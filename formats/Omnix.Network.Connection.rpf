@@ -1,0 +1,10 @@
+syntax = v1;
+
+using "Omnix.Cryptography.rpf";
+
+option csharp_namespace = "Omnix.Network.Connection";
+
+message SecureConnectionAgreementMessage {
+    CreationTime: timestamp = 0,
+    OmniAgreementPublicKey: OmniAgreementPublicKey = 1,
+}

@@ -1,0 +1,4 @@
+LIBRARY Library_Correction
+
+EXPORTS
+	mul

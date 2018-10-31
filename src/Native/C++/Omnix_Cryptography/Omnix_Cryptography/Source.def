@@ -1,0 +1,4 @@
+LIBRARY Omnix_Cryptography
+
+EXPORTS
+	compute_Crc32_Castagnoli

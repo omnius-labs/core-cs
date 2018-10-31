@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <AssemblyVersion>2018.8.30.12</AssemblyVersion>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Omnix.Base\Omnix.Base.csproj" />
+    <ProjectReference Include="..\Omnix.Serialization\Omnix.Serialization.csproj" />
+  </ItemGroup>
+
+</Project>
