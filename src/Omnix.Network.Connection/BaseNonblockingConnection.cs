@@ -8,7 +8,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Omnix.Base;
-using Omnix.Network.Connection.Internal;
 using Omnix.Serialization;
 
 namespace Omnix.Network.Connection
@@ -16,7 +15,6 @@ namespace Omnix.Network.Connection
     public sealed class BaseNonblockingConnection : DisposableBase, INonblockingConnection
     {
         private Cap _cap;
-        private readonly int _capacity;
         private readonly int _maxReceiveByteCount;
         private readonly BufferPool _bufferPool;
 
@@ -66,7 +64,7 @@ namespace Omnix.Network.Connection
 
         public long SentByteCount => Interlocked.Read(ref _sentByteCount);
 
-        private int InternalSendHubReader(Hub.HubReader reader, int limit)
+        private int InternalSend(Hub.HubReader reader, int limit)
         {
             int total = 0;
 
@@ -115,11 +113,11 @@ namespace Omnix.Network.Connection
 
                     if (!_sendHeaderHub.Reader.IsCompleted)
                     {
-                        total += this.InternalSendHubReader(_sendHeaderHub.Reader, limit - total);
+                        total += this.InternalSend(_sendHeaderHub.Reader, limit - total);
                     }
                     else if (_sendContentHub.Writer.IsCompleted)
                     {
-                        total += this.InternalSendHubReader(_sendContentHub.Reader, limit - total);
+                        total += this.InternalSend(_sendContentHub.Reader, limit - total);
 
                         if (_sendContentHub.Reader.IsCompleted)
                         {

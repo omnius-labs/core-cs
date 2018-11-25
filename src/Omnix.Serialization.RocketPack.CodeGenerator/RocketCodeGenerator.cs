@@ -17,6 +17,8 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
 
                 // デフォルトで以下の名前空間をusingする。
                 hashSet.Add("System");
+                hashSet.Add("System.Collections.Generic");
+                hashSet.Add("System.Collections.ObjectModel");
                 hashSet.Add("System.Buffers");
                 hashSet.Add("Omnix.Base");
                 hashSet.Add("Omnix.Base.Helpers");
@@ -155,9 +157,12 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
 
             public void WriteLine(string value)
             {
-                this.TryWriteIndent();
-                _sb.AppendLine(value);
-                _wroteIndent = false;
+                foreach (var line in value.Split(new string[] { "\r\n", "\r", "\n" }, options: StringSplitOptions.None))
+                {
+                    this.TryWriteIndent();
+                    _sb.AppendLine(line);
+                    _wroteIndent = false;
+                }
             }
 
             public void PushIndent()

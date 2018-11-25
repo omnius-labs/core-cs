@@ -8,7 +8,7 @@ namespace Omnix.Collections
     /// Bloom filter.
     /// </summary>
     /// <typeparam name="T">Item type </typeparam>
-    public class BloomFilter<T>
+    public sealed class BloomFilter<T>
     {
         private readonly BitArray _hashBits;
         private readonly Func<T, long> _hashFunction;
@@ -64,13 +64,40 @@ namespace Omnix.Collections
         }
 
         /// <summary>
+        /// The best k.
+        /// </summary>
+        /// <param name="capacity"> The capacity. </param>
+        /// <param name="errorRate"> The error rate. </param>
+        /// <returns> The <see cref="int"/>. </returns>
+        private static int ComputeBestK(int capacity, double errorRate)
+        {
+            return (int)Math.Round(Math.Log(2.0) * ComputeBestM(capacity, errorRate) / capacity);
+        }
+
+        /// <summary>
+        /// The best m.
+        /// </summary>
+        /// <param name="capacity"> The capacity. </param>
+        /// <param name="errorRate"> The error rate. </param>
+        /// <returns> The <see cref="int"/>. </returns>
+        private static int ComputeBestM(int capacity, double errorRate)
+        {
+            return (int)Math.Ceiling(capacity * Math.Log(errorRate, (1.0 / Math.Pow(2, Math.Log(2.0)))));
+        }
+
+        private static int ComputeM(int n, double p, int k)
+        {
+            return (int)Math.Ceiling(n * ((-k) / Math.Log(1 - Math.Exp(Math.Log(p) / k))));
+        }
+
+        /// <summary>
         /// The ratio of false to true bits in the filter. E.g., 1 true bit in a 10 bit filter means a truthiness of 0.1.
         /// </summary>
         public double Truthiness
         {
             get
             {
-                return (double)this.GetTrueBitCount() / _hashBits.Count;
+                return (double)_hashBits.GetCardinality() / _hashBits.Count;
             }
         }
 
@@ -114,33 +141,6 @@ namespace Omnix.Collections
         }
 
         /// <summary>
-        /// The best k.
-        /// </summary>
-        /// <param name="capacity"> The capacity. </param>
-        /// <param name="errorRate"> The error rate. </param>
-        /// <returns> The <see cref="int"/>. </returns>
-        private static int ComputeBestK(int capacity, double errorRate)
-        {
-            return (int)Math.Round(Math.Log(2.0) * ComputeBestM(capacity, errorRate) / capacity);
-        }
-
-        /// <summary>
-        /// The best m.
-        /// </summary>
-        /// <param name="capacity"> The capacity. </param>
-        /// <param name="errorRate"> The error rate. </param>
-        /// <returns> The <see cref="int"/>. </returns>
-        private static int ComputeBestM(int capacity, double errorRate)
-        {
-            return (int)Math.Ceiling(capacity * Math.Log(errorRate, (1.0 / Math.Pow(2, Math.Log(2.0)))));
-        }
-
-        private static int ComputeM(int n, double p, int k)
-        {
-            return (int)Math.Ceiling(n * ((-k) / Math.Log(1 - Math.Exp(Math.Log(p) / k))));
-        }
-
-        /// <summary>
         /// The best error rate.
         /// </summary>
         /// <param name="capacity"> The capacity. </param>
@@ -157,15 +157,6 @@ namespace Omnix.Collections
             // default
             // http://www.cs.princeton.edu/courses/archive/spring02/cs493/lec7.pdf
             return (double)Math.Pow(0.6185, int.MaxValue / capacity);
-        }
-
-        /// <summary>
-        /// The true bits.
-        /// </summary>
-        /// <returns> The <see cref="int"/>. </returns>
-        private int GetTrueBitCount()
-        {
-            return _hashBits.GetCardinality();
         }
 
         /// <summary>

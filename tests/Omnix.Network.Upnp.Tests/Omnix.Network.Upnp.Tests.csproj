@@ -3,8 +3,6 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp2.1</TargetFramework>
     <IsPackable>false</IsPackable>
-    <AssemblyVersion>2018.8.14.57</AssemblyVersion>
-    <LangVersion>latest</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -18,18 +16,10 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
-    <DotNetCliToolReference Include="dotnet-xunit" Version="2.3.1" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Omnix.Base\Omnix.Base.csproj" />
-    <ProjectReference Include="..\..\src\Omnix.Serialization.RocketPack.CodeGenerator\Omnix.Serialization.RocketPack.CodeGenerator.csproj" />
-    <ProjectReference Include="..\..\src\Omnix.Serialization.RocketPack\Omnix.Serialization.RocketPack.csproj" />
-    <ProjectReference Include="..\..\src\Omnix.Serialization\Omnix.Serialization.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="_RocketPack\" />
+    <ProjectReference Include="..\..\src\Omnix.Network.Upnp\Omnix.Network.Upnp.csproj" />
   </ItemGroup>
 
 </Project>

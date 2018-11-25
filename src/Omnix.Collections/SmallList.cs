@@ -30,24 +30,11 @@ namespace Omnix.Collections
             }
         }
 
-        protected virtual bool Filter(T item)
-        {
-            return false;
-        }
-
-        public T[] ToArray()
-        {
-            var array = new T[_list.Count];
-            _list.CopyTo(array, 0);
-
-            return array;
-        }
-
-        public int Capacity
+        public int? Capacity
         {
             get
             {
-                return _capacity ?? -1;
+                return _capacity;
             }
             set
             {
@@ -61,6 +48,19 @@ namespace Omnix.Collections
             {
                 return _list.Count;
             }
+        }
+
+        protected virtual bool Filter(T item)
+        {
+            return false;
+        }
+
+        public T[] ToArray()
+        {
+            var array = new T[_list.Count];
+            _list.CopyTo(array, 0);
+
+            return array;
         }
 
         public T this[int index]
@@ -183,29 +183,11 @@ namespace Omnix.Collections
             _list.TrimExcess();
         }
 
-        bool ICollection<T>.IsReadOnly
-        {
-            get
-            {
-                return false;
-            }
-        }
+        bool ICollection<T>.IsReadOnly => false;
 
-        bool IList.IsFixedSize
-        {
-            get
-            {
-                return false;
-            }
-        }
+        bool IList.IsFixedSize => false;
 
-        bool IList.IsReadOnly
-        {
-            get
-            {
-                return false;
-            }
-        }
+        bool IList.IsReadOnly => false;
 
         object IList.this[int index]
         {
@@ -245,21 +227,9 @@ namespace Omnix.Collections
             this.Remove((T)item);
         }
 
-        bool ICollection.IsSynchronized
-        {
-            get
-            {
-                return true;
-            }
-        }
+        bool ICollection.IsSynchronized => false;
 
-        object ICollection.SyncRoot
-        {
-            get
-            {
-                return ((ICollection)_list).SyncRoot;
-            }
-        }
+        object ICollection.SyncRoot => null;
 
         void ICollection.CopyTo(Array array, int index)
         {

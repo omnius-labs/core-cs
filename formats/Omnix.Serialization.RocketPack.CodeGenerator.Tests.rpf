@@ -1,0 +1,101 @@
+syntax = v1;
+
+option csharp_namespace = "Omnix.Serialization.RocketPack.CodeGenerator.Tests";
+
+enum Enum1 : int8 {
+    Yes = 0,
+    No = 1,
+}
+
+enum Enum2 : int16 {
+    Yes = 0,
+    No = 1,
+}
+
+enum Enum3 : int32 {
+    Yes = 0,
+    No = 1,
+}
+
+enum Enum4 : int64 {
+    Yes = 0,
+    No = 1,
+}
+
+enum Enum5 : uint8 {
+    Yes = 0,
+    No = 1,
+}
+
+enum Enum6 : uint16 {
+    Yes = 0,
+    No = 1,
+}
+
+enum Enum7 : uint32 {
+    Yes = 0,
+    No = 1,
+}
+
+enum Enum8: uint64 {
+    Yes = 0,
+    No = 1,
+}
+
+message HelloMessage {
+    X1: bool = 0,
+    X2: int8 = 1,
+    X3: int16 = 2,
+    X4: int32 = 3,
+    X5: int64 = 4,
+    X6: uint8 = 5,
+    X7: uint16 = 6,
+    X8: uint32 = 7,
+    X9: uint64 = 8,
+    X10: float32 = 9,
+    X11: float64 = 10,
+    X12: string(128) = 11, // maximum bytes size is 128
+    X13: timestamp = 12,
+    X14: memory(256) = 13, // maximum bytes size is 256
+    [Recyclable]
+    X15: memory(256) = 14, // use recyclable memory
+    X16: vector<string(128)>(16) = 15,
+    X17: map<int8, memory(32)>(32) = 16,
+    X19: Enum1 = 17,
+    X20: Enum2 = 18,
+    X21: Enum3 = 19,
+    X22: Enum4 = 20,
+    X23: Enum5 = 21,
+    X24: Enum6 = 22,
+    X25: Enum7 = 23,
+    X26: Enum8 = 24,
+}
+
+small message HelloMessage2 {
+    X1: bool,
+    X2: int8,
+    X3: int16,
+    X4: int32,
+    X5: int64,
+    X6: uint8,
+    X7: uint16,
+    X8: uint32,
+    X9: uint64,
+    X10: float32,
+    X11: float64,
+    X12: string(128), // maximum bytes size is 128
+    X13: timestamp,
+    X14: memory(256), // maximum bytes size is 256
+    [Recyclable]
+    X15: memory(256), // use recyclable memory
+    X16: vector<string(128)>(16),
+    X17: map<int8, memory(32)>(32),
+    X19: Enum1,
+    X20: Enum2,
+    X21: Enum3,
+    X22: Enum4,
+    X23: Enum5,
+    X24: Enum6,
+    X25: Enum7,
+    X26: Enum8,
+}

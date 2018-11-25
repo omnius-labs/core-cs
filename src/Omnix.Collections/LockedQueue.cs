@@ -11,8 +11,6 @@ namespace Omnix.Collections
         private Queue<T> _queue;
         private int? _capacity;
 
-        private readonly object _lockObject = new object();
-
         public LockedQueue()
         {
             _queue = new Queue<T>();
@@ -34,13 +32,15 @@ namespace Omnix.Collections
             }
         }
 
-        public int Capacity
+        public object LockObject { get; } = new object();
+
+        public int? Capacity
         {
             get
             {
                 lock (this.LockObject)
                 {
-                    return _capacity ?? 0;
+                    return _capacity;
                 }
             }
             set
@@ -129,16 +129,7 @@ namespace Omnix.Collections
             }
         }
 
-        bool ICollection<T>.IsReadOnly
-        {
-            get
-            {
-                lock (this.LockObject)
-                {
-                    return false;
-                }
-            }
-        }
+        bool ICollection<T>.IsReadOnly => false;
 
         void ICollection<T>.Add(T item)
         {
@@ -159,24 +150,9 @@ namespace Omnix.Collections
             }
         }
 
-        bool ICollection.IsSynchronized
-        {
-            get
-            {
-                lock (this.LockObject)
-                {
-                    return true;
-                }
-            }
-        }
+        bool ICollection.IsSynchronized => true;
 
-        object ICollection.SyncRoot
-        {
-            get
-            {
-                return this.LockObject;
-            }
-        }
+        object ICollection.SyncRoot => this.LockObject;
 
         void ICollection.CopyTo(Array array, int index)
         {
@@ -204,17 +180,5 @@ namespace Omnix.Collections
                 return this.GetEnumerator();
             }
         }
-
-        #region IThisLock
-
-        public object LockObject
-        {
-            get
-            {
-                return _lockObject;
-            }
-        }
-
-        #endregion
     }
 }

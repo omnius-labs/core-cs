@@ -41,31 +41,31 @@ namespace Omnix.Serialization.RocketPack.Internal
             this.Value = value;
         }
 
-        public Float64Bits(byte[] bigEndianBytes, int offset)
+        public Float64Bits(Span<byte> bigEndianBytes)
         {
             this = default(Float64Bits);
 
             if (BitConverter.IsLittleEndian)
             {
-                this.Byte0 = bigEndianBytes[offset + 7];
-                this.Byte1 = bigEndianBytes[offset + 6];
-                this.Byte2 = bigEndianBytes[offset + 5];
-                this.Byte3 = bigEndianBytes[offset + 4];
-                this.Byte4 = bigEndianBytes[offset + 3];
-                this.Byte5 = bigEndianBytes[offset + 2];
-                this.Byte6 = bigEndianBytes[offset + 1];
-                this.Byte7 = bigEndianBytes[offset];
+                this.Byte0 = bigEndianBytes[7];
+                this.Byte1 = bigEndianBytes[6];
+                this.Byte2 = bigEndianBytes[5];
+                this.Byte3 = bigEndianBytes[4];
+                this.Byte4 = bigEndianBytes[3];
+                this.Byte5 = bigEndianBytes[2];
+                this.Byte6 = bigEndianBytes[1];
+                this.Byte7 = bigEndianBytes[0];
             }
             else
             {
-                this.Byte0 = bigEndianBytes[offset];
-                this.Byte1 = bigEndianBytes[offset + 1];
-                this.Byte2 = bigEndianBytes[offset + 2];
-                this.Byte3 = bigEndianBytes[offset + 3];
-                this.Byte4 = bigEndianBytes[offset + 4];
-                this.Byte5 = bigEndianBytes[offset + 5];
-                this.Byte6 = bigEndianBytes[offset + 6];
-                this.Byte7 = bigEndianBytes[offset + 7];
+                this.Byte0 = bigEndianBytes[0];
+                this.Byte1 = bigEndianBytes[1];
+                this.Byte2 = bigEndianBytes[2];
+                this.Byte3 = bigEndianBytes[3];
+                this.Byte4 = bigEndianBytes[4];
+                this.Byte5 = bigEndianBytes[5];
+                this.Byte6 = bigEndianBytes[6];
+                this.Byte7 = bigEndianBytes[7];
             }
         }
     }

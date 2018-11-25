@@ -38,7 +38,7 @@ namespace Omnix.Network.Connection.Tests
         public void RandomSendAndReceiveeTest()
         {
             var random = new Random();
-            var caseList = new int[] { 1, 5, 10, 100, 1000, 10000, 1024 * 1024 };
+            var caseList = new int[] { 1, 5, 10, 100, 1000, 10000, 1024 * 1024, 1024 * 1024 * 32 };
 
             foreach (var bufferSize in caseList)
             {

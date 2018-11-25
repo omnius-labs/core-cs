@@ -17,5 +17,3 @@ if %PROCESSOR_ARCHITECTURE% == AMD64 (
 mkdir %TOOLS_DIR%Omnix.Serialization.RocketPack.CodeGenerator
 
 dotnet publish %BAT_DIR%src\Omnix.Serialization.RocketPack.CodeGenerator\Omnix.Serialization.RocketPack.CodeGenerator.csproj --configuration Release --output "%TOOLS_DIR%Omnix.Serialization.RocketPack.CodeGenerator" --runtime %BUILD_ARCHITECTURE%
-
-pause

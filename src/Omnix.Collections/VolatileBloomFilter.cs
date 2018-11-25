@@ -5,6 +5,7 @@ using System.Linq;
 using Omnix.Base;
 using System.Collections;
 using System.Runtime.CompilerServices;
+using Omnix.Base.Extensions;
 
 namespace Omnix.Collections
 {
@@ -21,8 +22,6 @@ namespace Omnix.Collections
         private readonly int _bitCount;
 
         private int[] _hashes;
-
-        private readonly object _lockObject = new object();
 
         public VolatileBloomFilter(int capacity, double errorRate, int hashFunctionCount, Func<T, long> hashFunction, TimeSpan unitTime, TimeSpan survivalTime)
         {
@@ -73,16 +72,9 @@ namespace Omnix.Collections
             }
         }
 
-        public TimeSpan SurvivalTime
-        {
-            get
-            {
-                lock (this.LockObject)
-                {
-                    return _survivalTime;
-                }
-            }
-        }
+        public object LockObject { get; } = new object();
+
+        public TimeSpan SurvivalTime => _survivalTime;
 
         public TimeSpan GetElapsedTime(T item)
         {
@@ -161,17 +153,5 @@ namespace Omnix.Collections
                 return false;
             }
         }
-
-        #region ISynchronized
-
-        public object LockObject
-        {
-            get
-            {
-                return _lockObject;
-            }
-        }
-
-        #endregion
     }
 }

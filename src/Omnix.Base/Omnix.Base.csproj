@@ -10,6 +10,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="System.IO.Pipelines" Version="4.5.2" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Update="Assemblies\Omnix_Base_x64.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

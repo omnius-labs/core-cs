@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.IO.Pipelines;
 using System.Text;
 
-namespace Omnix.Network.Connection.Internal
+namespace Omnix.Base
 {
     partial class Hub
     {

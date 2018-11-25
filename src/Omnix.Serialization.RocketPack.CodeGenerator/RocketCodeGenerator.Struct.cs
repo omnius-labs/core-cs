@@ -214,15 +214,17 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
             /// </summary>
             private void Write_Constructor(CodeWriter w, MessageInfo messageInfo)
             {
-                bool isDefinedMaxLength = false;
-
                 // 最大サイズの宣言。
-                foreach (var elementInfo in messageInfo.Elements)
                 {
-                    isDefinedMaxLength |= this.Try_Write_Constructor_Define_MaxLength(w, elementInfo.Name, elementInfo.Type);
-                }
+                    bool isDefinedMaxLength = false;
 
-                if (isDefinedMaxLength) w.WriteLine();
+                    foreach (var elementInfo in messageInfo.Elements)
+                    {
+                        isDefinedMaxLength |= this.Try_Write_Constructor_Define_MaxLength(w, elementInfo.Name, elementInfo.Type);
+                    }
+
+                    if (isDefinedMaxLength) w.WriteLine();
+                }
 
                 // パラメータの生成。
                 var parameter = string.Join(", ", messageInfo.Elements.Select(element => this.GetParameterTypeString(element.Type) + " " + GetFieldName(element.Name)));
@@ -232,60 +234,17 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
 
                 w.PushIndent();
 
-                bool isChecked = false;
-
-                // パラメータのnullチェック
-                foreach (var elementInfo in messageInfo.Elements)
+                // パラメータのチェック
                 {
-                    isChecked |= this.Try_Write_Constructor_CheckNull(w, GetFieldName(elementInfo.Name), elementInfo.Type);
-                }
+                    bool isChecked = false;
 
-                // パラメータの最大長チェック
-                foreach (var elementInfo in messageInfo.Elements)
-                {
-                    isChecked |= this.Try_Write_Constructor_CheckMaxLength(w, GetFieldName(elementInfo.Name), elementInfo.Type);
-                }
-
-                // listとmapのパラメータの要素のnullチェック
-                foreach (var elementInfo in messageInfo.Elements)
-                {
-                    if (elementInfo.Type is ListTypeInfo listTypeInfo)
+                    foreach (var elementInfo in messageInfo.Elements)
                     {
-                        w.WriteLine($"foreach (var n in {GetFieldName(elementInfo.Name)})");
-                        w.WriteLine("{");
-
-                        w.PushIndent();
-
-                        {
-                            isChecked |= this.Try_Write_Constructor_CheckNull(w, "n", listTypeInfo.ElementType);
-                            isChecked |= this.Try_Write_Constructor_CheckMaxLength(w, "n", listTypeInfo.ElementType);
-                        }
-
-                        w.PopIndent();
-
-                        w.WriteLine("}");
+                        isChecked = this.Try_Write_Constructor_Check(w, elementInfo);
                     }
-                    else if (elementInfo.Type is MapTypeInfo mapTypeInfo)
-                    {
-                        w.WriteLine($"foreach (var n in {GetFieldName(elementInfo.Name)})");
-                        w.WriteLine("{");
 
-                        w.PushIndent();
-
-                        {
-                            isChecked |= this.Try_Write_Constructor_CheckNull(w, "n.Key", mapTypeInfo.KeyType);
-                            isChecked |= this.Try_Write_Constructor_CheckNull(w, "n.Value", mapTypeInfo.ValueType);
-                            isChecked |= this.Try_Write_Constructor_CheckMaxLength(w, "n.Key", mapTypeInfo.KeyType);
-                            isChecked |= this.Try_Write_Constructor_CheckMaxLength(w, "n.Value", mapTypeInfo.ValueType);
-                        }
-
-                        w.PopIndent();
-
-                        w.WriteLine("}");
-                    }
+                    if (isChecked) w.WriteLine();
                 }
-
-                if (isChecked) w.WriteLine();
 
                 foreach (var elementInfo in messageInfo.Elements)
                 {
@@ -293,6 +252,12 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
                     {
                         case MemoryTypeInfo typeInfo when (typeInfo.IsUseMemoryPool):
                             w.WriteLine($"_{GetFieldName(elementInfo.Name)} = {GetFieldName(elementInfo.Name)};");
+                            break;
+                        case ListTypeInfo typeInfo:
+                            w.WriteLine($"this.{elementInfo.Name} = new ReadOnlyCollection<{this.GetParameterTypeString(typeInfo.ElementType)}>({GetFieldName(elementInfo.Name)});");
+                            break;
+                        case MapTypeInfo typeInfo:
+                            w.WriteLine($"this.{elementInfo.Name} = new ReadOnlyDictionary<{this.GetParameterTypeString(typeInfo.KeyType)}, {this.GetParameterTypeString(typeInfo.ValueType)}>({GetFieldName(elementInfo.Name)});");
                             break;
                         default:
                             w.WriteLine($"this.{elementInfo.Name} = {GetFieldName(elementInfo.Name)};");
@@ -304,135 +269,95 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
 
                 this.Write_Constructor_HashCode(w, messageInfo);
 
-                //w.WriteLine("this.Initialize();");
-
                 w.PopIndent();
 
                 w.WriteLine("}");
             }
 
-            private void Write_Constructor_HashCode(CodeWriter w, MessageInfo messageInfo)
+            private bool Try_Write_Constructor_Check(CodeWriter w, MessageElementInfo elementInfo)
             {
-                w.WriteLine("{");
+                bool isChecked = false;
 
-                w.PushIndent();
+                isChecked |= this.Try_Write_Constructor_CheckNull(w, GetFieldName(elementInfo.Name), elementInfo.Type);
+                isChecked |= this.Try_Write_Constructor_CheckMaxLength(w, GetFieldName(elementInfo.Name), elementInfo.Type);
 
+                if (elementInfo.Type is ListTypeInfo listTypeInfo)
                 {
-                    w.WriteLine("var hashCode = new HashCode();");
+                    var w2 = new CodeWriter();
+                    bool isChecked2 = false;
 
-                    foreach (var elementInfo in messageInfo.Elements)
+                    w2.WriteLine($"foreach (var n in {GetFieldName(elementInfo.Name)})");
+                    w2.WriteLine("{");
+
+                    w2.PushIndent();
+
                     {
-                        switch (elementInfo.Type)
-                        {
-                            case BoolTypeInfo typeInfo:
-                                w.WriteLine($"if (this.{elementInfo.Name} != default) hashCode.Add(this.{elementInfo.Name}.GetHashCode());");
-                                break;
-                            case IntTypeInfo typeInfo:
-                                w.WriteLine($"if (this.{elementInfo.Name} != default) hashCode.Add(this.{elementInfo.Name}.GetHashCode());");
-                                break;
-                            case FloatTypeInfo typeInfo:
-                                w.WriteLine($"if (this.{elementInfo.Name} != default) hashCode.Add(this.{elementInfo.Name}.GetHashCode());");
-                                break;
-                            case StringTypeInfo typeInfo:
-                                w.WriteLine($"if (this.{elementInfo.Name} != default) hashCode.Add(this.{elementInfo.Name}.GetHashCode());");
-                                break;
-                            case TimestampTypeInfo typeInfo:
-                                w.WriteLine($"if (this.{elementInfo.Name} != default) hashCode.Add(this.{elementInfo.Name}.GetHashCode());");
-                                break;
-                            case MemoryTypeInfo typeInfo when (typeInfo.IsUseMemoryPool):
-                                w.WriteLine($"if (_{GetFieldName(elementInfo.Name)}.Memory.IsEmpty) hashCode.Add(ObjectHelper.GetHashCode(_{GetFieldName(elementInfo.Name)}.Memory.Span));");
-                                break;
-                            case MemoryTypeInfo typeInfo when (!typeInfo.IsUseMemoryPool):
-                                w.WriteLine($"if (!this.{elementInfo.Name}.IsEmpty) hashCode.Add(ObjectHelper.GetHashCode(this.{elementInfo.Name}.Span));");
-                                break;
-                            case ListTypeInfo typeInfo:
-                                {
-                                    w.WriteLine($"foreach (var n in {GetFieldName(elementInfo.Name)})");
-                                    w.WriteLine("{");
-
-                                    w.PushIndent();
-
-                                    {
-                                        w.WriteLine($"if (n != default) hashCode.Add(ObjectHelper.GetHashCode(n));");
-                                    }
-
-                                    w.PopIndent();
-
-                                    w.WriteLine("}");
-                                }
-                                break;
-                            case MapTypeInfo typeInfo:
-                                {
-                                    w.WriteLine($"foreach (var n in {GetFieldName(elementInfo.Name)})");
-                                    w.WriteLine("{");
-
-                                    w.PushIndent();
-
-                                    {
-                                        w.WriteLine($"if (n.Key != default) h ^= hashCode.Add(ObjectHelper.GetHashCode(n.Key));");
-                                        w.WriteLine($"if (n.Value != default) hashCode.Add(ObjectHelper.GetHashCode(n.Value));");
-                                    }
-
-                                    w.PopIndent();
-
-                                    w.WriteLine("}");
-                                }
-                                break;
-                            case CustomTypeInfo typeInfo:
-                                w.WriteLine($"if (this.{elementInfo.Name} != default) hashCode.Add(this.{elementInfo.Name}.GetHashCode());");
-                                break;
-                        }
+                        isChecked2 |= this.Try_Write_Constructor_CheckNull(w2, "n", listTypeInfo.ElementType);
+                        isChecked2 |= this.Try_Write_Constructor_CheckMaxLength(w2, "n", listTypeInfo.ElementType);
                     }
 
-                    w.WriteLine("_hashCode = hashCode.ToHashCode();");
+                    w2.PopIndent();
+
+                    w2.WriteLine("}");
+
+                    if (isChecked2) w.WriteLine(w2.ToString().TrimEnd());
+
+                    isChecked |= isChecked2;
                 }
-
-                w.PopIndent();
-
-                w.WriteLine("}");
-            }
-
-
-            private bool Try_Write_Constructor_Define_MaxLength(CodeWriter w, string name, TypeInfo typeInfo)
-            {
-                switch (typeInfo)
+                else if (elementInfo.Type is MapTypeInfo mapTypeInfo)
                 {
-                    case StringTypeInfo stringTypeInfo:
-                        w.WriteLine($"public static readonly int Max{name}Length = {stringTypeInfo.MaxLength};");
-                        return true;
-                    case MemoryTypeInfo memoryTypeInfo:
-                        w.WriteLine($"public static readonly int Max{name}Length = {memoryTypeInfo.MaxLength};");
-                        return true;
-                    case ListTypeInfo listTypeInfo:
-                        w.WriteLine($"public static readonly int Max{name}Count = {listTypeInfo.MaxLength};");
-                        return true;
-                    case MapTypeInfo mapTypeInfo:
-                        w.WriteLine($"public static readonly int Max{name}Count = {mapTypeInfo.MaxLength};");
-                        return true;
-                    default:
-                        return false;
+                    var w2 = new CodeWriter();
+                    bool isChecked2 = false;
+
+                    w2.WriteLine($"foreach (var n in {GetFieldName(elementInfo.Name)})");
+                    w2.WriteLine("{");
+
+                    w2.PushIndent();
+
+                    {
+                        isChecked2 |= this.Try_Write_Constructor_CheckNull(w2, "n.Key", mapTypeInfo.KeyType);
+                        isChecked2 |= this.Try_Write_Constructor_CheckNull(w2, "n.Value", mapTypeInfo.ValueType);
+                        isChecked2 |= this.Try_Write_Constructor_CheckMaxLength(w2, "n.Key", mapTypeInfo.KeyType);
+                        isChecked2 |= this.Try_Write_Constructor_CheckMaxLength(w2, "n.Value", mapTypeInfo.ValueType);
+                    }
+
+                    w2.PopIndent();
+
+                    w2.WriteLine("}");
+
+                    if (isChecked2) w.WriteLine(w2.ToString().TrimEnd());
+
+                    isChecked |= isChecked2;
                 }
+
+                return isChecked;
             }
 
             private bool Try_Write_Constructor_CheckNull(CodeWriter w, string name, TypeInfo typeInfo)
             {
                 switch (typeInfo)
                 {
-                    case StringTypeInfo stringTypeInfo when (typeInfo.IsNullable):
+                    case StringTypeInfo stringTypeInfo when (!typeInfo.IsNullable):
                         w.WriteLine($"if ({name} is null) throw new ArgumentNullException(\"{name}\");");
                         return true;
                     case MemoryTypeInfo memoryTypeInfo when (memoryTypeInfo.IsUseMemoryPool):
                         w.WriteLine($"if ({name} is null) throw new ArgumentNullException(\"{name}\");");
                         return true;
-                    case ListTypeInfo listTypeInfo when (typeInfo.IsNullable):
+                    case ListTypeInfo listTypeInfo when (!typeInfo.IsNullable):
                         w.WriteLine($"if ({name} is null) throw new ArgumentNullException(\"{name}\");");
                         return true;
-                    case MapTypeInfo mapTypeInfo when (typeInfo.IsNullable):
+                    case MapTypeInfo mapTypeInfo when (!typeInfo.IsNullable):
                         w.WriteLine($"if ({name} is null) throw new ArgumentNullException(\"{name}\");");
                         return true;
-                    case CustomTypeInfo customTypeInfo when (typeInfo.IsNullable):
-                        w.WriteLine($"if ({name} is null) throw new ArgumentNullException(\"{name}\");");
-                        return true;
+                    case CustomTypeInfo customTypeInfo when (!typeInfo.IsNullable):
+                        switch (_customTypeResolver.Invoke(customTypeInfo))
+                        {
+                            case MessageInfo messageInfo when (messageInfo.FormatType == MessageFormatType.Medium):
+                                w.WriteLine($"if ({name} is null) throw new ArgumentNullException(\"{name}\");");
+                                return true;
+                            default:
+                                return false;
+                        }
                     default:
                         return false;
                 }
@@ -479,6 +404,113 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
                 }
 
                 return true;
+            }
+
+            private bool Try_Write_Constructor_Define_MaxLength(CodeWriter w, string name, TypeInfo typeInfo)
+            {
+                switch (typeInfo)
+                {
+                    case StringTypeInfo stringTypeInfo:
+                        w.WriteLine($"public static readonly int Max{name}Length = {stringTypeInfo.MaxLength};");
+                        return true;
+                    case MemoryTypeInfo memoryTypeInfo:
+                        w.WriteLine($"public static readonly int Max{name}Length = {memoryTypeInfo.MaxLength};");
+                        return true;
+                    case ListTypeInfo listTypeInfo:
+                        w.WriteLine($"public static readonly int Max{name}Count = {listTypeInfo.MaxLength};");
+                        return true;
+                    case MapTypeInfo mapTypeInfo:
+                        w.WriteLine($"public static readonly int Max{name}Count = {mapTypeInfo.MaxLength};");
+                        return true;
+                    default:
+                        return false;
+                }
+            }
+
+            private void Write_Constructor_HashCode(CodeWriter w, MessageInfo messageInfo)
+            {
+                w.WriteLine("{");
+
+                w.PushIndent();
+
+                {
+                    w.WriteLine("var hashCode = new HashCode();");
+
+                    foreach (var elementInfo in messageInfo.Elements)
+                    {
+                        this.Write_Constructor_HashCode_Element(w, "this." + elementInfo.Name, elementInfo.Type);
+                    }
+
+                    w.WriteLine("_hashCode = hashCode.ToHashCode();");
+                }
+
+                w.PopIndent();
+
+                w.WriteLine("}");
+            }
+
+            private void Write_Constructor_HashCode_Element(CodeWriter w, string name, TypeInfo typeInfo)
+            {
+                switch (typeInfo)
+                {
+                    case BoolTypeInfo boolTypeInfo:
+                        w.WriteLine($"if ({name} != default) hashCode.Add({name}.GetHashCode());");
+                        break;
+                    case IntTypeInfo intTypeInfo:
+                        w.WriteLine($"if ({name} != default) hashCode.Add({name}.GetHashCode());");
+                        break;
+                    case FloatTypeInfo floatTypeInfo:
+                        w.WriteLine($"if ({name} != default) hashCode.Add({name}.GetHashCode());");
+                        break;
+                    case StringTypeInfo stringTypeInfo:
+                        w.WriteLine($"if ({name} != default) hashCode.Add({name}.GetHashCode());");
+                        break;
+                    case TimestampTypeInfo timestampTypeInfo:
+                        w.WriteLine($"if ({name} != default) hashCode.Add({name}.GetHashCode());");
+                        break;
+                    case MemoryTypeInfo memoryTypeInfo when (memoryTypeInfo.IsUseMemoryPool):
+                        w.WriteLine($"if (!{name}.IsEmpty) hashCode.Add(ObjectHelper.GetHashCode({name}.Span));");
+                        break;
+                    case MemoryTypeInfo memoryTypeInfo when (!memoryTypeInfo.IsUseMemoryPool):
+                        w.WriteLine($"if (!{name}.IsEmpty) hashCode.Add(ObjectHelper.GetHashCode({name}.Span));");
+                        break;
+                    case ListTypeInfo listTypeInfo:
+                        {
+                            w.WriteLine($"foreach (var n in {GetFieldName(name)})");
+                            w.WriteLine("{");
+
+                            w.PushIndent();
+
+                            {
+                                this.Write_Constructor_HashCode_Element(w, "n", listTypeInfo.ElementType);
+                            }
+
+                            w.PopIndent();
+
+                            w.WriteLine("}");
+                        }
+                        break;
+                    case MapTypeInfo mapTypeInfo:
+                        {
+                            w.WriteLine($"foreach (var n in {GetFieldName(name)})");
+                            w.WriteLine("{");
+
+                            w.PushIndent();
+
+                            {
+                                this.Write_Constructor_HashCode_Element(w, "n.Key", mapTypeInfo.KeyType);
+                                this.Write_Constructor_HashCode_Element(w, "n.Value", mapTypeInfo.ValueType);
+                            }
+
+                            w.PopIndent();
+
+                            w.WriteLine("}");
+                        }
+                        break;
+                    case CustomTypeInfo customTypeInfo:
+                        w.WriteLine($"if ({name} != default) hashCode.Add({name}.GetHashCode());");
+                        break;
+                }
             }
 
             private void Write_Equals(CodeWriter w, MessageInfo messageInfo)
@@ -537,11 +569,11 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
                                 break;
                             case ListTypeInfo typeInfo:
                                 w.WriteLine($"if ((this.{elementInfo.Name} is null) != (target.{elementInfo.Name} is null)) return false;");
-                                w.WriteLine($"if (!(this.{elementInfo.Name} is null) && !(target.{elementInfo.Name} is null) && !CollectionHelper.Equals(this.{elementInfo.Name}.Span, target.{elementInfo.Name}.Span)) return false;");
+                                w.WriteLine($"if (!(this.{elementInfo.Name} is null) && !(target.{elementInfo.Name} is null) && !CollectionHelper.Equals(this.{elementInfo.Name}, target.{elementInfo.Name})) return false;");
                                 break;
                             case MapTypeInfo typeInfo:
                                 w.WriteLine($"if ((this.{elementInfo.Name} is null) != (target.{elementInfo.Name} is null)) return false;");
-                                w.WriteLine($"if (!(this.{elementInfo.Name} is null) && !(target.{elementInfo.Name} is null) && !CollectionHelper.Equals(this.{elementInfo.Name}.Span, target.{elementInfo.Name}.Span)) return false;");
+                                w.WriteLine($"if (!(this.{elementInfo.Name} is null) && !(target.{elementInfo.Name} is null) && !CollectionHelper.Equals(this.{elementInfo.Name}, target.{elementInfo.Name})) return false;");
                                 break;
                             case CustomTypeInfo typeInfo:
                                 w.WriteLine($"if (this.{elementInfo.Name} != target.{elementInfo.Name}) return false;");
@@ -642,7 +674,51 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
 
                     foreach (var elementInfo in messageInfo.Elements)
                     {
+                        w.WriteLine($"// {elementInfo.Name}");
+
+                        switch (elementInfo.Type)
+                        {
+                            case BoolTypeInfo typeInfo:
+                                w.WriteLine($"if (value.{elementInfo.Name} != default)");
+                                break;
+                            case IntTypeInfo typeInfo:
+                                w.WriteLine($"if (value.{elementInfo.Name} != default)");
+                                break;
+                            case FloatTypeInfo typeInfo:
+                                w.WriteLine($"if (value.{elementInfo.Name} != default)");
+                                break;
+                            case StringTypeInfo typeInfo:
+                                w.WriteLine($"if (value.{elementInfo.Name} != default)");
+                                break;
+                            case TimestampTypeInfo typeInfo:
+                                w.WriteLine($"if (value.{elementInfo.Name} != default)");
+                                break;
+                            case MemoryTypeInfo typeInfo when (typeInfo.IsUseMemoryPool):
+                                w.WriteLine($"if (!value.{elementInfo.Name}.IsEmpty)");
+                                break;
+                            case MemoryTypeInfo typeInfo when (!typeInfo.IsUseMemoryPool):
+                                w.WriteLine($"if (!value.{elementInfo.Name}.IsEmpty)");
+                                break;
+                            case ListTypeInfo typeInfo:
+                                w.WriteLine($"if (value.{elementInfo.Name}.Count != 0)");
+                                break;
+                            case MapTypeInfo typeInfo:
+                                w.WriteLine($"if (value.{elementInfo.Name}.Count != 0)");
+                                break;
+                            case CustomTypeInfo typeInfo:
+                                w.WriteLine($"if (value.{elementInfo.Name} != default)");
+                                break;
+                        }
+
+                        w.WriteLine("{");
+
+                        w.PushIndent();
+
                         this.Write_Formatter_Serialize_PropertyDef(w, "value." + elementInfo.Name, elementInfo.Type, 0);
+
+                        w.PopIndent();
+
+                        w.WriteLine("}");
                     }
 
                     w.PopIndent();
@@ -664,7 +740,55 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
 
                     foreach (var elementInfo in messageInfo.Elements)
                     {
+                        switch (elementInfo.Type)
+                        {
+                            case BoolTypeInfo typeInfo:
+                                w.WriteLine($"{this.GetParameterTypeString(elementInfo.Type)} p_{GetFieldName(elementInfo.Name)} = default;");
+                                break;
+                            case IntTypeInfo typeInfo:
+                                w.WriteLine($"{this.GetParameterTypeString(elementInfo.Type)} p_{GetFieldName(elementInfo.Name)} = default;");
+                                break;
+                            case FloatTypeInfo typeInfo:
+                                w.WriteLine($"{this.GetParameterTypeString(elementInfo.Type)} p_{GetFieldName(elementInfo.Name)} = default;");
+                                break;
+                            case StringTypeInfo typeInfo:
+                                w.WriteLine($"{this.GetParameterTypeString(elementInfo.Type)} p_{GetFieldName(elementInfo.Name)} = default;");
+                                break;
+                            case TimestampTypeInfo typeInfo:
+                                w.WriteLine($"{this.GetParameterTypeString(elementInfo.Type)} p_{GetFieldName(elementInfo.Name)} = default;");
+                                break;
+                            case MemoryTypeInfo typeInfo when (typeInfo.IsUseMemoryPool):
+                                w.WriteLine($"{this.GetParameterTypeString(elementInfo.Type)} p_{GetFieldName(elementInfo.Name)} = default;");
+                                break;
+                            case MemoryTypeInfo typeInfo when (!typeInfo.IsUseMemoryPool):
+                                w.WriteLine($"{this.GetParameterTypeString(elementInfo.Type)} p_{GetFieldName(elementInfo.Name)} = default;");
+                                break;
+                            case ListTypeInfo typeInfo:
+                                w.WriteLine($"{this.GetParameterTypeString(elementInfo.Type)} p_{GetFieldName(elementInfo.Name)} = default;");
+                                break;
+                            case MapTypeInfo typeInfo:
+                                w.WriteLine($"{this.GetParameterTypeString(elementInfo.Type)} p_{GetFieldName(elementInfo.Name)} = default;");
+                                break;
+                            case CustomTypeInfo typeInfo:
+                                w.WriteLine($"{this.GetParameterTypeString(elementInfo.Type)} p_{GetFieldName(elementInfo.Name)} = default;");
+                                break;
+                        }
+                    }
+
+                    w.WriteLine();
+
+                    foreach (var elementInfo in messageInfo.Elements)
+                    {
+                        w.WriteLine($"// {elementInfo.Name}");
+                        w.WriteLine("{");
+
+                        w.PushIndent();
+
                         this.Write_Formatter_Deserialize_PropertyDef(w, "p_" + GetFieldName(elementInfo.Name), elementInfo.Type, 0);
+
+                        w.PopIndent();
+
+                        w.WriteLine("}");
                     }
 
                     w.WriteLine();
@@ -772,36 +896,36 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
                 switch (typeInfo)
                 {
                     case BoolTypeInfo boolTypeInfo:
-                        w.WriteLine($"var {name} = r.GetBoolean();");
+                        w.WriteLine($"{name} = r.GetBoolean();");
                         break;
                     case IntTypeInfo intTypeInfo when (intTypeInfo.IsSigned):
-                        w.WriteLine($"var {name} = ({this.GetParameterTypeString(intTypeInfo)})r.GetInt64();");
+                        w.WriteLine($"{name} = ({this.GetParameterTypeString(intTypeInfo)})r.GetInt64();");
                         break;
                     case IntTypeInfo intTypeInfo when (!intTypeInfo.IsSigned):
-                        w.WriteLine($"var {name} = ({this.GetParameterTypeString(intTypeInfo)})r.GetUInt64();");
+                        w.WriteLine($"{name} = ({this.GetParameterTypeString(intTypeInfo)})r.GetUInt64();");
                         break;
                     case FloatTypeInfo floatTypeInfo when (floatTypeInfo.Size == 32):
-                        w.WriteLine($"var {name} = r.GetFloat32();");
+                        w.WriteLine($"{name} = r.GetFloat32();");
                         break;
                     case FloatTypeInfo floatTypeInfo when (floatTypeInfo.Size == 64):
-                        w.WriteLine($"var {name} = r.GetFloat64();");
+                        w.WriteLine($"{name} = r.GetFloat64();");
                         break;
                     case StringTypeInfo stringTypeInfo:
-                        w.WriteLine($"var {name} = r.GetString({stringTypeInfo.MaxLength});");
+                        w.WriteLine($"{name} = r.GetString({stringTypeInfo.MaxLength});");
                         break;
                     case TimestampTypeInfo timestampTypeInfo:
-                        w.WriteLine($"var {name} = r.GetTimestamp();");
+                        w.WriteLine($"{name} = r.GetTimestamp();");
                         break;
                     case MemoryTypeInfo memoryTypeInfo when (memoryTypeInfo.IsUseMemoryPool):
-                        w.WriteLine($"var {name} = r.GetRecyclableMemory({memoryTypeInfo.MaxLength});");
+                        w.WriteLine($"{name} = r.GetRecyclableMemory({memoryTypeInfo.MaxLength});");
                         break;
                     case MemoryTypeInfo memoryTypeInfo when (!memoryTypeInfo.IsUseMemoryPool):
-                        w.WriteLine($"var {name} = r.GetMemory({memoryTypeInfo.MaxLength});");
+                        w.WriteLine($"{name} = r.GetMemory({memoryTypeInfo.MaxLength});");
                         break;
                     case ListTypeInfo listTypeInfo:
                         {
                             w.WriteLine("var length = (int)r.GetUInt64();");
-                            w.WriteLine($"var t_array = new {listTypeInfo.ElementType}[length];");
+                            w.WriteLine($"var t_array = new {this.GetParameterTypeString(listTypeInfo.ElementType)}[length];");
 
                             w.WriteLine("for (int i = 0; i < t_array.Length; i++)");
                             w.WriteLine("{");
@@ -814,26 +938,28 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
 
                             w.WriteLine("}");
 
-                            w.WriteLine($"var {name} = new List<{listTypeInfo.ElementType}>(t_array);");
+                            w.WriteLine($"{name} = new List<{this.GetParameterTypeString(listTypeInfo.ElementType)}>(t_array);");
                         }
                         break;
                     case MapTypeInfo mapTypeInfo:
                         {
                             w.WriteLine("var length = (int)r.GetUInt64();");
-                            w.WriteLine($"var t_map = new Dictionary<{mapTypeInfo.KeyType}, {mapTypeInfo.ValueType}>();");
+                            w.WriteLine($"{name} = new Dictionary<{this.GetParameterTypeString(mapTypeInfo.KeyType)}, {this.GetParameterTypeString(mapTypeInfo.ValueType)}>();");
+                            w.WriteLine($"{this.GetParameterTypeString(mapTypeInfo.KeyType)} t_key = default;");
+                            w.WriteLine($"{this.GetParameterTypeString(mapTypeInfo.ValueType)} t_value = default;");
 
-                            w.WriteLine("for (int i = 0; i < t_array.Length; i++)");
+                            w.WriteLine("for (int i = 0; i < length; i++)");
                             w.WriteLine("{");
 
                             w.PushIndent();
 
-                            this.Write_Formatter_Deserialize_PropertyDef(w, "t_array[i]", mapTypeInfo.KeyType, rank + 1);
+                            this.Write_Formatter_Deserialize_PropertyDef(w, "t_key", mapTypeInfo.KeyType, rank + 1);
+                            this.Write_Formatter_Deserialize_PropertyDef(w, "t_value", mapTypeInfo.ValueType, rank + 1);
+                            w.WriteLine($"{name}[t_key] = t_value;");
 
                             w.PopIndent();
 
                             w.WriteLine("}");
-
-                            w.WriteLine($"var {name} = new List<{mapTypeInfo.KeyType}>(t_array);");
                         }
                         break;
                     case CustomTypeInfo customTypeInfo:
@@ -843,18 +969,18 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
                                 switch (enumInfo.Type)
                                 {
                                     case IntTypeInfo intTypeInfo when (intTypeInfo.IsSigned):
-                                        w.WriteLine($"var {name} = ({enumInfo.Name})r.GetInt64();");
+                                        w.WriteLine($"{name} = ({enumInfo.Name})r.GetInt64();");
                                         break;
                                     case IntTypeInfo intTypeInfo when (!intTypeInfo.IsSigned):
-                                        w.WriteLine($"var {name} = ({enumInfo.Name})r.GetUInt64();");
+                                        w.WriteLine($"{name} = ({enumInfo.Name})r.GetUInt64();");
                                         break;
                                 }
                                 break;
                             case MessageInfo messageInfo when (messageInfo.FormatType == MessageFormatType.Medium):
-                                w.WriteLine($"var {name} = {messageInfo.Name}.Formatter.Deserialize(r, rank + 1);");
+                                w.WriteLine($"{name} = {messageInfo.Name}.Formatter.Deserialize(r, rank + 1);");
                                 break;
                             case MessageInfo messageInfo when (messageInfo.FormatType == MessageFormatType.Small):
-                                w.WriteLine($"var {name} = {messageInfo.Name}.Formatter.Deserialize(r, rank + 1);");
+                                w.WriteLine($"{name} = {messageInfo.Name}.Formatter.Deserialize(r, rank + 1);");
                                 break;
                         }
                         break;

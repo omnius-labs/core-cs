@@ -4,13 +4,14 @@ using System.IO;
 using System.Text;
 using System.Threading;
 using Omnix.Base;
+using Omnix.Serialization.RocketPack.Internal;
 
 namespace Omnix.Serialization.RocketPack
 {
     /// <summary>
     /// RocketPackフォーマットのデシリアライズ機能を提供します。
     /// </summary>
-    public class RocketPackReader
+    public sealed class RocketPackReader
     {
         private ReadOnlySequence<byte> _sequence;
         private BufferPool _bufferPool;
@@ -107,6 +108,32 @@ namespace Omnix.Serialization.RocketPack
             _sequence = _sequence.Slice(consumed);
 
             return result;
+        }
+
+        public float GetFloat32()
+        {
+            const int BytesLength = 4;
+            Span<byte> bytes = stackalloc byte[BytesLength];
+
+            _sequence.Slice(0, BytesLength).CopyTo(bytes);
+            _sequence = _sequence.Slice(BytesLength);
+
+            var f = new Float32Bits(bytes);
+
+            return f.Value;
+        }
+
+        public double GetFloat64()
+        {
+            const int BytesLength = 4;
+            Span<byte> bytes = stackalloc byte[BytesLength];
+
+            _sequence.Slice(0, BytesLength).CopyTo(bytes);
+            _sequence = _sequence.Slice(BytesLength);
+
+            var f = new Float64Bits(bytes);
+
+            return f.Value;
         }
     }
 }

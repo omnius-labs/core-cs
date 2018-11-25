@@ -4,13 +4,14 @@ using System.IO;
 using System.Text;
 using System.Threading;
 using Omnix.Base;
+using Omnix.Serialization.RocketPack.Internal;
 
 namespace Omnix.Serialization.RocketPack
 {
     /// <summary>
     /// RocketPackフォーマットのシリアライズ機能を提供します。
     /// </summary>
-    public class RocketPackWriter
+    public sealed class RocketPackWriter
     {
         private IBufferWriter<byte> _bufferWriter;
         private BufferPool _bufferPool;
@@ -59,6 +60,40 @@ namespace Omnix.Serialization.RocketPack
         public void Write(ulong value)
         {
             Varint.SetUInt64(value, _bufferWriter);
+        }
+
+        public unsafe void Write(float value)
+        {
+            fixed (byte* p = _bufferWriter.GetSpan(4))
+            {
+                var f = new Float32Bits(value);
+
+                p[0] = f.Byte0;
+                p[1] = f.Byte1;
+                p[2] = f.Byte2;
+                p[3] = f.Byte3;
+            }
+
+            _bufferWriter.Advance(4);
+        }
+
+        public unsafe void Write(double value)
+        {
+            fixed (byte* p = _bufferWriter.GetSpan(8))
+            {
+                var f = new Float64Bits(value);
+
+                p[0] = f.Byte0;
+                p[1] = f.Byte1;
+                p[2] = f.Byte2;
+                p[3] = f.Byte3;
+                p[4] = f.Byte4;
+                p[5] = f.Byte5;
+                p[6] = f.Byte6;
+                p[7] = f.Byte7;
+            }
+
+            _bufferWriter.Advance(8);
         }
     }
 }

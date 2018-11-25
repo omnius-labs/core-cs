@@ -25,13 +25,9 @@ namespace Omnix.Collections
             _survivalTime = survivalTime;
         }
 
-        public TimeSpan SurvivalTime
-        {
-            get
-            {
-                return _survivalTime;
-            }
-        }
+        public object LockObject { get; } = new object();
+
+        public TimeSpan SurvivalTime => _survivalTime;
 
         public T[] ToArray()
         {
@@ -163,16 +159,7 @@ namespace Omnix.Collections
             }
         }
 
-        bool ICollection<T>.IsReadOnly
-        {
-            get
-            {
-                lock (this.LockObject)
-                {
-                    return false;
-                }
-            }
-        }
+        bool ICollection<T>.IsReadOnly => false;
 
         void ICollection<T>.Add(T item)
         {
@@ -182,24 +169,9 @@ namespace Omnix.Collections
             }
         }
 
-        bool ICollection.IsSynchronized
-        {
-            get
-            {
-                lock (this.LockObject)
-                {
-                    return true;
-                }
-            }
-        }
+        bool ICollection.IsSynchronized => true;
 
-        object ICollection.SyncRoot
-        {
-            get
-            {
-                return this.LockObject;
-            }
-        }
+        object ICollection.SyncRoot => this.LockObject;
 
         void ICollection.CopyTo(Array array, int index)
         {
@@ -307,17 +279,5 @@ namespace Omnix.Collections
         {
             throw new NotImplementedException();
         }
-
-        #region IThisLock
-
-        public object LockObject
-        {
-            get
-            {
-                return _lockObject;
-            }
-        }
-
-        #endregion
     }
 }

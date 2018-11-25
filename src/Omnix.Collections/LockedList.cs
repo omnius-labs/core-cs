@@ -6,44 +6,10 @@ using Omnix.Base;
 
 namespace Omnix.Collections
 {
-    public static class IEnumerableExtensions
-    {
-        public static LockedList<T> ToLockedList<T>(this IEnumerable<T> list)
-        {
-            object lockObject = null;
-            {
-                if (list is ICollection collection && collection.IsSynchronized)
-                {
-                    lockObject = collection.SyncRoot;
-                }
-
-                if (lockObject == null && list is ISynchronized synchronized)
-                {
-                    lockObject = synchronized.LockObject;
-                }
-            }
-
-            bool lockToken = false;
-
-            try
-            {
-                Monitor.Enter(lockObject, ref lockToken);
-
-                return new LockedList<T>(list);
-            }
-            finally
-            {
-                if (lockToken) Monitor.Exit(lockObject);
-            }
-        }
-    }
-
     public class LockedList<T> : IList<T>, ICollection<T>, IEnumerable<T>, IList, ICollection, IEnumerable, ISynchronized
     {
         private List<T> _list;
         private int? _capacity;
-
-        private readonly object _lockObject = new object();
 
         public LockedList()
         {
@@ -66,6 +32,8 @@ namespace Omnix.Collections
             }
         }
 
+        public object LockObject { get; } = new object();
+
         protected virtual bool Filter(T item)
         {
             return false;
@@ -82,13 +50,13 @@ namespace Omnix.Collections
             }
         }
 
-        public int Capacity
+        public int? Capacity
         {
             get
             {
                 lock (this.LockObject)
                 {
-                    return _capacity ?? 0;
+                    return _capacity;
                 }
             }
             set
@@ -298,38 +266,9 @@ namespace Omnix.Collections
             }
         }
 
-        bool ICollection<T>.IsReadOnly
-        {
-            get
-            {
-                lock (this.LockObject)
-                {
-                    return false;
-                }
-            }
-        }
+        bool IList.IsFixedSize => false;
 
-        bool IList.IsFixedSize
-        {
-            get
-            {
-                lock (this.LockObject)
-                {
-                    return false;
-                }
-            }
-        }
-
-        bool IList.IsReadOnly
-        {
-            get
-            {
-                lock (this.LockObject)
-                {
-                    return false;
-                }
-            }
-        }
+        bool IList.IsReadOnly => false;
 
         object IList.this[int index]
         {
@@ -390,24 +329,11 @@ namespace Omnix.Collections
             }
         }
 
-        bool ICollection.IsSynchronized
-        {
-            get
-            {
-                lock (this.LockObject)
-                {
-                    return true;
-                }
-            }
-        }
+        bool ICollection<T>.IsReadOnly => false;
 
-        object ICollection.SyncRoot
-        {
-            get
-            {
-                return this.LockObject;
-            }
-        }
+        bool ICollection.IsSynchronized => true;
+
+        object ICollection.SyncRoot => this.LockObject;
 
         void ICollection.CopyTo(Array array, int index)
         {
@@ -435,17 +361,5 @@ namespace Omnix.Collections
                 return this.GetEnumerator();
             }
         }
-
-        #region IThisLock
-
-        public object LockObject
-        {
-            get
-            {
-                return _lockObject;
-            }
-        }
-
-        #endregion
     }
 }

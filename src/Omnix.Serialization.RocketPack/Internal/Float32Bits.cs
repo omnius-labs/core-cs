@@ -29,23 +29,23 @@ namespace Omnix.Serialization.RocketPack.Internal
             this.Value = value;
         }
 
-        public Float32Bits(byte[] bigEndianBytes, int offset)
+        public Float32Bits(Span<byte> bigEndianBytes)
         {
             this = default(Float32Bits);
 
             if (BitConverter.IsLittleEndian)
             {
-                this.Byte0 = bigEndianBytes[offset + 3];
-                this.Byte1 = bigEndianBytes[offset + 2];
-                this.Byte2 = bigEndianBytes[offset + 1];
-                this.Byte3 = bigEndianBytes[offset];
+                this.Byte0 = bigEndianBytes[3];
+                this.Byte1 = bigEndianBytes[2];
+                this.Byte2 = bigEndianBytes[1];
+                this.Byte3 = bigEndianBytes[0];
             }
             else
             {
-                this.Byte0 = bigEndianBytes[offset];
-                this.Byte1 = bigEndianBytes[offset + 1];
-                this.Byte2 = bigEndianBytes[offset + 2];
-                this.Byte3 = bigEndianBytes[offset + 3];
+                this.Byte0 = bigEndianBytes[0];
+                this.Byte1 = bigEndianBytes[1];
+                this.Byte2 = bigEndianBytes[2];
+                this.Byte3 = bigEndianBytes[3];
             }
         }
     }

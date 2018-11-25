@@ -4,6 +4,8 @@ using Omnix.Serialization;
 using Omnix.Serialization.RocketPack;
 using System;
 using System.Buffers;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace Omnix.Cryptography
 {
@@ -87,16 +89,33 @@ namespace Omnix.Cryptography
             {
                 if (rank > 256) throw new FormatException();
 
-                w.Write((ulong)value.AlgorithmType);
-                w.Write(value.Value.Span);
+                // AlgorithmType
+                if (value.AlgorithmType != default)
+                {
+                    w.Write((ulong)value.AlgorithmType);
+                }
+                // Value
+                if (!value.Value.IsEmpty)
+                {
+                    w.Write(value.Value.Span);
+                }
             }
 
             public OmniHash Deserialize(RocketPackReader r, int rank)
             {
                 if (rank > 256) throw new FormatException();
 
-                var p_algorithmType = (OmniHashAlgorithmType)r.GetUInt64();
-                var p_value = r.GetMemory(256);
+                OmniHashAlgorithmType p_algorithmType = default;
+                ReadOnlyMemory<byte> p_value = default;
+
+                // AlgorithmType
+                {
+                    p_algorithmType = (OmniHashAlgorithmType)r.GetUInt64();
+                }
+                // Value
+                {
+                    p_value = r.GetMemory(256);
+                }
 
                 return new OmniHash(p_algorithmType, p_value);
             }
@@ -452,6 +471,7 @@ namespace Omnix.Cryptography
 
         public OmniDigitalSignature(string name, OmniDigitalSignatureAlgorithmType algorithmType, ReadOnlyMemory<byte> publicKey, ReadOnlyMemory<byte> privateKey)
         {
+            if (name is null) throw new ArgumentNullException("name");
             if (name.Length > 32) throw new ArgumentOutOfRangeException("name");
             if (publicKey.Length > 8192) throw new ArgumentOutOfRangeException("publicKey");
             if (privateKey.Length > 8192) throw new ArgumentOutOfRangeException("privateKey");
@@ -578,6 +598,7 @@ namespace Omnix.Cryptography
 
         public OmniCertificate(string name, OmniDigitalSignatureAlgorithmType algorithmType, ReadOnlyMemory<byte> publicKey, ReadOnlyMemory<byte> value)
         {
+            if (name is null) throw new ArgumentNullException("name");
             if (name.Length > 32) throw new ArgumentOutOfRangeException("name");
             if (publicKey.Length > 8192) throw new ArgumentOutOfRangeException("publicKey");
             if (value.Length > 8192) throw new ArgumentOutOfRangeException("value");
@@ -702,8 +723,8 @@ namespace Omnix.Cryptography
 
         public OmniSignature(string name, OmniHash hash)
         {
+            if (name is null) throw new ArgumentNullException("name");
             if (name.Length > 32) throw new ArgumentOutOfRangeException("name");
-
             this.Name = name;
             this.Hash = hash;
 

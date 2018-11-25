@@ -44,6 +44,8 @@ namespace Omnix.Collections
             _hashSet = new HashSet<T>(collection, comparer);
         }
 
+        public object LockObject { get; } = new object();
+
         public T[] ToArray()
         {
             lock (this.LockObject)
@@ -66,13 +68,13 @@ namespace Omnix.Collections
             }
         }
 
-        public int Capacity
+        public int? Capacity
         {
             get
             {
                 lock (this.LockObject)
                 {
-                    return _capacity ?? 0;
+                    return _capacity;
                 }
             }
             set
@@ -292,17 +294,5 @@ namespace Omnix.Collections
                 return this.GetEnumerator();
             }
         }
-
-        #region IThisLock
-
-        public object LockObject
-        {
-            get
-            {
-                return _lockObject;
-            }
-        }
-
-        #endregion
     }
 }

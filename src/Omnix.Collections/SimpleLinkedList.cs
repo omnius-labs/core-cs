@@ -31,15 +31,23 @@ namespace Omnix.Collections
             }
         }
 
-        public int Capacity
+        public int? Capacity
         {
             get
             {
-                return _capacity ?? -1;
+                return _capacity;
             }
             set
             {
                 _capacity = value;
+            }
+        }
+
+        public int Count
+        {
+            get
+            {
+                return _count;
             }
         }
 
@@ -82,14 +90,6 @@ namespace Omnix.Collections
             for (var currentNode = _firstNode; currentNode != null; currentNode = currentNode.Next)
             {
                 array[arrayIndex++] = currentNode.Value;
-            }
-        }
-
-        public int Count
-        {
-            get
-            {
-                return _count;
             }
         }
 
@@ -161,29 +161,11 @@ namespace Omnix.Collections
             return hitCount;
         }
 
-        bool ICollection<T>.IsReadOnly
-        {
-            get
-            {
-                return false;
-            }
-        }
+        bool ICollection<T>.IsReadOnly => false;
 
-        bool ICollection.IsSynchronized
-        {
-            get
-            {
-                return false;
-            }
-        }
+        bool ICollection.IsSynchronized => false;
 
-        object ICollection.SyncRoot
-        {
-            get
-            {
-                return null;
-            }
-        }
+        object ICollection.SyncRoot => null;
 
         void ICollection.CopyTo(Array array, int index)
         {

@@ -6,12 +6,13 @@ using Omnix.Base;
 
 namespace Omnix.Collections
 {
-    public class LockedSortedDictionary<TKey, TValue> : IDictionary<TKey, TValue>, ICollection<KeyValuePair<TKey, TValue>>, IDictionary, ICollection, IEnumerable<KeyValuePair<TKey, TValue>>, IEnumerable, ISynchronized
+    public partial class LockedSortedDictionary<TKey, TValue> : IDictionary<TKey, TValue>, ICollection<KeyValuePair<TKey, TValue>>, IDictionary, ICollection, IEnumerable<KeyValuePair<TKey, TValue>>, IEnumerable, ISynchronized
     {
         private SortedDictionary<TKey, TValue> _dic;
         private int? _capacity;
 
-        private readonly object _lockObject = new object();
+        private LockedCollection<TKey> _keys;
+        private LockedCollection<TValue> _values;
 
         public LockedSortedDictionary()
         {
@@ -55,6 +56,8 @@ namespace Omnix.Collections
             }
         }
 
+        public object LockObject { get; } = new object();
+
         public KeyValuePair<TKey, TValue>[] ToArray()
         {
             lock (this.LockObject)
@@ -66,35 +69,35 @@ namespace Omnix.Collections
             }
         }
 
-        public LockedKeyCollection Keys
+        public LockedCollection<TKey> Keys
         {
             get
             {
                 lock (this.LockObject)
                 {
-                    return new LockedKeyCollection(_dic.Keys, this.LockObject);
+                    return _keys ?? (_keys = new LockedCollection<TKey>(_dic.Keys, this.LockObject));
                 }
             }
         }
 
-        public LockedValueCollection Values
+        public LockedCollection<TValue> Values
         {
             get
             {
                 lock (this.LockObject)
                 {
-                    return new LockedValueCollection(_dic.Values, this.LockObject);
+                    return _values ?? (_values = new LockedCollection<TValue>(_dic.Values, this.LockObject));
                 }
             }
         }
 
-        public int Capacity
+        public int? Capacity
         {
             get
             {
                 lock (this.LockObject)
                 {
-                    return _capacity ?? 0;
+                    return _capacity;
                 }
             }
             set
@@ -229,27 +232,9 @@ namespace Omnix.Collections
             }
         }
 
-        bool IDictionary.IsFixedSize
-        {
-            get
-            {
-                lock (this.LockObject)
-                {
-                    return false;
-                }
-            }
-        }
+        bool IDictionary.IsFixedSize => false;
 
-        bool IDictionary.IsReadOnly
-        {
-            get
-            {
-                lock (this.LockObject)
-                {
-                    return false;
-                }
-            }
-        }
+        bool IDictionary.IsReadOnly => false;
 
         ICollection IDictionary.Keys
         {
@@ -323,16 +308,7 @@ namespace Omnix.Collections
             }
         }
 
-        bool ICollection<KeyValuePair<TKey, TValue>>.IsReadOnly
-        {
-            get
-            {
-                lock (this.LockObject)
-                {
-                    return false;
-                }
-            }
-        }
+        bool ICollection<KeyValuePair<TKey, TValue>>.IsReadOnly => false;
 
         void ICollection<KeyValuePair<TKey, TValue>>.Add(KeyValuePair<TKey, TValue> item)
         {
@@ -366,24 +342,9 @@ namespace Omnix.Collections
             }
         }
 
-        bool ICollection.IsSynchronized
-        {
-            get
-            {
-                lock (this.LockObject)
-                {
-                    return true;
-                }
-            }
-        }
+        bool ICollection.IsSynchronized => true;
 
-        object ICollection.SyncRoot
-        {
-            get
-            {
-                return this.LockObject;
-            }
-        }
+        object ICollection.SyncRoot => this.LockObject;
 
         void ICollection.CopyTo(Array array, int index)
         {
@@ -410,304 +371,6 @@ namespace Omnix.Collections
             {
                 return this.GetEnumerator();
             }
-        }
-
-        #region IThisLock
-
-        public object LockObject
-        {
-            get
-            {
-                return _lockObject;
-            }
-        }
-
-        #endregion
-
-        public sealed class LockedKeyCollection : ICollection<TKey>, IEnumerable<TKey>, ICollection, IEnumerable, ISynchronized
-        {
-            private ICollection<TKey> _collection;
-            private readonly object _lockObject;
-
-            internal LockedKeyCollection(ICollection<TKey> collection, object lockObject)
-            {
-                _collection = collection;
-                _lockObject = lockObject;
-            }
-
-            public TKey[] ToArray()
-            {
-                lock (this.LockObject)
-                {
-                    var array = new TKey[_collection.Count];
-                    _collection.CopyTo(array, 0);
-
-                    return array;
-                }
-            }
-
-            public void CopyTo(TKey[] array, int arrayIndex)
-            {
-                lock (this.LockObject)
-                {
-                    _collection.CopyTo(array, arrayIndex);
-                }
-            }
-
-            public int Count
-            {
-                get
-                {
-                    lock (this.LockObject)
-                    {
-                        return _collection.Count;
-                    }
-                }
-            }
-
-            bool ICollection<TKey>.IsReadOnly
-            {
-                get
-                {
-                    lock (this.LockObject)
-                    {
-                        return true;
-                    }
-                }
-            }
-
-            void ICollection<TKey>.Add(TKey item)
-            {
-                lock (this.LockObject)
-                {
-                    throw new NotSupportedException();
-                }
-            }
-
-            void ICollection<TKey>.Clear()
-            {
-                lock (this.LockObject)
-                {
-                    throw new NotSupportedException();
-                }
-            }
-
-            bool ICollection<TKey>.Contains(TKey item)
-            {
-                lock (this.LockObject)
-                {
-                    return _collection.Contains(item);
-                }
-            }
-
-            bool ICollection<TKey>.Remove(TKey item)
-            {
-                lock (this.LockObject)
-                {
-                    throw new NotSupportedException();
-                }
-            }
-
-            bool ICollection.IsSynchronized
-            {
-                get
-                {
-                    lock (this.LockObject)
-                    {
-                        return true;
-                    }
-                }
-            }
-
-            object ICollection.SyncRoot
-            {
-                get
-                {
-                    return this.LockObject;
-                }
-            }
-
-            void ICollection.CopyTo(Array array, int index)
-            {
-                lock (this.LockObject)
-                {
-                    ((ICollection)_collection).CopyTo(array, index);
-                }
-            }
-
-            public IEnumerator<TKey> GetEnumerator()
-            {
-                lock (this.LockObject)
-                {
-                    foreach (var item in _collection)
-                    {
-                        yield return item;
-                    }
-                }
-            }
-
-            IEnumerator IEnumerable.GetEnumerator()
-            {
-                lock (this.LockObject)
-                {
-                    return this.GetEnumerator();
-                }
-            }
-
-            #region IThisLock
-
-            public object LockObject
-            {
-                get
-                {
-                    return _lockObject;
-                }
-            }
-
-            #endregion
-        }
-
-        public sealed class LockedValueCollection : ICollection<TValue>, IEnumerable<TValue>, ICollection, IEnumerable, ISynchronized
-        {
-            private ICollection<TValue> _collection;
-            private readonly object _lockObject;
-
-            internal LockedValueCollection(ICollection<TValue> collection, object lockObject)
-            {
-                _collection = collection;
-                _lockObject = lockObject;
-            }
-
-            public TValue[] ToArray()
-            {
-                lock (this.LockObject)
-                {
-                    var array = new TValue[_collection.Count];
-                    _collection.CopyTo(array, 0);
-
-                    return array;
-                }
-            }
-
-            public void CopyTo(TValue[] array, int arrayIndex)
-            {
-                lock (this.LockObject)
-                {
-                    _collection.CopyTo(array, arrayIndex);
-                }
-            }
-
-            public int Count
-            {
-                get
-                {
-                    lock (this.LockObject)
-                    {
-                        return _collection.Count;
-                    }
-                }
-            }
-
-            bool ICollection<TValue>.IsReadOnly
-            {
-                get
-                {
-                    lock (this.LockObject)
-                    {
-                        return true;
-                    }
-                }
-            }
-
-            void ICollection<TValue>.Add(TValue item)
-            {
-                lock (this.LockObject)
-                {
-                    throw new NotSupportedException();
-                }
-            }
-
-            void ICollection<TValue>.Clear()
-            {
-                lock (this.LockObject)
-                {
-                    throw new NotSupportedException();
-                }
-            }
-
-            bool ICollection<TValue>.Contains(TValue item)
-            {
-                lock (this.LockObject)
-                {
-                    return _collection.Contains(item);
-                }
-            }
-
-            bool ICollection<TValue>.Remove(TValue item)
-            {
-                lock (this.LockObject)
-                {
-                    throw new NotSupportedException();
-                }
-            }
-
-            bool ICollection.IsSynchronized
-            {
-                get
-                {
-                    lock (this.LockObject)
-                    {
-                        return true;
-                    }
-                }
-            }
-
-            object ICollection.SyncRoot
-            {
-                get
-                {
-                    return this.LockObject;
-                }
-            }
-
-            void ICollection.CopyTo(Array array, int index)
-            {
-                lock (this.LockObject)
-                {
-                    ((ICollection)_collection).CopyTo(array, index);
-                }
-            }
-
-            public IEnumerator<TValue> GetEnumerator()
-            {
-                lock (this.LockObject)
-                {
-                    foreach (var item in _collection)
-                    {
-                        yield return item;
-                    }
-                }
-            }
-
-            IEnumerator IEnumerable.GetEnumerator()
-            {
-                lock (this.LockObject)
-                {
-                    return this.GetEnumerator();
-                }
-            }
-
-            #region IThisLock
-
-            public object LockObject
-            {
-                get
-                {
-                    return _lockObject;
-                }
-            }
-
-            #endregion
         }
     }
 }

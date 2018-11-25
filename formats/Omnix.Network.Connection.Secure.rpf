@@ -1,0 +1,19 @@
+syntax = v1;
+
+using "Omnix.Cryptography.rpf";
+
+option csharp_using = " Omnix.Cryptography";
+option csharp_namespace = "Omnix.Network.Connection.Secure";
+
+enum SecureConnectionType : uint8 {
+    Connect = 0,
+    Accept = 1,
+}
+
+enum SecureConnectionVersion : uint8 {
+    Version1 = 1,
+}
+
+message SecureConnectionHelloMessage {
+    Versions: vector<SecureConnectionVersion>(32) = 0,
+}
