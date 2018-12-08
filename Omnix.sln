@@ -50,7 +50,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Omnix.Correction", "src\Omn
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Omnix.Network.Connection.Tests", "tests\Omnix.Network.Connection.Tests\Omnix.Network.Connection.Tests.csproj", "{4B0A0305-E1EF-4C80-85ED-0500CD3B876E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Omnix.Network.Upnp.Tests", "tests\Omnix.Network.Upnp.Tests\Omnix.Network.Upnp.Tests.csproj", "{520BA6DB-4476-43F0-9AF2-568841863716}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Omnix.Network.Upnp.Tests", "tests\Omnix.Network.Upnp.Tests\Omnix.Network.Upnp.Tests.csproj", "{520BA6DB-4476-43F0-9AF2-568841863716}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Omnix.Cryptography.Tests", "tests\Omnix.Cryptography.Tests\Omnix.Cryptography.Tests.csproj", "{07086BB5-1CCE-437A-804E-2C018599D893}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -138,6 +140,10 @@ Global
 		{520BA6DB-4476-43F0-9AF2-568841863716}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{520BA6DB-4476-43F0-9AF2-568841863716}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{520BA6DB-4476-43F0-9AF2-568841863716}.Release|Any CPU.Build.0 = Release|Any CPU
+		{07086BB5-1CCE-437A-804E-2C018599D893}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{07086BB5-1CCE-437A-804E-2C018599D893}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{07086BB5-1CCE-437A-804E-2C018599D893}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{07086BB5-1CCE-437A-804E-2C018599D893}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -163,6 +169,7 @@ Global
 		{040894F6-3545-4F33-994B-32108F1C567E} = {28FCC997-2EE4-4D18-BAA0-96118DFA47BB}
 		{4B0A0305-E1EF-4C80-85ED-0500CD3B876E} = {CDE3119A-739A-44B1-8141-448AF0896E6C}
 		{520BA6DB-4476-43F0-9AF2-568841863716} = {CDE3119A-739A-44B1-8141-448AF0896E6C}
+		{07086BB5-1CCE-437A-804E-2C018599D893} = {CDE3119A-739A-44B1-8141-448AF0896E6C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {2CD56E0F-71CF-44BB-848D-F2A9EA663E45}

@@ -8,36 +8,17 @@ namespace Omnix.Cryptography.Internal
 {
     static class EcDh_P521_Sha2_256
     {
-        public static (ReadOnlyMemory<byte> publicKey, ReadOnlyMemory<byte> privateKey) CreateKeys()
+        public static (byte[] publicKey, byte[] privateKey) CreateKeys()
         {
             ECParameters ecParameters;
 
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            using (var ecdh = ECDiffieHellman.Create())
             {
-                var ckcp = new CngKeyCreationParameters();
-                ckcp.ExportPolicy = CngExportPolicies.AllowPlaintextExport;
-                ckcp.KeyUsage = CngKeyUsages.Signing;
-
-                using (var ck = CngKey.Create(CngAlgorithm.ECDsaP521, null, ckcp))
-                using (var ecdh = new ECDiffieHellmanCng(ck))
-                {
-                    ecParameters = ecdh.ExportParameters(true);
-                }
-            }
-            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-            {
-                using (var ecdh = new ECDiffieHellmanOpenSsl())
-                {
-                    ecdh.GenerateKey(ECCurve.NamedCurves.nistP521);
-                    ecParameters = ecdh.ExportParameters(true);
-                }
-            }
-            else
-            {
-                throw new NotSupportedException();
+                ecdh.GenerateKey(ECCurve.NamedCurves.nistP521);
+                ecParameters = ecdh.ExportParameters(true);
             }
 
-            ReadOnlyMemory<byte> publicKey;
+            byte[] publicKey;
             {
                 var plist = new List<ReadOnlyMemory<byte>>()
                 {
@@ -48,7 +29,7 @@ namespace Omnix.Cryptography.Internal
                 publicKey = SerializeHelper.Encode(plist);
             }
 
-            ReadOnlyMemory<byte> privateKey;
+            byte[] privateKey;
             {
                 var plist = new List<ReadOnlyMemory<byte>>()
                 {
@@ -63,7 +44,7 @@ namespace Omnix.Cryptography.Internal
             return (publicKey, privateKey);
         }
 
-        public static ReadOnlyMemory<byte> GetSecret(ReadOnlyMemory<byte> publicKey, ReadOnlyMemory<byte> privateKey)
+        public static byte[] GetSecret(ReadOnlyMemory<byte> publicKey, ReadOnlyMemory<byte> privateKey)
         {
             ECParameters ecParameters;
             {
@@ -71,6 +52,7 @@ namespace Omnix.Cryptography.Internal
 
                 ecParameters = new ECParameters()
                 {
+                    Curve = ECCurve.NamedCurves.nistP521,
                     Q = new ECPoint()
                     {
                         X = plist[0].ToArray(),
@@ -93,25 +75,10 @@ namespace Omnix.Cryptography.Internal
                     });
             }
 
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            using (var ecdh = ECDiffieHellman.Create())
             {
-                using (var ecdh = new ECDiffieHellmanCng())
-                {
-                    ecdh.ImportParameters(ecParameters);
-                    return ecdh.DeriveKeyFromHash(ecDiffieHellmanPublicKey, HashAlgorithmName.SHA256);
-                }
-            }
-            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-            {
-                using (var ecdh = new ECDiffieHellmanOpenSsl())
-                {
-                    ecdh.ImportParameters(ecParameters);
-                    return ecdh.DeriveKeyFromHash(ecDiffieHellmanPublicKey, HashAlgorithmName.SHA256);
-                }
-            }
-            else
-            {
-                throw new NotSupportedException();
+                ecdh.ImportParameters(ecParameters);
+                return ecdh.DeriveKeyFromHash(ecDiffieHellmanPublicKey, HashAlgorithmName.SHA256);
             }
         }
 

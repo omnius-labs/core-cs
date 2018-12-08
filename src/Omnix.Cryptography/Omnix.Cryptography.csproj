@@ -9,8 +9,6 @@
 
   <ItemGroup>
     <PackageReference Include="System.IO.Pipelines" Version="4.5.2" />
-    <PackageReference Include="System.Security.Cryptography.Cng" Version="4.5.0" />
-    <PackageReference Include="System.Security.Cryptography.OpenSsl" Version="4.5.0" />
   </ItemGroup>
 
   <ItemGroup>

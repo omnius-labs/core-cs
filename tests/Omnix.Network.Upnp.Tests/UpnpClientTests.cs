@@ -14,6 +14,8 @@ namespace Omnix.Network.Upnp.Tests
 
             await upnp.Connect();
 
+            if (!upnp.IsConnected) return;
+
             var ip = await upnp.GetExternalIpAddress();
             Assert.True(ip != null);
         }

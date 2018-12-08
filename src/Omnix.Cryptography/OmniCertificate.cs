@@ -10,7 +10,7 @@ namespace Omnix.Cryptography
         {
             if (digitalSignature == null) throw new ArgumentNullException(nameof(digitalSignature));
 
-            byte[] value = null;
+            ReadOnlyMemory<byte> value = null;
 
             if (digitalSignature.AlgorithmType == OmniDigitalSignatureAlgorithmType.EcDsa_P521_Sha2_256)
             {

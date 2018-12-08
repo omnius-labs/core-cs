@@ -16,6 +16,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
     {
         public string Path { get; set; }
     }
+
     public sealed class OptionInfo
     {
         public string Name { get; set; }
@@ -51,7 +52,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
         public IList<MessageElementInfo> Elements { get; set; }
     }
 
-    public class MessageElementInfo
+    public sealed class MessageElementInfo
     {
         public IList<string> Attributes { get; set; }
         public string Name { get; set; }

@@ -12,7 +12,7 @@ namespace Omnix.Base
         public sealed class HubWriter : IBufferWriter<byte>
         {
             private readonly PipeWriter _pipeWriter;
-            private int _bytesWritten = 0;
+            private long _bytesWritten = 0;
             private bool _isCompleted = false;
 
             internal HubWriter(Pipe pipe)
@@ -20,7 +20,7 @@ namespace Omnix.Base
                 _pipeWriter = pipe.Writer;
             }
 
-            public int BytesWritten => _bytesWritten;
+            public long BytesWritten => _bytesWritten;
             public bool IsCompleted => _isCompleted;
 
             public void Advance(int count)

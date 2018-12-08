@@ -48,5 +48,23 @@ namespace Omnix.Serialization.RocketPack.Internal
                 this.Byte3 = bigEndianBytes[3];
             }
         }
+
+        public void CopyTo(Span<byte> span)
+        {
+            if (BitConverter.IsLittleEndian)
+            {
+                span[3] = this.Byte0;
+                span[2] = this.Byte1;
+                span[1] = this.Byte2;
+                span[0] = this.Byte3;
+            }
+            else
+            {
+                span[0] = this.Byte0;
+                span[1] = this.Byte1;
+                span[2] = this.Byte2;
+                span[3] = this.Byte3;
+            }
+        }
     }
 }

@@ -14,7 +14,7 @@ namespace Omnix.Base
             private PipeReader _pipeReader;
             private ReadOnlySequence<byte>? _sequence;
             private SequencePosition? _sequencePosition;
-            private int _position = 0;
+            private long _position = 0;
             private bool _isCompleted = false;
 
             internal HubReader(Pipe pipe)
@@ -23,7 +23,7 @@ namespace Omnix.Base
                 _pipeReader = pipe.Reader;
             }
 
-            public int BytesConsumed => _position;
+            public long BytesConsumed => _position;
             public bool IsCompleted => _isCompleted;
 
             public void Advance(int count)

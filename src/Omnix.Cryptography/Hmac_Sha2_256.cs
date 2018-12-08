@@ -23,80 +23,104 @@ namespace Omnix.Cryptography
             }
         }
 
-        public static ReadOnlyMemory<byte> ComputeHash(ReadOnlySequence<byte> sequence, ReadOnlySpan<byte> key)
+        public static byte[] ComputeHash(ReadOnlySequence<byte> sequence, ReadOnlySpan<byte> key)
         {
+            byte[] result = new byte[32];
+            TryComputeHash(sequence, key, result);
+
+            return result;
+        }
+
+        public static byte[] ComputeHash(ReadOnlySpan<byte> sequence, ReadOnlySpan<byte> key)
+        {
+            byte[] result = new byte[32];
+            TryComputeHash(sequence, key, result);
+
+            return result;
+        }
+
+        public static bool TryComputeHash(ReadOnlySequence<byte> sequence, ReadOnlySpan<byte> key, Span<byte> destination)
+        {
+            if (destination.Length < 32) throw new ArgumentOutOfRangeException(nameof(destination));
+
+            Span<byte> extendedKey = stackalloc byte[_blockLength];
+
             if (key.Length > _blockLength)
             {
-                key = Sha2_256.ComputeHash(key).Span;
+                Sha2_256.TryComputeHash(key, extendedKey);
+            }
+            else
+            {
+                BytesOperations.Copy(key, extendedKey, Math.Min(key.Length, extendedKey.Length));
             }
 
-            var ixor = new byte[_blockLength];
-            BytesOperations.Xor(_ipad, key, ixor);
+            Span<byte> ixor = stackalloc byte[_blockLength];
+            BytesOperations.Xor(_ipad, extendedKey, ixor);
 
-            var oxor = new byte[_blockLength];
-            BytesOperations.Xor(_opad, key, oxor);
+            Span<byte> oxor = stackalloc byte[_blockLength];
+            BytesOperations.Xor(_opad, extendedKey, oxor);
 
-            byte[] ihash;
+            Span<byte> ihash = stackalloc byte[32];
 
             using (var incrementalHash = IncrementalHash.CreateHash(HashAlgorithmName.SHA256))
             {
-                incrementalHash.AppendData(ixor, 0, ixor.Length);
+                incrementalHash.AppendData(ixor);
 
                 foreach (var segment in sequence)
                 {
                     incrementalHash.AppendData(segment.Span);
                 }
 
-                ihash = incrementalHash.GetHashAndReset();
+                incrementalHash.TryGetHashAndReset(ihash, out _);
             }
-
-            byte[] ohash;
 
             using (var incrementalHash = IncrementalHash.CreateHash(HashAlgorithmName.SHA256))
             {
-                incrementalHash.AppendData(oxor, 0, oxor.Length);
-                incrementalHash.AppendData(ihash, 0, ihash.Length);
+                incrementalHash.AppendData(oxor);
+                incrementalHash.AppendData(ihash);
 
-                ohash = incrementalHash.GetHashAndReset();
+                return incrementalHash.TryGetHashAndReset(destination, out _);
             }
-
-            return ohash;
         }
 
-        public static ReadOnlyMemory<byte> ComputeHash(ReadOnlySpan<byte> source, ReadOnlySpan<byte> key)
+        public static bool TryComputeHash(ReadOnlySpan<byte> source, ReadOnlySpan<byte> key, Span<byte> destination)
         {
+            if (destination.Length < 32) throw new ArgumentOutOfRangeException(nameof(destination));
+
+            Span<byte> extendedKey = stackalloc byte[_blockLength];
+
             if (key.Length > _blockLength)
             {
-                key = Sha2_256.ComputeHash(key).Span;
+                Sha2_256.TryComputeHash(key, extendedKey);
+            }
+            else
+            {
+                BytesOperations.Copy(key, extendedKey, Math.Min(key.Length, extendedKey.Length));
             }
 
-            var ixor = new byte[_blockLength];
-            BytesOperations.Xor(_ipad, key, ixor);
+            Span<byte> ixor = stackalloc byte[_blockLength];
+            BytesOperations.Xor(_ipad, extendedKey, ixor);
 
-            var oxor = new byte[_blockLength];
-            BytesOperations.Xor(_opad, key, oxor);
+            Span<byte> oxor = stackalloc byte[_blockLength];
+            BytesOperations.Xor(_opad, extendedKey, oxor);
 
-            byte[] ihash;
+            Span<byte> ihash = stackalloc byte[32];
 
             using (var incrementalHash = IncrementalHash.CreateHash(HashAlgorithmName.SHA256))
             {
-                incrementalHash.AppendData(ixor, 0, ixor.Length);
+                incrementalHash.AppendData(ixor);
                 incrementalHash.AppendData(source);
 
-                ihash = incrementalHash.GetHashAndReset();
+                incrementalHash.TryGetHashAndReset(ihash, out _);
             }
-
-            byte[] ohash;
 
             using (var incrementalHash = IncrementalHash.CreateHash(HashAlgorithmName.SHA256))
             {
-                incrementalHash.AppendData(oxor, 0, oxor.Length);
-                incrementalHash.AppendData(ihash, 0, ihash.Length);
+                incrementalHash.AppendData(oxor);
+                incrementalHash.AppendData(ihash);
 
-                ohash = incrementalHash.GetHashAndReset();
+                return incrementalHash.TryGetHashAndReset(destination, out _);
             }
-
-            return ohash;
         }
     }
 }

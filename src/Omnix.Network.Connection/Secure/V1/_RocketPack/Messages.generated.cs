@@ -142,6 +142,7 @@ namespace Omnix.Network.Connection.Secure.V1
                 if (value.KeyExchangeAlgorithms.Count != 0)
                 {
                     w.Write((ulong)2);
+                    w.Write((ulong)value.KeyExchangeAlgorithms.Count);
                     foreach (var n in value.KeyExchangeAlgorithms)
                     {
                         w.Write((ulong)n);
@@ -151,6 +152,7 @@ namespace Omnix.Network.Connection.Secure.V1
                 if (value.KeyDerivationAlgorithms.Count != 0)
                 {
                     w.Write((ulong)3);
+                    w.Write((ulong)value.KeyDerivationAlgorithms.Count);
                     foreach (var n in value.KeyDerivationAlgorithms)
                     {
                         w.Write((ulong)n);
@@ -160,6 +162,7 @@ namespace Omnix.Network.Connection.Secure.V1
                 if (value.CryptoAlgorithms.Count != 0)
                 {
                     w.Write((ulong)4);
+                    w.Write((ulong)value.CryptoAlgorithms.Count);
                     foreach (var n in value.CryptoAlgorithms)
                     {
                         w.Write((ulong)n);
@@ -169,6 +172,7 @@ namespace Omnix.Network.Connection.Secure.V1
                 if (value.HashAlgorithms.Count != 0)
                 {
                     w.Write((ulong)5);
+                    w.Write((ulong)value.HashAlgorithms.Count);
                     foreach (var n in value.HashAlgorithms)
                     {
                         w.Write((ulong)n);
@@ -205,45 +209,41 @@ namespace Omnix.Network.Connection.Secure.V1
                         case 2: // KeyExchangeAlgorithms
                             {
                                 var length = (int)r.GetUInt64();
-                                var t_array = new KeyExchangeAlgorithm[length];
-                                for (int i = 0; i < t_array.Length; i++)
+                                p_keyExchangeAlgorithms = new KeyExchangeAlgorithm[length];
+                                for (int i = 0; i < p_keyExchangeAlgorithms.Count; i++)
                                 {
-                                    t_array[i] = (KeyExchangeAlgorithm)r.GetUInt64();
+                                    p_keyExchangeAlgorithms[i] = (KeyExchangeAlgorithm)r.GetUInt64();
                                 }
-                                p_keyExchangeAlgorithms = new List<KeyExchangeAlgorithm>(t_array);
                                 break;
                             }
                         case 3: // KeyDerivationAlgorithms
                             {
                                 var length = (int)r.GetUInt64();
-                                var t_array = new KeyDerivationAlgorithm[length];
-                                for (int i = 0; i < t_array.Length; i++)
+                                p_keyDerivationAlgorithms = new KeyDerivationAlgorithm[length];
+                                for (int i = 0; i < p_keyDerivationAlgorithms.Count; i++)
                                 {
-                                    t_array[i] = (KeyDerivationAlgorithm)r.GetUInt64();
+                                    p_keyDerivationAlgorithms[i] = (KeyDerivationAlgorithm)r.GetUInt64();
                                 }
-                                p_keyDerivationAlgorithms = new List<KeyDerivationAlgorithm>(t_array);
                                 break;
                             }
                         case 4: // CryptoAlgorithms
                             {
                                 var length = (int)r.GetUInt64();
-                                var t_array = new CryptoAlgorithm[length];
-                                for (int i = 0; i < t_array.Length; i++)
+                                p_cryptoAlgorithms = new CryptoAlgorithm[length];
+                                for (int i = 0; i < p_cryptoAlgorithms.Count; i++)
                                 {
-                                    t_array[i] = (CryptoAlgorithm)r.GetUInt64();
+                                    p_cryptoAlgorithms[i] = (CryptoAlgorithm)r.GetUInt64();
                                 }
-                                p_cryptoAlgorithms = new List<CryptoAlgorithm>(t_array);
                                 break;
                             }
                         case 5: // HashAlgorithms
                             {
                                 var length = (int)r.GetUInt64();
-                                var t_array = new HashAlgorithm[length];
-                                for (int i = 0; i < t_array.Length; i++)
+                                p_hashAlgorithms = new HashAlgorithm[length];
+                                for (int i = 0; i < p_hashAlgorithms.Count; i++)
                                 {
-                                    t_array[i] = (HashAlgorithm)r.GetUInt64();
+                                    p_hashAlgorithms[i] = (HashAlgorithm)r.GetUInt64();
                                 }
-                                p_hashAlgorithms = new List<HashAlgorithm>(t_array);
                                 break;
                             }
                     }
@@ -398,6 +398,7 @@ namespace Omnix.Network.Connection.Secure.V1
                 if (value.Hashes.Count != 0)
                 {
                     w.Write((ulong)0);
+                    w.Write((ulong)value.Hashes.Count);
                     foreach (var n in value.Hashes)
                     {
                         w.Write(n.Span);
@@ -419,12 +420,11 @@ namespace Omnix.Network.Connection.Secure.V1
                         case 0: // Hashes
                             {
                                 var length = (int)r.GetUInt64();
-                                var t_array = new ReadOnlyMemory<byte>[length];
-                                for (int i = 0; i < t_array.Length; i++)
+                                p_hashes = new ReadOnlyMemory<byte>[length];
+                                for (int i = 0; i < p_hashes.Count; i++)
                                 {
-                                    t_array[i] = r.GetMemory(32);
+                                    p_hashes[i] = r.GetMemory(32);
                                 }
-                                p_hashes = new List<ReadOnlyMemory<byte>>(t_array);
                                 break;
                             }
                     }

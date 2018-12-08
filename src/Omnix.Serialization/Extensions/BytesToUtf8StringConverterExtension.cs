@@ -32,5 +32,26 @@ namespace Omnix.Serialization.Extensions
 
             return true;
         }
+
+        public static string BytesToString(this IBytesToUtf8StringConverter converter, ReadOnlyMemory<byte> memory)
+        {
+            converter.TryEncode(new ReadOnlySequence<byte>(memory), out string text);
+            return text;
+        }
+
+        public static byte[] StringToBytes(this IBytesToUtf8StringConverter converter, string text)
+        {
+            var hub = new Hub();
+            converter.TryDecode(text, hub.Writer);
+            hub.Writer.Complete();
+
+            var result = new byte[hub.Writer.BytesWritten];
+            hub.Reader.GetSequence().CopyTo(result);
+
+            hub.Reader.Complete();
+            hub.Reset();
+
+            return result;
+        }
     }
 }

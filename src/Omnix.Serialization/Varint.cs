@@ -252,9 +252,10 @@ namespace Omnix.Serialization
                     var b = memory.Span[i];
 
                     result = (result << 7) | (byte)(b & 0x7F);
-                    if ((b & 0x80) != 0x80) break;
+                    count++;
 
-                    if (count++ > 10) return false;
+                    if ((b & 0x80) != 0x80) break;
+                    if (count > 10) return false;
                 }
             }
 

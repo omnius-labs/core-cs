@@ -31,7 +31,7 @@ namespace Omnix.Serialization.RocketPack
                 int length = _encoding.Value.GetBytes(value.AsSpan(), memoryOwner.Memory.Span);
                 Varint.SetUInt64((uint)length, _bufferWriter);
 
-                _bufferWriter.Write(memoryOwner.Memory.Span.Slice(length));
+                _bufferWriter.Write(memoryOwner.Memory.Span.Slice(0, length));
             }
         }
 
@@ -49,7 +49,7 @@ namespace Omnix.Serialization.RocketPack
 
         public void Write(bool value)
         {
-            this.Write(!value ? (byte)0x00 : (byte)0x01);
+            this.Write((ulong)(!value ? (byte)0x00 : (byte)0x01));
         }
 
         public void Write(long value)
@@ -64,35 +64,15 @@ namespace Omnix.Serialization.RocketPack
 
         public unsafe void Write(float value)
         {
-            fixed (byte* p = _bufferWriter.GetSpan(4))
-            {
-                var f = new Float32Bits(value);
-
-                p[0] = f.Byte0;
-                p[1] = f.Byte1;
-                p[2] = f.Byte2;
-                p[3] = f.Byte3;
-            }
-
+            var f = new Float32Bits(value);
+            f.CopyTo(_bufferWriter.GetSpan(4));
             _bufferWriter.Advance(4);
         }
 
         public unsafe void Write(double value)
         {
-            fixed (byte* p = _bufferWriter.GetSpan(8))
-            {
-                var f = new Float64Bits(value);
-
-                p[0] = f.Byte0;
-                p[1] = f.Byte1;
-                p[2] = f.Byte2;
-                p[3] = f.Byte3;
-                p[4] = f.Byte4;
-                p[5] = f.Byte5;
-                p[6] = f.Byte6;
-                p[7] = f.Byte7;
-            }
-
+            var f = new Float64Bits(value);
+            f.CopyTo(_bufferWriter.GetSpan(8));
             _bufferWriter.Advance(8);
         }
     }

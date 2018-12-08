@@ -72,6 +72,7 @@ namespace Omnix.Network.Connection.Secure
                 if (value.Versions.Count != 0)
                 {
                     w.Write((ulong)0);
+                    w.Write((ulong)value.Versions.Count);
                     foreach (var n in value.Versions)
                     {
                         w.Write((ulong)n);
@@ -93,12 +94,11 @@ namespace Omnix.Network.Connection.Secure
                         case 0: // Versions
                             {
                                 var length = (int)r.GetUInt64();
-                                var t_array = new SecureConnectionVersion[length];
-                                for (int i = 0; i < t_array.Length; i++)
+                                p_versions = new SecureConnectionVersion[length];
+                                for (int i = 0; i < p_versions.Count; i++)
                                 {
-                                    t_array[i] = (SecureConnectionVersion)r.GetUInt64();
+                                    p_versions[i] = (SecureConnectionVersion)r.GetUInt64();
                                 }
-                                p_versions = new List<SecureConnectionVersion>(t_array);
                                 break;
                             }
                     }

@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Buffers;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
+using System.Collections;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
@@ -10,12 +9,15 @@ using System.Threading.Tasks;
 using Omnix.Base;
 using Omnix.Network;
 using Omnix.Network.Connection;
-using Omnix.Network.Connection.Tests.Internal;
+using Omnix.Network.Connection.Secure;
 using Xunit;
+using System.Linq;
+using System.Collections.Generic;
+using Omnix.Network.Connection.Tests.Internal;
 
 namespace Omnix.Network.Connection.Tests
 {
-    public class BaseNonblockingConnectionTests
+    public class OmniSecureConnectionTests
     {
         [Fact]
         public void RandomSendAndReceiveTest()
@@ -28,9 +30,27 @@ namespace Omnix.Network.Connection.Tests
 
             var (socket1, socket2) = SocketHelpers.GetSockets();
 
-            using (var connection1 = new BaseNonblockingConnection(new SocketCap(socket1, false), 1024 * 1024 * 256, BufferPool.Shared))
-            using (var connection2 = new BaseNonblockingConnection(new SocketCap(socket2, false), 1024 * 1024 * 256, BufferPool.Shared))
+            using (var baseConnection1 = new BaseNonblockingConnection(new SocketCap(socket1, false), 1024 * 1024 * 256, BufferPool.Shared))
+            using (var baseConnection2 = new BaseNonblockingConnection(new SocketCap(socket2, false), 1024 * 1024 * 256, BufferPool.Shared))
+            using (var connection1 = new OmniSecureConnection(baseConnection1, SecureConnectionType.Connect, BufferPool.Shared))
+            using (var connection2 = new OmniSecureConnection(baseConnection2, SecureConnectionType.Accept, BufferPool.Shared))
             {
+                // ハンドシェイクを行う
+                {
+                    var valueTask1 = connection1.Handshake();
+                    var valueTask2 = connection2.Handshake();
+
+                    while (!valueTask1.IsCompleted || !valueTask2.IsCompleted)
+                    {
+                        Thread.Sleep(100);
+
+                        connection1.Send(1024 * 1024);
+                        connection1.Receive(1024 * 1024);
+                        connection2.Send(1024 * 1024);
+                        connection2.Receive(1024 * 1024);
+                    }
+                }
+
                 foreach (var bufferSize in caseList)
                 {
                     var buffer1 = new byte[bufferSize];

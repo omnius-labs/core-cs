@@ -819,6 +819,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
                         break;
                     case ListTypeInfo listTypeInfo:
                         {
+                            w.WriteLine($"w.Write((ulong){name}.Count);");
                             w.WriteLine($"foreach (var n in {name})");
                             w.WriteLine("{");
 
@@ -835,6 +836,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
                         break;
                     case MapTypeInfo mapTypeInfo:
                         {
+                            w.WriteLine($"w.Write((ulong){name}.Count);");
                             w.WriteLine($"foreach (var n in {name})");
                             w.WriteLine("{");
 
@@ -909,20 +911,18 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
                     case ListTypeInfo listTypeInfo:
                         {
                             w.WriteLine("var length = (int)r.GetUInt64();");
-                            w.WriteLine($"var t_array = new {this.GetParameterTypeString(listTypeInfo.ElementType)}[length];");
+                            w.WriteLine($"{name} = new {this.GetParameterTypeString(listTypeInfo.ElementType)}[length];");
 
-                            w.WriteLine("for (int i = 0; i < t_array.Length; i++)");
+                            w.WriteLine($"for (int i = 0; i < {name}.Count; i++)");
                             w.WriteLine("{");
 
                             w.PushIndent();
 
-                            this.Write_Formatter_Deserialize_PropertyDef(w, "t_array[i]", listTypeInfo.ElementType, rank + 1);
+                            this.Write_Formatter_Deserialize_PropertyDef(w, $"{name}[i]", listTypeInfo.ElementType, rank + 1);
 
                             w.PopIndent();
 
                             w.WriteLine("}");
-
-                            w.WriteLine($"{name} = new List<{this.GetParameterTypeString(listTypeInfo.ElementType)}>(t_array);");
                         }
                         break;
                     case MapTypeInfo mapTypeInfo:

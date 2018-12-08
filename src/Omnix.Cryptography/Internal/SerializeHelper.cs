@@ -10,7 +10,7 @@ namespace Omnix.Cryptography.Internal
 {
     static class SerializeHelper
     {
-        public static ReadOnlyMemory<byte> Encode(IEnumerable<ReadOnlyMemory<byte>> collection)
+        public static byte[] Encode(IEnumerable<ReadOnlyMemory<byte>> collection)
         {
             var pipe = new Pipe();
 
@@ -25,7 +25,7 @@ namespace Omnix.Cryptography.Internal
                 pipe.Writer.Complete();
             }
 
-            Memory<byte> result;
+            byte[] result;
             {
                 pipe.Reader.TryRead(out var readResult);
 
@@ -37,9 +37,9 @@ namespace Omnix.Cryptography.Internal
             return result;
         }
 
-        public static IEnumerable<ReadOnlyMemory<byte>> Decode(ReadOnlyMemory<byte> memory)
+        public static IEnumerable<byte[]> Decode(ReadOnlyMemory<byte> memory)
         {
-            var list = new List<ReadOnlyMemory<byte>>();
+            var list = new List<byte[]>();
 
             var sequence = new ReadOnlySequence<byte>(memory);
             var position = sequence.GetPosition(0);

@@ -125,7 +125,7 @@ namespace Omnix.Serialization.RocketPack
 
         public double GetFloat64()
         {
-            const int BytesLength = 4;
+            const int BytesLength = 8;
             Span<byte> bytes = stackalloc byte[BytesLength];
 
             _sequence.Slice(0, BytesLength).CopyTo(bytes);

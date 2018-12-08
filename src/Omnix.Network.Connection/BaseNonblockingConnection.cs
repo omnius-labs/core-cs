@@ -115,7 +115,7 @@ namespace Omnix.Network.Connection
                     {
                         total += this.InternalSend(_sendHeaderHub.Reader, limit - total);
                     }
-                    else if (_sendContentHub.Writer.IsCompleted)
+                    else if (!_sendContentHub.Reader.IsCompleted)
                     {
                         total += this.InternalSend(_sendContentHub.Reader, limit - total);
 

@@ -11,36 +11,17 @@ namespace Omnix.Cryptography.Internal
 {
     static class EcDsa_P521_Sha2_256
     {
-        public static (ReadOnlyMemory<byte> publicKey, ReadOnlyMemory<byte> privateKey) CreateKeys()
+        public static (byte[] publicKey, byte[] privateKey) CreateKeys()
         {
             ECParameters ecParameters;
 
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            using (var ecdsa = ECDsa.Create())
             {
-                var ckcp = new CngKeyCreationParameters();
-                ckcp.ExportPolicy = CngExportPolicies.AllowPlaintextExport;
-                ckcp.KeyUsage = CngKeyUsages.Signing;
-
-                using (var ck = CngKey.Create(CngAlgorithm.ECDsaP521, null, ckcp))
-                using (var ecdsa = new ECDsaCng(ck))
-                {
-                    ecParameters = ecdsa.ExportParameters(true);
-                }
-            }
-            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-            {
-                using (var ecdsa = new ECDsaOpenSsl())
-                {
-                    ecdsa.GenerateKey(ECCurve.NamedCurves.nistP521);
-                    ecParameters = ecdsa.ExportParameters(true);
-                }
-            }
-            else
-            {
-                throw new NotSupportedException();
+                ecdsa.GenerateKey(ECCurve.NamedCurves.nistP521);
+                ecParameters = ecdsa.ExportParameters(true);
             }
 
-            ReadOnlyMemory<byte> publicKey;
+            byte[] publicKey;
             {
                 var plist = new List<ReadOnlyMemory<byte>>()
                 {
@@ -51,7 +32,7 @@ namespace Omnix.Cryptography.Internal
                 publicKey = SerializeHelper.Encode(plist);
             }
 
-            ReadOnlyMemory<byte> privateKey;
+            byte[] privateKey;
             {
                 var plist = new List<ReadOnlyMemory<byte>>()
                 {
@@ -83,25 +64,10 @@ namespace Omnix.Cryptography.Internal
                 };
             }
 
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            using (var ecdsa = ECDsa.Create())
             {
-                using (var ecdsa = new ECDsaCng())
-                {
-                    ecdsa.ImportParameters(ecParameters);
-                    return ecdsa.SignHash(Sha2_256.ComputeHash(sequence).ToArray());
-                }
-            }
-            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-            {
-                using (var ecdsa = new ECDsaOpenSsl())
-                {
-                    ecdsa.ImportParameters(ecParameters);
-                    return ecdsa.SignHash(Sha2_256.ComputeHash(sequence).ToArray());
-                }
-            }
-            else
-            {
-                throw new NotSupportedException();
+                ecdsa.ImportParameters(ecParameters);
+                return ecdsa.SignHash(Sha2_256.ComputeHash(sequence));
             }
         }
 
@@ -121,39 +87,10 @@ namespace Omnix.Cryptography.Internal
                 };
             }
 
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            using (var ecdsa = ECDsa.Create())
             {
-                try
-                {
-                    using (var ecdsa = new ECDsaCng())
-                    {
-                        ecdsa.ImportParameters(ecParameters);
-                        return ecdsa.VerifyHash(Sha2_256.ComputeHash(sequence).Span, signature.Span);
-                    }
-                }
-                catch (Exception)
-                {
-                    return false;
-                }
-            }
-            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-            {
-                try
-                {
-                    using (var ecdsa = new ECDsaOpenSsl())
-                    {
-                        ecdsa.ImportParameters(ecParameters);
-                        return ecdsa.VerifyHash(Sha2_256.ComputeHash(sequence).Span, signature.Span);
-                    }
-                }
-                catch (Exception)
-                {
-                    return false;
-                }
-            }
-            else
-            {
-                throw new NotSupportedException();
+                ecdsa.ImportParameters(ecParameters);
+                return ecdsa.VerifyHash(Sha2_256.ComputeHash(sequence).AsSpan(), signature.Span);
             }
         }
     }
