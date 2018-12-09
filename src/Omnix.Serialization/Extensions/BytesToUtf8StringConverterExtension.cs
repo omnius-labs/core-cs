@@ -12,11 +12,20 @@ namespace Omnix.Serialization.Extensions
     {
         private static readonly Lazy<UTF8Encoding> _utf8Encoding = new Lazy<UTF8Encoding>(() => new UTF8Encoding(false));
 
+        public static bool TryEncode(this IBytesToUtf8StringConverter converter, ReadOnlySpan<byte> span, out string text, bool includePrefix = false)
+        {
+            if (!converter.TryEncode(span, out var utf8string, includePrefix)) throw new FormatException(nameof(span));
+
+            text = _utf8Encoding.Value.GetString(utf8string);
+
+            return true;
+        }
+
         public static bool TryEncode(this IBytesToUtf8StringConverter converter, ReadOnlySequence<byte> sequence, out string text, bool includePrefix = false)
         {
             if (!converter.TryEncode(sequence, out var utf8string, includePrefix)) throw new FormatException(nameof(sequence));
 
-            text = _utf8Encoding.Value.GetString(utf8string.Span);
+            text = _utf8Encoding.Value.GetString(utf8string);
 
             return true;
         }
@@ -33,13 +42,46 @@ namespace Omnix.Serialization.Extensions
             return true;
         }
 
-        public static string BytesToString(this IBytesToUtf8StringConverter converter, ReadOnlyMemory<byte> memory)
+        public static byte[] BytesToUtf8String(this IBytesToUtf8StringConverter converter, ReadOnlySpan<byte> span)
         {
-            converter.TryEncode(new ReadOnlySequence<byte>(memory), out string text);
+            converter.TryEncode(span, out var text);
+            return text;
+        }
+
+        public static byte[] BytesToUtf8String(this IBytesToUtf8StringConverter converter, ReadOnlySequence<byte> sequence)
+        {
+            converter.TryEncode(sequence, out var text);
+            return text;
+        }
+
+        public static string BytesToString(this IBytesToUtf8StringConverter converter, ReadOnlySpan<byte> span)
+        {
+            converter.TryEncode(span, out string text);
+            return text;
+        }
+
+        public static string BytesToString(this IBytesToUtf8StringConverter converter, ReadOnlySequence<byte> sequence)
+        {
+            converter.TryEncode(sequence, out string text);
             return text;
         }
 
         public static byte[] StringToBytes(this IBytesToUtf8StringConverter converter, string text)
+        {
+            var hub = new Hub();
+            converter.TryDecode(text, hub.Writer);
+            hub.Writer.Complete();
+
+            var result = new byte[hub.Writer.BytesWritten];
+            hub.Reader.GetSequence().CopyTo(result);
+
+            hub.Reader.Complete();
+            hub.Reset();
+
+            return result;
+        }
+
+        public static byte[] Utf8StringToBytes(this IBytesToUtf8StringConverter converter, ReadOnlySpan<byte> text)
         {
             var hub = new Hub();
             converter.TryDecode(text, hub.Writer);

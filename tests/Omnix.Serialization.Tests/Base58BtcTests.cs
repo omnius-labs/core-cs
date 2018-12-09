@@ -52,12 +52,12 @@ namespace Omnix.Serialization.Tests
                         // base58Btcのテキストを取得する。
                         base58Btc.TryEncode(readResult_base16.Buffer, out var text_base58);
 
-                        Assert.True(BytesOperations.SequenceEqual(text_base58.Span, UTF8Encoding.Default.GetBytes(output)));
+                        Assert.True(BytesOperations.SequenceEqual(text_base58, UTF8Encoding.Default.GetBytes(output)));
 
                         var pipe_base58Btc = new Pipe();
 
                         // base58Btcをデコードし、pipeに書き込む。
-                        base58Btc.TryDecode(UTF8Encoding.Default.GetString(text_base58.Span), pipe_base58Btc.Writer);
+                        base58Btc.TryDecode(UTF8Encoding.Default.GetString(text_base58), pipe_base58Btc.Writer);
                         pipe_base58Btc.Writer.Complete();
 
                         // base58Btcのデコード結果を読み込む。

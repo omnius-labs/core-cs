@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 
 namespace Omnix.Collections
 {
+    // TODO 実装中
     partial class GolombCodedSet
     {
         public async void Test()
