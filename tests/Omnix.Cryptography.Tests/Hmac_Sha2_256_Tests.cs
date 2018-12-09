@@ -45,7 +45,7 @@ namespace Omnix.Cryptography.Tests
                     using (var stream = new MemoryStream(buffer))
                     using (var hmacSha256 = new HMACSHA256(key))
                     {
-                        Assert.True(BytesOperations.SequenceEqual(hmacSha256.ComputeHash(stream), Hmac_Sha2_256.ComputeHash(new ReadOnlySequence<byte>(buffer), key)));
+                        Assert.True(BytesOperations.SequenceEqual(hmacSha256.ComputeHash(stream), Hmac_Sha2_256.ComputeHash(buffer, key)));
                     }
                 }
             }

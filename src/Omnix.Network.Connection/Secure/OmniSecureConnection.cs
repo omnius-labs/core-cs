@@ -261,13 +261,6 @@ namespace Omnix.Network.Connection.Secure
                 byte[] xorSessionId = new byte[Math.Max(myProfileMessage.SessionId.Length, otherProfileMessage.SessionId.Length)];
                 BytesOperations.Xor(myProfileMessage.SessionId.Span, otherProfileMessage.SessionId.Span, xorSessionId);
 
-                HMAC hmac = null;
-
-                if (hashAlgorithm.HasFlag(V1.HashAlgorithm.Sha2_256))
-                {
-                    hmac = new HMACSHA256();
-                }
-
                 int cryptoKeyLength = 0;
                 int hmacKeyLength = 0;
 
@@ -287,9 +280,13 @@ namespace Omnix.Network.Connection.Secure
                 otherHmacKey = new byte[hmacKeyLength];
 
                 var kdfResult = new byte[(cryptoKeyLength + hmacKeyLength) * 2];
-                Pbkdf2_Sha2_256.TryComputeHash(secret.Span, xorSessionId, 1024, kdfResult);
 
-                using (var stream = new MemoryStream(kdfResult))
+                if (hashAlgorithm.HasFlag(V1.HashAlgorithm.Sha2_256))
+                {
+                    Pbkdf2_Sha2_256.TryComputeHash(secret.Span, xorSessionId, 1024, kdfResult);
+                }
+
+                using (var stream = new MemoryStream(kdfResult))  
                 {
                     if (_type == SecureConnectionType.Connect)
                     {

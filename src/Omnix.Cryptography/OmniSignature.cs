@@ -25,16 +25,17 @@ namespace Omnix.Cryptography
 
                 OmniHash omniHash;
                 {
-                    var pipe = new Pipe();
+                    var hub = new Hub();
 
-                    // @以降の文字列をデコードし、pipeへ書き込む。
-                    OmniBase.TryDecode(item.Substring(index + 1), pipe.Writer);
-                    pipe.Writer.Complete();
+                    // @以降の文字列をデコードし、hubへ書き込む。
+                    OmniBase.TryDecode(item.Substring(index + 1), hub.Writer);
+                    hub.Writer.Complete();
 
-                    // pipeからHash情報を読み取る。
-                    pipe.Reader.TryRead(out var readResult);
-                    omniHash = OmniHash.Import(readResult.Buffer, BufferPool.Shared);
-                    pipe.Reader.Complete();
+                    // hubからHash情報を読み取る。
+                    omniHash = OmniHash.Import(hub.Reader.GetSequence(), BufferPool.Shared);
+                    hub.Reader.Complete();
+
+                    hub.Reset();
                 }
 
                 return new OmniSignature(name, omniHash);
@@ -53,16 +54,17 @@ namespace Omnix.Cryptography
             {
                 string hashString;
                 {
-                    var pipe = new Pipe();
+                    var hub = new Hub();
 
-                    // Hash情報をpipeへ書き込む。
-                    this.Hash.Export(pipe.Writer, BufferPool.Shared);
-                    pipe.Writer.Complete();
+                    // Hash情報をhubへ書き込む。
+                    this.Hash.Export(hub.Writer, BufferPool.Shared);
+                    hub.Writer.Complete();
 
-                    // pipeからHash情報を読み込み、Base58Btcへ変換する。
-                    pipe.Reader.TryRead(out var readResult);
-                    hashString = OmniBase.ToBase58BtcString(readResult.Buffer);
-                    pipe.Reader.Complete();
+                    // hubからHash情報を読み込み、Base58Btcへ変換する。
+                    hashString = OmniBase.ToBase58BtcString(hub.Reader.GetSequence());
+                    hub.Reader.Complete();
+
+                    hub.Reset();
                 }
 
                 _toString = StringHelper.Normalize(this.Name) + "@" + hashString;
