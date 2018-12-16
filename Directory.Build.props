@@ -8,7 +8,6 @@
     <GenerateRuntimeConfigurationFiles>false</GenerateRuntimeConfigurationFiles>
     <Deterministic>true</Deterministic>
     <LangVersion>latest</LangVersion>
-    <NullableReferenceTypes>true</NullableReferenceTypes>
   </PropertyGroup>
 
   <PropertyGroup>

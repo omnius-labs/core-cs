@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Buffers;
 using System.IO;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
 using Omnix.Base;
@@ -26,6 +27,7 @@ namespace Omnix.Serialization.RocketPack
 
         public long Available => _sequence.Length;
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public IMemoryOwner<byte> GetRecyclableMemory(int limit)
         {
             if (!Varint.TryGetUInt64(_sequence, out ulong length, out var consumed)) throw new FormatException();
@@ -42,6 +44,7 @@ namespace Omnix.Serialization.RocketPack
             return memoryOwner;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ReadOnlyMemory<byte> GetMemory(int limit)
         {
             if (!Varint.TryGetUInt64(_sequence, out ulong length, out var consumed)) throw new FormatException();
@@ -58,6 +61,7 @@ namespace Omnix.Serialization.RocketPack
             return new ReadOnlyMemory<byte>(result);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public string GetString(int limit)
         {
             if (!Varint.TryGetUInt64(_sequence, out ulong length, out var consumed)) throw new FormatException();
@@ -75,6 +79,7 @@ namespace Omnix.Serialization.RocketPack
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public Timestamp GetTimestamp()
         {
             long seconds = this.GetInt64();
@@ -83,6 +88,7 @@ namespace Omnix.Serialization.RocketPack
             return new Timestamp(seconds, nanos);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool GetBoolean()
         {
             if (!Varint.TryGetUInt64(_sequence, out ulong result, out var consumed)) throw new FormatException();
@@ -92,6 +98,7 @@ namespace Omnix.Serialization.RocketPack
             return (result != 0);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ulong GetUInt64()
         {
             if (!Varint.TryGetUInt64(_sequence, out ulong result, out var consumed)) throw new FormatException();
@@ -101,6 +108,7 @@ namespace Omnix.Serialization.RocketPack
             return result;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public long GetInt64()
         {
             if (!Varint.TryGetInt64(_sequence, out long result, out var consumed)) throw new FormatException();
@@ -110,6 +118,7 @@ namespace Omnix.Serialization.RocketPack
             return result;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public float GetFloat32()
         {
             const int BytesLength = 4;
@@ -123,6 +132,7 @@ namespace Omnix.Serialization.RocketPack
             return f.Value;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public double GetFloat64()
         {
             const int BytesLength = 8;

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Buffers;
 using System.IO;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
 using Omnix.Base;
@@ -24,6 +25,7 @@ namespace Omnix.Serialization.RocketPack
             _bufferPool = bufferPool;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Write(string value)
         {
             using (var memoryOwner = _bufferPool.Rent(_encoding.Value.GetMaxByteCount(value.Length)))
@@ -35,33 +37,39 @@ namespace Omnix.Serialization.RocketPack
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Write(ReadOnlySpan<byte> value)
         {
             Varint.SetUInt64((uint)value.Length, _bufferWriter);
             _bufferWriter.Write(value);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Write(Timestamp value)
         {
             this.Write((long)value.Seconds);
             this.Write((ulong)value.Nanos);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Write(bool value)
         {
             this.Write((ulong)(!value ? (byte)0x00 : (byte)0x01));
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Write(long value)
         {
             Varint.SetInt64(value, _bufferWriter);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Write(ulong value)
         {
             Varint.SetUInt64(value, _bufferWriter);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public unsafe void Write(float value)
         {
             var f = new Float32Bits(value);
@@ -69,6 +77,7 @@ namespace Omnix.Serialization.RocketPack
             _bufferWriter.Advance(4);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public unsafe void Write(double value)
         {
             var f = new Float64Bits(value);

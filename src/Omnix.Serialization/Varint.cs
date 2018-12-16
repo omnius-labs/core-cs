@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Buffers;
 using System.IO;
+using System.Runtime.CompilerServices;
 using System.Threading;
 
 namespace Omnix.Serialization
@@ -12,16 +13,19 @@ namespace Omnix.Serialization
     /// </summary>
     public unsafe static class Varint
     {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool IsEnd(byte value)
         {
             return ((value & 0x80) != 0x80);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int ComputeSize(long value)
         {
             return ComputeSize((ulong)((value << 1) ^ (value >> 63)));
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int ComputeSize(ulong value)
         {
             if (value <= 0x7F)
@@ -66,11 +70,13 @@ namespace Omnix.Serialization
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void SetInt64(long value, IBufferWriter<byte> writer)
         {
             SetUInt64((ulong)((value << 1) ^ (value >> 63)), writer);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void SetUInt64(ulong value, IBufferWriter<byte> writer)
         {
             if (value <= 0x7F)
@@ -226,6 +232,7 @@ namespace Omnix.Serialization
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool TryGetInt64(ReadOnlySequence<byte> sequence, out long result, out SequencePosition consumed)
         {
             result = 0;
@@ -237,6 +244,7 @@ namespace Omnix.Serialization
             return true;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool TryGetUInt64(ReadOnlySequence<byte> sequence, out ulong result, out SequencePosition consumed)
         {
             result = 0;
@@ -247,15 +255,16 @@ namespace Omnix.Serialization
 
             while (sequence.TryGet(ref position, out var memory))
             {
-                for (int i = 0; i < memory.Length; i++)
+                fixed (byte* p = memory.Span)
                 {
-                    var b = memory.Span[i];
+                    for (int i = 0; i < memory.Length; i++)
+                    {
+                        result = (result << 7) | (byte)(p[i] & 0x7F);
+                        count++;
 
-                    result = (result << 7) | (byte)(b & 0x7F);
-                    count++;
-
-                    if ((b & 0x80) != 0x80) break;
-                    if (count > 10) return false;
+                        if ((p[i] & 0x80) != 0x80) break;
+                        if (count > 10) return false;
+                    }
                 }
             }
 

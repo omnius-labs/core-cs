@@ -15,3 +15,4 @@ if %PROCESSOR_ARCHITECTURE% == AMD64 (
 "%TOOL_PATH%" %BAT_DIR%formats\Omnix.Network.Connection.Secure.rpf %BAT_DIR%src\Omnix.Network.Connection\Secure\_RocketPack\Messages.generated.cs
 "%TOOL_PATH%" %BAT_DIR%formats\Omnix.Network.Connection.Secure.V1.rpf %BAT_DIR%src\Omnix.Network.Connection\Secure\V1\_RocketPack\Messages.generated.cs
 "%TOOL_PATH%" %BAT_DIR%formats\Omnix.Serialization.RocketPack.CodeGenerator.Tests.rpf %BAT_DIR%\tests\Omnix.Serialization.RocketPack.CodeGenerator.Tests\_RocketPack\Messages.generated.cs
+"%TOOL_PATH%" %BAT_DIR%formats\FormatterBenchmarks.rpf %BAT_DIR%\benchmarks\FormatterBenchmarks\_RocketPack\Messages.generated.cs
