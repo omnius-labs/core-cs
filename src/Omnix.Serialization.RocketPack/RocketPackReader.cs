@@ -17,7 +17,7 @@ namespace Omnix.Serialization.RocketPack
         private ReadOnlySequence<byte> _sequence;
         private BufferPool _bufferPool;
 
-        private static readonly ThreadLocal<Encoding> _encoding = new ThreadLocal<Encoding>(() => new UTF8Encoding(false));
+        private static readonly Lazy<Encoding> _encoding = new Lazy<Encoding>(() => new UTF8Encoding(false));
 
         public RocketPackReader(ReadOnlySequence<byte> sequence, BufferPool bufferPool)
         {

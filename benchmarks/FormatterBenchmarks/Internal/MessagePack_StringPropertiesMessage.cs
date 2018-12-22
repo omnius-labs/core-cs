@@ -1,6 +1,13 @@
 ﻿namespace FormatterBenchmarks.Internal
 {
     [MessagePack.MessagePackObject]
+    public class MessagePack_StringPropertiesListMessage
+    {
+        [MessagePack.Key(0)]
+        public virtual MessagePack_StringPropertiesMessage[] List { get; set; }
+    }
+
+    [MessagePack.MessagePackObject]
     public class MessagePack_StringPropertiesMessage
     {
         [MessagePack.Key(0)]

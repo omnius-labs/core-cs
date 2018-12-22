@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Buffers;
 using System.IO;
-using System.Runtime.CompilerServices;
 using System.Threading;
 
 namespace Omnix.Serialization
@@ -13,54 +12,51 @@ namespace Omnix.Serialization
     /// </summary>
     public unsafe static class Varint
     {
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool IsEnd(byte value)
         {
             return ((value & 0x80) != 0x80);
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int ComputeSize(long value)
         {
             return ComputeSize((ulong)((value << 1) ^ (value >> 63)));
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int ComputeSize(ulong value)
         {
-            if (value <= 0x7F)
+            if (value < ((ulong)1 << 7 * 1))
             {
                 return 1;
             }
-            else if (value <= 0x3FFF)
+            else if (value < ((ulong)1 << 7 * 2))
             {
                 return 2;
             }
-            else if (value <= 0x1FFFFF)
+            else if (value < ((ulong)1 << 7 * 3))
             {
                 return 3;
             }
-            else if (value <= 0xFFFFFFF)
+            else if (value < ((ulong)1 << 7 * 4))
             {
                 return 4;
             }
-            else if (value <= 0x7FFFFFFFF)
+            else if (value < ((ulong)1 << 7 * 5))
             {
                 return 5;
             }
-            else if (value <= 0x3FFFFFFFFFF)
+            else if (value < ((ulong)1 << 7 * 6))
             {
                 return 6;
             }
-            else if (value <= 0x1FFFFFFFFFFFF)
+            else if (value < ((ulong)1 << 7 * 7))
             {
                 return 7;
             }
-            else if (value <= 0xFFFFFFFFFFFFFF)
+            else if (value < ((ulong)1 << 7 * 8))
             {
                 return 8;
             }
-            else if (value <= 0x7FFFFFFFFFFFFFFF)
+            else if (value < ((ulong)1 << 7 * 9))
             {
                 return 9;
             }
@@ -70,23 +66,21 @@ namespace Omnix.Serialization
             }
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void SetInt64(long value, IBufferWriter<byte> writer)
         {
             SetUInt64((ulong)((value << 1) ^ (value >> 63)), writer);
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void SetUInt64(ulong value, IBufferWriter<byte> writer)
         {
-            if (value <= 0x7F)
+            if (value < ((ulong)1 << 7 * 1))
             {
                 var buffer = writer.GetSpan(1);
                 buffer[0] = (byte)value;
 
                 writer.Advance(1);
             }
-            else if (value <= 0x3FFF)
+            else if (value < ((ulong)1 << 7 * 2))
             {
                 var buffer = writer.GetSpan(2);
 
@@ -98,7 +92,7 @@ namespace Omnix.Serialization
 
                 writer.Advance(2);
             }
-            else if (value <= 0x1FFFFF)
+            else if (value < ((ulong)1 << 7 * 3))
             {
                 var buffer = writer.GetSpan(3);
 
@@ -111,7 +105,7 @@ namespace Omnix.Serialization
 
                 writer.Advance(3);
             }
-            else if (value <= 0xFFFFFFF)
+            else if (value < ((ulong)1 << 7 * 4))
             {
                 var buffer = writer.GetSpan(4);
 
@@ -125,7 +119,7 @@ namespace Omnix.Serialization
 
                 writer.Advance(4);
             }
-            else if (value <= 0x7FFFFFFFF)
+            else if (value < ((ulong)1 << 7 * 5))
             {
                 var buffer = writer.GetSpan(5);
 
@@ -140,7 +134,7 @@ namespace Omnix.Serialization
 
                 writer.Advance(5);
             }
-            else if (value <= 0x3FFFFFFFFFF)
+            else if (value < ((ulong)1 << 7 * 6))
             {
                 var buffer = writer.GetSpan(6);
 
@@ -156,7 +150,7 @@ namespace Omnix.Serialization
 
                 writer.Advance(6);
             }
-            else if (value <= 0x1FFFFFFFFFFFF)
+            else if (value < ((ulong)1 << 7 * 7))
             {
                 var buffer = writer.GetSpan(7);
 
@@ -173,7 +167,7 @@ namespace Omnix.Serialization
 
                 writer.Advance(7);
             }
-            else if (value <= 0xFFFFFFFFFFFFFF)
+            else if (value < ((ulong)1 << 7 * 8))
             {
                 var buffer = writer.GetSpan(8);
 
@@ -191,7 +185,7 @@ namespace Omnix.Serialization
 
                 writer.Advance(8);
             }
-            else if (value <= 0x7FFFFFFFFFFFFFFF)
+            else if (value < ((ulong)1 << 7 * 9))
             {
                 var buffer = writer.GetSpan(9);
 
@@ -232,7 +226,6 @@ namespace Omnix.Serialization
             }
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool TryGetInt64(ReadOnlySequence<byte> sequence, out long result, out SequencePosition consumed)
         {
             result = 0;
@@ -244,7 +237,6 @@ namespace Omnix.Serialization
             return true;
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool TryGetUInt64(ReadOnlySequence<byte> sequence, out ulong result, out SequencePosition consumed)
         {
             result = 0;
@@ -255,18 +247,23 @@ namespace Omnix.Serialization
 
             while (sequence.TryGet(ref position, out var memory))
             {
-                fixed (byte* p = memory.Span)
+                fixed (byte* fixed_p = memory.Span)
                 {
-                    for (int i = 0; i < memory.Length; i++)
-                    {
-                        result = (result << 7) | (byte)(p[i] & 0x7F);
-                        count++;
+                    var p = fixed_p;
 
-                        if ((p[i] & 0x80) != 0x80) break;
-                        if (count > 10) return false;
+                    for (int i = memory.Length - 1; i >= 0; i--)
+                    {
+                        if (++count > 10) return false;
+
+                        result = (result << 7) | (byte)(*p & 0x7F);
+                        if ((*p & 0x80) != 0x80) goto End;
+
+                        p++;
                     }
                 }
             }
+
+        End:;
 
             consumed = sequence.GetPosition(count);
 

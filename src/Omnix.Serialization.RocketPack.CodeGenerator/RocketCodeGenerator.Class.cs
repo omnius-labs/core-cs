@@ -628,6 +628,60 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
 
                     w.WriteLine();
 
+                    {
+                        w.WriteLine("// Write property count");
+                        w.WriteLine("{");
+
+                        w.PushIndent();
+
+                        w.WriteLine("int propertyCount = 0;");
+
+                        foreach (var elementInfo in messageInfo.Elements)
+                        {
+                            switch (elementInfo.Type)
+                            {
+                                case BoolTypeInfo typeInfo:
+                                    w.WriteLine($"if (value.{elementInfo.Name} != default) propertyCount++;");
+                                    break;
+                                case IntTypeInfo typeInfo:
+                                    w.WriteLine($"if (value.{elementInfo.Name} != default) propertyCount++;");
+                                    break;
+                                case FloatTypeInfo typeInfo:
+                                    w.WriteLine($"if (value.{elementInfo.Name} != default) propertyCount++;");
+                                    break;
+                                case StringTypeInfo typeInfo:
+                                    w.WriteLine($"if (value.{elementInfo.Name} != default) propertyCount++;");
+                                    break;
+                                case TimestampTypeInfo typeInfo:
+                                    w.WriteLine($"if (value.{elementInfo.Name} != default) propertyCount++;");
+                                    break;
+                                case MemoryTypeInfo typeInfo when (typeInfo.IsUseMemoryPool):
+                                    w.WriteLine($"if (!value.{elementInfo.Name}.IsEmpty) propertyCount++;");
+                                    break;
+                                case MemoryTypeInfo typeInfo when (!typeInfo.IsUseMemoryPool):
+                                    w.WriteLine($"if (!value.{elementInfo.Name}.IsEmpty) propertyCount++;");
+                                    break;
+                                case ListTypeInfo typeInfo:
+                                    w.WriteLine($"if (value.{elementInfo.Name}.Count != 0) propertyCount++;");
+                                    break;
+                                case MapTypeInfo typeInfo:
+                                    w.WriteLine($"if (value.{elementInfo.Name}.Count != 0) propertyCount++;");
+                                    break;
+                                case CustomTypeInfo typeInfo:
+                                    w.WriteLine($"if (value.{elementInfo.Name} != default) propertyCount++;");
+                                    break;
+                            }
+                        }
+
+                        w.WriteLine($"w.Write((ulong)propertyCount);");
+
+                        w.PopIndent();
+
+                        w.WriteLine("}");
+                    }
+
+                    w.WriteLine();
+
                     foreach (var elementInfo in messageInfo.Elements)
                     {
                         w.WriteLine($"// {elementInfo.Name}");
@@ -695,6 +749,11 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
 
                     w.WriteLine();
 
+                    w.WriteLine("// Read property count");
+                    w.WriteLine("int propertyCount = (int)r.GetUInt64();");
+
+                    w.WriteLine();
+
                     foreach (var elementInfo in messageInfo.Elements)
                     {
                         switch (elementInfo.Type)
@@ -734,7 +793,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
 
                     w.WriteLine();
 
-                    w.WriteLine("while (r.Available > 0)");
+                    w.WriteLine("for (; propertyCount > 0; propertyCount--)");
                     w.WriteLine("{");
 
                     w.PushIndent();

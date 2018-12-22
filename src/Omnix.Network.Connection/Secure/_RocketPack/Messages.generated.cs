@@ -68,6 +68,13 @@ namespace Omnix.Network.Connection.Secure
             {
                 if (rank > 256) throw new FormatException();
 
+                // Write property count
+                {
+                    int propertyCount = 0;
+                    if (value.Versions.Count != 0) propertyCount++;
+                    w.Write((ulong)propertyCount);
+                }
+
                 // Versions
                 if (value.Versions.Count != 0)
                 {
@@ -84,9 +91,12 @@ namespace Omnix.Network.Connection.Secure
             {
                 if (rank > 256) throw new FormatException();
 
+                // Read property count
+                int propertyCount = (int)r.GetUInt64();
+
                 IList<SecureConnectionVersion> p_versions = default;
 
-                while (r.Available > 0)
+                for (; propertyCount > 0; propertyCount--)
                 {
                     int id = (int)r.GetUInt64();
                     switch (id)

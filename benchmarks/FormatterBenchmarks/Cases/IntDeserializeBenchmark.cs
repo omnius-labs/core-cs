@@ -3,6 +3,7 @@ using BenchmarkDotNet.Attributes;
 using Omnix.Base;
 using System.Buffers;
 using FormatterBenchmarks.Internal;
+using System.Collections.Generic;
 
 namespace FormatterBenchmarks.Cases
 {
@@ -15,28 +16,60 @@ namespace FormatterBenchmarks.Cases
         static IntDeserializeBenchmark()
         {
             {
-                var message = new MessagePack_IntPropertiesMessage()
+                var random = new Random(0);
+
+                var items = new List<MessagePack_IntPropertiesMessage>();
+                for (int i = 0; i < 100000; i++)
                 {
-                    MyProperty1 = 1,
-                    MyProperty2 = 10,
-                    MyProperty3 = 100,
-                    MyProperty4 = 1000,
-                    MyProperty5 = 10000,
-                    MyProperty6 = 100000,
-                    MyProperty7 = 1000000,
-                    MyProperty8 = 10000000,
-                    MyProperty9 = 100000000,
+                    var message = new MessagePack_IntPropertiesMessage()
+                    {
+                        MyProperty1 = random.Next(),
+                        MyProperty2 = random.Next(),
+                        MyProperty3 = random.Next(),
+                        MyProperty4 = random.Next(),
+                        MyProperty5 = random.Next(),
+                        MyProperty6 = random.Next(),
+                        MyProperty7 = random.Next(),
+                        MyProperty8 = random.Next(),
+                        MyProperty9 = random.Next(),
+                    };
+
+                    items.Add(message);
+                }
+
+                var list = new MessagePack_IntPropertiesListMessage()
+                {
+                    List = items.ToArray(),
                 };
 
-                _messagePack_Bytes = MessagePack.MessagePackSerializer.Serialize(message);
+                _messagePack_Bytes = MessagePack.MessagePackSerializer.Serialize(list);
             }
 
             {
-                var message = new RocketPack_IntPropertiesMessage(1, 10, 100, 1000, 10000, 100000, 1000000, 10000000, 100000000);
+                var random = new Random(0);
+
+                var items = new List<RocketPack_IntPropertiesMessage>();
+                for (int i = 0; i < 100000; i++)
+                {
+                    var message = new RocketPack_IntPropertiesMessage(
+                        (uint)random.Next(),
+                        (uint)random.Next(),
+                        (uint)random.Next(),
+                        (uint)random.Next(),
+                        (uint)random.Next(),
+                        (uint)random.Next(),
+                        (uint)random.Next(),
+                        (uint)random.Next(),
+                        (uint)random.Next());
+
+                    items.Add(message);
+                }
+
+                var list = new RocketPack_IntPropertiesListMessage(items);
 
                 var hub = new Hub();
 
-                message.Export(hub.Writer, BufferPool.Shared);
+                list.Export(hub.Writer, BufferPool.Shared);
                 hub.Writer.Complete();
 
                 _rocketPack_Bytes = new byte[hub.Writer.BytesWritten];
@@ -48,15 +81,15 @@ namespace FormatterBenchmarks.Cases
         }
 
         [Benchmark(Baseline = true)]
-        public void MessagePack_IntPropertiesMessage_DeserializeTest()
+        public MessagePack_IntPropertiesListMessage MessagePack_IntPropertiesMessage_DeserializeTest()
         {
-            MessagePack.MessagePackSerializer.Deserialize<MessagePack_IntPropertiesMessage>(_messagePack_Bytes);
+            return MessagePack.MessagePackSerializer.Deserialize<MessagePack_IntPropertiesListMessage>(_messagePack_Bytes);
         }
 
         [Benchmark]
-        public void RocketPack_IntPropertiesMessage_DeserializeTest()
+        public RocketPack_IntPropertiesListMessage RocketPack_IntPropertiesMessage_DeserializeTest()
         {
-            RocketPack_IntPropertiesMessage.Import(new ReadOnlySequence<byte>(_rocketPack_Bytes), BufferPool.Shared);
+           return RocketPack_IntPropertiesListMessage.Import(new ReadOnlySequence<byte>(_rocketPack_Bytes), BufferPool.Shared);
         }
     }
 }

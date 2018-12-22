@@ -56,7 +56,7 @@ namespace Omnix.Serialization
 
         public bool TryEncode(ReadOnlySpan<byte> span, out byte[] text, bool includePrefix = false)
         {
-            var result = new byte[(includePrefix ? 1 : 0) + span.Length];
+            var result = new byte[(includePrefix ? 1 : 0) + (span.Length * 2)];
 
             fixed (byte* p_result_fixed = result)
             {
@@ -89,7 +89,7 @@ namespace Omnix.Serialization
 
         public bool TryEncode(ReadOnlySequence<byte> sequence, out byte[] text, bool includePrefix = false)
         {
-            var result = new byte[(includePrefix ? 1 : 0) + sequence.Length];
+            var result = new byte[(includePrefix ? 1 : 0) + (sequence.Length * 2)];
 
             fixed (byte* p_result_fixed = result)
             {

@@ -1,44 +1,83 @@
 ﻿using BenchmarkDotNet.Attributes;
 using Omnix.Base;
 using FormatterBenchmarks.Internal;
+using System.Collections.Generic;
+using System;
 
 namespace FormatterBenchmarks.Cases
 {
     [Config(typeof(BenchmarkConfig))]
     public class IntSerializeBenchmark
     {
-        static MessagePack_IntPropertiesMessage _messagePack_Message;
-        static RocketPack_IntPropertiesMessage _rocketPack_Message;
+        static MessagePack_IntPropertiesListMessage _messagePack_Message;
+        static RocketPack_IntPropertiesListMessage _rocketPack_Message;
 
         static IntSerializeBenchmark()
         {
-            _messagePack_Message = new MessagePack_IntPropertiesMessage()
             {
-                MyProperty1 = 1,
-                MyProperty2 = 10,
-                MyProperty3 = 100,
-                MyProperty4 = 1000,
-                MyProperty5 = 10000,
-                MyProperty6 = 100000,
-                MyProperty7 = 1000000,
-                MyProperty8 = 10000000,
-                MyProperty9 = 100000000,
-            };
+                var random = new Random(0);
 
-            _rocketPack_Message = new RocketPack_IntPropertiesMessage(1, 10, 100, 1000, 10000, 100000, 1000000, 10000000, 100000000);
+                var items = new List<MessagePack_IntPropertiesMessage>();
+                for (int i = 0; i < 100000; i++)
+                {
+                    var message = new MessagePack_IntPropertiesMessage()
+                    {
+                        MyProperty1 = random.Next(),
+                        MyProperty2 = random.Next(),
+                        MyProperty3 = random.Next(),
+                        MyProperty4 = random.Next(),
+                        MyProperty5 = random.Next(),
+                        MyProperty6 = random.Next(),
+                        MyProperty7 = random.Next(),
+                        MyProperty8 = random.Next(),
+                        MyProperty9 = random.Next(),
+                    };
+
+                    items.Add(message);
+                }
+
+                _messagePack_Message = new MessagePack_IntPropertiesListMessage()
+                {
+                    List = items.ToArray(),
+                };
+            }
+
+            {
+                var random = new Random(0);
+
+                var items = new List<RocketPack_IntPropertiesMessage>();
+                for (int i = 0; i < 100000; i++)
+                {
+                    var message = new RocketPack_IntPropertiesMessage(
+                        (uint)random.Next(),
+                        (uint)random.Next(),
+                        (uint)random.Next(),
+                        (uint)random.Next(),
+                        (uint)random.Next(),
+                        (uint)random.Next(),
+                        (uint)random.Next(),
+                        (uint)random.Next(),
+                        (uint)random.Next());
+
+                    items.Add(message);
+                }
+
+                _rocketPack_Message = new RocketPack_IntPropertiesListMessage(items);
+            }
         }
 
         [Benchmark(Baseline = true)]
-        public void MessagePack_IntPropertiesMessage_SerializeTest()
+        public byte[] MessagePack_IntPropertiesMessage_SerializeTest()
         {
-            MessagePack.MessagePackSerializer.Serialize<MessagePack_IntPropertiesMessage>(_messagePack_Message);
+            return MessagePack.MessagePackSerializer.Serialize(_messagePack_Message);
         }
 
         [Benchmark]
-        public void RocketPack_IntPropertiesMessage_SerializeTest()
+        public Hub RocketPack_IntPropertiesMessage_SerializeTest()
         {
             var hub = new Hub();
             _rocketPack_Message.Export(hub.Writer, BufferPool.Shared);
+            return hub;
         }
     }
 }

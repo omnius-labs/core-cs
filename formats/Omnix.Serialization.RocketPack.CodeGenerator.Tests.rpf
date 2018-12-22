@@ -99,3 +99,29 @@ small message SmallHelloMessage {
     X23: vector<string(128)>(16),
     X24: map<uint8, string(128)>(32),
 }
+
+message IntPropertiesListMessage {
+    List: vector<IntPropertiesMessage>(100000) = 0,
+}
+
+message StringPropertiesListMessage {
+    List: vector<StringPropertiesMessage>(100000) = 0,
+}
+
+message IntPropertiesMessage {
+    MyProperty1: uint32 = 0,
+    MyProperty2: uint32 = 1,
+    MyProperty3: uint32 = 2,
+    MyProperty4: uint32 = 3,
+    MyProperty5: uint32 = 4,
+    MyProperty6: uint32 = 5,
+    MyProperty7: uint32 = 6,
+    MyProperty8: uint32 = 7,
+    MyProperty9: uint32 = 8,
+}
+
+message StringPropertiesMessage {
+    MyProperty1: string(8192) = 0,
+    MyProperty2: string(8192) = 1,
+    MyProperty3: string(8192) = 2,
+}

@@ -126,6 +126,18 @@ namespace Omnix.Network.Connection.Secure.V1
             {
                 if (rank > 256) throw new FormatException();
 
+                // Write property count
+                {
+                    int propertyCount = 0;
+                    if (!value.SessionId.IsEmpty) propertyCount++;
+                    if (value.AuthenticationType != default) propertyCount++;
+                    if (value.KeyExchangeAlgorithms.Count != 0) propertyCount++;
+                    if (value.KeyDerivationAlgorithms.Count != 0) propertyCount++;
+                    if (value.CryptoAlgorithms.Count != 0) propertyCount++;
+                    if (value.HashAlgorithms.Count != 0) propertyCount++;
+                    w.Write((ulong)propertyCount);
+                }
+
                 // SessionId
                 if (!value.SessionId.IsEmpty)
                 {
@@ -184,6 +196,9 @@ namespace Omnix.Network.Connection.Secure.V1
             {
                 if (rank > 256) throw new FormatException();
 
+                // Read property count
+                int propertyCount = (int)r.GetUInt64();
+
                 ReadOnlyMemory<byte> p_sessionId = default;
                 AuthenticationType p_authenticationType = default;
                 IList<KeyExchangeAlgorithm> p_keyExchangeAlgorithms = default;
@@ -191,7 +206,7 @@ namespace Omnix.Network.Connection.Secure.V1
                 IList<CryptoAlgorithm> p_cryptoAlgorithms = default;
                 IList<HashAlgorithm> p_hashAlgorithms = default;
 
-                while (r.Available > 0)
+                for (; propertyCount > 0; propertyCount--)
                 {
                     int id = (int)r.GetUInt64();
                     switch (id)
@@ -299,6 +314,14 @@ namespace Omnix.Network.Connection.Secure.V1
             {
                 if (rank > 256) throw new FormatException();
 
+                // Write property count
+                {
+                    int propertyCount = 0;
+                    if (value.ProfileMessage != default) propertyCount++;
+                    if (value.AgreementPublicKey != default) propertyCount++;
+                    w.Write((ulong)propertyCount);
+                }
+
                 // ProfileMessage
                 if (value.ProfileMessage != default)
                 {
@@ -317,10 +340,13 @@ namespace Omnix.Network.Connection.Secure.V1
             {
                 if (rank > 256) throw new FormatException();
 
+                // Read property count
+                int propertyCount = (int)r.GetUInt64();
+
                 SecureConnectionProfileMessage p_profileMessage = default;
                 OmniAgreementPublicKey p_agreementPublicKey = default;
 
-                while (r.Available > 0)
+                for (; propertyCount > 0; propertyCount--)
                 {
                     int id = (int)r.GetUInt64();
                     switch (id)
@@ -394,6 +420,13 @@ namespace Omnix.Network.Connection.Secure.V1
             {
                 if (rank > 256) throw new FormatException();
 
+                // Write property count
+                {
+                    int propertyCount = 0;
+                    if (value.Hashes.Count != 0) propertyCount++;
+                    w.Write((ulong)propertyCount);
+                }
+
                 // Hashes
                 if (value.Hashes.Count != 0)
                 {
@@ -410,9 +443,12 @@ namespace Omnix.Network.Connection.Secure.V1
             {
                 if (rank > 256) throw new FormatException();
 
+                // Read property count
+                int propertyCount = (int)r.GetUInt64();
+
                 IList<ReadOnlyMemory<byte>> p_hashes = default;
 
-                while (r.Available > 0)
+                for (; propertyCount > 0; propertyCount--)
                 {
                     int id = (int)r.GetUInt64();
                     switch (id)

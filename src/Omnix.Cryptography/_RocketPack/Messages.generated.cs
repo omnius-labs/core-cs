@@ -178,6 +178,16 @@ namespace Omnix.Cryptography
             {
                 if (rank > 256) throw new FormatException();
 
+                // Write property count
+                {
+                    int propertyCount = 0;
+                    if (value.CreationTime != default) propertyCount++;
+                    if (value.AlgorithmType != default) propertyCount++;
+                    if (!value.PublicKey.IsEmpty) propertyCount++;
+                    if (!value.PrivateKey.IsEmpty) propertyCount++;
+                    w.Write((ulong)propertyCount);
+                }
+
                 // CreationTime
                 if (value.CreationTime != default)
                 {
@@ -208,12 +218,15 @@ namespace Omnix.Cryptography
             {
                 if (rank > 256) throw new FormatException();
 
+                // Read property count
+                int propertyCount = (int)r.GetUInt64();
+
                 Timestamp p_creationTime = default;
                 OmniAgreementAlgorithmType p_algorithmType = default;
                 ReadOnlyMemory<byte> p_publicKey = default;
                 ReadOnlyMemory<byte> p_privateKey = default;
 
-                while (r.Available > 0)
+                for (; propertyCount > 0; propertyCount--)
                 {
                     int id = (int)r.GetUInt64();
                     switch (id)
@@ -296,6 +309,15 @@ namespace Omnix.Cryptography
             {
                 if (rank > 256) throw new FormatException();
 
+                // Write property count
+                {
+                    int propertyCount = 0;
+                    if (value.CreationTime != default) propertyCount++;
+                    if (value.AlgorithmType != default) propertyCount++;
+                    if (!value.PublicKey.IsEmpty) propertyCount++;
+                    w.Write((ulong)propertyCount);
+                }
+
                 // CreationTime
                 if (value.CreationTime != default)
                 {
@@ -320,11 +342,14 @@ namespace Omnix.Cryptography
             {
                 if (rank > 256) throw new FormatException();
 
+                // Read property count
+                int propertyCount = (int)r.GetUInt64();
+
                 Timestamp p_creationTime = default;
                 OmniAgreementAlgorithmType p_algorithmType = default;
                 ReadOnlyMemory<byte> p_publicKey = default;
 
-                while (r.Available > 0)
+                for (; propertyCount > 0; propertyCount--)
                 {
                     int id = (int)r.GetUInt64();
                     switch (id)
@@ -402,6 +427,15 @@ namespace Omnix.Cryptography
             {
                 if (rank > 256) throw new FormatException();
 
+                // Write property count
+                {
+                    int propertyCount = 0;
+                    if (value.CreationTime != default) propertyCount++;
+                    if (value.AlgorithmType != default) propertyCount++;
+                    if (!value.PrivateKey.IsEmpty) propertyCount++;
+                    w.Write((ulong)propertyCount);
+                }
+
                 // CreationTime
                 if (value.CreationTime != default)
                 {
@@ -426,11 +460,14 @@ namespace Omnix.Cryptography
             {
                 if (rank > 256) throw new FormatException();
 
+                // Read property count
+                int propertyCount = (int)r.GetUInt64();
+
                 Timestamp p_creationTime = default;
                 OmniAgreementAlgorithmType p_algorithmType = default;
                 ReadOnlyMemory<byte> p_privateKey = default;
 
-                while (r.Available > 0)
+                for (; propertyCount > 0; propertyCount--)
                 {
                     int id = (int)r.GetUInt64();
                     switch (id)
@@ -517,6 +554,16 @@ namespace Omnix.Cryptography
             {
                 if (rank > 256) throw new FormatException();
 
+                // Write property count
+                {
+                    int propertyCount = 0;
+                    if (value.Name != default) propertyCount++;
+                    if (value.AlgorithmType != default) propertyCount++;
+                    if (!value.PublicKey.IsEmpty) propertyCount++;
+                    if (!value.PrivateKey.IsEmpty) propertyCount++;
+                    w.Write((ulong)propertyCount);
+                }
+
                 // Name
                 if (value.Name != default)
                 {
@@ -547,12 +594,15 @@ namespace Omnix.Cryptography
             {
                 if (rank > 256) throw new FormatException();
 
+                // Read property count
+                int propertyCount = (int)r.GetUInt64();
+
                 string p_name = default;
                 OmniDigitalSignatureAlgorithmType p_algorithmType = default;
                 ReadOnlyMemory<byte> p_publicKey = default;
                 ReadOnlyMemory<byte> p_privateKey = default;
 
-                while (r.Available > 0)
+                for (; propertyCount > 0; propertyCount--)
                 {
                     int id = (int)r.GetUInt64();
                     switch (id)
@@ -644,6 +694,16 @@ namespace Omnix.Cryptography
             {
                 if (rank > 256) throw new FormatException();
 
+                // Write property count
+                {
+                    int propertyCount = 0;
+                    if (value.Name != default) propertyCount++;
+                    if (value.AlgorithmType != default) propertyCount++;
+                    if (!value.PublicKey.IsEmpty) propertyCount++;
+                    if (!value.Value.IsEmpty) propertyCount++;
+                    w.Write((ulong)propertyCount);
+                }
+
                 // Name
                 if (value.Name != default)
                 {
@@ -674,12 +734,15 @@ namespace Omnix.Cryptography
             {
                 if (rank > 256) throw new FormatException();
 
+                // Read property count
+                int propertyCount = (int)r.GetUInt64();
+
                 string p_name = default;
                 OmniDigitalSignatureAlgorithmType p_algorithmType = default;
                 ReadOnlyMemory<byte> p_publicKey = default;
                 ReadOnlyMemory<byte> p_value = default;
 
-                while (r.Available > 0)
+                for (; propertyCount > 0; propertyCount--)
                 {
                     int id = (int)r.GetUInt64();
                     switch (id)
@@ -758,6 +821,14 @@ namespace Omnix.Cryptography
             {
                 if (rank > 256) throw new FormatException();
 
+                // Write property count
+                {
+                    int propertyCount = 0;
+                    if (value.Name != default) propertyCount++;
+                    if (value.Hash != default) propertyCount++;
+                    w.Write((ulong)propertyCount);
+                }
+
                 // Name
                 if (value.Name != default)
                 {
@@ -776,10 +847,13 @@ namespace Omnix.Cryptography
             {
                 if (rank > 256) throw new FormatException();
 
+                // Read property count
+                int propertyCount = (int)r.GetUInt64();
+
                 string p_name = default;
                 OmniHash p_hash = default;
 
-                while (r.Available > 0)
+                for (; propertyCount > 0; propertyCount--)
                 {
                     int id = (int)r.GetUInt64();
                     switch (id)

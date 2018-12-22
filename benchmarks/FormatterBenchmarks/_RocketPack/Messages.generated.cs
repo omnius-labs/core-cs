@@ -9,6 +9,210 @@ using System.Collections.ObjectModel;
 
 namespace FormatterBenchmarks
 {
+    public sealed partial class RocketPack_IntPropertiesListMessage : RocketPackMessageBase<RocketPack_IntPropertiesListMessage>
+    {
+        static RocketPack_IntPropertiesListMessage()
+        {
+            RocketPack_IntPropertiesListMessage.Formatter = new CustomFormatter();
+        }
+
+        public static readonly int MaxListCount = 100000;
+
+        public RocketPack_IntPropertiesListMessage(IList<RocketPack_IntPropertiesMessage> list)
+        {
+            if (list is null) throw new ArgumentNullException("list");
+            if (list.Count > 100000) throw new ArgumentOutOfRangeException("list");
+            foreach (var n in list)
+            {
+                if (n is null) throw new ArgumentNullException("n");
+            }
+
+            this.List = new ReadOnlyCollection<RocketPack_IntPropertiesMessage>(list);
+
+            {
+                var hashCode = new HashCode();
+                foreach (var n in this.List)
+                {
+                    if (n != default) hashCode.Add(n.GetHashCode());
+                }
+                _hashCode = hashCode.ToHashCode();
+            }
+        }
+
+        public IReadOnlyList<RocketPack_IntPropertiesMessage> List { get; }
+
+        public override bool Equals(RocketPack_IntPropertiesListMessage target)
+        {
+            if ((object)target == null) return false;
+            if (Object.ReferenceEquals(this, target)) return true;
+            if ((this.List is null) != (target.List is null)) return false;
+            if (!(this.List is null) && !(target.List is null) && !CollectionHelper.Equals(this.List, target.List)) return false;
+
+            return true;
+        }
+
+        private readonly int _hashCode;
+        public override int GetHashCode() => _hashCode;
+
+        private sealed class CustomFormatter : IRocketPackFormatter<RocketPack_IntPropertiesListMessage>
+        {
+            public void Serialize(RocketPackWriter w, RocketPack_IntPropertiesListMessage value, int rank)
+            {
+                if (rank > 256) throw new FormatException();
+
+                // Write property count
+                {
+                    int propertyCount = 0;
+                    if (value.List.Count != 0) propertyCount++;
+                    w.Write((ulong)propertyCount);
+                }
+
+                // List
+                if (value.List.Count != 0)
+                {
+                    w.Write((ulong)0);
+                    w.Write((ulong)value.List.Count);
+                    foreach (var n in value.List)
+                    {
+                        RocketPack_IntPropertiesMessage.Formatter.Serialize(w, n, rank + 1);
+                    }
+                }
+            }
+
+            public RocketPack_IntPropertiesListMessage Deserialize(RocketPackReader r, int rank)
+            {
+                if (rank > 256) throw new FormatException();
+
+                // Read property count
+                int propertyCount = (int)r.GetUInt64();
+
+                IList<RocketPack_IntPropertiesMessage> p_list = default;
+
+                for (; propertyCount > 0; propertyCount--)
+                {
+                    int id = (int)r.GetUInt64();
+                    switch (id)
+                    {
+                        case 0: // List
+                            {
+                                var length = (int)r.GetUInt64();
+                                p_list = new RocketPack_IntPropertiesMessage[length];
+                                for (int i = 0; i < p_list.Count; i++)
+                                {
+                                    p_list[i] = RocketPack_IntPropertiesMessage.Formatter.Deserialize(r, rank + 1);
+                                }
+                                break;
+                            }
+                    }
+                }
+
+                return new RocketPack_IntPropertiesListMessage(p_list);
+            }
+        }
+    }
+
+    public sealed partial class RocketPack_StringPropertiesListMessage : RocketPackMessageBase<RocketPack_StringPropertiesListMessage>
+    {
+        static RocketPack_StringPropertiesListMessage()
+        {
+            RocketPack_StringPropertiesListMessage.Formatter = new CustomFormatter();
+        }
+
+        public static readonly int MaxListCount = 100000;
+
+        public RocketPack_StringPropertiesListMessage(IList<RocketPack_StringPropertiesMessage> list)
+        {
+            if (list is null) throw new ArgumentNullException("list");
+            if (list.Count > 100000) throw new ArgumentOutOfRangeException("list");
+            foreach (var n in list)
+            {
+                if (n is null) throw new ArgumentNullException("n");
+            }
+
+            this.List = new ReadOnlyCollection<RocketPack_StringPropertiesMessage>(list);
+
+            {
+                var hashCode = new HashCode();
+                foreach (var n in this.List)
+                {
+                    if (n != default) hashCode.Add(n.GetHashCode());
+                }
+                _hashCode = hashCode.ToHashCode();
+            }
+        }
+
+        public IReadOnlyList<RocketPack_StringPropertiesMessage> List { get; }
+
+        public override bool Equals(RocketPack_StringPropertiesListMessage target)
+        {
+            if ((object)target == null) return false;
+            if (Object.ReferenceEquals(this, target)) return true;
+            if ((this.List is null) != (target.List is null)) return false;
+            if (!(this.List is null) && !(target.List is null) && !CollectionHelper.Equals(this.List, target.List)) return false;
+
+            return true;
+        }
+
+        private readonly int _hashCode;
+        public override int GetHashCode() => _hashCode;
+
+        private sealed class CustomFormatter : IRocketPackFormatter<RocketPack_StringPropertiesListMessage>
+        {
+            public void Serialize(RocketPackWriter w, RocketPack_StringPropertiesListMessage value, int rank)
+            {
+                if (rank > 256) throw new FormatException();
+
+                // Write property count
+                {
+                    int propertyCount = 0;
+                    if (value.List.Count != 0) propertyCount++;
+                    w.Write((ulong)propertyCount);
+                }
+
+                // List
+                if (value.List.Count != 0)
+                {
+                    w.Write((ulong)0);
+                    w.Write((ulong)value.List.Count);
+                    foreach (var n in value.List)
+                    {
+                        RocketPack_StringPropertiesMessage.Formatter.Serialize(w, n, rank + 1);
+                    }
+                }
+            }
+
+            public RocketPack_StringPropertiesListMessage Deserialize(RocketPackReader r, int rank)
+            {
+                if (rank > 256) throw new FormatException();
+
+                // Read property count
+                int propertyCount = (int)r.GetUInt64();
+
+                IList<RocketPack_StringPropertiesMessage> p_list = default;
+
+                for (; propertyCount > 0; propertyCount--)
+                {
+                    int id = (int)r.GetUInt64();
+                    switch (id)
+                    {
+                        case 0: // List
+                            {
+                                var length = (int)r.GetUInt64();
+                                p_list = new RocketPack_StringPropertiesMessage[length];
+                                for (int i = 0; i < p_list.Count; i++)
+                                {
+                                    p_list[i] = RocketPack_StringPropertiesMessage.Formatter.Deserialize(r, rank + 1);
+                                }
+                                break;
+                            }
+                    }
+                }
+
+                return new RocketPack_StringPropertiesListMessage(p_list);
+            }
+        }
+    }
+
     public sealed partial class RocketPack_IntPropertiesMessage : RocketPackMessageBase<RocketPack_IntPropertiesMessage>
     {
         static RocketPack_IntPropertiesMessage()
@@ -79,6 +283,21 @@ namespace FormatterBenchmarks
             {
                 if (rank > 256) throw new FormatException();
 
+                // Write property count
+                {
+                    int propertyCount = 0;
+                    if (value.MyProperty1 != default) propertyCount++;
+                    if (value.MyProperty2 != default) propertyCount++;
+                    if (value.MyProperty3 != default) propertyCount++;
+                    if (value.MyProperty4 != default) propertyCount++;
+                    if (value.MyProperty5 != default) propertyCount++;
+                    if (value.MyProperty6 != default) propertyCount++;
+                    if (value.MyProperty7 != default) propertyCount++;
+                    if (value.MyProperty8 != default) propertyCount++;
+                    if (value.MyProperty9 != default) propertyCount++;
+                    w.Write((ulong)propertyCount);
+                }
+
                 // MyProperty1
                 if (value.MyProperty1 != default)
                 {
@@ -139,6 +358,9 @@ namespace FormatterBenchmarks
             {
                 if (rank > 256) throw new FormatException();
 
+                // Read property count
+                int propertyCount = (int)r.GetUInt64();
+
                 uint p_myProperty1 = default;
                 uint p_myProperty2 = default;
                 uint p_myProperty3 = default;
@@ -149,7 +371,7 @@ namespace FormatterBenchmarks
                 uint p_myProperty8 = default;
                 uint p_myProperty9 = default;
 
-                while (r.Available > 0)
+                for (; propertyCount > 0; propertyCount--)
                 {
                     int id = (int)r.GetUInt64();
                     switch (id)
@@ -264,6 +486,15 @@ namespace FormatterBenchmarks
             {
                 if (rank > 256) throw new FormatException();
 
+                // Write property count
+                {
+                    int propertyCount = 0;
+                    if (value.MyProperty1 != default) propertyCount++;
+                    if (value.MyProperty2 != default) propertyCount++;
+                    if (value.MyProperty3 != default) propertyCount++;
+                    w.Write((ulong)propertyCount);
+                }
+
                 // MyProperty1
                 if (value.MyProperty1 != default)
                 {
@@ -288,11 +519,14 @@ namespace FormatterBenchmarks
             {
                 if (rank > 256) throw new FormatException();
 
+                // Read property count
+                int propertyCount = (int)r.GetUInt64();
+
                 string p_myProperty1 = default;
                 string p_myProperty2 = default;
                 string p_myProperty3 = default;
 
-                while (r.Available > 0)
+                for (; propertyCount > 0; propertyCount--)
                 {
                     int id = (int)r.GetUInt64();
                     switch (id)

@@ -17,7 +17,7 @@ namespace Omnix.Serialization.RocketPack
         private IBufferWriter<byte> _bufferWriter;
         private BufferPool _bufferPool;
 
-        private static readonly ThreadLocal<Encoding> _encoding = new ThreadLocal<Encoding>(() => new UTF8Encoding(false));
+        private static readonly Lazy<Encoding> _encoding = new Lazy<Encoding>(() => new UTF8Encoding(false));
 
         public RocketPackWriter(IBufferWriter<byte> bufferWriter, BufferPool bufferPool)
         {

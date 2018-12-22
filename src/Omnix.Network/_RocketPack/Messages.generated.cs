@@ -52,6 +52,13 @@ namespace Omnix.Network
             {
                 if (rank > 256) throw new FormatException();
 
+                // Write property count
+                {
+                    int propertyCount = 0;
+                    if (value.Value != default) propertyCount++;
+                    w.Write((ulong)propertyCount);
+                }
+
                 // Value
                 if (value.Value != default)
                 {
@@ -64,9 +71,12 @@ namespace Omnix.Network
             {
                 if (rank > 256) throw new FormatException();
 
+                // Read property count
+                int propertyCount = (int)r.GetUInt64();
+
                 string p_value = default;
 
-                while (r.Available > 0)
+                for (; propertyCount > 0; propertyCount--)
                 {
                     int id = (int)r.GetUInt64();
                     switch (id)

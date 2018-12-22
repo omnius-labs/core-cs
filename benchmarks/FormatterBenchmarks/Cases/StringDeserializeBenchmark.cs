@@ -3,6 +3,8 @@ using BenchmarkDotNet.Attributes;
 using Omnix.Base;
 using System.Buffers;
 using FormatterBenchmarks.Internal;
+using System.Collections.Generic;
+using System.Text;
 
 namespace FormatterBenchmarks.Cases
 {
@@ -14,23 +16,61 @@ namespace FormatterBenchmarks.Cases
 
         static StringDeserializeBenchmark()
         {
-            {
-                var message = new MessagePack_StringPropertiesMessage()
-                {
-                    MyProperty1 = "0",
-                    MyProperty2 = "0000000000",
-                    MyProperty3 = "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
-                };
+            var charList = new char[] { 'A', 'B', 'C', 'D', 'E', '安', '以', '宇', '衣', '於' };
 
-                _messagePack_Bytes = MessagePack.MessagePackSerializer.Serialize(message);
+            string GetRandomString(Random random)
+            {
+                var sb = new StringBuilder();
+
+                for (int i = random.Next(32, 256) - 1; i >= 0; i--)
+                {
+                    sb.Append(charList[random.Next(0, charList.Length)]);
+                }
+
+                return sb.ToString();
             }
 
             {
-                var message = new RocketPack_StringPropertiesMessage("0", "0000000000", "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000");
+                var random = new Random(0);
+
+                var items = new List<MessagePack_StringPropertiesMessage>();
+                for (int i = 0; i < 100000; i++)
+                {
+                    var message = new MessagePack_StringPropertiesMessage()
+                    {
+                        MyProperty1 = GetRandomString(random),
+                        MyProperty2 = GetRandomString(random),
+                        MyProperty3 = GetRandomString(random),
+                    };
+                    items.Add(message);
+                }
+
+                var list = new MessagePack_StringPropertiesListMessage()
+                {
+                    List = items.ToArray(),
+                };
+
+                _messagePack_Bytes = MessagePack.MessagePackSerializer.Serialize(list);
+            }
+
+            {
+                var random = new Random(0);
+
+                var items = new List<RocketPack_StringPropertiesMessage>();
+                for (int i = 0; i < 100000; i++)
+                {
+                    var message = new RocketPack_StringPropertiesMessage(
+                         GetRandomString(random),
+                         GetRandomString(random),
+                         GetRandomString(random));
+                    items.Add(message);
+                }
+
+                var list = new RocketPack_StringPropertiesListMessage(items);
 
                 var hub = new Hub();
 
-                message.Export(hub.Writer, BufferPool.Shared);
+                list.Export(hub.Writer, BufferPool.Shared);
                 hub.Writer.Complete();
 
                 _rocketPack_Bytes = new byte[hub.Writer.BytesWritten];
@@ -42,15 +82,15 @@ namespace FormatterBenchmarks.Cases
         }
 
         [Benchmark(Baseline = true)]
-        public void MessagePack_StringPropertiesMessage_DeserializeTest()
+        public MessagePack_StringPropertiesListMessage MessagePack_StringPropertiesMessage_DeserializeTest()
         {
-            MessagePack.MessagePackSerializer.Deserialize<MessagePack_StringPropertiesMessage>(_messagePack_Bytes);
+            return MessagePack.MessagePackSerializer.Deserialize<MessagePack_StringPropertiesListMessage>(_messagePack_Bytes);
         }
 
         [Benchmark]
-        public void RocketPack_StringPropertiesMessage_DeserializeTest()
+        public RocketPack_StringPropertiesListMessage RocketPack_StringPropertiesMessage_DeserializeTest()
         {
-            RocketPack_StringPropertiesMessage.Import(new ReadOnlySequence<byte>(_rocketPack_Bytes), BufferPool.Shared);
+            return RocketPack_StringPropertiesListMessage.Import(new ReadOnlySequence<byte>(_rocketPack_Bytes), BufferPool.Shared);
         }
     }
 }

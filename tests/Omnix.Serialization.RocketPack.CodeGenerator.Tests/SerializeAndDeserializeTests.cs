@@ -4,13 +4,18 @@ using Omnix.Serialization.RocketPack.CodeGenerator;
 using Omnix.Base;
 using System.Buffers;
 using System.Collections.Generic;
+using System.Text;
+using System.Diagnostics;
+using Omnix.Serialization.Extensions;
+using System.Security.Cryptography;
+using Omnix.Cryptography;
 
 namespace Omnix.Serialization.RocketPack.CodeGenerator.Tests
 {
     public class SerializeAndDeserializeTests
     {
         [Fact]
-        public void ClassTest()
+        public void HelloMessageTest()
         {
             bool x0 = true;
             sbyte x1 = 1;
@@ -49,6 +54,99 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator.Tests
 
             Assert.True(message == message2);
         }
+
+        [Fact]
+        public void IntDeserializeTest()
+        {
+            IntPropertiesListMessage list1, list2;
+
+            var random = new Random(0);
+
+            for (int count = 0; count < 1024; count++)
+            {
+                var items = new List<IntPropertiesMessage>();
+                for (int i = 0; i < 1000; i++)
+                {
+                    var message = new IntPropertiesMessage(
+                            (uint)random.Next(),
+                            (uint)random.Next(),
+                            (uint)random.Next(),
+                            (uint)random.Next(),
+                            (uint)random.Next(),
+                            (uint)random.Next(),
+                            (uint)random.Next(),
+                            (uint)random.Next(),
+                            (uint)random.Next());
+
+                    items.Add(message);
+                }
+
+                list1 = new IntPropertiesListMessage(items);
+
+                var hub = new Hub();
+
+                list1.Export(hub.Writer, BufferPool.Shared);
+                hub.Writer.Complete();
+
+                var list1_bytes = new byte[hub.Writer.BytesWritten];
+                hub.Reader.GetSequence().CopyTo(list1_bytes);
+
+                hub.Reader.Complete();
+                hub.Reset();
+                list2 = IntPropertiesListMessage.Import(new ReadOnlySequence<byte>(list1_bytes), BufferPool.Shared);
+
+                Assert.Equal(list1, list2);
+            }
+        }
+
+        [Fact]
+        public void StringDeserializeTest()
+        {
+            var charList = new char[] { 'A', 'B', 'C', 'D', 'E', '安', '以', '宇', '衣', '於' };
+
+            var random = new Random(0);
+
+            string GetRandomString()
+            {
+                var sb = new StringBuilder();
+
+                for (int i = random.Next(32, 256) - 1; i >= 0; i--)
+                {
+                    sb.Append(charList[random.Next(0, charList.Length)]);
+                }
+
+                return sb.ToString();
+            }
+
+            for (int count = 0; count < 1024; count++)
+            {
+                StringPropertiesListMessage list1, list2;
+
+                var message = new StringPropertiesMessage(GetRandomString(), GetRandomString(), GetRandomString());
+
+                var items = new List<StringPropertiesMessage>();
+                for (int i = 0; i < 1000; i++)
+                {
+                    items.Add(message);
+                }
+
+                list1 = new StringPropertiesListMessage(items);
+
+                var hub = new Hub();
+
+                list1.Export(hub.Writer, BufferPool.Shared);
+                hub.Writer.Complete();
+
+                var list1_bytes = new byte[hub.Writer.BytesWritten];
+                hub.Reader.GetSequence().CopyTo(list1_bytes);
+
+                hub.Reader.Complete();
+                hub.Reset();
+
+                list2 = StringPropertiesListMessage.Import(new ReadOnlySequence<byte>(list1_bytes), BufferPool.Shared);
+
+                Assert.Equal(list1, list2);
+            }
+        }
     }
 }
-
