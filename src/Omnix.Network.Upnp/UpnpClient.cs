@@ -105,6 +105,8 @@ namespace Omnix.Net.Upnp
 
                 for (int i = 0; i < querys.Count; i++)
                 {
+                    token.ThrowIfCancellationRequested();
+
                     try
                     {
                         var queryBytes = Encoding.ASCII.GetBytes(querys[i]);
@@ -120,12 +122,14 @@ namespace Omnix.Net.Upnp
 
                 for (int i = 0; i < 32; i++)
                 {
+                    token.ThrowIfCancellationRequested();
+
                     string queryResponse = null;
 
                     try
                     {
                         var data = new byte[1024 * 64];
-                        int dataLength = await socket.ReceiveAsync(data.AsMemory(), SocketFlags.None, token);
+                        int dataLength = socket.Receive(data.AsSpan(), SocketFlags.None);
 
                         queryResponse = Encoding.ASCII.GetString(data, 0, dataLength);
                         if (string.IsNullOrWhiteSpace(queryResponse)) continue;
@@ -133,7 +137,7 @@ namespace Omnix.Net.Upnp
                     catch (SocketException e)
                     {
                         _logger.Info(e, "Failed to receive of socket.");
-                        throw new UpnpClientException("Failed to receive of socket.", e);
+                        continue;
                     }
 
                     try
