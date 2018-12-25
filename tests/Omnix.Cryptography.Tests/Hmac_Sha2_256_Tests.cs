@@ -24,7 +24,7 @@ namespace Omnix.Cryptography.Tests
                 var value = base16.StringToBytes("4869205468657265");
                 var result = base16.BytesToString(Hmac_Sha2_256.ComputeHash(value, key));
 
-                Assert.True(result == "b0344c61d8db38535ca8afceaf0bf12b");
+                Assert.True(result == "b0344c61d8db38535ca8afceaf0bf12b881dc200c9833da726e9376c2e32cff7");
             }
 
             {
