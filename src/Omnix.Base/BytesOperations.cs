@@ -132,7 +132,8 @@ namespace Omnix.Base
             fixed (byte* p_x = source)
             fixed (byte* p_y = destination)
             {
-                _copy(p_x, p_y, length);
+                Buffer.MemoryCopy(p_x, p_y, destination.Length, length);
+                //_copy(p_x, p_y, length);
             }
         }
 

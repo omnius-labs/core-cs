@@ -9,6 +9,97 @@ using System.Collections.ObjectModel;
 
 namespace FormatterBenchmarks
 {
+    public sealed partial class RocketPack_BytesMessage : RocketPackMessageBase<RocketPack_BytesMessage>, IDisposable
+    {
+        static RocketPack_BytesMessage()
+        {
+            RocketPack_BytesMessage.Formatter = new CustomFormatter();
+        }
+
+        public static readonly int MaxBytesLength = 1048576;
+
+        public RocketPack_BytesMessage(IMemoryOwner<byte> bytes)
+        {
+            if (bytes is null) throw new ArgumentNullException("bytes");
+            if (bytes.Memory.Length > 1048576) throw new ArgumentOutOfRangeException("bytes");
+
+            _bytes = bytes;
+
+            {
+                var hashCode = new HashCode();
+                if (!this.Bytes.IsEmpty) hashCode.Add(ObjectHelper.GetHashCode(this.Bytes.Span));
+                _hashCode = hashCode.ToHashCode();
+            }
+        }
+
+        private readonly IMemoryOwner<byte> _bytes;
+        public ReadOnlyMemory<byte> Bytes => _bytes.Memory;
+
+        public override bool Equals(RocketPack_BytesMessage target)
+        {
+            if ((object)target == null) return false;
+            if (Object.ReferenceEquals(this, target)) return true;
+            if (!BytesOperations.SequenceEqual(this.Bytes.Span, target.Bytes.Span)) return false;
+
+            return true;
+        }
+
+        private readonly int _hashCode;
+        public override int GetHashCode() => _hashCode;
+
+        public void Dispose()
+        {
+            _bytes?.Dispose();
+        }
+
+        private sealed class CustomFormatter : IRocketPackFormatter<RocketPack_BytesMessage>
+        {
+            public void Serialize(RocketPackWriter w, RocketPack_BytesMessage value, int rank)
+            {
+                if (rank > 256) throw new FormatException();
+
+                // Write property count
+                {
+                    int propertyCount = 0;
+                    if (!value.Bytes.IsEmpty) propertyCount++;
+                    w.Write((ulong)propertyCount);
+                }
+
+                // Bytes
+                if (!value.Bytes.IsEmpty)
+                {
+                    w.Write((ulong)0);
+                    w.Write(value.Bytes.Span);
+                }
+            }
+
+            public RocketPack_BytesMessage Deserialize(RocketPackReader r, int rank)
+            {
+                if (rank > 256) throw new FormatException();
+
+                // Read property count
+                int propertyCount = (int)r.GetUInt64();
+
+                IMemoryOwner<byte> p_bytes = default;
+
+                for (; propertyCount > 0; propertyCount--)
+                {
+                    int id = (int)r.GetUInt64();
+                    switch (id)
+                    {
+                        case 0: // Bytes
+                            {
+                                p_bytes = r.GetRecyclableMemory(1048576);
+                                break;
+                            }
+                    }
+                }
+
+                return new RocketPack_BytesMessage(p_bytes);
+            }
+        }
+    }
+
     public sealed partial class RocketPack_IntPropertiesListMessage : RocketPackMessageBase<RocketPack_IntPropertiesListMessage>
     {
         static RocketPack_IntPropertiesListMessage()

@@ -2,6 +2,11 @@ syntax = v1;
 
 option csharp_namespace = "FormatterBenchmarks";
 
+message RocketPack_BytesMessage {
+    [Recyclable]
+    Bytes: memory(1048576) = 0, // use recyclable memory
+}
+
 message RocketPack_IntPropertiesListMessage {
     List: vector<RocketPack_IntPropertiesMessage>(100000) = 0,
 }
