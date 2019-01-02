@@ -8,11 +8,7 @@ dotnet tool install --global dotnet-reportgenerator-globaltool
 
 export PATH="$PATH:/root/.dotnet/tools"
 
-if [ -z "$CI_PROJECT_DIR" ]; then
-    CI_PROJECT_DIR=`dirname $0`
-fi
-
-for path in `find "$CI_PROJECT_DIR/tests" -maxdepth 2 -type f -name "*.csproj"`
+for path in `find "tests" -maxdepth 2 -type f -name "*.csproj"`
 do
     output="../TestResults/$(basename ${path%.*})-opencover.xml"
     dotnet test "$path" -p:CollectCoverage=true -p:CoverletOutputFormat=opencover -p:CoverletOutput=$output;

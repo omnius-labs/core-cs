@@ -54,9 +54,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Omnix.Network.Upnp.Tests", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Omnix.Cryptography.Tests", "tests\Omnix.Cryptography.Tests\Omnix.Cryptography.Tests.csproj", "{07086BB5-1CCE-437A-804E-2C018599D893}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FormatterBenchmarks", "benchmarks\FormatterBenchmarks\FormatterBenchmarks.csproj", "{69AC7FCB-64B5-4E88-A5D8-7E326AFE67C8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FormatterBenchmarks", "benchmarks\FormatterBenchmarks\FormatterBenchmarks.csproj", "{69AC7FCB-64B5-4E88-A5D8-7E326AFE67C8}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Benchmarks", "Benchmarks", "{D3C36B78-868D-4E27-910A-23FD8DB73F00}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Omnix.Cryptography.HashcashComputer", "src\Omnix.Cryptography.HashcashComputer\Omnix.Cryptography.HashcashComputer.csproj", "{6B302E32-78BD-4FAF-8244-AD758C589710}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -152,6 +154,10 @@ Global
 		{69AC7FCB-64B5-4E88-A5D8-7E326AFE67C8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{69AC7FCB-64B5-4E88-A5D8-7E326AFE67C8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{69AC7FCB-64B5-4E88-A5D8-7E326AFE67C8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6B302E32-78BD-4FAF-8244-AD758C589710}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6B302E32-78BD-4FAF-8244-AD758C589710}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6B302E32-78BD-4FAF-8244-AD758C589710}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6B302E32-78BD-4FAF-8244-AD758C589710}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -179,6 +185,7 @@ Global
 		{520BA6DB-4476-43F0-9AF2-568841863716} = {CDE3119A-739A-44B1-8141-448AF0896E6C}
 		{07086BB5-1CCE-437A-804E-2C018599D893} = {CDE3119A-739A-44B1-8141-448AF0896E6C}
 		{69AC7FCB-64B5-4E88-A5D8-7E326AFE67C8} = {D3C36B78-868D-4E27-910A-23FD8DB73F00}
+		{6B302E32-78BD-4FAF-8244-AD758C589710} = {28FCC997-2EE4-4D18-BAA0-96118DFA47BB}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {2CD56E0F-71CF-44BB-848D-F2A9EA663E45}

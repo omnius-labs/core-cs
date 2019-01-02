@@ -24,6 +24,11 @@ namespace Omnix.Cryptography
         EcDsa_P521_Sha2_256 = 0,
     }
 
+    public enum OmniHashcashAlgorithmType : byte
+    {
+        Sha2_256 = 0,
+    }
+
     public readonly struct OmniHash
     {
         public static IRocketPackFormatter<OmniHash> Formatter { get; }
@@ -872,6 +877,107 @@ namespace Omnix.Cryptography
                 }
 
                 return new OmniSignature(p_name, p_hash);
+            }
+        }
+    }
+
+    public sealed partial class OmniHashcash : RocketPackMessageBase<OmniHashcash>
+    {
+        static OmniHashcash()
+        {
+            OmniHashcash.Formatter = new CustomFormatter();
+        }
+
+        public static readonly int MaxKeyLength = 32;
+
+        public OmniHashcash(OmniHashcashAlgorithmType algorithmType, ReadOnlyMemory<byte> key)
+        {
+            if (key.Length > 32) throw new ArgumentOutOfRangeException("key");
+
+            this.AlgorithmType = algorithmType;
+            this.Key = key;
+
+            {
+                var hashCode = new HashCode();
+                if (this.AlgorithmType != default) hashCode.Add(this.AlgorithmType.GetHashCode());
+                if (!this.Key.IsEmpty) hashCode.Add(ObjectHelper.GetHashCode(this.Key.Span));
+                _hashCode = hashCode.ToHashCode();
+            }
+        }
+
+        public OmniHashcashAlgorithmType AlgorithmType { get; }
+        public ReadOnlyMemory<byte> Key { get; }
+
+        public override bool Equals(OmniHashcash target)
+        {
+            if ((object)target == null) return false;
+            if (Object.ReferenceEquals(this, target)) return true;
+            if (this.AlgorithmType != target.AlgorithmType) return false;
+            if (!BytesOperations.SequenceEqual(this.Key.Span, target.Key.Span)) return false;
+
+            return true;
+        }
+
+        private readonly int _hashCode;
+        public override int GetHashCode() => _hashCode;
+
+        private sealed class CustomFormatter : IRocketPackFormatter<OmniHashcash>
+        {
+            public void Serialize(RocketPackWriter w, OmniHashcash value, int rank)
+            {
+                if (rank > 256) throw new FormatException();
+
+                // Write property count
+                {
+                    int propertyCount = 0;
+                    if (value.AlgorithmType != default) propertyCount++;
+                    if (!value.Key.IsEmpty) propertyCount++;
+                    w.Write((ulong)propertyCount);
+                }
+
+                // AlgorithmType
+                if (value.AlgorithmType != default)
+                {
+                    w.Write((ulong)0);
+                    w.Write((ulong)value.AlgorithmType);
+                }
+                // Key
+                if (!value.Key.IsEmpty)
+                {
+                    w.Write((ulong)1);
+                    w.Write(value.Key.Span);
+                }
+            }
+
+            public OmniHashcash Deserialize(RocketPackReader r, int rank)
+            {
+                if (rank > 256) throw new FormatException();
+
+                // Read property count
+                int propertyCount = (int)r.GetUInt64();
+
+                OmniHashcashAlgorithmType p_algorithmType = default;
+                ReadOnlyMemory<byte> p_key = default;
+
+                for (; propertyCount > 0; propertyCount--)
+                {
+                    int id = (int)r.GetUInt64();
+                    switch (id)
+                    {
+                        case 0: // AlgorithmType
+                            {
+                                p_algorithmType = (OmniHashcashAlgorithmType)r.GetUInt64();
+                                break;
+                            }
+                        case 1: // Key
+                            {
+                                p_key = r.GetMemory(32);
+                                break;
+                            }
+                    }
+                }
+
+                return new OmniHashcash(p_algorithmType, p_key);
             }
         }
     }

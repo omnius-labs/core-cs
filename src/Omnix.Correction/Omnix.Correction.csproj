@@ -10,4 +10,13 @@
     <ProjectReference Include="..\Omnix.Base\Omnix.Base.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="Assemblies\Omnix.Correction.linux-x64.so">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Assemblies\Omnix.Correction.win-x64.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
