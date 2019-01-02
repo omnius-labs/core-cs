@@ -43,11 +43,7 @@ namespace Omnix.Cryptography
             {
                 if (RuntimeInformation.ProcessArchitecture == Architecture.X64)
                 {
-                    _nativeLibraryManager = new NativeLibraryManager("Assemblies/Omnix_Security_x64.dll");
-                }
-                else if (RuntimeInformation.ProcessArchitecture == Architecture.X86)
-                {
-                    _nativeLibraryManager = new NativeLibraryManager("Assemblies/Omnix_Security_x86.dll");
+                    _nativeLibraryManager = new NativeLibraryManager("Assemblies/Omnix.Security.win-x64.dll");
                 }
                 else
                 {
@@ -58,11 +54,7 @@ namespace Omnix.Cryptography
             {
                 if (RuntimeInformation.ProcessArchitecture == Architecture.X64)
                 {
-                    _nativeLibraryManager = new NativeLibraryManager("Assemblies/Omnix_Security_x64.so");
-                }
-                else if (RuntimeInformation.ProcessArchitecture == Architecture.X86)
-                {
-                    _nativeLibraryManager = new NativeLibraryManager("Assemblies/Omnix_Security_x86.so");
+                    _nativeLibraryManager = new NativeLibraryManager("Assemblies/Omnix.Security.linux-x64.so");
                 }
                 else
                 {

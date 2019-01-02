@@ -1,4 +1,4 @@
-LIBRARY Library_Correction
+LIBRARY Omnix_Correction
 
 EXPORTS
 	mul

@@ -2,15 +2,15 @@
 cwd=`dirname "${0}"`
 expr "${0}" : "/.*" > /dev/null || cwd=`(cd "${cwd}" && pwd)`
 
-export CFLAGS="-shared -m32 -mfpmath=sse -march=pentium4 -fPIC -Wall -O3 -pipe -D UNIX"
-export CXXFLAGS="-shared -m32 -mfpmath=sse -march=pentium4 -fPIC -Wall -O3 -pipe -D UNIX"
-export BUILD="bin/linux-x86"
+export CFLAGS="-shared -m64 -fPIC -Wall -O3 -pipe -D UNIX"
+export CXXFLAGS="-shared -m64 -fPIC -Wall -O3 -pipe -D UNIX" 
+export BUILD="bin/linux-x64"
 
 cd ${cwd}/Omnix_Base/Omnix_Base
-make 
+make
 
 cd ${cwd}/Omnix_Correction/Omnix_Correction
-make 
+make
 
 cd ${cwd}/Omnix_Cryptography/Omnix_Cryptography
 make

@@ -14,6 +14,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="Assemblies\Omnix.Base.linux-x64.so">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Assemblies\Omnix.Base.win-x64.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Assemblies\Omnix_Base_x64.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

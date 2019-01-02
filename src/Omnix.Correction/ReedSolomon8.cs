@@ -257,22 +257,18 @@ namespace Omnix.Correction
                 {
                     if (Environment.Is64BitProcess)
                     {
-                        _nativeLibraryManager = new NativeLibraryManager("Assemblies/Omnix_Correction_x64.dll");
+                        _nativeLibraryManager = new NativeLibraryManager("Assemblies/Omnix.Correction.win-x64.dll");
                     }
                     else
                     {
-                        _nativeLibraryManager = new NativeLibraryManager("Assemblies/Omnix_Correction_x86.dll");
+                        throw new NotSupportedException();
                     }
                 }
                 else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
                 {
                     if (RuntimeInformation.ProcessArchitecture == Architecture.X64)
                     {
-                        _nativeLibraryManager = new NativeLibraryManager("Assemblies/Omnix_Correction_x64.so");
-                    }
-                    else if (RuntimeInformation.ProcessArchitecture == Architecture.X86)
-                    {
-                        _nativeLibraryManager = new NativeLibraryManager("Assemblies/Omnix_Correction_x86.so");
+                        _nativeLibraryManager = new NativeLibraryManager("Assemblies/Omnix.Correction.linux-x64.so");
                     }
                     else
                     {

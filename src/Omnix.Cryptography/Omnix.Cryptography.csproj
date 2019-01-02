@@ -13,6 +13,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Omnix.Base\Omnix.Base.csproj" />
+    <ProjectReference Include="..\Omnix.Cryptography.HashcashComputer\Omnix.Cryptography.HashcashComputer.csproj" />
     <ProjectReference Include="..\Omnix.Io\Omnix.Io.csproj" />
     <ProjectReference Include="..\Omnix.Serialization.RocketPack\Omnix.Serialization.RocketPack.csproj" />
     <ProjectReference Include="..\Omnix.Serialization\Omnix.Serialization.csproj" />
@@ -20,6 +21,21 @@
 
   <ItemGroup>
     <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Assemblies\Omnix.Cryptography.HashcashComputer.linux-x64">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Assemblies\Omnix.Cryptography.HashcashComputer.win-x64.exe">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Assemblies\Omnix.Cryptography.linux-x64.so">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Assemblies\Omnix.Cryptography.win-x64.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>
