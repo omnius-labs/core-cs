@@ -28,28 +28,14 @@ namespace Omnix.Serialization.RocketPack
             Formatter.Serialize(new RocketPackWriter(bufferWriter, bufferPool), (T)this, 0);
         }
 
-        public static bool operator ==(RocketPackMessageBase<T> x, RocketPackMessageBase<T> y)
+        public static bool operator ==(RocketPackMessageBase<T> left, RocketPackMessageBase<T> right)
         {
-            if ((object)x == null)
-            {
-                if ((object)y == null)
-                {
-                    return true;
-                }
-                else
-                {
-                    return ((T)y).Equals((T)x);
-                }
-            }
-            else
-            {
-                return ((T)x).Equals((T)y);
-            }
+            return (right is null) ? (left is null) : right.Equals(left);
         }
 
-        public static bool operator !=(RocketPackMessageBase<T> x, RocketPackMessageBase<T> y)
+        public static bool operator !=(RocketPackMessageBase<T> left, RocketPackMessageBase<T> right)
         {
-            return !(x == y);
+            return !(left == right);
         }
 
         public override int GetHashCode()
