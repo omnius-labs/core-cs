@@ -34,6 +34,16 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
         {
             var (info, externalInfos) = RocketFormatLoader.Load(definitionFilePath);
 
+            // 出力先フォルダが存在しない場合は作成する
+            {
+                var destinationParentDirectoryPath = Path.GetDirectoryName(destinationFilePath);
+
+                if (!Directory.Exists(destinationParentDirectoryPath))
+                {
+                    Directory.CreateDirectory(destinationParentDirectoryPath);
+                }
+            }
+
             using (var writer = new StreamWriter(destinationFilePath, false, Encoding.UTF8))
             {
                 writer.Write(RocketCodeGenerator.Generate(info, externalInfos));
