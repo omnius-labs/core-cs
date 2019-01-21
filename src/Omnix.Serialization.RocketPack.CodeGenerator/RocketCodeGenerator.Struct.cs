@@ -71,7 +71,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
                                 case MessageInfo messageInfo when (messageInfo.FormatType == MessageFormatType.Small):
                                     return typeInfo.TypeName + (typeInfo.IsNullable ? "?" : "");
                                 default:
-                                    throw new ArgumentException(nameof(type));
+                                    throw new ArgumentException($"Type \"{typeInfo.TypeName}\" was not found", nameof(type));
                             }
                         }
                     default:
@@ -131,7 +131,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
                                 case MessageInfo messageInfo when (messageInfo.FormatType == MessageFormatType.Small):
                                     return typeInfo.TypeName + (typeInfo.IsNullable ? "?" : "");
                                 default:
-                                    throw new ArgumentException(nameof(type));
+                                    throw new ArgumentException($"Type \"{typeInfo.TypeName}\" was not found", nameof(type));
                             }
                         }
                     default:
@@ -676,49 +676,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
                     {
                         w.WriteLine($"// {elementInfo.Name}");
 
-                        switch (elementInfo.Type)
-                        {
-                            case BoolTypeInfo typeInfo:
-                                w.WriteLine($"if (value.{elementInfo.Name} != default)");
-                                break;
-                            case IntTypeInfo typeInfo:
-                                w.WriteLine($"if (value.{elementInfo.Name} != default)");
-                                break;
-                            case FloatTypeInfo typeInfo:
-                                w.WriteLine($"if (value.{elementInfo.Name} != default)");
-                                break;
-                            case StringTypeInfo typeInfo:
-                                w.WriteLine($"if (value.{elementInfo.Name} != default)");
-                                break;
-                            case TimestampTypeInfo typeInfo:
-                                w.WriteLine($"if (value.{elementInfo.Name} != default)");
-                                break;
-                            case MemoryTypeInfo typeInfo when (typeInfo.IsUseMemoryPool):
-                                w.WriteLine($"if (!value.{elementInfo.Name}.IsEmpty)");
-                                break;
-                            case MemoryTypeInfo typeInfo when (!typeInfo.IsUseMemoryPool):
-                                w.WriteLine($"if (!value.{elementInfo.Name}.IsEmpty)");
-                                break;
-                            case ListTypeInfo typeInfo:
-                                w.WriteLine($"if (value.{elementInfo.Name}.Count != 0)");
-                                break;
-                            case MapTypeInfo typeInfo:
-                                w.WriteLine($"if (value.{elementInfo.Name}.Count != 0)");
-                                break;
-                            case CustomTypeInfo typeInfo:
-                                w.WriteLine($"if (value.{elementInfo.Name} != default)");
-                                break;
-                        }
-
-                        w.WriteLine("{");
-
-                        w.PushIndent();
-
                         this.Write_Formatter_Serialize_PropertyDef(w, "value." + elementInfo.Name, elementInfo.Type, 0);
-
-                        w.PopIndent();
-
-                        w.WriteLine("}");
                     }
 
                     w.PopIndent();

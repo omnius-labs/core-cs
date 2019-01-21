@@ -6,7 +6,7 @@ namespace Omnix.Serialization
 {
     // https://github.com/google/protobuf/blob/master/csharp/src/Google.Protobuf/WellKnownTypes/TimestampPartial.cs
 
-    public readonly struct Timestamp : IEquatable<Timestamp>
+    public readonly struct Timestamp : IEquatable<Timestamp>, IComparable<Timestamp>
     {
         public Timestamp(long seconds, int nanos)
         {
@@ -40,6 +40,19 @@ namespace Omnix.Serialization
         public bool Equals(Timestamp other)
         {
             return (this.Seconds == other.Seconds && this.Nanos == other.Nanos);
+        }
+
+        public int CompareTo(Timestamp other)
+        {
+            int result;
+
+            result = this.Seconds.CompareTo(other.Seconds);
+            if (result != 0) return result;
+
+            result = this.Nanos.CompareTo(other.Nanos);
+            if (result != 0) return result;
+
+            return 0;
         }
 
         public DateTime ToDateTime()

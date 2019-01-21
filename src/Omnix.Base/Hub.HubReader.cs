@@ -2,6 +2,7 @@
 using System.Buffers;
 using System.Collections.Generic;
 using System.IO.Pipelines;
+using System.Runtime.Serialization;
 using System.Text;
 
 namespace Omnix.Base
@@ -36,7 +37,7 @@ namespace Omnix.Base
             {
                 if (_sequence == null)
                 {
-                    if (!_pipeReader.TryRead(out var readResult)) throw new Exception();
+                    if (!_pipeReader.TryRead(out var readResult)) throw new HubReaderException("Read failed.");
 
                     _sequence = readResult.Buffer;
                     _sequencePosition = _sequence.Value.Start;
@@ -59,5 +60,12 @@ namespace Omnix.Base
                 _isCompleted = false;
             }
         }
+    }
+
+    public sealed class HubReaderException : Exception
+    {
+        public HubReaderException() { }
+        public HubReaderException(string message) : base(message) { }
+        public HubReaderException(string message, Exception innerException) : base(message, innerException) { }
     }
 }

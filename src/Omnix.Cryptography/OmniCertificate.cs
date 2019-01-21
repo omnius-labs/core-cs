@@ -34,7 +34,9 @@ namespace Omnix.Cryptography
         public OmniSignature GetOmniSignature()
         {
             if (_omniSignature == null)
-                _omniSignature = SignatureHelper.GetSignature(this);
+            {
+                _omniSignature = SignatureHelper.GetOmniSignature(this);
+            }
 
             return _omniSignature;
         }

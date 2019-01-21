@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace Omnix.Base
 {
-    public enum ServiceState
+    public enum ServiceStateType
     {
         Starting,
         Running,
@@ -21,6 +21,6 @@ namespace Omnix.Base
         public abstract ValueTask Stop(CancellationToken token = default);
         public abstract ValueTask Restart(CancellationToken token = default);
 
-        public abstract ServiceState State { get; }
+        public abstract ServiceStateType StateType { get; }
     }
 }
