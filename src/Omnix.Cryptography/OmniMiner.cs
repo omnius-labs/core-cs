@@ -16,7 +16,7 @@ namespace Omnix.Cryptography
 {
     public static class OmniMiner
     {
-        public static async ValueTask<OmniHashcash> Create(ReadOnlySequence<byte> sequence, OmniHashcashAlgorithmType hashcashAlgorithmType, int limit, TimeSpan timeout, CancellationToken token)
+        public static async ValueTask<OmniHashcash> Create(ReadOnlySequence<byte> sequence, ReadOnlyMemory<byte> key, OmniHashcashAlgorithmType hashcashAlgorithmType, int limit, TimeSpan timeout, CancellationToken token)
         {
             if (!EnumHelper.IsValid(hashcashAlgorithmType)) throw new ArgumentException(nameof(OmniHashcashAlgorithmType));
 
@@ -24,22 +24,25 @@ namespace Omnix.Cryptography
             {
                 if (hashcashAlgorithmType == OmniHashcashAlgorithmType.Sha2_256)
                 {
-                    var key = MinerHelper.Compute_OmniHashcash_Sha2_256(Sha2_256.ComputeHash(sequence), limit, timeout, token);
+                    var target = Hmac_Sha2_256.ComputeHash(sequence, key.Span);
+                    var hashcashKey = MinerHelper.Compute_OmniHashcash_Sha2_256(target, limit, timeout, token);
 
-                    return new OmniHashcash(OmniHashcashAlgorithmType.Sha2_256, key);
+                    return new OmniHashcash(OmniHashcashAlgorithmType.Sha2_256, hashcashKey);
                 }
 
                 throw new NotSupportedException(nameof(hashcashAlgorithmType));
             }, token);
         }
 
-        public static int Verify(OmniHashcash hashcash, ReadOnlySequence<byte> sequence)
+        public static uint Verify(OmniHashcash hashcash, ReadOnlySequence<byte> sequence, ReadOnlyMemory<byte> key)
         {
             if (hashcash is null) throw new ArgumentNullException(nameof(hashcash));
 
             if (hashcash.AlgorithmType == OmniHashcashAlgorithmType.Sha2_256)
             {
-                return MinerHelper.Verify_OmniHashcash_Sha2_256(hashcash.Key.Span, Sha2_256.ComputeHash(sequence));
+                var target = Hmac_Sha2_256.ComputeHash(sequence, key.Span);
+
+                return MinerHelper.Verify_OmniHashcash_Sha2_256(hashcash.Key.Span, target);
             }
 
             return 0;
@@ -128,7 +131,7 @@ namespace Omnix.Cryptography
                 }
             }
 
-            public static int Verify_OmniHashcash_Sha2_256(ReadOnlySpan<byte> key, ReadOnlySpan<byte> value)
+            public static uint Verify_OmniHashcash_Sha2_256(ReadOnlySpan<byte> key, ReadOnlySpan<byte> value)
             {
                 if (key == null) throw new ArgumentNullException(nameof(key));
                 if (key.Length != 32) throw new ArgumentOutOfRangeException(nameof(key));
@@ -146,7 +149,7 @@ namespace Omnix.Cryptography
                         result = Sha2_256.ComputeHash(buffer);
                     }
 
-                    int count = 0;
+                    uint count = 0;
 
                     for (int i = 0; i < 32; i++)
                     {
