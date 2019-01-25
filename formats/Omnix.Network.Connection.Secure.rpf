@@ -2,7 +2,6 @@ syntax = v1;
 
 using "Omnix.Cryptography.rpf";
 
-option csharp_using = " Omnix.Cryptography";
 option csharp_namespace = "Omnix.Network.Connection.Secure";
 
 enum SecureConnectionType : uint8 {

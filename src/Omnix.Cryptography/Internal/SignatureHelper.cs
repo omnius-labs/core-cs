@@ -16,59 +16,49 @@ namespace Omnix.Cryptography.Internal
     {
         private static readonly ThreadLocal<Encoding> _encoding = new ThreadLocal<Encoding>(() => new UTF8Encoding(false));
 
-        private static OmniHash CreateHash(string name, ReadOnlySpan<byte> publicKey, OmniHashAlgorithmType hashAlgorithmType)
+        private static OmniHash CreateOmniHash(string name, ReadOnlySpan<byte> publicKey, OmniHashAlgorithmType hashAlgorithmType)
         {
             if (name == null) throw new ArgumentNullException(nameof(name));
 
-            var pipe = new Pipe();
+            var hub = new Hub();
 
+            try
             {
-                var writer = new RocketPackWriter(pipe.Writer, BufferPool.Shared);
-
-                writer.Write(name);
-                writer.Write(publicKey);
-
-                pipe.Writer.Complete();
-            }
-
-            OmniHash omniHash;
-            {
-                pipe.Reader.TryRead(out var readResult);
-
-                using (var recyclableMemory = MemoryPool<byte>.Shared.Rent((int)readResult.Buffer.Length))
                 {
-                    readResult.Buffer.CopyTo(recyclableMemory.Memory.Span);
+                    var writer = new RocketPackWriter(hub.Writer, BufferPool.Shared);
 
-                    if (hashAlgorithmType == OmniHashAlgorithmType.Sha2_256)
-                    {
-                        using (var sha2_256 = SHA256.Create())
-                        {
-                            var result = new byte[32];
-                            if (!sha2_256.TryComputeHash(recyclableMemory.Memory.Span.Slice((int)readResult.Buffer.Length), result, out _)) throw new Exception();
+                    writer.Write(name);
+                    writer.Write(publicKey);
 
-                            omniHash = new OmniHash(hashAlgorithmType, result);
-                        }
-                    }
-                    else
-                    {
-                        throw new NotSupportedException();
-                    }
+                    hub.Writer.Complete();
                 }
 
-                pipe.Reader.Complete();
-            }
+                if (hashAlgorithmType == OmniHashAlgorithmType.Sha2_256)
+                {
+                    var result = new OmniHash(hashAlgorithmType, Sha2_256.ComputeHash(hub.Reader.GetSequence()));
+                    hub.Reader.Complete();
 
-            return omniHash;
+                    return result;
+                }
+                else
+                {
+                    throw new NotSupportedException();
+                }
+            }
+            finally
+            {
+                hub.Reset();
+            }
         }
 
-        public static OmniSignature GetSignature(OmniDigitalSignature digitalSignature)
+        public static OmniSignature GetOmniSignature(OmniDigitalSignature digitalSignature)
         {
             if (digitalSignature == null) throw new ArgumentNullException(nameof(digitalSignature));
             if (digitalSignature.Name == null) throw new ArgumentNullException(nameof(digitalSignature.Name));
 
             if (digitalSignature.AlgorithmType == OmniDigitalSignatureAlgorithmType.EcDsa_P521_Sha2_256)
             {
-                return new OmniSignature(digitalSignature.Name, CreateHash(digitalSignature.Name, digitalSignature.PublicKey.Span, OmniHashAlgorithmType.Sha2_256));
+                return new OmniSignature(digitalSignature.Name, CreateOmniHash(digitalSignature.Name, digitalSignature.PublicKey.Span, OmniHashAlgorithmType.Sha2_256));
             }
             else
             {
@@ -76,14 +66,14 @@ namespace Omnix.Cryptography.Internal
             }
         }
 
-        public static OmniSignature GetSignature(OmniCertificate certificate)
+        public static OmniSignature GetOmniSignature(OmniCertificate certificate)
         {
             if (certificate == null) throw new ArgumentNullException(nameof(certificate));
             if (certificate.Name == null) throw new ArgumentNullException(nameof(certificate.Name));
 
             if (certificate.AlgorithmType == OmniDigitalSignatureAlgorithmType.EcDsa_P521_Sha2_256)
             {
-                return new OmniSignature(certificate.Name, CreateHash(certificate.Name, certificate.PublicKey.Span, OmniHashAlgorithmType.Sha2_256));
+                return new OmniSignature(certificate.Name, CreateOmniHash(certificate.Name, certificate.PublicKey.Span, OmniHashAlgorithmType.Sha2_256));
             }
             else
             {

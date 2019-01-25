@@ -14,7 +14,7 @@ namespace Omnix.Base
         private Task _task;
         private CancellationTokenSource _tokenSource;
 
-        private ServiceState _state = ServiceState.Stopped;
+        private ServiceStateType _state = ServiceStateType.Stopped;
 
         private readonly AsyncLock _asyncLock = new AsyncLock();
         private volatile bool _disposed;
@@ -49,7 +49,7 @@ namespace Omnix.Base
             return _task?.Wait(timeout) ?? true;
         }
 
-        public override ServiceState State
+        public override ServiceStateType StateType
         {
             get
             {
@@ -59,8 +59,8 @@ namespace Omnix.Base
 
         internal void InternalStart()
         {
-            if (this.State != ServiceState.Stopped) return;
-            _state = ServiceState.Starting;
+            if (this.StateType != ServiceStateType.Stopped) return;
+            _state = ServiceStateType.Starting;
 
             _tokenSource = new CancellationTokenSource();
             _task = new Task(() =>
@@ -69,13 +69,13 @@ namespace Omnix.Base
             }, _tokenSource.Token, TaskCreationOptions.LongRunning);
             _task.Start();
 
-            _state = ServiceState.Running;
+            _state = ServiceStateType.Running;
         }
 
         internal void InternalStop()
         {
-            if (this.State != ServiceState.Running) return;
-            _state = ServiceState.Stopping;
+            if (this.StateType != ServiceStateType.Running) return;
+            _state = ServiceStateType.Stopping;
 
             _tokenSource.Cancel();
             _task.Wait();
@@ -86,7 +86,7 @@ namespace Omnix.Base
             _tokenSource.Dispose();
             _tokenSource = null;
 
-            _state = ServiceState.Stopped;
+            _state = ServiceStateType.Stopped;
         }
 
         public override async ValueTask Start(CancellationToken token = default)

@@ -28,6 +28,9 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
                 // 任意の名前空間をusingする。
                 hashSet.UnionWith(info.Options.Where(n => n.Name == "csharp_using").Select(n => n.Value.Trim()));
 
+                // ロードされた*.rpfファイルの名前空間をusingする
+                hashSet.UnionWith(externalInfos.SelectMany(n => n.Options.Where(m => m.Name == "csharp_namespace").Select(m => m.Value.Trim())));
+
                 var sortedList = hashSet.ToList();
                 sortedList.Sort();
 

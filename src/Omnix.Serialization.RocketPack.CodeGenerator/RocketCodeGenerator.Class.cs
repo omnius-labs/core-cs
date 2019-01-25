@@ -71,7 +71,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
                                 case MessageInfo messageInfo when (messageInfo.FormatType == MessageFormatType.Small):
                                     return typeInfo.TypeName + (typeInfo.IsNullable ? "?" : "");
                                 default:
-                                    throw new ArgumentException(nameof(type));
+                                    throw new ArgumentException($"Type \"{typeInfo.TypeName}\" was not found", nameof(type));
                             }
                         }
                     default:
@@ -131,7 +131,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
                                 case MessageInfo messageInfo when (messageInfo.FormatType == MessageFormatType.Small):
                                     return typeInfo.TypeName + (typeInfo.IsNullable ? "?" : "");
                                 default:
-                                    throw new ArgumentException(nameof(type));
+                                    throw new ArgumentException($"Type \"{typeInfo.TypeName}\" was not found", nameof(type));
                             }
                         }
                     default:
