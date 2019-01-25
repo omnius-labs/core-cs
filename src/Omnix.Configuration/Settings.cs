@@ -1,12 +1,16 @@
 using System;
 using System.IO;
+using System.IO.Compression;
 using Omnix.Base;
 using Omnix.Io;
+using Omnix.Serialization.RocketPack;
 
 namespace Omnix.Configuration
 {
     public class Settings
     {
+        private static NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
+
         private const int _bufferSize = 1024 * 256;
 
         public Settings(string path)
@@ -16,7 +20,7 @@ namespace Omnix.Configuration
 
         public string BasePath { get; }
 
-        static UnbufferedFileStream GetUniqueFileStream(string path)
+        private static UnbufferedFileStream GetUniqueFileStream(string path)
         {
             if (!File.Exists(path))
             {
@@ -61,70 +65,114 @@ namespace Omnix.Configuration
         }
 
         public T Load<T>(string name, Func<T> defaultValueFactory)
+            where T : RocketPackMessageBase<T>
         {
             return Load(BasePath, name, defaultValueFactory);
         }
 
+        public static T Load<T>(string directoryPath, string name)
+            where T : RocketPackMessageBase<T>
+        {
+            return Load(directoryPath, name, () => default(T));
+        }
+
         public T Load<T>(string name)
+            where T : RocketPackMessageBase<T>
         {
             return Load(BasePath, name, () => default(T));
         }
 
         public void Save<T>(string name, T value)
+            where T : RocketPackMessageBase<T>
         {
-            Settings.Save(BasePath, name, value, false);
+            Save(BasePath, name, value, false);
         }
 
         public void Save<T>(string name, T value, bool isTypeNameHandling)
+            where T : RocketPackMessageBase<T>
         {
-            Settings.Save(BasePath, name, value, isTypeNameHandling);
+            Save(BasePath, name, value, isTypeNameHandling);
         }
 
         public static T Load<T>(string directoryPath, string name, Func<T> defaultValueFactory)
+            where T : RocketPackMessageBase<T>
         {
             if (!Directory.Exists(directoryPath))
-                Directory.CreateDirectory(directoryPath);
-
-            foreach (string extension in new string[] { ".json.gz", ".json.gz.bak" })
             {
+                Directory.CreateDirectory(directoryPath);
+            }
+
+            foreach (string extension in new string[] { ".rpk.gz", ".rpk.gz.bak" })
+            {
+                string configPath = Path.Combine(directoryPath, name + extension);
+                var hub = new Hub();
+
                 try
                 {
-                    string configPath = Path.Combine(directoryPath, name + extension);
                     if (!File.Exists(configPath))
-                        continue;
-
-                    using (var stream = new UnbufferedFileStream(configPath, FileMode.Open, FileAccess.Read, FileShare.Read, FileOptions.None, BufferPool.Instance))
                     {
-                        return JsonNetUtils.Load<T>(stream);
+                        continue;
                     }
+
+                    using (var fileStream = new UnbufferedFileStream(configPath, FileMode.Open, FileAccess.Read, FileShare.Read, FileOptions.None, BufferPool.Shared))
+                    using (var gzipStream = new GZipStream(fileStream, CompressionMode.Decompress))
+                    {
+                        for (; ; )
+                        {
+                            var readLength = gzipStream.Read(hub.Writer.GetSpan(1024 * 4));
+                            if (readLength < 0) break;
+
+                            hub.Writer.Advance(readLength);
+                        }
+                    }
+
+                    hub.Writer.Complete();
+
+                    var result = RocketPackMessageBase<T>.Import(hub.Reader.GetSequence(), BufferPool.Shared);
+
+                    hub.Reader.Complete();
+
+                    return result;
                 }
                 catch (Exception e)
                 {
-                    Log.Warning(e);
+                    _logger.Error(e);
+                }
+                finally
+                {
+                    hub.Reset();
                 }
             }
 
             return defaultValueFactory();
         }
 
-        public static T Load<T>(string directoryPath, string name)
-        {
-            return Load(directoryPath, name, () => default(T));
-        }
 
         public static void Save<T>(string directoryPath, string name, T value, bool isTypeNameHandling)
+            where T : RocketPackMessageBase<T>
         {
             string uniquePath = null;
+            var hub = new Hub();
 
-            using (var stream = GetUniqueFileStream(Path.Combine(directoryPath, name + ".tmp")))
+            value.Export(hub.Writer, BufferPool.Shared);
+            hub.Writer.Complete();
+
+            using (var fileStream = GetUniqueFileStream(Path.Combine(directoryPath, name + ".tmp")))
+            using (var gzipStream = new GZipStream(fileStream, CompressionLevel.Fastest))
             {
-                uniquePath = stream.Name;
+                uniquePath = fileStream.Name;
 
-                JsonNetUtils.Save<T>(stream, value, isTypeNameHandling);
+                var sequence = hub.Reader.GetSequence();
+                var position = sequence.Start;
+
+                while (sequence.TryGet(ref position, out var memory))
+                {
+                    gzipStream.Write(memory.Span);
+                }
             }
 
-            string newPath = Path.Combine(directoryPath, name + ".json.gz");
-            string bakPath = Path.Combine(directoryPath, name + ".json.gz.bak");
+            string newPath = Path.Combine(directoryPath, name + ".rpk.gz");
+            string bakPath = Path.Combine(directoryPath, name + ".rpk.gz.bak");
 
             if (File.Exists(newPath))
             {

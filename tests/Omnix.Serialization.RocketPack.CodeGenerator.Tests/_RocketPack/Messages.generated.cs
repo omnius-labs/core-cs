@@ -795,138 +795,63 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator.Tests
                 if (rank > 256) throw new FormatException();
 
                 // X0
-                if (value.X0 != default)
-                {
-                    w.Write(value.X0);
-                }
+                w.Write(value.X0);
                 // X1
-                if (value.X1 != default)
-                {
-                    w.Write((long)value.X1);
-                }
+                w.Write((long)value.X1);
                 // X2
-                if (value.X2 != default)
-                {
-                    w.Write((long)value.X2);
-                }
+                w.Write((long)value.X2);
                 // X3
-                if (value.X3 != default)
-                {
-                    w.Write((long)value.X3);
-                }
+                w.Write((long)value.X3);
                 // X4
-                if (value.X4 != default)
-                {
-                    w.Write((long)value.X4);
-                }
+                w.Write((long)value.X4);
                 // X5
-                if (value.X5 != default)
-                {
-                    w.Write((ulong)value.X5);
-                }
+                w.Write((ulong)value.X5);
                 // X6
-                if (value.X6 != default)
-                {
-                    w.Write((ulong)value.X6);
-                }
+                w.Write((ulong)value.X6);
                 // X7
-                if (value.X7 != default)
-                {
-                    w.Write((ulong)value.X7);
-                }
+                w.Write((ulong)value.X7);
                 // X8
-                if (value.X8 != default)
-                {
-                    w.Write((ulong)value.X8);
-                }
+                w.Write((ulong)value.X8);
                 // X9
-                if (value.X9 != default)
-                {
-                    w.Write((long)value.X9);
-                }
+                w.Write((long)value.X9);
                 // X10
-                if (value.X10 != default)
-                {
-                    w.Write((long)value.X10);
-                }
+                w.Write((long)value.X10);
                 // X11
-                if (value.X11 != default)
-                {
-                    w.Write((long)value.X11);
-                }
+                w.Write((long)value.X11);
                 // X12
-                if (value.X12 != default)
-                {
-                    w.Write((long)value.X12);
-                }
+                w.Write((long)value.X12);
                 // X13
-                if (value.X13 != default)
-                {
-                    w.Write((ulong)value.X13);
-                }
+                w.Write((ulong)value.X13);
                 // X14
-                if (value.X14 != default)
-                {
-                    w.Write((ulong)value.X14);
-                }
+                w.Write((ulong)value.X14);
                 // X15
-                if (value.X15 != default)
-                {
-                    w.Write((ulong)value.X15);
-                }
+                w.Write((ulong)value.X15);
                 // X16
-                if (value.X16 != default)
-                {
-                    w.Write((ulong)value.X16);
-                }
+                w.Write((ulong)value.X16);
                 // X17
-                if (value.X17 != default)
-                {
-                    w.Write(value.X17);
-                }
+                w.Write(value.X17);
                 // X18
-                if (value.X18 != default)
-                {
-                    w.Write(value.X18);
-                }
+                w.Write(value.X18);
                 // X19
-                if (value.X19 != default)
-                {
-                    w.Write(value.X19);
-                }
+                w.Write(value.X19);
                 // X20
-                if (value.X20 != default)
-                {
-                    w.Write(value.X20);
-                }
+                w.Write(value.X20);
                 // X21
-                if (!value.X21.IsEmpty)
-                {
-                    w.Write(value.X21.Span);
-                }
+                w.Write(value.X21.Span);
                 // X22
-                if (!value.X22.IsEmpty)
-                {
-                    w.Write(value.X22.Span);
-                }
+                w.Write(value.X22.Span);
                 // X23
-                if (value.X23.Count != 0)
+                w.Write((ulong)value.X23.Count);
+                foreach (var n in value.X23)
                 {
-                    w.Write((ulong)value.X23.Count);
-                    foreach (var n in value.X23)
-                    {
-                        w.Write(n);
-                    }
+                    w.Write(n);
                 }
                 // X24
-                if (value.X24.Count != 0)
+                w.Write((ulong)value.X24.Count);
+                foreach (var n in value.X24)
                 {
-                    w.Write((ulong)value.X24.Count);
-                    foreach (var n in value.X24)
-                    {
-                        w.Write((ulong)n.Key);
-                        w.Write(n.Value);
-                    }
+                    w.Write((ulong)n.Key);
+                    w.Write(n.Value);
                 }
             }
 

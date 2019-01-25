@@ -17,6 +17,8 @@ namespace Omnix.Net.Upnp
 {
     public class UpnpClient : DisposableBase
     {
+        private static NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
+
         private string _contents;
         private Uri _location;
 
@@ -26,8 +28,6 @@ namespace Omnix.Net.Upnp
 
         private readonly static Regex _deviceTypeRegex = new Regex(@"<(\s*)deviceType((\s*)|(\s+)(.*?))>(\s*)urn:schemas-upnp-org:device:InternetGatewayDevice:1(\s*)</(\s*)deviceType(\s*)>", RegexOptions.Singleline | RegexOptions.IgnoreCase);
         private readonly static Regex _controlUrlRegex = new Regex(@"<(\s*)controlURL((\s*)|(\s+)(.*?))>(\s*)(?<url>.*?)(\s*)</(\s*)controlURL(\s*)>", RegexOptions.Singleline | RegexOptions.IgnoreCase);
-
-        private static NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
 
         public UpnpClient()
         {

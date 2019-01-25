@@ -14,7 +14,7 @@ namespace Omnix.Base
             : this(predicate, obj => obj.GetHashCode())
         {
         }
-        public GenericEqualityComparer(Func<T, T, bool> predicate, Func<T, int> gethash)
+        public GenericEqualityComparer(Func<T, T, bool> predicate, Func<T, int> getHashCode)
         {
             _predicate = predicate;
             _gethash = gethash;

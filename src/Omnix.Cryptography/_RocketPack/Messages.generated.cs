@@ -95,15 +95,9 @@ namespace Omnix.Cryptography
                 if (rank > 256) throw new FormatException();
 
                 // AlgorithmType
-                if (value.AlgorithmType != default)
-                {
-                    w.Write((ulong)value.AlgorithmType);
-                }
+                w.Write((ulong)value.AlgorithmType);
                 // Value
-                if (!value.Value.IsEmpty)
-                {
-                    w.Write(value.Value.Span);
-                }
+                w.Write(value.Value.Span);
             }
 
             public OmniHash Deserialize(RocketPackReader r, int rank)

@@ -122,7 +122,7 @@ namespace Omnix.Cryptography.Internal
                         crcStream.Read(orignalCrc, 0, orignalCrc.Length);
                     }
 
-                    if (!Unsafe.Equals(verifyCrc, orignalCrc))
+                    if (!BytesOperations.SequenceEqual(verifyCrc, orignalCrc))
                     {
                         throw new ArgumentException("Crc Error");
                     }

@@ -25,7 +25,7 @@ namespace Omnix.Correction
         private readonly object _lockObject = new object();
         private volatile bool _disposed;
 
-        public ReedSolomon8(int k, int n, int threadCount, BufferPool bufferPool)
+        public ReedSolomon8(int k, int n, BufferPool bufferPool)
         {
             _k = k;
             _n = n;
