@@ -15,10 +15,13 @@ namespace Omnix.Cryptography.Tests
         {
             var random = new Random();
             var value = new byte[1024];
-            random.NextBytes(value);
+            var key = new byte[1024];
 
-            var hashcash = await OmniMiner.Create(new ReadOnlySequence<byte>(value), OmniHashcashAlgorithmType.Sha2_256, 1, TimeSpan.FromSeconds(10), CancellationToken.None);
-            var cost = OmniMiner.Verify(hashcash, new ReadOnlySequence<byte>(value));
+            random.NextBytes(value);
+            random.NextBytes(key);
+
+            var hashcash = await OmniMiner.Create(new ReadOnlySequence<byte>(value), key, OmniHashcashAlgorithmType.Sha2_256, 1, TimeSpan.FromSeconds(10), CancellationToken.None);
+            var cost = OmniMiner.Verify(hashcash, new ReadOnlySequence<byte>(value), key);
 
             Assert.True(cost >= 1);
         }
