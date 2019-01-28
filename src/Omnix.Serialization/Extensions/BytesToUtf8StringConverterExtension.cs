@@ -68,32 +68,32 @@ namespace Omnix.Serialization.Extensions
 
         public static byte[] StringToBytes(this IBytesToUtf8StringConverter converter, string text)
         {
-            var hub = new Hub();
-            converter.TryDecode(text, hub.Writer);
-            hub.Writer.Complete();
+            using (var hub = new Hub())
+            {
+                converter.TryDecode(text, hub.Writer);
+                hub.Writer.Complete();
 
-            var result = new byte[hub.Writer.BytesWritten];
-            hub.Reader.GetSequence().CopyTo(result);
+                var result = new byte[hub.Writer.BytesWritten];
+                hub.Reader.GetSequence().CopyTo(result);
+                hub.Reader.Complete();
 
-            hub.Reader.Complete();
-            hub.Reset();
-
-            return result;
+                return result;
+            }
         }
 
         public static byte[] Utf8StringToBytes(this IBytesToUtf8StringConverter converter, ReadOnlySpan<byte> text)
         {
-            var hub = new Hub();
-            converter.TryDecode(text, hub.Writer);
-            hub.Writer.Complete();
+            using (var hub = new Hub())
+            {
+                converter.TryDecode(text, hub.Writer);
+                hub.Writer.Complete();
 
-            var result = new byte[hub.Writer.BytesWritten];
-            hub.Reader.GetSequence().CopyTo(result);
+                var result = new byte[hub.Writer.BytesWritten];
+                hub.Reader.GetSequence().CopyTo(result);
+                hub.Reader.Complete();
 
-            hub.Reader.Complete();
-            hub.Reset();
-
-            return result;
+                return result;
+            }
         }
     }
 }

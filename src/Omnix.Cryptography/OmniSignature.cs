@@ -24,9 +24,9 @@ namespace Omnix.Cryptography
                 string name = item.Substring(0, index);
 
                 OmniHash omniHash;
-                {
-                    var hub = new Hub();
 
+                using (var hub = new Hub())
+                {
                     // @以降の文字列をデコードし、hubへ書き込む。
                     OmniBase.TryDecode(item.Substring(index + 1), hub.Writer);
                     hub.Writer.Complete();
@@ -34,8 +34,6 @@ namespace Omnix.Cryptography
                     // hubからHash情報を読み取る。
                     omniHash = OmniHash.Import(hub.Reader.GetSequence(), BufferPool.Shared);
                     hub.Reader.Complete();
-
-                    hub.Reset();
                 }
 
                 return new OmniSignature(name, omniHash);
@@ -53,9 +51,9 @@ namespace Omnix.Cryptography
             if (_toString == null)
             {
                 string hashString;
-                {
-                    var hub = new Hub();
 
+                using (var hub = new Hub())
+                {
                     // Hash情報をhubへ書き込む。
                     this.Hash.Export(hub.Writer, BufferPool.Shared);
                     hub.Writer.Complete();
@@ -63,8 +61,6 @@ namespace Omnix.Cryptography
                     // hubからHash情報を読み込み、Base58Btcへ変換する。
                     hashString = OmniBase.ToBase58BtcString(hub.Reader.GetSequence());
                     hub.Reader.Complete();
-
-                    hub.Reset();
                 }
 
                 _toString = StringHelper.Normalize(this.Name) + "@" + hashString;

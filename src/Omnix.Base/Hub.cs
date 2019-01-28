@@ -5,11 +5,12 @@ using System.Text;
 
 namespace Omnix.Base
 {
-    public sealed partial class Hub
+    public sealed partial class Hub : IDisposable
     {
         private Pipe _pipe;
         private readonly HubReader _hubReader;
         private readonly HubWriter _hubWriter;
+        private volatile bool _disposed;
 
         public Hub()
             : this(new Pipe())
@@ -35,6 +36,14 @@ namespace Omnix.Base
 
             _hubReader.Reset();
             _hubWriter.Reset();
+        }
+
+        public void Dispose()
+        {
+            if (_disposed) return;
+            _disposed = true;
+
+            this.Reset();
         }
     }
 }

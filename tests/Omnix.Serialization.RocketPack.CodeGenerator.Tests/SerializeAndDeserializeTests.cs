@@ -43,16 +43,17 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator.Tests
             x22.Memory.Span[0] = 1;
             IList<string> x23 = new string[] { "1" };
             IDictionary<byte, string> x24 = new Dictionary<byte, string>() { { 1, "1" } };
-            var message = new HelloMessage(x0, x1, x2, x3, x4, x5, x6, x7, x8, x9, x10, x11, x12, x13, x14, x15, x16, x17, x18, x19, x20, x21, x22, x23, x24);
 
-            var hub = new Hub();
-            message.Export(hub.Writer, BufferPool.Shared);
-            hub.Writer.Complete();
-            var message2 = HelloMessage.Import(hub.Reader.GetSequence(), BufferPool.Shared);
-            hub.Reader.Complete();
-            hub.Reset();
+            using (var hub = new Hub())
+            {
+                var message = new HelloMessage(x0, x1, x2, x3, x4, x5, x6, x7, x8, x9, x10, x11, x12, x13, x14, x15, x16, x17, x18, x19, x20, x21, x22, x23, x24);
+                message.Export(hub.Writer, BufferPool.Shared);
+                hub.Writer.Complete();
+                var message2 = HelloMessage.Import(hub.Reader.GetSequence(), BufferPool.Shared);
+                hub.Reader.Complete();
 
-            Assert.True(message == message2);
+                Assert.True(message == message2);
+            }
         }
 
         [Fact]
@@ -64,38 +65,38 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator.Tests
 
             for (int count = 0; count < 1024; count++)
             {
-                var items = new List<IntPropertiesMessage>();
-                for (int i = 0; i < 1000; i++)
+                using (var hub = new Hub())
                 {
-                    var message = new IntPropertiesMessage(
-                            (uint)random.Next(),
-                            (uint)random.Next(),
-                            (uint)random.Next(),
-                            (uint)random.Next(),
-                            (uint)random.Next(),
-                            (uint)random.Next(),
-                            (uint)random.Next(),
-                            (uint)random.Next(),
-                            (uint)random.Next());
+                    var items = new List<IntPropertiesMessage>();
+                    for (int i = 0; i < 1000; i++)
+                    {
+                        var message = new IntPropertiesMessage(
+                                (uint)random.Next(),
+                                (uint)random.Next(),
+                                (uint)random.Next(),
+                                (uint)random.Next(),
+                                (uint)random.Next(),
+                                (uint)random.Next(),
+                                (uint)random.Next(),
+                                (uint)random.Next(),
+                                (uint)random.Next());
 
-                    items.Add(message);
+                        items.Add(message);
+                    }
+
+                    list1 = new IntPropertiesListMessage(items);
+
+                    list1.Export(hub.Writer, BufferPool.Shared);
+                    hub.Writer.Complete();
+
+                    var list1_bytes = new byte[hub.Writer.BytesWritten];
+                    hub.Reader.GetSequence().CopyTo(list1_bytes);
+                    hub.Reader.Complete();
+
+                    list2 = IntPropertiesListMessage.Import(new ReadOnlySequence<byte>(list1_bytes), BufferPool.Shared);
+
+                    Assert.Equal(list1, list2);
                 }
-
-                list1 = new IntPropertiesListMessage(items);
-
-                var hub = new Hub();
-
-                list1.Export(hub.Writer, BufferPool.Shared);
-                hub.Writer.Complete();
-
-                var list1_bytes = new byte[hub.Writer.BytesWritten];
-                hub.Reader.GetSequence().CopyTo(list1_bytes);
-
-                hub.Reader.Complete();
-                hub.Reset();
-                list2 = IntPropertiesListMessage.Import(new ReadOnlySequence<byte>(list1_bytes), BufferPool.Shared);
-
-                Assert.Equal(list1, list2);
             }
         }
 
@@ -120,32 +121,31 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator.Tests
 
             for (int count = 0; count < 1024; count++)
             {
-                StringPropertiesListMessage list1, list2;
-
-                var message = new StringPropertiesMessage(GetRandomString(), GetRandomString(), GetRandomString());
-
-                var items = new List<StringPropertiesMessage>();
-                for (int i = 0; i < 1000; i++)
+                using (var hub = new Hub())
                 {
-                    items.Add(message);
+                    StringPropertiesListMessage list1, list2;
+
+                    var message = new StringPropertiesMessage(GetRandomString(), GetRandomString(), GetRandomString());
+
+                    var items = new List<StringPropertiesMessage>();
+                    for (int i = 0; i < 1000; i++)
+                    {
+                        items.Add(message);
+                    }
+
+                    list1 = new StringPropertiesListMessage(items);
+
+                    list1.Export(hub.Writer, BufferPool.Shared);
+                    hub.Writer.Complete();
+
+                    var list1_bytes = new byte[hub.Writer.BytesWritten];
+                    hub.Reader.GetSequence().CopyTo(list1_bytes);
+                    hub.Reader.Complete();
+
+                    list2 = StringPropertiesListMessage.Import(new ReadOnlySequence<byte>(list1_bytes), BufferPool.Shared);
+
+                    Assert.Equal(list1, list2);
                 }
-
-                list1 = new StringPropertiesListMessage(items);
-
-                var hub = new Hub();
-
-                list1.Export(hub.Writer, BufferPool.Shared);
-                hub.Writer.Complete();
-
-                var list1_bytes = new byte[hub.Writer.BytesWritten];
-                hub.Reader.GetSequence().CopyTo(list1_bytes);
-
-                hub.Reader.Complete();
-                hub.Reset();
-
-                list2 = StringPropertiesListMessage.Import(new ReadOnlySequence<byte>(list1_bytes), BufferPool.Shared);
-
-                Assert.Equal(list1, list2);
             }
         }
     }

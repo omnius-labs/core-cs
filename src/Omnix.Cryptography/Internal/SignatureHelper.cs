@@ -20,9 +20,7 @@ namespace Omnix.Cryptography.Internal
         {
             if (name == null) throw new ArgumentNullException(nameof(name));
 
-            var hub = new Hub();
-
-            try
+            using (var hub = new Hub())
             {
                 {
                     var writer = new RocketPackWriter(hub.Writer, BufferPool.Shared);
@@ -44,10 +42,6 @@ namespace Omnix.Cryptography.Internal
                 {
                     throw new NotSupportedException();
                 }
-            }
-            finally
-            {
-                hub.Reset();
             }
         }
 

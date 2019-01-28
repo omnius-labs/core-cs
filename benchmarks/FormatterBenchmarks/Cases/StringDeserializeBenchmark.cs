@@ -53,6 +53,7 @@ namespace FormatterBenchmarks.Cases
                 _messagePack_Bytes = MessagePack.MessagePackSerializer.Serialize(list);
             }
 
+            using (var hub = new Hub())
             {
                 var random = new Random(0);
 
@@ -68,8 +69,6 @@ namespace FormatterBenchmarks.Cases
 
                 var list = new RocketPack_StringPropertiesListMessage(items);
 
-                var hub = new Hub();
-
                 list.Export(hub.Writer, BufferPool.Shared);
                 hub.Writer.Complete();
 
@@ -77,7 +76,6 @@ namespace FormatterBenchmarks.Cases
                 hub.Reader.GetSequence().CopyTo(_rocketPack_Bytes);
 
                 hub.Reader.Complete();
-                hub.Reset();
             }
         }
 
