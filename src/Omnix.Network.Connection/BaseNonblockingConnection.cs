@@ -276,19 +276,19 @@ namespace Omnix.Network.Connection
 
                 if (sendHeaderHub != null)
                 {
-                    sendHeaderHub.Reset();
+                    sendHeaderHub.Dispose();
                     _sendHeaderHub = null;
                 }
 
                 if (sendContentHub != null)
                 {
-                    sendContentHub.Reset();
+                    sendContentHub.Dispose();
                     _sendContentHub = null;
                 }
 
                 if (receiveHeaderHub != null)
                 {
-                    receiveHeaderHub.Reset();
+                    receiveHeaderHub.Dispose();
                     _receiveHeaderHub = null;
                 }
 

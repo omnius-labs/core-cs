@@ -25,11 +25,10 @@ namespace FormatterBenchmarks.Cases
                 _messagePack_Bytes = MessagePack.MessagePackSerializer.Serialize(message);
             }
 
+            using (var hub = new Hub())
             {
                 var memoryOwner = BufferPool.Create().Rent(1024 * 1024);
                 var message = new RocketPack_BytesMessage(memoryOwner);
-
-                var hub = new Hub();
 
                 message.Export(hub.Writer, BufferPool.Shared);
                 hub.Writer.Complete();
@@ -38,7 +37,6 @@ namespace FormatterBenchmarks.Cases
                 hub.Reader.GetSequence().CopyTo(_rocketPack_Bytes);
 
                 hub.Reader.Complete();
-                hub.Reset();
             }
         }
 
