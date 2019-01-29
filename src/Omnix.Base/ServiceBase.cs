@@ -17,9 +17,9 @@ namespace Omnix.Base
     /// </summary>
     public abstract class ServiceBase : DisposableBase
     {
-        public abstract ValueTask Start(CancellationToken token = default);
-        public abstract ValueTask Stop(CancellationToken token = default);
-        public abstract ValueTask Restart(CancellationToken token = default);
+        public abstract ValueTask Start();
+        public abstract ValueTask Stop();
+        public abstract ValueTask Restart();
 
         public abstract ServiceStateType StateType { get; }
     }
