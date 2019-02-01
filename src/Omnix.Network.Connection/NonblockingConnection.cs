@@ -12,7 +12,7 @@ using Omnix.Serialization;
 
 namespace Omnix.Network.Connection
 {
-    public sealed class BaseNonblockingConnection : DisposableBase, INonblockingConnection
+    public sealed class NonblockingConnection : DisposableBase, IConnection
     {
         private Cap _cap;
         private readonly int _maxReceiveByteCount;
@@ -36,7 +36,7 @@ namespace Omnix.Network.Connection
 
         private volatile bool _disposed;
 
-        public BaseNonblockingConnection(Cap cap, int maxReceiveByteCount, BufferPool bufferPool)
+        public NonblockingConnection(Cap cap, int maxReceiveByteCount, BufferPool bufferPool)
         {
             if (cap == null) throw new ArgumentNullException(nameof(cap));
             if (cap.IsBlocking == true) throw new ArgumentException($"{nameof(cap)} is not nonblocking", nameof(cap));
@@ -229,6 +229,13 @@ namespace Omnix.Network.Connection
             return true;
         }
 
+        public void Enqueue(Action<IBufferWriter<byte>> action)
+        {
+            _sendSemaphoreSlim.Wait();
+
+            this.InternalEnqueue(action);
+        }
+
         public void InternalDequeue(Action<ReadOnlySequence<byte>> action)
         {
             var sequence = _receiveContentHub.Reader.GetSequence();
@@ -253,6 +260,13 @@ namespace Omnix.Network.Connection
             return true;
         }
 
+        public void Dequeue(Action<ReadOnlySequence<byte>> action)
+        {
+            _receiveSemaphoreSlim.Wait();
+
+            this.InternalDequeue(action);
+        }
+
         protected override void Dispose(bool disposing)
         {
             if (_disposed) return;
@@ -260,49 +274,23 @@ namespace Omnix.Network.Connection
 
             if (disposing)
             {
-                var cap = _cap;
-                var sendHeaderHub = _sendHeaderHub;
-                var sendContentHub = _sendContentHub;
-                var receiveHeaderHub = _receiveContentHub;
-                var receiveContentHub = _receiveContentHub;
-                var sendSemaphoreSlim = _sendSemaphoreSlim;
-                var receiveSemaphoreSlim = _receiveSemaphoreSlim;
+                _cap?.Dispose();
+                _cap = null;
 
-                if (cap != null)
-                {
-                    cap.Dispose();
-                    _cap = null;
-                }
+                _sendHeaderHub?.Dispose();
+                _sendHeaderHub = null;
 
-                if (sendHeaderHub != null)
-                {
-                    sendHeaderHub.Dispose();
-                    _sendHeaderHub = null;
-                }
+                _sendContentHub?.Dispose();
+                _sendContentHub = null;
 
-                if (sendContentHub != null)
-                {
-                    sendContentHub.Dispose();
-                    _sendContentHub = null;
-                }
+                _receiveHeaderHub?.Dispose();
+                _receiveHeaderHub = null;
 
-                if (receiveHeaderHub != null)
-                {
-                    receiveHeaderHub.Dispose();
-                    _receiveHeaderHub = null;
-                }
+                _sendSemaphoreSlim?.Dispose();
+                _sendSemaphoreSlim = null;
 
-                if (sendSemaphoreSlim != null)
-                {
-                    sendSemaphoreSlim.Dispose();
-                    _sendSemaphoreSlim = null;
-                }
-
-                if (receiveSemaphoreSlim != null)
-                {
-                    receiveSemaphoreSlim.Dispose();
-                    _receiveSemaphoreSlim = null;
-                }
+                _receiveSemaphoreSlim?.Dispose();
+                _receiveSemaphoreSlim = null;
             }
         }
     }

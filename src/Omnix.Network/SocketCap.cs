@@ -81,15 +81,8 @@ namespace Omnix.Network
 
             if (disposing)
             {
-                try
-                {
-                    _socket?.Dispose();
-                    _socket = null;
-                }
-                catch (Exception)
-                {
-
-                }
+                _socket?.Dispose();
+                _socket = null;
 
                 _isConnected = false;
             }
