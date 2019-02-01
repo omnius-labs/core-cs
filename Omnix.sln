@@ -62,6 +62,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Omnix.Cryptography.Hashcash
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Omnix.Avalonia", "src\Omnix.Avalonia\Omnix.Avalonia.csproj", "{3B17B0FA-BF3F-4F44-8DF2-29203909557C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Omnix.Messaging", "src\Omnix.Messaging\Omnix.Messaging.csproj", "{B4259EB6-2994-4CB2-B428-C376FE2A215D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -164,6 +166,10 @@ Global
 		{3B17B0FA-BF3F-4F44-8DF2-29203909557C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3B17B0FA-BF3F-4F44-8DF2-29203909557C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3B17B0FA-BF3F-4F44-8DF2-29203909557C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B4259EB6-2994-4CB2-B428-C376FE2A215D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B4259EB6-2994-4CB2-B428-C376FE2A215D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B4259EB6-2994-4CB2-B428-C376FE2A215D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B4259EB6-2994-4CB2-B428-C376FE2A215D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -193,6 +199,7 @@ Global
 		{69AC7FCB-64B5-4E88-A5D8-7E326AFE67C8} = {D3C36B78-868D-4E27-910A-23FD8DB73F00}
 		{6B302E32-78BD-4FAF-8244-AD758C589710} = {28FCC997-2EE4-4D18-BAA0-96118DFA47BB}
 		{3B17B0FA-BF3F-4F44-8DF2-29203909557C} = {28FCC997-2EE4-4D18-BAA0-96118DFA47BB}
+		{B4259EB6-2994-4CB2-B428-C376FE2A215D} = {28FCC997-2EE4-4D18-BAA0-96118DFA47BB}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {2CD56E0F-71CF-44BB-848D-F2A9EA663E45}

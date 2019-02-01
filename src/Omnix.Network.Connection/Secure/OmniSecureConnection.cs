@@ -17,9 +17,9 @@ using System.Buffers.Binary;
 
 namespace Omnix.Network.Connection.Secure
 {
-    public sealed class OmniSecureConnection : DisposableBase, INonblockingConnection
+    public sealed class OmniSecureConnection : DisposableBase, IConnection
     {
-        private readonly INonblockingConnection _connection;
+        private readonly IConnection _connection;
         private readonly SecureConnectionType _type;
         private readonly IReadOnlyList<string> _passwords;
         private readonly BufferPool _bufferPool;
@@ -35,13 +35,13 @@ namespace Omnix.Network.Connection.Secure
 
         private volatile bool _disposed;
 
-        public OmniSecureConnection(INonblockingConnection connection, SecureConnectionType type, BufferPool bufferPool)
+        public OmniSecureConnection(IConnection connection, SecureConnectionType type, BufferPool bufferPool)
             : this(connection, type, Enumerable.Empty<string>(), bufferPool)
         {
 
         }
 
-        public OmniSecureConnection(INonblockingConnection connection, SecureConnectionType type, IEnumerable<string> passwords, BufferPool bufferPool)
+        public OmniSecureConnection(IConnection connection, SecureConnectionType type, IEnumerable<string> passwords, BufferPool bufferPool)
         {
             if (connection == null) throw new ArgumentNullException(nameof(connection));
             if (!EnumHelper.IsValid(type)) throw new ArgumentException(nameof(type));
@@ -54,15 +54,14 @@ namespace Omnix.Network.Connection.Secure
             _bufferPool = bufferPool;
         }
 
+        public IConnection BaseConnection => _connection;
+
         public bool IsConnected => _connection.IsConnected;
         public long ReceivedByteCount => _connection.ReceivedByteCount;
         public long SentByteCount => _connection.SentByteCount;
 
         public SecureConnectionType Type => _type;
         public IReadOnlyList<string> MatchedPasswords => _matchedPasswords;
-
-        public int Send(int limit) => _connection.Send(limit);
-        public int Receive(int limit) => _connection.Receive(limit);
 
         public async ValueTask Handshake(CancellationToken token = default)
         {
@@ -102,10 +101,10 @@ namespace Omnix.Network.Connection.Secure
                 if (hashSet.Contains(item)) return item;
             }
 
-            throw new SecureConnectionException($"Overlap enums of {nameof(T)} could not be found.");
+            throw new SecureConnectionException($"Overlap enum of {nameof(T)} could not be found.");
         }
 
-        private async ValueTask Hello(INonblockingConnection connection, CancellationToken token)
+        private async ValueTask Hello(IConnection connection, CancellationToken token)
         {
             if (_type == SecureConnectionType.Connect)
             {
@@ -133,7 +132,7 @@ namespace Omnix.Network.Connection.Secure
             }
         }
 
-        private async ValueTask HandshakeV1(INonblockingConnection connection, CancellationToken token)
+        private async ValueTask HandshakeV1(IConnection connection, CancellationToken token)
         {
             V1.SecureConnectionProfileMessage myProfileMessage = null;
             V1.SecureConnectionProfileMessage otherProfileMessage = null;
@@ -205,7 +204,7 @@ namespace Omnix.Network.Connection.Secure
                         // 受信
                         await connection.DequeueAsync((sequence) => otherAgreementPublicKey = OmniAgreementPublicKey.Import(sequence, _bufferPool), token);
 
-                        if ((DateTime.UtcNow - otherAgreementPublicKey.CreationTime.ToDateTime()).TotalMinutes > 30) throw new SecureConnectionException("Agreemet public key has Expired.");
+                        if ((DateTime.UtcNow - otherAgreementPublicKey.CreationTime.ToDateTime()).TotalMinutes > 30) throw new SecureConnectionException("Agreement public key has Expired.");
                     }
 
                     if (_passwords.Count > 0)
@@ -286,7 +285,7 @@ namespace Omnix.Network.Connection.Secure
                     Pbkdf2_Sha2_256.TryComputeHash(secret.Span, xorSessionId, 1024, kdfResult);
                 }
 
-                using (var stream = new MemoryStream(kdfResult))  
+                using (var stream = new MemoryStream(kdfResult))
                 {
                     if (_type == SecureConnectionType.Connect)
                     {
@@ -452,6 +451,11 @@ namespace Omnix.Network.Connection.Secure
             throw new SecureConnectionException("Conversion failed.");
         }
 
+        public void Enqueue(Action<IBufferWriter<byte>> action)
+        {
+            _connection.Enqueue((bufferWriter) => this.InternalEnqueue(bufferWriter, action));
+        }
+
         public async ValueTask EnqueueAsync(Action<IBufferWriter<byte>> action, CancellationToken token = default)
         {
             await _connection.EnqueueAsync((bufferWriter) => this.InternalEnqueue(bufferWriter, action), token);
@@ -569,6 +573,11 @@ namespace Omnix.Network.Connection.Secure
             throw new SecureConnectionException("Conversion failed.");
         }
 
+        public void Dequeue(Action<ReadOnlySequence<byte>> action)
+        {
+            _connection.Dequeue((sequence) => this.InternalDequeue(sequence, action));
+        }
+
         public async ValueTask DequeueAsync(Action<ReadOnlySequence<byte>> action, CancellationToken token = default)
         {
             await _connection.DequeueAsync((sequence) => this.InternalDequeue(sequence, action), token);
@@ -598,19 +607,8 @@ namespace Omnix.Network.Connection.Secure
 
             if (disposing)
             {
-                if (_random != null)
-                {
-                    try
-                    {
-                        _random.Dispose();
-                    }
-                    catch (Exception)
-                    {
-
-                    }
-
-                    _random = null;
-                }
+                _random?.Dispose();
+                _random = null;
             }
         }
 

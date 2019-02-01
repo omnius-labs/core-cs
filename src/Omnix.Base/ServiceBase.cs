@@ -15,7 +15,7 @@ namespace Omnix.Base
     /// <summary>
     /// Statefulなクラスの実行状態を管理します。
     /// </summary>
-    public abstract class ServiceBase : DisposableBase
+    public abstract class ServiceBase : DisposableBase, IService
     {
         public abstract ValueTask Start();
         public abstract ValueTask Stop();
