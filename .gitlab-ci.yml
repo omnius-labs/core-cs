@@ -2,13 +2,30 @@ stages:
   - test
 
 test_linux_job:
-  image: microsoft/dotnet:2.1-sdk
   stage: test
+  tags: 
+    - ubuntu
   only:
     - master
   script: 
+    - cd "$CI_PROJECT_DIR"
+    - dotnet test
     - sh run-test.sh
-    - mv tests/TestResults/html/ public
   artifacts:
     paths:
-      - public
+      - tests/TestResults
+
+test_windows_job:
+  stage: test
+  tags: 
+    - windows
+  only:
+    - master
+  script: 
+    - chcp 65001
+    - cd "%CI_PROJECT_DIR%"
+    - dotnet test
+    - call run-test.cmd
+  artifacts:
+    paths:
+      - tests/TestResults
