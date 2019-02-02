@@ -30,8 +30,8 @@ namespace Omnix.Network.Connection.Tests
 
             var (socket1, socket2) = SocketHelpers.GetSockets();
 
-            using (var baseConnection1 = new BaseNonblockingConnection(new SocketCap(socket1, false), 1024 * 1024 * 256, BufferPool.Shared))
-            using (var baseConnection2 = new BaseNonblockingConnection(new SocketCap(socket2, false), 1024 * 1024 * 256, BufferPool.Shared))
+            using (var baseConnection1 = new NonblockingConnection(new SocketCap(socket1, false), 1024 * 1024 * 256, BufferPool.Shared))
+            using (var baseConnection2 = new NonblockingConnection(new SocketCap(socket2, false), 1024 * 1024 * 256, BufferPool.Shared))
             using (var connection1 = new OmniSecureConnection(baseConnection1, SecureConnectionType.Connect, BufferPool.Shared))
             using (var connection2 = new OmniSecureConnection(baseConnection2, SecureConnectionType.Accept, BufferPool.Shared))
             {
@@ -44,10 +44,10 @@ namespace Omnix.Network.Connection.Tests
                     {
                         Thread.Sleep(100);
 
-                        connection1.Send(1024 * 1024);
-                        connection1.Receive(1024 * 1024);
-                        connection2.Send(1024 * 1024);
-                        connection2.Receive(1024 * 1024);
+                        baseConnection1.Send(1024 * 1024);
+                        baseConnection1.Receive(1024 * 1024);
+                        baseConnection2.Send(1024 * 1024);
+                        baseConnection2.Receive(1024 * 1024);
                     }
                 }
 
@@ -72,10 +72,10 @@ namespace Omnix.Network.Connection.Tests
                     {
                         Thread.Sleep(100);
 
-                        connection1.Send(1024 * 1024);
-                        connection1.Receive(1024 * 1024);
-                        connection2.Send(1024 * 1024);
-                        connection2.Receive(1024 * 1024);
+                        baseConnection1.Send(1024 * 1024);
+                        baseConnection1.Receive(1024 * 1024);
+                        baseConnection2.Send(1024 * 1024);
+                        baseConnection2.Receive(1024 * 1024);
                     }
 
                     Assert.True(BytesOperations.SequenceEqual(buffer1, buffer2));

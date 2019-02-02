@@ -22,9 +22,9 @@ namespace Omnix.Base.Tests
 
                 Assert.False(flag);
 
-                await taskManager.Start();
+                taskManager.Start();
 
-                taskManager.Wait();
+                await taskManager.Task;
 
                 Assert.True(flag);
 
@@ -42,17 +42,15 @@ namespace Omnix.Base.Tests
 
                 Assert.False(flag);
 
-                await taskManager.Start();
+                taskManager.Start();
 
-                var task = Task.Run(async () =>
+                var task = Task.Run(() =>
                 {
                     Thread.Sleep(1000);
-                    await taskManager.Stop();
+                    taskManager.Cancel();
                 });
 
-                taskManager.Wait();
-
-                await task;
+                await taskManager.Task;
 
                 Assert.True(flag);
 

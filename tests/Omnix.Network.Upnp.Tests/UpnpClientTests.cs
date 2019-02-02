@@ -15,9 +15,15 @@ namespace Omnix.Network.Upnp.Tests
             {
                 var upnp = new UpnpClient();
 
-                await upnp.Connect(tokenSource.Token);
-
-                if (!upnp.IsConnected) return;
+                try
+                {
+                    await upnp.Connect(tokenSource.Token);
+                }
+                catch (Exception)
+                {
+                    // UPnP‚ÉÚ‘±‚Å‚«‚È‚¢ŠÂ‹«‚¾‚Á‚½ê‡
+                    return;
+                }
 
                 var ip = await upnp.GetExternalIpAddress(tokenSource.Token);
                 Assert.True(ip != null);
