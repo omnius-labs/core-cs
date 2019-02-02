@@ -1,0 +1,10 @@
+stages:
+  - test
+
+test_linux_job:
+  image: microsoft/dotnet:2.1-sdk
+  stage: test
+  script: sh run-test.sh
+  artifacts:
+    paths:
+      - tests/TestResults/html/
