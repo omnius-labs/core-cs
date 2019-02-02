@@ -4,7 +4,11 @@ stages:
 test_linux_job:
   image: microsoft/dotnet:2.1-sdk
   stage: test
-  script: sh run-test.sh
+  only:
+    - master
+  script: 
+    - sh run-test.sh
+    - mv tests/TestResults/html/ public
   artifacts:
     paths:
-      - tests/TestResults/html/
+      - public
