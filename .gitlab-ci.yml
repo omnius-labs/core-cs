@@ -5,8 +5,6 @@ test_linux_job:
   stage: test
   tags: 
     - ubuntu
-  only:
-    - master
   script: 
     - cd "$CI_PROJECT_DIR"
     - dotnet test
@@ -19,8 +17,6 @@ test_windows_job:
   stage: test
   tags: 
     - windows
-  only:
-    - master
   script: 
     - chcp 65001
     - cd "%CI_PROJECT_DIR%"

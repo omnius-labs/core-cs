@@ -20,7 +20,7 @@ namespace Omnix.Cryptography.Tests
             random.NextBytes(value);
             random.NextBytes(key);
 
-            var hashcash = await OmniMiner.Create(new ReadOnlySequence<byte>(value), key, OmniHashcashAlgorithmType.Sha2_256, 1, TimeSpan.FromSeconds(10), CancellationToken.None);
+            var hashcash = await OmniMiner.Create(new ReadOnlySequence<byte>(value), key, OmniHashcashAlgorithmType.Sha2_256, 1, TimeSpan.FromSeconds(100), CancellationToken.None);
             var cost = OmniMiner.Verify(hashcash, new ReadOnlySequence<byte>(value), key);
 
             Assert.True(cost >= 1);
