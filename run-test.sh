@@ -4,9 +4,7 @@ apt-get update
 apt-get install -y --no-install-recommends libc6-dev
 
 dotnet tool install --global coverlet.console
-dotnet tool install --global dotnet-reportgenerator-globaltool
-
-export PATH="$PATH:/root/.dotnet/tools"
+dotnet tool install dotnet-reportgenerator-globaltool --tool-path tools
 
 for path in `find "tests" -maxdepth 2 -type f -name "*.csproj"`
 do
@@ -14,4 +12,4 @@ do
     dotnet test "$path" -p:CollectCoverage=true -p:CoverletOutputFormat=opencover -p:CoverletOutput=$output;
 done
 
-reportgenerator "--reports:tests/TestResults/*-opencover.xml" "--targetdir:tests/TestResults/html"
+tools\reportgenerator "--reports:tests/TestResults/*-opencover.xml" "--targetdir:tests/TestResults/html"

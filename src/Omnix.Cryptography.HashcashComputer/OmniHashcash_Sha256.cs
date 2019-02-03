@@ -38,10 +38,6 @@ namespace Omnix.Cryptography.HashcashComputer
                         ((ulong*)p)[1] = xorshift.Next();
                         ((ulong*)p)[2] = xorshift.Next();
                         ((ulong*)p)[3] = xorshift.Next();
-                        ((ulong*)p)[4] = xorshift.Next();
-                        ((ulong*)p)[5] = xorshift.Next();
-                        ((ulong*)p)[6] = xorshift.Next();
-                        ((ulong*)p)[7] = xorshift.Next();
                     }
 
                     if (!sha2_256.TryComputeHash(buffer, result, out _)) throw new FormatException();
