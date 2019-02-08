@@ -30,8 +30,8 @@ namespace Omnix.Network.Connection.Tests
 
             var (socket1, socket2) = SocketHelpers.GetSockets();
 
-            using (var baseConnection1 = new NonblockingConnection(new SocketCap(socket1, false), 1024 * 1024 * 256, BufferPool.Shared))
-            using (var baseConnection2 = new NonblockingConnection(new SocketCap(socket2, false), 1024 * 1024 * 256, BufferPool.Shared))
+            using (var baseConnection1 = new BaseConnection(new SocketCap(socket1, false), 1024 * 1024 * 256, BufferPool.Shared))
+            using (var baseConnection2 = new BaseConnection(new SocketCap(socket2, false), 1024 * 1024 * 256, BufferPool.Shared))
             using (var connection1 = new OmniSecureConnection(baseConnection1, SecureConnectionType.Connect, BufferPool.Shared))
             using (var connection2 = new OmniSecureConnection(baseConnection2, SecureConnectionType.Accept, BufferPool.Shared))
             {
