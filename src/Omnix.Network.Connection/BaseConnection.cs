@@ -1,5 +1,6 @@
 using System;
 using System.Buffers;
+using System.Buffers.Binary;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
@@ -12,16 +13,18 @@ using Omnix.Serialization;
 
 namespace Omnix.Network.Connection
 {
-    public sealed class NonblockingConnection : DisposableBase, IConnection
+    public sealed class BaseConnection : DisposableBase, IConnection
     {
         private Cap _cap;
         private readonly int _maxReceiveByteCount;
         private readonly BufferPool _bufferPool;
 
-        private Hub _sendHeaderHub;
+        private byte[] _sendHeaderBuffer = new byte[4];
+        private int _sendHeaderBufferPosition = -1;
         private Hub _sendContentHub;
 
-        private Hub _receiveHeaderHub;
+        private byte[] _receiveHeaderBuffer = new byte[4];
+        private int _receiveHeaderBufferPosition = 0;
         private int _receiveContentRemain = -1;
         private Hub _receiveContentHub;
 
@@ -36,7 +39,7 @@ namespace Omnix.Network.Connection
 
         private volatile bool _disposed;
 
-        public NonblockingConnection(Cap cap, int maxReceiveByteCount, BufferPool bufferPool)
+        public BaseConnection(Cap cap, int maxReceiveByteCount, BufferPool bufferPool)
         {
             if (cap == null) throw new ArgumentNullException(nameof(cap));
             if (cap.IsBlocking == true) throw new ArgumentException($"{nameof(cap)} is not nonblocking", nameof(cap));
@@ -46,10 +49,7 @@ namespace Omnix.Network.Connection
             _maxReceiveByteCount = maxReceiveByteCount;
             _bufferPool = bufferPool;
 
-            _sendHeaderHub = new Hub();
             _sendContentHub = new Hub();
-
-            _receiveHeaderHub = new Hub();
             _receiveContentHub = new Hub();
 
             _receiveSemaphoreSlim = new SemaphoreSlim(0, 1);
@@ -57,44 +57,9 @@ namespace Omnix.Network.Connection
         }
 
         public Cap Cap => _cap;
-
         public bool IsConnected => (_cap != null && _cap.IsConnected);
-
         public long ReceivedByteCount => Interlocked.Read(ref _receivedByteCount);
-
         public long SentByteCount => Interlocked.Read(ref _sentByteCount);
-
-        private int InternalSend(Hub.HubReader reader, int limit)
-        {
-            int total = 0;
-
-            var sequence = reader.GetSequence();
-            var position = sequence.Start;
-
-            while (total < limit && sequence.TryGet(ref position, out var memory, false))
-            {
-                if (memory.Length == 0)
-                {
-                    reader.Complete();
-                    break;
-                }
-
-                int readLength = Math.Min(limit - total, memory.Length);
-
-                if (!_cap.CanSend()) break;
-                int sendLength = _cap.Send(memory.Span.Slice(0, readLength));
-                if (sendLength == 0) break;
-
-                position = sequence.GetPosition(sendLength, position);
-
-                total += sendLength;
-                Interlocked.Add(ref _sentByteCount, sendLength);
-
-                reader.Advance(sendLength);
-            }
-
-            return total;
-        }
 
         public int Send(int limit)
         {
@@ -108,20 +73,47 @@ namespace Omnix.Network.Connection
 
                 while (total < limit)
                 {
-                    if (!_sendHeaderHub.Writer.IsCompleted && !_sendContentHub.Writer.IsCompleted) break;
+                    if (_sendHeaderBufferPosition == -1 && !_sendContentHub.Writer.IsCompleted) break;
                     if (++loopCount > 5) break;
 
-                    if (!_sendHeaderHub.Reader.IsCompleted)
+                    if (_sendHeaderBufferPosition < 4)
                     {
-                        total += this.InternalSend(_sendHeaderHub.Reader, limit - total);
+                        if (!_cap.CanSend()) break;
+                        int sendLength = _cap.Send(_sendHeaderBuffer.AsSpan().Slice(_sendHeaderBufferPosition));
+                        if (sendLength == 0) break;
+
+                        _sendHeaderBufferPosition += sendLength;
                     }
                     else if (!_sendContentHub.Reader.IsCompleted)
                     {
-                        total += this.InternalSend(_sendContentHub.Reader, limit - total);
+                        var sequence = _sendContentHub.Reader.GetSequence();
+                        var position = sequence.Start;
+
+                        while (total < limit && sequence.TryGet(ref position, out var memory, false))
+                        {
+                            if (memory.Length == 0)
+                            {
+                                _sendContentHub.Reader.Complete();
+                                break;
+                            }
+
+                            int readLength = Math.Min(limit - total, memory.Length);
+
+                            if (!_cap.CanSend()) break;
+                            int sendLength = _cap.Send(memory.Span.Slice(0, readLength));
+                            if (sendLength == 0) break;
+
+                            position = sequence.GetPosition(sendLength, position);
+
+                            total += sendLength;
+                            Interlocked.Add(ref _sentByteCount, sendLength);
+
+                            _sendContentHub.Reader.Advance(sendLength);
+                        }
 
                         if (_sendContentHub.Reader.IsCompleted)
                         {
-                            _sendHeaderHub.Reset();
+                            _sendHeaderBufferPosition = -1;
                             _sendContentHub.Reset();
 
                             _sendSemaphoreSlim.Release();
@@ -152,28 +144,18 @@ namespace Omnix.Network.Connection
 
                     if (_receiveContentRemain == -1)
                     {
-                        Span<byte> buffer = stackalloc byte[1];
-
                         for (; ; )
                         {
-                            if (_receiveHeaderHub.Writer.BytesWritten > 10) throw new ConnectionException("too large varint.");
-
                             if (!_cap.CanReceive()) break;
-                            int receiveLength = _cap.Receive(buffer);
+                            int receiveLength = _cap.Receive(_receiveHeaderBuffer.AsSpan().Slice(_receiveHeaderBufferPosition));
                             if (receiveLength == 0) break;
 
-                            _receiveHeaderHub.Writer.Write(buffer);
+                            _receiveHeaderBufferPosition += receiveLength;
 
-                            if (Varint.IsEnd(buffer[0]))
+                            if (_receiveHeaderBufferPosition == 4)
                             {
-                                _receiveHeaderHub.Writer.Complete();
-                                var sequence = _receiveHeaderHub.Reader.GetSequence();
-
-                                Varint.TryGetUInt64(sequence, out var contentLength, out var _);
-                                _receiveContentRemain = (int)contentLength;
-
-                                _receiveHeaderHub.Reader.Complete();
-                                _receiveHeaderHub.Reset();
+                                var contentLength = BinaryPrimitives.ReadInt32BigEndian(_receiveHeaderBuffer);
+                                _receiveContentRemain = contentLength;
 
                                 break;
                             }
@@ -192,8 +174,9 @@ namespace Omnix.Network.Connection
 
                     if (_receiveContentRemain == 0)
                     {
-                        _receiveContentHub.Writer.Complete();
+                        _receiveHeaderBufferPosition = 0;
                         _receiveContentRemain = -1;
+                        _receiveContentHub.Writer.Complete();
 
                         _receiveSemaphoreSlim.Release();
 
@@ -210,8 +193,15 @@ namespace Omnix.Network.Connection
             action.Invoke(_sendContentHub.Writer);
             _sendContentHub.Writer.Complete();
 
-            Varint.SetUInt64((ulong)_sendContentHub.Writer.BytesWritten , _sendHeaderHub.Writer);
-            _sendHeaderHub.Writer.Complete();
+            BinaryPrimitives.WriteInt32BigEndian(_sendHeaderBuffer, (int)_sendContentHub.Writer.BytesWritten);
+            _sendHeaderBufferPosition = 0;
+        }
+
+        public void Enqueue(Action<IBufferWriter<byte>> action)
+        {
+            _sendSemaphoreSlim.Wait();
+
+            this.InternalEnqueue(action);
         }
 
         public async ValueTask EnqueueAsync(Action<IBufferWriter<byte>> action, CancellationToken token = default)
@@ -229,13 +219,6 @@ namespace Omnix.Network.Connection
             return true;
         }
 
-        public void Enqueue(Action<IBufferWriter<byte>> action)
-        {
-            _sendSemaphoreSlim.Wait();
-
-            this.InternalEnqueue(action);
-        }
-
         public void InternalDequeue(Action<ReadOnlySequence<byte>> action)
         {
             var sequence = _receiveContentHub.Reader.GetSequence();
@@ -243,6 +226,13 @@ namespace Omnix.Network.Connection
 
             _receiveContentHub.Reader.Complete();
             _receiveContentHub.Reset();
+        }
+
+        public void Dequeue(Action<ReadOnlySequence<byte>> action)
+        {
+            _receiveSemaphoreSlim.Wait();
+
+            this.InternalDequeue(action);
         }
 
         public async ValueTask DequeueAsync(Action<ReadOnlySequence<byte>> action, CancellationToken token = default)
@@ -260,13 +250,6 @@ namespace Omnix.Network.Connection
             return true;
         }
 
-        public void Dequeue(Action<ReadOnlySequence<byte>> action)
-        {
-            _receiveSemaphoreSlim.Wait();
-
-            this.InternalDequeue(action);
-        }
-
         protected override void Dispose(bool disposing)
         {
             if (_disposed) return;
@@ -277,14 +260,8 @@ namespace Omnix.Network.Connection
                 _cap?.Dispose();
                 _cap = null;
 
-                _sendHeaderHub?.Dispose();
-                _sendHeaderHub = null;
-
                 _sendContentHub?.Dispose();
                 _sendContentHub = null;
-
-                _receiveHeaderHub?.Dispose();
-                _receiveHeaderHub = null;
 
                 _sendSemaphoreSlim?.Dispose();
                 _sendSemaphoreSlim = null;

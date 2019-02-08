@@ -63,6 +63,9 @@ namespace Omnix.Network.Connection.Secure
         public SecureConnectionType Type => _type;
         public IReadOnlyList<string> MatchedPasswords => _matchedPasswords;
 
+        public int Send(int limit) => _connection.Send(limit);
+        public int Receive(int limit) => _connection.Receive(limit);
+
         public async ValueTask Handshake(CancellationToken token = default)
         {
             try
@@ -78,13 +81,13 @@ namespace Omnix.Network.Connection.Secure
                     throw new NotSupportedException("Not supported SecureConnectionVersion.");
                 }
             }
-            catch (SecureConnectionException)
+            catch (OmniSecureConnectionException)
             {
                 throw;
             }
             catch (Exception e)
             {
-                throw new SecureConnectionException($"Handshake of {nameof(OmniSecureConnection)} failed.", e);
+                throw new OmniSecureConnectionException($"Handshake of {nameof(OmniSecureConnection)} failed.", e);
             }
         }
 
@@ -101,7 +104,7 @@ namespace Omnix.Network.Connection.Secure
                 if (hashSet.Contains(item)) return item;
             }
 
-            throw new SecureConnectionException($"Overlap enum of {nameof(T)} could not be found.");
+            throw new OmniSecureConnectionException($"Overlap enum of {nameof(T)} could not be found.");
         }
 
         private async ValueTask Hello(IConnection connection, CancellationToken token)
@@ -158,7 +161,7 @@ namespace Omnix.Network.Connection.Secure
 
                 if (myProfileMessage.AuthenticationType != otherProfileMessage.AuthenticationType)
                 {
-                    throw new SecureConnectionException("AuthenticationType does not match.");
+                    throw new OmniSecureConnectionException("AuthenticationType does not match.");
                 }
             }
 
@@ -169,19 +172,19 @@ namespace Omnix.Network.Connection.Secure
 
             if (!EnumHelper.IsValid(keyExchangeAlgorithm))
             {
-                throw new SecureConnectionException("key exchange algorithm does not match.");
+                throw new OmniSecureConnectionException("key exchange algorithm does not match.");
             }
             if (!EnumHelper.IsValid(keyDerivationAlgorithm))
             {
-                throw new SecureConnectionException("key derivation algorithm does not match.");
+                throw new OmniSecureConnectionException("key derivation algorithm does not match.");
             }
             if (!EnumHelper.IsValid(cryptoAlgorithm))
             {
-                throw new SecureConnectionException("Crypto algorithm does not match.");
+                throw new OmniSecureConnectionException("Crypto algorithm does not match.");
             }
             if (!EnumHelper.IsValid(hashAlgorithm))
             {
-                throw new SecureConnectionException("Hash algorithm does not match.");
+                throw new OmniSecureConnectionException("Hash algorithm does not match.");
             }
 
             ReadOnlyMemory<byte> secret = null;
@@ -204,7 +207,7 @@ namespace Omnix.Network.Connection.Secure
                         // 受信
                         await connection.DequeueAsync((sequence) => otherAgreementPublicKey = OmniAgreementPublicKey.Import(sequence, _bufferPool), token);
 
-                        if ((DateTime.UtcNow - otherAgreementPublicKey.CreationTime.ToDateTime()).TotalMinutes > 30) throw new SecureConnectionException("Agreement public key has Expired.");
+                        if ((DateTime.UtcNow - otherAgreementPublicKey.CreationTime.ToDateTime()).TotalMinutes > 30) throw new OmniSecureConnectionException("Agreement public key has Expired.");
                     }
 
                     if (_passwords.Count > 0)
@@ -238,7 +241,7 @@ namespace Omnix.Network.Connection.Secure
                             }
                         }
 
-                        if (matchedPasswords.Count == 0) throw new SecureConnectionException("Password does not match.");
+                        if (matchedPasswords.Count == 0) throw new OmniSecureConnectionException("Password does not match.");
 
                         _matchedPasswords = matchedPasswords.ToArray();
                     }
@@ -438,17 +441,17 @@ namespace Omnix.Network.Connection.Secure
                         }
                     }
                 }
-                catch (SecureConnectionException e)
+                catch (OmniSecureConnectionException e)
                 {
                     throw e;
                 }
                 catch (Exception e)
                 {
-                    throw new SecureConnectionException(e.Message, e);
+                    throw new OmniSecureConnectionException(e.Message, e);
                 }
             }
 
-            throw new SecureConnectionException("Conversion failed.");
+            throw new OmniSecureConnectionException("Conversion failed.");
         }
 
         public void Enqueue(Action<IBufferWriter<byte>> action)
@@ -492,7 +495,7 @@ namespace Omnix.Network.Connection.Secure
                                     totalReceivedSize = (long)BinaryPrimitives.ReadUInt64BigEndian(totalReceiveSizeBuffer);
                                 }
 
-                                if (totalReceivedSize != _totalReceivedSize) throw new SecureConnectionException();
+                                if (totalReceivedSize != _totalReceivedSize) throw new OmniSecureConnectionException();
                             }
 
                             // HMACが正しいか検証する
@@ -501,7 +504,7 @@ namespace Omnix.Network.Connection.Secure
                                 sequence.Slice(sequence.Length - hashLength).CopyTo(receivedHash);
 
                                 var computedhash = Hmac_Sha2_256.ComputeHash(sequence.Slice(headerSize, sequence.Length - (headerSize + hashLength)), _infoV1.OtherHmacKey);
-                                if (!BytesOperations.SequenceEqual(receivedHash, computedhash)) throw new SecureConnectionException();
+                                if (!BytesOperations.SequenceEqual(receivedHash, computedhash)) throw new OmniSecureConnectionException();
                             }
 
                             sequence = sequence.Slice(headerSize, sequence.Length - (headerSize + hashLength));
@@ -560,17 +563,17 @@ namespace Omnix.Network.Connection.Secure
                         }
                     }
                 }
-                catch (SecureConnectionException e)
+                catch (OmniSecureConnectionException e)
                 {
                     throw e;
                 }
                 catch (Exception e)
                 {
-                    throw new SecureConnectionException(e.Message, e);
+                    throw new OmniSecureConnectionException(e.Message, e);
                 }
             }
 
-            throw new SecureConnectionException("Conversion failed.");
+            throw new OmniSecureConnectionException("Conversion failed.");
         }
 
         public void Dequeue(Action<ReadOnlySequence<byte>> action)
@@ -611,12 +614,12 @@ namespace Omnix.Network.Connection.Secure
                 _random = null;
             }
         }
+    }
 
-        public class SecureConnectionException : Exception
-        {
-            public SecureConnectionException() : base() { }
-            public SecureConnectionException(string message) : base(message) { }
-            public SecureConnectionException(string message, Exception innerException) : base(message, innerException) { }
-        }
+    public class OmniSecureConnectionException : Exception
+    {
+        public OmniSecureConnectionException() : base() { }
+        public OmniSecureConnectionException(string message) : base(message) { }
+        public OmniSecureConnectionException(string message, Exception innerException) : base(message, innerException) { }
     }
 }
