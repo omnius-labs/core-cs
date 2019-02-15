@@ -11,13 +11,17 @@ using Omnix.Serialization.RocketPack;
 
 namespace Omnix.Remoting
 {
-    public sealed class OmniRpcStream
+    public sealed class OmniRpcStream : DisposableBase
     {
-        private IConnection _connection;
+        private readonly IConnection _connection;
+        private readonly BufferPool _bufferPool;
 
-        internal OmniRpcStream(IConnection connection)
+        private volatile bool _disposed;
+
+        internal OmniRpcStream(IConnection connection, BufferPool bufferPool)
         {
             _connection = connection;
+            _bufferPool = bufferPool;
         }
 
         public async ValueTask SendMessageAsync(Action<IBufferWriter<byte>> callback, CancellationToken token = default)
@@ -55,7 +59,7 @@ namespace Omnix.Remoting
             {
                 bufferWriter.GetSpan(1)[0] = (byte)OmniRpcStreamPacketType.Error;
                 bufferWriter.Advance(1);
-                errorMessage.Export(bufferWriter, BufferPool.Shared);
+                errorMessage.Export(bufferWriter, _bufferPool);
             }, token);
         }
 
@@ -78,10 +82,21 @@ namespace Omnix.Remoting
                         complete.Invoke();
                         break;
                     case OmniRpcStreamPacketType.Error:
-                        error.Invoke(ErrorMessage.Import(sequence.Slice(1), BufferPool.Shared));
+                        error.Invoke(ErrorMessage.Import(sequence.Slice(1), _bufferPool));
                         break;
                 }
             }, token);
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (_disposed) return;
+            _disposed = true;
+
+            if (disposing)
+            {
+                _connection?.Dispose();
+            }
         }
     }
 }
