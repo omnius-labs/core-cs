@@ -2,22 +2,40 @@
 using System.Buffers;
 using System.Buffers.Binary;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
+using Omnix.Base;
 using Omnix.Network.Connection;
 using Omnix.Serialization;
-using Omnix.Serialization.RocketPack;
 
 namespace Omnix.Remoting
 {
-    public sealed class OmniRpcServer
+    public sealed class OmniRpc
     {
-        public Func<IConnection> CreateConnection { private get; set; }
+        private readonly BufferPool _bufferPool;
+
+        public OmniRpc(BufferPool bufferPool)
+        {
+            _bufferPool = bufferPool;
+        }
+
+        public Func<IConnection> GetAcceptedConnection { private get; set; }
+        public Func<IConnection> GetConnectedConnection { private get; set; }
+
+        public async ValueTask<OmniRpcStream> Connect(ulong type)
+        {
+            var connection = this.GetConnectedConnection.Invoke();
+
+            await connection.EnqueueAsync((bufferWriter) =>
+            {
+                Varint.SetUInt64(type, bufferWriter);
+            });
+
+            return new OmniRpcStream(connection, _bufferPool);
+        }
 
         public async ValueTask<AcceptResult> Accept()
         {
-            var connection = this.CreateConnection.Invoke();
+            var connection = this.GetAcceptedConnection.Invoke();
 
             ulong type = 0;
 
@@ -29,7 +47,7 @@ namespace Omnix.Remoting
                 }
             });
 
-            return new AcceptResult(type, new OmniRpcStream(connection));
+            return new AcceptResult(type, new OmniRpcStream(connection, _bufferPool));
         }
 
         public readonly struct AcceptResult
