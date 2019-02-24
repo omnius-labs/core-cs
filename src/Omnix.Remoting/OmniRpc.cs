@@ -9,7 +9,7 @@ using Omnix.Serialization;
 
 namespace Omnix.Remoting
 {
-    public sealed class OmniRpc
+    public sealed partial class OmniRpc
     {
         private readonly BufferPool _bufferPool;
 
@@ -18,8 +18,8 @@ namespace Omnix.Remoting
             _bufferPool = bufferPool;
         }
 
-        public Func<IConnection> GetAcceptedConnection { private get; set; }
         public Func<IConnection> GetConnectedConnection { private get; set; }
+        public Func<IConnection> GetAcceptedConnection { private get; set; }
 
         public async ValueTask<OmniRpcStream> Connect(ulong type)
         {
@@ -48,18 +48,6 @@ namespace Omnix.Remoting
             });
 
             return new AcceptResult(type, new OmniRpcStream(connection, _bufferPool));
-        }
-
-        public readonly struct AcceptResult
-        {
-            public AcceptResult(ulong type, OmniRpcStream stream)
-            {
-                this.Type = type;
-                this.Stream = stream;
-            }
-
-            public ulong Type { get; }
-            public OmniRpcStream Stream { get; }
         }
     }
 }

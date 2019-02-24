@@ -11,7 +11,7 @@ using Omnix.Serialization.RocketPack;
 
 namespace Omnix.Remoting
 {
-    public sealed class OmniRpcStream : DisposableBase
+    public sealed partial class OmniRpcStream : DisposableBase
     {
         private readonly IConnection _connection;
         private readonly BufferPool _bufferPool;
@@ -24,47 +24,50 @@ namespace Omnix.Remoting
             _bufferPool = bufferPool;
         }
 
-        public async ValueTask SendMessageAsync(Action<IBufferWriter<byte>> callback, CancellationToken token = default)
+        public async ValueTask SendMessageAsync<TMessage>(TMessage message, CancellationToken token = default)
+            where TMessage : RocketPackMessageBase<TMessage>
         {
             await _connection.EnqueueAsync((bufferWriter) =>
             {
-                bufferWriter.GetSpan(1)[0] = (byte)OmniRpcStreamPacketType.Data;
+                bufferWriter.GetSpan(1)[0] = (byte)OmniRpcStreamPacketType.Message;
                 bufferWriter.Advance(1);
-
-                callback.Invoke(bufferWriter);
+                RocketPackMessageBase<TMessage>.Formatter.Serialize(new RocketPackWriter(bufferWriter, _bufferPool), message, 0);
             }, token);
         }
 
-        public async ValueTask SendCancelAsync(CancellationToken token = default)
+        public async ValueTask SendErrorMessageAsync(OmniRpcErrorMessage errorMessage, CancellationToken token = default)
         {
             await _connection.EnqueueAsync((bufferWriter) =>
             {
-                bufferWriter.GetSpan(1)[0] = (byte)OmniRpcStreamPacketType.Cancel;
-                bufferWriter.Advance(1);
-            }, token);
-        }
-
-        public async ValueTask SendCompleteAsync(CancellationToken token = default)
-        {
-            await _connection.EnqueueAsync((bufferWriter) =>
-            {
-                bufferWriter.GetSpan(1)[0] = (byte)OmniRpcStreamPacketType.Complete;
-                bufferWriter.Advance(1);
-            }, token);
-        }
-
-        public async ValueTask SendErrorAsync(ErrorMessage errorMessage, CancellationToken token = default)
-        {
-            await _connection.EnqueueAsync((bufferWriter) =>
-            {
-                bufferWriter.GetSpan(1)[0] = (byte)OmniRpcStreamPacketType.Error;
+                bufferWriter.GetSpan(1)[0] = (byte)OmniRpcStreamPacketType.ErrorMessage;
                 bufferWriter.Advance(1);
                 errorMessage.Export(bufferWriter, _bufferPool);
             }, token);
         }
 
-        public async ValueTask ReceiveAsync(Action<ReadOnlySequence<byte>> message = default, Action cancel = default, Action complete = default, Action<ErrorMessage> error = default, CancellationToken token = default)
+        public async ValueTask SendCanceledAsync(CancellationToken token = default)
         {
+            await _connection.EnqueueAsync((bufferWriter) =>
+            {
+                bufferWriter.GetSpan(1)[0] = (byte)OmniRpcStreamPacketType.Canceled;
+                bufferWriter.Advance(1);
+            }, token);
+        }
+
+        public async ValueTask SendCompletedAsync(CancellationToken token = default)
+        {
+            await _connection.EnqueueAsync((bufferWriter) =>
+            {
+                bufferWriter.GetSpan(1)[0] = (byte)OmniRpcStreamPacketType.Completed;
+                bufferWriter.Advance(1);
+            }, token);
+        }
+
+        public async ValueTask<ReceiveResult<TMessage>> ReceiveAsync<TMessage>(CancellationToken token = default)
+            where TMessage : RocketPackMessageBase<TMessage>
+        {
+            ReceiveResult<TMessage> receiveResult = default;
+
             await _connection.DequeueAsync((sequence) =>
             {
                 Span<byte> type = stackalloc byte[1];
@@ -72,20 +75,24 @@ namespace Omnix.Remoting
 
                 switch ((OmniRpcStreamPacketType)type[0])
                 {
-                    case OmniRpcStreamPacketType.Data:
-                        message.Invoke(sequence.Slice(1));
+                    case OmniRpcStreamPacketType.Message:
+                        var message = RocketPackMessageBase<TMessage>.Formatter.Deserialize(new RocketPackReader(sequence, _bufferPool), 0);
+                        receiveResult = new ReceiveResult<TMessage>(message, null, false, false);
                         break;
-                    case OmniRpcStreamPacketType.Cancel:
-                        cancel.Invoke();
+                    case OmniRpcStreamPacketType.ErrorMessage:
+                        var errorMessage = OmniRpcErrorMessage.Import(sequence, _bufferPool);
+                        receiveResult = new ReceiveResult<TMessage>(null, errorMessage, false, false);
                         break;
-                    case OmniRpcStreamPacketType.Complete:
-                        complete.Invoke();
+                    case OmniRpcStreamPacketType.Canceled:
+                        receiveResult = new ReceiveResult<TMessage>(null, null, true, false);
                         break;
-                    case OmniRpcStreamPacketType.Error:
-                        error.Invoke(ErrorMessage.Import(sequence.Slice(1), _bufferPool));
+                    case OmniRpcStreamPacketType.Completed:
+                        receiveResult = new ReceiveResult<TMessage>(null, null, false, true);
                         break;
                 }
             }, token);
+
+            return receiveResult;
         }
 
         protected override void Dispose(bool disposing)

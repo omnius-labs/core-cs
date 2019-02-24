@@ -3,13 +3,13 @@
 option csharp_namespace = "Omnix.Remoting";
 
 enum OmniRpcStreamPacketType : uint8 {
-    Data = 0,
-    Cancel = 1,
-    Complete = 2,
-    Error = 3,
+    Message = 0,
+    ErrorMessage = 1,
+    Canceled = 2,
+    Completed = 3,
 }
 
-message ErrorMessage {
+message OmniRpcErrorMessage {
     Type: string(8192) = 0,
     Message: string(8192) = 1,
     StackTrace: string(8192) = 2,
