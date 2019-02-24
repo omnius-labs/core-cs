@@ -11,24 +11,24 @@ namespace Omnix.Remoting
 {
     public enum OmniRpcStreamPacketType : byte
     {
-        Data = 0,
-        Cancel = 1,
-        Complete = 2,
-        Error = 3,
+        Message = 0,
+        ErrorMessage = 1,
+        Canceled = 2,
+        Completed = 3,
     }
 
-    public sealed partial class ErrorMessage : RocketPackMessageBase<ErrorMessage>
+    public sealed partial class OmniRpcErrorMessage : RocketPackMessageBase<OmniRpcErrorMessage>
     {
-        static ErrorMessage()
+        static OmniRpcErrorMessage()
         {
-            ErrorMessage.Formatter = new CustomFormatter();
+            OmniRpcErrorMessage.Formatter = new CustomFormatter();
         }
 
         public static readonly int MaxTypeLength = 8192;
         public static readonly int MaxMessageLength = 8192;
         public static readonly int MaxStackTraceLength = 8192;
 
-        public ErrorMessage(string type, string message, string stackTrace)
+        public OmniRpcErrorMessage(string type, string message, string stackTrace)
         {
             if (type is null) throw new ArgumentNullException("type");
             if (type.Length > 8192) throw new ArgumentOutOfRangeException("type");
@@ -54,7 +54,7 @@ namespace Omnix.Remoting
         public string Message { get; }
         public string StackTrace { get; }
 
-        public override bool Equals(ErrorMessage target)
+        public override bool Equals(OmniRpcErrorMessage target)
         {
             if ((object)target == null) return false;
             if (Object.ReferenceEquals(this, target)) return true;
@@ -68,9 +68,9 @@ namespace Omnix.Remoting
         private readonly int _hashCode;
         public override int GetHashCode() => _hashCode;
 
-        private sealed class CustomFormatter : IRocketPackFormatter<ErrorMessage>
+        private sealed class CustomFormatter : IRocketPackFormatter<OmniRpcErrorMessage>
         {
-            public void Serialize(RocketPackWriter w, ErrorMessage value, int rank)
+            public void Serialize(RocketPackWriter w, OmniRpcErrorMessage value, int rank)
             {
                 if (rank > 256) throw new FormatException();
 
@@ -103,7 +103,7 @@ namespace Omnix.Remoting
                 }
             }
 
-            public ErrorMessage Deserialize(RocketPackReader r, int rank)
+            public OmniRpcErrorMessage Deserialize(RocketPackReader r, int rank)
             {
                 if (rank > 256) throw new FormatException();
 
@@ -137,7 +137,7 @@ namespace Omnix.Remoting
                     }
                 }
 
-                return new ErrorMessage(p_type, p_message, p_stackTrace);
+                return new OmniRpcErrorMessage(p_type, p_message, p_stackTrace);
             }
         }
     }
