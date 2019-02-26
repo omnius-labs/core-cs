@@ -14,17 +14,18 @@ using Omnix.Cryptography;
 using Omnix.Io;
 using Omnix.Serialization;
 using System.Buffers.Binary;
+using Omnix.Network.Connection.Secure.Internal;
 
 namespace Omnix.Network.Connection.Secure
 {
     public sealed class OmniSecureConnection : DisposableBase, IConnection
     {
         private readonly IConnection _connection;
-        private readonly SecureConnectionType _type;
+        private readonly OmniSecureConnectionType _type;
         private readonly IReadOnlyList<string> _passwords;
         private readonly BufferPool _bufferPool;
 
-        private SecureConnectionVersion _version = SecureConnectionVersion.Version1;
+        private OmniSecureConnectionVersion _version = OmniSecureConnectionVersion.Version1;
         private long _totalSentSize;
         private long _totalReceivedSize;
         private string[] _matchedPasswords;
@@ -35,13 +36,13 @@ namespace Omnix.Network.Connection.Secure
 
         private volatile bool _disposed;
 
-        public OmniSecureConnection(IConnection connection, SecureConnectionType type, BufferPool bufferPool)
+        public OmniSecureConnection(IConnection connection, OmniSecureConnectionType type, BufferPool bufferPool)
             : this(connection, type, Enumerable.Empty<string>(), bufferPool)
         {
 
         }
 
-        public OmniSecureConnection(IConnection connection, SecureConnectionType type, IEnumerable<string> passwords, BufferPool bufferPool)
+        public OmniSecureConnection(IConnection connection, OmniSecureConnectionType type, IEnumerable<string> passwords, BufferPool bufferPool)
         {
             if (connection == null) throw new ArgumentNullException(nameof(connection));
             if (!EnumHelper.IsValid(type)) throw new ArgumentException(nameof(type));
@@ -60,11 +61,13 @@ namespace Omnix.Network.Connection.Secure
         public long ReceivedByteCount => _connection.ReceivedByteCount;
         public long SentByteCount => _connection.SentByteCount;
 
-        public SecureConnectionType Type => _type;
+        public OmniSecureConnectionType Type => _type;
         public IReadOnlyList<string> MatchedPasswords => _matchedPasswords;
 
-        public int Send(int limit) => _connection.Send(limit);
-        public int Receive(int limit) => _connection.Receive(limit);
+        public void DoEvents()
+        {
+            _connection.DoEvents();
+        }
 
         public async ValueTask Handshake(CancellationToken token = default)
         {
@@ -72,13 +75,13 @@ namespace Omnix.Network.Connection.Secure
             {
                 await this.Hello(_connection, token);
 
-                if (_version == SecureConnectionVersion.Version1)
+                if (_version == OmniSecureConnectionVersion.Version1)
                 {
                     await this.HandshakeV1(_connection, token);
                 }
                 else
                 {
-                    throw new NotSupportedException("Not supported SecureConnectionVersion.");
+                    throw new NotSupportedException("Not supported OmniSecureConnectionVersion.");
                 }
             }
             catch (OmniSecureConnectionException)
@@ -109,26 +112,26 @@ namespace Omnix.Network.Connection.Secure
 
         private async ValueTask Hello(IConnection connection, CancellationToken token)
         {
-            if (_type == SecureConnectionType.Connect)
+            if (_type == OmniSecureConnectionType.Connect)
             {
                 // Helloメッセージを送信
-                var sendHelloMessage = new SecureConnectionHelloMessage(new[] { _version });
+                var sendHelloMessage = new HelloMessage(new[] { _version });
                 await connection.EnqueueAsync((bufferWriter) => sendHelloMessage.Export(bufferWriter, _bufferPool), token);
 
                 // Helloメッセージを受信
-                SecureConnectionHelloMessage receiveHelloMessage = null;
-                await connection.DequeueAsync((sequence) => receiveHelloMessage = SecureConnectionHelloMessage.Import(sequence, _bufferPool), token);
+                HelloMessage receiveHelloMessage = null;
+                await connection.DequeueAsync((sequence) => receiveHelloMessage = HelloMessage.Import(sequence, _bufferPool), token);
 
                 _version = GetOverlapMaxEnum(sendHelloMessage.Versions, receiveHelloMessage.Versions);
             }
-            else if (_type == SecureConnectionType.Accept)
+            else if (_type == OmniSecureConnectionType.Accept)
             {
                 // Helloメッセージを受信
-                SecureConnectionHelloMessage receiveHelloMessage = null;
-                await connection.DequeueAsync((sequence) => receiveHelloMessage = SecureConnectionHelloMessage.Import(sequence, _bufferPool), token);
+                HelloMessage receiveHelloMessage = null;
+                await connection.DequeueAsync((sequence) => receiveHelloMessage = HelloMessage.Import(sequence, _bufferPool), token);
 
                 // Helloメッセージを送信
-                var sendHelloMessage = new SecureConnectionHelloMessage(new[] { _version });
+                var sendHelloMessage = new HelloMessage(new[] { _version });
                 await connection.EnqueueAsync((bufferWriter) => sendHelloMessage.Export(bufferWriter, _bufferPool), token);
 
                 _version = GetOverlapMaxEnum(sendHelloMessage.Versions, receiveHelloMessage.Versions);
@@ -137,27 +140,27 @@ namespace Omnix.Network.Connection.Secure
 
         private async ValueTask HandshakeV1(IConnection connection, CancellationToken token)
         {
-            V1.SecureConnectionProfileMessage myProfileMessage = null;
-            V1.SecureConnectionProfileMessage otherProfileMessage = null;
+            V1.Internal.ProfileMessage myProfileMessage = null;
+            V1.Internal.ProfileMessage otherProfileMessage = null;
             {
                 {
                     var sessionId = new byte[32];
                     _random.GetBytes(sessionId);
 
-                    myProfileMessage = new V1.SecureConnectionProfileMessage(
+                    myProfileMessage = new V1.Internal.ProfileMessage(
                         sessionId,
-                        (_passwords.Count == 0) ? V1.AuthenticationType.None : V1.AuthenticationType.Password,
-                        new[] { V1.KeyExchangeAlgorithm.EcDh_P521_Sha2_256 },
-                        new[] { V1.KeyDerivationAlgorithm.Pbkdf2 },
-                        new[] { V1.CryptoAlgorithm.Aes_256 },
-                        new[] { V1.HashAlgorithm.Sha2_256 });
+                        (_passwords.Count == 0) ? V1.Internal.AuthenticationType.None : V1.Internal.AuthenticationType.Password,
+                        new[] { V1.Internal.KeyExchangeAlgorithm.EcDh_P521_Sha2_256 },
+                        new[] { V1.Internal.KeyDerivationAlgorithm.Pbkdf2 },
+                        new[] { V1.Internal.CryptoAlgorithm.Aes_256 },
+                        new[] { V1.Internal.HashAlgorithm.Sha2_256 });
                 }
 
                 // 送信
                 await connection.EnqueueAsync((bufferWriter) => myProfileMessage.Export(bufferWriter, _bufferPool), token);
 
                 // 受信
-                await connection.DequeueAsync((sequence) => otherProfileMessage = V1.SecureConnectionProfileMessage.Import(sequence, _bufferPool), token);
+                await connection.DequeueAsync((sequence) => otherProfileMessage = V1.Internal.ProfileMessage.Import(sequence, _bufferPool), token);
 
                 if (myProfileMessage.AuthenticationType != otherProfileMessage.AuthenticationType)
                 {
@@ -189,7 +192,7 @@ namespace Omnix.Network.Connection.Secure
 
             ReadOnlyMemory<byte> secret = null;
 
-            if (keyExchangeAlgorithm.HasFlag(V1.KeyExchangeAlgorithm.EcDh_P521_Sha2_256))
+            if (keyExchangeAlgorithm.HasFlag(V1.Internal.KeyExchangeAlgorithm.EcDh_P521_Sha2_256))
             {
                 OmniAgreementPrivateKey myAgreementPrivateKey = null;
                 OmniAgreementPublicKey otherAgreementPublicKey = null;
@@ -216,7 +219,7 @@ namespace Omnix.Network.Connection.Secure
                             var myHashAndPasswordList = this.GetHashesV1(myProfileMessage, myAgreement.GetOmniAgreementPublicKey(), hashAlgorithm).ToList();
 
                             RandomProvider.GetThreadRandom().Shuffle(myHashAndPasswordList);
-                            var myAuthenticationMessage = new V1.SecureConnectionAuthenticationMessage(myHashAndPasswordList.Select(n => n.Item1).ToList());
+                            var myAuthenticationMessage = new V1.Internal.AuthenticationMessage(myHashAndPasswordList.Select(n => n.Item1).ToList());
 
                             // 送信
                             await connection.EnqueueAsync((bufferWriter) => myAuthenticationMessage.Export(bufferWriter, _bufferPool), token);
@@ -224,10 +227,10 @@ namespace Omnix.Network.Connection.Secure
 
                         var matchedPasswords = new List<string>();
                         {
-                            V1.SecureConnectionAuthenticationMessage otherAuthenticationMessage = null;
+                            V1.Internal.AuthenticationMessage otherAuthenticationMessage = null;
 
                             // 受信
-                            await connection.DequeueAsync((sequence) => otherAuthenticationMessage = V1.SecureConnectionAuthenticationMessage.Import(sequence, _bufferPool), token);
+                            await connection.DequeueAsync((sequence) => otherAuthenticationMessage = V1.Internal.AuthenticationMessage.Import(sequence, _bufferPool), token);
 
                             var equalityComparer = new GenericEqualityComparer<ReadOnlyMemory<byte>>((x, y) => BytesOperations.SequenceEqual(x.Span, y.Span), (x) => Fnv1_32.ComputeHash(x.Span));
                             var receiveHashes = new HashSet<ReadOnlyMemory<byte>>(otherAuthenticationMessage.Hashes, equalityComparer);
@@ -247,7 +250,7 @@ namespace Omnix.Network.Connection.Secure
                     }
                 }
 
-                if (hashAlgorithm.HasFlag(V1.HashAlgorithm.Sha2_256))
+                if (hashAlgorithm.HasFlag(V1.Internal.HashAlgorithm.Sha2_256))
                 {
                     secret = OmniAgreement.GetSecret(otherAgreementPublicKey, myAgreementPrivateKey);
                 }
@@ -258,7 +261,7 @@ namespace Omnix.Network.Connection.Secure
             byte[] myHmacKey = null;
             byte[] otherHmacKey = null;
 
-            if (keyDerivationAlgorithm.HasFlag(V1.KeyDerivationAlgorithm.Pbkdf2))
+            if (keyDerivationAlgorithm.HasFlag(V1.Internal.KeyDerivationAlgorithm.Pbkdf2))
             {
                 byte[] xorSessionId = new byte[Math.Max(myProfileMessage.SessionId.Length, otherProfileMessage.SessionId.Length)];
                 BytesOperations.Xor(myProfileMessage.SessionId.Span, otherProfileMessage.SessionId.Span, xorSessionId);
@@ -266,12 +269,12 @@ namespace Omnix.Network.Connection.Secure
                 int cryptoKeyLength = 0;
                 int hmacKeyLength = 0;
 
-                if (cryptoAlgorithm.HasFlag(V1.CryptoAlgorithm.Aes_256))
+                if (cryptoAlgorithm.HasFlag(V1.Internal.CryptoAlgorithm.Aes_256))
                 {
                     cryptoKeyLength = 32;
                 }
 
-                if (hashAlgorithm.HasFlag(V1.HashAlgorithm.Sha2_256))
+                if (hashAlgorithm.HasFlag(V1.Internal.HashAlgorithm.Sha2_256))
                 {
                     hmacKeyLength = 32;
                 }
@@ -283,21 +286,21 @@ namespace Omnix.Network.Connection.Secure
 
                 var kdfResult = new byte[(cryptoKeyLength + hmacKeyLength) * 2];
 
-                if (hashAlgorithm.HasFlag(V1.HashAlgorithm.Sha2_256))
+                if (hashAlgorithm.HasFlag(V1.Internal.HashAlgorithm.Sha2_256))
                 {
                     Pbkdf2_Sha2_256.TryComputeHash(secret.Span, xorSessionId, 1024, kdfResult);
                 }
 
                 using (var stream = new MemoryStream(kdfResult))
                 {
-                    if (_type == SecureConnectionType.Connect)
+                    if (_type == OmniSecureConnectionType.Connect)
                     {
                         stream.Read(myCryptoKey, 0, myCryptoKey.Length);
                         stream.Read(otherCryptoKey, 0, otherCryptoKey.Length);
                         stream.Read(myHmacKey, 0, myHmacKey.Length);
                         stream.Read(otherHmacKey, 0, otherHmacKey.Length);
                     }
-                    else if (_type == SecureConnectionType.Accept)
+                    else if (_type == OmniSecureConnectionType.Accept)
                     {
                         stream.Read(otherCryptoKey, 0, otherCryptoKey.Length);
                         stream.Read(myCryptoKey, 0, myCryptoKey.Length);
@@ -316,15 +319,15 @@ namespace Omnix.Network.Connection.Secure
             _infoV1.OtherHmacKey = otherHmacKey;
         }
 
-        private IEnumerable<(ReadOnlyMemory<byte>, string)> GetHashesV1(V1.SecureConnectionProfileMessage profileMessage, OmniAgreementPublicKey agreementPublicKey, V1.HashAlgorithm hashAlgorithm)
+        private IEnumerable<(ReadOnlyMemory<byte>, string)> GetHashesV1(V1.Internal.ProfileMessage profileMessage, OmniAgreementPublicKey agreementPublicKey, V1.Internal.HashAlgorithm hashAlgorithm)
         {
             var results = new Dictionary<ReadOnlyMemory<byte>, string>();
 
             byte[] verificationMessageHash = null;
             {
-                var verificationMessage = new V1.SecureConnectionVerificationMessage(profileMessage, agreementPublicKey);
+                var verificationMessage = new V1.Internal.VerificationMessage(profileMessage, agreementPublicKey);
 
-                if (hashAlgorithm == V1.HashAlgorithm.Sha2_256)
+                if (hashAlgorithm == V1.Internal.HashAlgorithm.Sha2_256)
                 {
                     var hub = new Hub();
 
@@ -335,7 +338,7 @@ namespace Omnix.Network.Connection.Secure
 
             foreach (var password in _passwords)
             {
-                if (hashAlgorithm.HasFlag(V1.HashAlgorithm.Sha2_256))
+                if (hashAlgorithm.HasFlag(V1.Internal.HashAlgorithm.Sha2_256))
                 {
                     results.Add(Hmac_Sha2_256.ComputeHash(verificationMessageHash, Sha2_256.ComputeHash(password)), password);
                 }
@@ -355,10 +358,10 @@ namespace Omnix.Network.Connection.Secure
 
                 try
                 {
-                    if (_version.HasFlag(SecureConnectionVersion.Version1))
+                    if (_version.HasFlag(OmniSecureConnectionVersion.Version1))
                     {
-                        if (_infoV1.CryptoAlgorithm.HasFlag(V1.CryptoAlgorithm.Aes_256)
-                            && _infoV1.HashAlgorithm.HasFlag(V1.HashAlgorithm.Sha2_256))
+                        if (_infoV1.CryptoAlgorithm.HasFlag(V1.Internal.CryptoAlgorithm.Aes_256)
+                            && _infoV1.HashAlgorithm.HasFlag(V1.Internal.HashAlgorithm.Sha2_256))
                         {
                             const int headerSize = 8;
                             const int hashLength = 32;
@@ -454,19 +457,14 @@ namespace Omnix.Network.Connection.Secure
             throw new OmniSecureConnectionException("Conversion failed.");
         }
 
-        public void Enqueue(Action<IBufferWriter<byte>> action)
+        public bool TryEnqueue(Action<IBufferWriter<byte>> action)
         {
-            _connection.Enqueue((bufferWriter) => this.InternalEnqueue(bufferWriter, action));
+            return _connection.TryEnqueue((bufferWriter) => this.InternalEnqueue(bufferWriter, action));
         }
 
         public async ValueTask EnqueueAsync(Action<IBufferWriter<byte>> action, CancellationToken token = default)
         {
             await _connection.EnqueueAsync((bufferWriter) => this.InternalEnqueue(bufferWriter, action), token);
-        }
-
-        public bool TryEnqueue(Action<IBufferWriter<byte>> action)
-        {
-            return _connection.TryEnqueue((bufferWriter) => this.InternalEnqueue(bufferWriter, action));
         }
 
         private void InternalDequeue(ReadOnlySequence<byte> sequence, Action<ReadOnlySequence<byte>> action)
@@ -475,10 +473,10 @@ namespace Omnix.Network.Connection.Secure
             {
                 try
                 {
-                    if (_version.HasFlag(SecureConnectionVersion.Version1))
+                    if (_version.HasFlag(OmniSecureConnectionVersion.Version1))
                     {
-                        if (_infoV1.CryptoAlgorithm.HasFlag(V1.CryptoAlgorithm.Aes_256)
-                            && _infoV1.HashAlgorithm.HasFlag(V1.HashAlgorithm.Sha2_256))
+                        if (_infoV1.CryptoAlgorithm.HasFlag(V1.Internal.CryptoAlgorithm.Aes_256)
+                            && _infoV1.HashAlgorithm.HasFlag(V1.Internal.HashAlgorithm.Sha2_256))
                         {
                             const int headerSize = 8;
                             const int hashLength = 32;
@@ -576,9 +574,9 @@ namespace Omnix.Network.Connection.Secure
             throw new OmniSecureConnectionException("Conversion failed.");
         }
 
-        public void Dequeue(Action<ReadOnlySequence<byte>> action)
+        public bool TryDequeue(Action<ReadOnlySequence<byte>> action)
         {
-            _connection.Dequeue((sequence) => this.InternalDequeue(sequence, action));
+            return _connection.TryDequeue((sequence) => this.InternalDequeue(sequence, action));
         }
 
         public async ValueTask DequeueAsync(Action<ReadOnlySequence<byte>> action, CancellationToken token = default)
@@ -586,15 +584,10 @@ namespace Omnix.Network.Connection.Secure
             await _connection.DequeueAsync((sequence) => this.InternalDequeue(sequence, action), token);
         }
 
-        public bool TryDequeue(Action<ReadOnlySequence<byte>> action)
-        {
-            return _connection.TryDequeue((sequence) => this.InternalDequeue(sequence, action));
-        }
-
         private class InfoV1
         {
-            public V1.CryptoAlgorithm CryptoAlgorithm { get; set; }
-            public V1.HashAlgorithm HashAlgorithm { get; set; }
+            public V1.Internal.CryptoAlgorithm CryptoAlgorithm { get; set; }
+            public V1.Internal.HashAlgorithm HashAlgorithm { get; set; }
 
             public byte[] MyCryptoKey { get; set; }
             public byte[] OtherCryptoKey { get; set; }

@@ -9,14 +9,6 @@ using System.Collections.ObjectModel;
 
 namespace Omnix.Remoting
 {
-    public enum OmniRpcStreamPacketType : byte
-    {
-        Message = 0,
-        ErrorMessage = 1,
-        Canceled = 2,
-        Completed = 3,
-    }
-
     public sealed partial class OmniRpcErrorMessage : RocketPackMessageBase<OmniRpcErrorMessage>
     {
         static OmniRpcErrorMessage()
