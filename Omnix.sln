@@ -54,7 +54,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Omnix.Network.Upnp.Tests", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Omnix.Cryptography.Tests", "tests\Omnix.Cryptography.Tests\Omnix.Cryptography.Tests.csproj", "{07086BB5-1CCE-437A-804E-2C018599D893}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FormatterBenchmarks", "benchmarks\FormatterBenchmarks\FormatterBenchmarks.csproj", "{69AC7FCB-64B5-4E88-A5D8-7E326AFE67C8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FormatterBenchmarks", "perf\FormatterBenchmarks\FormatterBenchmarks.csproj", "{69AC7FCB-64B5-4E88-A5D8-7E326AFE67C8}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Benchmarks", "Benchmarks", "{D3C36B78-868D-4E27-910A-23FD8DB73F00}"
 EndProject
