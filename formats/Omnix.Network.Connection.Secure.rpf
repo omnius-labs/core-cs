@@ -4,15 +4,11 @@ using "Omnix.Cryptography.rpf";
 
 option csharp_namespace = "Omnix.Network.Connection.Secure";
 
-enum SecureConnectionType : uint8 {
+enum OmniSecureConnectionType : uint8 {
     Connect = 0,
     Accept = 1,
 }
 
-enum SecureConnectionVersion : uint8 {
+enum OmniSecureConnectionVersion : uint8 {
     Version1 = 1,
-}
-
-message SecureConnectionHelloMessage {
-    Versions: vector<SecureConnectionVersion>(32) = 0,
 }

@@ -33,7 +33,7 @@ namespace Omnix.Remoting
             return new OmniRpcStream(connection, _bufferPool);
         }
 
-        public async ValueTask<AcceptResult> Accept()
+        public async ValueTask<OmniRpcAcceptResult> Accept()
         {
             var connection = this.GetAcceptedConnection.Invoke();
 
@@ -47,7 +47,7 @@ namespace Omnix.Remoting
                 }
             });
 
-            return new AcceptResult(type, new OmniRpcStream(connection, _bufferPool));
+            return new OmniRpcAcceptResult(type, new OmniRpcStream(connection, _bufferPool));
         }
     }
 }
