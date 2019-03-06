@@ -1,37 +1,65 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Omnix.Base;
 
 namespace Omnix.Network.Connection
 {
-    public sealed class BandwidthController : DisposableBase
+    public sealed class BandwidthController
     {
-        private Queue<(DateTime time, int size)> _sendInfoQueue;
+        public Limiter SendBytesLimiter { get; } = new Limiter();
+        public Limiter ReceiveBytesLimiter { get; } = new Limiter();
 
-        public int SendBytesPerSecond { get; set; }
-        public int ReceiveBytesPerSecond { get; set; }
-
-        public int ComputeSendBytes(int size)
+        public void Reset()
         {
-            var lowerLimit = DateTime.UtcNow.AddSeconds(-1);
+            this.SendBytesLimiter.Reset();
+            this.ReceiveBytesLimiter.Reset();
+        }
 
-            while (_sendInfoQueue.Peek().time < lowerLimit)
+        public sealed class Limiter : ISynchronized
+        {
+            private Queue<(DateTime time, int size)> _queue = new Queue<(DateTime time, int size)>();
+
+            public int MaxBytesPerSecond { get; set; }
+            public object LockObject { get; } = new object();
+
+            public int ComputeFreeBytes()
             {
-                _sendInfoQueue.Dequeue();
+                lock (this.LockObject)
+                {
+                    var now = DateTime.UtcNow;
+                    var lowerLimit = now.AddSeconds(-1);
+
+                    while (_queue.Peek().time < lowerLimit)
+                    {
+                        _queue.Dequeue();
+                    }
+
+                    int result = this.MaxBytesPerSecond - _queue.ToArray().Sum(n => n.size);
+
+                    return result;
+                }
             }
 
-            throw new NotImplementedException();
-        }
+            public void AddConsumedBytes(int size)
+            {
+                if (size < 0) throw new ArgumentOutOfRangeException(nameof(size));
 
-        public int ComputeReceiveBytes(int size)
-        {
-            throw new NotImplementedException();
-        }
+                lock (this.LockObject)
+                {
+                    var now = DateTime.UtcNow;
+                    _queue.Enqueue((now, size));
+                }
+            }
 
-        protected override void Dispose(bool disposing)
-        {
-            throw new NotImplementedException();
+            public void Reset()
+            {
+                lock (this.LockObject)
+                {
+                    _queue.Clear();
+                }
+            }
         }
     }
 }

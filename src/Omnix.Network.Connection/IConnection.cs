@@ -16,8 +16,10 @@ namespace Omnix.Network.Connection
 
         bool TryEnqueue(Action<IBufferWriter<byte>> action);
         ValueTask EnqueueAsync(Action<IBufferWriter<byte>> action, CancellationToken token = default);
+        void Enqueue(Action<IBufferWriter<byte>> action, CancellationToken token = default);
 
         bool TryDequeue(Action<ReadOnlySequence<byte>> action);
         ValueTask DequeueAsync(Action<ReadOnlySequence<byte>> action, CancellationToken token = default);
+        void Dequeue(Action<ReadOnlySequence<byte>> action, CancellationToken token = default);
     }
 }

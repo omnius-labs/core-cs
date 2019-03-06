@@ -28,8 +28,15 @@ namespace Omnix.Network.Connection.Tests
 
             var (socket1, socket2) = SocketHelpers.GetSockets();
 
-            using (var connection1 = new OmniNonblockingConnection(new SocketCap(socket1, false), 1024 * 1024 * 256, BufferPool.Shared))
-            using (var connection2 = new OmniNonblockingConnection(new SocketCap(socket2, false), 1024 * 1024 * 256, BufferPool.Shared))
+            var options = new OmniNonblockingConnectionOptions()
+            {
+                MaxReceiveByteCount = 1024 * 1024 * 256,
+                MaxSendByteCount = 1024 * 1024 * 256,
+                BufferPool = BufferPool.Shared,
+            };
+
+            using (var connection1 = new OmniNonblockingConnection(new SocketCap(socket1, false), options))
+            using (var connection2 = new OmniNonblockingConnection(new SocketCap(socket2, false), options))
             {
                 foreach (var bufferSize in caseList)
                 {
@@ -52,10 +59,8 @@ namespace Omnix.Network.Connection.Tests
                     {
                         Thread.Sleep(100);
 
-                        connection1.Send(1024 * 1024);
-                        connection1.Receive(1024 * 1024);
-                        connection2.Send(1024 * 1024);
-                        connection2.Receive(1024 * 1024);
+                        connection1.DoEvents();
+                        connection2.DoEvents();
                     }
 
                     Assert.True(BytesOperations.SequenceEqual(buffer1, buffer2));
