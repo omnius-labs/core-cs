@@ -10,10 +10,12 @@
   <ItemGroup>
     <PackageReference Include="System.IO.Pipelines" Version="4.5.2" />
     <PackageReference Include="System.Memory" Version="4.5.1" />
+    <PackageReference Include="System.Threading.Channels" Version="4.5.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Omnix.Base\Omnix.Base.csproj" />
+    <ProjectReference Include="..\Omnix.Collections\Omnix.Collections.csproj" />
     <ProjectReference Include="..\Omnix.Cryptography\Omnix.Cryptography.csproj" />
     <ProjectReference Include="..\Omnix.Network\Omnix.Network.csproj" />
     <ProjectReference Include="..\Omnix.Serialization.RocketPack\Omnix.Serialization.RocketPack.csproj" />

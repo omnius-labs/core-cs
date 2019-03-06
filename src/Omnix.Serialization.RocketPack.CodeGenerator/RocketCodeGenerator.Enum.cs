@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Linq;
 
 namespace Omnix.Serialization.RocketPack.CodeGenerator
 {
@@ -11,9 +12,15 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
         /// </summary>
         class EnumWriter
         {
-            public EnumWriter()
-            {
+            private RocketFormatInfo _rocketFormatInfo;
+            private string _accessLevel;
 
+            public EnumWriter(RocketFormatInfo rocketFormatInfo)
+            {
+                _rocketFormatInfo = rocketFormatInfo;
+
+                var accessLevelOption = _rocketFormatInfo.Options.FirstOrDefault(n => n.Name == "csharp_access_level");
+                _accessLevel = accessLevelOption?.Value ?? "public";
             }
 
             /// <summary>
@@ -49,7 +56,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
             /// </summary>
             public void Write(CodeWriter w, EnumInfo enumInfo)
             {
-                w.WriteLine($"public enum {enumInfo.Name} : {this.GetTypeString(enumInfo.Type)}");
+                w.WriteLine($"{_accessLevel} enum {enumInfo.Name} : {this.GetTypeString(enumInfo.Type)}");
                 w.WriteLine("{");
 
                 w.PushIndent();

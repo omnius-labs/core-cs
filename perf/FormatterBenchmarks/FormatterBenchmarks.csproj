@@ -17,10 +17,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="_RocketPack\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\..\src\Omnix.Base\Omnix.Base.csproj" />
     <ProjectReference Include="..\..\src\Omnix.Serialization.RocketPack\Omnix.Serialization.RocketPack.csproj" />
     <ProjectReference Include="..\..\src\Omnix.Serialization\Omnix.Serialization.csproj" />

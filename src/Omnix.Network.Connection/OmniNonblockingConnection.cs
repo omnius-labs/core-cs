@@ -13,10 +13,12 @@ using Omnix.Serialization;
 
 namespace Omnix.Network.Connection
 {
-    public sealed class BaseConnection : DisposableBase, IConnection
+    public sealed class OmniNonblockingConnection : DisposableBase, IConnection
     {
-        private Cap _cap;
+        private readonly Cap _cap;
+        private readonly int _maxSendByteCount;
         private readonly int _maxReceiveByteCount;
+        private readonly BandwidthController _bandwidthController;
         private readonly BufferPool _bufferPool;
 
         private byte[] _sendHeaderBuffer = new byte[4];
@@ -39,15 +41,19 @@ namespace Omnix.Network.Connection
 
         private volatile bool _disposed;
 
-        public BaseConnection(Cap cap, int maxReceiveByteCount, BufferPool bufferPool)
+        private const int ReceiveBytesPerOneTime = 4096;
+
+        public OmniNonblockingConnection(Cap cap, OmniNonblockingConnectionOptions option)
         {
             if (cap == null) throw new ArgumentNullException(nameof(cap));
             if (cap.IsBlocking == true) throw new ArgumentException($"{nameof(cap)} is not nonblocking", nameof(cap));
-            if (bufferPool == null) throw new ArgumentNullException(nameof(bufferPool));
+            if (option == null) throw new ArgumentNullException(nameof(option));
 
             _cap = cap;
-            _maxReceiveByteCount = maxReceiveByteCount;
-            _bufferPool = bufferPool;
+            _maxSendByteCount = Math.Max(256, option.MaxSendByteCount);
+            _maxReceiveByteCount = Math.Max(256, option.MaxReceiveByteCount);
+            _bandwidthController = option.BandwidthController;
+            _bufferPool = option.BufferPool ?? BufferPool.Shared;
 
             _sendContentHub = new Hub();
             _receiveContentHub = new Hub();
@@ -61,7 +67,32 @@ namespace Omnix.Network.Connection
         public long ReceivedByteCount => Interlocked.Read(ref _receivedByteCount);
         public long SentByteCount => Interlocked.Read(ref _sentByteCount);
 
-        public int Send(int limit)
+        public void DoEvents()
+        {
+            if (_bandwidthController == null)
+            {
+                this.Send(_maxSendByteCount);
+                this.Receive(_maxReceiveByteCount);
+            }
+            else
+            {
+                lock (_bandwidthController.SendBytesLimiter.LockObject)
+                {
+                    var availableSize = _bandwidthController.SendBytesLimiter.ComputeFreeBytes();
+                    var sentSize = this.Send(availableSize);
+                    _bandwidthController.SendBytesLimiter.AddConsumedBytes(sentSize);
+                }
+
+                lock (_bandwidthController.ReceiveBytesLimiter.LockObject)
+                {
+                    var availableSize = _bandwidthController.ReceiveBytesLimiter.ComputeFreeBytes();
+                    var receivedSize = this.Receive(availableSize);
+                    _bandwidthController.ReceiveBytesLimiter.AddConsumedBytes(receivedSize);
+                }
+            }
+        }
+
+        private int Send(int limit)
         {
             if (_disposed) throw new ObjectDisposedException(this.GetType().FullName);
             if (!this.IsConnected) throw new ConnectionException("Not connected");
@@ -127,7 +158,7 @@ namespace Omnix.Network.Connection
             }
         }
 
-        public int Receive(int limit)
+        private int Receive(int limit)
         {
             if (_disposed) throw new ObjectDisposedException(this.GetType().FullName);
             if (!this.IsConnected) throw new ConnectionException("Not connected");
@@ -155,6 +186,8 @@ namespace Omnix.Network.Connection
                             if (_receiveHeaderBufferPosition == 4)
                             {
                                 var contentLength = BinaryPrimitives.ReadInt32BigEndian(_receiveHeaderBuffer);
+                                if (contentLength > _maxReceiveByteCount) throw new ConnectionException("This message is too long");
+
                                 _receiveContentRemain = contentLength;
 
                                 break;
@@ -197,11 +230,12 @@ namespace Omnix.Network.Connection
             _sendHeaderBufferPosition = 0;
         }
 
-        public void Enqueue(Action<IBufferWriter<byte>> action)
+        public bool TryEnqueue(Action<IBufferWriter<byte>> action)
         {
-            _sendSemaphoreSlim.Wait();
-
+            if (!_sendSemaphoreSlim.Wait(0)) return false;
             this.InternalEnqueue(action);
+
+            return true;
         }
 
         public async ValueTask EnqueueAsync(Action<IBufferWriter<byte>> action, CancellationToken token = default)
@@ -210,13 +244,10 @@ namespace Omnix.Network.Connection
             this.InternalEnqueue(action);
         }
 
-        public bool TryEnqueue(Action<IBufferWriter<byte>> action)
+        public void Enqueue(Action<IBufferWriter<byte>> action, CancellationToken token = default)
         {
-            if (!_sendSemaphoreSlim.Wait(0)) return false;
-
+            _sendSemaphoreSlim.Wait(token);
             this.InternalEnqueue(action);
-
-            return true;
         }
 
         public void InternalDequeue(Action<ReadOnlySequence<byte>> action)
@@ -228,11 +259,12 @@ namespace Omnix.Network.Connection
             _receiveContentHub.Reset();
         }
 
-        public void Dequeue(Action<ReadOnlySequence<byte>> action)
+        public bool TryDequeue(Action<ReadOnlySequence<byte>> action)
         {
-            _receiveSemaphoreSlim.Wait();
-
+            if (!_receiveSemaphoreSlim.Wait(0)) return false;
             this.InternalDequeue(action);
+
+            return true;
         }
 
         public async ValueTask DequeueAsync(Action<ReadOnlySequence<byte>> action, CancellationToken token = default)
@@ -241,13 +273,10 @@ namespace Omnix.Network.Connection
             this.InternalDequeue(action);
         }
 
-        public bool TryDequeue(Action<ReadOnlySequence<byte>> action)
+        public void Dequeue(Action<ReadOnlySequence<byte>> action, CancellationToken token = default)
         {
-            if (!_receiveSemaphoreSlim.Wait(0)) return false;
-
+            _receiveSemaphoreSlim.Wait(token);
             this.InternalDequeue(action);
-
-            return true;
         }
 
         protected override void Dispose(bool disposing)
@@ -258,7 +287,6 @@ namespace Omnix.Network.Connection
             if (disposing)
             {
                 _cap?.Dispose();
-                _cap = null;
 
                 _sendContentHub?.Dispose();
                 _sendContentHub = null;

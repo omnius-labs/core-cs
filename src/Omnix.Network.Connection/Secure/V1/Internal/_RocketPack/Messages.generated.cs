@@ -8,39 +8,39 @@ using System.Buffers;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
-namespace Omnix.Network.Connection.Secure.V1
+namespace Omnix.Network.Connection.Secure.V1.Internal
 {
-    public enum KeyExchangeAlgorithm : byte
+    internal enum KeyExchangeAlgorithm : byte
     {
         EcDh_P521_Sha2_256 = 0,
     }
 
-    public enum KeyDerivationAlgorithm : byte
+    internal enum KeyDerivationAlgorithm : byte
     {
         Pbkdf2 = 0,
     }
 
-    public enum HashAlgorithm : byte
+    internal enum HashAlgorithm : byte
     {
         Sha2_256 = 0,
     }
 
-    public enum CryptoAlgorithm : byte
+    internal enum CryptoAlgorithm : byte
     {
         Aes_256 = 0,
     }
 
-    public enum AuthenticationType : byte
+    internal enum AuthenticationType : byte
     {
         None = 0,
         Password = 1,
     }
 
-    public sealed partial class SecureConnectionProfileMessage : RocketPackMessageBase<SecureConnectionProfileMessage>
+    internal sealed partial class ProfileMessage : RocketPackMessageBase<ProfileMessage>
     {
-        static SecureConnectionProfileMessage()
+        static ProfileMessage()
         {
-            SecureConnectionProfileMessage.Formatter = new CustomFormatter();
+            ProfileMessage.Formatter = new CustomFormatter();
         }
 
         public static readonly int MaxSessionIdLength = 32;
@@ -49,7 +49,7 @@ namespace Omnix.Network.Connection.Secure.V1
         public static readonly int MaxCryptoAlgorithmsCount = 32;
         public static readonly int MaxHashAlgorithmsCount = 32;
 
-        public SecureConnectionProfileMessage(ReadOnlyMemory<byte> sessionId, AuthenticationType authenticationType, IList<KeyExchangeAlgorithm> keyExchangeAlgorithms, IList<KeyDerivationAlgorithm> keyDerivationAlgorithms, IList<CryptoAlgorithm> cryptoAlgorithms, IList<HashAlgorithm> hashAlgorithms)
+        public ProfileMessage(ReadOnlyMemory<byte> sessionId, AuthenticationType authenticationType, IList<KeyExchangeAlgorithm> keyExchangeAlgorithms, IList<KeyDerivationAlgorithm> keyDerivationAlgorithms, IList<CryptoAlgorithm> cryptoAlgorithms, IList<HashAlgorithm> hashAlgorithms)
         {
             if (sessionId.Length > 32) throw new ArgumentOutOfRangeException("sessionId");
             if (keyExchangeAlgorithms is null) throw new ArgumentNullException("keyExchangeAlgorithms");
@@ -99,7 +99,7 @@ namespace Omnix.Network.Connection.Secure.V1
         public IReadOnlyList<CryptoAlgorithm> CryptoAlgorithms { get; }
         public IReadOnlyList<HashAlgorithm> HashAlgorithms { get; }
 
-        public override bool Equals(SecureConnectionProfileMessage target)
+        public override bool Equals(ProfileMessage target)
         {
             if ((object)target == null) return false;
             if (Object.ReferenceEquals(this, target)) return true;
@@ -120,9 +120,9 @@ namespace Omnix.Network.Connection.Secure.V1
         private readonly int _hashCode;
         public override int GetHashCode() => _hashCode;
 
-        private sealed class CustomFormatter : IRocketPackFormatter<SecureConnectionProfileMessage>
+        private sealed class CustomFormatter : IRocketPackFormatter<ProfileMessage>
         {
-            public void Serialize(RocketPackWriter w, SecureConnectionProfileMessage value, int rank)
+            public void Serialize(RocketPackWriter w, ProfileMessage value, int rank)
             {
                 if (rank > 256) throw new FormatException();
 
@@ -192,7 +192,7 @@ namespace Omnix.Network.Connection.Secure.V1
                 }
             }
 
-            public SecureConnectionProfileMessage Deserialize(RocketPackReader r, int rank)
+            public ProfileMessage Deserialize(RocketPackReader r, int rank)
             {
                 if (rank > 256) throw new FormatException();
 
@@ -264,19 +264,19 @@ namespace Omnix.Network.Connection.Secure.V1
                     }
                 }
 
-                return new SecureConnectionProfileMessage(p_sessionId, p_authenticationType, p_keyExchangeAlgorithms, p_keyDerivationAlgorithms, p_cryptoAlgorithms, p_hashAlgorithms);
+                return new ProfileMessage(p_sessionId, p_authenticationType, p_keyExchangeAlgorithms, p_keyDerivationAlgorithms, p_cryptoAlgorithms, p_hashAlgorithms);
             }
         }
     }
 
-    public sealed partial class SecureConnectionVerificationMessage : RocketPackMessageBase<SecureConnectionVerificationMessage>
+    internal sealed partial class VerificationMessage : RocketPackMessageBase<VerificationMessage>
     {
-        static SecureConnectionVerificationMessage()
+        static VerificationMessage()
         {
-            SecureConnectionVerificationMessage.Formatter = new CustomFormatter();
+            VerificationMessage.Formatter = new CustomFormatter();
         }
 
-        public SecureConnectionVerificationMessage(SecureConnectionProfileMessage profileMessage, OmniAgreementPublicKey agreementPublicKey)
+        public VerificationMessage(ProfileMessage profileMessage, OmniAgreementPublicKey agreementPublicKey)
         {
             if (profileMessage is null) throw new ArgumentNullException("profileMessage");
             if (agreementPublicKey is null) throw new ArgumentNullException("agreementPublicKey");
@@ -292,10 +292,10 @@ namespace Omnix.Network.Connection.Secure.V1
             }
         }
 
-        public SecureConnectionProfileMessage ProfileMessage { get; }
+        public ProfileMessage ProfileMessage { get; }
         public OmniAgreementPublicKey AgreementPublicKey { get; }
 
-        public override bool Equals(SecureConnectionVerificationMessage target)
+        public override bool Equals(VerificationMessage target)
         {
             if ((object)target == null) return false;
             if (Object.ReferenceEquals(this, target)) return true;
@@ -308,9 +308,9 @@ namespace Omnix.Network.Connection.Secure.V1
         private readonly int _hashCode;
         public override int GetHashCode() => _hashCode;
 
-        private sealed class CustomFormatter : IRocketPackFormatter<SecureConnectionVerificationMessage>
+        private sealed class CustomFormatter : IRocketPackFormatter<VerificationMessage>
         {
-            public void Serialize(RocketPackWriter w, SecureConnectionVerificationMessage value, int rank)
+            public void Serialize(RocketPackWriter w, VerificationMessage value, int rank)
             {
                 if (rank > 256) throw new FormatException();
 
@@ -326,7 +326,7 @@ namespace Omnix.Network.Connection.Secure.V1
                 if (value.ProfileMessage != default)
                 {
                     w.Write((ulong)0);
-                    SecureConnectionProfileMessage.Formatter.Serialize(w, value.ProfileMessage, rank + 1);
+                    ProfileMessage.Formatter.Serialize(w, value.ProfileMessage, rank + 1);
                 }
                 // AgreementPublicKey
                 if (value.AgreementPublicKey != default)
@@ -336,14 +336,14 @@ namespace Omnix.Network.Connection.Secure.V1
                 }
             }
 
-            public SecureConnectionVerificationMessage Deserialize(RocketPackReader r, int rank)
+            public VerificationMessage Deserialize(RocketPackReader r, int rank)
             {
                 if (rank > 256) throw new FormatException();
 
                 // Read property count
                 int propertyCount = (int)r.GetUInt64();
 
-                SecureConnectionProfileMessage p_profileMessage = default;
+                ProfileMessage p_profileMessage = default;
                 OmniAgreementPublicKey p_agreementPublicKey = default;
 
                 for (; propertyCount > 0; propertyCount--)
@@ -353,7 +353,7 @@ namespace Omnix.Network.Connection.Secure.V1
                     {
                         case 0: // ProfileMessage
                             {
-                                p_profileMessage = SecureConnectionProfileMessage.Formatter.Deserialize(r, rank + 1);
+                                p_profileMessage = ProfileMessage.Formatter.Deserialize(r, rank + 1);
                                 break;
                             }
                         case 1: // AgreementPublicKey
@@ -364,21 +364,21 @@ namespace Omnix.Network.Connection.Secure.V1
                     }
                 }
 
-                return new SecureConnectionVerificationMessage(p_profileMessage, p_agreementPublicKey);
+                return new VerificationMessage(p_profileMessage, p_agreementPublicKey);
             }
         }
     }
 
-    public sealed partial class SecureConnectionAuthenticationMessage : RocketPackMessageBase<SecureConnectionAuthenticationMessage>
+    internal sealed partial class AuthenticationMessage : RocketPackMessageBase<AuthenticationMessage>
     {
-        static SecureConnectionAuthenticationMessage()
+        static AuthenticationMessage()
         {
-            SecureConnectionAuthenticationMessage.Formatter = new CustomFormatter();
+            AuthenticationMessage.Formatter = new CustomFormatter();
         }
 
         public static readonly int MaxHashesCount = 32;
 
-        public SecureConnectionAuthenticationMessage(IList<ReadOnlyMemory<byte>> hashes)
+        public AuthenticationMessage(IList<ReadOnlyMemory<byte>> hashes)
         {
             if (hashes is null) throw new ArgumentNullException("hashes");
             if (hashes.Count > 32) throw new ArgumentOutOfRangeException("hashes");
@@ -401,7 +401,7 @@ namespace Omnix.Network.Connection.Secure.V1
 
         public IReadOnlyList<ReadOnlyMemory<byte>> Hashes { get; }
 
-        public override bool Equals(SecureConnectionAuthenticationMessage target)
+        public override bool Equals(AuthenticationMessage target)
         {
             if ((object)target == null) return false;
             if (Object.ReferenceEquals(this, target)) return true;
@@ -414,9 +414,9 @@ namespace Omnix.Network.Connection.Secure.V1
         private readonly int _hashCode;
         public override int GetHashCode() => _hashCode;
 
-        private sealed class CustomFormatter : IRocketPackFormatter<SecureConnectionAuthenticationMessage>
+        private sealed class CustomFormatter : IRocketPackFormatter<AuthenticationMessage>
         {
-            public void Serialize(RocketPackWriter w, SecureConnectionAuthenticationMessage value, int rank)
+            public void Serialize(RocketPackWriter w, AuthenticationMessage value, int rank)
             {
                 if (rank > 256) throw new FormatException();
 
@@ -439,7 +439,7 @@ namespace Omnix.Network.Connection.Secure.V1
                 }
             }
 
-            public SecureConnectionAuthenticationMessage Deserialize(RocketPackReader r, int rank)
+            public AuthenticationMessage Deserialize(RocketPackReader r, int rank)
             {
                 if (rank > 256) throw new FormatException();
 
@@ -466,7 +466,7 @@ namespace Omnix.Network.Connection.Secure.V1
                     }
                 }
 
-                return new SecureConnectionAuthenticationMessage(p_hashes);
+                return new AuthenticationMessage(p_hashes);
             }
         }
     }
