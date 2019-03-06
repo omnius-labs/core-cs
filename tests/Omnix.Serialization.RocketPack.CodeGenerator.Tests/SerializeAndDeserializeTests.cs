@@ -9,6 +9,7 @@ using System.Diagnostics;
 using Omnix.Serialization.Extensions;
 using System.Security.Cryptography;
 using Omnix.Cryptography;
+using Omnix.Serialization.RocketPack.CodeGenerator.Tests.Internal;
 
 namespace Omnix.Serialization.RocketPack.CodeGenerator.Tests
 {

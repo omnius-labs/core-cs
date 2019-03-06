@@ -2,7 +2,8 @@ syntax = v1;
 
 using "Omnix.Cryptography.rpf";
 
-option csharp_namespace = "Omnix.Network.Connection.Secure.V1";
+option csharp_namespace = "Omnix.Network.Connection.Secure.V1.Internal";
+option csharp_access_level = "internal";
 
 enum KeyExchangeAlgorithm : uint8 {
     EcDh_P521_Sha2_256 = 0,
@@ -25,7 +26,7 @@ enum AuthenticationType : uint8 {
     Password = 1,
 }
 
-message SecureConnectionProfileMessage {
+message ProfileMessage {
     SessionId: memory(32) = 0,
     AuthenticationType: AuthenticationType = 1,
     KeyExchangeAlgorithms: vector<KeyExchangeAlgorithm>(32) = 2,
@@ -34,11 +35,11 @@ message SecureConnectionProfileMessage {
     HashAlgorithms: vector<HashAlgorithm>(32) = 5,
 }
 
-message SecureConnectionVerificationMessage {
-    ProfileMessage: SecureConnectionProfileMessage = 0,
+message VerificationMessage {
+    ProfileMessage: ProfileMessage = 0,
     AgreementPublicKey: OmniAgreementPublicKey = 1,
 }
 
-message SecureConnectionAuthenticationMessage {
+message AuthenticationMessage {
     Hashes: vector<memory(32)>(32) = 0,
 }

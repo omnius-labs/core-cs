@@ -52,23 +52,9 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
             w.WriteLine("{");
             w.PushIndent();
 
-            object customTypeResolver(CustomTypeInfo n)
-            {
-                foreach (var targetInfo in new[] { info }.Union(externalInfos))
-                {
-                    var enumInfo = targetInfo.Enums.FirstOrDefault(m => m.Name == n.TypeName);
-                    if (enumInfo != null) return enumInfo;
-
-                    var messageInfo = targetInfo.Messages.FirstOrDefault(m => m.Name == n.TypeName);
-                    if (messageInfo != null) return messageInfo;
-                }
-
-                return null;
-            }
-
-            var enumWriter = new EnumWriter();
-            var classWriter = new ClassWriter(customTypeResolver);
-            var structWriter = new StructWriter(customTypeResolver);
+            var enumWriter = new EnumWriter(info);
+            var classWriter = new ClassWriter(info, externalInfos);
+            var structWriter = new StructWriter(info, externalInfos);
 
             foreach (var enumInfo in info.Enums)
             {

@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Omnix.Serialization.RocketPack
+namespace Omnix.Network.Connection.Flatten
 {
-    class RocketPackMeasurer
+    class OmniFlattenConnection
     {
     }
 }

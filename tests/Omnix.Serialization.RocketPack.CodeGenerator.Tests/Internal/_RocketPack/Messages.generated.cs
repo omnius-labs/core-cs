@@ -7,57 +7,57 @@ using System.Buffers;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
-namespace Omnix.Serialization.RocketPack.CodeGenerator.Tests
+namespace Omnix.Serialization.RocketPack.CodeGenerator.Tests.Internal
 {
-    public enum Enum1 : sbyte
+    internal enum Enum1 : sbyte
     {
         Yes = 0,
         No = 1,
     }
 
-    public enum Enum2 : short
+    internal enum Enum2 : short
     {
         Yes = 0,
         No = 1,
     }
 
-    public enum Enum3 : int
+    internal enum Enum3 : int
     {
         Yes = 0,
         No = 1,
     }
 
-    public enum Enum4 : long
+    internal enum Enum4 : long
     {
         Yes = 0,
         No = 1,
     }
 
-    public enum Enum5 : byte
+    internal enum Enum5 : byte
     {
         Yes = 0,
         No = 1,
     }
 
-    public enum Enum6 : ushort
+    internal enum Enum6 : ushort
     {
         Yes = 0,
         No = 1,
     }
 
-    public enum Enum7 : uint
+    internal enum Enum7 : uint
     {
         Yes = 0,
         No = 1,
     }
 
-    public enum Enum8 : ulong
+    internal enum Enum8 : ulong
     {
         Yes = 0,
         No = 1,
     }
 
-    public sealed partial class HelloMessage : RocketPackMessageBase<HelloMessage>, IDisposable
+    internal sealed partial class HelloMessage : RocketPackMessageBase<HelloMessage>, IDisposable
     {
         static HelloMessage()
         {
@@ -608,7 +608,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator.Tests
         }
     }
 
-    public readonly struct SmallHelloMessage
+    internal readonly struct SmallHelloMessage
     {
         public static IRocketPackFormatter<SmallHelloMessage> Formatter { get; }
 
@@ -1005,7 +1005,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator.Tests
         }
     }
 
-    public sealed partial class IntPropertiesListMessage : RocketPackMessageBase<IntPropertiesListMessage>
+    internal sealed partial class IntPropertiesListMessage : RocketPackMessageBase<IntPropertiesListMessage>
     {
         static IntPropertiesListMessage()
         {
@@ -1107,7 +1107,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator.Tests
         }
     }
 
-    public sealed partial class StringPropertiesListMessage : RocketPackMessageBase<StringPropertiesListMessage>
+    internal sealed partial class StringPropertiesListMessage : RocketPackMessageBase<StringPropertiesListMessage>
     {
         static StringPropertiesListMessage()
         {
@@ -1209,7 +1209,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator.Tests
         }
     }
 
-    public sealed partial class IntPropertiesMessage : RocketPackMessageBase<IntPropertiesMessage>
+    internal sealed partial class IntPropertiesMessage : RocketPackMessageBase<IntPropertiesMessage>
     {
         static IntPropertiesMessage()
         {
@@ -1425,7 +1425,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator.Tests
         }
     }
 
-    public sealed partial class StringPropertiesMessage : RocketPackMessageBase<StringPropertiesMessage>
+    internal sealed partial class StringPropertiesMessage : RocketPackMessageBase<StringPropertiesMessage>
     {
         static StringPropertiesMessage()
         {

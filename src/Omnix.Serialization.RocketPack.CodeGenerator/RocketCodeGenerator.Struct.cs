@@ -12,11 +12,32 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
         /// </summary>
         class StructWriter
         {
-            private Func<CustomTypeInfo, object> _customTypeResolver;
+            private RocketFormatInfo _rocketFormatInfo;
+            private IList<RocketFormatInfo> _externalRocketFormatInfos;
 
-            public StructWriter(Func<CustomTypeInfo, object> customTypeResolver)
+            private string _accessLevel;
+
+            public StructWriter(RocketFormatInfo rocketFormatInfo, IEnumerable<RocketFormatInfo> externalRocketFormatInfos)
             {
-                _customTypeResolver = customTypeResolver;
+                _rocketFormatInfo = rocketFormatInfo;
+                _externalRocketFormatInfos = externalRocketFormatInfos.ToList();
+
+                var accessLevelOption = _rocketFormatInfo.Options.FirstOrDefault(n => n.Name == "csharp_access_level");
+                _accessLevel = accessLevelOption?.Value ?? "public";
+            }
+
+            private object CustomTypeResolver(CustomTypeInfo n)
+            {
+                foreach (var targetInfo in new[] { _rocketFormatInfo }.Union(_externalRocketFormatInfos))
+                {
+                    var enumInfo = targetInfo.Enums.FirstOrDefault(m => m.Name == n.TypeName);
+                    if (enumInfo != null) return enumInfo;
+
+                    var messageInfo = targetInfo.Messages.FirstOrDefault(m => m.Name == n.TypeName);
+                    if (messageInfo != null) return messageInfo;
+                }
+
+                return null;
             }
 
             /// <summary>
@@ -62,7 +83,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
                         return $"IDictionary<{this.GetParameterTypeString(typeInfo.KeyType)}, {this.GetParameterTypeString(typeInfo.ValueType)}>";
                     case CustomTypeInfo typeInfo:
                         {
-                            switch (_customTypeResolver.Invoke(typeInfo))
+                            switch (this.CustomTypeResolver(typeInfo))
                             {
                                 case EnumInfo enumInfo:
                                     return typeInfo.TypeName + (typeInfo.IsNullable ? "?" : "");
@@ -122,7 +143,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
                         return $"IReadOnlyDictionary<{this.GetParameterTypeString(typeInfo.KeyType)}, {this.GetParameterTypeString(typeInfo.ValueType)}>";
                     case CustomTypeInfo typeInfo:
                         {
-                            switch (_customTypeResolver.Invoke(typeInfo))
+                            switch (this.CustomTypeResolver(typeInfo))
                             {
                                 case EnumInfo enumInfo:
                                     return typeInfo.TypeName + (typeInfo.IsNullable ? "?" : "");
@@ -146,11 +167,11 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
             {
                 if (messageInfo.Elements.Select(n => n.Type).OfType<MemoryTypeInfo>().Any(n => n.IsUseMemoryPool))
                 {
-                    w.WriteLine($"public readonly struct {messageInfo.Name} : IDisposable");
+                    w.WriteLine($"{_accessLevel} readonly struct {messageInfo.Name} : IDisposable");
                 }
                 else
                 {
-                    w.WriteLine($"public readonly struct {messageInfo.Name}");
+                    w.WriteLine($"{_accessLevel} readonly struct {messageInfo.Name}");
                 }
 
                 w.WriteLine("{");
@@ -350,7 +371,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
                         w.WriteLine($"if ({name} is null) throw new ArgumentNullException(\"{name}\");");
                         return true;
                     case CustomTypeInfo customTypeInfo when (!typeInfo.IsNullable):
-                        switch (_customTypeResolver.Invoke(customTypeInfo))
+                        switch (this.CustomTypeResolver(customTypeInfo))
                         {
                             case MessageInfo messageInfo when (messageInfo.FormatType == MessageFormatType.Medium):
                                 w.WriteLine($"if ({name} is null) throw new ArgumentNullException(\"{name}\");");
@@ -827,7 +848,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
                         }
                         break;
                     case CustomTypeInfo customTypeInfo:
-                        switch (_customTypeResolver.Invoke(customTypeInfo))
+                        switch (this.CustomTypeResolver(customTypeInfo))
                         {
                             case EnumInfo enumInfo:
                                 switch (enumInfo.Type)
@@ -921,7 +942,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
                         }
                         break;
                     case CustomTypeInfo customTypeInfo:
-                        switch (_customTypeResolver.Invoke(customTypeInfo))
+                        switch (this.CustomTypeResolver(customTypeInfo))
                         {
                             case EnumInfo enumInfo:
                                 switch (enumInfo.Type)
