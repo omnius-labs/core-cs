@@ -30,10 +30,17 @@ namespace Omnix.Network.Connection.Tests
 
             var (socket1, socket2) = SocketHelpers.GetSockets();
 
-            using (var baseConnection1 = new OmniNonblockingConnection(new SocketCap(socket1, false), 1024 * 1024 * 256, BufferPool.Shared))
-            using (var baseConnection2 = new OmniNonblockingConnection(new SocketCap(socket2, false), 1024 * 1024 * 256, BufferPool.Shared))
-            using (var connection1 = new OmniSecureConnection(baseConnection1, OmniSecureConnectionType.Connect, BufferPool.Shared))
-            using (var connection2 = new OmniSecureConnection(baseConnection2, OmniSecureConnectionType.Accept, BufferPool.Shared))
+            var options = new OmniNonblockingConnectionOptions()
+            {
+                MaxReceiveByteCount = 1024 * 1024 * 256,
+                MaxSendByteCount = 1024 * 1024 * 256,
+                BufferPool = BufferPool.Shared,
+            };
+
+            using (var baseConnection1 = new OmniNonblockingConnection(new SocketCap(socket1, false), options))
+            using (var baseConnection2 = new OmniNonblockingConnection(new SocketCap(socket2, false), options))
+            using (var connection1 = new OmniSecureConnection(baseConnection1, new OmniSecureConnectionOptions() { Type = OmniSecureConnectionType.Connect }))
+            using (var connection2 = new OmniSecureConnection(baseConnection2, new OmniSecureConnectionOptions() { Type = OmniSecureConnectionType.Accept }))
             {
                 // ハンドシェイクを行う
                 {
@@ -44,10 +51,8 @@ namespace Omnix.Network.Connection.Tests
                     {
                         Thread.Sleep(100);
 
-                        baseConnection1.Send(1024 * 1024);
-                        baseConnection1.Receive(1024 * 1024);
-                        baseConnection2.Send(1024 * 1024);
-                        baseConnection2.Receive(1024 * 1024);
+                        baseConnection1.DoEvents();
+                        baseConnection2.DoEvents();
                     }
                 }
 
@@ -72,10 +77,8 @@ namespace Omnix.Network.Connection.Tests
                     {
                         Thread.Sleep(100);
 
-                        baseConnection1.Send(1024 * 1024);
-                        baseConnection1.Receive(1024 * 1024);
-                        baseConnection2.Send(1024 * 1024);
-                        baseConnection2.Receive(1024 * 1024);
+                        baseConnection1.DoEvents();
+                        baseConnection2.DoEvents();
                     }
 
                     Assert.True(BytesOperations.SequenceEqual(buffer1, buffer2));

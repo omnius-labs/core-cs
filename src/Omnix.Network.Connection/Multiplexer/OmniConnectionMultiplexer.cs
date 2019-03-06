@@ -11,6 +11,7 @@ using System.Linq;
 
 namespace Omnix.Network.Connection.Multiplexer
 {
+    /*
     public sealed partial class OmniConnectionMultiplexer<TPriority> : ServiceBase
          where TPriority : IComparable<TPriority>
     {
@@ -72,6 +73,8 @@ namespace Omnix.Network.Connection.Multiplexer
                 if (_sessionInfos.TryGetValue(sessionConnection.Id, out var info))
                 {
                     info.Priority = priority;
+
+                    return;
                 }
             }
 
@@ -85,6 +88,7 @@ namespace Omnix.Network.Connection.Multiplexer
             var sessionInfo = new SessionInfo();
             sessionInfo.Id = id;
             sessionInfo.Priority = priority;
+            sessionInfo.StatusType = SessionStatusType.Connecting;
 
             return new SessionConnection(id, this);
         }
@@ -150,19 +154,6 @@ namespace Omnix.Network.Connection.Multiplexer
         {
         }
 
-        private sealed class SessionInfo : ISynchronized
-        {
-            public object LockObject { get; } = new object();
-
-            public SemaphoreSlim SendSemaphoreSlim { get; } = new SemaphoreSlim(3, 3);
-            public SemaphoreSlim ReceiveSemaphoreSlim { get; } = new SemaphoreSlim(0, 3);
-
-            public ulong Id { get; set; }
-            public TPriority Priority { get; set; }
-            public Queue<Hub> SendHubQueue { get; } = new Queue<Hub>();
-            public Queue<Hub> ReceiveHubQueue { get; } = new Queue<Hub>();
-        }
-
         private void SendThread(CancellationToken token)
         {
             while (!token.IsCancellationRequested)
@@ -226,4 +217,5 @@ namespace Omnix.Network.Connection.Multiplexer
             }
         }
     }
+    */
 }

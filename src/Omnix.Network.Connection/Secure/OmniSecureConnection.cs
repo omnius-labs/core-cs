@@ -36,23 +36,16 @@ namespace Omnix.Network.Connection.Secure
 
         private volatile bool _disposed;
 
-        public OmniSecureConnection(IConnection connection, OmniSecureConnectionType type, BufferPool bufferPool)
-            : this(connection, type, Enumerable.Empty<string>(), bufferPool)
-        {
-
-        }
-
-        public OmniSecureConnection(IConnection connection, OmniSecureConnectionType type, IEnumerable<string> passwords, BufferPool bufferPool)
+        public OmniSecureConnection(IConnection connection, OmniSecureConnectionOptions options)
         {
             if (connection == null) throw new ArgumentNullException(nameof(connection));
-            if (!EnumHelper.IsValid(type)) throw new ArgumentException(nameof(type));
-            if (passwords == null) throw new ArgumentNullException(nameof(passwords));
-            if (bufferPool == null) throw new ArgumentNullException(nameof(bufferPool));
+            if (options == null) throw new ArgumentNullException(nameof(options));
+            if (!EnumHelper.IsValid(options.Type)) throw new ArgumentException(nameof(options.Type));
 
             _connection = connection;
-            _type = type;
-            _passwords = new ReadOnlyCollection<string>(passwords.ToList());
-            _bufferPool = bufferPool;
+            _type = options.Type;
+            _passwords = new ReadOnlyCollection<string>(options.Passwords ?? Array.Empty<string>());
+            _bufferPool = options.BufferPool ?? BufferPool.Shared;
         }
 
         public IConnection BaseConnection => _connection;
@@ -112,30 +105,15 @@ namespace Omnix.Network.Connection.Secure
 
         private async ValueTask Hello(IConnection connection, CancellationToken token)
         {
-            if (_type == OmniSecureConnectionType.Connect)
-            {
-                // Helloメッセージを送信
-                var sendHelloMessage = new HelloMessage(new[] { _version });
-                await connection.EnqueueAsync((bufferWriter) => sendHelloMessage.Export(bufferWriter, _bufferPool), token);
+            // Helloメッセージを送信
+            var sendHelloMessage = new HelloMessage(new[] { _version });
+            await connection.EnqueueAsync((bufferWriter) => sendHelloMessage.Export(bufferWriter, _bufferPool), token);
 
-                // Helloメッセージを受信
-                HelloMessage receiveHelloMessage = null;
-                await connection.DequeueAsync((sequence) => receiveHelloMessage = HelloMessage.Import(sequence, _bufferPool), token);
+            // Helloメッセージを受信
+            HelloMessage receiveHelloMessage = null;
+            await connection.DequeueAsync((sequence) => receiveHelloMessage = HelloMessage.Import(sequence, _bufferPool), token);
 
-                _version = GetOverlapMaxEnum(sendHelloMessage.Versions, receiveHelloMessage.Versions);
-            }
-            else if (_type == OmniSecureConnectionType.Accept)
-            {
-                // Helloメッセージを受信
-                HelloMessage receiveHelloMessage = null;
-                await connection.DequeueAsync((sequence) => receiveHelloMessage = HelloMessage.Import(sequence, _bufferPool), token);
-
-                // Helloメッセージを送信
-                var sendHelloMessage = new HelloMessage(new[] { _version });
-                await connection.EnqueueAsync((bufferWriter) => sendHelloMessage.Export(bufferWriter, _bufferPool), token);
-
-                _version = GetOverlapMaxEnum(sendHelloMessage.Versions, receiveHelloMessage.Versions);
-            }
+            _version = GetOverlapMaxEnum(sendHelloMessage.Versions, receiveHelloMessage.Versions);
         }
 
         private async ValueTask HandshakeV1(IConnection connection, CancellationToken token)
@@ -364,7 +342,6 @@ namespace Omnix.Network.Connection.Secure
                             && _infoV1.HashAlgorithm.HasFlag(V1.Internal.HashAlgorithm.Sha2_256))
                         {
                             const int headerSize = 8;
-                            const int hashLength = 32;
                             const int blockSize = 16;
 
                             // 送信済みデータ + 送信するデータのサイズを書き込む
@@ -465,6 +442,11 @@ namespace Omnix.Network.Connection.Secure
         public async ValueTask EnqueueAsync(Action<IBufferWriter<byte>> action, CancellationToken token = default)
         {
             await _connection.EnqueueAsync((bufferWriter) => this.InternalEnqueue(bufferWriter, action), token);
+        }
+
+        public void Enqueue(Action<IBufferWriter<byte>> action, CancellationToken token = default)
+        {
+            _connection.Enqueue((bufferWriter) => this.InternalEnqueue(bufferWriter, action), token);
         }
 
         private void InternalDequeue(ReadOnlySequence<byte> sequence, Action<ReadOnlySequence<byte>> action)
@@ -582,6 +564,10 @@ namespace Omnix.Network.Connection.Secure
         public async ValueTask DequeueAsync(Action<ReadOnlySequence<byte>> action, CancellationToken token = default)
         {
             await _connection.DequeueAsync((sequence) => this.InternalDequeue(sequence, action), token);
+        }
+        public void Dequeue(Action<ReadOnlySequence<byte>> action, CancellationToken token = default)
+        {
+            _connection.Dequeue((sequence) => this.InternalDequeue(sequence, action), token);
         }
 
         private class InfoV1

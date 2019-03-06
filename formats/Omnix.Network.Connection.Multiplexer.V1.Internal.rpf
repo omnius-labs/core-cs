@@ -1,0 +1,44 @@
+syntax = v1;
+
+option csharp_namespace = "Omnix.Network.Connection.Multiplexer.V1.Internal";
+option csharp_access_level = "internal";
+
+message ProfileMessage {
+    InitialWindowSize: uint64 = 0,
+    MaxSessionAcceptQueueSize: uint32 = 1,
+}
+
+message SessionConnectMessage {
+    SessionId: uint64 = 0,
+}
+
+message SessionAcceptMessage {
+    SessionId: uint64 = 0,
+}
+
+message SessionUpdateWindowSizeMessage {
+    SessionId: uint64 = 0,
+    Size: uint64 = 1,
+}
+
+message SessionDataMessage {
+    SessionId: uint64 = 0,
+    IsCompleted: bool = 1,
+    [Recyclable]
+    Data: memory(262144) = 2,
+}
+
+message SessionCloseMessage {
+    SessionId: uint64 = 0,
+}
+
+enum SessionErrorType : uint8 {
+    ConnectFailed = 0,
+    MemoryOverflow = 1,
+    NotFoundSessionId = 2,
+}
+
+message SessionErrorMessage {
+    SessionId: uint64 = 0,
+    ErrorType: SessionErrorType = 1, 
+}
