@@ -4,14 +4,13 @@
     <TargetFramework>netcoreapp2.1</TargetFramework>
     <LangVersion>latest</LangVersion>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <AssemblyVersion>2018.8.31.34</AssemblyVersion>
     <AssemblyName>Omnix.Base</AssemblyName>
     <RootNamespace>Omnix.Base</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="NLog" Version="4.5.11" />
-    <PackageReference Include="System.IO.Pipelines" Version="4.5.2" />
+    <PackageReference Include="System.IO.Pipelines" Version="4.5.3" />
   </ItemGroup>
 
   <ItemGroup>

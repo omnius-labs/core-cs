@@ -60,23 +60,23 @@ namespace Omnix.Network.Connection.Multiplexer.V1.Internal
 
                 // Write property count
                 {
-                    int propertyCount = 0;
+                    uint propertyCount = 0;
                     if (value.InitialWindowSize != default) propertyCount++;
                     if (value.MaxSessionAcceptQueueSize != default) propertyCount++;
-                    w.Write((ulong)propertyCount);
+                    w.Write(propertyCount);
                 }
 
                 // InitialWindowSize
                 if (value.InitialWindowSize != default)
                 {
-                    w.Write((ulong)0);
-                    w.Write((ulong)value.InitialWindowSize);
+                    w.Write((uint)0);
+                    w.Write(value.InitialWindowSize);
                 }
                 // MaxSessionAcceptQueueSize
                 if (value.MaxSessionAcceptQueueSize != default)
                 {
-                    w.Write((ulong)1);
-                    w.Write((ulong)value.MaxSessionAcceptQueueSize);
+                    w.Write((uint)1);
+                    w.Write(value.MaxSessionAcceptQueueSize);
                 }
             }
 
@@ -85,24 +85,24 @@ namespace Omnix.Network.Connection.Multiplexer.V1.Internal
                 if (rank > 256) throw new FormatException();
 
                 // Read property count
-                int propertyCount = (int)r.GetUInt64();
+                uint propertyCount = r.GetUInt32();
 
                 ulong p_initialWindowSize = default;
                 uint p_maxSessionAcceptQueueSize = default;
 
                 for (; propertyCount > 0; propertyCount--)
                 {
-                    int id = (int)r.GetUInt64();
+                    uint id = r.GetUInt32();
                     switch (id)
                     {
                         case 0: // InitialWindowSize
                             {
-                                p_initialWindowSize = (ulong)r.GetUInt64();
+                                p_initialWindowSize = r.GetUInt64();
                                 break;
                             }
                         case 1: // MaxSessionAcceptQueueSize
                             {
-                                p_maxSessionAcceptQueueSize = (uint)r.GetUInt64();
+                                p_maxSessionAcceptQueueSize = r.GetUInt32();
                                 break;
                             }
                     }
@@ -153,16 +153,16 @@ namespace Omnix.Network.Connection.Multiplexer.V1.Internal
 
                 // Write property count
                 {
-                    int propertyCount = 0;
+                    uint propertyCount = 0;
                     if (value.SessionId != default) propertyCount++;
-                    w.Write((ulong)propertyCount);
+                    w.Write(propertyCount);
                 }
 
                 // SessionId
                 if (value.SessionId != default)
                 {
-                    w.Write((ulong)0);
-                    w.Write((ulong)value.SessionId);
+                    w.Write((uint)0);
+                    w.Write(value.SessionId);
                 }
             }
 
@@ -171,18 +171,18 @@ namespace Omnix.Network.Connection.Multiplexer.V1.Internal
                 if (rank > 256) throw new FormatException();
 
                 // Read property count
-                int propertyCount = (int)r.GetUInt64();
+                uint propertyCount = r.GetUInt32();
 
                 ulong p_sessionId = default;
 
                 for (; propertyCount > 0; propertyCount--)
                 {
-                    int id = (int)r.GetUInt64();
+                    uint id = r.GetUInt32();
                     switch (id)
                     {
                         case 0: // SessionId
                             {
-                                p_sessionId = (ulong)r.GetUInt64();
+                                p_sessionId = r.GetUInt64();
                                 break;
                             }
                     }
@@ -233,16 +233,16 @@ namespace Omnix.Network.Connection.Multiplexer.V1.Internal
 
                 // Write property count
                 {
-                    int propertyCount = 0;
+                    uint propertyCount = 0;
                     if (value.SessionId != default) propertyCount++;
-                    w.Write((ulong)propertyCount);
+                    w.Write(propertyCount);
                 }
 
                 // SessionId
                 if (value.SessionId != default)
                 {
-                    w.Write((ulong)0);
-                    w.Write((ulong)value.SessionId);
+                    w.Write((uint)0);
+                    w.Write(value.SessionId);
                 }
             }
 
@@ -251,18 +251,18 @@ namespace Omnix.Network.Connection.Multiplexer.V1.Internal
                 if (rank > 256) throw new FormatException();
 
                 // Read property count
-                int propertyCount = (int)r.GetUInt64();
+                uint propertyCount = r.GetUInt32();
 
                 ulong p_sessionId = default;
 
                 for (; propertyCount > 0; propertyCount--)
                 {
-                    int id = (int)r.GetUInt64();
+                    uint id = r.GetUInt32();
                     switch (id)
                     {
                         case 0: // SessionId
                             {
-                                p_sessionId = (ulong)r.GetUInt64();
+                                p_sessionId = r.GetUInt64();
                                 break;
                             }
                     }
@@ -317,23 +317,23 @@ namespace Omnix.Network.Connection.Multiplexer.V1.Internal
 
                 // Write property count
                 {
-                    int propertyCount = 0;
+                    uint propertyCount = 0;
                     if (value.SessionId != default) propertyCount++;
                     if (value.Size != default) propertyCount++;
-                    w.Write((ulong)propertyCount);
+                    w.Write(propertyCount);
                 }
 
                 // SessionId
                 if (value.SessionId != default)
                 {
-                    w.Write((ulong)0);
-                    w.Write((ulong)value.SessionId);
+                    w.Write((uint)0);
+                    w.Write(value.SessionId);
                 }
                 // Size
                 if (value.Size != default)
                 {
-                    w.Write((ulong)1);
-                    w.Write((ulong)value.Size);
+                    w.Write((uint)1);
+                    w.Write(value.Size);
                 }
             }
 
@@ -342,24 +342,24 @@ namespace Omnix.Network.Connection.Multiplexer.V1.Internal
                 if (rank > 256) throw new FormatException();
 
                 // Read property count
-                int propertyCount = (int)r.GetUInt64();
+                uint propertyCount = r.GetUInt32();
 
                 ulong p_sessionId = default;
                 ulong p_size = default;
 
                 for (; propertyCount > 0; propertyCount--)
                 {
-                    int id = (int)r.GetUInt64();
+                    uint id = r.GetUInt32();
                     switch (id)
                     {
                         case 0: // SessionId
                             {
-                                p_sessionId = (ulong)r.GetUInt64();
+                                p_sessionId = r.GetUInt64();
                                 break;
                             }
                         case 1: // Size
                             {
-                                p_size = (ulong)r.GetUInt64();
+                                p_size = r.GetUInt64();
                                 break;
                             }
                     }
@@ -377,12 +377,12 @@ namespace Omnix.Network.Connection.Multiplexer.V1.Internal
             SessionDataMessage.Formatter = new CustomFormatter();
         }
 
-        public static readonly int MaxDataLength = 1048576;
+        public static readonly int MaxDataLength = 262144;
 
         public SessionDataMessage(ulong sessionId, bool isCompleted, IMemoryOwner<byte> data)
         {
             if (data is null) throw new ArgumentNullException("data");
-            if (data.Memory.Length > 1048576) throw new ArgumentOutOfRangeException("data");
+            if (data.Memory.Length > 262144) throw new ArgumentOutOfRangeException("data");
 
             this.SessionId = sessionId;
             this.IsCompleted = isCompleted;
@@ -429,29 +429,29 @@ namespace Omnix.Network.Connection.Multiplexer.V1.Internal
 
                 // Write property count
                 {
-                    int propertyCount = 0;
+                    uint propertyCount = 0;
                     if (value.SessionId != default) propertyCount++;
                     if (value.IsCompleted != default) propertyCount++;
                     if (!value.Data.IsEmpty) propertyCount++;
-                    w.Write((ulong)propertyCount);
+                    w.Write(propertyCount);
                 }
 
                 // SessionId
                 if (value.SessionId != default)
                 {
-                    w.Write((ulong)0);
-                    w.Write((ulong)value.SessionId);
+                    w.Write((uint)0);
+                    w.Write(value.SessionId);
                 }
                 // IsCompleted
                 if (value.IsCompleted != default)
                 {
-                    w.Write((ulong)1);
+                    w.Write((uint)1);
                     w.Write(value.IsCompleted);
                 }
                 // Data
                 if (!value.Data.IsEmpty)
                 {
-                    w.Write((ulong)2);
+                    w.Write((uint)2);
                     w.Write(value.Data.Span);
                 }
             }
@@ -461,7 +461,7 @@ namespace Omnix.Network.Connection.Multiplexer.V1.Internal
                 if (rank > 256) throw new FormatException();
 
                 // Read property count
-                int propertyCount = (int)r.GetUInt64();
+                uint propertyCount = r.GetUInt32();
 
                 ulong p_sessionId = default;
                 bool p_isCompleted = default;
@@ -469,12 +469,12 @@ namespace Omnix.Network.Connection.Multiplexer.V1.Internal
 
                 for (; propertyCount > 0; propertyCount--)
                 {
-                    int id = (int)r.GetUInt64();
+                    uint id = r.GetUInt32();
                     switch (id)
                     {
                         case 0: // SessionId
                             {
-                                p_sessionId = (ulong)r.GetUInt64();
+                                p_sessionId = r.GetUInt64();
                                 break;
                             }
                         case 1: // IsCompleted
@@ -484,7 +484,7 @@ namespace Omnix.Network.Connection.Multiplexer.V1.Internal
                             }
                         case 2: // Data
                             {
-                                p_data = r.GetRecyclableMemory(1048576);
+                                p_data = r.GetRecyclableMemory(262144);
                                 break;
                             }
                     }
@@ -535,16 +535,16 @@ namespace Omnix.Network.Connection.Multiplexer.V1.Internal
 
                 // Write property count
                 {
-                    int propertyCount = 0;
+                    uint propertyCount = 0;
                     if (value.SessionId != default) propertyCount++;
-                    w.Write((ulong)propertyCount);
+                    w.Write(propertyCount);
                 }
 
                 // SessionId
                 if (value.SessionId != default)
                 {
-                    w.Write((ulong)0);
-                    w.Write((ulong)value.SessionId);
+                    w.Write((uint)0);
+                    w.Write(value.SessionId);
                 }
             }
 
@@ -553,18 +553,18 @@ namespace Omnix.Network.Connection.Multiplexer.V1.Internal
                 if (rank > 256) throw new FormatException();
 
                 // Read property count
-                int propertyCount = (int)r.GetUInt64();
+                uint propertyCount = r.GetUInt32();
 
                 ulong p_sessionId = default;
 
                 for (; propertyCount > 0; propertyCount--)
                 {
-                    int id = (int)r.GetUInt64();
+                    uint id = r.GetUInt32();
                     switch (id)
                     {
                         case 0: // SessionId
                             {
-                                p_sessionId = (ulong)r.GetUInt64();
+                                p_sessionId = r.GetUInt64();
                                 break;
                             }
                     }
@@ -619,22 +619,22 @@ namespace Omnix.Network.Connection.Multiplexer.V1.Internal
 
                 // Write property count
                 {
-                    int propertyCount = 0;
+                    uint propertyCount = 0;
                     if (value.SessionId != default) propertyCount++;
                     if (value.ErrorType != default) propertyCount++;
-                    w.Write((ulong)propertyCount);
+                    w.Write(propertyCount);
                 }
 
                 // SessionId
                 if (value.SessionId != default)
                 {
-                    w.Write((ulong)0);
-                    w.Write((ulong)value.SessionId);
+                    w.Write((uint)0);
+                    w.Write(value.SessionId);
                 }
                 // ErrorType
                 if (value.ErrorType != default)
                 {
-                    w.Write((ulong)1);
+                    w.Write((uint)1);
                     w.Write((ulong)value.ErrorType);
                 }
             }
@@ -644,19 +644,19 @@ namespace Omnix.Network.Connection.Multiplexer.V1.Internal
                 if (rank > 256) throw new FormatException();
 
                 // Read property count
-                int propertyCount = (int)r.GetUInt64();
+                uint propertyCount = r.GetUInt32();
 
                 ulong p_sessionId = default;
                 SessionErrorType p_errorType = default;
 
                 for (; propertyCount > 0; propertyCount--)
                 {
-                    int id = (int)r.GetUInt64();
+                    uint id = r.GetUInt32();
                     switch (id)
                     {
                         case 0: // SessionId
                             {
-                                p_sessionId = (ulong)r.GetUInt64();
+                                p_sessionId = r.GetUInt64();
                                 break;
                             }
                         case 1: // ErrorType
