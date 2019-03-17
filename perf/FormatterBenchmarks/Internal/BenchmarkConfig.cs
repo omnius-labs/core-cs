@@ -1,7 +1,9 @@
 ﻿using BenchmarkDotNet.Configs;
 using BenchmarkDotNet.Diagnosers;
+using BenchmarkDotNet.Diagnostics.Windows;
 using BenchmarkDotNet.Exporters;
 using BenchmarkDotNet.Jobs;
+using BenchmarkDotNet.Toolchains.CsProj;
 
 namespace FormatterBenchmarks.Internal
 {
@@ -11,8 +13,8 @@ namespace FormatterBenchmarks.Internal
         {
             this.Add(MarkdownExporter.GitHub);
             this.Add(MemoryDiagnoser.Default);
-
-            this.Add(Job.ShortRun.With(BenchmarkDotNet.Environments.Platform.X64));
+            this.Add(Job.ShortRun.With(BenchmarkDotNet.Environments.Platform.X64).With(CsProjCoreToolchain.NetCoreApp21));
+            //this.Add(new EtwProfiler());
         }
     }
 }

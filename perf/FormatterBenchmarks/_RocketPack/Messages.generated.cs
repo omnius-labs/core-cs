@@ -60,15 +60,15 @@ namespace FormatterBenchmarks
 
                 // Write property count
                 {
-                    int propertyCount = 0;
+                    uint propertyCount = 0;
                     if (!value.Bytes.IsEmpty) propertyCount++;
-                    w.Write((ulong)propertyCount);
+                    w.Write(propertyCount);
                 }
 
                 // Bytes
                 if (!value.Bytes.IsEmpty)
                 {
-                    w.Write((ulong)0);
+                    w.Write((uint)0);
                     w.Write(value.Bytes.Span);
                 }
             }
@@ -78,13 +78,13 @@ namespace FormatterBenchmarks
                 if (rank > 256) throw new FormatException();
 
                 // Read property count
-                int propertyCount = (int)r.GetUInt64();
+                uint propertyCount = r.GetUInt32();
 
                 IMemoryOwner<byte> p_bytes = default;
 
                 for (; propertyCount > 0; propertyCount--)
                 {
-                    int id = (int)r.GetUInt64();
+                    uint id = r.GetUInt32();
                     switch (id)
                     {
                         case 0: // Bytes
@@ -153,16 +153,16 @@ namespace FormatterBenchmarks
 
                 // Write property count
                 {
-                    int propertyCount = 0;
+                    uint propertyCount = 0;
                     if (value.List.Count != 0) propertyCount++;
-                    w.Write((ulong)propertyCount);
+                    w.Write(propertyCount);
                 }
 
                 // List
                 if (value.List.Count != 0)
                 {
-                    w.Write((ulong)0);
-                    w.Write((ulong)value.List.Count);
+                    w.Write((uint)0);
+                    w.Write((uint)value.List.Count);
                     foreach (var n in value.List)
                     {
                         RocketPack_IntPropertiesMessage.Formatter.Serialize(w, n, rank + 1);
@@ -175,18 +175,18 @@ namespace FormatterBenchmarks
                 if (rank > 256) throw new FormatException();
 
                 // Read property count
-                int propertyCount = (int)r.GetUInt64();
+                uint propertyCount = r.GetUInt32();
 
                 IList<RocketPack_IntPropertiesMessage> p_list = default;
 
                 for (; propertyCount > 0; propertyCount--)
                 {
-                    int id = (int)r.GetUInt64();
+                    uint id = r.GetUInt32();
                     switch (id)
                     {
                         case 0: // List
                             {
-                                var length = (int)r.GetUInt64();
+                                var length = r.GetUInt32();
                                 p_list = new RocketPack_IntPropertiesMessage[length];
                                 for (int i = 0; i < p_list.Count; i++)
                                 {
@@ -255,16 +255,16 @@ namespace FormatterBenchmarks
 
                 // Write property count
                 {
-                    int propertyCount = 0;
+                    uint propertyCount = 0;
                     if (value.List.Count != 0) propertyCount++;
-                    w.Write((ulong)propertyCount);
+                    w.Write(propertyCount);
                 }
 
                 // List
                 if (value.List.Count != 0)
                 {
-                    w.Write((ulong)0);
-                    w.Write((ulong)value.List.Count);
+                    w.Write((uint)0);
+                    w.Write((uint)value.List.Count);
                     foreach (var n in value.List)
                     {
                         RocketPack_StringPropertiesMessage.Formatter.Serialize(w, n, rank + 1);
@@ -277,18 +277,18 @@ namespace FormatterBenchmarks
                 if (rank > 256) throw new FormatException();
 
                 // Read property count
-                int propertyCount = (int)r.GetUInt64();
+                uint propertyCount = r.GetUInt32();
 
                 IList<RocketPack_StringPropertiesMessage> p_list = default;
 
                 for (; propertyCount > 0; propertyCount--)
                 {
-                    int id = (int)r.GetUInt64();
+                    uint id = r.GetUInt32();
                     switch (id)
                     {
                         case 0: // List
                             {
-                                var length = (int)r.GetUInt64();
+                                var length = r.GetUInt32();
                                 p_list = new RocketPack_StringPropertiesMessage[length];
                                 for (int i = 0; i < p_list.Count; i++)
                                 {
@@ -376,7 +376,7 @@ namespace FormatterBenchmarks
 
                 // Write property count
                 {
-                    int propertyCount = 0;
+                    uint propertyCount = 0;
                     if (value.MyProperty1 != default) propertyCount++;
                     if (value.MyProperty2 != default) propertyCount++;
                     if (value.MyProperty3 != default) propertyCount++;
@@ -386,62 +386,62 @@ namespace FormatterBenchmarks
                     if (value.MyProperty7 != default) propertyCount++;
                     if (value.MyProperty8 != default) propertyCount++;
                     if (value.MyProperty9 != default) propertyCount++;
-                    w.Write((ulong)propertyCount);
+                    w.Write(propertyCount);
                 }
 
                 // MyProperty1
                 if (value.MyProperty1 != default)
                 {
-                    w.Write((ulong)0);
-                    w.Write((ulong)value.MyProperty1);
+                    w.Write((uint)0);
+                    w.Write(value.MyProperty1);
                 }
                 // MyProperty2
                 if (value.MyProperty2 != default)
                 {
-                    w.Write((ulong)1);
-                    w.Write((ulong)value.MyProperty2);
+                    w.Write((uint)1);
+                    w.Write(value.MyProperty2);
                 }
                 // MyProperty3
                 if (value.MyProperty3 != default)
                 {
-                    w.Write((ulong)2);
-                    w.Write((ulong)value.MyProperty3);
+                    w.Write((uint)2);
+                    w.Write(value.MyProperty3);
                 }
                 // MyProperty4
                 if (value.MyProperty4 != default)
                 {
-                    w.Write((ulong)3);
-                    w.Write((ulong)value.MyProperty4);
+                    w.Write((uint)3);
+                    w.Write(value.MyProperty4);
                 }
                 // MyProperty5
                 if (value.MyProperty5 != default)
                 {
-                    w.Write((ulong)4);
-                    w.Write((ulong)value.MyProperty5);
+                    w.Write((uint)4);
+                    w.Write(value.MyProperty5);
                 }
                 // MyProperty6
                 if (value.MyProperty6 != default)
                 {
-                    w.Write((ulong)5);
-                    w.Write((ulong)value.MyProperty6);
+                    w.Write((uint)5);
+                    w.Write(value.MyProperty6);
                 }
                 // MyProperty7
                 if (value.MyProperty7 != default)
                 {
-                    w.Write((ulong)6);
-                    w.Write((ulong)value.MyProperty7);
+                    w.Write((uint)6);
+                    w.Write(value.MyProperty7);
                 }
                 // MyProperty8
                 if (value.MyProperty8 != default)
                 {
-                    w.Write((ulong)7);
-                    w.Write((ulong)value.MyProperty8);
+                    w.Write((uint)7);
+                    w.Write(value.MyProperty8);
                 }
                 // MyProperty9
                 if (value.MyProperty9 != default)
                 {
-                    w.Write((ulong)8);
-                    w.Write((ulong)value.MyProperty9);
+                    w.Write((uint)8);
+                    w.Write(value.MyProperty9);
                 }
             }
 
@@ -450,7 +450,7 @@ namespace FormatterBenchmarks
                 if (rank > 256) throw new FormatException();
 
                 // Read property count
-                int propertyCount = (int)r.GetUInt64();
+                uint propertyCount = r.GetUInt32();
 
                 uint p_myProperty1 = default;
                 uint p_myProperty2 = default;
@@ -464,52 +464,52 @@ namespace FormatterBenchmarks
 
                 for (; propertyCount > 0; propertyCount--)
                 {
-                    int id = (int)r.GetUInt64();
+                    uint id = r.GetUInt32();
                     switch (id)
                     {
                         case 0: // MyProperty1
                             {
-                                p_myProperty1 = (uint)r.GetUInt64();
+                                p_myProperty1 = r.GetUInt32();
                                 break;
                             }
                         case 1: // MyProperty2
                             {
-                                p_myProperty2 = (uint)r.GetUInt64();
+                                p_myProperty2 = r.GetUInt32();
                                 break;
                             }
                         case 2: // MyProperty3
                             {
-                                p_myProperty3 = (uint)r.GetUInt64();
+                                p_myProperty3 = r.GetUInt32();
                                 break;
                             }
                         case 3: // MyProperty4
                             {
-                                p_myProperty4 = (uint)r.GetUInt64();
+                                p_myProperty4 = r.GetUInt32();
                                 break;
                             }
                         case 4: // MyProperty5
                             {
-                                p_myProperty5 = (uint)r.GetUInt64();
+                                p_myProperty5 = r.GetUInt32();
                                 break;
                             }
                         case 5: // MyProperty6
                             {
-                                p_myProperty6 = (uint)r.GetUInt64();
+                                p_myProperty6 = r.GetUInt32();
                                 break;
                             }
                         case 6: // MyProperty7
                             {
-                                p_myProperty7 = (uint)r.GetUInt64();
+                                p_myProperty7 = r.GetUInt32();
                                 break;
                             }
                         case 7: // MyProperty8
                             {
-                                p_myProperty8 = (uint)r.GetUInt64();
+                                p_myProperty8 = r.GetUInt32();
                                 break;
                             }
                         case 8: // MyProperty9
                             {
-                                p_myProperty9 = (uint)r.GetUInt64();
+                                p_myProperty9 = r.GetUInt32();
                                 break;
                             }
                     }
@@ -579,29 +579,29 @@ namespace FormatterBenchmarks
 
                 // Write property count
                 {
-                    int propertyCount = 0;
+                    uint propertyCount = 0;
                     if (value.MyProperty1 != default) propertyCount++;
                     if (value.MyProperty2 != default) propertyCount++;
                     if (value.MyProperty3 != default) propertyCount++;
-                    w.Write((ulong)propertyCount);
+                    w.Write(propertyCount);
                 }
 
                 // MyProperty1
                 if (value.MyProperty1 != default)
                 {
-                    w.Write((ulong)0);
+                    w.Write((uint)0);
                     w.Write(value.MyProperty1);
                 }
                 // MyProperty2
                 if (value.MyProperty2 != default)
                 {
-                    w.Write((ulong)1);
+                    w.Write((uint)1);
                     w.Write(value.MyProperty2);
                 }
                 // MyProperty3
                 if (value.MyProperty3 != default)
                 {
-                    w.Write((ulong)2);
+                    w.Write((uint)2);
                     w.Write(value.MyProperty3);
                 }
             }
@@ -611,7 +611,7 @@ namespace FormatterBenchmarks
                 if (rank > 256) throw new FormatException();
 
                 // Read property count
-                int propertyCount = (int)r.GetUInt64();
+                uint propertyCount = r.GetUInt32();
 
                 string p_myProperty1 = default;
                 string p_myProperty2 = default;
@@ -619,7 +619,7 @@ namespace FormatterBenchmarks
 
                 for (; propertyCount > 0; propertyCount--)
                 {
-                    int id = (int)r.GetUInt64();
+                    uint id = r.GetUInt32();
                     switch (id)
                     {
                         case 0: // MyProperty1

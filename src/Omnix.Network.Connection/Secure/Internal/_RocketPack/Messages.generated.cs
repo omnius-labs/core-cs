@@ -60,16 +60,16 @@ namespace Omnix.Network.Connection.Secure.Internal
 
                 // Write property count
                 {
-                    int propertyCount = 0;
+                    uint propertyCount = 0;
                     if (value.Versions.Count != 0) propertyCount++;
-                    w.Write((ulong)propertyCount);
+                    w.Write(propertyCount);
                 }
 
                 // Versions
                 if (value.Versions.Count != 0)
                 {
-                    w.Write((ulong)0);
-                    w.Write((ulong)value.Versions.Count);
+                    w.Write((uint)0);
+                    w.Write((uint)value.Versions.Count);
                     foreach (var n in value.Versions)
                     {
                         w.Write((ulong)n);
@@ -82,18 +82,18 @@ namespace Omnix.Network.Connection.Secure.Internal
                 if (rank > 256) throw new FormatException();
 
                 // Read property count
-                int propertyCount = (int)r.GetUInt64();
+                uint propertyCount = r.GetUInt32();
 
                 IList<OmniSecureConnectionVersion> p_versions = default;
 
                 for (; propertyCount > 0; propertyCount--)
                 {
-                    int id = (int)r.GetUInt64();
+                    uint id = r.GetUInt32();
                     switch (id)
                     {
                         case 0: // Versions
                             {
-                                var length = (int)r.GetUInt64();
+                                var length = r.GetUInt32();
                                 p_versions = new OmniSecureConnectionVersion[length];
                                 for (int i = 0; i < p_versions.Count; i++)
                                 {
