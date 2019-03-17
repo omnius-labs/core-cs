@@ -655,7 +655,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
 
                         w.PushIndent();
 
-                        w.WriteLine("int propertyCount = 0;");
+                        w.WriteLine("uint propertyCount = 0;");
 
                         foreach (var elementInfo in messageInfo.Elements)
                         {
@@ -694,7 +694,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
                             }
                         }
 
-                        w.WriteLine($"w.Write((ulong)propertyCount);");
+                        w.WriteLine($"w.Write(propertyCount);");
 
                         w.PopIndent();
 
@@ -745,7 +745,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
 
                         w.PushIndent();
 
-                        w.WriteLine($"w.Write((ulong){elementInfo.Id});");
+                        w.WriteLine($"w.Write((uint){elementInfo.Id});");
                         this.Write_Formatter_Serialize_PropertyDef(w, "value." + elementInfo.Name, elementInfo.Type, 0);
 
                         w.PopIndent();
@@ -771,7 +771,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
                     w.WriteLine();
 
                     w.WriteLine("// Read property count");
-                    w.WriteLine("int propertyCount = (int)r.GetUInt64();");
+                    w.WriteLine("uint propertyCount = r.GetUInt32();");
 
                     w.WriteLine();
 
@@ -819,7 +819,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
 
                     w.PushIndent();
 
-                    w.WriteLine("int id = (int)r.GetUInt64();");
+                    w.WriteLine("uint id = r.GetUInt32();");
                     w.WriteLine("switch (id)");
                     w.WriteLine("{");
 
@@ -876,11 +876,8 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
                     case BoolTypeInfo boolTypeInfo:
                         w.WriteLine($"w.Write({name});");
                         break;
-                    case IntTypeInfo intTypeInfo when (intTypeInfo.IsSigned):
-                        w.WriteLine($"w.Write((long){name});");
-                        break;
-                    case IntTypeInfo intTypeInfo when (!intTypeInfo.IsSigned):
-                        w.WriteLine($"w.Write((ulong){name});");
+                    case IntTypeInfo intTypeInfo:
+                        w.WriteLine($"w.Write({name});");
                         break;
                     case FloatTypeInfo floatTypeInfo:
                         w.WriteLine($"w.Write({name});");
@@ -899,7 +896,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
                         break;
                     case ListTypeInfo listTypeInfo:
                         {
-                            w.WriteLine($"w.Write((ulong){name}.Count);");
+                            w.WriteLine($"w.Write((uint){name}.Count);");
                             w.WriteLine($"foreach (var n in {name})");
                             w.WriteLine("{");
 
@@ -916,7 +913,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
                         break;
                     case MapTypeInfo mapTypeInfo:
                         {
-                            w.WriteLine($"w.Write((ulong){name}.Count);");
+                            w.WriteLine($"w.Write((uint){name}.Count);");
                             w.WriteLine($"foreach (var n in {name})");
                             w.WriteLine("{");
 
@@ -964,11 +961,11 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
                     case BoolTypeInfo boolTypeInfo:
                         w.WriteLine($"{name} = r.GetBoolean();");
                         break;
-                    case IntTypeInfo intTypeInfo when (intTypeInfo.IsSigned):
-                        w.WriteLine($"{name} = ({this.GetParameterTypeString(intTypeInfo)})r.GetInt64();");
-                        break;
                     case IntTypeInfo intTypeInfo when (!intTypeInfo.IsSigned):
-                        w.WriteLine($"{name} = ({this.GetParameterTypeString(intTypeInfo)})r.GetUInt64();");
+                        w.WriteLine($"{name} = r.GetUInt{intTypeInfo.Size}();");
+                        break;
+                    case IntTypeInfo intTypeInfo when (intTypeInfo.IsSigned):
+                        w.WriteLine($"{name} = r.GetInt{intTypeInfo.Size}();");
                         break;
                     case FloatTypeInfo floatTypeInfo when (floatTypeInfo.Size == 32):
                         w.WriteLine($"{name} = r.GetFloat32();");
@@ -990,7 +987,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
                         break;
                     case ListTypeInfo listTypeInfo:
                         {
-                            w.WriteLine("var length = (int)r.GetUInt64();");
+                            w.WriteLine("var length = r.GetUInt32();");
                             w.WriteLine($"{name} = new {this.GetParameterTypeString(listTypeInfo.ElementType)}[length];");
 
                             w.WriteLine($"for (int i = 0; i < {name}.Count; i++)");
@@ -1007,7 +1004,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
                         break;
                     case MapTypeInfo mapTypeInfo:
                         {
-                            w.WriteLine("var length = (int)r.GetUInt64();");
+                            w.WriteLine("var length = r.GetUInt32();");
                             w.WriteLine($"{name} = new Dictionary<{this.GetParameterTypeString(mapTypeInfo.KeyType)}, {this.GetParameterTypeString(mapTypeInfo.ValueType)}>();");
                             w.WriteLine($"{this.GetParameterTypeString(mapTypeInfo.KeyType)} t_key = default;");
                             w.WriteLine($"{this.GetParameterTypeString(mapTypeInfo.ValueType)} t_value = default;");

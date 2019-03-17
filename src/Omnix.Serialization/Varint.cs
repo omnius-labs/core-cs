@@ -2,6 +2,8 @@
 using System.Buffers;
 using System.IO;
 using System.Threading;
+using System.Buffers.Binary;
+using System.Runtime.CompilerServices;
 
 namespace Omnix.Serialization
 {
@@ -12,262 +14,553 @@ namespace Omnix.Serialization
     /// </summary>
     public unsafe static class Varint
     {
-        public static bool IsEnd(byte value)
-        {
-            return ((value & 0x80) != 0x80);
-        }
+        // bit count | first byte (in binary) | first byte (in hex)
+        // --------- | ---------------------- | -------------------
+        // 7 bit     | 0xxx xxxx              | 0x00 - 0x7F
+        // 8 bit     | 1000 0000              | 0x80
+        // 16 bit    | 1000 0001              | 0x81
+        // 32 bit    | 1000 0010              | 0x82
+        // 64 bit    | 1000 0011              | 0x83
 
-        public static int ComputeSize(long value)
-        {
-            return ComputeSize((ulong)((value << 1) ^ (value >> 63)));
-        }
+        public const byte MinInt7 = 0x00; // 0
+        public const byte MaxInt7 = 0x7F; // 127
 
-        public static int ComputeSize(ulong value)
+        private const byte Int8Code = 0x80;
+        private const byte Int16Code = 0x81;
+        private const byte Int32Code = 0x82;
+        private const byte Int64Code = 0x83;
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void SetUInt8(byte value, IBufferWriter<byte> writer)
         {
-            if (value < ((ulong)1 << 7 * 1))
+            unchecked
             {
-                return 1;
-            }
-            else if (value < ((ulong)1 << 7 * 2))
-            {
-                return 2;
-            }
-            else if (value < ((ulong)1 << 7 * 3))
-            {
-                return 3;
-            }
-            else if (value < ((ulong)1 << 7 * 4))
-            {
-                return 4;
-            }
-            else if (value < ((ulong)1 << 7 * 5))
-            {
-                return 5;
-            }
-            else if (value < ((ulong)1 << 7 * 6))
-            {
-                return 6;
-            }
-            else if (value < ((ulong)1 << 7 * 7))
-            {
-                return 7;
-            }
-            else if (value < ((ulong)1 << 7 * 8))
-            {
-                return 8;
-            }
-            else if (value < ((ulong)1 << 7 * 9))
-            {
-                return 9;
-            }
-            else
-            {
-                return 10;
+                if (value <= MaxInt7)
+                {
+                    var span = writer.GetSpan(1);
+                    span[0] = value;
+
+                    writer.Advance(1);
+                }
+                else
+                {
+                    var span = writer.GetSpan(2);
+                    span[0] = Int8Code;
+                    span[1] = value;
+
+                    writer.Advance(2);
+                }
             }
         }
 
-        public static void SetInt64(long value, IBufferWriter<byte> writer)
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void SetUInt16(ushort value, IBufferWriter<byte> writer)
         {
-            SetUInt64((ulong)((value << 1) ^ (value >> 63)), writer);
+            unchecked
+            {
+                if (value <= MaxInt7)
+                {
+                    var span = writer.GetSpan(1);
+                    span[0] = (byte)value;
+
+                    writer.Advance(1);
+                }
+                else if (value <= byte.MaxValue)
+                {
+                    var span = writer.GetSpan(2);
+                    span[0] = Int8Code;
+                    span[1] = (byte)value;
+
+                    writer.Advance(2);
+                }
+                else
+                {
+                    var span = writer.GetSpan(3);
+                    span[0] = Int16Code;
+                    span[1] = (byte)(value >> 8);
+                    span[2] = (byte)value;
+
+                    writer.Advance(3);
+                }
+            }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void SetUInt32(uint value, IBufferWriter<byte> writer)
+        {
+            unchecked
+            {
+                if (value <= MaxInt7)
+                {
+                    var span = writer.GetSpan(1);
+                    span[0] = (byte)value;
+
+                    writer.Advance(1);
+                }
+                else if (value <= byte.MaxValue)
+                {
+                    var span = writer.GetSpan(2);
+                    span[0] = Int8Code;
+                    span[1] = (byte)value;
+
+                    writer.Advance(2);
+                }
+                else if (value <= ushort.MaxValue)
+                {
+                    var span = writer.GetSpan(3);
+                    span[0] = Int16Code;
+                    span[1] = (byte)(value >> 8);
+                    span[2] = (byte)value;
+
+                    writer.Advance(3);
+                }
+                else
+                {
+                    var span = writer.GetSpan(5);
+                    span[0] = Int32Code;
+                    span[1] = (byte)(value >> 24);
+                    span[2] = (byte)(value >> 16);
+                    span[3] = (byte)(value >> 8);
+                    span[4] = (byte)value;
+
+                    writer.Advance(5);
+                }
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void SetUInt64(ulong value, IBufferWriter<byte> writer)
         {
-            if (value < ((ulong)1 << 7 * 1))
+            unchecked
             {
-                var buffer = writer.GetSpan(1);
-                buffer[0] = (byte)value;
-
-                writer.Advance(1);
-            }
-            else if (value < ((ulong)1 << 7 * 2))
-            {
-                var buffer = writer.GetSpan(2);
-
-                fixed (byte* p = buffer)
+                if (value <= MaxInt7)
                 {
-                    p[0] = (byte)((value >> 8 - 1) & 0x7F | 0x80);
-                    p[1] = (byte)((value >> 0 - 0) & 0x7F);
+                    var span = writer.GetSpan(1);
+                    span[0] = (byte)value;
+
+                    writer.Advance(1);
                 }
-
-                writer.Advance(2);
-            }
-            else if (value < ((ulong)1 << 7 * 3))
-            {
-                var buffer = writer.GetSpan(3);
-
-                fixed (byte* p = buffer)
+                else if (value <= byte.MaxValue)
                 {
-                    p[0] = (byte)((value >> 16 - 2) & 0x7F | 0x80);
-                    p[1] = (byte)((value >> 8 - 1) & 0x7F | 0x80);
-                    p[2] = (byte)((value >> 0 - 0) & 0x7F);
+                    var span = writer.GetSpan(2);
+                    span[0] = Int8Code;
+                    span[1] = (byte)value;
+
+                    writer.Advance(2);
                 }
-
-                writer.Advance(3);
-            }
-            else if (value < ((ulong)1 << 7 * 4))
-            {
-                var buffer = writer.GetSpan(4);
-
-                fixed (byte* p = buffer)
+                else if (value <= ushort.MaxValue)
                 {
-                    p[0] = (byte)((value >> 24 - 3) & 0x7F | 0x80);
-                    p[1] = (byte)((value >> 16 - 2) & 0x7F | 0x80);
-                    p[2] = (byte)((value >> 8 - 1) & 0x7F | 0x80);
-                    p[3] = (byte)((value >> 0 - 0) & 0x7F);
+                    var span = writer.GetSpan(3);
+                    span[0] = Int16Code;
+                    span[1] = (byte)(value >> 8);
+                    span[2] = (byte)value;
+
+                    writer.Advance(3);
                 }
-
-                writer.Advance(4);
-            }
-            else if (value < ((ulong)1 << 7 * 5))
-            {
-                var buffer = writer.GetSpan(5);
-
-                fixed (byte* p = buffer)
+                else if (value <= uint.MaxValue)
                 {
-                    p[0] = (byte)((value >> 32 - 4) & 0x7F | 0x80);
-                    p[1] = (byte)((value >> 24 - 3) & 0x7F | 0x80);
-                    p[2] = (byte)((value >> 16 - 2) & 0x7F | 0x80);
-                    p[3] = (byte)((value >> 8 - 1) & 0x7F | 0x80);
-                    p[4] = (byte)((value >> 0 - 0) & 0x7F);
+                    var span = writer.GetSpan(5);
+                    span[0] = Int32Code;
+                    span[1] = (byte)(value >> 24);
+                    span[2] = (byte)(value >> 16);
+                    span[3] = (byte)(value >> 8);
+                    span[4] = (byte)value;
+
+                    writer.Advance(5);
                 }
-
-                writer.Advance(5);
-            }
-            else if (value < ((ulong)1 << 7 * 6))
-            {
-                var buffer = writer.GetSpan(6);
-
-                fixed (byte* p = buffer)
+                else
                 {
-                    p[0] = (byte)((value >> 40 - 5) & 0x7F | 0x80);
-                    p[1] = (byte)((value >> 32 - 4) & 0x7F | 0x80);
-                    p[2] = (byte)((value >> 24 - 3) & 0x7F | 0x80);
-                    p[3] = (byte)((value >> 16 - 2) & 0x7F | 0x80);
-                    p[4] = (byte)((value >> 8 - 1) & 0x7F | 0x80);
-                    p[5] = (byte)((value >> 0 - 0) & 0x7F);
+                    var span = writer.GetSpan(5);
+                    span[0] = Int64Code;
+                    span[1] = (byte)(value >> 56);
+                    span[2] = (byte)(value >> 48);
+                    span[3] = (byte)(value >> 40);
+                    span[4] = (byte)(value >> 32);
+                    span[5] = (byte)(value >> 24);
+                    span[6] = (byte)(value >> 16);
+                    span[7] = (byte)(value >> 8);
+                    span[8] = (byte)value;
+
+                    writer.Advance(9);
                 }
-
-                writer.Advance(6);
-            }
-            else if (value < ((ulong)1 << 7 * 7))
-            {
-                var buffer = writer.GetSpan(7);
-
-                fixed (byte* p = buffer)
-                {
-                    p[0] = (byte)((value >> 48 - 6) & 0x7F | 0x80);
-                    p[1] = (byte)((value >> 40 - 5) & 0x7F | 0x80);
-                    p[2] = (byte)((value >> 32 - 4) & 0x7F | 0x80);
-                    p[3] = (byte)((value >> 24 - 3) & 0x7F | 0x80);
-                    p[4] = (byte)((value >> 16 - 2) & 0x7F | 0x80);
-                    p[5] = (byte)((value >> 8 - 1) & 0x7F | 0x80);
-                    p[6] = (byte)((value >> 0 - 0) & 0x7F);
-                }
-
-                writer.Advance(7);
-            }
-            else if (value < ((ulong)1 << 7 * 8))
-            {
-                var buffer = writer.GetSpan(8);
-
-                fixed (byte* p = buffer)
-                {
-                    p[0] = (byte)((value >> 56 - 7) & 0x7F | 0x80);
-                    p[1] = (byte)((value >> 48 - 6) & 0x7F | 0x80);
-                    p[2] = (byte)((value >> 40 - 5) & 0x7F | 0x80);
-                    p[3] = (byte)((value >> 32 - 4) & 0x7F | 0x80);
-                    p[4] = (byte)((value >> 24 - 3) & 0x7F | 0x80);
-                    p[5] = (byte)((value >> 16 - 2) & 0x7F | 0x80);
-                    p[6] = (byte)((value >> 8 - 1) & 0x7F | 0x80);
-                    p[7] = (byte)((value >> 0 - 0) & 0x7F);
-                }
-
-                writer.Advance(8);
-            }
-            else if (value < ((ulong)1 << 7 * 9))
-            {
-                var buffer = writer.GetSpan(9);
-
-                fixed (byte* p = buffer)
-                {
-                    p[0] = (byte)((value >> 64 - 8) & 0x7F | 0x80);
-                    p[1] = (byte)((value >> 56 - 7) & 0x7F | 0x80);
-                    p[2] = (byte)((value >> 48 - 6) & 0x7F | 0x80);
-                    p[3] = (byte)((value >> 40 - 5) & 0x7F | 0x80);
-                    p[4] = (byte)((value >> 32 - 4) & 0x7F | 0x80);
-                    p[5] = (byte)((value >> 24 - 3) & 0x7F | 0x80);
-                    p[6] = (byte)((value >> 16 - 2) & 0x7F | 0x80);
-                    p[7] = (byte)((value >> 8 - 1) & 0x7F | 0x80);
-                    p[8] = (byte)((value >> 0 - 0) & 0x7F);
-                }
-
-                writer.Advance(9);
-            }
-            else
-            {
-                var buffer = writer.GetSpan(10);
-
-                fixed (byte* p = buffer)
-                {
-                    p[0] = (byte)((value >> 72 - 9) & 0x7F | 0x80);
-                    p[1] = (byte)((value >> 64 - 8) & 0x7F | 0x80);
-                    p[2] = (byte)((value >> 56 - 7) & 0x7F | 0x80);
-                    p[3] = (byte)((value >> 48 - 6) & 0x7F | 0x80);
-                    p[4] = (byte)((value >> 40 - 5) & 0x7F | 0x80);
-                    p[5] = (byte)((value >> 32 - 4) & 0x7F | 0x80);
-                    p[6] = (byte)((value >> 24 - 3) & 0x7F | 0x80);
-                    p[7] = (byte)((value >> 16 - 2) & 0x7F | 0x80);
-                    p[8] = (byte)((value >> 8 - 1) & 0x7F | 0x80);
-                    p[9] = (byte)((value >> 0 - 0) & 0x7F);
-                }
-
-                writer.Advance(10);
             }
         }
 
-        public static bool TryGetInt64(ReadOnlySequence<byte> sequence, out long result, out SequencePosition consumed)
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void SetInt8(sbyte value, IBufferWriter<byte> writer)
         {
-            result = 0;
-            consumed = sequence.Start;
-
-            if (!TryGetUInt64(sequence, out ulong ulong_result, out consumed)) return false;
-
-            result = (long)(ulong_result >> 1) ^ (-((long)ulong_result & 1));
-            return true;
+            unchecked
+            {
+                SetUInt8((byte)((value << 1) ^ (value >> 7)), writer);
+            }
         }
 
-        public static bool TryGetUInt64(ReadOnlySequence<byte> sequence, out ulong result, out SequencePosition consumed)
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void SetInt16(short value, IBufferWriter<byte> writer)
         {
-            result = 0;
-            consumed = sequence.Start;
-
-            var position = sequence.Start;
-            int count = 0;
-
-            while (sequence.TryGet(ref position, out var memory))
+            unchecked
             {
-                fixed (byte* fixed_p = memory.Span)
+                SetUInt16((ushort)((value << 1) ^ (value >> 15)), writer);
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void SetInt32(int value, IBufferWriter<byte> writer)
+        {
+            unchecked
+            {
+                SetUInt32((uint)((value << 1) ^ (value >> 31)), writer);
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void SetInt64(long value, IBufferWriter<byte> writer)
+        {
+            unchecked
+            {
+                SetUInt64((ulong)((value << 1) ^ (value >> 63)), writer);
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static bool InternalTryGetUInt8(ReadOnlySpan<byte> span, out byte value, out int consumed)
+        {
+            unchecked
+            {
+                fixed (byte* fixed_p = span)
                 {
                     var p = fixed_p;
 
-                    for (int i = memory.Length - 1; i >= 0; i--)
+                    if (MinInt7 <= *p && *p <= MaxInt7)
                     {
-                        if (++count > 10) return false;
-
-                        result = (result << 7) | (byte)(*p & 0x7F);
-                        if ((*p & 0x80) != 0x80) goto End;
-
-                        p++;
+                        value = *p;
+                        consumed = 1;
+                        return true;
+                    }
+                    else
+                    {
+                        switch (*p)
+                        {
+                            case Int8Code:
+                                value = p[1];
+                                consumed = 2;
+                                return true;
+                            default:
+                                value = 0;
+                                consumed = 0;
+                                return false;
+                        }
                     }
                 }
             }
+        }
 
-        End:;
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static bool InternalTryGetUInt16(ReadOnlySpan<byte> span, out ushort value, out int consumed)
+        {
+            unchecked
+            {
+                fixed (byte* fixed_p = span)
+                {
+                    var p = fixed_p;
 
-            consumed = sequence.GetPosition(count);
+                    if (MinInt7 <= *p && *p <= MaxInt7)
+                    {
+                        value = *p;
+                        consumed = 1;
+                        return true;
+                    }
+                    else
+                    {
+                        switch (*p)
+                        {
+                            case Int8Code:
+                                value = p[1];
+                                consumed = 2;
+                                return true;
+                            case Int16Code:
+                                value = (ushort)((ushort)p[1] << 8 | (ushort)p[2]);
+                                consumed = 3;
+                                return true;
+                            default:
+                                value = 0;
+                                consumed = 0;
+                                return false;
+                        }
+                    }
+                }
+            }
+        }
 
-            return true;
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static bool InternalTryGetUInt32(ReadOnlySpan<byte> span, out uint value, out int consumed)
+        {
+            unchecked
+            {
+                fixed (byte* fixed_p = span)
+                {
+                    var p = fixed_p;
+
+                    if (MinInt7 <= *p && *p <= MaxInt7)
+                    {
+                        value = *p;
+                        consumed = 1;
+                        return true;
+                    }
+                    else
+                    {
+                        switch (*p)
+                        {
+                            case Int8Code:
+                                value = p[1];
+                                consumed = 2;
+                                return true;
+                            case Int16Code:
+                                value = (uint)p[1] << 8 | (uint)p[2];
+                                consumed = 3;
+                                return true;
+                            case Int32Code:
+                                value = (uint)p[1] << 24 | (uint)p[2] << 16 | (uint)p[3] << 8 | (uint)p[4];
+                                consumed = 5;
+                                return true;
+                            default:
+                                value = 0;
+                                consumed = 0;
+                                return false;
+                        }
+                    }
+                }
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static bool InternalTryGetUInt64(ReadOnlySpan<byte> span, out ulong value, out int consumed)
+        {
+            unchecked
+            {
+                fixed (byte* fixed_p = span)
+                {
+                    var p = fixed_p;
+
+                    if (MinInt7 <= *p && *p <= MaxInt7)
+                    {
+                        value = *p;
+                        consumed = 1;
+                        return true;
+                    }
+                    else
+                    {
+                        switch (*p)
+                        {
+                            case Int8Code:
+                                value = p[1];
+                                consumed = 2;
+                                return true;
+                            case Int16Code:
+                                value = (ulong)p[1] << 8 | (ulong)p[2];
+                                consumed = 3;
+                                return true;
+                            case Int32Code:
+                                value = (ulong)p[1] << 24 | (ulong)p[2] << 16 | (ulong)p[3] << 8 | (ulong)p[4];
+                                consumed = 5;
+                                return true;
+                            case Int64Code:
+                                value = (ulong)p[1] << 56 | (ulong)p[2] << 48 | (ulong)p[3] << 40 | (ulong)p[4] << 32
+                                    | (ulong)p[5] << 24 | (ulong)p[6] << 16 | (ulong)p[7] << 8 | (ulong)p[8];
+                                consumed = 9;
+                                return true;
+                            default:
+                                value = 0;
+                                consumed = 0;
+                                return false;
+                        }
+                    }
+                }
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool TryGetUInt8(ReadOnlySequence<byte> sequence, out byte value, out SequencePosition consumed)
+        {
+            unchecked
+            {
+                if (sequence.IsEmpty)
+                {
+                    value = 0;
+                    consumed = sequence.Start;
+                    return false;
+                }
+
+                if (sequence.IsSingleSegment || sequence.First.Length >= 2)
+                {
+                    bool flag = InternalTryGetUInt8(sequence.First.Span, out value, out int int_consumed);
+                    consumed = sequence.GetPosition(int_consumed);
+
+                    return flag;
+                }
+                else
+                {
+                    Span<byte> span = stackalloc byte[(int)Math.Min(2, sequence.Length)];
+                    sequence.CopyTo(span);
+
+                    bool flag = InternalTryGetUInt8(span, out value, out int int_consumed);
+                    consumed = sequence.GetPosition(int_consumed);
+
+                    return flag;
+                }
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool TryGetUInt16(ReadOnlySequence<byte> sequence, out ushort value, out SequencePosition consumed)
+        {
+            unchecked
+            {
+                if (sequence.IsEmpty)
+                {
+                    value = 0;
+                    consumed = sequence.Start;
+                    return false;
+                }
+
+                if (sequence.IsSingleSegment || sequence.First.Length >= 3)
+                {
+                    bool flag = InternalTryGetUInt16(sequence.First.Span, out value, out int int_consumed);
+                    consumed = sequence.GetPosition(int_consumed);
+
+                    return flag;
+                }
+                else
+                {
+                    Span<byte> span = stackalloc byte[(int)Math.Min(3, sequence.Length)];
+                    sequence.CopyTo(span);
+
+                    bool flag = InternalTryGetUInt16(span, out value, out int int_consumed);
+                    consumed = sequence.GetPosition(int_consumed);
+
+                    return flag;
+                }
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool TryGetUInt32(ReadOnlySequence<byte> sequence, out uint value, out SequencePosition consumed)
+        {
+            unchecked
+            {
+                if (sequence.IsEmpty)
+                {
+                    value = 0;
+                    consumed = sequence.Start;
+                    return false;
+                }
+
+                if (sequence.IsSingleSegment || sequence.First.Length >= 5)
+                {
+                    bool flag = InternalTryGetUInt32(sequence.First.Span, out value, out int int_consumed);
+                    consumed = sequence.GetPosition(int_consumed);
+
+                    return flag;
+                }
+                else
+                {
+                    Span<byte> span = stackalloc byte[(int)Math.Min(5, sequence.Length)];
+                    sequence.CopyTo(span);
+
+                    bool flag = InternalTryGetUInt32(span, out value, out int int_consumed);
+                    consumed = sequence.GetPosition(int_consumed);
+
+                    return flag;
+                }
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool TryGetUInt64(ReadOnlySequence<byte> sequence, out ulong value, out SequencePosition consumed)
+        {
+            unchecked
+            {
+                if (sequence.IsEmpty)
+                {
+                    value = 0;
+                    consumed = sequence.Start;
+                    return false;
+                }
+
+                if (sequence.IsSingleSegment || sequence.First.Length >= 9)
+                {
+                    bool flag = InternalTryGetUInt64(sequence.First.Span, out value, out int int_consumed);
+                    consumed = sequence.GetPosition(int_consumed);
+
+                    return flag;
+                }
+                else
+                {
+                    Span<byte> span = stackalloc byte[(int)Math.Min(9, sequence.Length)];
+                    sequence.CopyTo(span);
+
+                    bool flag = InternalTryGetUInt64(span, out value, out int int_consumed);
+                    consumed = sequence.GetPosition(int_consumed);
+
+                    return flag;
+                }
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool TryGetInt8(ReadOnlySequence<byte> sequence, out sbyte result, out SequencePosition consumed)
+        {
+            unchecked
+            {
+                result = 0;
+
+                if (!TryGetUInt8(sequence, out byte byte_result, out consumed)) return false;
+
+                result = (sbyte)((byte_result >> 1) ^ (-((sbyte)byte_result & 1)));
+                return true;
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool TryGetInt16(ReadOnlySequence<byte> sequence, out short result, out SequencePosition consumed)
+        {
+            unchecked
+            {
+                result = 0;
+
+                if (!TryGetUInt16(sequence, out ushort ushort_result, out consumed)) return false;
+
+                result = (short)((ushort_result >> 1) ^ (-((short)ushort_result & 1)));
+                return true;
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool TryGetInt32(ReadOnlySequence<byte> sequence, out int result, out SequencePosition consumed)
+        {
+            unchecked
+            {
+                result = 0;
+
+                if (!TryGetUInt32(sequence, out uint uint_result, out consumed)) return false;
+
+                result = (int)(uint_result >> 1) ^ (-((int)uint_result & 1));
+                return true;
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool TryGetInt64(ReadOnlySequence<byte> sequence, out long result, out SequencePosition consumed)
+        {
+            unchecked
+            {
+                result = 0;
+
+                if (!TryGetUInt64(sequence, out ulong ulong_result, out consumed)) return false;
+
+                result = (long)(ulong_result >> 1) ^ (-((long)ulong_result & 1));
+                return true;
+            }
         }
     }
 }

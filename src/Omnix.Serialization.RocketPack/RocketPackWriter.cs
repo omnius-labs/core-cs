@@ -31,7 +31,7 @@ namespace Omnix.Serialization.RocketPack
             using (var memoryOwner = _bufferPool.Rent(_encoding.Value.GetMaxByteCount(value.Length)))
             {
                 int length = _encoding.Value.GetBytes(value.AsSpan(), memoryOwner.Memory.Span);
-                Varint.SetUInt64((uint)length, _bufferWriter);
+                Varint.SetUInt32((uint)length, _bufferWriter);
 
                 _bufferWriter.Write(memoryOwner.Memory.Span.Slice(0, length));
             }
@@ -40,7 +40,7 @@ namespace Omnix.Serialization.RocketPack
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Write(ReadOnlySpan<byte> value)
         {
-            Varint.SetUInt64((uint)value.Length, _bufferWriter);
+            Varint.SetUInt32((uint)value.Length, _bufferWriter);
             _bufferWriter.Write(value);
         }
 
@@ -48,25 +48,62 @@ namespace Omnix.Serialization.RocketPack
         public void Write(Timestamp value)
         {
             this.Write((long)value.Seconds);
-            this.Write((ulong)value.Nanos);
+            this.Write((uint)value.Nanos);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Write(bool value)
         {
-            this.Write((ulong)(!value ? (byte)0x00 : (byte)0x01));
+            _bufferWriter.GetSpan(1)[0] = !value ? (byte)0x00 : (byte)0x01;
+            _bufferWriter.Advance(1);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void Write(long value)
+        public void Write(byte value)
         {
-            Varint.SetInt64(value, _bufferWriter);
+            Varint.SetUInt64(value, _bufferWriter);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void Write(ushort value)
+        {
+            Varint.SetUInt64(value, _bufferWriter);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void Write(uint value)
+        {
+            Varint.SetUInt64(value, _bufferWriter);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Write(ulong value)
         {
             Varint.SetUInt64(value, _bufferWriter);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void Write(sbyte value)
+        {
+            Varint.SetInt64(value, _bufferWriter);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void Write(short value)
+        {
+            Varint.SetInt64(value, _bufferWriter);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void Write(int value)
+        {
+            Varint.SetInt64(value, _bufferWriter);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void Write(long value)
+        {
+            Varint.SetInt64(value, _bufferWriter);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
