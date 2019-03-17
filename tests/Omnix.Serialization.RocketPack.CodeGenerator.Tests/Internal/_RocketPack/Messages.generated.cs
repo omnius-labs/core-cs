@@ -233,7 +233,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator.Tests.Internal
 
                 // Write property count
                 {
-                    int propertyCount = 0;
+                    uint propertyCount = 0;
                     if (value.X0 != default) propertyCount++;
                     if (value.X1 != default) propertyCount++;
                     if (value.X2 != default) propertyCount++;
@@ -259,152 +259,152 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator.Tests.Internal
                     if (!value.X22.IsEmpty) propertyCount++;
                     if (value.X23.Count != 0) propertyCount++;
                     if (value.X24.Count != 0) propertyCount++;
-                    w.Write((ulong)propertyCount);
+                    w.Write(propertyCount);
                 }
 
                 // X0
                 if (value.X0 != default)
                 {
-                    w.Write((ulong)0);
+                    w.Write((uint)0);
                     w.Write(value.X0);
                 }
                 // X1
                 if (value.X1 != default)
                 {
-                    w.Write((ulong)1);
-                    w.Write((long)value.X1);
+                    w.Write((uint)1);
+                    w.Write(value.X1);
                 }
                 // X2
                 if (value.X2 != default)
                 {
-                    w.Write((ulong)2);
-                    w.Write((long)value.X2);
+                    w.Write((uint)2);
+                    w.Write(value.X2);
                 }
                 // X3
                 if (value.X3 != default)
                 {
-                    w.Write((ulong)3);
-                    w.Write((long)value.X3);
+                    w.Write((uint)3);
+                    w.Write(value.X3);
                 }
                 // X4
                 if (value.X4 != default)
                 {
-                    w.Write((ulong)4);
-                    w.Write((long)value.X4);
+                    w.Write((uint)4);
+                    w.Write(value.X4);
                 }
                 // X5
                 if (value.X5 != default)
                 {
-                    w.Write((ulong)5);
-                    w.Write((ulong)value.X5);
+                    w.Write((uint)5);
+                    w.Write(value.X5);
                 }
                 // X6
                 if (value.X6 != default)
                 {
-                    w.Write((ulong)6);
-                    w.Write((ulong)value.X6);
+                    w.Write((uint)6);
+                    w.Write(value.X6);
                 }
                 // X7
                 if (value.X7 != default)
                 {
-                    w.Write((ulong)7);
-                    w.Write((ulong)value.X7);
+                    w.Write((uint)7);
+                    w.Write(value.X7);
                 }
                 // X8
                 if (value.X8 != default)
                 {
-                    w.Write((ulong)8);
-                    w.Write((ulong)value.X8);
+                    w.Write((uint)8);
+                    w.Write(value.X8);
                 }
                 // X9
                 if (value.X9 != default)
                 {
-                    w.Write((ulong)9);
+                    w.Write((uint)9);
                     w.Write((long)value.X9);
                 }
                 // X10
                 if (value.X10 != default)
                 {
-                    w.Write((ulong)10);
+                    w.Write((uint)10);
                     w.Write((long)value.X10);
                 }
                 // X11
                 if (value.X11 != default)
                 {
-                    w.Write((ulong)11);
+                    w.Write((uint)11);
                     w.Write((long)value.X11);
                 }
                 // X12
                 if (value.X12 != default)
                 {
-                    w.Write((ulong)12);
+                    w.Write((uint)12);
                     w.Write((long)value.X12);
                 }
                 // X13
                 if (value.X13 != default)
                 {
-                    w.Write((ulong)13);
+                    w.Write((uint)13);
                     w.Write((ulong)value.X13);
                 }
                 // X14
                 if (value.X14 != default)
                 {
-                    w.Write((ulong)14);
+                    w.Write((uint)14);
                     w.Write((ulong)value.X14);
                 }
                 // X15
                 if (value.X15 != default)
                 {
-                    w.Write((ulong)15);
+                    w.Write((uint)15);
                     w.Write((ulong)value.X15);
                 }
                 // X16
                 if (value.X16 != default)
                 {
-                    w.Write((ulong)16);
+                    w.Write((uint)16);
                     w.Write((ulong)value.X16);
                 }
                 // X17
                 if (value.X17 != default)
                 {
-                    w.Write((ulong)17);
+                    w.Write((uint)17);
                     w.Write(value.X17);
                 }
                 // X18
                 if (value.X18 != default)
                 {
-                    w.Write((ulong)18);
+                    w.Write((uint)18);
                     w.Write(value.X18);
                 }
                 // X19
                 if (value.X19 != default)
                 {
-                    w.Write((ulong)19);
+                    w.Write((uint)19);
                     w.Write(value.X19);
                 }
                 // X20
                 if (value.X20 != default)
                 {
-                    w.Write((ulong)20);
+                    w.Write((uint)20);
                     w.Write(value.X20);
                 }
                 // X21
                 if (!value.X21.IsEmpty)
                 {
-                    w.Write((ulong)21);
+                    w.Write((uint)21);
                     w.Write(value.X21.Span);
                 }
                 // X22
                 if (!value.X22.IsEmpty)
                 {
-                    w.Write((ulong)22);
+                    w.Write((uint)22);
                     w.Write(value.X22.Span);
                 }
                 // X23
                 if (value.X23.Count != 0)
                 {
-                    w.Write((ulong)23);
-                    w.Write((ulong)value.X23.Count);
+                    w.Write((uint)23);
+                    w.Write((uint)value.X23.Count);
                     foreach (var n in value.X23)
                     {
                         w.Write(n);
@@ -413,11 +413,11 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator.Tests.Internal
                 // X24
                 if (value.X24.Count != 0)
                 {
-                    w.Write((ulong)24);
-                    w.Write((ulong)value.X24.Count);
+                    w.Write((uint)24);
+                    w.Write((uint)value.X24.Count);
                     foreach (var n in value.X24)
                     {
-                        w.Write((ulong)n.Key);
+                        w.Write(n.Key);
                         w.Write(n.Value);
                     }
                 }
@@ -428,7 +428,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator.Tests.Internal
                 if (rank > 256) throw new FormatException();
 
                 // Read property count
-                int propertyCount = (int)r.GetUInt64();
+                uint propertyCount = r.GetUInt32();
 
                 bool p_x0 = default;
                 sbyte p_x1 = default;
@@ -458,7 +458,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator.Tests.Internal
 
                 for (; propertyCount > 0; propertyCount--)
                 {
-                    int id = (int)r.GetUInt64();
+                    uint id = r.GetUInt32();
                     switch (id)
                     {
                         case 0: // X0
@@ -468,42 +468,42 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator.Tests.Internal
                             }
                         case 1: // X1
                             {
-                                p_x1 = (sbyte)r.GetInt64();
+                                p_x1 = r.GetInt8();
                                 break;
                             }
                         case 2: // X2
                             {
-                                p_x2 = (short)r.GetInt64();
+                                p_x2 = r.GetInt16();
                                 break;
                             }
                         case 3: // X3
                             {
-                                p_x3 = (int)r.GetInt64();
+                                p_x3 = r.GetInt32();
                                 break;
                             }
                         case 4: // X4
                             {
-                                p_x4 = (long)r.GetInt64();
+                                p_x4 = r.GetInt64();
                                 break;
                             }
                         case 5: // X5
                             {
-                                p_x5 = (byte)r.GetUInt64();
+                                p_x5 = r.GetUInt8();
                                 break;
                             }
                         case 6: // X6
                             {
-                                p_x6 = (ushort)r.GetUInt64();
+                                p_x6 = r.GetUInt16();
                                 break;
                             }
                         case 7: // X7
                             {
-                                p_x7 = (uint)r.GetUInt64();
+                                p_x7 = r.GetUInt32();
                                 break;
                             }
                         case 8: // X8
                             {
-                                p_x8 = (ulong)r.GetUInt64();
+                                p_x8 = r.GetUInt64();
                                 break;
                             }
                         case 9: // X9
@@ -578,7 +578,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator.Tests.Internal
                             }
                         case 23: // X23
                             {
-                                var length = (int)r.GetUInt64();
+                                var length = r.GetUInt32();
                                 p_x23 = new string[length];
                                 for (int i = 0; i < p_x23.Count; i++)
                                 {
@@ -588,13 +588,13 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator.Tests.Internal
                             }
                         case 24: // X24
                             {
-                                var length = (int)r.GetUInt64();
+                                var length = r.GetUInt32();
                                 p_x24 = new Dictionary<byte, string>();
                                 byte t_key = default;
                                 string t_value = default;
                                 for (int i = 0; i < length; i++)
                                 {
-                                    t_key = (byte)r.GetUInt64();
+                                    t_key = r.GetUInt8();
                                     t_value = r.GetString(128);
                                     p_x24[t_key] = t_value;
                                 }
@@ -797,21 +797,21 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator.Tests.Internal
                 // X0
                 w.Write(value.X0);
                 // X1
-                w.Write((long)value.X1);
+                w.Write(value.X1);
                 // X2
-                w.Write((long)value.X2);
+                w.Write(value.X2);
                 // X3
-                w.Write((long)value.X3);
+                w.Write(value.X3);
                 // X4
-                w.Write((long)value.X4);
+                w.Write(value.X4);
                 // X5
-                w.Write((ulong)value.X5);
+                w.Write(value.X5);
                 // X6
-                w.Write((ulong)value.X6);
+                w.Write(value.X6);
                 // X7
-                w.Write((ulong)value.X7);
+                w.Write(value.X7);
                 // X8
-                w.Write((ulong)value.X8);
+                w.Write(value.X8);
                 // X9
                 w.Write((long)value.X9);
                 // X10
@@ -841,16 +841,16 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator.Tests.Internal
                 // X22
                 w.Write(value.X22.Span);
                 // X23
-                w.Write((ulong)value.X23.Count);
+                w.Write((uint)value.X23.Count);
                 foreach (var n in value.X23)
                 {
                     w.Write(n);
                 }
                 // X24
-                w.Write((ulong)value.X24.Count);
+                w.Write((uint)value.X24.Count);
                 foreach (var n in value.X24)
                 {
-                    w.Write((ulong)n.Key);
+                    w.Write(n.Key);
                     w.Write(n.Value);
                 }
             }
@@ -891,35 +891,35 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator.Tests.Internal
                 }
                 // X1
                 {
-                    p_x1 = (sbyte)r.GetInt64();
+                    p_x1 = r.GetInt8();
                 }
                 // X2
                 {
-                    p_x2 = (short)r.GetInt64();
+                    p_x2 = r.GetInt16();
                 }
                 // X3
                 {
-                    p_x3 = (int)r.GetInt64();
+                    p_x3 = r.GetInt32();
                 }
                 // X4
                 {
-                    p_x4 = (long)r.GetInt64();
+                    p_x4 = r.GetInt64();
                 }
                 // X5
                 {
-                    p_x5 = (byte)r.GetUInt64();
+                    p_x5 = r.GetUInt8();
                 }
                 // X6
                 {
-                    p_x6 = (ushort)r.GetUInt64();
+                    p_x6 = r.GetUInt16();
                 }
                 // X7
                 {
-                    p_x7 = (uint)r.GetUInt64();
+                    p_x7 = r.GetUInt32();
                 }
                 // X8
                 {
-                    p_x8 = (ulong)r.GetUInt64();
+                    p_x8 = r.GetUInt64();
                 }
                 // X9
                 {
@@ -979,7 +979,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator.Tests.Internal
                 }
                 // X23
                 {
-                    var length = (int)r.GetUInt64();
+                    var length = r.GetUInt32();
                     p_x23 = new string[length];
                     for (int i = 0; i < p_x23.Count; i++)
                     {
@@ -988,13 +988,13 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator.Tests.Internal
                 }
                 // X24
                 {
-                    var length = (int)r.GetUInt64();
+                    var length = r.GetUInt32();
                     p_x24 = new Dictionary<byte, string>();
                     byte t_key = default;
                     string t_value = default;
                     for (int i = 0; i < length; i++)
                     {
-                        t_key = (byte)r.GetUInt64();
+                        t_key = r.GetUInt8();
                         t_value = r.GetString(128);
                         p_x24[t_key] = t_value;
                     }
@@ -1058,16 +1058,16 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator.Tests.Internal
 
                 // Write property count
                 {
-                    int propertyCount = 0;
+                    uint propertyCount = 0;
                     if (value.List.Count != 0) propertyCount++;
-                    w.Write((ulong)propertyCount);
+                    w.Write(propertyCount);
                 }
 
                 // List
                 if (value.List.Count != 0)
                 {
-                    w.Write((ulong)0);
-                    w.Write((ulong)value.List.Count);
+                    w.Write((uint)0);
+                    w.Write((uint)value.List.Count);
                     foreach (var n in value.List)
                     {
                         IntPropertiesMessage.Formatter.Serialize(w, n, rank + 1);
@@ -1080,18 +1080,18 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator.Tests.Internal
                 if (rank > 256) throw new FormatException();
 
                 // Read property count
-                int propertyCount = (int)r.GetUInt64();
+                uint propertyCount = r.GetUInt32();
 
                 IList<IntPropertiesMessage> p_list = default;
 
                 for (; propertyCount > 0; propertyCount--)
                 {
-                    int id = (int)r.GetUInt64();
+                    uint id = r.GetUInt32();
                     switch (id)
                     {
                         case 0: // List
                             {
-                                var length = (int)r.GetUInt64();
+                                var length = r.GetUInt32();
                                 p_list = new IntPropertiesMessage[length];
                                 for (int i = 0; i < p_list.Count; i++)
                                 {
@@ -1160,16 +1160,16 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator.Tests.Internal
 
                 // Write property count
                 {
-                    int propertyCount = 0;
+                    uint propertyCount = 0;
                     if (value.List.Count != 0) propertyCount++;
-                    w.Write((ulong)propertyCount);
+                    w.Write(propertyCount);
                 }
 
                 // List
                 if (value.List.Count != 0)
                 {
-                    w.Write((ulong)0);
-                    w.Write((ulong)value.List.Count);
+                    w.Write((uint)0);
+                    w.Write((uint)value.List.Count);
                     foreach (var n in value.List)
                     {
                         StringPropertiesMessage.Formatter.Serialize(w, n, rank + 1);
@@ -1182,18 +1182,18 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator.Tests.Internal
                 if (rank > 256) throw new FormatException();
 
                 // Read property count
-                int propertyCount = (int)r.GetUInt64();
+                uint propertyCount = r.GetUInt32();
 
                 IList<StringPropertiesMessage> p_list = default;
 
                 for (; propertyCount > 0; propertyCount--)
                 {
-                    int id = (int)r.GetUInt64();
+                    uint id = r.GetUInt32();
                     switch (id)
                     {
                         case 0: // List
                             {
-                                var length = (int)r.GetUInt64();
+                                var length = r.GetUInt32();
                                 p_list = new StringPropertiesMessage[length];
                                 for (int i = 0; i < p_list.Count; i++)
                                 {
@@ -1281,7 +1281,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator.Tests.Internal
 
                 // Write property count
                 {
-                    int propertyCount = 0;
+                    uint propertyCount = 0;
                     if (value.MyProperty1 != default) propertyCount++;
                     if (value.MyProperty2 != default) propertyCount++;
                     if (value.MyProperty3 != default) propertyCount++;
@@ -1291,62 +1291,62 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator.Tests.Internal
                     if (value.MyProperty7 != default) propertyCount++;
                     if (value.MyProperty8 != default) propertyCount++;
                     if (value.MyProperty9 != default) propertyCount++;
-                    w.Write((ulong)propertyCount);
+                    w.Write(propertyCount);
                 }
 
                 // MyProperty1
                 if (value.MyProperty1 != default)
                 {
-                    w.Write((ulong)0);
-                    w.Write((ulong)value.MyProperty1);
+                    w.Write((uint)0);
+                    w.Write(value.MyProperty1);
                 }
                 // MyProperty2
                 if (value.MyProperty2 != default)
                 {
-                    w.Write((ulong)1);
-                    w.Write((ulong)value.MyProperty2);
+                    w.Write((uint)1);
+                    w.Write(value.MyProperty2);
                 }
                 // MyProperty3
                 if (value.MyProperty3 != default)
                 {
-                    w.Write((ulong)2);
-                    w.Write((ulong)value.MyProperty3);
+                    w.Write((uint)2);
+                    w.Write(value.MyProperty3);
                 }
                 // MyProperty4
                 if (value.MyProperty4 != default)
                 {
-                    w.Write((ulong)3);
-                    w.Write((ulong)value.MyProperty4);
+                    w.Write((uint)3);
+                    w.Write(value.MyProperty4);
                 }
                 // MyProperty5
                 if (value.MyProperty5 != default)
                 {
-                    w.Write((ulong)4);
-                    w.Write((ulong)value.MyProperty5);
+                    w.Write((uint)4);
+                    w.Write(value.MyProperty5);
                 }
                 // MyProperty6
                 if (value.MyProperty6 != default)
                 {
-                    w.Write((ulong)5);
-                    w.Write((ulong)value.MyProperty6);
+                    w.Write((uint)5);
+                    w.Write(value.MyProperty6);
                 }
                 // MyProperty7
                 if (value.MyProperty7 != default)
                 {
-                    w.Write((ulong)6);
-                    w.Write((ulong)value.MyProperty7);
+                    w.Write((uint)6);
+                    w.Write(value.MyProperty7);
                 }
                 // MyProperty8
                 if (value.MyProperty8 != default)
                 {
-                    w.Write((ulong)7);
-                    w.Write((ulong)value.MyProperty8);
+                    w.Write((uint)7);
+                    w.Write(value.MyProperty8);
                 }
                 // MyProperty9
                 if (value.MyProperty9 != default)
                 {
-                    w.Write((ulong)8);
-                    w.Write((ulong)value.MyProperty9);
+                    w.Write((uint)8);
+                    w.Write(value.MyProperty9);
                 }
             }
 
@@ -1355,7 +1355,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator.Tests.Internal
                 if (rank > 256) throw new FormatException();
 
                 // Read property count
-                int propertyCount = (int)r.GetUInt64();
+                uint propertyCount = r.GetUInt32();
 
                 uint p_myProperty1 = default;
                 uint p_myProperty2 = default;
@@ -1369,52 +1369,52 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator.Tests.Internal
 
                 for (; propertyCount > 0; propertyCount--)
                 {
-                    int id = (int)r.GetUInt64();
+                    uint id = r.GetUInt32();
                     switch (id)
                     {
                         case 0: // MyProperty1
                             {
-                                p_myProperty1 = (uint)r.GetUInt64();
+                                p_myProperty1 = r.GetUInt32();
                                 break;
                             }
                         case 1: // MyProperty2
                             {
-                                p_myProperty2 = (uint)r.GetUInt64();
+                                p_myProperty2 = r.GetUInt32();
                                 break;
                             }
                         case 2: // MyProperty3
                             {
-                                p_myProperty3 = (uint)r.GetUInt64();
+                                p_myProperty3 = r.GetUInt32();
                                 break;
                             }
                         case 3: // MyProperty4
                             {
-                                p_myProperty4 = (uint)r.GetUInt64();
+                                p_myProperty4 = r.GetUInt32();
                                 break;
                             }
                         case 4: // MyProperty5
                             {
-                                p_myProperty5 = (uint)r.GetUInt64();
+                                p_myProperty5 = r.GetUInt32();
                                 break;
                             }
                         case 5: // MyProperty6
                             {
-                                p_myProperty6 = (uint)r.GetUInt64();
+                                p_myProperty6 = r.GetUInt32();
                                 break;
                             }
                         case 6: // MyProperty7
                             {
-                                p_myProperty7 = (uint)r.GetUInt64();
+                                p_myProperty7 = r.GetUInt32();
                                 break;
                             }
                         case 7: // MyProperty8
                             {
-                                p_myProperty8 = (uint)r.GetUInt64();
+                                p_myProperty8 = r.GetUInt32();
                                 break;
                             }
                         case 8: // MyProperty9
                             {
-                                p_myProperty9 = (uint)r.GetUInt64();
+                                p_myProperty9 = r.GetUInt32();
                                 break;
                             }
                     }
@@ -1484,29 +1484,29 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator.Tests.Internal
 
                 // Write property count
                 {
-                    int propertyCount = 0;
+                    uint propertyCount = 0;
                     if (value.MyProperty1 != default) propertyCount++;
                     if (value.MyProperty2 != default) propertyCount++;
                     if (value.MyProperty3 != default) propertyCount++;
-                    w.Write((ulong)propertyCount);
+                    w.Write(propertyCount);
                 }
 
                 // MyProperty1
                 if (value.MyProperty1 != default)
                 {
-                    w.Write((ulong)0);
+                    w.Write((uint)0);
                     w.Write(value.MyProperty1);
                 }
                 // MyProperty2
                 if (value.MyProperty2 != default)
                 {
-                    w.Write((ulong)1);
+                    w.Write((uint)1);
                     w.Write(value.MyProperty2);
                 }
                 // MyProperty3
                 if (value.MyProperty3 != default)
                 {
-                    w.Write((ulong)2);
+                    w.Write((uint)2);
                     w.Write(value.MyProperty3);
                 }
             }
@@ -1516,7 +1516,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator.Tests.Internal
                 if (rank > 256) throw new FormatException();
 
                 // Read property count
-                int propertyCount = (int)r.GetUInt64();
+                uint propertyCount = r.GetUInt32();
 
                 string p_myProperty1 = default;
                 string p_myProperty2 = default;
@@ -1524,7 +1524,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator.Tests.Internal
 
                 for (; propertyCount > 0; propertyCount--)
                 {
-                    int id = (int)r.GetUInt64();
+                    uint id = r.GetUInt32();
                     switch (id)
                     {
                         case 0: // MyProperty1

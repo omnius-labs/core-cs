@@ -128,33 +128,33 @@ namespace Omnix.Network.Connection.Secure.V1.Internal
 
                 // Write property count
                 {
-                    int propertyCount = 0;
+                    uint propertyCount = 0;
                     if (!value.SessionId.IsEmpty) propertyCount++;
                     if (value.AuthenticationType != default) propertyCount++;
                     if (value.KeyExchangeAlgorithms.Count != 0) propertyCount++;
                     if (value.KeyDerivationAlgorithms.Count != 0) propertyCount++;
                     if (value.CryptoAlgorithms.Count != 0) propertyCount++;
                     if (value.HashAlgorithms.Count != 0) propertyCount++;
-                    w.Write((ulong)propertyCount);
+                    w.Write(propertyCount);
                 }
 
                 // SessionId
                 if (!value.SessionId.IsEmpty)
                 {
-                    w.Write((ulong)0);
+                    w.Write((uint)0);
                     w.Write(value.SessionId.Span);
                 }
                 // AuthenticationType
                 if (value.AuthenticationType != default)
                 {
-                    w.Write((ulong)1);
+                    w.Write((uint)1);
                     w.Write((ulong)value.AuthenticationType);
                 }
                 // KeyExchangeAlgorithms
                 if (value.KeyExchangeAlgorithms.Count != 0)
                 {
-                    w.Write((ulong)2);
-                    w.Write((ulong)value.KeyExchangeAlgorithms.Count);
+                    w.Write((uint)2);
+                    w.Write((uint)value.KeyExchangeAlgorithms.Count);
                     foreach (var n in value.KeyExchangeAlgorithms)
                     {
                         w.Write((ulong)n);
@@ -163,8 +163,8 @@ namespace Omnix.Network.Connection.Secure.V1.Internal
                 // KeyDerivationAlgorithms
                 if (value.KeyDerivationAlgorithms.Count != 0)
                 {
-                    w.Write((ulong)3);
-                    w.Write((ulong)value.KeyDerivationAlgorithms.Count);
+                    w.Write((uint)3);
+                    w.Write((uint)value.KeyDerivationAlgorithms.Count);
                     foreach (var n in value.KeyDerivationAlgorithms)
                     {
                         w.Write((ulong)n);
@@ -173,8 +173,8 @@ namespace Omnix.Network.Connection.Secure.V1.Internal
                 // CryptoAlgorithms
                 if (value.CryptoAlgorithms.Count != 0)
                 {
-                    w.Write((ulong)4);
-                    w.Write((ulong)value.CryptoAlgorithms.Count);
+                    w.Write((uint)4);
+                    w.Write((uint)value.CryptoAlgorithms.Count);
                     foreach (var n in value.CryptoAlgorithms)
                     {
                         w.Write((ulong)n);
@@ -183,8 +183,8 @@ namespace Omnix.Network.Connection.Secure.V1.Internal
                 // HashAlgorithms
                 if (value.HashAlgorithms.Count != 0)
                 {
-                    w.Write((ulong)5);
-                    w.Write((ulong)value.HashAlgorithms.Count);
+                    w.Write((uint)5);
+                    w.Write((uint)value.HashAlgorithms.Count);
                     foreach (var n in value.HashAlgorithms)
                     {
                         w.Write((ulong)n);
@@ -197,7 +197,7 @@ namespace Omnix.Network.Connection.Secure.V1.Internal
                 if (rank > 256) throw new FormatException();
 
                 // Read property count
-                int propertyCount = (int)r.GetUInt64();
+                uint propertyCount = r.GetUInt32();
 
                 ReadOnlyMemory<byte> p_sessionId = default;
                 AuthenticationType p_authenticationType = default;
@@ -208,7 +208,7 @@ namespace Omnix.Network.Connection.Secure.V1.Internal
 
                 for (; propertyCount > 0; propertyCount--)
                 {
-                    int id = (int)r.GetUInt64();
+                    uint id = r.GetUInt32();
                     switch (id)
                     {
                         case 0: // SessionId
@@ -223,7 +223,7 @@ namespace Omnix.Network.Connection.Secure.V1.Internal
                             }
                         case 2: // KeyExchangeAlgorithms
                             {
-                                var length = (int)r.GetUInt64();
+                                var length = r.GetUInt32();
                                 p_keyExchangeAlgorithms = new KeyExchangeAlgorithm[length];
                                 for (int i = 0; i < p_keyExchangeAlgorithms.Count; i++)
                                 {
@@ -233,7 +233,7 @@ namespace Omnix.Network.Connection.Secure.V1.Internal
                             }
                         case 3: // KeyDerivationAlgorithms
                             {
-                                var length = (int)r.GetUInt64();
+                                var length = r.GetUInt32();
                                 p_keyDerivationAlgorithms = new KeyDerivationAlgorithm[length];
                                 for (int i = 0; i < p_keyDerivationAlgorithms.Count; i++)
                                 {
@@ -243,7 +243,7 @@ namespace Omnix.Network.Connection.Secure.V1.Internal
                             }
                         case 4: // CryptoAlgorithms
                             {
-                                var length = (int)r.GetUInt64();
+                                var length = r.GetUInt32();
                                 p_cryptoAlgorithms = new CryptoAlgorithm[length];
                                 for (int i = 0; i < p_cryptoAlgorithms.Count; i++)
                                 {
@@ -253,7 +253,7 @@ namespace Omnix.Network.Connection.Secure.V1.Internal
                             }
                         case 5: // HashAlgorithms
                             {
-                                var length = (int)r.GetUInt64();
+                                var length = r.GetUInt32();
                                 p_hashAlgorithms = new HashAlgorithm[length];
                                 for (int i = 0; i < p_hashAlgorithms.Count; i++)
                                 {
@@ -316,22 +316,22 @@ namespace Omnix.Network.Connection.Secure.V1.Internal
 
                 // Write property count
                 {
-                    int propertyCount = 0;
+                    uint propertyCount = 0;
                     if (value.ProfileMessage != default) propertyCount++;
                     if (value.AgreementPublicKey != default) propertyCount++;
-                    w.Write((ulong)propertyCount);
+                    w.Write(propertyCount);
                 }
 
                 // ProfileMessage
                 if (value.ProfileMessage != default)
                 {
-                    w.Write((ulong)0);
+                    w.Write((uint)0);
                     ProfileMessage.Formatter.Serialize(w, value.ProfileMessage, rank + 1);
                 }
                 // AgreementPublicKey
                 if (value.AgreementPublicKey != default)
                 {
-                    w.Write((ulong)1);
+                    w.Write((uint)1);
                     OmniAgreementPublicKey.Formatter.Serialize(w, value.AgreementPublicKey, rank + 1);
                 }
             }
@@ -341,14 +341,14 @@ namespace Omnix.Network.Connection.Secure.V1.Internal
                 if (rank > 256) throw new FormatException();
 
                 // Read property count
-                int propertyCount = (int)r.GetUInt64();
+                uint propertyCount = r.GetUInt32();
 
                 ProfileMessage p_profileMessage = default;
                 OmniAgreementPublicKey p_agreementPublicKey = default;
 
                 for (; propertyCount > 0; propertyCount--)
                 {
-                    int id = (int)r.GetUInt64();
+                    uint id = r.GetUInt32();
                     switch (id)
                     {
                         case 0: // ProfileMessage
@@ -422,16 +422,16 @@ namespace Omnix.Network.Connection.Secure.V1.Internal
 
                 // Write property count
                 {
-                    int propertyCount = 0;
+                    uint propertyCount = 0;
                     if (value.Hashes.Count != 0) propertyCount++;
-                    w.Write((ulong)propertyCount);
+                    w.Write(propertyCount);
                 }
 
                 // Hashes
                 if (value.Hashes.Count != 0)
                 {
-                    w.Write((ulong)0);
-                    w.Write((ulong)value.Hashes.Count);
+                    w.Write((uint)0);
+                    w.Write((uint)value.Hashes.Count);
                     foreach (var n in value.Hashes)
                     {
                         w.Write(n.Span);
@@ -444,18 +444,18 @@ namespace Omnix.Network.Connection.Secure.V1.Internal
                 if (rank > 256) throw new FormatException();
 
                 // Read property count
-                int propertyCount = (int)r.GetUInt64();
+                uint propertyCount = r.GetUInt32();
 
                 IList<ReadOnlyMemory<byte>> p_hashes = default;
 
                 for (; propertyCount > 0; propertyCount--)
                 {
-                    int id = (int)r.GetUInt64();
+                    uint id = r.GetUInt32();
                     switch (id)
                     {
                         case 0: // Hashes
                             {
-                                var length = (int)r.GetUInt64();
+                                var length = r.GetUInt32();
                                 p_hashes = new ReadOnlyMemory<byte>[length];
                                 for (int i = 0; i < p_hashes.Count; i++)
                                 {

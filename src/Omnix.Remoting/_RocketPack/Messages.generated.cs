@@ -68,29 +68,29 @@ namespace Omnix.Remoting
 
                 // Write property count
                 {
-                    int propertyCount = 0;
+                    uint propertyCount = 0;
                     if (value.Type != default) propertyCount++;
                     if (value.Message != default) propertyCount++;
                     if (value.StackTrace != default) propertyCount++;
-                    w.Write((ulong)propertyCount);
+                    w.Write(propertyCount);
                 }
 
                 // Type
                 if (value.Type != default)
                 {
-                    w.Write((ulong)0);
+                    w.Write((uint)0);
                     w.Write(value.Type);
                 }
                 // Message
                 if (value.Message != default)
                 {
-                    w.Write((ulong)1);
+                    w.Write((uint)1);
                     w.Write(value.Message);
                 }
                 // StackTrace
                 if (value.StackTrace != default)
                 {
-                    w.Write((ulong)2);
+                    w.Write((uint)2);
                     w.Write(value.StackTrace);
                 }
             }
@@ -100,7 +100,7 @@ namespace Omnix.Remoting
                 if (rank > 256) throw new FormatException();
 
                 // Read property count
-                int propertyCount = (int)r.GetUInt64();
+                uint propertyCount = r.GetUInt32();
 
                 string p_type = default;
                 string p_message = default;
@@ -108,7 +108,7 @@ namespace Omnix.Remoting
 
                 for (; propertyCount > 0; propertyCount--)
                 {
-                    int id = (int)r.GetUInt64();
+                    uint id = r.GetUInt32();
                     switch (id)
                     {
                         case 0: // Type
