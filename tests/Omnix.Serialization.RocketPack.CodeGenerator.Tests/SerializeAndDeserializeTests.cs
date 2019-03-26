@@ -42,7 +42,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator.Tests
             ReadOnlyMemory<byte> x21 = new byte[] { 1 };
             IMemoryOwner<byte> x22 = BufferPool.Shared.Rent(1);
             x22.Memory.Span[0] = 1;
-            IList<string> x23 = new string[] { "1" };
+            string[] x23 = new string[] { "1" };
             IDictionary<byte, string> x24 = new Dictionary<byte, string>() { { 1, "1" } };
 
             using (var hub = new Hub())
@@ -85,7 +85,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator.Tests
                         items.Add(message);
                     }
 
-                    list1 = new IntPropertiesListMessage(items);
+                    list1 = new IntPropertiesListMessage(items.ToArray());
 
                     list1.Export(hub.Writer, BufferPool.Shared);
                     hub.Writer.Complete();
@@ -134,7 +134,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator.Tests
                         items.Add(message);
                     }
 
-                    list1 = new StringPropertiesListMessage(items);
+                    list1 = new StringPropertiesListMessage(items.ToArray());
 
                     list1.Export(hub.Writer, BufferPool.Shared);
                     hub.Writer.Complete();

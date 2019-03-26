@@ -1,5 +1,6 @@
 ﻿using Omnix.Base;
 using Omnix.Base.Helpers;
+using Omnix.Collections;
 using Omnix.Cryptography;
 using Omnix.Serialization;
 using Omnix.Serialization.RocketPack;

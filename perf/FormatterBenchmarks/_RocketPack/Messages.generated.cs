@@ -1,5 +1,6 @@
 ﻿using Omnix.Base;
 using Omnix.Base.Helpers;
+using Omnix.Collections;
 using Omnix.Serialization;
 using Omnix.Serialization.RocketPack;
 using System;
@@ -109,16 +110,16 @@ namespace FormatterBenchmarks
 
         public static readonly int MaxListCount = 100000;
 
-        public RocketPack_IntPropertiesListMessage(IList<RocketPack_IntPropertiesMessage> list)
+        public RocketPack_IntPropertiesListMessage(RocketPack_IntPropertiesMessage[] list)
         {
             if (list is null) throw new ArgumentNullException("list");
-            if (list.Count > 100000) throw new ArgumentOutOfRangeException("list");
+            if (list.Length > 100000) throw new ArgumentOutOfRangeException("list");
             foreach (var n in list)
             {
                 if (n is null) throw new ArgumentNullException("n");
             }
 
-            this.List = new ReadOnlyCollection<RocketPack_IntPropertiesMessage>(list);
+            this.List = new ReadOnlyListSlim<RocketPack_IntPropertiesMessage>(list);
 
             {
                 var hashCode = new HashCode();
@@ -130,7 +131,7 @@ namespace FormatterBenchmarks
             }
         }
 
-        public IReadOnlyList<RocketPack_IntPropertiesMessage> List { get; }
+        public ReadOnlyListSlim<RocketPack_IntPropertiesMessage> List { get; }
 
         public override bool Equals(RocketPack_IntPropertiesListMessage target)
         {
@@ -177,7 +178,7 @@ namespace FormatterBenchmarks
                 // Read property count
                 uint propertyCount = r.GetUInt32();
 
-                IList<RocketPack_IntPropertiesMessage> p_list = default;
+                RocketPack_IntPropertiesMessage[] p_list = default;
 
                 for (; propertyCount > 0; propertyCount--)
                 {
@@ -188,7 +189,7 @@ namespace FormatterBenchmarks
                             {
                                 var length = r.GetUInt32();
                                 p_list = new RocketPack_IntPropertiesMessage[length];
-                                for (int i = 0; i < p_list.Count; i++)
+                                for (int i = 0; i < p_list.Length; i++)
                                 {
                                     p_list[i] = RocketPack_IntPropertiesMessage.Formatter.Deserialize(r, rank + 1);
                                 }
@@ -211,16 +212,16 @@ namespace FormatterBenchmarks
 
         public static readonly int MaxListCount = 100000;
 
-        public RocketPack_StringPropertiesListMessage(IList<RocketPack_StringPropertiesMessage> list)
+        public RocketPack_StringPropertiesListMessage(RocketPack_StringPropertiesMessage[] list)
         {
             if (list is null) throw new ArgumentNullException("list");
-            if (list.Count > 100000) throw new ArgumentOutOfRangeException("list");
+            if (list.Length > 100000) throw new ArgumentOutOfRangeException("list");
             foreach (var n in list)
             {
                 if (n is null) throw new ArgumentNullException("n");
             }
 
-            this.List = new ReadOnlyCollection<RocketPack_StringPropertiesMessage>(list);
+            this.List = new ReadOnlyListSlim<RocketPack_StringPropertiesMessage>(list);
 
             {
                 var hashCode = new HashCode();
@@ -232,7 +233,7 @@ namespace FormatterBenchmarks
             }
         }
 
-        public IReadOnlyList<RocketPack_StringPropertiesMessage> List { get; }
+        public ReadOnlyListSlim<RocketPack_StringPropertiesMessage> List { get; }
 
         public override bool Equals(RocketPack_StringPropertiesListMessage target)
         {
@@ -279,7 +280,7 @@ namespace FormatterBenchmarks
                 // Read property count
                 uint propertyCount = r.GetUInt32();
 
-                IList<RocketPack_StringPropertiesMessage> p_list = default;
+                RocketPack_StringPropertiesMessage[] p_list = default;
 
                 for (; propertyCount > 0; propertyCount--)
                 {
@@ -290,7 +291,7 @@ namespace FormatterBenchmarks
                             {
                                 var length = r.GetUInt32();
                                 p_list = new RocketPack_StringPropertiesMessage[length];
-                                for (int i = 0; i < p_list.Count; i++)
+                                for (int i = 0; i < p_list.Length; i++)
                                 {
                                     p_list[i] = RocketPack_StringPropertiesMessage.Formatter.Deserialize(r, rank + 1);
                                 }

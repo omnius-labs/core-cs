@@ -76,9 +76,14 @@ namespace Omnix.Serialization
                 else
                 {
                     var span = writer.GetSpan(3);
-                    span[0] = Int16Code;
-                    span[1] = (byte)(value >> 8);
-                    span[2] = (byte)value;
+
+                    fixed (byte* p = span)
+                    {
+                        p[0] = Int16Code;
+
+                        ushort* uint_p = (ushort*)(p + 1);
+                        *uint_p = (ushort)value;
+                    }
 
                     writer.Advance(3);
                 }
@@ -108,20 +113,28 @@ namespace Omnix.Serialization
                 else if (value <= ushort.MaxValue)
                 {
                     var span = writer.GetSpan(3);
-                    span[0] = Int16Code;
-                    span[1] = (byte)(value >> 8);
-                    span[2] = (byte)value;
+
+                    fixed (byte* p = span)
+                    {
+                        p[0] = Int16Code;
+
+                        ushort* uint_p = (ushort*)(p + 1);
+                        *uint_p = (ushort)value;
+                    }
 
                     writer.Advance(3);
                 }
                 else
                 {
                     var span = writer.GetSpan(5);
-                    span[0] = Int32Code;
-                    span[1] = (byte)(value >> 24);
-                    span[2] = (byte)(value >> 16);
-                    span[3] = (byte)(value >> 8);
-                    span[4] = (byte)value;
+
+                    fixed (byte* p = span)
+                    {
+                        span[0] = Int32Code;
+
+                        uint* uint_p = (uint*)(p + 1);
+                        *uint_p = (uint)value;
+                    }
 
                     writer.Advance(5);
                 }
@@ -151,35 +164,42 @@ namespace Omnix.Serialization
                 else if (value <= ushort.MaxValue)
                 {
                     var span = writer.GetSpan(3);
-                    span[0] = Int16Code;
-                    span[1] = (byte)(value >> 8);
-                    span[2] = (byte)value;
+
+                    fixed (byte* p = span)
+                    {
+                        span[0] = Int16Code;
+
+                        ushort* uint_p = (ushort*)(p + 1);
+                        *uint_p = (ushort)value;
+                    }
 
                     writer.Advance(3);
                 }
                 else if (value <= uint.MaxValue)
                 {
                     var span = writer.GetSpan(5);
-                    span[0] = Int32Code;
-                    span[1] = (byte)(value >> 24);
-                    span[2] = (byte)(value >> 16);
-                    span[3] = (byte)(value >> 8);
-                    span[4] = (byte)value;
+
+                    fixed (byte* p = span)
+                    {
+                        span[0] = Int32Code;
+
+                        uint* uint_p = (uint*)(p + 1);
+                        *uint_p = (uint)value;
+                    }
 
                     writer.Advance(5);
                 }
                 else
                 {
                     var span = writer.GetSpan(5);
-                    span[0] = Int64Code;
-                    span[1] = (byte)(value >> 56);
-                    span[2] = (byte)(value >> 48);
-                    span[3] = (byte)(value >> 40);
-                    span[4] = (byte)(value >> 32);
-                    span[5] = (byte)(value >> 24);
-                    span[6] = (byte)(value >> 16);
-                    span[7] = (byte)(value >> 8);
-                    span[8] = (byte)value;
+
+                    fixed (byte* p = span)
+                    {
+                        span[0] = Int64Code;
+
+                        ulong* ulong_p = (ulong*)(p + 1);
+                        *ulong_p = value;
+                    }
 
                     writer.Advance(9);
                 }
@@ -279,7 +299,7 @@ namespace Omnix.Serialization
                                 consumed = 2;
                                 return true;
                             case Int16Code:
-                                value = (ushort)((ushort)p[1] << 8 | (ushort)p[2]);
+                                value = *(ushort*)(p + 1);
                                 consumed = 3;
                                 return true;
                             default:
@@ -316,11 +336,11 @@ namespace Omnix.Serialization
                                 consumed = 2;
                                 return true;
                             case Int16Code:
-                                value = (uint)p[1] << 8 | (uint)p[2];
+                                value = *(ushort*)(p + 1);
                                 consumed = 3;
                                 return true;
                             case Int32Code:
-                                value = (uint)p[1] << 24 | (uint)p[2] << 16 | (uint)p[3] << 8 | (uint)p[4];
+                                value = *(uint*)(p + 1);
                                 consumed = 5;
                                 return true;
                             default:
@@ -357,16 +377,15 @@ namespace Omnix.Serialization
                                 consumed = 2;
                                 return true;
                             case Int16Code:
-                                value = (ulong)p[1] << 8 | (ulong)p[2];
+                                value = *(ushort*)(p + 1);
                                 consumed = 3;
                                 return true;
                             case Int32Code:
-                                value = (ulong)p[1] << 24 | (ulong)p[2] << 16 | (ulong)p[3] << 8 | (ulong)p[4];
+                                value = *(uint*)(p + 1);
                                 consumed = 5;
                                 return true;
                             case Int64Code:
-                                value = (ulong)p[1] << 56 | (ulong)p[2] << 48 | (ulong)p[3] << 40 | (ulong)p[4] << 32
-                                    | (ulong)p[5] << 24 | (ulong)p[6] << 16 | (ulong)p[7] << 8 | (ulong)p[8];
+                                value = *(ulong*)(p + 1);
                                 consumed = 9;
                                 return true;
                             default:
@@ -384,14 +403,8 @@ namespace Omnix.Serialization
         {
             unchecked
             {
-                if (sequence.IsEmpty)
-                {
-                    value = 0;
-                    consumed = sequence.Start;
-                    return false;
-                }
 
-                if (sequence.IsSingleSegment || sequence.First.Length >= 2)
+                if( sequence.First.Length >= 2)
                 {
                     bool flag = InternalTryGetUInt8(sequence.First.Span, out value, out int int_consumed);
                     consumed = sequence.GetPosition(int_consumed);
@@ -416,14 +429,8 @@ namespace Omnix.Serialization
         {
             unchecked
             {
-                if (sequence.IsEmpty)
-                {
-                    value = 0;
-                    consumed = sequence.Start;
-                    return false;
-                }
 
-                if (sequence.IsSingleSegment || sequence.First.Length >= 3)
+                if( sequence.First.Length >= 3)
                 {
                     bool flag = InternalTryGetUInt16(sequence.First.Span, out value, out int int_consumed);
                     consumed = sequence.GetPosition(int_consumed);
@@ -448,14 +455,8 @@ namespace Omnix.Serialization
         {
             unchecked
             {
-                if (sequence.IsEmpty)
-                {
-                    value = 0;
-                    consumed = sequence.Start;
-                    return false;
-                }
 
-                if (sequence.IsSingleSegment || sequence.First.Length >= 5)
+                if( sequence.First.Length >= 5)
                 {
                     bool flag = InternalTryGetUInt32(sequence.First.Span, out value, out int int_consumed);
                     consumed = sequence.GetPosition(int_consumed);
@@ -480,14 +481,7 @@ namespace Omnix.Serialization
         {
             unchecked
             {
-                if (sequence.IsEmpty)
-                {
-                    value = 0;
-                    consumed = sequence.Start;
-                    return false;
-                }
-
-                if (sequence.IsSingleSegment || sequence.First.Length >= 9)
+                if( sequence.First.Length >= 9)
                 {
                     bool flag = InternalTryGetUInt64(sequence.First.Span, out value, out int int_consumed);
                     consumed = sequence.GetPosition(int_consumed);

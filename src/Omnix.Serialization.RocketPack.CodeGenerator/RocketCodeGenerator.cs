@@ -22,6 +22,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
                 hashSet.Add("System.Buffers");
                 hashSet.Add("Omnix.Base");
                 hashSet.Add("Omnix.Base.Helpers");
+                hashSet.Add("Omnix.Collections");
                 hashSet.Add("Omnix.Serialization");
                 hashSet.Add("Omnix.Serialization.RocketPack");
 

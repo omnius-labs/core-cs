@@ -1,5 +1,6 @@
 ﻿using Omnix.Base;
 using Omnix.Base.Helpers;
+using Omnix.Collections;
 using Omnix.Cryptography;
 using Omnix.Network.Connection.Secure;
 using Omnix.Serialization;
@@ -20,12 +21,12 @@ namespace Omnix.Network.Connection.Secure.Internal
 
         public static readonly int MaxVersionsCount = 32;
 
-        public HelloMessage(IList<OmniSecureConnectionVersion> versions)
+        public HelloMessage(OmniSecureConnectionVersion[] versions)
         {
             if (versions is null) throw new ArgumentNullException("versions");
-            if (versions.Count > 32) throw new ArgumentOutOfRangeException("versions");
+            if (versions.Length > 32) throw new ArgumentOutOfRangeException("versions");
 
-            this.Versions = new ReadOnlyCollection<OmniSecureConnectionVersion>(versions);
+            this.Versions = new ReadOnlyListSlim<OmniSecureConnectionVersion>(versions);
 
             {
                 var hashCode = new HashCode();
@@ -37,7 +38,7 @@ namespace Omnix.Network.Connection.Secure.Internal
             }
         }
 
-        public IReadOnlyList<OmniSecureConnectionVersion> Versions { get; }
+        public ReadOnlyListSlim<OmniSecureConnectionVersion> Versions { get; }
 
         public override bool Equals(HelloMessage target)
         {
@@ -84,7 +85,7 @@ namespace Omnix.Network.Connection.Secure.Internal
                 // Read property count
                 uint propertyCount = r.GetUInt32();
 
-                IList<OmniSecureConnectionVersion> p_versions = default;
+                OmniSecureConnectionVersion[] p_versions = default;
 
                 for (; propertyCount > 0; propertyCount--)
                 {
@@ -95,7 +96,7 @@ namespace Omnix.Network.Connection.Secure.Internal
                             {
                                 var length = r.GetUInt32();
                                 p_versions = new OmniSecureConnectionVersion[length];
-                                for (int i = 0; i < p_versions.Count; i++)
+                                for (int i = 0; i < p_versions.Length; i++)
                                 {
                                     p_versions[i] = (OmniSecureConnectionVersion)r.GetUInt64();
                                 }

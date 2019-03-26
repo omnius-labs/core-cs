@@ -66,7 +66,7 @@ namespace FormatterBenchmarks.Cases
                     items.Add(message);
                 }
 
-                var list = new RocketPack_IntPropertiesListMessage(items);
+                var list = new RocketPack_IntPropertiesListMessage(items.ToArray());
 
                 list.Export(hub.Writer, BufferPool.Shared);
                 hub.Writer.Complete();
