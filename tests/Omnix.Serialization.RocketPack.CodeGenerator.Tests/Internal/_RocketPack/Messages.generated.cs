@@ -1,5 +1,6 @@
 ﻿using Omnix.Base;
 using Omnix.Base.Helpers;
+using Omnix.Collections;
 using Omnix.Serialization;
 using Omnix.Serialization.RocketPack;
 using System;
@@ -70,7 +71,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator.Tests.Internal
         public static readonly int MaxX23Count = 16;
         public static readonly int MaxX24Count = 32;
 
-        public HelloMessage(bool x0, sbyte x1, short x2, int x3, long x4, byte x5, ushort x6, uint x7, ulong x8, Enum1 x9, Enum2 x10, Enum3 x11, Enum4 x12, Enum5 x13, Enum6 x14, Enum7 x15, Enum8 x16, float x17, double x18, string x19, Timestamp x20, ReadOnlyMemory<byte> x21, IMemoryOwner<byte> x22, IList<string> x23, IDictionary<byte, string> x24)
+        public HelloMessage(bool x0, sbyte x1, short x2, int x3, long x4, byte x5, ushort x6, uint x7, ulong x8, Enum1 x9, Enum2 x10, Enum3 x11, Enum4 x12, Enum5 x13, Enum6 x14, Enum7 x15, Enum8 x16, float x17, double x18, string x19, Timestamp x20, ReadOnlyMemory<byte> x21, IMemoryOwner<byte> x22, string[] x23, IDictionary<byte, string> x24)
         {
             if (x19 is null) throw new ArgumentNullException("x19");
             if (x19.Length > 128) throw new ArgumentOutOfRangeException("x19");
@@ -78,7 +79,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator.Tests.Internal
             if (x22 is null) throw new ArgumentNullException("x22");
             if (x22.Memory.Length > 256) throw new ArgumentOutOfRangeException("x22");
             if (x23 is null) throw new ArgumentNullException("x23");
-            if (x23.Count > 16) throw new ArgumentOutOfRangeException("x23");
+            if (x23.Length > 16) throw new ArgumentOutOfRangeException("x23");
             foreach (var n in x23)
             {
                 if (n is null) throw new ArgumentNullException("n");
@@ -115,7 +116,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator.Tests.Internal
             this.X20 = x20;
             this.X21 = x21;
             _x22 = x22;
-            this.X23 = new ReadOnlyCollection<string>(x23);
+            this.X23 = new ReadOnlyListSlim<string>(x23);
             this.X24 = new ReadOnlyDictionary<byte, string>(x24);
 
             {
@@ -180,7 +181,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator.Tests.Internal
         public ReadOnlyMemory<byte> X21 { get; }
         private readonly IMemoryOwner<byte> _x22;
         public ReadOnlyMemory<byte> X22 => _x22.Memory;
-        public IReadOnlyList<string> X23 { get; }
+        public ReadOnlyListSlim<string> X23 { get; }
         public IReadOnlyDictionary<byte, string> X24 { get; }
 
         public override bool Equals(HelloMessage target)
@@ -453,7 +454,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator.Tests.Internal
                 Timestamp p_x20 = default;
                 ReadOnlyMemory<byte> p_x21 = default;
                 IMemoryOwner<byte> p_x22 = default;
-                IList<string> p_x23 = default;
+                string[] p_x23 = default;
                 IDictionary<byte, string> p_x24 = default;
 
                 for (; propertyCount > 0; propertyCount--)
@@ -580,7 +581,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator.Tests.Internal
                             {
                                 var length = r.GetUInt32();
                                 p_x23 = new string[length];
-                                for (int i = 0; i < p_x23.Count; i++)
+                                for (int i = 0; i < p_x23.Length; i++)
                                 {
                                     p_x23[i] = r.GetString(128);
                                 }
@@ -623,14 +624,14 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator.Tests.Internal
         public static readonly int MaxX23Count = 16;
         public static readonly int MaxX24Count = 32;
 
-        public SmallHelloMessage(bool x0, sbyte x1, short x2, int x3, long x4, byte x5, ushort x6, uint x7, ulong x8, Enum1 x9, Enum2 x10, Enum3 x11, Enum4 x12, Enum5 x13, Enum6 x14, Enum7 x15, Enum8 x16, float x17, double x18, string x19, Timestamp x20, ReadOnlyMemory<byte> x21, ReadOnlyMemory<byte> x22, IList<string> x23, IDictionary<byte, string> x24)
+        public SmallHelloMessage(bool x0, sbyte x1, short x2, int x3, long x4, byte x5, ushort x6, uint x7, ulong x8, Enum1 x9, Enum2 x10, Enum3 x11, Enum4 x12, Enum5 x13, Enum6 x14, Enum7 x15, Enum8 x16, float x17, double x18, string x19, Timestamp x20, ReadOnlyMemory<byte> x21, ReadOnlyMemory<byte> x22, string[] x23, IDictionary<byte, string> x24)
         {
             if (x19 is null) throw new ArgumentNullException("x19");
             if (x19.Length > 128) throw new ArgumentOutOfRangeException("x19");
             if (x21.Length > 256) throw new ArgumentOutOfRangeException("x21");
             if (x22.Length > 256) throw new ArgumentOutOfRangeException("x22");
             if (x23 is null) throw new ArgumentNullException("x23");
-            if (x23.Count > 16) throw new ArgumentOutOfRangeException("x23");
+            if (x23.Length > 16) throw new ArgumentOutOfRangeException("x23");
             foreach (var n in x23)
             {
                 if (n is null) throw new ArgumentNullException("n");
@@ -667,7 +668,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator.Tests.Internal
             this.X20 = x20;
             this.X21 = x21;
             this.X22 = x22;
-            this.X23 = new ReadOnlyCollection<string>(x23);
+            this.X23 = new ReadOnlyListSlim<string>(x23);
             this.X24 = new ReadOnlyDictionary<byte, string>(x24);
 
             {
@@ -741,7 +742,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator.Tests.Internal
         public Timestamp X20 { get; }
         public ReadOnlyMemory<byte> X21 { get; }
         public ReadOnlyMemory<byte> X22 { get; }
-        public IReadOnlyList<string> X23 { get; }
+        public ReadOnlyListSlim<string> X23 { get; }
         public IReadOnlyDictionary<byte, string> X24 { get; }
 
         public static bool operator ==(SmallHelloMessage x, SmallHelloMessage y) => x.Equals(y);
@@ -882,7 +883,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator.Tests.Internal
                 Timestamp p_x20 = default;
                 ReadOnlyMemory<byte> p_x21 = default;
                 ReadOnlyMemory<byte> p_x22 = default;
-                IList<string> p_x23 = default;
+                string[] p_x23 = default;
                 IDictionary<byte, string> p_x24 = default;
 
                 // X0
@@ -981,7 +982,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator.Tests.Internal
                 {
                     var length = r.GetUInt32();
                     p_x23 = new string[length];
-                    for (int i = 0; i < p_x23.Count; i++)
+                    for (int i = 0; i < p_x23.Length; i++)
                     {
                         p_x23[i] = r.GetString(128);
                     }
@@ -1014,16 +1015,16 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator.Tests.Internal
 
         public static readonly int MaxListCount = 100000;
 
-        public IntPropertiesListMessage(IList<IntPropertiesMessage> list)
+        public IntPropertiesListMessage(IntPropertiesMessage[] list)
         {
             if (list is null) throw new ArgumentNullException("list");
-            if (list.Count > 100000) throw new ArgumentOutOfRangeException("list");
+            if (list.Length > 100000) throw new ArgumentOutOfRangeException("list");
             foreach (var n in list)
             {
                 if (n is null) throw new ArgumentNullException("n");
             }
 
-            this.List = new ReadOnlyCollection<IntPropertiesMessage>(list);
+            this.List = new ReadOnlyListSlim<IntPropertiesMessage>(list);
 
             {
                 var hashCode = new HashCode();
@@ -1035,7 +1036,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator.Tests.Internal
             }
         }
 
-        public IReadOnlyList<IntPropertiesMessage> List { get; }
+        public ReadOnlyListSlim<IntPropertiesMessage> List { get; }
 
         public override bool Equals(IntPropertiesListMessage target)
         {
@@ -1082,7 +1083,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator.Tests.Internal
                 // Read property count
                 uint propertyCount = r.GetUInt32();
 
-                IList<IntPropertiesMessage> p_list = default;
+                IntPropertiesMessage[] p_list = default;
 
                 for (; propertyCount > 0; propertyCount--)
                 {
@@ -1093,7 +1094,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator.Tests.Internal
                             {
                                 var length = r.GetUInt32();
                                 p_list = new IntPropertiesMessage[length];
-                                for (int i = 0; i < p_list.Count; i++)
+                                for (int i = 0; i < p_list.Length; i++)
                                 {
                                     p_list[i] = IntPropertiesMessage.Formatter.Deserialize(r, rank + 1);
                                 }
@@ -1116,16 +1117,16 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator.Tests.Internal
 
         public static readonly int MaxListCount = 100000;
 
-        public StringPropertiesListMessage(IList<StringPropertiesMessage> list)
+        public StringPropertiesListMessage(StringPropertiesMessage[] list)
         {
             if (list is null) throw new ArgumentNullException("list");
-            if (list.Count > 100000) throw new ArgumentOutOfRangeException("list");
+            if (list.Length > 100000) throw new ArgumentOutOfRangeException("list");
             foreach (var n in list)
             {
                 if (n is null) throw new ArgumentNullException("n");
             }
 
-            this.List = new ReadOnlyCollection<StringPropertiesMessage>(list);
+            this.List = new ReadOnlyListSlim<StringPropertiesMessage>(list);
 
             {
                 var hashCode = new HashCode();
@@ -1137,7 +1138,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator.Tests.Internal
             }
         }
 
-        public IReadOnlyList<StringPropertiesMessage> List { get; }
+        public ReadOnlyListSlim<StringPropertiesMessage> List { get; }
 
         public override bool Equals(StringPropertiesListMessage target)
         {
@@ -1184,7 +1185,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator.Tests.Internal
                 // Read property count
                 uint propertyCount = r.GetUInt32();
 
-                IList<StringPropertiesMessage> p_list = default;
+                StringPropertiesMessage[] p_list = default;
 
                 for (; propertyCount > 0; propertyCount--)
                 {
@@ -1195,7 +1196,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator.Tests.Internal
                             {
                                 var length = r.GetUInt32();
                                 p_list = new StringPropertiesMessage[length];
-                                for (int i = 0; i < p_list.Count; i++)
+                                for (int i = 0; i < p_list.Length; i++)
                                 {
                                     p_list[i] = StringPropertiesMessage.Formatter.Deserialize(r, rank + 1);
                                 }

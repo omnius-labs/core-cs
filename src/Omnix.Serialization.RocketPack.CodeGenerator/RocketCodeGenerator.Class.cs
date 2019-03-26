@@ -78,7 +78,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
                     case MemoryTypeInfo typeInfo when (!typeInfo.IsUseMemoryPool):
                         return "ReadOnlyMemory<byte>";
                     case ListTypeInfo typeInfo:
-                        return $"IList<{this.GetParameterTypeString(typeInfo.ElementType)}>";
+                        return $"{this.GetParameterTypeString(typeInfo.ElementType)}[]";
                     case MapTypeInfo typeInfo:
                         return $"IDictionary<{this.GetParameterTypeString(typeInfo.KeyType)}, {this.GetParameterTypeString(typeInfo.ValueType)}>";
                     case CustomTypeInfo typeInfo:
@@ -138,7 +138,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
                     case MemoryTypeInfo typeInfo when (!typeInfo.IsUseMemoryPool):
                         return "ReadOnlyMemory<byte>";
                     case ListTypeInfo typeInfo:
-                        return $"IReadOnlyList<{this.GetParameterTypeString(typeInfo.ElementType)}>";
+                        return $"ReadOnlyListSlim<{this.GetParameterTypeString(typeInfo.ElementType)}>";
                     case MapTypeInfo typeInfo:
                         return $"IReadOnlyDictionary<{this.GetParameterTypeString(typeInfo.KeyType)}, {this.GetParameterTypeString(typeInfo.ValueType)}>";
                     case CustomTypeInfo typeInfo:
@@ -268,7 +268,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
                             w.WriteLine($"_{GetFieldName(elementInfo.Name)} = {GetFieldName(elementInfo.Name)};");
                             break;
                         case ListTypeInfo typeInfo:
-                            w.WriteLine($"this.{elementInfo.Name} = new ReadOnlyCollection<{this.GetParameterTypeString(typeInfo.ElementType)}>({GetFieldName(elementInfo.Name)});");
+                            w.WriteLine($"this.{elementInfo.Name} = new ReadOnlyListSlim<{this.GetParameterTypeString(typeInfo.ElementType)}>({GetFieldName(elementInfo.Name)});");
                             break;
                         case MapTypeInfo typeInfo:
                             w.WriteLine($"this.{elementInfo.Name} = new ReadOnlyDictionary<{this.GetParameterTypeString(typeInfo.KeyType)}, {this.GetParameterTypeString(typeInfo.ValueType)}>({GetFieldName(elementInfo.Name)});");
@@ -397,7 +397,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
                         maxLength = memoryTypeInfo.MaxLength;
                         break;
                     case ListTypeInfo listTypeInfo:
-                        property = "Count";
+                        property = "Length";
                         maxLength = listTypeInfo.MaxLength;
                         break;
                     case MapTypeInfo mapTypeInfo:
@@ -990,7 +990,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
                             w.WriteLine("var length = r.GetUInt32();");
                             w.WriteLine($"{name} = new {this.GetParameterTypeString(listTypeInfo.ElementType)}[length];");
 
-                            w.WriteLine($"for (int i = 0; i < {name}.Count; i++)");
+                            w.WriteLine($"for (int i = 0; i < {name}.Length; i++)");
                             w.WriteLine("{");
 
                             w.PushIndent();
