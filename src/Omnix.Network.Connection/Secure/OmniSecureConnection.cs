@@ -197,7 +197,7 @@ namespace Omnix.Network.Connection.Secure
                             var myHashAndPasswordList = this.GetHashesV1(myProfileMessage, myAgreement.GetOmniAgreementPublicKey(), hashAlgorithm).ToList();
 
                             RandomProvider.GetThreadRandom().Shuffle(myHashAndPasswordList);
-                            var myAuthenticationMessage = new V1.Internal.AuthenticationMessage(myHashAndPasswordList.Select(n => n.Item1).ToList());
+                            var myAuthenticationMessage = new V1.Internal.AuthenticationMessage(myHashAndPasswordList.Select(n => n.Item1).ToArray());
 
                             // 送信
                             await connection.EnqueueAsync((bufferWriter) => myAuthenticationMessage.Export(bufferWriter, _bufferPool), token);

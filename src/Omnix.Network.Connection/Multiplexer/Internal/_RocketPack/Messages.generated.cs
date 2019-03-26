@@ -1,5 +1,6 @@
 ﻿using Omnix.Base;
 using Omnix.Base.Helpers;
+using Omnix.Collections;
 using Omnix.Serialization;
 using Omnix.Serialization.RocketPack;
 using System;
@@ -23,12 +24,12 @@ namespace Omnix.Network.Connection.Multiplexer.Internal
 
         public static readonly int MaxVersionsCount = 32;
 
-        public HelloMessage(IList<CommunicatorVersion> versions)
+        public HelloMessage(CommunicatorVersion[] versions)
         {
             if (versions is null) throw new ArgumentNullException("versions");
-            if (versions.Count > 32) throw new ArgumentOutOfRangeException("versions");
+            if (versions.Length > 32) throw new ArgumentOutOfRangeException("versions");
 
-            this.Versions = new ReadOnlyCollection<CommunicatorVersion>(versions);
+            this.Versions = new ReadOnlyListSlim<CommunicatorVersion>(versions);
 
             {
                 var hashCode = new HashCode();
@@ -40,7 +41,7 @@ namespace Omnix.Network.Connection.Multiplexer.Internal
             }
         }
 
-        public IReadOnlyList<CommunicatorVersion> Versions { get; }
+        public ReadOnlyListSlim<CommunicatorVersion> Versions { get; }
 
         public override bool Equals(HelloMessage target)
         {
@@ -87,7 +88,7 @@ namespace Omnix.Network.Connection.Multiplexer.Internal
                 // Read property count
                 uint propertyCount = r.GetUInt32();
 
-                IList<CommunicatorVersion> p_versions = default;
+                CommunicatorVersion[] p_versions = default;
 
                 for (; propertyCount > 0; propertyCount--)
                 {
@@ -98,7 +99,7 @@ namespace Omnix.Network.Connection.Multiplexer.Internal
                             {
                                 var length = r.GetUInt32();
                                 p_versions = new CommunicatorVersion[length];
-                                for (int i = 0; i < p_versions.Count; i++)
+                                for (int i = 0; i < p_versions.Length; i++)
                                 {
                                     p_versions[i] = (CommunicatorVersion)r.GetUInt64();
                                 }

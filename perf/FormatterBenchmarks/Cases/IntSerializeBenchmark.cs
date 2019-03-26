@@ -62,7 +62,7 @@ namespace FormatterBenchmarks.Cases
                     items.Add(message);
                 }
 
-                _rocketPack_Message = new RocketPack_IntPropertiesListMessage(items);
+                _rocketPack_Message = new RocketPack_IntPropertiesListMessage(items.ToArray());
             }
         }
 

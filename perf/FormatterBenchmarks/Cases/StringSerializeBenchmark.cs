@@ -65,7 +65,7 @@ namespace FormatterBenchmarks.Cases
                     items.Add(message);
                 }
 
-                _rocketPack_Message = new RocketPack_StringPropertiesListMessage(items);
+                _rocketPack_Message = new RocketPack_StringPropertiesListMessage(items.ToArray());
             }
         }
 
