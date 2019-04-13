@@ -1,0 +1,18 @@
+stages:
+  - test
+
+test_windows_job:
+  image: mcr.microsoft.com/dotnet/core/sdk:2.2
+  stage: test
+  tags: 
+    - windows
+  only:
+    - master
+  script: 
+    - chcp 65001
+    - cd "%CI_PROJECT_DIR%"
+    - dotnet test
+    - call run-test.cmd
+  artifacts:
+    paths:
+      - tests/TestResults
