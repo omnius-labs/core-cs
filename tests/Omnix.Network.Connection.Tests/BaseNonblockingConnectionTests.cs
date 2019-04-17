@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Buffers;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -55,8 +56,12 @@ namespace Omnix.Network.Connection.Tests
                         sequence.CopyTo(buffer2);
                     });
 
+                    var stopwatch = Stopwatch.StartNew();
+
                     while (!valueTask1.IsCompleted || !valueTask2.IsCompleted)
                     {
+                        if (stopwatch.Elapsed.TotalSeconds > 60) throw new TimeoutException("SendAndReceive");
+
                         Thread.Sleep(100);
 
                         connection1.DoEvents();
