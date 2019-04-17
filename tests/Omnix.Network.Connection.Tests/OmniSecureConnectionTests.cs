@@ -14,6 +14,7 @@ using Xunit;
 using System.Linq;
 using System.Collections.Generic;
 using Omnix.Network.Connection.Tests.Internal;
+using System.Diagnostics;
 
 namespace Omnix.Network.Connection.Tests
 {
@@ -47,12 +48,16 @@ namespace Omnix.Network.Connection.Tests
                     var valueTask1 = connection1.Handshake();
                     var valueTask2 = connection2.Handshake();
 
+                    var stopwatch = Stopwatch.StartNew();
+
                     while (!valueTask1.IsCompleted || !valueTask2.IsCompleted)
                     {
+                        if (stopwatch.Elapsed.TotalSeconds > 60) throw new TimeoutException("Handshake");
+
                         Thread.Sleep(100);
 
-                        baseConnection1.DoEvents();
-                        baseConnection2.DoEvents();
+                        connection1.DoEvents();
+                        connection2.DoEvents();
                     }
                 }
 
@@ -73,12 +78,16 @@ namespace Omnix.Network.Connection.Tests
                         sequence.CopyTo(buffer2);
                     });
 
+                    var stopwatch = Stopwatch.StartNew();
+
                     while (!valueTask1.IsCompleted || !valueTask2.IsCompleted)
                     {
+                        if (stopwatch.Elapsed.TotalSeconds > 60) throw new TimeoutException("SendAndReceive");
+
                         Thread.Sleep(100);
 
-                        baseConnection1.DoEvents();
-                        baseConnection2.DoEvents();
+                        connection1.DoEvents();
+                        connection2.DoEvents();
                     }
 
                     Assert.True(BytesOperations.SequenceEqual(buffer1, buffer2));
