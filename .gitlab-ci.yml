@@ -2,7 +2,6 @@ stages:
   - test
 
 test_windows_job:
-  image: mcr.microsoft.com/dotnet/core/sdk:2.2
   stage: test
   tags: 
     - windows
