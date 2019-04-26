@@ -63,25 +63,19 @@ namespace Omnix.Collections
 
             lock (this.LockObject)
             {
-                List<T> list = null;
+                var list = new List<T>();
 
                 foreach (var (key, value) in _dic)
                 {
                     if ((now - value) > _survivalTime)
                     {
-                        if (list == null)
-                            list = new List<T>();
-
                         list.Add(key);
                     }
                 }
 
-                if (list != null)
+                foreach (var key in list)
                 {
-                    foreach (var key in list)
-                    {
-                        _dic.Remove(key);
-                    }
+                    _dic.Remove(key);
                 }
             }
         }

@@ -4,6 +4,7 @@ using System.Runtime.Serialization;
 using Omnix.Base;
 using Omnix.Cryptography.Internal;
 using Omnix.Serialization;
+using Omnix.Serialization.RocketPack;
 
 namespace Omnix.Cryptography
 {

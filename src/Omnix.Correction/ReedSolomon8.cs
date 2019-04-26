@@ -13,36 +13,29 @@ using Omnix.Correction.Internal;
 
 namespace Omnix.Correction
 {
-    public class ReedSolomon8 : DisposableBase
+    public class ReedSolomon8
     {
         private readonly int _k;
         private readonly int _n;
         private readonly BufferPool _bufferPool;
-
-        private ReadSolomonMath _math;
         private readonly byte[] _encMatrix;
-        
-        private readonly object _lockObject = new object();
-        private volatile bool _disposed;
 
         public ReedSolomon8(int k, int n, BufferPool bufferPool)
         {
             _k = k;
             _n = n;
             _bufferPool = bufferPool;
-
-            _math = new ReadSolomonMath();
-            _encMatrix = _math.CreateEncodeMatrix(k, n);
+            _encMatrix = ReadSolomonMath.CreateEncodeMatrix(k, n);
         }
 
-        internal void LoadNativeMethods()
+        internal static void LoadNativeMethods()
         {
-            _math.LoadNativeMethods();
+            ReadSolomonMath.LoadNativeMethods();
         }
 
-        internal void LoadPureUnsafeMethods()
+        internal static void LoadPureUnsafeMethods()
         {
-            _math.LoadPureUnsafeMethods();
+            ReadSolomonMath.LoadPureUnsafeMethods();
         }
 
         public async Task Encode(ReadOnlyMemory<byte>[] sources, int[] index, Memory<byte>[] repairs, int packetLength, int concurrency = 1, CancellationToken token = default)
@@ -73,7 +66,7 @@ namespace Omnix.Correction
                         {
                             token.ThrowIfCancellationRequested();
 
-                            _math.AddMul(sources[col].Span, repairs[row].Span, _encMatrix[pos + col], packetLength);
+                            ReadSolomonMath.AddMul(sources[col].Span, repairs[row].Span, _encMatrix[pos + col], packetLength);
                         }
                     }
                 });
@@ -87,7 +80,7 @@ namespace Omnix.Correction
 
             Shuffle(packets, index, _k);
 
-            var decMatrix = _math.CreateDecodeMatrix(_encMatrix, index, _k, _n);
+            var decMatrix = ReadSolomonMath.CreateDecodeMatrix(_encMatrix, index, _k, _n);
 
             // do the actual decoding..
             var tempPackets = new byte[_k][];
@@ -107,7 +100,7 @@ namespace Omnix.Correction
                         {
                             token.ThrowIfCancellationRequested();
 
-                            _math.AddMul(packets[col].Span, tempPackets[row], decMatrix[row * _k + col], packetLength);
+                            ReadSolomonMath.AddMul(packets[col].Span, tempPackets[row], decMatrix[row * _k + col], packetLength);
                         }
                     }
                 });
@@ -159,16 +152,13 @@ namespace Omnix.Correction
             }
         }
 
-        private unsafe class ReadSolomonMath : DisposableBase
+        private static unsafe class ReadSolomonMath
         {
-            private NativeLibraryManager _nativeLibraryManager;
+            private static NativeLibraryManager? _nativeLibraryManager;
 
-            delegate void MulDelegate(byte* src, byte* dst, byte* table, int len);
-            private MulDelegate _mul;
+            private delegate void MulDelegate(byte* src, byte* dst, byte* table, int len);
 
-            private const int _gfBits = 8;
-
-            private volatile int _gfSize;
+            private static MulDelegate _mul;
 
             /**
              * Primitive polynomials - see Lin & Costello, Appendix A,
@@ -176,8 +166,8 @@ namespace Omnix.Correction
              */
             private static string[] _prim_polys = {
                                           // gfBits         polynomial
-                null,                     // 0              no code
-                null,                     // 1              no code
+                "",                       // 0              no code
+                "",                       // 1              no code
                 "111",                    // 2              1+x+x^2
                 "1101",                   // 3              1+x+x^3
                 "11001",                  // 4              1+x+x^4
@@ -195,6 +185,9 @@ namespace Omnix.Correction
                 "11010000000010001"       // 16             1+x+x^3+x^12+x^16
             };
 
+            private static readonly int _gfBits = 8;
+            private static readonly int _gfSize;
+
             /**
              * To speed up computations, we have tables for logarithm, exponent
              * and inverse of a number. If gfBits &lt;= 8, we use a table for
@@ -204,11 +197,11 @@ namespace Omnix.Correction
              */
 
             // index->poly form conversion table
-            private volatile byte[] _gf_exp;
+            private static byte[] _gf_exp;
             // Poly->index form conversion table
-            private volatile int[] _gf_log;
+            private static int[] _gf_log;
             // inverse of field elem.
-            private volatile byte[] _inverse;
+            private static byte[] _inverse;
 
             /**
              * gf_mul(x,y) multiplies two numbers. If gfBits &lt;= 8, it is much
@@ -220,19 +213,17 @@ namespace Omnix.Correction
              * A value related to the multiplication is held in a local variable
              * declared with USE_GF_MULC . See usage in addMul1().
              */
-            private volatile byte[][] _gf_mul_table;
+            private static byte[][] _gf_mul_table;
 
-            private volatile bool _disposed;
-
-            public ReadSolomonMath()
+            static ReadSolomonMath()
             {
                 try
                 {
-                    this.LoadNativeMethods();
+                    LoadNativeMethods();
                 }
                 catch (Exception)
                 {
-                    this.LoadPureUnsafeMethods();
+                    LoadPureUnsafeMethods();
                 }
 
                 _gfSize = ((1 << _gfBits) - 1);
@@ -241,60 +232,60 @@ namespace Omnix.Correction
                 _gf_log = new int[_gfSize + 1];
                 _inverse = new byte[_gfSize + 1];
 
-                this.GenerateGF();
-                this.InitMulTable();
+                GenerateGF();
+                InitMulTable();
             }
 
-            internal void LoadNativeMethods()
+            internal static void LoadNativeMethods()
             {
-                if (_nativeLibraryManager != null)
-                {
-                    _nativeLibraryManager.Dispose();
-                    _nativeLibraryManager = null;
-                }
+                _nativeLibraryManager?.Dispose();
 
-                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                try
                 {
-                    if (Environment.Is64BitProcess)
+                    if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                     {
-                        _nativeLibraryManager = new NativeLibraryManager("Assemblies/Omnix.Correction.win-x64.dll");
+                        if (Environment.Is64BitProcess)
+                        {
+                            _nativeLibraryManager = new NativeLibraryManager("Assemblies/Omnix.Correction.win-x64.dll");
+                        }
+                        else
+                        {
+                            throw new NotSupportedException();
+                        }
+                    }
+                    else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+                    {
+                        if (RuntimeInformation.ProcessArchitecture == Architecture.X64)
+                        {
+                            _nativeLibraryManager = new NativeLibraryManager("Assemblies/Omnix.Correction.linux-x64.so");
+                        }
+                        else
+                        {
+                            throw new NotSupportedException();
+                        }
                     }
                     else
                     {
                         throw new NotSupportedException();
                     }
-                }
-                else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-                {
-                    if (RuntimeInformation.ProcessArchitecture == Architecture.X64)
-                    {
-                        _nativeLibraryManager = new NativeLibraryManager("Assemblies/Omnix.Correction.linux-x64.so");
-                    }
-                    else
-                    {
-                        throw new NotSupportedException();
-                    }
-                }
-                else
-                {
-                    throw new NotSupportedException();
-                }
 
-                _mul = _nativeLibraryManager.GetMethod<MulDelegate>("mul");
+                    _mul = _nativeLibraryManager.GetMethod<MulDelegate>("mul");
+                }
+                catch (Exception)
+                {
+                    _nativeLibraryManager?.Dispose();
+                    _nativeLibraryManager = null;
+
+                    throw;
+                }
             }
 
-            internal void LoadPureUnsafeMethods()
+            internal static void LoadPureUnsafeMethods()
             {
-                if (_nativeLibraryManager != null)
-                {
-                    _nativeLibraryManager.Dispose();
-                    _nativeLibraryManager = null;
-                }
-
                 _mul = PureUnsafeMethods.ReedSolomon8_Mul;
             }
 
-            public void GenerateGF()
+            private static void GenerateGF()
             {
                 string primPoly = _prim_polys[_gfBits];
                 byte mask = (byte)1; // x ** 0 = 1
@@ -373,7 +364,7 @@ namespace Omnix.Correction
                 }
             }
 
-            public void InitMulTable()
+            private static void InitMulTable()
             {
                 _gf_mul_table = new byte[_gfSize + 1][];
 
@@ -386,7 +377,7 @@ namespace Omnix.Correction
                 {
                     for (int j = 0; j < _gfSize + 1; j++)
                     {
-                        _gf_mul_table[i][j] = _gf_exp[this.Modnn(_gf_log[i] + _gf_log[j])];
+                        _gf_mul_table[i][j] = _gf_exp[Modnn(_gf_log[i] + _gf_log[j])];
                     }
                 }
 
@@ -397,7 +388,7 @@ namespace Omnix.Correction
                 }
             }
 
-            public byte Modnn(int x)
+            private static byte Modnn(int x)
             {
                 while (x >= _gfSize)
                 {
@@ -408,7 +399,7 @@ namespace Omnix.Correction
                 return (byte)x;
             }
 
-            public byte Mul(byte x, byte y)
+            private static byte Mul(byte x, byte y)
             {
                 return _gf_mul_table[x][y];
             }
@@ -418,35 +409,7 @@ namespace Omnix.Correction
                 return new byte[rows * cols];
             }
 
-            [HandleProcessCorruptedStateExceptions]
-            public void AddMul(ReadOnlySpan<byte> src, Span<byte> dst, byte c, int len)
-            {
-                // nop, optimize
-                if (c == 0) return;
-
-                // use our multiplication table.
-                // Instead of doing gf_mul_table[c,x] for multiply, we'll save
-                // the gf_mul_table[c] to a local variable since it is going to
-                // be used many times.
-                var table = _gf_mul_table[c];
-
-                try
-                {
-                    fixed (byte* p_dst = dst)
-                    fixed (byte* p_src = src)
-                    fixed (byte* p_table = table)
-                    {
-                        _mul(p_src, p_dst, p_table, len);
-                    }
-                }
-                catch (Exception e)
-                {
-                    Debug.WriteLine(e.ToString());
-                    throw e;
-                }
-            }
-
-            public void MatMul(byte[] a, int aStart, byte[] b, int bStart, byte[] c, int cStart, int n, int k, int m)
+            private static void MatMul(byte[] a, int aStart, byte[] b, int bStart, byte[] c, int cStart, int n, int k, int m)
             {
                 for (int row = 0; row < n; row++)
                 {
@@ -458,7 +421,7 @@ namespace Omnix.Correction
 
                         for (int i = 0; i < k; i++, posA++, posB += m)
                         {
-                            acc ^= this.Mul(a[aStart + posA], b[bStart + posB]);
+                            acc ^= Mul(a[aStart + posA], b[bStart + posB]);
                         }
 
                         c[cStart + (row * m + col)] = acc;
@@ -466,7 +429,7 @@ namespace Omnix.Correction
                 }
             }
 
-            public void InvertMatrix(byte[] src, int k)
+            private static void InvertMatrix(byte[] src, int k)
             {
                 var indxc = new int[k];
                 var indxr = new int[k];
@@ -474,7 +437,7 @@ namespace Omnix.Correction
                 // ipiv marks elements already used as pivots.
                 var ipiv = new int[k];
 
-                var id_row = ReadSolomonMath.CreateGFMatrix(1, k);
+                var id_row = CreateGFMatrix(1, k);
                 //byte[] temp_row = CreateGFMatrix(1, k);
 
                 for (int col = 0; col < k; col++)
@@ -496,7 +459,7 @@ namespace Omnix.Correction
 
                     if (!foundPiv)
                     {
-                        loop1:
+                    loop1:
                         for (int row = 0; row < k; row++)
                         {
                             if (ipiv[row] != 1)
@@ -590,7 +553,7 @@ namespace Omnix.Correction
                             {
                                 c = src[p + icol];
                                 src[p + icol] = (byte)0;
-                                this.AddMul(src.AsSpan(pivotRowPos), src.AsSpan(p), c, k);
+                                AddMul(src.AsSpan(pivotRowPos), src.AsSpan(p), c, k);
                             }
                         }
                     }
@@ -624,7 +587,7 @@ namespace Omnix.Correction
                 }
             }
 
-            public void InvertVandermonde(byte[] src, int k)
+            private static void InvertVandermonde(byte[] src, int k)
             {
                 if (k == 1)
                 {
@@ -636,9 +599,9 @@ namespace Omnix.Correction
                  * c holds the coefficient of P(x) = Prod (x - p_i), i=0..k-1
                  * b holds the coefficient for the matrix inversion
                  */
-                var c = ReadSolomonMath.CreateGFMatrix(1, k);
-                var b = ReadSolomonMath.CreateGFMatrix(1, k);
-                var p = ReadSolomonMath.CreateGFMatrix(1, k);
+                var c = CreateGFMatrix(1, k);
+                var b = CreateGFMatrix(1, k);
+                var p = CreateGFMatrix(1, k);
 
                 for (int j = 1, i = 0; i < k; i++, j += k)
                 {
@@ -688,14 +651,34 @@ namespace Omnix.Correction
                 }
             }
 
-            public byte[] CreateEncodeMatrix(int k, int n)
+            [HandleProcessCorruptedStateExceptions]
+            public static void AddMul(ReadOnlySpan<byte> src, Span<byte> dst, byte c, int len)
+            {
+                // nop, optimize
+                if (c == 0) return;
+
+                // use our multiplication table.
+                // Instead of doing gf_mul_table[c,x] for multiply, we'll save
+                // the gf_mul_table[c] to a local variable since it is going to
+                // be used many times.
+                var table = _gf_mul_table[c];
+
+                fixed (byte* p_dst = dst)
+                fixed (byte* p_src = src)
+                fixed (byte* p_table = table)
+                {
+                    _mul(p_src, p_dst, p_table, len);
+                }
+            }
+
+            public static byte[] CreateEncodeMatrix(int k, int n)
             {
                 if (k > _gfSize + 1 || n > _gfSize + 1 || k > n)
                 {
                     throw new ArgumentException("Invalid parameters n=" + n + ",k=" + k + ",gfSize=" + _gfSize);
                 }
 
-                var encMatrix = ReadSolomonMath.CreateGFMatrix(n, k);
+                var encMatrix = CreateGFMatrix(n, k);
 
                 /*
                  * The encoding matrix is computed starting with a Vandermonde matrix,
@@ -704,7 +687,7 @@ namespace Omnix.Correction
                  * fill the matrix with powers of field elements, starting from 0.
                  * The first row is special, cannot be computed with exp. table.
                  */
-                var tmpMatrix = ReadSolomonMath.CreateGFMatrix(n, k);
+                var tmpMatrix = CreateGFMatrix(n, k);
 
                 tmpMatrix[0] = (byte)1;
 
@@ -723,8 +706,8 @@ namespace Omnix.Correction
                  * by the inverse, and construct the identity matrix at the top.
                  */
                 // much faster than invertMatrix
-                this.InvertVandermonde(tmpMatrix, k);
-                this.MatMul(tmpMatrix, k * k, tmpMatrix, 0, encMatrix, k * k, n - k, k, k);
+                InvertVandermonde(tmpMatrix, k);
+                MatMul(tmpMatrix, k * k, tmpMatrix, 0, encMatrix, k * k, n - k, k, k);
 
                 /*
                  * the upper matrix is I so do not bother with a slow multiply
@@ -739,7 +722,7 @@ namespace Omnix.Correction
                 return encMatrix;
             }
 
-            public byte[] CreateDecodeMatrix(byte[] encMatrix, int[] index, int k, int n)
+            public static byte[] CreateDecodeMatrix(byte[] encMatrix, int[] index, int k, int n)
             {
                 var matrix = CreateGFMatrix(k, k);
 
@@ -748,55 +731,9 @@ namespace Omnix.Correction
                     BytesOperations.Copy(encMatrix.AsSpan(index[i] * k), matrix.AsSpan(pos), k);
                 }
 
-                this.InvertMatrix(matrix, k);
+                InvertMatrix(matrix, k);
 
                 return matrix;
-            }
-
-            protected override void Dispose(bool isDisposing)
-            {
-                if (_disposed) return;
-                _disposed = true;
-
-                if (isDisposing)
-                {
-                    if (_nativeLibraryManager != null)
-                    {
-                        try
-                        {
-                            _nativeLibraryManager.Dispose();
-                        }
-                        catch (Exception)
-                        {
-
-                        }
-
-                        _nativeLibraryManager = null;
-                    }
-                }
-            }
-        }
-
-        protected override void Dispose(bool isDisposing)
-        {
-            if (_disposed) return;
-            _disposed = true;
-
-            if (isDisposing)
-            {
-                if (_math != null)
-                {
-                    try
-                    {
-                        _math.Dispose();
-                    }
-                    catch (Exception)
-                    {
-
-                    }
-
-                    _math = null;
-                }
             }
         }
     }

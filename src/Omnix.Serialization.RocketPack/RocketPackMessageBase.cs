@@ -6,7 +6,7 @@ using Omnix.Base;
 
 namespace Omnix.Serialization.RocketPack
 {
-    public abstract class RocketPackMessageBase<T> : IEquatable<T>
+    public abstract class RocketPackMessageBase<T> : IEquatable<T?>
         where T : RocketPackMessageBase<T>
     {
         static RocketPackMessageBase()
@@ -16,7 +16,7 @@ namespace Omnix.Serialization.RocketPack
 
         public static IRocketPackFormatter<T> Formatter { get; protected set; }
 
-        public virtual void Initialize() { }
+        public static T Empty { get; protected set; }
 
         public static T Import(ReadOnlySequence<byte> sequence, BufferPool bufferPool)
         {
@@ -28,12 +28,12 @@ namespace Omnix.Serialization.RocketPack
             Formatter.Serialize(new RocketPackWriter(bufferWriter, bufferPool), (T)this, 0);
         }
 
-        public static bool operator ==(RocketPackMessageBase<T> left, RocketPackMessageBase<T> right)
+        public static bool operator ==(RocketPackMessageBase<T>? left, RocketPackMessageBase<T>? right)
         {
             return (right is null) ? (left is null) : right.Equals(left);
         }
 
-        public static bool operator !=(RocketPackMessageBase<T> left, RocketPackMessageBase<T> right)
+        public static bool operator !=(RocketPackMessageBase<T>? left, RocketPackMessageBase<T>? right)
         {
             return !(left == right);
         }
@@ -43,12 +43,12 @@ namespace Omnix.Serialization.RocketPack
             return base.GetHashCode();
         }
 
-        public override bool Equals(object other)
+        public override bool Equals(object? other)
         {
             if (!(other is T)) return false;
             return this.Equals((T)other);
         }
 
-        public abstract bool Equals(T other);
+        public abstract bool Equals(T? other);
     }
 }

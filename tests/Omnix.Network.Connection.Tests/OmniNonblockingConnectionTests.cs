@@ -16,7 +16,7 @@ using Xunit;
 
 namespace Omnix.Network.Connection.Tests
 {
-    public class BaseNonblockingConnectionTests
+    public class OmniNonblockingConnectionTests
     {
         [Fact]
         public void RandomSendAndReceiveTest()

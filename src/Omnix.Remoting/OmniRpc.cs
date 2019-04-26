@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Omnix.Base;
 using Omnix.Network.Connection;
 using Omnix.Serialization;
+using Omnix.Serialization.RocketPack;
 
 namespace Omnix.Remoting
 {
@@ -18,8 +19,8 @@ namespace Omnix.Remoting
             _bufferPool = bufferPool;
         }
 
-        public Func<IConnection> GetConnectedConnection { private get; set; }
-        public Func<IConnection> GetAcceptedConnection { private get; set; }
+        public Func<IConnection> GetConnectedConnection { private get; set; } = () => throw new OmniRpcException("callback is not registed");
+        public Func<IConnection> GetAcceptedConnection { private get; set; } = () => throw new OmniRpcException("callback is not registed");
 
         public async ValueTask<OmniRpcStream> Connect(ulong type)
         {
@@ -49,5 +50,10 @@ namespace Omnix.Remoting
 
             return new OmniRpcAcceptResult(type, new OmniRpcStream(connection, _bufferPool));
         }
+    }
+
+    public class OmniRpcException : Exception
+    {
+        public OmniRpcException(string message) : base(message) { }
     }
 }

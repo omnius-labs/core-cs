@@ -1,13 +1,6 @@
-﻿using Omnix.Base;
-using Omnix.Base.Helpers;
-using Omnix.Collections;
-using Omnix.Cryptography;
-using Omnix.Serialization;
-using Omnix.Serialization.RocketPack;
-using System;
-using System.Buffers;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using Omnix.Cryptography;
+
+#nullable enable
 
 namespace Omnix.Network.Connection.Secure.V1.Internal
 {
@@ -37,12 +30,15 @@ namespace Omnix.Network.Connection.Secure.V1.Internal
         Password = 1,
     }
 
-    internal sealed partial class ProfileMessage : RocketPackMessageBase<ProfileMessage>
+    internal sealed partial class ProfileMessage : Omnix.Serialization.RocketPack.RocketPackMessageBase<ProfileMessage>
     {
         static ProfileMessage()
         {
             ProfileMessage.Formatter = new CustomFormatter();
+            ProfileMessage.Empty = new ProfileMessage(System.ReadOnlyMemory<byte>.Empty, (AuthenticationType)0, System.Array.Empty<KeyExchangeAlgorithm>(), System.Array.Empty<KeyDerivationAlgorithm>(), System.Array.Empty<CryptoAlgorithm>(), System.Array.Empty<HashAlgorithm>());
         }
+
+        private readonly int __hashCode;
 
         public static readonly int MaxSessionIdLength = 32;
         public static readonly int MaxKeyExchangeAlgorithmsCount = 32;
@@ -50,108 +46,117 @@ namespace Omnix.Network.Connection.Secure.V1.Internal
         public static readonly int MaxCryptoAlgorithmsCount = 32;
         public static readonly int MaxHashAlgorithmsCount = 32;
 
-        public ProfileMessage(ReadOnlyMemory<byte> sessionId, AuthenticationType authenticationType, KeyExchangeAlgorithm[] keyExchangeAlgorithms, KeyDerivationAlgorithm[] keyDerivationAlgorithms, CryptoAlgorithm[] cryptoAlgorithms, HashAlgorithm[] hashAlgorithms)
+        public ProfileMessage(System.ReadOnlyMemory<byte> sessionId, AuthenticationType authenticationType, KeyExchangeAlgorithm[] keyExchangeAlgorithms, KeyDerivationAlgorithm[] keyDerivationAlgorithms, CryptoAlgorithm[] cryptoAlgorithms, HashAlgorithm[] hashAlgorithms)
         {
-            if (sessionId.Length > 32) throw new ArgumentOutOfRangeException("sessionId");
-            if (keyExchangeAlgorithms is null) throw new ArgumentNullException("keyExchangeAlgorithms");
-            if (keyExchangeAlgorithms.Length > 32) throw new ArgumentOutOfRangeException("keyExchangeAlgorithms");
-            if (keyDerivationAlgorithms is null) throw new ArgumentNullException("keyDerivationAlgorithms");
-            if (keyDerivationAlgorithms.Length > 32) throw new ArgumentOutOfRangeException("keyDerivationAlgorithms");
-            if (cryptoAlgorithms is null) throw new ArgumentNullException("cryptoAlgorithms");
-            if (cryptoAlgorithms.Length > 32) throw new ArgumentOutOfRangeException("cryptoAlgorithms");
-            if (hashAlgorithms is null) throw new ArgumentNullException("hashAlgorithms");
-            if (hashAlgorithms.Length > 32) throw new ArgumentOutOfRangeException("hashAlgorithms");
+            if (sessionId.Length > 32) throw new System.ArgumentOutOfRangeException("sessionId");
+            if (keyExchangeAlgorithms is null) throw new System.ArgumentNullException("keyExchangeAlgorithms");
+            if (keyExchangeAlgorithms.Length > 32) throw new System.ArgumentOutOfRangeException("keyExchangeAlgorithms");
+            if (keyDerivationAlgorithms is null) throw new System.ArgumentNullException("keyDerivationAlgorithms");
+            if (keyDerivationAlgorithms.Length > 32) throw new System.ArgumentOutOfRangeException("keyDerivationAlgorithms");
+            if (cryptoAlgorithms is null) throw new System.ArgumentNullException("cryptoAlgorithms");
+            if (cryptoAlgorithms.Length > 32) throw new System.ArgumentOutOfRangeException("cryptoAlgorithms");
+            if (hashAlgorithms is null) throw new System.ArgumentNullException("hashAlgorithms");
+            if (hashAlgorithms.Length > 32) throw new System.ArgumentOutOfRangeException("hashAlgorithms");
 
             this.SessionId = sessionId;
             this.AuthenticationType = authenticationType;
-            this.KeyExchangeAlgorithms = new ReadOnlyListSlim<KeyExchangeAlgorithm>(keyExchangeAlgorithms);
-            this.KeyDerivationAlgorithms = new ReadOnlyListSlim<KeyDerivationAlgorithm>(keyDerivationAlgorithms);
-            this.CryptoAlgorithms = new ReadOnlyListSlim<CryptoAlgorithm>(cryptoAlgorithms);
-            this.HashAlgorithms = new ReadOnlyListSlim<HashAlgorithm>(hashAlgorithms);
+            this.KeyExchangeAlgorithms = new Omnix.Collections.ReadOnlyListSlim<KeyExchangeAlgorithm>(keyExchangeAlgorithms);
+            this.KeyDerivationAlgorithms = new Omnix.Collections.ReadOnlyListSlim<KeyDerivationAlgorithm>(keyDerivationAlgorithms);
+            this.CryptoAlgorithms = new Omnix.Collections.ReadOnlyListSlim<CryptoAlgorithm>(cryptoAlgorithms);
+            this.HashAlgorithms = new Omnix.Collections.ReadOnlyListSlim<HashAlgorithm>(hashAlgorithms);
 
             {
-                var hashCode = new HashCode();
-                if (!this.SessionId.IsEmpty) hashCode.Add(ObjectHelper.GetHashCode(this.SessionId.Span));
-                if (this.AuthenticationType != default) hashCode.Add(this.AuthenticationType.GetHashCode());
+                var __h = new System.HashCode();
+                if (!this.SessionId.IsEmpty) __h.Add(Omnix.Base.Helpers.ObjectHelper.GetHashCode(this.SessionId.Span));
+                if (this.AuthenticationType != default) __h.Add(this.AuthenticationType.GetHashCode());
                 foreach (var n in this.KeyExchangeAlgorithms)
                 {
-                    if (n != default) hashCode.Add(n.GetHashCode());
+                    if (n != default) __h.Add(n.GetHashCode());
                 }
                 foreach (var n in this.KeyDerivationAlgorithms)
                 {
-                    if (n != default) hashCode.Add(n.GetHashCode());
+                    if (n != default) __h.Add(n.GetHashCode());
                 }
                 foreach (var n in this.CryptoAlgorithms)
                 {
-                    if (n != default) hashCode.Add(n.GetHashCode());
+                    if (n != default) __h.Add(n.GetHashCode());
                 }
                 foreach (var n in this.HashAlgorithms)
                 {
-                    if (n != default) hashCode.Add(n.GetHashCode());
+                    if (n != default) __h.Add(n.GetHashCode());
                 }
-                _hashCode = hashCode.ToHashCode();
+                __hashCode = __h.ToHashCode();
             }
         }
 
-        public ReadOnlyMemory<byte> SessionId { get; }
+        public System.ReadOnlyMemory<byte> SessionId { get; }
         public AuthenticationType AuthenticationType { get; }
-        public ReadOnlyListSlim<KeyExchangeAlgorithm> KeyExchangeAlgorithms { get; }
-        public ReadOnlyListSlim<KeyDerivationAlgorithm> KeyDerivationAlgorithms { get; }
-        public ReadOnlyListSlim<CryptoAlgorithm> CryptoAlgorithms { get; }
-        public ReadOnlyListSlim<HashAlgorithm> HashAlgorithms { get; }
+        public Omnix.Collections.ReadOnlyListSlim<KeyExchangeAlgorithm> KeyExchangeAlgorithms { get; }
+        public Omnix.Collections.ReadOnlyListSlim<KeyDerivationAlgorithm> KeyDerivationAlgorithms { get; }
+        public Omnix.Collections.ReadOnlyListSlim<CryptoAlgorithm> CryptoAlgorithms { get; }
+        public Omnix.Collections.ReadOnlyListSlim<HashAlgorithm> HashAlgorithms { get; }
 
-        public override bool Equals(ProfileMessage target)
+        public override bool Equals(ProfileMessage? target)
         {
-            if ((object)target == null) return false;
-            if (Object.ReferenceEquals(this, target)) return true;
-            if (!BytesOperations.SequenceEqual(this.SessionId.Span, target.SessionId.Span)) return false;
+            if (target is null) return false;
+            if (object.ReferenceEquals(this, target)) return true;
+            if (!Omnix.Base.BytesOperations.SequenceEqual(this.SessionId.Span, target.SessionId.Span)) return false;
             if (this.AuthenticationType != target.AuthenticationType) return false;
-            if ((this.KeyExchangeAlgorithms is null) != (target.KeyExchangeAlgorithms is null)) return false;
-            if (!(this.KeyExchangeAlgorithms is null) && !(target.KeyExchangeAlgorithms is null) && !CollectionHelper.Equals(this.KeyExchangeAlgorithms, target.KeyExchangeAlgorithms)) return false;
-            if ((this.KeyDerivationAlgorithms is null) != (target.KeyDerivationAlgorithms is null)) return false;
-            if (!(this.KeyDerivationAlgorithms is null) && !(target.KeyDerivationAlgorithms is null) && !CollectionHelper.Equals(this.KeyDerivationAlgorithms, target.KeyDerivationAlgorithms)) return false;
-            if ((this.CryptoAlgorithms is null) != (target.CryptoAlgorithms is null)) return false;
-            if (!(this.CryptoAlgorithms is null) && !(target.CryptoAlgorithms is null) && !CollectionHelper.Equals(this.CryptoAlgorithms, target.CryptoAlgorithms)) return false;
-            if ((this.HashAlgorithms is null) != (target.HashAlgorithms is null)) return false;
-            if (!(this.HashAlgorithms is null) && !(target.HashAlgorithms is null) && !CollectionHelper.Equals(this.HashAlgorithms, target.HashAlgorithms)) return false;
+            if (!Omnix.Base.Helpers.CollectionHelper.Equals(this.KeyExchangeAlgorithms, target.KeyExchangeAlgorithms)) return false;
+            if (!Omnix.Base.Helpers.CollectionHelper.Equals(this.KeyDerivationAlgorithms, target.KeyDerivationAlgorithms)) return false;
+            if (!Omnix.Base.Helpers.CollectionHelper.Equals(this.CryptoAlgorithms, target.CryptoAlgorithms)) return false;
+            if (!Omnix.Base.Helpers.CollectionHelper.Equals(this.HashAlgorithms, target.HashAlgorithms)) return false;
 
             return true;
         }
 
-        private readonly int _hashCode;
-        public override int GetHashCode() => _hashCode;
+        public override int GetHashCode() => __hashCode;
 
-        private sealed class CustomFormatter : IRocketPackFormatter<ProfileMessage>
+        private sealed class CustomFormatter : Omnix.Serialization.RocketPack.IRocketPackFormatter<ProfileMessage>
         {
-            public void Serialize(RocketPackWriter w, ProfileMessage value, int rank)
+            public void Serialize(Omnix.Serialization.RocketPack.RocketPackWriter w, ProfileMessage value, int rank)
             {
-                if (rank > 256) throw new FormatException();
+                if (rank > 256) throw new System.FormatException();
 
-                // Write property count
                 {
                     uint propertyCount = 0;
-                    if (!value.SessionId.IsEmpty) propertyCount++;
-                    if (value.AuthenticationType != default) propertyCount++;
-                    if (value.KeyExchangeAlgorithms.Count != 0) propertyCount++;
-                    if (value.KeyDerivationAlgorithms.Count != 0) propertyCount++;
-                    if (value.CryptoAlgorithms.Count != 0) propertyCount++;
-                    if (value.HashAlgorithms.Count != 0) propertyCount++;
+                    if (!value.SessionId.IsEmpty)
+                    {
+                        propertyCount++;
+                    }
+                    if (value.AuthenticationType != (AuthenticationType)0)
+                    {
+                        propertyCount++;
+                    }
+                    if (value.KeyExchangeAlgorithms.Count != 0)
+                    {
+                        propertyCount++;
+                    }
+                    if (value.KeyDerivationAlgorithms.Count != 0)
+                    {
+                        propertyCount++;
+                    }
+                    if (value.CryptoAlgorithms.Count != 0)
+                    {
+                        propertyCount++;
+                    }
+                    if (value.HashAlgorithms.Count != 0)
+                    {
+                        propertyCount++;
+                    }
                     w.Write(propertyCount);
                 }
 
-                // SessionId
                 if (!value.SessionId.IsEmpty)
                 {
                     w.Write((uint)0);
                     w.Write(value.SessionId.Span);
                 }
-                // AuthenticationType
-                if (value.AuthenticationType != default)
+                if (value.AuthenticationType != (AuthenticationType)0)
                 {
                     w.Write((uint)1);
                     w.Write((ulong)value.AuthenticationType);
                 }
-                // KeyExchangeAlgorithms
                 if (value.KeyExchangeAlgorithms.Count != 0)
                 {
                     w.Write((uint)2);
@@ -161,7 +166,6 @@ namespace Omnix.Network.Connection.Secure.V1.Internal
                         w.Write((ulong)n);
                     }
                 }
-                // KeyDerivationAlgorithms
                 if (value.KeyDerivationAlgorithms.Count != 0)
                 {
                     w.Write((uint)3);
@@ -171,7 +175,6 @@ namespace Omnix.Network.Connection.Secure.V1.Internal
                         w.Write((ulong)n);
                     }
                 }
-                // CryptoAlgorithms
                 if (value.CryptoAlgorithms.Count != 0)
                 {
                     w.Write((uint)4);
@@ -181,7 +184,6 @@ namespace Omnix.Network.Connection.Secure.V1.Internal
                         w.Write((ulong)n);
                     }
                 }
-                // HashAlgorithms
                 if (value.HashAlgorithms.Count != 0)
                 {
                     w.Write((uint)5);
@@ -193,19 +195,19 @@ namespace Omnix.Network.Connection.Secure.V1.Internal
                 }
             }
 
-            public ProfileMessage Deserialize(RocketPackReader r, int rank)
+            public ProfileMessage Deserialize(Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
             {
-                if (rank > 256) throw new FormatException();
+                if (rank > 256) throw new System.FormatException();
 
                 // Read property count
                 uint propertyCount = r.GetUInt32();
 
-                ReadOnlyMemory<byte> p_sessionId = default;
-                AuthenticationType p_authenticationType = default;
-                KeyExchangeAlgorithm[] p_keyExchangeAlgorithms = default;
-                KeyDerivationAlgorithm[] p_keyDerivationAlgorithms = default;
-                CryptoAlgorithm[] p_cryptoAlgorithms = default;
-                HashAlgorithm[] p_hashAlgorithms = default;
+                System.ReadOnlyMemory<byte> p_sessionId = System.ReadOnlyMemory<byte>.Empty;
+                AuthenticationType p_authenticationType = (AuthenticationType)0;
+                KeyExchangeAlgorithm[] p_keyExchangeAlgorithms = System.Array.Empty<KeyExchangeAlgorithm>();
+                KeyDerivationAlgorithm[] p_keyDerivationAlgorithms = System.Array.Empty<KeyDerivationAlgorithm>();
+                CryptoAlgorithm[] p_cryptoAlgorithms = System.Array.Empty<CryptoAlgorithm>();
+                HashAlgorithm[] p_hashAlgorithms = System.Array.Empty<HashAlgorithm>();
 
                 for (; propertyCount > 0; propertyCount--)
                 {
@@ -270,82 +272,87 @@ namespace Omnix.Network.Connection.Secure.V1.Internal
         }
     }
 
-    internal sealed partial class VerificationMessage : RocketPackMessageBase<VerificationMessage>
+    internal sealed partial class VerificationMessage : Omnix.Serialization.RocketPack.RocketPackMessageBase<VerificationMessage>
     {
         static VerificationMessage()
         {
             VerificationMessage.Formatter = new CustomFormatter();
+            VerificationMessage.Empty = new VerificationMessage(ProfileMessage.Empty, OmniAgreementPublicKey.Empty);
         }
+
+        private readonly int __hashCode;
 
         public VerificationMessage(ProfileMessage profileMessage, OmniAgreementPublicKey agreementPublicKey)
         {
-            if (profileMessage is null) throw new ArgumentNullException("profileMessage");
-            if (agreementPublicKey is null) throw new ArgumentNullException("agreementPublicKey");
+            if (profileMessage is null) throw new System.ArgumentNullException("profileMessage");
+            if (agreementPublicKey is null) throw new System.ArgumentNullException("agreementPublicKey");
 
             this.ProfileMessage = profileMessage;
             this.AgreementPublicKey = agreementPublicKey;
 
             {
-                var hashCode = new HashCode();
-                if (this.ProfileMessage != default) hashCode.Add(this.ProfileMessage.GetHashCode());
-                if (this.AgreementPublicKey != default) hashCode.Add(this.AgreementPublicKey.GetHashCode());
-                _hashCode = hashCode.ToHashCode();
+                var __h = new System.HashCode();
+                if (this.ProfileMessage != default) __h.Add(this.ProfileMessage.GetHashCode());
+                if (this.AgreementPublicKey != default) __h.Add(this.AgreementPublicKey.GetHashCode());
+                __hashCode = __h.ToHashCode();
             }
         }
 
         public ProfileMessage ProfileMessage { get; }
         public OmniAgreementPublicKey AgreementPublicKey { get; }
 
-        public override bool Equals(VerificationMessage target)
+        public override bool Equals(VerificationMessage? target)
         {
-            if ((object)target == null) return false;
-            if (Object.ReferenceEquals(this, target)) return true;
+            if (target is null) return false;
+            if (object.ReferenceEquals(this, target)) return true;
             if (this.ProfileMessage != target.ProfileMessage) return false;
             if (this.AgreementPublicKey != target.AgreementPublicKey) return false;
 
             return true;
         }
 
-        private readonly int _hashCode;
-        public override int GetHashCode() => _hashCode;
+        public override int GetHashCode() => __hashCode;
 
-        private sealed class CustomFormatter : IRocketPackFormatter<VerificationMessage>
+        private sealed class CustomFormatter : Omnix.Serialization.RocketPack.IRocketPackFormatter<VerificationMessage>
         {
-            public void Serialize(RocketPackWriter w, VerificationMessage value, int rank)
+            public void Serialize(Omnix.Serialization.RocketPack.RocketPackWriter w, VerificationMessage value, int rank)
             {
-                if (rank > 256) throw new FormatException();
+                if (rank > 256) throw new System.FormatException();
 
-                // Write property count
                 {
                     uint propertyCount = 0;
-                    if (value.ProfileMessage != default) propertyCount++;
-                    if (value.AgreementPublicKey != default) propertyCount++;
+                    if (value.ProfileMessage != ProfileMessage.Empty)
+                    {
+                        propertyCount++;
+                    }
+                    if (value.AgreementPublicKey != OmniAgreementPublicKey.Empty)
+                    {
+                        propertyCount++;
+                    }
                     w.Write(propertyCount);
                 }
 
-                // ProfileMessage
-                if (value.ProfileMessage != default)
+                if (value.ProfileMessage != ProfileMessage.Empty)
                 {
                     w.Write((uint)0);
                     ProfileMessage.Formatter.Serialize(w, value.ProfileMessage, rank + 1);
                 }
-                // AgreementPublicKey
-                if (value.AgreementPublicKey != default)
+                if (value.AgreementPublicKey != OmniAgreementPublicKey.Empty)
                 {
                     w.Write((uint)1);
                     OmniAgreementPublicKey.Formatter.Serialize(w, value.AgreementPublicKey, rank + 1);
                 }
             }
 
-            public VerificationMessage Deserialize(RocketPackReader r, int rank)
+            public VerificationMessage Deserialize(Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
             {
-                if (rank > 256) throw new FormatException();
+                if (rank > 256) throw new System.FormatException();
 
                 // Read property count
                 uint propertyCount = r.GetUInt32();
 
-                ProfileMessage p_profileMessage = default;
-                OmniAgreementPublicKey p_agreementPublicKey = default;
+                ProfileMessage p_profileMessage = ProfileMessage.Empty;
+                OmniAgreementPublicKey p_agreementPublicKey = OmniAgreementPublicKey.Empty;
 
                 for (; propertyCount > 0; propertyCount--)
                 {
@@ -370,65 +377,67 @@ namespace Omnix.Network.Connection.Secure.V1.Internal
         }
     }
 
-    internal sealed partial class AuthenticationMessage : RocketPackMessageBase<AuthenticationMessage>
+    internal sealed partial class AuthenticationMessage : Omnix.Serialization.RocketPack.RocketPackMessageBase<AuthenticationMessage>
     {
         static AuthenticationMessage()
         {
             AuthenticationMessage.Formatter = new CustomFormatter();
+            AuthenticationMessage.Empty = new AuthenticationMessage(System.Array.Empty<System.ReadOnlyMemory<byte>>());
         }
+
+        private readonly int __hashCode;
 
         public static readonly int MaxHashesCount = 32;
 
-        public AuthenticationMessage(ReadOnlyMemory<byte>[] hashes)
+        public AuthenticationMessage(System.ReadOnlyMemory<byte>[] hashes)
         {
-            if (hashes is null) throw new ArgumentNullException("hashes");
-            if (hashes.Length > 32) throw new ArgumentOutOfRangeException("hashes");
+            if (hashes is null) throw new System.ArgumentNullException("hashes");
+            if (hashes.Length > 32) throw new System.ArgumentOutOfRangeException("hashes");
             foreach (var n in hashes)
             {
-                if (n.Length > 32) throw new ArgumentOutOfRangeException("n");
+                if (n.Length > 32) throw new System.ArgumentOutOfRangeException("n");
             }
 
-            this.Hashes = new ReadOnlyListSlim<ReadOnlyMemory<byte>>(hashes);
+            this.Hashes = new Omnix.Collections.ReadOnlyListSlim<System.ReadOnlyMemory<byte>>(hashes);
 
             {
-                var hashCode = new HashCode();
+                var __h = new System.HashCode();
                 foreach (var n in this.Hashes)
                 {
-                    if (!n.IsEmpty) hashCode.Add(ObjectHelper.GetHashCode(n.Span));
+                    if (!n.IsEmpty) __h.Add(Omnix.Base.Helpers.ObjectHelper.GetHashCode(n.Span));
                 }
-                _hashCode = hashCode.ToHashCode();
+                __hashCode = __h.ToHashCode();
             }
         }
 
-        public ReadOnlyListSlim<ReadOnlyMemory<byte>> Hashes { get; }
+        public Omnix.Collections.ReadOnlyListSlim<System.ReadOnlyMemory<byte>> Hashes { get; }
 
-        public override bool Equals(AuthenticationMessage target)
+        public override bool Equals(AuthenticationMessage? target)
         {
-            if ((object)target == null) return false;
-            if (Object.ReferenceEquals(this, target)) return true;
-            if ((this.Hashes is null) != (target.Hashes is null)) return false;
-            if (!(this.Hashes is null) && !(target.Hashes is null) && !CollectionHelper.Equals(this.Hashes, target.Hashes)) return false;
+            if (target is null) return false;
+            if (object.ReferenceEquals(this, target)) return true;
+            if (!Omnix.Base.Helpers.CollectionHelper.Equals(this.Hashes, target.Hashes)) return false;
 
             return true;
         }
 
-        private readonly int _hashCode;
-        public override int GetHashCode() => _hashCode;
+        public override int GetHashCode() => __hashCode;
 
-        private sealed class CustomFormatter : IRocketPackFormatter<AuthenticationMessage>
+        private sealed class CustomFormatter : Omnix.Serialization.RocketPack.IRocketPackFormatter<AuthenticationMessage>
         {
-            public void Serialize(RocketPackWriter w, AuthenticationMessage value, int rank)
+            public void Serialize(Omnix.Serialization.RocketPack.RocketPackWriter w, AuthenticationMessage value, int rank)
             {
-                if (rank > 256) throw new FormatException();
+                if (rank > 256) throw new System.FormatException();
 
-                // Write property count
                 {
                     uint propertyCount = 0;
-                    if (value.Hashes.Count != 0) propertyCount++;
+                    if (value.Hashes.Count != 0)
+                    {
+                        propertyCount++;
+                    }
                     w.Write(propertyCount);
                 }
 
-                // Hashes
                 if (value.Hashes.Count != 0)
                 {
                     w.Write((uint)0);
@@ -440,14 +449,14 @@ namespace Omnix.Network.Connection.Secure.V1.Internal
                 }
             }
 
-            public AuthenticationMessage Deserialize(RocketPackReader r, int rank)
+            public AuthenticationMessage Deserialize(Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
             {
-                if (rank > 256) throw new FormatException();
+                if (rank > 256) throw new System.FormatException();
 
                 // Read property count
                 uint propertyCount = r.GetUInt32();
 
-                ReadOnlyMemory<byte>[] p_hashes = default;
+                System.ReadOnlyMemory<byte>[] p_hashes = System.Array.Empty<System.ReadOnlyMemory<byte>>();
 
                 for (; propertyCount > 0; propertyCount--)
                 {
@@ -457,7 +466,7 @@ namespace Omnix.Network.Connection.Secure.V1.Internal
                         case 0: // Hashes
                             {
                                 var length = r.GetUInt32();
-                                p_hashes = new ReadOnlyMemory<byte>[length];
+                                p_hashes = new System.ReadOnlyMemory<byte>[length];
                                 for (int i = 0; i < p_hashes.Length; i++)
                                 {
                                     p_hashes[i] = r.GetMemory(32);

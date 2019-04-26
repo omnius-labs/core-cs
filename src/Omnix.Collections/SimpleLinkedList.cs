@@ -6,7 +6,7 @@ namespace Omnix.Collections
 {
     public class SimpleLinkedList<T> : ICollection<T>, IEnumerable<T>, ICollection, IEnumerable
     {
-        private Node _firstNode;
+        private Node? _firstNode;
         private int _count;
 
         private int? _capacity;
@@ -61,8 +61,7 @@ namespace Omnix.Collections
             if (_capacity != null && _count + 1 > _capacity.Value) throw new OverflowException();
             if (this.Filter(item)) return;
 
-            var currentItem = new Node();
-            currentItem.Value = item;
+            var currentItem = new Node(item);
             currentItem.Next = _firstNode;
 
             _firstNode = currentItem;
@@ -96,7 +95,7 @@ namespace Omnix.Collections
         public bool Remove(T item)
         {
             var currentItem = _firstNode;
-            Node previousItem = null;
+            Node? previousItem = null;
 
             while (currentItem != null)
             {
@@ -104,7 +103,7 @@ namespace Omnix.Collections
                 {
                     if (previousItem == null)
                     {
-                        _firstNode = _firstNode.Next;
+                        _firstNode = _firstNode?.Next;
                         _count--;
                     }
                     else
@@ -132,7 +131,7 @@ namespace Omnix.Collections
             int hitCount = 0;
 
             var currentItem = _firstNode;
-            Node previousItem = null;
+            Node? previousItem = null;
 
             while (currentItem != null)
             {
@@ -140,7 +139,7 @@ namespace Omnix.Collections
                 {
                     if (previousItem == null)
                     {
-                        _firstNode = _firstNode.Next;
+                        _firstNode = _firstNode?.Next;
                         _count--;
                     }
                     else
@@ -165,7 +164,7 @@ namespace Omnix.Collections
 
         bool ICollection.IsSynchronized => false;
 
-        object ICollection.SyncRoot => null;
+        object? ICollection.SyncRoot => null;
 
         void ICollection.CopyTo(Array array, int index)
         {
@@ -190,8 +189,13 @@ namespace Omnix.Collections
 
         private sealed class Node
         {
-            public T Value { get; set; }
-            public Node Next { get; set; }
+            public Node(T value)
+            {
+                this.Value = value;
+            }
+
+            public T Value { get; }
+            public Node? Next { get; set; }
         }
     }
 }

@@ -1,81 +1,77 @@
-﻿using Omnix.Base;
-using Omnix.Base.Helpers;
-using Omnix.Collections;
-using Omnix.Serialization;
-using Omnix.Serialization.RocketPack;
-using System;
-using System.Buffers;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿
+#nullable enable
 
 namespace Omnix.Network
 {
-    public sealed partial class OmniAddress : RocketPackMessageBase<OmniAddress>
+    public sealed partial class OmniAddress : Omnix.Serialization.RocketPack.RocketPackMessageBase<OmniAddress>
     {
         static OmniAddress()
         {
             OmniAddress.Formatter = new CustomFormatter();
+            OmniAddress.Empty = new OmniAddress(string.Empty);
         }
+
+        private readonly int __hashCode;
 
         public static readonly int MaxValueLength = 8192;
 
         public OmniAddress(string value)
         {
-            if (value is null) throw new ArgumentNullException("value");
-            if (value.Length > 8192) throw new ArgumentOutOfRangeException("value");
+            if (value is null) throw new System.ArgumentNullException("value");
+            if (value.Length > 8192) throw new System.ArgumentOutOfRangeException("value");
 
             this.Value = value;
 
             {
-                var hashCode = new HashCode();
-                if (this.Value != default) hashCode.Add(this.Value.GetHashCode());
-                _hashCode = hashCode.ToHashCode();
+                var __h = new System.HashCode();
+                if (this.Value != default) __h.Add(this.Value.GetHashCode());
+                __hashCode = __h.ToHashCode();
             }
         }
 
         public string Value { get; }
 
-        public override bool Equals(OmniAddress target)
+        public override bool Equals(OmniAddress? target)
         {
-            if ((object)target == null) return false;
-            if (Object.ReferenceEquals(this, target)) return true;
+            if (target is null) return false;
+            if (object.ReferenceEquals(this, target)) return true;
             if (this.Value != target.Value) return false;
 
             return true;
         }
 
-        private readonly int _hashCode;
-        public override int GetHashCode() => _hashCode;
+        public override int GetHashCode() => __hashCode;
 
-        private sealed class CustomFormatter : IRocketPackFormatter<OmniAddress>
+        private sealed class CustomFormatter : Omnix.Serialization.RocketPack.IRocketPackFormatter<OmniAddress>
         {
-            public void Serialize(RocketPackWriter w, OmniAddress value, int rank)
+            public void Serialize(Omnix.Serialization.RocketPack.RocketPackWriter w, OmniAddress value, int rank)
             {
-                if (rank > 256) throw new FormatException();
+                if (rank > 256) throw new System.FormatException();
 
-                // Write property count
                 {
                     uint propertyCount = 0;
-                    if (value.Value != default) propertyCount++;
+                    if (value.Value != string.Empty)
+                    {
+                        propertyCount++;
+                    }
                     w.Write(propertyCount);
                 }
 
-                // Value
-                if (value.Value != default)
+                if (value.Value != string.Empty)
                 {
                     w.Write((uint)0);
                     w.Write(value.Value);
                 }
             }
 
-            public OmniAddress Deserialize(RocketPackReader r, int rank)
+            public OmniAddress Deserialize(Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
             {
-                if (rank > 256) throw new FormatException();
+                if (rank > 256) throw new System.FormatException();
 
                 // Read property count
                 uint propertyCount = r.GetUInt32();
 
-                string p_value = default;
+                string p_value = string.Empty;
 
                 for (; propertyCount > 0; propertyCount--)
                 {

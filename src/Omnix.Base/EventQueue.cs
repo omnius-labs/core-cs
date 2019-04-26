@@ -8,12 +8,12 @@ namespace Omnix.Base
 {
     public sealed class EventQueue<T> : DisposableBase
     {
-        private static NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
+        private static readonly NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
 
         private Dictionary<Delegate, EventItem> _events = new Dictionary<Delegate, EventItem>();
 
         private readonly object _lockObject = new object();
-        private volatile bool _isDisposed;
+        private volatile bool _disposed;
 
         public EventQueue()
         {
@@ -29,7 +29,7 @@ namespace Omnix.Base
 
         public void Enqueue(params T[] items)
         {
-            if (_isDisposed) throw new ObjectDisposedException(this.GetType().FullName);
+            if (_disposed) throw new ObjectDisposedException(this.GetType().FullName);
 
             lock (_lockObject)
             {
@@ -42,7 +42,7 @@ namespace Omnix.Base
 
         public void Enqueue(IEnumerable<T> items)
         {
-            if (_isDisposed) throw new ObjectDisposedException(this.GetType().FullName);
+            if (_disposed) throw new ObjectDisposedException(this.GetType().FullName);
 
             lock (_lockObject)
             {
@@ -57,7 +57,7 @@ namespace Omnix.Base
         {
             add
             {
-                if (_isDisposed) throw new ObjectDisposedException(this.GetType().FullName);
+                if (_disposed) throw new ObjectDisposedException(this.GetType().FullName);
 
                 lock (_lockObject)
                 {
@@ -66,7 +66,7 @@ namespace Omnix.Base
             }
             remove
             {
-                if (_isDisposed) throw new ObjectDisposedException(this.GetType().FullName);
+                if (_disposed) throw new ObjectDisposedException(this.GetType().FullName);
 
                 lock (_lockObject)
                 {
@@ -87,11 +87,11 @@ namespace Omnix.Base
             private Task _task;
 
             private LinkedList<T> _queue = new LinkedList<T>();
-            private volatile ManualResetEvent _queueResetEvent = new ManualResetEvent(false);
-            private volatile ManualResetEvent _delayResetEvent = new ManualResetEvent(false);
+            private ManualResetEvent _queueResetEvent = new ManualResetEvent(false);
+            private ManualResetEvent _delayResetEvent = new ManualResetEvent(false);
 
             private readonly object _lockObject = new object();
-            private volatile bool _isDisposed;
+            private volatile bool _disposed;
 
             public EventItem(Action<IEnumerable<T>> action, TimeSpan? delay)
             {
@@ -112,7 +112,7 @@ namespace Omnix.Base
 
                         for (; ; )
                         {
-                            if (_isDisposed) return;
+                            if (_disposed) return;
 
                             lock (_lockObject)
                             {
@@ -168,40 +168,30 @@ namespace Omnix.Base
                 }
             }
 
-            protected override void Dispose(bool isDisposing)
+            protected override void Dispose(bool disposing)
             {
-                if (_isDisposed) return;
-                _isDisposed = true;
+                if (_disposed) return;
+                _disposed = true;
 
-                if (isDisposing)
+                if (disposing)
                 {
-                    if (_queueResetEvent != null)
-                    {
-                        _queueResetEvent.Set();
-                        _queueResetEvent.Dispose();
+                    _queueResetEvent.Set();
+                    _queueResetEvent.Dispose();
 
-                        _queueResetEvent = null;
-                    }
-
-                    if (_delayResetEvent != null)
-                    {
-                        _delayResetEvent.Set();
-                        _delayResetEvent.Dispose();
-
-                        _delayResetEvent = null;
-                    }
+                    _delayResetEvent.Set();
+                    _delayResetEvent.Dispose();
 
                     _task.Wait();
                 }
             }
         }
 
-        protected override void Dispose(bool isDisposing)
+        protected override void Dispose(bool disposing)
         {
-            if (_isDisposed) return;
-            _isDisposed = true;
+            if (_disposed) return;
+            _disposed = true;
 
-            if (isDisposing)
+            if (disposing)
             {
                 foreach (var eventItem in _events.Values)
                 {

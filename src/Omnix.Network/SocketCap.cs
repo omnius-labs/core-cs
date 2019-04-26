@@ -82,8 +82,6 @@ namespace Omnix.Network
             if (disposing)
             {
                 _socket?.Dispose();
-                _socket = null;
-
                 _isConnected = false;
             }
         }

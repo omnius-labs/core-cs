@@ -9,7 +9,7 @@ namespace Omnix.Base
         private Dictionary<int, T> _idMap = new Dictionary<int, T>();
         private int _current;
 
-        private readonly object _syncObject = new object();
+        private readonly object _lockObject = new object();
 
         public int Add(T item)
         {

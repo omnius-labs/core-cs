@@ -11,8 +11,8 @@ namespace Omnix.Base
     {
         private readonly Action<CancellationToken> _callback;
 
-        private Task _task;
-        private CancellationTokenSource _tokenSource;
+        private Task? _task;
+        private CancellationTokenSource? _tokenSource;
 
         private readonly AsyncLock _asyncLock = new AsyncLock();
         private volatile bool _disposed;
@@ -22,21 +22,22 @@ namespace Omnix.Base
             _callback = callback;
         }
 
-        public Task Task => _task;
+        public Task? Task => _task;
 
         public void Start()
         {
             _tokenSource = new CancellationTokenSource();
-            _task = new Task(() =>
+            _task = new Task((state) =>
             {
-                _callback(_tokenSource.Token);
-            }, _tokenSource.Token, TaskCreationOptions.LongRunning);
+                var tokenSource = (CancellationTokenSource)state;
+                _callback(tokenSource.Token);
+            }, _tokenSource, _tokenSource.Token, TaskCreationOptions.LongRunning);
             _task.Start();
         }
 
         public void Cancel()
         {
-            _tokenSource.Cancel();
+            _tokenSource?.Cancel();
         }
 
         protected override void Dispose(bool disposing)
@@ -46,17 +47,8 @@ namespace Omnix.Base
 
             if (disposing)
             {
-                if (_task != null)
-                {
-                    _task.Dispose();
-                    _task = null;
-                }
-
-                if (_tokenSource != null)
-                {
-                    _tokenSource.Dispose();
-                    _tokenSource = null;
-                }
+                _task?.Dispose();
+                _tokenSource?.Dispose();
             }
         }
     }

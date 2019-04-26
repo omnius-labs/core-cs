@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27703.2026
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.28729.10
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Omnix.Collections", "src\Omnix.Collections\Omnix.Collections.csproj", "{FCE23238-F711-444A-83E6-63CEA6EDEEE4}"
 EndProject
@@ -58,11 +58,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FormatterBenchmarks", "perf
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Benchmarks", "Benchmarks", "{D3C36B78-868D-4E27-910A-23FD8DB73F00}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Omnix.Cryptography.HashcashComputer", "src\Omnix.Cryptography.HashcashComputer\Omnix.Cryptography.HashcashComputer.csproj", "{6B302E32-78BD-4FAF-8244-AD758C589710}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Omnix.Avalonia", "src\Omnix.Avalonia\Omnix.Avalonia.csproj", "{3B17B0FA-BF3F-4F44-8DF2-29203909557C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Omnix.Remoting", "src\Omnix.Remoting\Omnix.Remoting.csproj", "{83F09E24-1544-4AE2-A09D-ED05D8935F97}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Omnix.Remoting", "src\Omnix.Remoting\Omnix.Remoting.csproj", "{83F09E24-1544-4AE2-A09D-ED05D8935F97}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Omnix.Serialization.RocketPack.Tests", "tests\Omnix.Serialization.RocketPack.Tests\Omnix.Serialization.RocketPack.Tests.csproj", "{F9A3206F-441F-4BB3-9639-29D9F5235FE6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -158,10 +158,6 @@ Global
 		{69AC7FCB-64B5-4E88-A5D8-7E326AFE67C8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{69AC7FCB-64B5-4E88-A5D8-7E326AFE67C8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{69AC7FCB-64B5-4E88-A5D8-7E326AFE67C8}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6B302E32-78BD-4FAF-8244-AD758C589710}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6B302E32-78BD-4FAF-8244-AD758C589710}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6B302E32-78BD-4FAF-8244-AD758C589710}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6B302E32-78BD-4FAF-8244-AD758C589710}.Release|Any CPU.Build.0 = Release|Any CPU
 		{3B17B0FA-BF3F-4F44-8DF2-29203909557C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{3B17B0FA-BF3F-4F44-8DF2-29203909557C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3B17B0FA-BF3F-4F44-8DF2-29203909557C}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -170,6 +166,10 @@ Global
 		{83F09E24-1544-4AE2-A09D-ED05D8935F97}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{83F09E24-1544-4AE2-A09D-ED05D8935F97}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{83F09E24-1544-4AE2-A09D-ED05D8935F97}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F9A3206F-441F-4BB3-9639-29D9F5235FE6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F9A3206F-441F-4BB3-9639-29D9F5235FE6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F9A3206F-441F-4BB3-9639-29D9F5235FE6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F9A3206F-441F-4BB3-9639-29D9F5235FE6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -197,9 +197,9 @@ Global
 		{520BA6DB-4476-43F0-9AF2-568841863716} = {CDE3119A-739A-44B1-8141-448AF0896E6C}
 		{07086BB5-1CCE-437A-804E-2C018599D893} = {CDE3119A-739A-44B1-8141-448AF0896E6C}
 		{69AC7FCB-64B5-4E88-A5D8-7E326AFE67C8} = {D3C36B78-868D-4E27-910A-23FD8DB73F00}
-		{6B302E32-78BD-4FAF-8244-AD758C589710} = {28FCC997-2EE4-4D18-BAA0-96118DFA47BB}
 		{3B17B0FA-BF3F-4F44-8DF2-29203909557C} = {28FCC997-2EE4-4D18-BAA0-96118DFA47BB}
 		{83F09E24-1544-4AE2-A09D-ED05D8935F97} = {28FCC997-2EE4-4D18-BAA0-96118DFA47BB}
+		{F9A3206F-441F-4BB3-9639-29D9F5235FE6} = {CDE3119A-739A-44B1-8141-448AF0896E6C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {2CD56E0F-71CF-44BB-848D-F2A9EA663E45}

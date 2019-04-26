@@ -1,41 +1,76 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Linq;
 
 namespace Omnix.Serialization.RocketPack.CodeGenerator
 {
-    public sealed class RocketFormatInfo
+    public sealed class RocketPackDefinition
     {
-        public IList<UsingInfo> Usings { get; set; }
-        public IList<OptionInfo> Options { get; set; }
-        public IList<EnumInfo> Enums { get; set; }
-        public IList<MessageInfo> Messages { get; set; }
+        public RocketPackDefinition(IEnumerable<UsingDefinition> usings, IEnumerable<OptionDefinition> options, IEnumerable<EnumDefinition> enums, IEnumerable<MessageDefinition> messages)
+        {
+            this.Usings = usings?.ToList() ?? throw new ArgumentNullException(nameof(usings));
+            this.Options = options?.ToList() ?? throw new ArgumentNullException(nameof(options));
+            this.Enums = enums?.ToList() ?? throw new ArgumentNullException(nameof(enums));
+            this.Messages = messages?.ToList() ?? throw new ArgumentNullException(nameof(messages));
+        }
+
+        public IList<UsingDefinition> Usings { get; }
+        public IList<OptionDefinition> Options { get; }
+        public IList<EnumDefinition> Enums { get; }
+        public IList<MessageDefinition> Messages { get; }
     }
 
-    public sealed class UsingInfo
+    public sealed class UsingDefinition
     {
-        public string Path { get; set; }
+        public UsingDefinition(string path)
+        {
+            this.Path = path ?? throw new ArgumentNullException(nameof(path));
+        }
+
+        public string Path { get; }
     }
 
-    public sealed class OptionInfo
+    public sealed class OptionDefinition
     {
-        public string Name { get; set; }
-        public string Value { get; set; }
+        public OptionDefinition(string name, string value)
+        {
+            this.Name = name ?? throw new ArgumentNullException(nameof(name));
+            this.Value = value ?? throw new ArgumentNullException(nameof(value));
+        }
+
+        public string Name { get; }
+        public string Value { get; }
     }
 
-    public sealed class EnumInfo
+    public sealed class EnumDefinition
     {
-        public IList<string> Attributes { get; set; }
-        public string Name { get; set; }
-        public TypeInfo Type { get; set; }
-        public IList<EnumElementInfo> Elements { get; set; }
+        public EnumDefinition(IEnumerable<string> attributes, string name, TypeBase type, IEnumerable<EnumElement> elements)
+        {
+            this.Attributes = attributes?.ToList() ?? throw new ArgumentNullException(nameof(attributes));
+            this.Name = name ?? throw new ArgumentNullException(nameof(name));
+            this.Type = type ?? throw new ArgumentNullException(nameof(type));
+            this.Elements = elements?.ToList() ?? throw new ArgumentNullException(nameof(elements));
+        }
+
+        public IList<string> Attributes { get; }
+        public string Name { get; }
+        public TypeBase Type { get; }
+        public IList<EnumElement> Elements { get; }
     }
 
-    public sealed class EnumElementInfo
+    public sealed class EnumElement
     {
-        public IList<string> Attributes { get; set; }
-        public string Name { get; set; }
-        public int Id { get; set; }
+        public EnumElement(IEnumerable<string> attributes, string name, int id)
+        {
+            this.Attributes = attributes?.ToList() ?? throw new ArgumentNullException(nameof(attributes));
+            this.Name = name ?? throw new ArgumentNullException(nameof(name));
+            this.Id = id;
+        }
+
+        public IList<string> Attributes { get; }
+        public string Name { get; }
+        public int Id { get; }
     }
 
     public enum MessageFormatType
@@ -44,72 +79,138 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
         Medium,
     }
 
-    public sealed class MessageInfo
+    public sealed class MessageDefinition
     {
-        public IList<string> Attributes { get; set; }
-        public MessageFormatType FormatType { get; set; }
-        public string Name { get; set; }
-        public IList<MessageElementInfo> Elements { get; set; }
+        public MessageDefinition(IEnumerable<string> attributes, MessageFormatType formatType, string name, IEnumerable<MessageElement> elements)
+        {
+            this.Attributes = attributes?.ToList() ?? throw new ArgumentNullException(nameof(attributes));
+            this.FormatType = formatType;
+            this.Name = name ?? throw new ArgumentNullException(nameof(name));
+            this.Elements = elements?.ToList() ?? throw new ArgumentNullException(nameof(elements));
+        }
+
+        public IList<string> Attributes { get; }
+        public MessageFormatType FormatType { get; }
+        public string Name { get; }
+        public IList<MessageElement> Elements { get; }
     }
 
-    public sealed class MessageElementInfo
+    public sealed class MessageElement
     {
-        public IList<string> Attributes { get; set; }
-        public string Name { get; set; }
-        public TypeInfo Type { get; set; }
-        public int? Id { get; set; }
+        public MessageElement(IEnumerable<string> attributes, string name, TypeBase type, int? id)
+        {
+            this.Attributes = attributes?.ToList() ?? throw new ArgumentNullException(nameof(attributes));
+            this.Name = name ?? throw new ArgumentNullException(nameof(name));
+            this.Type = type ?? throw new ArgumentNullException(nameof(type));
+            this.Id = id;
+        }
+
+        public IList<string> Attributes { get; }
+        public string Name { get; }
+        public TypeBase Type { get; }
+        public int? Id { get; }
     }
 
-    public abstract class TypeInfo
+    public abstract class TypeBase
     {
-        public bool IsNullable { get; set; }
+        public TypeBase(bool isOptional)
+        {
+            this.IsOptional = isOptional;
+        }
+
+        public bool IsOptional { get; }
     }
 
-    public sealed class BoolTypeInfo : TypeInfo
+    public sealed class BoolType : TypeBase
     {
+        public BoolType(bool isOptional) : base(isOptional)
+        {
+        }
     }
 
-    public sealed class IntTypeInfo : TypeInfo
+    public sealed class IntType : TypeBase
     {
-        public bool IsSigned { get; set; }
-        public int Size { get; set; }
+        public IntType(bool isSigned, int size, bool isOptional) : base(isOptional)
+        {
+            this.IsSigned = isSigned;
+            this.Size = size;
+        }
+
+        public bool IsSigned { get; }
+        public int Size { get; }
     }
 
-    public sealed class FloatTypeInfo : TypeInfo
+    public sealed class FloatType : TypeBase
     {
-        public int Size { get; set; }
+        public FloatType(int size, bool isOptional) : base(isOptional)
+        {
+            this.Size = size;
+        }
+
+        public int Size { get; }
     }
 
-    public sealed class StringTypeInfo : TypeInfo
+    public sealed class StringType : TypeBase
     {
-        public int MaxLength { get; set; }
+        public StringType(int maxLength, bool isOptional) : base(isOptional)
+        {
+            this.MaxLength = maxLength;
+        }
+
+        public int MaxLength { get; }
     }
 
-    public sealed class TimestampTypeInfo : TypeInfo
+    public sealed class TimestampType : TypeBase
     {
+        public TimestampType(bool isOptional) : base(isOptional)
+        {
+        }
     }
 
-    public sealed class MemoryTypeInfo : TypeInfo
+    public sealed class MemoryType : TypeBase
     {
-        public int MaxLength { get; set; }
+        public MemoryType(int maxLength, bool isOptional) : base(isOptional)
+        {
+            this.MaxLength = maxLength;
+        }
+
+        public int MaxLength { get; }
         public bool IsUseMemoryPool { get; set; }
     }
 
-    public sealed class ListTypeInfo : TypeInfo
+    public sealed class ListType : TypeBase
     {
-        public int MaxLength { get; set; }
-        public TypeInfo ElementType { get; set; }
+        public ListType(TypeBase elementType, int maxLength, bool isOptional) : base(isOptional)
+        {
+            this.ElementType = elementType ?? throw new ArgumentNullException(nameof(elementType));
+            this.MaxLength = maxLength;
+        }
+
+        public TypeBase ElementType { get; }
+        public int MaxLength { get; }
     }
 
-    public sealed class MapTypeInfo : TypeInfo
+    public sealed class MapType : TypeBase
     {
-        public int MaxLength { get; set; }
-        public TypeInfo KeyType { get; set; }
-        public TypeInfo ValueType { get; set; }
+        public MapType(TypeBase keyType, TypeBase valueType, int maxLength, bool isOptional) : base(isOptional)
+        {
+            this.KeyType = keyType ?? throw new ArgumentNullException(nameof(keyType));
+            this.ValueType = valueType ?? throw new ArgumentNullException(nameof(valueType));
+            this.MaxLength = maxLength;
+        }
+
+        public TypeBase KeyType { get; }
+        public TypeBase ValueType { get; }
+        public int MaxLength { get; }
     }
 
-    public sealed class CustomTypeInfo : TypeInfo
+    public sealed class CustomType : TypeBase
     {
-        public string TypeName { get; set; }
+        public CustomType(string typeName, bool isOptional) : base(isOptional)
+        {
+            this.TypeName = typeName ?? throw new ArgumentNullException(nameof(typeName));
+        }
+
+        public string TypeName { get; }
     }
 }

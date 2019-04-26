@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Omnix.Serialization
+namespace Omnix.Serialization.RocketPack
 {
     // https://github.com/google/protobuf/blob/master/csharp/src/Google.Protobuf/WellKnownTypes/TimestampPartial.cs
 
@@ -13,6 +13,8 @@ namespace Omnix.Serialization
             this.Seconds = seconds;
             this.Nanos = nanos;
         }
+
+        public static Timestamp Zero { get; } = new Timestamp(0, 0);
 
         public long Seconds { get; }
         public int Nanos { get; }

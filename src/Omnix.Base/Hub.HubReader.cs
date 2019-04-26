@@ -14,7 +14,6 @@ namespace Omnix.Base
             private Pipe _pipe;
             private PipeReader _pipeReader;
             private ReadOnlySequence<byte>? _sequence;
-            private SequencePosition? _sequencePosition;
             private long _position = 0;
             private bool _isCompleted = false;
 
@@ -30,7 +29,6 @@ namespace Omnix.Base
             public void Advance(int count)
             {
                 _position += count;
-                _sequencePosition = _sequence.Value.GetPosition(_position);
             }
 
             public ReadOnlySequence<byte> GetSequence()
@@ -40,10 +38,9 @@ namespace Omnix.Base
                     if (!_pipeReader.TryRead(out var readResult)) throw new HubReaderException("Read failed.");
 
                     _sequence = readResult.Buffer;
-                    _sequencePosition = _sequence.Value.Start;
                 }
 
-                return _sequence.Value.Slice(_sequencePosition.Value);
+                return _sequence.Value.Slice(_position);
             }
 
             public void Complete()
@@ -55,7 +52,6 @@ namespace Omnix.Base
             internal void Reset()
             {
                 _sequence = null;
-                _sequencePosition = null;
                 _position = 0;
                 _isCompleted = false;
             }
