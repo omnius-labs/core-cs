@@ -1,21 +1,17 @@
-﻿using Omnix.Base;
-using Omnix.Base.Helpers;
-using Omnix.Collections;
-using Omnix.Serialization;
-using Omnix.Serialization.RocketPack;
-using System;
-using System.Buffers;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿
+#nullable enable
 
 namespace Omnix.Remoting
 {
-    public sealed partial class OmniRpcErrorMessage : RocketPackMessageBase<OmniRpcErrorMessage>
+    public sealed partial class OmniRpcErrorMessage : Omnix.Serialization.RocketPack.RocketPackMessageBase<OmniRpcErrorMessage>
     {
         static OmniRpcErrorMessage()
         {
             OmniRpcErrorMessage.Formatter = new CustomFormatter();
+            OmniRpcErrorMessage.Empty = new OmniRpcErrorMessage(string.Empty, string.Empty, string.Empty);
         }
+
+        private readonly int __hashCode;
 
         public static readonly int MaxTypeLength = 8192;
         public static readonly int MaxMessageLength = 8192;
@@ -23,23 +19,23 @@ namespace Omnix.Remoting
 
         public OmniRpcErrorMessage(string type, string message, string stackTrace)
         {
-            if (type is null) throw new ArgumentNullException("type");
-            if (type.Length > 8192) throw new ArgumentOutOfRangeException("type");
-            if (message is null) throw new ArgumentNullException("message");
-            if (message.Length > 8192) throw new ArgumentOutOfRangeException("message");
-            if (stackTrace is null) throw new ArgumentNullException("stackTrace");
-            if (stackTrace.Length > 8192) throw new ArgumentOutOfRangeException("stackTrace");
+            if (type is null) throw new System.ArgumentNullException("type");
+            if (type.Length > 8192) throw new System.ArgumentOutOfRangeException("type");
+            if (message is null) throw new System.ArgumentNullException("message");
+            if (message.Length > 8192) throw new System.ArgumentOutOfRangeException("message");
+            if (stackTrace is null) throw new System.ArgumentNullException("stackTrace");
+            if (stackTrace.Length > 8192) throw new System.ArgumentOutOfRangeException("stackTrace");
 
             this.Type = type;
             this.Message = message;
             this.StackTrace = stackTrace;
 
             {
-                var hashCode = new HashCode();
-                if (this.Type != default) hashCode.Add(this.Type.GetHashCode());
-                if (this.Message != default) hashCode.Add(this.Message.GetHashCode());
-                if (this.StackTrace != default) hashCode.Add(this.StackTrace.GetHashCode());
-                _hashCode = hashCode.ToHashCode();
+                var __h = new System.HashCode();
+                if (this.Type != default) __h.Add(this.Type.GetHashCode());
+                if (this.Message != default) __h.Add(this.Message.GetHashCode());
+                if (this.StackTrace != default) __h.Add(this.StackTrace.GetHashCode());
+                __hashCode = __h.ToHashCode();
             }
         }
 
@@ -47,10 +43,10 @@ namespace Omnix.Remoting
         public string Message { get; }
         public string StackTrace { get; }
 
-        public override bool Equals(OmniRpcErrorMessage target)
+        public override bool Equals(OmniRpcErrorMessage? target)
         {
-            if ((object)target == null) return false;
-            if (Object.ReferenceEquals(this, target)) return true;
+            if (target is null) return false;
+            if (object.ReferenceEquals(this, target)) return true;
             if (this.Type != target.Type) return false;
             if (this.Message != target.Message) return false;
             if (this.StackTrace != target.StackTrace) return false;
@@ -58,54 +54,58 @@ namespace Omnix.Remoting
             return true;
         }
 
-        private readonly int _hashCode;
-        public override int GetHashCode() => _hashCode;
+        public override int GetHashCode() => __hashCode;
 
-        private sealed class CustomFormatter : IRocketPackFormatter<OmniRpcErrorMessage>
+        private sealed class CustomFormatter : Omnix.Serialization.RocketPack.IRocketPackFormatter<OmniRpcErrorMessage>
         {
-            public void Serialize(RocketPackWriter w, OmniRpcErrorMessage value, int rank)
+            public void Serialize(Omnix.Serialization.RocketPack.RocketPackWriter w, OmniRpcErrorMessage value, int rank)
             {
-                if (rank > 256) throw new FormatException();
+                if (rank > 256) throw new System.FormatException();
 
-                // Write property count
                 {
                     uint propertyCount = 0;
-                    if (value.Type != default) propertyCount++;
-                    if (value.Message != default) propertyCount++;
-                    if (value.StackTrace != default) propertyCount++;
+                    if (value.Type != string.Empty)
+                    {
+                        propertyCount++;
+                    }
+                    if (value.Message != string.Empty)
+                    {
+                        propertyCount++;
+                    }
+                    if (value.StackTrace != string.Empty)
+                    {
+                        propertyCount++;
+                    }
                     w.Write(propertyCount);
                 }
 
-                // Type
-                if (value.Type != default)
+                if (value.Type != string.Empty)
                 {
                     w.Write((uint)0);
                     w.Write(value.Type);
                 }
-                // Message
-                if (value.Message != default)
+                if (value.Message != string.Empty)
                 {
                     w.Write((uint)1);
                     w.Write(value.Message);
                 }
-                // StackTrace
-                if (value.StackTrace != default)
+                if (value.StackTrace != string.Empty)
                 {
                     w.Write((uint)2);
                     w.Write(value.StackTrace);
                 }
             }
 
-            public OmniRpcErrorMessage Deserialize(RocketPackReader r, int rank)
+            public OmniRpcErrorMessage Deserialize(Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
             {
-                if (rank > 256) throw new FormatException();
+                if (rank > 256) throw new System.FormatException();
 
                 // Read property count
                 uint propertyCount = r.GetUInt32();
 
-                string p_type = default;
-                string p_message = default;
-                string p_stackTrace = default;
+                string p_type = string.Empty;
+                string p_message = string.Empty;
+                string p_stackTrace = string.Empty;
 
                 for (; propertyCount > 0; propertyCount--)
                 {

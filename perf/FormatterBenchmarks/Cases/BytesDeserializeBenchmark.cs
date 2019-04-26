@@ -1,10 +1,9 @@
 ﻿using System;
-using BenchmarkDotNet.Attributes;
-using Omnix.Base;
 using System.Buffers;
-using FormatterBenchmarks.Internal;
 using System.Collections.Generic;
-using System.Text;
+using BenchmarkDotNet.Attributes;
+using FormatterBenchmarks.Internal;
+using Omnix.Base;
 
 namespace FormatterBenchmarks.Cases
 {
@@ -17,18 +16,57 @@ namespace FormatterBenchmarks.Cases
         static BytesDeserializeBenchmark()
         {
             {
-                var message = new MessagePack_BytesMessage()
-                {
-                    Bytes = new byte[1024 * 1024],
-                };
+                var random = new Random(0);
 
-                _messagePack_Bytes = MessagePack.MessagePackSerializer.Serialize(message);
+                var elementsList = new List<MessagePack_BytesElements>();
+
+                for (int i = 0; i < 32; i++)
+                {
+                    var elements = new MessagePack_BytesElements()
+                    {
+                        X0 = new byte[random.Next(0, 1024 * 256)],
+                        X1 = new byte[random.Next(0, 1024 * 256)],
+                        X2 = new byte[random.Next(0, 1024 * 256)],
+                        X3 = new byte[random.Next(0, 1024 * 256)],
+                        X4 = new byte[random.Next(0, 1024 * 256)],
+                        X5 = new byte[random.Next(0, 1024 * 256)],
+                        X6 = new byte[random.Next(0, 1024 * 256)],
+                        X7 = new byte[random.Next(0, 1024 * 256)],
+                        X8 = new byte[random.Next(0, 1024 * 256)],
+                        X9 = new byte[random.Next(0, 1024 * 256)],
+                    };
+
+                    elementsList.Add(elements);
+                }
+
+                _messagePack_Bytes = MessagePack.MessagePackSerializer.Serialize(new MessagePack_BytesElementsList() { List = elementsList.ToArray() });
             }
 
             using (var hub = new Hub())
             {
-                var memoryOwner = BufferPool.Create().Rent(1024 * 1024);
-                var message = new RocketPack_BytesMessage(memoryOwner);
+                var random = new Random(0);
+                var bufferPool = BufferPool.Shared;
+
+                var elementsList = new List<RocketPack_BytesElements>();
+
+                for (int i = 0; i < 32; i++)
+                {
+                    var X0 = bufferPool.Rent(random.Next(0, 1024 * 256));
+                    var X1 = bufferPool.Rent(random.Next(0, 1024 * 256));
+                    var X2 = bufferPool.Rent(random.Next(0, 1024 * 256));
+                    var X3 = bufferPool.Rent(random.Next(0, 1024 * 256));
+                    var X4 = bufferPool.Rent(random.Next(0, 1024 * 256));
+                    var X5 = bufferPool.Rent(random.Next(0, 1024 * 256));
+                    var X6 = bufferPool.Rent(random.Next(0, 1024 * 256));
+                    var X7 = bufferPool.Rent(random.Next(0, 1024 * 256));
+                    var X8 = bufferPool.Rent(random.Next(0, 1024 * 256));
+                    var X9 = bufferPool.Rent(random.Next(0, 1024 * 256));
+
+                    var elements = new RocketPack_BytesElements(X0, X1, X2, X3, X4, X5, X6, X7, X8, X9);
+                    elementsList.Add(elements);
+                }
+
+                var message = new RocketPack_BytesElementsList(elementsList.ToArray());
 
                 message.Export(hub.Writer, BufferPool.Shared);
                 hub.Writer.Complete();
@@ -41,15 +79,15 @@ namespace FormatterBenchmarks.Cases
         }
 
         [Benchmark(Baseline = true)]
-        public MessagePack_BytesMessage MessagePack_StringPropertiesMessage_DeserializeTest()
+        public object MessagePack_StringPropertiesMessage_DeserializeTest()
         {
-            return MessagePack.MessagePackSerializer.Deserialize<MessagePack_BytesMessage>(_messagePack_Bytes);
+            return MessagePack.MessagePackSerializer.Deserialize<MessagePack_BytesElementsList>(_messagePack_Bytes);
         }
 
         [Benchmark]
-        public RocketPack_BytesMessage RocketPack_StringPropertiesMessage_DeserializeTest()
+        public object RocketPack_StringPropertiesMessage_DeserializeTest()
         {
-            return RocketPack_BytesMessage.Import(new ReadOnlySequence<byte>(_rocketPack_Bytes), BufferPool.Shared);
+            return RocketPack_BytesElementsList.Import(new ReadOnlySequence<byte>(_rocketPack_Bytes), BufferPool.Shared);
         }
     }
 }

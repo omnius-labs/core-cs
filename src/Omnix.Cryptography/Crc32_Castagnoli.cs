@@ -14,7 +14,7 @@ namespace Omnix.Cryptography
     {
         private static readonly ThreadLocal<Encoding> _utf8Encoding = new ThreadLocal<Encoding>(() => new UTF8Encoding(false));
 
-        private static NativeLibraryManager _nativeLibraryManager;
+        private static NativeLibraryManager? _nativeLibraryManager;
 
         delegate uint ComputeDelegate(uint x, byte* src, int len);
         private static ComputeDelegate _compute;
@@ -33,40 +33,44 @@ namespace Omnix.Cryptography
 
         internal static void LoadNativeMethods()
         {
-            if (_nativeLibraryManager != null)
+            _nativeLibraryManager?.Dispose();
+
+            try
             {
-                _nativeLibraryManager.Dispose();
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                {
+                    if (RuntimeInformation.ProcessArchitecture == Architecture.X64)
+                    {
+                        _nativeLibraryManager = new NativeLibraryManager("Assemblies/Omnix.Security.win-x64.dll");
+                    }
+                    else
+                    {
+                        throw new NotSupportedException();
+                    }
+                }
+                else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+                {
+                    if (RuntimeInformation.ProcessArchitecture == Architecture.X64)
+                    {
+                        _nativeLibraryManager = new NativeLibraryManager("Assemblies/Omnix.Security.linux-x64.so");
+                    }
+                    else
+                    {
+                        throw new NotSupportedException();
+                    }
+                }
+                else
+                {
+                    throw new NotSupportedException();
+                }
+
+                _compute = _nativeLibraryManager.GetMethod<ComputeDelegate>("compute_Crc32_Castagnoli");
+            }
+            catch (Exception)
+            {
+                _nativeLibraryManager?.Dispose();
                 _nativeLibraryManager = null;
             }
-
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-            {
-                if (RuntimeInformation.ProcessArchitecture == Architecture.X64)
-                {
-                    _nativeLibraryManager = new NativeLibraryManager("Assemblies/Omnix.Security.win-x64.dll");
-                }
-                else
-                {
-                    throw new NotSupportedException();
-                }
-            }
-            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-            {
-                if (RuntimeInformation.ProcessArchitecture == Architecture.X64)
-                {
-                    _nativeLibraryManager = new NativeLibraryManager("Assemblies/Omnix.Security.linux-x64.so");
-                }
-                else
-                {
-                    throw new NotSupportedException();
-                }
-            }
-            else
-            {
-                throw new NotSupportedException();
-            }
-
-            _compute = _nativeLibraryManager.GetMethod<ComputeDelegate>("compute_Crc32_Castagnoli");
         }
 
         internal static void LoadPureUnsafeMethods()

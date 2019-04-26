@@ -276,7 +276,7 @@ namespace Omnix.Collections
             {
                 lock (this.LockObject)
                 {
-                    return this[index];
+                    return this[index]!;
                 }
             }
             set

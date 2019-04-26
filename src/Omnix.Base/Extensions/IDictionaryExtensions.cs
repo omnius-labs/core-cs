@@ -14,12 +14,12 @@ namespace Omnix.Base.Extensions
             if (addValueFactory == null) throw new ArgumentNullException(nameof(addValueFactory));
             if (updateValueFactory == null) throw new ArgumentNullException(nameof(updateValueFactory));
 
-            object syncObject = ExtensionHelper.GetLockObject(dictionary);
+            object? lockObject = ExtensionHelper.GetLockObject(dictionary);
             bool lockToken = false;
 
             try
             {
-                if (syncObject != null) Monitor.Enter(syncObject, ref lockToken);
+                if (lockObject != null) Monitor.Enter(lockObject, ref lockToken);
 
                 TValue result;
 
@@ -38,7 +38,7 @@ namespace Omnix.Base.Extensions
             }
             finally
             {
-                if (lockToken) Monitor.Exit(syncObject);
+                if (lockToken) Monitor.Exit(lockObject);
             }
         }
 
@@ -48,12 +48,12 @@ namespace Omnix.Base.Extensions
             if (key == null) throw new ArgumentNullException(nameof(key));
             if (updateValueFactory == null) throw new ArgumentNullException(nameof(updateValueFactory));
 
-            object syncObject = ExtensionHelper.GetLockObject(dictionary);
+            object? lockObject = ExtensionHelper.GetLockObject(dictionary);
             bool lockToken = false;
 
             try
             {
-                if (syncObject != null) Monitor.Enter(syncObject, ref lockToken);
+                if (lockObject != null) Monitor.Enter(lockObject, ref lockToken);
 
                 TValue result;
 
@@ -72,7 +72,7 @@ namespace Omnix.Base.Extensions
             }
             finally
             {
-                if (lockToken) Monitor.Exit(syncObject);
+                if (lockToken) Monitor.Exit(lockObject);
             }
         }
 
@@ -82,12 +82,12 @@ namespace Omnix.Base.Extensions
             if (key == null) throw new ArgumentNullException(nameof(key));
             if (match == null) throw new ArgumentNullException(nameof(match));
 
-            object syncObject = ExtensionHelper.GetLockObject(dictionary);
+            object? lockObject = ExtensionHelper.GetLockObject(dictionary);
             bool lockToken = false;
 
             try
             {
-                if (syncObject != null) Monitor.Enter(syncObject, ref lockToken);
+                if (lockObject != null) Monitor.Enter(lockObject, ref lockToken);
 
                 if (dictionary.TryGetValue(key, out var result) && match(result))
                 {
@@ -100,7 +100,7 @@ namespace Omnix.Base.Extensions
             }
             finally
             {
-                if (lockToken) Monitor.Exit(syncObject);
+                if (lockToken) Monitor.Exit(lockObject);
             }
         }
 
@@ -109,12 +109,12 @@ namespace Omnix.Base.Extensions
             if (dictionary == null) throw new ArgumentNullException(nameof(dictionary));
             if (key == null) throw new ArgumentNullException(nameof(key));
 
-            object syncObject = ExtensionHelper.GetLockObject(dictionary);
+            object? lockObject = ExtensionHelper.GetLockObject(dictionary);
             bool lockToken = false;
 
             try
             {
-                if (syncObject != null) Monitor.Enter(syncObject, ref lockToken);
+                if (lockObject != null) Monitor.Enter(lockObject, ref lockToken);
 
                 dictionary.TryGetValue(key, out value);
 
@@ -122,7 +122,7 @@ namespace Omnix.Base.Extensions
             }
             finally
             {
-                if (lockToken) Monitor.Exit(syncObject);
+                if (lockToken) Monitor.Exit(lockObject);
             }
         }
 
@@ -132,12 +132,12 @@ namespace Omnix.Base.Extensions
             if (key == null) throw new ArgumentNullException(nameof(key));
             if (value == null) throw new ArgumentNullException(nameof(value));
 
-            object syncObject = ExtensionHelper.GetLockObject(dictionary);
+            object? lockObject = ExtensionHelper.GetLockObject(dictionary);
             bool lockToken = false;
 
             try
             {
-                if (syncObject != null) Monitor.Enter(syncObject, ref lockToken);
+                if (lockObject != null) Monitor.Enter(lockObject, ref lockToken);
 
                 int count = dictionary.Count;
                 dictionary[key] = value;
@@ -146,7 +146,7 @@ namespace Omnix.Base.Extensions
             }
             finally
             {
-                if (lockToken) Monitor.Exit(syncObject);
+                if (lockToken) Monitor.Exit(lockObject);
             }
         }
 
@@ -156,12 +156,12 @@ namespace Omnix.Base.Extensions
             if (key == null) throw new ArgumentNullException(nameof(key));
             if (valueFactory == null) throw new ArgumentNullException(nameof(valueFactory));
 
-            object syncObject = ExtensionHelper.GetLockObject(dictionary);
+            object? lockObject = ExtensionHelper.GetLockObject(dictionary);
             bool lockToken = false;
 
             try
             {
-                if (syncObject != null) Monitor.Enter(syncObject, ref lockToken);
+                if (lockObject != null) Monitor.Enter(lockObject, ref lockToken);
 
                 TValue result;
                 if (dictionary.TryGetValue(key, out result)) return result;
@@ -173,7 +173,7 @@ namespace Omnix.Base.Extensions
             }
             finally
             {
-                if (lockToken) Monitor.Exit(syncObject);
+                if (lockToken) Monitor.Exit(lockObject);
             }
         }
 
@@ -183,12 +183,12 @@ namespace Omnix.Base.Extensions
             if (key == null) throw new ArgumentNullException(nameof(key));
             if (value == null) throw new ArgumentNullException(nameof(value));
 
-            object syncObject = ExtensionHelper.GetLockObject(dictionary);
+            object? lockObject = ExtensionHelper.GetLockObject(dictionary);
             bool lockToken = false;
 
             try
             {
-                if (syncObject != null) Monitor.Enter(syncObject, ref lockToken);
+                if (lockObject != null) Monitor.Enter(lockObject, ref lockToken);
 
                 TValue result;
                 if (dictionary.TryGetValue(key, out result)) return result;
@@ -199,7 +199,7 @@ namespace Omnix.Base.Extensions
             }
             finally
             {
-                if (lockToken) Monitor.Exit(syncObject);
+                if (lockToken) Monitor.Exit(lockObject);
             }
         }
     }

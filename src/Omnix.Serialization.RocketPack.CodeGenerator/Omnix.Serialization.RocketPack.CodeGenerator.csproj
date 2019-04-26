@@ -1,10 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
     <OutputType>Exe</OutputType>
-    <AssemblyVersion>2018.8.29.137</AssemblyVersion>
-    <LangVersion>latest</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>

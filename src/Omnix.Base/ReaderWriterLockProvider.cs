@@ -64,10 +64,8 @@ namespace Omnix.Base
 
             public void Dispose()
             {
-                if (_readerWriterLock != null)
-                {
-                    _readerWriterLock.ExitUpgradeableReadLock();
-                }
+                _readerWriterLock.ExitUpgradeableReadLock();
+
             }
         }
 
@@ -82,10 +80,7 @@ namespace Omnix.Base
 
             public void Dispose()
             {
-                if (_readerWriterlock != null)
-                {
-                    _readerWriterlock.ExitWriteLock();
-                }
+                _readerWriterlock.ExitWriteLock();
             }
         }
     }

@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Omnix.Base;
 using Omnix.Network.Connection.Multiplexer.V1.Internal;
 using Omnix.Serialization;
+using Omnix.Serialization.RocketPack;
 
 namespace Omnix.Network.Connection.Multiplexer.V1
 {

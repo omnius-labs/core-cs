@@ -5,6 +5,7 @@ using System.IO.Pipelines;
 using Omnix.Base;
 using Omnix.Serialization;
 using System.Buffers;
+using Omnix.Serialization.RocketPack;
 
 namespace Omnix.Cryptography.Internal
 {
