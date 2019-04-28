@@ -7,6 +7,13 @@ namespace Omnix.Collections
 {
     public sealed class ReadOnlyListSlim<T> : IReadOnlyList<T>
     {
+        public static ReadOnlyListSlim<T> Empty { get; }
+
+        static ReadOnlyListSlim()
+        {
+            Empty = new ReadOnlyListSlim<T>(Array.Empty<T>());
+        }
+
         private readonly T[] _array;
 
         public ReadOnlyListSlim(T[] array)
@@ -41,7 +48,7 @@ namespace Omnix.Collections
             internal Enumerator(T[] array) => (_array, _i) = (array, -1);
 
             public T Current => _array[_i];
-            object IEnumerator.Current => this.Current;
+            object? IEnumerator.Current => this.Current;
 
             public bool MoveNext() => ((uint)++_i) < (uint)_array.Length;
             public void Reset() => throw new NotSupportedException();

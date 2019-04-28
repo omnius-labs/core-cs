@@ -24,6 +24,7 @@ namespace Omnix.Base.Tests
 
                 taskManager.Start();
 
+                if (taskManager.Task is null) throw new NullReferenceException();
                 await taskManager.Task;
 
                 Assert.True(flag);
@@ -50,6 +51,7 @@ namespace Omnix.Base.Tests
                     taskManager.Cancel();
                 });
 
+                if (taskManager.Task is null) throw new NullReferenceException();
                 await taskManager.Task;
 
                 Assert.True(flag);

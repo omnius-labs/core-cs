@@ -35,22 +35,16 @@ namespace Omnix.Base
         {
             if (bufferSize <= 0)
             {
-                return new ZeroBytesPoolBuffer();
+                return SimpleMemoryOwner<byte>.Empty;
             }
 
             return new BufferPoolMemoryOwner(_arrayPool, bufferSize);
         }
 
-        private sealed class ZeroBytesPoolBuffer : IMemoryOwner<byte>
-        {
-            public Memory<byte> Memory => Memory<byte>.Empty;
-            public void Dispose() { }
-        }
-
         private sealed class BufferPoolMemoryOwner : IMemoryOwner<byte>
         {
             private readonly ArrayPool<byte> _arrayPool;
-            private byte[] _bytes;
+            private byte[]? _bytes;
             private readonly int _size;
 
             public BufferPoolMemoryOwner(ArrayPool<byte> arrayPool, int size)

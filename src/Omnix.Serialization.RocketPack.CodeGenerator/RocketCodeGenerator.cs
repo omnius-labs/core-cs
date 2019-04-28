@@ -7,7 +7,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
 {
     public static partial class RocketCodeGenerator
     {
-        public static string Generate(RocketFormatInfo info, IEnumerable<RocketFormatInfo> externalInfos)
+        public static string Generate(RocketPackDefinition definition, IEnumerable<RocketPackDefinition> externalDefinitions)
         {
             var w = new CodeWriter();
 
@@ -15,22 +15,8 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
             {
                 var hashSet = new HashSet<string>();
 
-                // デフォルトで以下の名前空間をusingする。
-                hashSet.Add("System");
-                hashSet.Add("System.Collections.Generic");
-                hashSet.Add("System.Collections.ObjectModel");
-                hashSet.Add("System.Buffers");
-                hashSet.Add("Omnix.Base");
-                hashSet.Add("Omnix.Base.Helpers");
-                hashSet.Add("Omnix.Collections");
-                hashSet.Add("Omnix.Serialization");
-                hashSet.Add("Omnix.Serialization.RocketPack");
-
-                // 任意の名前空間をusingする。
-                hashSet.UnionWith(info.Options.Where(n => n.Name == "csharp_using").Select(n => n.Value.Trim()));
-
                 // ロードされた*.rpfファイルの名前空間をusingする
-                hashSet.UnionWith(externalInfos.SelectMany(n => n.Options.Where(m => m.Name == "csharp_namespace").Select(m => m.Value.Trim())));
+                hashSet.UnionWith(externalDefinitions.SelectMany(n => n.Options.Where(m => m.Name == "csharp_namespace").Select(m => m.Value.Trim())));
 
                 var sortedList = hashSet.ToList();
                 sortedList.Sort();
@@ -43,9 +29,13 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
 
             w.WriteLine();
 
+            w.WriteLine("#nullable enable");
+
+            w.WriteLine();
+
             // namespaceの宣言を行う。
             {
-                var option = info.Options.First(n => n.Name == "csharp_namespace");
+                var option = definition.Options.First(n => n.Name == "csharp_namespace");
 
                 w.WriteLine($"namespace {option.Value}");
             }
@@ -53,11 +43,11 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
             w.WriteLine("{");
             w.PushIndent();
 
-            var enumWriter = new EnumWriter(info);
-            var classWriter = new ClassWriter(info, externalInfos);
-            var structWriter = new StructWriter(info, externalInfos);
+            var enumWriter = new EnumWriter(definition);
+            var classWriter = new ClassWriter(definition, externalDefinitions);
+            var structWriter = new StructWriter(definition, externalDefinitions);
 
-            foreach (var enumInfo in info.Enums)
+            foreach (var enumInfo in definition.Enums)
             {
                 // Enum
                 enumWriter.Write(w, enumInfo);
@@ -65,7 +55,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
                 w.WriteLine();
             }
 
-            foreach (var messageInfo in info.Messages)
+            foreach (var messageInfo in definition.Messages)
             {
                 if (messageInfo.FormatType == MessageFormatType.Medium)
                 {
@@ -95,26 +85,41 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
             return name[0].ToString().ToLower() + name.Substring(1);
         }
 
-        /// <summary>
-        /// 最大サイズを示すフィールド変数名を生成します。
-        /// </summary>
-        private static string GetMaxLengthFieldName(MessageElementInfo element)
+        private static string GetFullName(string name, params string[] types)
         {
-            switch (element.Type)
+            return name switch
             {
-                case StringTypeInfo typeInfo:
-                    return $"Max{element.Name}Length";
-                case MemoryTypeInfo typeInfo:
-                    return $"Max{element.Name}Length";
-                case ListTypeInfo typeInfo:
-                    return $"Max{element.Name}Count";
-                case MapTypeInfo typeInfo:
-                    return $"Max{element.Name}Count";
-                default:
-                    return null;
-            }
+                "ReadOnlySequence<>" => $"System.Buffers.ReadOnlySequence<{types[0]}>",
+                "IBufferWriter<>" => $"System.Buffers.IBufferWriter<{types[0]}>",
+                "IEquatable<>" => $"System.IEquatable<{types[0]}>",
+                "RocketPackReader" => "Omnix.Serialization.RocketPack.RocketPackReader",
+                "RocketPackWriter" => "Omnix.Serialization.RocketPack.RocketPackWriter",
+                "IRocketPackFormatter<>" => $"Omnix.Serialization.RocketPack.IRocketPackFormatter<{types[0]}>",
+                "FormatException" => "System.FormatException",
+                "BytesOperations" => "Omnix.Base.BytesOperations",
+                "CollectionHelper" => "Omnix.Base.Helpers.CollectionHelper",
+                "ObjectHelper" => "Omnix.Base.Helpers.ObjectHelper",
+                "HashCode" => "System.HashCode",
+                "Array" => "System.Array",
+                "Timestamp" => "Omnix.Serialization.RocketPack.Timestamp",
+                "IMemoryOwner<>" => $"System.Buffers.IMemoryOwner<{types[0]}>",
+                "Span<>" => $"System.Span<{types[0]}>",
+                "ReadOnlySpan<>" => $"System.ReadOnlySpan<{types[0]}>",
+                "Memory<>" => $"System.Memory<{types[0]}>",
+                "ReadOnlyMemory<>" => $"System.ReadOnlyMemory<{types[0]}>",
+                "ReadOnlyListSlim<>" => $"Omnix.Collections.ReadOnlyListSlim<{types[0]}>",
+                "ReadOnlyDictionarySlim<,>" => $"Omnix.Collections.ReadOnlyDictionarySlim<{types[0]}, {types[1]}>",
+                "Dictionary<,>" => $"System.Collections.Generic.Dictionary<{types[0]}, {types[1]}>",
+                "RocketPackMessageBase<>" => $"Omnix.Serialization.RocketPack.RocketPackMessageBase<{types[0]}>",
+                "IDisposable" => "System.IDisposable",
+                "BufferPool" => "Omnix.Base.BufferPool",
+                "MemoryOwner<>" => $"Omnix.Base.SimpleMemoryOwner<{types[0]}>",
+                "ArgumentNullException" => "System.ArgumentNullException",
+                "ArgumentOutOfRangeException" => "System.ArgumentOutOfRangeException",
+                _ => throw new InvalidOperationException(name)
+            };
         }
-
+            
         private class CodeWriter
         {
             private StringBuilder _sb = new StringBuilder();

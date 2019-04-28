@@ -1,0 +1,65 @@
+syntax = v1;
+
+option csharp_namespace = "FormatterBenchmarks";
+option csharp_access_level = "internal";
+
+message RocketPack_BytesElementsList {
+    List: vector<RocketPack_BytesElements>(100000) = 0,
+}
+
+message RocketPack_BytesElements {
+    [Recyclable]
+    X0: memory(1048576) = 0,
+    [Recyclable]
+    X1: memory(1048576) = 1,
+    [Recyclable]
+    X2: memory(1048576) = 2,
+    [Recyclable]
+    X3: memory(1048576) = 3,
+    [Recyclable]
+    X4: memory(1048576) = 4,
+    [Recyclable]
+    X5: memory(1048576) = 5,
+    [Recyclable]
+    X6: memory(1048576) = 6,
+    [Recyclable]
+    X7: memory(1048576) = 7,
+    [Recyclable]
+    X8: memory(1048576) = 8,
+    [Recyclable]
+    X9: memory(1048576) = 9,
+}
+
+message RocketPack_IntElementsList {
+    List: vector<RocketPack_IntElements>(100000) = 0,
+}
+
+message RocketPack_IntElements {
+    X0: uint32 = 0,
+    X1: uint32 = 1,
+    X2: uint32 = 2,
+    X3: uint32 = 3,
+    X4: uint32 = 4,
+    X5: uint32 = 5,
+    X6: uint32 = 6,
+    X7: uint32 = 7,
+    X8: uint32 = 8,
+    X9: uint32 = 9,
+}
+
+message RocketPack_StringElementsList {
+    List: vector<RocketPack_StringElements>(100000) = 0,
+}
+
+message RocketPack_StringElements {
+    X0: string(8192) = 0,
+    X1: string(8192) = 1,
+    X2: string(8192) = 2,
+    X3: string(8192) = 3,
+    X4: string(8192) = 4,
+    X5: string(8192) = 5,
+    X6: string(8192) = 6,
+    X7: string(8192) = 7,
+    X8: string(8192) = 8,
+    X9: string(8192) = 9,
+}

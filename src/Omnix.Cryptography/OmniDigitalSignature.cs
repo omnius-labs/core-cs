@@ -7,7 +7,7 @@ namespace Omnix.Cryptography
 {
     public sealed partial class OmniDigitalSignature
     {
-        private volatile OmniSignature _omniSignature;
+        private OmniSignature? _signature;
 
         public static OmniDigitalSignature Create(string name, OmniDigitalSignatureAlgorithmType algorithmType)
         {
@@ -29,10 +29,7 @@ namespace Omnix.Cryptography
 
         public OmniSignature GetOmniSignature()
         {
-            if (_omniSignature == null)
-                _omniSignature = SignatureHelper.GetOmniSignature(this);
-
-            return _omniSignature;
+            return _signature ?? (_signature = SignatureHelper.GetOmniSignature(this));
         }
 
         public static OmniCertificate CreateOmniCertificate(OmniDigitalSignature digitalSignature, ReadOnlySequence<byte> sequence)

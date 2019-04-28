@@ -10,15 +10,6 @@ namespace Omnix.Io
     /// </summary>
     public class UnbufferedFileStream : Stream
     {
-        private class BlockInfo
-        {
-            public bool IsUpdated { get; set; }
-            public long Position { get; set; }
-            public int Offset { get; set; }
-            public int Count { get; set; }
-            public byte[] Value { get; set; }
-        }
-
         private string _path;
         private BufferPool _bufferPool;
 
@@ -26,7 +17,11 @@ namespace Omnix.Io
         private long _length;
         private FileStream _stream;
 
-        private BlockInfo _blockInfo;
+        private bool _blockIsUpdated;
+        private long _blockPosition;
+        private int _blockOffset;
+        private int _blockCount;
+        private byte[] _blockBuffer;
 
         private bool _disposed;
 
@@ -44,19 +39,16 @@ namespace Omnix.Io
                 _stream = new FileStream(path, mode, access, share, 8, options | FileFlagNoBuffering);
 
             }
-            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            else
             {
                 _stream = new FileStream(path, mode, access, share, 8, options);
             }
 
-            _blockInfo = new BlockInfo();
-            {
-                _blockInfo.IsUpdated = false;
-                _blockInfo.Position = -1;
-                _blockInfo.Offset = 0;
-                _blockInfo.Count = 0;
-                _blockInfo.Value = _bufferPool.GetArrayPool().Rent(SectorSize);
-            }
+            _blockIsUpdated = false;
+            _blockPosition = -1;
+            _blockOffset = 0;
+            _blockCount = 0;
+            _blockBuffer = _bufferPool.GetArrayPool().Rent(SectorSize);
 
             _position = _stream.Position;
             _length = _stream.Length;
@@ -114,7 +106,7 @@ namespace Omnix.Io
 
                 if (_position == value) return;
 
-                if (_blockInfo.IsUpdated)
+                if (_blockIsUpdated)
                 {
                     this.Flush();
                 }
@@ -122,11 +114,11 @@ namespace Omnix.Io
                 {
                     long p = (value / SectorSize) * SectorSize;
 
-                    if (_blockInfo.Position != p)
+                    if (_blockPosition != p)
                     {
-                        _blockInfo.Position = -1;
-                        _blockInfo.Offset = 0;
-                        _blockInfo.Count = 0;
+                        _blockPosition = -1;
+                        _blockOffset = 0;
+                        _blockCount = 0;
                     }
                 }
 
@@ -180,7 +172,7 @@ namespace Omnix.Io
             if (count < 0 || (buffer.Length - offset) < count) throw new ArgumentOutOfRangeException(nameof(count));
             if (count == 0) return 0;
 
-            if (_blockInfo.IsUpdated)
+            if (_blockIsUpdated)
             {
                 this.Flush();
             }
@@ -193,22 +185,22 @@ namespace Omnix.Io
             {
                 long p = (_position / SectorSize) * SectorSize;
 
-                if (_blockInfo.Position != p)
+                if (_blockPosition != p)
                 {
-                    _blockInfo.Position = p;
-                    _blockInfo.Offset = 0;
+                    _blockPosition = p;
+                    _blockOffset = 0;
 
-                    _stream.Seek(_blockInfo.Position, SeekOrigin.Begin);
+                    _stream.Seek(_blockPosition, SeekOrigin.Begin);
 
-                    int readLength = _stream.Read(_blockInfo.Value, 0, SectorSize);
-                    readLength = (int)Math.Min(_length - _blockInfo.Position, readLength);
+                    int readLength = _stream.Read(_blockBuffer, 0, SectorSize);
+                    readLength = (int)Math.Min(_length - _blockPosition, readLength);
 
-                    _blockInfo.Count = readLength;
+                    _blockCount = readLength;
                 }
 
                 int blockReadPosition = (int)(_position - p);
                 int length = Math.Min(SectorSize - blockReadPosition, count);
-                BytesOperations.Copy(_blockInfo.Value.AsSpan(blockReadPosition), buffer.AsSpan(offset), length);
+                BytesOperations.Copy(_blockBuffer.AsSpan(blockReadPosition), buffer.AsSpan(offset), length);
 
                 offset += length;
                 count -= length;
@@ -232,7 +224,7 @@ namespace Omnix.Io
             {
                 long p = (_position / SectorSize) * SectorSize;
 
-                if (_blockInfo.Position != p)
+                if (_blockPosition != p)
                 {
                     this.Flush();
                 }
@@ -242,13 +234,13 @@ namespace Omnix.Io
                 int blockWritePosition = (int)(_position - p);
                 int length = Math.Min(SectorSize - blockWritePosition, count);
 
-                _blockInfo.Position = p;
-                BytesOperations.Copy(buffer.AsSpan(offset), _blockInfo.Value.AsSpan(blockWritePosition), length);
-                if (_blockInfo.Count == 0)
-                    _blockInfo.Offset = blockWritePosition;
-                _blockInfo.Count = (length + blockWritePosition) - _blockInfo.Offset;
+                _blockPosition = p;
+                BytesOperations.Copy(buffer.AsSpan(offset), _blockBuffer.AsSpan(blockWritePosition), length);
+                if (_blockCount == 0)
+                    _blockOffset = blockWritePosition;
+                _blockCount = (length + blockWritePosition) - _blockOffset;
 
-                _blockInfo.IsUpdated = true;
+                _blockIsUpdated = true;
 
                 offset += length;
                 count -= length;
@@ -259,39 +251,39 @@ namespace Omnix.Io
 
         public override void Flush()
         {
-            if (_blockInfo.Position == -1) return;
+            if (_blockPosition == -1) return;
 
-            if (_blockInfo.IsUpdated)
+            if (_blockIsUpdated)
             {
-                _length = Math.Max(_length, _blockInfo.Position + _blockInfo.Offset + _blockInfo.Count);
+                _length = Math.Max(_length, _blockPosition + _blockOffset + _blockCount);
 
-                if (_blockInfo.Offset != 0 || _blockInfo.Count != SectorSize)
+                if (_blockOffset != 0 || _blockCount != SectorSize)
                 {
                     using (var memoryOwner = _bufferPool.Rent(SectorSize))
                     {
-                        _stream.Seek(_blockInfo.Position, SeekOrigin.Begin);
+                        _stream.Seek(_blockPosition, SeekOrigin.Begin);
 
                         int readLength = _stream.Read(memoryOwner.Memory.Span.Slice(0, SectorSize));
-                        readLength = (int)Math.Min(_length - _blockInfo.Position, readLength);
+                        readLength = (int)Math.Min(_length - _blockPosition, readLength);
 
                         BytesOperations.Zero(memoryOwner.Memory.Span.Slice(readLength, SectorSize - readLength));
-                        BytesOperations.Copy(_blockInfo.Value.AsSpan(_blockInfo.Offset), memoryOwner.Memory.Span.Slice(_blockInfo.Offset), _blockInfo.Count);
+                        BytesOperations.Copy(_blockBuffer.AsSpan(_blockOffset), memoryOwner.Memory.Span.Slice(_blockOffset), _blockCount);
 
-                        _stream.Seek(_blockInfo.Position, SeekOrigin.Begin);
+                        _stream.Seek(_blockPosition, SeekOrigin.Begin);
                         _stream.Write(memoryOwner.Memory.Span.Slice(0, SectorSize));
                     }
                 }
                 else
                 {
-                    _stream.Seek(_blockInfo.Position, SeekOrigin.Begin);
-                    _stream.Write(_blockInfo.Value.AsSpan().Slice(0, _blockInfo.Count));
+                    _stream.Seek(_blockPosition, SeekOrigin.Begin);
+                    _stream.Write(_blockBuffer.AsSpan().Slice(0, _blockCount));
                 }
             }
 
-            _blockInfo.IsUpdated = false;
-            _blockInfo.Position = -1;
-            _blockInfo.Offset = 0;
-            _blockInfo.Count = 0;
+            _blockIsUpdated = false;
+            _blockPosition = -1;
+            _blockOffset = 0;
+            _blockCount = 0;
 
             _stream.Flush();
         }
@@ -307,47 +299,15 @@ namespace Omnix.Io
                 {
                     this.Flush();
 
-                    if (_stream != null)
+                    _stream.Dispose();
+                    _bufferPool.GetArrayPool().Return(_blockBuffer);
+
+                    using (var stream = new FileStream(_path, FileMode.Open))
                     {
-                        try
+                        if (stream.Length != _length)
                         {
-                            _stream.Dispose();
+                            stream.SetLength(_length);
                         }
-                        catch (Exception)
-                        {
-
-                        }
-
-                        _stream = null;
-                    }
-
-                    if (_blockInfo.Value != null)
-                    {
-                        try
-                        {
-                            _bufferPool.GetArrayPool().Return(_blockInfo.Value);
-                        }
-                        catch (Exception)
-                        {
-
-                        }
-
-                        _blockInfo.Value = null;
-                    }
-
-                    try
-                    {
-                        using (var stream = new FileStream(_path, FileMode.Open))
-                        {
-                            if (stream.Length != _length)
-                            {
-                                stream.SetLength(_length);
-                            }
-                        }
-                    }
-                    catch (Exception)
-                    {
-
                     }
                 }
             }

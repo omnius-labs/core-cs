@@ -9,12 +9,12 @@ namespace Omnix.Base.Extensions
     {
         public static void Shuffle<T>(this Random random, IList<T> collection)
         {
-            object syncObject = ExtensionHelper.GetLockObject(collection);
+            object? lockObject = ExtensionHelper.GetLockObject(collection);
             bool lockToken = false;
 
             try
             {
-                if (syncObject != null) Monitor.Enter(syncObject, ref lockToken);
+                if (lockObject != null) Monitor.Enter(lockObject, ref lockToken);
 
                 int n = collection.Count;
 
@@ -28,7 +28,7 @@ namespace Omnix.Base.Extensions
             }
             finally
             {
-                if (lockToken) Monitor.Exit(syncObject);
+                if (lockToken) Monitor.Exit(lockObject);
             }
         }
 

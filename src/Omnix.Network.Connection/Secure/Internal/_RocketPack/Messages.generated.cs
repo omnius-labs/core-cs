@@ -1,72 +1,67 @@
-﻿using Omnix.Base;
-using Omnix.Base.Helpers;
-using Omnix.Collections;
-using Omnix.Cryptography;
+﻿using Omnix.Cryptography;
 using Omnix.Network.Connection.Secure;
-using Omnix.Serialization;
-using Omnix.Serialization.RocketPack;
-using System;
-using System.Buffers;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+
+#nullable enable
 
 namespace Omnix.Network.Connection.Secure.Internal
 {
-    internal sealed partial class HelloMessage : RocketPackMessageBase<HelloMessage>
+    internal sealed partial class HelloMessage : Omnix.Serialization.RocketPack.RocketPackMessageBase<HelloMessage>
     {
         static HelloMessage()
         {
             HelloMessage.Formatter = new CustomFormatter();
+            HelloMessage.Empty = new HelloMessage(System.Array.Empty<OmniSecureConnectionVersion>());
         }
+
+        private readonly int __hashCode;
 
         public static readonly int MaxVersionsCount = 32;
 
         public HelloMessage(OmniSecureConnectionVersion[] versions)
         {
-            if (versions is null) throw new ArgumentNullException("versions");
-            if (versions.Length > 32) throw new ArgumentOutOfRangeException("versions");
+            if (versions is null) throw new System.ArgumentNullException("versions");
+            if (versions.Length > 32) throw new System.ArgumentOutOfRangeException("versions");
 
-            this.Versions = new ReadOnlyListSlim<OmniSecureConnectionVersion>(versions);
+            this.Versions = new Omnix.Collections.ReadOnlyListSlim<OmniSecureConnectionVersion>(versions);
 
             {
-                var hashCode = new HashCode();
+                var __h = new System.HashCode();
                 foreach (var n in this.Versions)
                 {
-                    if (n != default) hashCode.Add(n.GetHashCode());
+                    if (n != default) __h.Add(n.GetHashCode());
                 }
-                _hashCode = hashCode.ToHashCode();
+                __hashCode = __h.ToHashCode();
             }
         }
 
-        public ReadOnlyListSlim<OmniSecureConnectionVersion> Versions { get; }
+        public Omnix.Collections.ReadOnlyListSlim<OmniSecureConnectionVersion> Versions { get; }
 
-        public override bool Equals(HelloMessage target)
+        public override bool Equals(HelloMessage? target)
         {
-            if ((object)target == null) return false;
-            if (Object.ReferenceEquals(this, target)) return true;
-            if ((this.Versions is null) != (target.Versions is null)) return false;
-            if (!(this.Versions is null) && !(target.Versions is null) && !CollectionHelper.Equals(this.Versions, target.Versions)) return false;
+            if (target is null) return false;
+            if (object.ReferenceEquals(this, target)) return true;
+            if (!Omnix.Base.Helpers.CollectionHelper.Equals(this.Versions, target.Versions)) return false;
 
             return true;
         }
 
-        private readonly int _hashCode;
-        public override int GetHashCode() => _hashCode;
+        public override int GetHashCode() => __hashCode;
 
-        private sealed class CustomFormatter : IRocketPackFormatter<HelloMessage>
+        private sealed class CustomFormatter : Omnix.Serialization.RocketPack.IRocketPackFormatter<HelloMessage>
         {
-            public void Serialize(RocketPackWriter w, HelloMessage value, int rank)
+            public void Serialize(Omnix.Serialization.RocketPack.RocketPackWriter w, HelloMessage value, int rank)
             {
-                if (rank > 256) throw new FormatException();
+                if (rank > 256) throw new System.FormatException();
 
-                // Write property count
                 {
                     uint propertyCount = 0;
-                    if (value.Versions.Count != 0) propertyCount++;
+                    if (value.Versions.Count != 0)
+                    {
+                        propertyCount++;
+                    }
                     w.Write(propertyCount);
                 }
 
-                // Versions
                 if (value.Versions.Count != 0)
                 {
                     w.Write((uint)0);
@@ -78,14 +73,14 @@ namespace Omnix.Network.Connection.Secure.Internal
                 }
             }
 
-            public HelloMessage Deserialize(RocketPackReader r, int rank)
+            public HelloMessage Deserialize(Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
             {
-                if (rank > 256) throw new FormatException();
+                if (rank > 256) throw new System.FormatException();
 
                 // Read property count
                 uint propertyCount = r.GetUInt32();
 
-                OmniSecureConnectionVersion[] p_versions = default;
+                OmniSecureConnectionVersion[] p_versions = System.Array.Empty<OmniSecureConnectionVersion>();
 
                 for (; propertyCount > 0; propertyCount--)
                 {

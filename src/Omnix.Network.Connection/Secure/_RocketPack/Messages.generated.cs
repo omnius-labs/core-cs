@@ -1,13 +1,6 @@
-﻿using Omnix.Base;
-using Omnix.Base.Helpers;
-using Omnix.Collections;
-using Omnix.Cryptography;
-using Omnix.Serialization;
-using Omnix.Serialization.RocketPack;
-using System;
-using System.Buffers;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using Omnix.Cryptography;
+
+#nullable enable
 
 namespace Omnix.Network.Connection.Secure
 {

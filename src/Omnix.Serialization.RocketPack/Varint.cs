@@ -5,7 +5,7 @@ using System.Threading;
 using System.Buffers.Binary;
 using System.Runtime.CompilerServices;
 
-namespace Omnix.Serialization
+namespace Omnix.Serialization.RocketPack
 {
     // https://developers.google.com/protocol-buffers/docs/encoding
 

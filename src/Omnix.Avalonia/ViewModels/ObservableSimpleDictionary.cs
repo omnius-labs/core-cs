@@ -69,16 +69,13 @@ namespace Omnix.Avalonia.ViewModels
             }
         }
 
-        private ReadOnlyObservableCollection<TValue> _readOnlyValues;
+        private ReadOnlyObservableCollection<TValue>? _readOnlyValues;
 
         public ReadOnlyObservableCollection<TValue> Values
         {
             get
             {
-                if (_readOnlyValues == null)
-                    _readOnlyValues = new ReadOnlyObservableCollection<TValue>(_collection);
-
-                return _readOnlyValues;
+                return _readOnlyValues ?? (_readOnlyValues = new ReadOnlyObservableCollection<TValue>(_collection));
             }
         }
 

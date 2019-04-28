@@ -47,7 +47,7 @@ namespace Omnix.Cryptography.Internal
 
         public static OmniSignature GetOmniSignature(OmniDigitalSignature digitalSignature)
         {
-            if (digitalSignature == null) throw new ArgumentNullException(nameof(digitalSignature));
+            if (digitalSignature is null) throw new ArgumentNullException(nameof(digitalSignature));
             if (digitalSignature.Name == null) throw new ArgumentNullException(nameof(digitalSignature.Name));
 
             if (digitalSignature.AlgorithmType == OmniDigitalSignatureAlgorithmType.EcDsa_P521_Sha2_256)
@@ -62,7 +62,7 @@ namespace Omnix.Cryptography.Internal
 
         public static OmniSignature GetOmniSignature(OmniCertificate certificate)
         {
-            if (certificate == null) throw new ArgumentNullException(nameof(certificate));
+            if (certificate is null) throw new ArgumentNullException(nameof(certificate));
             if (certificate.Name == null) throw new ArgumentNullException(nameof(certificate.Name));
 
             if (certificate.AlgorithmType == OmniDigitalSignatureAlgorithmType.EcDsa_P521_Sha2_256)

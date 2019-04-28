@@ -7,7 +7,7 @@ namespace Omnix.Base
 {
     public unsafe static class BytesOperations
     {
-        private static NativeLibraryManager _nativeLibraryManager;
+        private static NativeLibraryManager? _nativeLibraryManager;
 
         private delegate void ZeroDelegate(byte* source, int length);
         private delegate void CopyDelegate(byte* source, byte* destination, int length);
@@ -38,56 +38,56 @@ namespace Omnix.Base
 
         internal static void LoadNativeMethods()
         {
-            if (_nativeLibraryManager != null)
+            _nativeLibraryManager?.Dispose();
+
+            try
             {
-                _nativeLibraryManager.Dispose();
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                {
+                    if (RuntimeInformation.ProcessArchitecture == Architecture.X64)
+                    {
+                        _nativeLibraryManager = new NativeLibraryManager("Assemblies/Omnix.Base.win-x64.dll");
+                    }
+                    else
+                    {
+                        throw new NotSupportedException();
+                    }
+                }
+                else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+                {
+                    if (RuntimeInformation.ProcessArchitecture == Architecture.X64)
+                    {
+                        _nativeLibraryManager = new NativeLibraryManager("Assemblies/Omnix.Base.linux-x64.so");
+                    }
+                    else
+                    {
+                        throw new NotSupportedException();
+                    }
+                }
+                else
+                {
+                    throw new NotSupportedException();
+                }
+
+                _zero = _nativeLibraryManager.GetMethod<ZeroDelegate>("zero");
+                _copy = _nativeLibraryManager.GetMethod<CopyDelegate>("copy");
+                _equals = _nativeLibraryManager.GetMethod<EqualsDelegate>("equals");
+                _compare = _nativeLibraryManager.GetMethod<CompareDelegate>("compare");
+                _and = _nativeLibraryManager.GetMethod<BitwiseOperationDelegate>("math_and");
+                _or = _nativeLibraryManager.GetMethod<BitwiseOperationDelegate>("math_or");
+                _xor = _nativeLibraryManager.GetMethod<BitwiseOperationDelegate>("math_xor");
+            }
+            catch (Exception)
+            {
+                _nativeLibraryManager?.Dispose();
                 _nativeLibraryManager = null;
-            }
 
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-            {
-                if (RuntimeInformation.ProcessArchitecture == Architecture.X64)
-                {
-                    _nativeLibraryManager = new NativeLibraryManager("Assemblies/Omnix.Base.win-x64.dll");
-                }
-                else
-                {
-                    throw new NotSupportedException();
-                }
+                throw;
             }
-            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-            {
-                if (RuntimeInformation.ProcessArchitecture == Architecture.X64)
-                {
-                    _nativeLibraryManager = new NativeLibraryManager("Assemblies/Omnix.Base.linux-x64.so");
-                }
-                else
-                {
-                    throw new NotSupportedException();
-                }
-            }
-            else
-            {
-                throw new NotSupportedException();
-            }
-
-            _zero = _nativeLibraryManager.GetMethod<ZeroDelegate>("zero");
-            _copy = _nativeLibraryManager.GetMethod<CopyDelegate>("copy");
-            _equals = _nativeLibraryManager.GetMethod<EqualsDelegate>("equals");
-            _compare = _nativeLibraryManager.GetMethod<CompareDelegate>("compare");
-            _and = _nativeLibraryManager.GetMethod<BitwiseOperationDelegate>("math_and");
-            _or = _nativeLibraryManager.GetMethod<BitwiseOperationDelegate>("math_or");
-            _xor = _nativeLibraryManager.GetMethod<BitwiseOperationDelegate>("math_xor");
         }
 
         internal static void LoadPureUnsafeMethods()
         {
-            if (_nativeLibraryManager != null)
-            {
-                _nativeLibraryManager.Dispose();
-                _nativeLibraryManager = null;
-            }
-
             _zero = PureUnsafeMethods.Zero;
             _copy = PureUnsafeMethods.Copy;
             _equals = PureUnsafeMethods.Equals;

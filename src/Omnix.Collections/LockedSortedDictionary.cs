@@ -11,8 +11,8 @@ namespace Omnix.Collections
         private SortedDictionary<TKey, TValue> _dic;
         private int? _capacity;
 
-        private LockedCollection<TKey> _keys;
-        private LockedCollection<TValue> _values;
+        private LockedCollection<TKey>? _keys;
+        private LockedCollection<TValue>? _values;
 
         public LockedSortedDictionary()
         {
@@ -264,7 +264,7 @@ namespace Omnix.Collections
             {
                 lock (this.LockObject)
                 {
-                    return this[(TKey)key];
+                    return this[(TKey)key]!;
                 }
             }
             set

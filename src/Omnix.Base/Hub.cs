@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Omnix.Base
 {
-    public sealed partial class Hub : IDisposable
+    public sealed partial class Hub : DisposableBase
     {
         private Pipe _pipe;
         private readonly HubReader _hubReader;
@@ -38,12 +38,15 @@ namespace Omnix.Base
             _hubWriter.Reset();
         }
 
-        public void Dispose()
+        protected override void Dispose(bool disposing)
         {
             if (_disposed) return;
             _disposed = true;
 
-            this.Reset();
+            if (disposing)
+            {
+                this.Reset();
+            }
         }
     }
 }

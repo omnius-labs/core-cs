@@ -12,12 +12,12 @@ namespace Omnix.Base.Extensions
             if (list == null) throw new ArgumentNullException(nameof(list));
             if (items == null) throw new ArgumentNullException(nameof(items));
 
-            object syncObject = ExtensionHelper.GetLockObject(list);
+            object? lockObject = ExtensionHelper.GetLockObject(list);
             bool lockToken = false;
 
             try
             {
-                if (syncObject != null) Monitor.Enter(syncObject, ref lockToken);
+                if (lockObject != null) Monitor.Enter(lockObject, ref lockToken);
 
                 foreach (var item in items)
                 {
@@ -26,7 +26,7 @@ namespace Omnix.Base.Extensions
             }
             finally
             {
-                if (lockToken) Monitor.Exit(syncObject);
+                if (lockToken) Monitor.Exit(lockObject);
             }
         }
     }

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 using Omnix.Base;
+using Omnix.Collections.Internal;
 
 namespace Omnix.Collections.Extensions
 {
@@ -11,18 +12,7 @@ namespace Omnix.Collections.Extensions
     {
         public static LockedList<T> ToLockedList<T>(this IEnumerable<T> list)
         {
-            object lockObject = null;
-            {
-                if (list is ICollection collection && collection.IsSynchronized)
-                {
-                    lockObject = collection.SyncRoot;
-                }
-
-                if (lockObject == null && list is ISynchronized synchronized)
-                {
-                    lockObject = synchronized.LockObject;
-                }
-            }
+            object? lockObject = ExtensionHelper.GetLockObject(list);
 
             bool lockToken = false;
 
