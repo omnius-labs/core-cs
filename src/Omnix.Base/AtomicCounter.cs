@@ -35,7 +35,7 @@ namespace Omnix.Base
 
         public override bool Equals(object obj)
         {
-            if ((AtomicCounter)obj == null || !(obj is AtomicCounter)) return false;
+            if (!(obj is AtomicCounter)) return false;
 
             return this.Equals((AtomicCounter)obj);
         }

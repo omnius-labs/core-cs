@@ -16,7 +16,7 @@ enum OmniDigitalSignatureAlgorithmType : uint8 {
 
 enum OmniHashcashAlgorithmType : uint8
 {
-    Sha2_256 = 0,
+    Simple_Sha2_256 = 0,
 }
 
 small message OmniHash {

@@ -4,17 +4,17 @@ namespace Omnix.Base.Internal
 {
     internal static class ExtensionHelper
     {
-        public static object GetLockObject(object target)
+        public static object? GetLockObject(object target)
         {
-            object syncObject = null;
+            object? lockObject = null;
             {
                 if (target is ICollection collection && collection.IsSynchronized)
                 {
-                    syncObject = collection.SyncRoot;
+                    lockObject = collection.SyncRoot;
                 }
             }
 
-            return syncObject;
+            return lockObject;
         }
     }
 }

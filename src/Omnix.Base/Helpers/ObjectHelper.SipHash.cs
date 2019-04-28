@@ -10,7 +10,7 @@ namespace Omnix.Base.Helpers
         /// <summary>
         /// This class is immutable and thread-safe.
         /// </summary>
-        public sealed class SipHash
+        private sealed class SipHash
         {
             #region Fields
 

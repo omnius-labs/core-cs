@@ -123,7 +123,6 @@ namespace Omnix.Io
                 if (disposing)
                 {
                     this.Flush();
-                    _stream = null;
                 }
             }
             finally

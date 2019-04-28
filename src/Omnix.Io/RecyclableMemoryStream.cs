@@ -251,22 +251,12 @@ namespace Omnix.Io
 
                 if (disposing)
                 {
-                    if (_buffers != null)
+                    for (int i = 0; i < _buffers.Count; i++)
                     {
-                        try
-                        {
-                            for (int i = 0; i < _buffers.Count; i++)
-                            {
-                                _bytesPool.GetArrayPool().Return(_buffers[i]);
-                            }
-                        }
-                        catch (Exception)
-                        {
-
-                        }
-
-                        _buffers = null;
+                        _bytesPool.GetArrayPool().Return(_buffers[i]);
                     }
+
+                    _buffers.Clear();
                 }
             }
             finally

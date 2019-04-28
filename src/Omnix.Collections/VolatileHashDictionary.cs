@@ -68,25 +68,19 @@ namespace Omnix.Collections
 
             lock (this.LockObject)
             {
-                List<TKey> list = null;
+                var list = new List<TKey>();
 
                 foreach (var (key, info) in _dic)
                 {
                     if ((now - info.UpdateTime) > _survivalTime)
                     {
-                        if (list == null)
-                            list = new List<TKey>();
-
                         list.Add(key);
                     }
                 }
 
-                if (list != null)
+                foreach (var key in list)
                 {
-                    foreach (var key in list)
-                    {
-                        _dic.Remove(key);
-                    }
+                    _dic.Remove(key);
                 }
             }
         }
@@ -220,7 +214,7 @@ namespace Omnix.Collections
                 }
                 else
                 {
-                    value = default;
+                    value = default!;
 
                     return false;
                 }
@@ -307,7 +301,7 @@ namespace Omnix.Collections
             {
                 lock (this.LockObject)
                 {
-                    return this[(TKey)key];
+                    return this[(TKey)key]!;
                 }
             }
             set

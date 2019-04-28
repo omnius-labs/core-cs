@@ -4,7 +4,7 @@ using System.Text;
 using Omnix.Base;
 using Xunit;
 
-namespace Omnix.Serialization.Tests
+namespace Omnix.Serialization.RocketPack.Tests
 {
     public class VarintTests
     {
@@ -16,7 +16,7 @@ namespace Omnix.Serialization.Tests
 
             for (int i = 0; i < 1024; i++)
             {
-                var result1 = ((ulong)random.Next() << 32) | (ulong)random.Next();
+                var result1 = ((ulong)random.Next() << 32) | (uint)random.Next();
 
                 Varint.SetUInt64(result1, hub.Writer);
                 hub.Writer.Complete();

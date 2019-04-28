@@ -41,11 +41,11 @@ namespace Omnix.Base.Extensions
 
         public static Task AsTask(this WaitHandle handle, TimeSpan timeout)
         {
-            var tcs = new TaskCompletionSource<object>();
+            var tcs = new TaskCompletionSource<object?>();
 
             var registration = ThreadPool.RegisterWaitForSingleObject(handle, (state, localTimeout) =>
             {
-                var localTcs = (TaskCompletionSource<object>)state;
+                var localTcs = (TaskCompletionSource<object?>)state;
 
                 if (localTimeout)
                 {

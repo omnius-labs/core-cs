@@ -10,8 +10,8 @@ namespace FormatterBenchmarks.Cases
     [Config(typeof(BenchmarkConfig))]
     public class StringSerializeBenchmark
     {
-        static MessagePack_StringPropertiesListMessage _messagePack_Message;
-        static RocketPack_StringPropertiesListMessage _rocketPack_Message;
+        static MessagePack_StringElementsList _messagePack_Message;
+        static RocketPack_StringElementsList _rocketPack_Message;
 
         static StringSerializeBenchmark()
         {
@@ -32,51 +32,66 @@ namespace FormatterBenchmarks.Cases
             {
                 var random = new Random(0);
 
-                var items = new List<MessagePack_StringPropertiesMessage>();
-                for (int i = 0; i < 100000; i++)
-                {
-                var message = new MessagePack_StringPropertiesMessage()
-                {
-                    MyProperty1 = GetRandomString(random),
-                    MyProperty2 = GetRandomString(random),
-                    MyProperty3 = GetRandomString(random),
-                };
+                var elementsList = new List<MessagePack_StringElements>();
 
-                    items.Add(message);
+                for (int i = 0; i < 32; i++)
+                {
+                    var elements = new MessagePack_StringElements()
+                    {
+                        X0 = GetRandomString(random),
+                        X1 = GetRandomString(random),
+                        X2 = GetRandomString(random),
+                        X3 = GetRandomString(random),
+                        X4 = GetRandomString(random),
+                        X5 = GetRandomString(random),
+                        X6 = GetRandomString(random),
+                        X7 = GetRandomString(random),
+                        X8 = GetRandomString(random),
+                        X9 = GetRandomString(random),
+                    };
+
+                    elementsList.Add(elements);
                 }
 
-                _messagePack_Message = new MessagePack_StringPropertiesListMessage()
-                {
-                    List = items.ToArray(),
-                };
+                _messagePack_Message = new MessagePack_StringElementsList() { List = elementsList.ToArray() };
             }
 
+            using (var hub = new Hub())
             {
                 var random = new Random(0);
+                var bufferPool = BufferPool.Shared;
 
-                var items = new List<RocketPack_StringPropertiesMessage>();
-                for (int i = 0; i < 100000; i++)
+                var elementsList = new List<RocketPack_StringElements>();
+
+                for (int i = 0; i < 32; i++)
                 {
-                var message = new RocketPack_StringPropertiesMessage(
-                    GetRandomString(random),
-                    GetRandomString(random),
-                    GetRandomString(random));
+                    var X0 = GetRandomString(random);
+                    var X1 = GetRandomString(random);
+                    var X2 = GetRandomString(random);
+                    var X3 = GetRandomString(random);
+                    var X4 = GetRandomString(random);
+                    var X5 = GetRandomString(random);
+                    var X6 = GetRandomString(random);
+                    var X7 = GetRandomString(random);
+                    var X8 = GetRandomString(random);
+                    var X9 = GetRandomString(random);
 
-                    items.Add(message);
+                    var elements = new RocketPack_StringElements(X0, X1, X2, X3, X4, X5, X6, X7, X8, X9);
+                    elementsList.Add(elements);
                 }
 
-                _rocketPack_Message = new RocketPack_StringPropertiesListMessage(items.ToArray());
+                _rocketPack_Message = new RocketPack_StringElementsList(elementsList.ToArray());
             }
         }
 
         [Benchmark(Baseline = true)]
-        public byte[] MessagePack_StringPropertiesMessage_SerializeTest()
+        public object MessagePack_StringPropertiesMessage_SerializeTest()
         {
             return MessagePack.MessagePackSerializer.Serialize(_messagePack_Message);
         }
 
         [Benchmark]
-        public Hub RocketPack_StringPropertiesMessage_SerializeTest()
+        public object RocketPack_StringPropertiesMessage_SerializeTest()
         {
             var hub = new Hub();
             _rocketPack_Message.Export(hub.Writer, BufferPool.Shared);

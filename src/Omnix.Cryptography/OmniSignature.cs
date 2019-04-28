@@ -11,14 +11,15 @@ namespace Omnix.Cryptography
 {
     public sealed partial class OmniSignature
     {
-        public static OmniSignature Parse(string item)
+        public static bool TryParse(string item, out OmniSignature? signature)
         {
             if (item == null) throw new ArgumentNullException(nameof(item));
+            signature = null;
 
             try
             {
                 int index = item.IndexOf('@');
-                if (index == -1) return null;
+                if (index == -1) return false;
 
                 // @より前の文字列を取得
                 string name = item.Substring(0, index);
@@ -36,15 +37,16 @@ namespace Omnix.Cryptography
                     hub.Reader.Complete();
                 }
 
-                return new OmniSignature(name, omniHash);
+                signature = new OmniSignature(name, omniHash);
+                return true;
             }
             catch (Exception)
             {
-                return null;
+                return false;
             }
         }
 
-        private volatile string _toString;
+        private string? _toString;
 
         public override string ToString()
         {

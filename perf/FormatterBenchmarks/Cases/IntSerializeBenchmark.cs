@@ -3,77 +3,82 @@ using Omnix.Base;
 using FormatterBenchmarks.Internal;
 using System.Collections.Generic;
 using System;
+using System.IO.Pipelines;
+using System.Buffers;
 
 namespace FormatterBenchmarks.Cases
 {
     [Config(typeof(BenchmarkConfig))]
     public class IntSerializeBenchmark
     {
-        static MessagePack_IntPropertiesListMessage _messagePack_Message;
-        static RocketPack_IntPropertiesListMessage _rocketPack_Message;
+        static MessagePack_IntElementsList _messagePack_Message;
+        static RocketPack_IntElementsList _rocketPack_Message;
 
         static IntSerializeBenchmark()
         {
             {
                 var random = new Random(0);
 
-                var items = new List<MessagePack_IntPropertiesMessage>();
-                for (int i = 0; i < 100000; i++)
+                var elementsList = new List<MessagePack_IntElements>();
+
+                for (int i = 0; i < 32; i++)
                 {
-                    var message = new MessagePack_IntPropertiesMessage()
+                    var elements = new MessagePack_IntElements()
                     {
-                        MyProperty1 = random.Next(),
-                        MyProperty2 = random.Next(),
-                        MyProperty3 = random.Next(),
-                        MyProperty4 = random.Next(),
-                        MyProperty5 = random.Next(),
-                        MyProperty6 = random.Next(),
-                        MyProperty7 = random.Next(),
-                        MyProperty8 = random.Next(),
-                        MyProperty9 = random.Next(),
+                        X0 = (uint)random.Next(0, 1024 * 256),
+                        X1 = (uint)random.Next(0, 1024 * 256),
+                        X2 = (uint)random.Next(0, 1024 * 256),
+                        X3 = (uint)random.Next(0, 1024 * 256),
+                        X4 = (uint)random.Next(0, 1024 * 256),
+                        X5 = (uint)random.Next(0, 1024 * 256),
+                        X6 = (uint)random.Next(0, 1024 * 256),
+                        X7 = (uint)random.Next(0, 1024 * 256),
+                        X8 = (uint)random.Next(0, 1024 * 256),
+                        X9 = (uint)random.Next(0, 1024 * 256),
                     };
 
-                    items.Add(message);
+                    elementsList.Add(elements);
                 }
 
-                _messagePack_Message = new MessagePack_IntPropertiesListMessage()
-                {
-                    List = items.ToArray(),
-                };
+              _messagePack_Message = new MessagePack_IntElementsList() { List = elementsList.ToArray() };
             }
 
+            using (var hub = new Hub())
             {
                 var random = new Random(0);
+                var bufferPool = BufferPool.Shared;
 
-                var items = new List<RocketPack_IntPropertiesMessage>();
-                for (int i = 0; i < 100000; i++)
+                var elementsList = new List<RocketPack_IntElements>();
+
+                for (int i = 0; i < 32; i++)
                 {
-                    var message = new RocketPack_IntPropertiesMessage(
-                        (uint)random.Next(),
-                        (uint)random.Next(),
-                        (uint)random.Next(),
-                        (uint)random.Next(),
-                        (uint)random.Next(),
-                        (uint)random.Next(),
-                        (uint)random.Next(),
-                        (uint)random.Next(),
-                        (uint)random.Next());
+                    var X0 = (uint)random.Next(0, 1024 * 256);
+                    var X1 = (uint)random.Next(0, 1024 * 256);
+                    var X2 = (uint)random.Next(0, 1024 * 256);
+                    var X3 = (uint)random.Next(0, 1024 * 256);
+                    var X4 = (uint)random.Next(0, 1024 * 256);
+                    var X5 = (uint)random.Next(0, 1024 * 256);
+                    var X6 = (uint)random.Next(0, 1024 * 256);
+                    var X7 = (uint)random.Next(0, 1024 * 256);
+                    var X8 = (uint)random.Next(0, 1024 * 256);
+                    var X9 = (uint)random.Next(0, 1024 * 256);
 
-                    items.Add(message);
+                    var elements = new RocketPack_IntElements(X0, X1, X2, X3, X4, X5, X6, X7, X8, X9);
+                    elementsList.Add(elements);
                 }
 
-                _rocketPack_Message = new RocketPack_IntPropertiesListMessage(items.ToArray());
+                _rocketPack_Message = new RocketPack_IntElementsList(elementsList.ToArray());
             }
         }
 
         [Benchmark(Baseline = true)]
-        public byte[] MessagePack_IntPropertiesMessage_SerializeTest()
+        public object MessagePack_IntPropertiesMessage_SerializeTest()
         {
             return MessagePack.MessagePackSerializer.Serialize(_messagePack_Message);
         }
 
         [Benchmark]
-        public Hub RocketPack_IntPropertiesMessage_SerializeTest()
+        public object RocketPack_IntPropertiesMessage_SerializeTest()
         {
             var hub = new Hub();
             _rocketPack_Message.Export(hub.Writer, BufferPool.Shared);

@@ -8,9 +8,9 @@ namespace Omnix.Cryptography
     {
         public static OmniCertificate Create(OmniDigitalSignature digitalSignature, ReadOnlySequence<byte> sequence)
         {
-            if (digitalSignature == null) throw new ArgumentNullException(nameof(digitalSignature));
+            if (digitalSignature is null) throw new ArgumentNullException(nameof(digitalSignature));
 
-            ReadOnlyMemory<byte> value = null;
+            ReadOnlyMemory<byte> value;
 
             if (digitalSignature.AlgorithmType == OmniDigitalSignatureAlgorithmType.EcDsa_P521_Sha2_256)
             {
@@ -29,16 +29,11 @@ namespace Omnix.Cryptography
             return this.GetOmniSignature().ToString();
         }
 
-        private volatile OmniSignature _omniSignature;
+        private OmniSignature _signature;
 
         public OmniSignature GetOmniSignature()
         {
-            if (_omniSignature == null)
-            {
-                _omniSignature = SignatureHelper.GetOmniSignature(this);
-            }
-
-            return _omniSignature;
+            return _signature ?? (_signature = SignatureHelper.GetOmniSignature(this));
         }
 
         public bool Verify(ReadOnlySequence<byte> sequence)

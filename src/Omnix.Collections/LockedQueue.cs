@@ -143,10 +143,7 @@ namespace Omnix.Collections
         {
             lock (this.LockObject)
             {
-                int count = _queue.Count;
-                _queue = new Queue<T>(_queue.Where(n => !n.Equals(item)));
-
-                return (count != _queue.Count);
+                return ((ICollection<T>)_queue).Remove(item);
             }
         }
 

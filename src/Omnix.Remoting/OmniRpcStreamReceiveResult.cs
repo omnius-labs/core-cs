@@ -6,11 +6,11 @@ namespace Omnix.Remoting
     public readonly struct OmniRpcStreamReceiveResult<TMessage>
         where TMessage : RocketPackMessageBase<TMessage>
     {
-        private readonly TMessage _message;
-        private readonly OmniRpcErrorMessage _errorMessage;
+        private readonly TMessage? _message;
+        private readonly OmniRpcErrorMessage? _errorMessage;
         private readonly OmniRpcStreamReceiveResultFlags _resultFlags;
 
-        public OmniRpcStreamReceiveResult(TMessage message, OmniRpcErrorMessage errorMessage, bool isCanceled, bool isCompleted)
+        public OmniRpcStreamReceiveResult(TMessage? message, OmniRpcErrorMessage? errorMessage, bool isCanceled, bool isCompleted)
         {
             _message = message;
             _errorMessage = errorMessage;
@@ -25,6 +25,11 @@ namespace Omnix.Remoting
             if (isCompleted)
             {
                 _resultFlags |= OmniRpcStreamReceiveResultFlags.Completed;
+            }
+
+            if (!(errorMessage is null))
+            {
+                _resultFlags |= OmniRpcStreamReceiveResultFlags.Error;
             }
         }
 

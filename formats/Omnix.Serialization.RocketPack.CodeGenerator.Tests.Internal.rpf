@@ -43,36 +43,15 @@ enum Enum8: uint64 {
     No = 1,
 }
 
-message HelloMessage {
-    X0: bool = 0,
-    X1: int8 = 1,
-    X2: int16 = 2,
-    X3: int32 = 3,
-    X4: int64 = 4,
-    X5: uint8 = 5,
-    X6: uint16 = 6,
-    X7: uint32 = 7,
-    X8: uint64 = 8,
-    X9: Enum1 = 9,
-    X10: Enum2 = 10,
-    X11: Enum3 = 11,
-    X12: Enum4 = 12,
-    X13: Enum5 = 13,
-    X14: Enum6 = 14,
-    X15: Enum7 = 15,
-    X16: Enum8 = 16,
-    X17: float32 = 17,
-    X18: float64 = 18,
-    X19: string(128) = 19, // maximum bytes size is 128
-    X20: timestamp = 20,
-    X21: memory(256) = 21, // maximum bytes size is 256
-    [Recyclable]
-    X22: memory(256) = 22, // use recyclable memory
-    X23: vector<string(128)>(16) = 23,
-    X24: map<uint8, string(128)>(32) = 24,
-}
+small message SmallMessageElement {
+    X0: bool,
+} 
 
-small message SmallHelloMessage {
+message MessageElement {
+    X0: bool = 0,
+} 
+
+small message SmallMessage {
     X0: bool,
     X1: int8,
     X2: int16,
@@ -99,30 +78,68 @@ small message SmallHelloMessage {
     X22: memory(256), // use recyclable memory
     X23: vector<string(128)>(16),
     X24: map<uint8, string(128)>(32),
+    X25: SmallMessageElement,
+    X26: MessageElement,
 }
 
-message IntPropertiesListMessage {
-    List: vector<IntPropertiesMessage>(100000) = 0,
+message Message {
+    X0: bool = 0,
+    X1: int8 = 1,
+    X2: int16 = 2,
+    X3: int32 = 3,
+    X4: int64 = 4,
+    X5: uint8 = 5,
+    X6: uint16 = 6,
+    X7: uint32 = 7,
+    X8: uint64 = 8,
+    X9: Enum1 = 9,
+    X10: Enum2 = 10,
+    X11: Enum3 = 11,
+    X12: Enum4 = 12,
+    X13: Enum5 = 13,
+    X14: Enum6 = 14,
+    X15: Enum7 = 15,
+    X16: Enum8 = 16,
+    X17: float32 = 17,
+    X18: float64 = 18,
+    X19: string(128) = 19, // maximum bytes size is 128
+    X20: timestamp = 20,
+    X21: memory(256) = 21, // maximum bytes size is 256
+    [Recyclable]
+    X22: memory(256) = 22, // use recyclable memory
+    X23: vector<string(128)>(16) = 23,
+    X24: map<uint8, string(128)>(32) = 24,
+    X25: SmallMessageElement = 25,
+    X26: MessageElement = 26,
 }
 
-message StringPropertiesListMessage {
-    List: vector<StringPropertiesMessage>(100000) = 0,
-}
-
-message IntPropertiesMessage {
-    MyProperty1: uint32 = 0,
-    MyProperty2: uint32 = 1,
-    MyProperty3: uint32 = 2,
-    MyProperty4: uint32 = 3,
-    MyProperty5: uint32 = 4,
-    MyProperty6: uint32 = 5,
-    MyProperty7: uint32 = 6,
-    MyProperty8: uint32 = 7,
-    MyProperty9: uint32 = 8,
-}
-
-message StringPropertiesMessage {
-    MyProperty1: string(8192) = 0,
-    MyProperty2: string(8192) = 1,
-    MyProperty3: string(8192) = 2,
+message NullableMessage {
+    X0: bool? = 0,
+    X1: int8? = 1,
+    X2: int16? = 2,
+    X3: int32? = 3,
+    X4: int64? = 4,
+    X5: uint8? = 5,
+    X6: uint16? = 6,
+    X7: uint32? = 7,
+    X8: uint64? = 8,
+    X9: Enum1? = 9,
+    X10: Enum2? = 10,
+    X11: Enum3? = 11,
+    X12: Enum4? = 12,
+    X13: Enum5? = 13,
+    X14: Enum6? = 14,
+    X15: Enum7? = 15,
+    X16: Enum8? = 16,
+    X17: float32? = 17,
+    X18: float64? = 18,
+    X19: string(128)? = 19, // maximum bytes size is 128
+    X20: timestamp? = 20,
+    X21: memory(256)? = 21, // maximum bytes size is 256
+    [Recyclable]
+    X22: memory(256)? = 22, // use recyclable memory
+    X23: vector<string(128)>(16)? = 23,
+    X24: map<uint8, string(128)>(32)? = 24,
+    X25: SmallMessageElement? = 25,
+    X26: MessageElement? = 26,
 }

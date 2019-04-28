@@ -18,7 +18,7 @@ namespace Omnix.Network.Connection
         private readonly Cap _cap;
         private readonly int _maxSendByteCount;
         private readonly int _maxReceiveByteCount;
-        private readonly BandwidthController _bandwidthController;
+        private readonly BandwidthController? _bandwidthController;
         private readonly BufferPool _bufferPool;
 
         private byte[] _sendHeaderBuffer = new byte[4];
@@ -40,8 +40,6 @@ namespace Omnix.Network.Connection
         private readonly object _receiveLockObject = new object();
 
         private volatile bool _disposed;
-
-        private const int ReceiveBytesPerOneTime = 4096;
 
         public OmniNonblockingConnection(Cap cap, OmniNonblockingConnectionOptions option)
         {
@@ -287,15 +285,9 @@ namespace Omnix.Network.Connection
             if (disposing)
             {
                 _cap?.Dispose();
-
                 _sendContentHub?.Dispose();
-                _sendContentHub = null;
-
                 _sendSemaphoreSlim?.Dispose();
-                _sendSemaphoreSlim = null;
-
                 _receiveSemaphoreSlim?.Dispose();
-                _receiveSemaphoreSlim = null;
             }
         }
     }
