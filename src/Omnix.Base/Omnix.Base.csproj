@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="NLog" Version="4.5.11" />
+    <PackageReference Include="NLog" Version="4.6.2" />
     <PackageReference Include="System.IO.Pipelines" Version="4.5.3" />
   </ItemGroup>
 

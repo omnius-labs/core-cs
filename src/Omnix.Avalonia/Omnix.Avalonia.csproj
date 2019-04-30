@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>Library</OutputType>
-    <TargetFrameworks>netcoreapp2.1;net461</TargetFrameworks>
+    <TargetFrameworks>netcoreapp2.2</TargetFrameworks>
   </PropertyGroup>
   <ItemGroup>
     <Compile Update="**\*.xaml.cs">
@@ -15,10 +15,10 @@
     <None Remove="BaseDark.xaml" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Avalonia" Version="0.7.0" />
-    <PackageReference Include="Avalonia.Desktop" Version="0.7.0" />
-    <PackageReference Include="Avalonia.Xaml.Behaviors" Version="0.7.0" />
-    <PackageReference Include="ReactiveProperty" Version="5.3.2" />
+    <PackageReference Include="Avalonia" Version="0.8.0" />
+    <PackageReference Include="Avalonia.Desktop" Version="0.8.0" />
+    <PackageReference Include="Avalonia.Xaml.Behaviors" Version="0.8.0" />
+    <PackageReference Include="ReactiveProperty" Version="5.4.0" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Update="Themes\DarkTheme.xaml">
