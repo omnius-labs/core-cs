@@ -5,7 +5,7 @@ namespace Omnix.Network
 {
     public class SocketCap : Cap
     {
-        private Socket _socket;
+        private readonly Socket _socket;
 
         private volatile bool _isConnected;
 
@@ -81,7 +81,7 @@ namespace Omnix.Network
 
             if (disposing)
             {
-                _socket?.Dispose();
+                _socket.Dispose();
                 _isConnected = false;
             }
         }

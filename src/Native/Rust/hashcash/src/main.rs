@@ -96,9 +96,11 @@ fn main() {
 
         {
             let time_to_receive_alive = time_to_receive_alive.clone();
+
             thread::spawn(move || loop {
                 let mut buffer = String::new();
                 std::io::stdin().read_to_string(&mut buffer).unwrap();
+
                 if buffer == "a" {
                     let mut time_to_receive_alive = time_to_receive_alive.lock().unwrap();
                     *time_to_receive_alive = Instant::now();
@@ -106,7 +108,8 @@ fn main() {
                     process::exit(1);
                 }
             })
-            .join().unwrap();
+            .join()
+            .unwrap();
         }
     }
 }

@@ -22,6 +22,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="Assemblies\hashcash.linux-x64">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Assemblies\hashcash.win-x64.exe">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

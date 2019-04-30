@@ -3,35 +3,49 @@ using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using Omnix.Base;
 
 namespace Omnix.Network.Connection.Tests.Internal
 {
     internal static class SocketHelpers
     {
-        private static object _lockObject = new object();
+        private static readonly object _lockObject = new object();
 
         public static (Socket, Socket) GetSockets()
         {
             lock (_lockObject)
             {
-                Socket socket1, socket2;
+                for (; ; )
+                {
+                    try
+                    {
+                        var random = RandomProvider.GetThreadRandom();
 
-                var listener = new TcpListener(new IPEndPoint(IPAddress.Parse("127.0.0.1"), 30000));
-                listener.Start();
-                var acceptSocketTask = listener.AcceptSocketAsync();
+                        int port = random.Next(1024, 20000);
+                        Socket socket1, socket2;
 
-                var client = new TcpClient();
-                client.ConnectAsync(IPAddress.Parse("127.0.0.1"), 30000).Wait();
+                        var listener = new TcpListener(new IPEndPoint(IPAddress.Loopback, port));
+                        listener.Start();
+                        var acceptSocketTask = listener.AcceptSocketAsync();
 
-                var server = acceptSocketTask.Result;
-                listener.Stop();
+                        var client = new TcpClient();
+                        client.ConnectAsync(IPAddress.Loopback, port).Wait();
 
-                socket1 = client.Client;
-                socket2 = server;
+                        var server = acceptSocketTask.Result;
+                        listener.Stop();
 
-                listener.Stop();
+                        socket1 = client.Client;
+                        socket2 = server;
 
-                return (socket1, socket2);
+                        listener.Stop();
+
+                        return (socket1, socket2);
+                    }
+                    catch (Exception)
+                    {
+
+                    }
+                }
             }
         }
     }
