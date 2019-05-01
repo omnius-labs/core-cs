@@ -2,12 +2,13 @@
 using System.Buffers;
 using System.IO;
 using System.Security.Cryptography;
+using Omnix.Common;
 
 namespace Omnix.Base.Helpers
 {
     public static partial class ObjectHelper
     {
-        private static SipHash _hashFunction;
+        private static SipHasher _hashFunction;
 
         static ObjectHelper()
         {
@@ -16,22 +17,24 @@ namespace Omnix.Base.Helpers
                 var buffer = new byte[16];
                 random.GetBytes(buffer);
 
-                _hashFunction = new SipHash(buffer);
+                _hashFunction = new SipHasher(buffer);
             }
         }
 
         public static int GetHashCode(ReadOnlySpan<byte> value)
         {
-            long v = _hashFunction.ComputeHash(value);
+            _hashFunction.Write(value);
+            ulong v = _hashFunction.Finalize();
 
-            return (int)Math.Abs((v & 0xFFFFFFFF) | (v >> 32));
+            return (int)(v & 0xFFFFFFFF) | (int)(v >> 32);
         }
 
         public static int GetHashCode(ReadOnlySequence<byte> sequence)
         {
-            long v = _hashFunction.ComputeHash(sequence);
+            _hashFunction.Write(sequence);
+            ulong v = _hashFunction.Finalize();
 
-            return (int)Math.Abs((v & 0xFFFFFFFF) | (v >> 32));
+            return (int)(v & 0xFFFFFFFF) | (int)(v >> 32);
         }
     }
 }
