@@ -11,6 +11,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Include="$(SolutionDir)\src\Omnix.Common\**\*.*">
+      <Link>_Common\%(RecursiveDir)%(FileName)%(Extension)</Link>
+    </Compile>
     <None Update="Assemblies\Omnix.Base.linux-x64.so">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
