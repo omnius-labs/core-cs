@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Omnix.Base.Internal;
@@ -8,6 +10,66 @@ namespace Omnix.Base.Extensions
 {
     public static class IEnumerableExtensions
     {
+        public static bool Contains(this IEnumerable items, object item)
+        {
+            return items.IndexOf(item) != -1;
+        }
+
+        public static int Count(this IEnumerable items)
+        {
+            if (items != null)
+            {
+                if (items is ICollection collection)
+                {
+                    return collection.Count;
+                }
+                else
+                {
+                    return Enumerable.Count(items.Cast<object>());
+                }
+            }
+            else
+            {
+                return 0;
+            }
+        }
+
+        public static int IndexOf(this IEnumerable items, object item)
+        {
+            if (items is IList list)
+            {
+                return list.IndexOf(item);
+            }
+            else
+            {
+                int index = 0;
+
+                foreach (var i in items)
+                {
+                    if (ReferenceEquals(i, item))
+                    {
+                        return index;
+                    }
+
+                    ++index;
+                }
+
+                return -1;
+            }
+        }
+
+        public static object ElementAt(this IEnumerable items, int index)
+        {
+            if (items is IList list)
+            {
+                return list[index];
+            }
+            else
+            {
+                return Enumerable.ElementAt(items.Cast<object>(), index);
+            }
+        }
+
         public static IEnumerable<T> Randomize<T>(this IEnumerable<T> collection)
         {
             var random = RandomProvider.GetThreadRandom();

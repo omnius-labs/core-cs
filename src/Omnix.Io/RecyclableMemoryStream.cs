@@ -265,7 +265,7 @@ namespace Omnix.Io
             }
         }
 
-        public IMemoryOwner<byte> ToArray()
+        public IMemoryOwner<byte> ToMemoryOwner()
         {
             var memoryOwner = _bytesPool.Rent((int)this.Length);
 
