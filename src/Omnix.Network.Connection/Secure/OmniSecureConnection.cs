@@ -341,108 +341,107 @@ namespace Omnix.Network.Connection.Secure
 
         private void InternalEnqueue(IBufferWriter<byte> bufferWriter, Action<IBufferWriter<byte>> action)
         {
-            using (var hub = new Hub())
+            using var hub = new Hub();
+
+            action.Invoke(hub.Writer);
+            hub.Writer.Complete();
+
+            var sequence = hub.Reader.GetSequence();
+
+            try
             {
-                action.Invoke(hub.Writer);
-                hub.Writer.Complete();
-
-                var sequence = hub.Reader.GetSequence();
-
-                try
+                if (_version.HasFlag(OmniSecureConnectionVersion.Version1) && _infoV1 != null)
                 {
-                    if (_version.HasFlag(OmniSecureConnectionVersion.Version1) && _infoV1 != null)
+                    if (_infoV1.CryptoAlgorithm.HasFlag(V1.Internal.CryptoAlgorithm.Aes_256)
+                        && _infoV1.HashAlgorithm.HasFlag(V1.Internal.HashAlgorithm.Sha2_256))
                     {
-                        if (_infoV1.CryptoAlgorithm.HasFlag(V1.Internal.CryptoAlgorithm.Aes_256)
-                            && _infoV1.HashAlgorithm.HasFlag(V1.Internal.HashAlgorithm.Sha2_256))
+                        const int headerSize = 8;
+                        const int blockSize = 16;
+
+                        // 送信済みデータ + 送信するデータのサイズを書き込む
                         {
-                            const int headerSize = 8;
-                            const int blockSize = 16;
+                            var paddingSize = blockSize;
 
-                            // 送信済みデータ + 送信するデータのサイズを書き込む
+                            if (sequence.Length % blockSize != 0)
                             {
-                                var paddingSize = blockSize;
-
-                                if (sequence.Length % blockSize != 0)
-                                {
-                                    paddingSize = blockSize - (int)(sequence.Length % blockSize);
-                                }
-
-                                var encryptedContentLength = blockSize + (sequence.Length + paddingSize);
-
-                                BinaryPrimitives.TryWriteUInt64BigEndian(bufferWriter.GetSpan(headerSize), (ulong)(_totalSentSize + encryptedContentLength));
-                                bufferWriter.Advance(headerSize);
+                                paddingSize = blockSize - (int)(sequence.Length % blockSize);
                             }
 
-                            using (var hmac = new HMACSHA256(_infoV1.MyHmacKey))
-                            using (var aes = Aes.Create())
-                            {
-                                aes.KeySize = 256;
-                                aes.Mode = CipherMode.CBC;
-                                aes.Padding = PaddingMode.PKCS7;
+                            var encryptedContentLength = blockSize + (sequence.Length + paddingSize);
 
-                                // IVを書き込む
-                                var iv = new byte[blockSize];
-                                _random.GetBytes(iv);
-                                bufferWriter.Write(iv);
-                                hmac.TransformBlock(iv, 0, iv.Length, null, 0);
-                                Interlocked.Add(ref _totalSentSize, iv.Length);
-
-                                // 暗号化データを書き込む
-                                using (var encryptor = aes.CreateEncryptor(_infoV1.MyCryptoKey, iv))
-                                {
-                                    var inBuffer = _bufferPool.GetArrayPool().Rent(blockSize);
-                                    var outBuffer = _bufferPool.GetArrayPool().Rent(blockSize);
-
-                                    try
-                                    {
-                                        while (sequence.Length > blockSize)
-                                        {
-                                            sequence.Slice(0, blockSize).CopyTo(inBuffer.AsSpan(0, blockSize));
-
-                                            var transed = encryptor.TransformBlock(inBuffer, 0, blockSize, outBuffer, 0);
-                                            bufferWriter.Write(outBuffer.AsSpan(0, transed));
-                                            hmac.TransformBlock(outBuffer, 0, transed, null, 0);
-                                            Interlocked.Add(ref _totalSentSize, transed);
-
-                                            sequence = sequence.Slice(blockSize);
-                                        }
-
-                                        {
-                                            int remain = (int)sequence.Length;
-                                            sequence.CopyTo(inBuffer.AsSpan(0, remain));
-
-                                            var remainBuffer = encryptor.TransformFinalBlock(inBuffer, 0, remain);
-                                            bufferWriter.Write(remainBuffer);
-                                            hmac.TransformBlock(remainBuffer, 0, remainBuffer.Length, null, 0);
-                                            Interlocked.Add(ref _totalSentSize, remainBuffer.Length);
-                                        }
-                                    }
-                                    finally
-                                    {
-                                        _bufferPool.GetArrayPool().Return(inBuffer);
-                                        _bufferPool.GetArrayPool().Return(outBuffer);
-                                    }
-                                }
-
-                                // HMACを書き込む
-                                hmac.TransformFinalBlock(Array.Empty<byte>(), 0, 0);
-                                bufferWriter.Write(hmac.Hash);
-                            }
-
-                            hub.Reader.Complete();
-
-                            return;
+                            BinaryPrimitives.TryWriteUInt64BigEndian(bufferWriter.GetSpan(headerSize), (ulong)(_totalSentSize + encryptedContentLength));
+                            bufferWriter.Advance(headerSize);
                         }
+
+                        using (var hmac = new HMACSHA256(_infoV1.MyHmacKey))
+                        using (var aes = Aes.Create())
+                        {
+                            aes.KeySize = 256;
+                            aes.Mode = CipherMode.CBC;
+                            aes.Padding = PaddingMode.PKCS7;
+
+                            // IVを書き込む
+                            var iv = new byte[blockSize];
+                            _random.GetBytes(iv);
+                            bufferWriter.Write(iv);
+                            hmac.TransformBlock(iv, 0, iv.Length, null, 0);
+                            Interlocked.Add(ref _totalSentSize, iv.Length);
+
+                            // 暗号化データを書き込む
+                            using (var encryptor = aes.CreateEncryptor(_infoV1.MyCryptoKey, iv))
+                            {
+                                var inBuffer = _bufferPool.GetArrayPool().Rent(blockSize);
+                                var outBuffer = _bufferPool.GetArrayPool().Rent(blockSize);
+
+                                try
+                                {
+                                    while (sequence.Length > blockSize)
+                                    {
+                                        sequence.Slice(0, blockSize).CopyTo(inBuffer.AsSpan(0, blockSize));
+
+                                        var transed = encryptor.TransformBlock(inBuffer, 0, blockSize, outBuffer, 0);
+                                        bufferWriter.Write(outBuffer.AsSpan(0, transed));
+                                        hmac.TransformBlock(outBuffer, 0, transed, null, 0);
+                                        Interlocked.Add(ref _totalSentSize, transed);
+
+                                        sequence = sequence.Slice(blockSize);
+                                    }
+
+                                    {
+                                        int remain = (int)sequence.Length;
+                                        sequence.CopyTo(inBuffer.AsSpan(0, remain));
+
+                                        var remainBuffer = encryptor.TransformFinalBlock(inBuffer, 0, remain);
+                                        bufferWriter.Write(remainBuffer);
+                                        hmac.TransformBlock(remainBuffer, 0, remainBuffer.Length, null, 0);
+                                        Interlocked.Add(ref _totalSentSize, remainBuffer.Length);
+                                    }
+                                }
+                                finally
+                                {
+                                    _bufferPool.GetArrayPool().Return(inBuffer);
+                                    _bufferPool.GetArrayPool().Return(outBuffer);
+                                }
+                            }
+
+                            // HMACを書き込む
+                            hmac.TransformFinalBlock(Array.Empty<byte>(), 0, 0);
+                            bufferWriter.Write(hmac.Hash);
+                        }
+
+                        hub.Reader.Complete();
+
+                        return;
                     }
                 }
-                catch (OmniSecureConnectionException e)
-                {
-                    throw e;
-                }
-                catch (Exception e)
-                {
-                    throw new OmniSecureConnectionException(e.Message, e);
-                }
+            }
+            catch (OmniSecureConnectionException e)
+            {
+                throw e;
+            }
+            catch (Exception e)
+            {
+                throw new OmniSecureConnectionException(e.Message, e);
             }
 
             throw new OmniSecureConnectionException("Conversion failed.");
@@ -465,106 +464,105 @@ namespace Omnix.Network.Connection.Secure
 
         private void InternalDequeue(ReadOnlySequence<byte> sequence, Action<ReadOnlySequence<byte>> action)
         {
-            using (var hub = new Hub())
+            using var hub = new Hub();
+
+            try
             {
-                try
+                if (_version.HasFlag(OmniSecureConnectionVersion.Version1) && _infoV1 != null)
                 {
-                    if (_version.HasFlag(OmniSecureConnectionVersion.Version1) && _infoV1 != null)
+                    if (_infoV1.CryptoAlgorithm.HasFlag(V1.Internal.CryptoAlgorithm.Aes_256)
+                        && _infoV1.HashAlgorithm.HasFlag(V1.Internal.HashAlgorithm.Sha2_256))
                     {
-                        if (_infoV1.CryptoAlgorithm.HasFlag(V1.Internal.CryptoAlgorithm.Aes_256)
-                            && _infoV1.HashAlgorithm.HasFlag(V1.Internal.HashAlgorithm.Sha2_256))
+                        const int headerSize = 8;
+                        const int hashLength = 32;
+                        const int blockSize = 16;
+
+                        Interlocked.Add(ref _totalReceivedSize, sequence.Length - (headerSize + hashLength));
+
+                        // 送信済みデータ + 送信するデータのサイズが正しいか検証する
                         {
-                            const int headerSize = 8;
-                            const int hashLength = 32;
-                            const int blockSize = 16;
-
-                            Interlocked.Add(ref _totalReceivedSize, sequence.Length - (headerSize + hashLength));
-
-                            // 送信済みデータ + 送信するデータのサイズが正しいか検証する
+                            long totalReceivedSize;
                             {
-                                long totalReceivedSize;
-                                {
-                                    Span<byte> totalReceiveSizeBuffer = stackalloc byte[headerSize];
-                                    sequence.Slice(0, headerSize).CopyTo(totalReceiveSizeBuffer);
-                                    totalReceivedSize = (long)BinaryPrimitives.ReadUInt64BigEndian(totalReceiveSizeBuffer);
-                                }
-
-                                if (totalReceivedSize != _totalReceivedSize) throw new OmniSecureConnectionException();
+                                Span<byte> totalReceiveSizeBuffer = stackalloc byte[headerSize];
+                                sequence.Slice(0, headerSize).CopyTo(totalReceiveSizeBuffer);
+                                totalReceivedSize = (long)BinaryPrimitives.ReadUInt64BigEndian(totalReceiveSizeBuffer);
                             }
 
-                            // HMACが正しいか検証する
-                            {
-                                Span<byte> receivedHash = stackalloc byte[hashLength];
-                                sequence.Slice(sequence.Length - hashLength).CopyTo(receivedHash);
-
-                                var computedhash = Hmac_Sha2_256.ComputeHash(sequence.Slice(headerSize, sequence.Length - (headerSize + hashLength)), _infoV1.OtherHmacKey);
-                                if (!BytesOperations.SequenceEqual(receivedHash, computedhash)) throw new OmniSecureConnectionException();
-                            }
-
-                            sequence = sequence.Slice(headerSize, sequence.Length - (headerSize + hashLength));
-
-                            using (var aes = Aes.Create())
-                            {
-                                aes.KeySize = 256;
-                                aes.Mode = CipherMode.CBC;
-                                aes.Padding = PaddingMode.PKCS7;
-
-                                // IVを読み込む
-                                var iv = new byte[16];
-                                sequence.Slice(0, iv.Length).CopyTo(iv);
-                                sequence = sequence.Slice(iv.Length);
-
-                                // 暗号化されたデータを復号化する
-                                using (var decryptor = aes.CreateDecryptor(_infoV1.OtherCryptoKey, iv))
-                                {
-                                    var inBuffer = _bufferPool.GetArrayPool().Rent(blockSize);
-                                    var outBuffer = _bufferPool.GetArrayPool().Rent(blockSize);
-
-                                    try
-                                    {
-                                        while (sequence.Length > blockSize)
-                                        {
-                                            sequence.Slice(0, blockSize).CopyTo(inBuffer.AsSpan(0, blockSize));
-
-                                            var transed = decryptor.TransformBlock(inBuffer, 0, blockSize, outBuffer, 0);
-                                            hub.Writer.Write(outBuffer.AsSpan(0, transed));
-
-                                            sequence = sequence.Slice(blockSize);
-                                        }
-
-                                        {
-                                            int remain = (int)sequence.Length;
-                                            sequence.CopyTo(inBuffer.AsSpan(0, remain));
-
-                                            var remainBuffer = decryptor.TransformFinalBlock(inBuffer, 0, remain);
-                                            hub.Writer.Write(remainBuffer);
-                                            hub.Writer.Complete();
-                                        }
-                                    }
-                                    finally
-                                    {
-                                        _bufferPool.GetArrayPool().Return(inBuffer);
-                                        _bufferPool.GetArrayPool().Return(outBuffer);
-                                    }
-                                }
-                            }
-
-                            action.Invoke(hub.Reader.GetSequence());
-
-                            hub.Reader.Complete();
-
-                            return;
+                            if (totalReceivedSize != _totalReceivedSize) throw new OmniSecureConnectionException();
                         }
+
+                        // HMACが正しいか検証する
+                        {
+                            Span<byte> receivedHash = stackalloc byte[hashLength];
+                            sequence.Slice(sequence.Length - hashLength).CopyTo(receivedHash);
+
+                            var computedhash = Hmac_Sha2_256.ComputeHash(sequence.Slice(headerSize, sequence.Length - (headerSize + hashLength)), _infoV1.OtherHmacKey);
+                            if (!BytesOperations.SequenceEqual(receivedHash, computedhash)) throw new OmniSecureConnectionException();
+                        }
+
+                        sequence = sequence.Slice(headerSize, sequence.Length - (headerSize + hashLength));
+
+                        using (var aes = Aes.Create())
+                        {
+                            aes.KeySize = 256;
+                            aes.Mode = CipherMode.CBC;
+                            aes.Padding = PaddingMode.PKCS7;
+
+                            // IVを読み込む
+                            var iv = new byte[16];
+                            sequence.Slice(0, iv.Length).CopyTo(iv);
+                            sequence = sequence.Slice(iv.Length);
+
+                            // 暗号化されたデータを復号化する
+                            using (var decryptor = aes.CreateDecryptor(_infoV1.OtherCryptoKey, iv))
+                            {
+                                var inBuffer = _bufferPool.GetArrayPool().Rent(blockSize);
+                                var outBuffer = _bufferPool.GetArrayPool().Rent(blockSize);
+
+                                try
+                                {
+                                    while (sequence.Length > blockSize)
+                                    {
+                                        sequence.Slice(0, blockSize).CopyTo(inBuffer.AsSpan(0, blockSize));
+
+                                        var transed = decryptor.TransformBlock(inBuffer, 0, blockSize, outBuffer, 0);
+                                        hub.Writer.Write(outBuffer.AsSpan(0, transed));
+
+                                        sequence = sequence.Slice(blockSize);
+                                    }
+
+                                    {
+                                        int remain = (int)sequence.Length;
+                                        sequence.CopyTo(inBuffer.AsSpan(0, remain));
+
+                                        var remainBuffer = decryptor.TransformFinalBlock(inBuffer, 0, remain);
+                                        hub.Writer.Write(remainBuffer);
+                                        hub.Writer.Complete();
+                                    }
+                                }
+                                finally
+                                {
+                                    _bufferPool.GetArrayPool().Return(inBuffer);
+                                    _bufferPool.GetArrayPool().Return(outBuffer);
+                                }
+                            }
+                        }
+
+                        action.Invoke(hub.Reader.GetSequence());
+
+                        hub.Reader.Complete();
+
+                        return;
                     }
                 }
-                catch (OmniSecureConnectionException e)
-                {
-                    throw e;
-                }
-                catch (Exception e)
-                {
-                    throw new OmniSecureConnectionException(e.Message, e);
-                }
+            }
+            catch (OmniSecureConnectionException e)
+            {
+                throw e;
+            }
+            catch (Exception e)
+            {
+                throw new OmniSecureConnectionException(e.Message, e);
             }
 
             throw new OmniSecureConnectionException("Conversion failed.");

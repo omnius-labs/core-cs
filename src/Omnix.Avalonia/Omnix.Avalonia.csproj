@@ -21,6 +21,9 @@
     <PackageReference Include="ReactiveProperty" Version="5.4.0" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Omnix.Base\Omnix.Base.csproj" />
+  </ItemGroup>
+  <ItemGroup>
     <EmbeddedResource Update="Themes\DarkTheme.xaml">
       <Generator>MSBuild:Compile</Generator>
     </EmbeddedResource>

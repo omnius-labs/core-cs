@@ -6,12 +6,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="NLog" Version="4.6.2" />
+    <PackageReference Include="NLog" Version="4.6.3" />
     <PackageReference Include="System.IO.Pipelines" Version="4.5.3" />
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Include="$(SolutionDir)\src\Omnix.Common\**\*.*">
+    <Compile Include="$(ProjectDir)..\..\src\Omnix.Common\**\*.*">
       <Link>_Common\%(RecursiveDir)%(FileName)%(Extension)</Link>
     </Compile>
     <None Update="Assemblies\Omnix.Base.linux-x64.so">
