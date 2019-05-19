@@ -1,0 +1,7 @@
+﻿syntax = v1;
+
+option csharp_namespace = "Omnix.Configuration.Internal";
+
+small message SettingsDatabaseVersion {
+    Value: uint32,
+}
