@@ -12,6 +12,8 @@ if %PROCESSOR_ARCHITECTURE% == AMD64 (
 
 "%TOOL_PATH%" %cd%\formats\FormatterBenchmarks.Internal.rpf %cd%\perf\FormatterBenchmarks\Internal\_RocketPack\Messages.generated.cs
 
+"%TOOL_PATH%" %cd%\formats\Omnix.Configuration.Internal.rpf %cd%\src\Omnix.Configuration\Internal\_RocketPack\Messages.generated.cs
+
 "%TOOL_PATH%" %cd%\formats\Omnix.Cryptography.rpf %cd%\src\Omnix.Cryptography\_RocketPack\Messages.generated.cs
 
 "%TOOL_PATH%" %cd%\formats\Omnix.Network.rpf %cd%\src\Omnix.Network\_RocketPack\Messages.generated.cs

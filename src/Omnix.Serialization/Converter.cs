@@ -6,8 +6,11 @@ using System.Linq;
 using Omnix.Base;
 using Omnix.Serialization;
 
-namespace Omnix.Cryptography.Internal
+namespace Omnix.Serialization
 {
+    // TODO
+    // FileConverter
+    // 汎用的なファイルのインポート&エクスポート機能を実装する
     /*
     static class Converter
     {
