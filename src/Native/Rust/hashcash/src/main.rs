@@ -29,8 +29,8 @@ fn simple_sha2_256(value: &[u8]) {
 
         let mut current_difficulty: u32 = 0;
 
-        for i in 0..32 {
-            let zeros = result[i].leading_zeros();
+        for element in result {
+            let zeros = element.leading_zeros();
             current_difficulty += zeros;
 
             if zeros < 8 {
