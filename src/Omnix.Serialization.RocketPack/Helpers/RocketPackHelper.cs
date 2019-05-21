@@ -42,8 +42,6 @@ namespace Omnix.Serialization.RocketPack.Helpers
                 stream.Write(memory.Span);
             }
 
-            stream.Seek(0, SeekOrigin.Begin);
-
             hub.Reader.Complete();
         }
     }
