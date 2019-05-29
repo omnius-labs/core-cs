@@ -20,7 +20,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Omnix.Base\Omnix.Base.csproj" />
     <ProjectReference Include="..\..\src\Omnix.Collections\Omnix.Collections.csproj" />
   </ItemGroup>
 
