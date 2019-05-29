@@ -20,7 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Omnix.Network.Upnp\Omnix.Network.Upnp.csproj" />
+    <ProjectReference Include="..\..\src\Omnix.Configuration\Omnix.Configuration.csproj" />
   </ItemGroup>
 
 </Project>

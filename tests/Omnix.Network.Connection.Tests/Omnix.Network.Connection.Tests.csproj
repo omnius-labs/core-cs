@@ -16,12 +16,11 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
+    <DotNetCliToolReference Include="dotnet-xunit" Version="2.3.1" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Omnix.Base\Omnix.Base.csproj" />
     <ProjectReference Include="..\..\src\Omnix.Network.Connection\Omnix.Network.Connection.csproj" />
-    <ProjectReference Include="..\..\src\Omnix.Network\Omnix.Network.csproj" />
   </ItemGroup>
 
 </Project>

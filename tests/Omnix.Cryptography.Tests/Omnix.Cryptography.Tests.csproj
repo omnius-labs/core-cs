@@ -16,10 +16,10 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
+    <DotNetCliToolReference Include="dotnet-xunit" Version="2.3.1" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Omnix.Base\Omnix.Base.csproj" />
     <ProjectReference Include="..\..\src\Omnix.Cryptography\Omnix.Cryptography.csproj" />
   </ItemGroup>
 
