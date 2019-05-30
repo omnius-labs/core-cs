@@ -11,14 +11,4 @@
     <ProjectReference Include="..\Omnix.Serialization\Omnix.Serialization.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="_Generators\Messages\_Generator\Models.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-    </None>
-  </ItemGroup>
-
 </Project>
