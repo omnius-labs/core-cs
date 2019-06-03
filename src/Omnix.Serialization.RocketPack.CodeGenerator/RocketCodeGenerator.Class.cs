@@ -944,7 +944,6 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
 
                     w.WriteLine();
 
-                    w.WriteLine("// Read property count");
                     w.WriteLine("uint propertyCount = r.GetUInt32();");
 
                     w.WriteLine();
@@ -969,7 +968,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
 
                     foreach (var elementInfo in messageFormat.Elements)
                     {
-                        w.WriteLine($"case {elementInfo.Id}: // {elementInfo.Name}");
+                        w.WriteLine($"case {elementInfo.Id}:");
 
                         w.PushIndent();
 
