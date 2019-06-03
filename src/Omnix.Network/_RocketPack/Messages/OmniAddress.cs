@@ -8,7 +8,7 @@ namespace Omnix.Network
     {
         public string[] Parse()
         {
-            return this.Value.Split('/');
+            return this.Value.Split('/', StringSplitOptions.RemoveEmptyEntries);
         }
     }
 }
