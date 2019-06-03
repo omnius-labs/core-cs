@@ -317,7 +317,7 @@ namespace Omnix.Network.Connection.Secure
 
                 if (hashAlgorithm == V1.Internal.HashAlgorithm.Sha2_256)
                 {
-                    var hub = new Hub();
+                    using var hub = new Hub();
 
                     verificationMessage.Export(hub.Writer, _bufferPool);
                     verificationMessageHash = Sha2_256.ComputeHash(hub.Reader.GetSequence());
