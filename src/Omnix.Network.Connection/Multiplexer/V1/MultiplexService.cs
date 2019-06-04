@@ -13,6 +13,7 @@ using Omnix.Serialization;
 
 namespace Omnix.Network.Connection.Multiplexer.V1
 {
+    /*
     internal sealed partial class MultiplexService
     {
         private readonly Communicator _communicator;
@@ -137,5 +138,5 @@ namespace Omnix.Network.Connection.Multiplexer.V1
             public ulong SessionId { get; set; }
             public DateTime CreationTime { get; set; }
         }
-    }
+    }*/
 }
