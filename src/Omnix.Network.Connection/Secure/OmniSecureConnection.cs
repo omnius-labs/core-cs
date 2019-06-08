@@ -1,19 +1,12 @@
-﻿using System;
+using System;
 using System.Buffers;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.IO;
 using System.Linq;
-using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
 using Omnix.Base;
 using Omnix.Base.Extensions;
 using Omnix.Base.Helpers;
-using Omnix.Cryptography;
-using Omnix.Io;
-using Omnix.Serialization;
-using System.Buffers.Binary;
 using Omnix.Network.Connection.Secure.Internal;
 
 namespace Omnix.Network.Connection.Secure
@@ -24,7 +17,7 @@ namespace Omnix.Network.Connection.Secure
         private readonly OmniSecureConnectionOptions _options;
         private readonly BufferPool _bufferPool;
 
-        private OmniSecureConnectionVersion _version;
+        private OmniSecureConnectionVersion _version = OmniSecureConnectionVersion.Version1;
         private V1.Internal.SecureConnection? _secureConnection_v1;
 
         private volatile bool _disposed;
