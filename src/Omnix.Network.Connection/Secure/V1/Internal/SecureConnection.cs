@@ -37,9 +37,20 @@ namespace Omnix.Network.Connection.Secure.V1.Internal
 
         public SecureConnection(IConnection connection, OmniSecureConnectionOptions options)
         {
-            if (connection == null) throw new ArgumentNullException(nameof(connection));
-            if (options == null) throw new ArgumentNullException(nameof(options));
-            if (!EnumHelper.IsValid(options.Type)) throw new ArgumentException(nameof(options.Type));
+            if (connection == null)
+            {
+                throw new ArgumentNullException(nameof(connection));
+            }
+
+            if (options == null)
+            {
+                throw new ArgumentNullException(nameof(options));
+            }
+
+            if (!EnumHelper.IsValid(options.Type))
+            {
+                throw new ArgumentException(nameof(options.Type));
+            }
 
             _connection = connection;
             _type = options.Type;
@@ -65,7 +76,10 @@ namespace Omnix.Network.Connection.Secure.V1.Internal
 
             foreach (var item in list)
             {
-                if (hashSet.Contains(item)) return item;
+                if (hashSet.Contains(item))
+                {
+                    return item;
+                }
             }
 
             throw new SecureConnectionException($"Overlap enum of {nameof(T)} could not be found.");
@@ -99,7 +113,10 @@ namespace Omnix.Network.Connection.Secure.V1.Internal
 
                 await ValueTaskHelper.WhenAll(enqueueTask, dequeueTask);
 
-                if (otherProfileMessage is null) throw new NullReferenceException();
+                if (otherProfileMessage is null)
+                {
+                    throw new NullReferenceException();
+                }
 
                 if (myProfileMessage.AuthenticationType != otherProfileMessage.AuthenticationType)
                 {
@@ -146,9 +163,15 @@ namespace Omnix.Network.Connection.Secure.V1.Internal
 
                         await ValueTaskHelper.WhenAll(enqueueTask, dequeueTask);
 
-                        if (otherAgreementPublicKey is null) throw new NullReferenceException();
+                        if (otherAgreementPublicKey is null)
+                        {
+                            throw new NullReferenceException();
+                        }
 
-                        if ((DateTime.UtcNow - otherAgreementPublicKey.CreationTime.ToDateTime()).TotalMinutes > 30) throw new SecureConnectionException("Agreement public key has Expired.");
+                        if ((DateTime.UtcNow - otherAgreementPublicKey.CreationTime.ToDateTime()).TotalMinutes > 30)
+                        {
+                            throw new SecureConnectionException("Agreement public key has Expired.");
+                        }
                     }
 
                     if (_passwords.Count > 0)
@@ -168,7 +191,10 @@ namespace Omnix.Network.Connection.Secure.V1.Internal
 
                             await ValueTaskHelper.WhenAll(enqueueTask, dequeueTask);
 
-                            if (otherAuthenticationMessage is null) throw new NullReferenceException();
+                            if (otherAuthenticationMessage is null)
+                            {
+                                throw new NullReferenceException();
+                            }
 
                             var matchedPasswords = new List<string>();
                             {
@@ -185,7 +211,11 @@ namespace Omnix.Network.Connection.Secure.V1.Internal
                                 }
                             }
 
-                            if (matchedPasswords.Count == 0) throw new SecureConnectionException("Password does not match.");
+                            if (matchedPasswords.Count == 0)
+                            {
+                                throw new SecureConnectionException("Password does not match.");
+                            }
+
                             _matchedPasswords = matchedPasswords.ToArray();
                         }
                     }
@@ -296,7 +326,10 @@ namespace Omnix.Network.Connection.Secure.V1.Internal
 
         private void InternalEnqueue(IBufferWriter<byte> bufferWriter, Action<IBufferWriter<byte>> action)
         {
-            if (_status == null) throw new SecureConnectionException("Not handshaked");
+            if (_status == null)
+            {
+                throw new SecureConnectionException("Not handshaked");
+            }
 
             using var hub = new Hub();
 
@@ -418,7 +451,10 @@ namespace Omnix.Network.Connection.Secure.V1.Internal
 
         private void InternalDequeue(ReadOnlySequence<byte> sequence, Action<ReadOnlySequence<byte>> action)
         {
-            if (_status == null) throw new SecureConnectionException("Not handshaked");
+            if (_status == null)
+            {
+                throw new SecureConnectionException("Not handshaked");
+            }
 
             using var hub = new Hub();
 
@@ -442,7 +478,10 @@ namespace Omnix.Network.Connection.Secure.V1.Internal
                             totalReceivedSize = (long)BinaryPrimitives.ReadUInt64BigEndian(totalReceiveSizeBuffer);
                         }
 
-                        if (totalReceivedSize != _totalReceivedSize) throw new SecureConnectionException();
+                        if (totalReceivedSize != _totalReceivedSize)
+                        {
+                            throw new SecureConnectionException();
+                        }
                     }
 
                     // HMACが正しいか検証する
@@ -451,7 +490,10 @@ namespace Omnix.Network.Connection.Secure.V1.Internal
                         sequence.Slice(sequence.Length - hashLength).CopyTo(receivedHash);
 
                         var computedhash = Hmac_Sha2_256.ComputeHash(sequence.Slice(headerSize, sequence.Length - (headerSize + hashLength)), _status.OtherHmacKey);
-                        if (!BytesOperations.SequenceEqual(receivedHash, computedhash)) throw new SecureConnectionException();
+                        if (!BytesOperations.SequenceEqual(receivedHash, computedhash))
+                        {
+                            throw new SecureConnectionException();
+                        }
                     }
 
                     sequence = sequence.Slice(headerSize, sequence.Length - (headerSize + hashLength));
@@ -560,7 +602,11 @@ namespace Omnix.Network.Connection.Secure.V1.Internal
 
         protected override void Dispose(bool disposing)
         {
-            if (_disposed) return;
+            if (_disposed)
+            {
+                return;
+            }
+
             _disposed = true;
 
             if (disposing)

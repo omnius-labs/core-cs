@@ -67,7 +67,10 @@ namespace Omnix.Serialization
         // TODO Utf8String版を実装したい
         public static bool TryDecode(string text, IBufferWriter<byte> bufferWriter)
         {
-            if (text == null) throw new ArgumentNullException(nameof(text));
+            if (text == null)
+            {
+                throw new ArgumentNullException(nameof(text));
+            }
 
             if (string.IsNullOrEmpty(text))
             {

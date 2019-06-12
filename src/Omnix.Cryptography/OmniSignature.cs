@@ -13,13 +13,20 @@ namespace Omnix.Cryptography
     {
         public static bool TryParse(string item, out OmniSignature? signature)
         {
-            if (item == null) throw new ArgumentNullException(nameof(item));
+            if (item == null)
+            {
+                throw new ArgumentNullException(nameof(item));
+            }
+
             signature = null;
 
             try
             {
                 int index = item.IndexOf('@');
-                if (index == -1) return false;
+                if (index == -1)
+                {
+                    return false;
+                }
 
                 // @より前の文字列を取得
                 string name = item.Substring(0, index);

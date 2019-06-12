@@ -29,11 +29,17 @@ namespace Omnix.Network.Proxy.Internal
                     token.ThrowIfCancellationRequested();
 
                     int receiveLength = _socket.Receive(buffer);
-                    if (receiveLength < 1) break;
+                    if (receiveLength < 1)
+                    {
+                        break;
+                    }
 
                     stream.Write(buffer);
 
-                    if (buffer[0] == '\n') break;
+                    if (buffer[0] == '\n')
+                    {
+                        break;
+                    }
                 }
 
                 stream.Seek(0, SeekOrigin.Begin);

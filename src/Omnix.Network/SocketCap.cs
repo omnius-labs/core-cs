@@ -13,8 +13,15 @@ namespace Omnix.Network
 
         public SocketCap(Socket socket, bool blocking)
         {
-            if (socket == null) throw new ArgumentNullException(nameof(socket));
-            if (!socket.Connected) throw new ArgumentException("Socket is not connected.");
+            if (socket == null)
+            {
+                throw new ArgumentNullException(nameof(socket));
+            }
+
+            if (!socket.Connected)
+            {
+                throw new ArgumentException("Socket is not connected.");
+            }
 
             _socket = socket;
             _socket.Blocking = blocking;
@@ -42,8 +49,15 @@ namespace Omnix.Network
 
         public override int Receive(Span<byte> buffer)
         {
-            if (_disposed) throw new ObjectDisposedException(this.GetType().FullName);
-            if (!_isConnected) throw new CapException("Closed");
+            if (_disposed)
+            {
+                throw new ObjectDisposedException(this.GetType().FullName);
+            }
+
+            if (!_isConnected)
+            {
+                throw new CapException("Closed");
+            }
 
             try
             {
@@ -59,8 +73,15 @@ namespace Omnix.Network
 
         public override int Send(ReadOnlySpan<byte> buffer)
         {
-            if (_disposed) throw new ObjectDisposedException(this.GetType().FullName);
-            if (!_isConnected) throw new CapException();
+            if (_disposed)
+            {
+                throw new ObjectDisposedException(this.GetType().FullName);
+            }
+
+            if (!_isConnected)
+            {
+                throw new CapException();
+            }
 
             try
             {
@@ -76,7 +97,11 @@ namespace Omnix.Network
 
         protected override void Dispose(bool disposing)
         {
-            if (_disposed) return;
+            if (_disposed)
+            {
+                return;
+            }
+
             _disposed = true;
 
             if (disposing)

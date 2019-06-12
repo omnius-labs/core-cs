@@ -14,7 +14,10 @@ namespace Omnix.Base.Extensions
 
             try
             {
-                if (lockObject != null) Monitor.Enter(lockObject, ref lockToken);
+                if (lockObject != null)
+                {
+                    Monitor.Enter(lockObject, ref lockToken);
+                }
 
                 int n = collection.Count;
 
@@ -28,7 +31,10 @@ namespace Omnix.Base.Extensions
             }
             finally
             {
-                if (lockToken) Monitor.Exit(lockObject);
+                if (lockToken)
+                {
+                    Monitor.Exit(lockObject);
+                }
             }
         }
 

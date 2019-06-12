@@ -16,7 +16,10 @@ namespace Omnix.Serialization.RocketPack.Helpers
             while (inStream.Position < inStream.Length)
             {
                 var readLength = inStream.Read(hub.Writer.GetSpan(bufferSize));
-                if (readLength < 0) break;
+                if (readLength < 0)
+                {
+                    break;
+                }
 
                 hub.Writer.Advance(readLength);
             }

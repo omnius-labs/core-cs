@@ -508,7 +508,10 @@ namespace Omnix.Serialization.RocketPack
             {
                 result = 0;
 
-                if (!TryGetUInt8(sequence, out byte byte_result, out consumed)) return false;
+                if (!TryGetUInt8(sequence, out byte byte_result, out consumed))
+                {
+                    return false;
+                }
 
                 result = (sbyte)((byte_result >> 1) ^ (-((sbyte)byte_result & 1)));
                 return true;
@@ -522,7 +525,10 @@ namespace Omnix.Serialization.RocketPack
             {
                 result = 0;
 
-                if (!TryGetUInt16(sequence, out ushort ushort_result, out consumed)) return false;
+                if (!TryGetUInt16(sequence, out ushort ushort_result, out consumed))
+                {
+                    return false;
+                }
 
                 result = (short)((ushort_result >> 1) ^ (-((short)ushort_result & 1)));
                 return true;
@@ -536,7 +542,10 @@ namespace Omnix.Serialization.RocketPack
             {
                 result = 0;
 
-                if (!TryGetUInt32(sequence, out uint uint_result, out consumed)) return false;
+                if (!TryGetUInt32(sequence, out uint uint_result, out consumed))
+                {
+                    return false;
+                }
 
                 result = (int)(uint_result >> 1) ^ (-((int)uint_result & 1));
                 return true;
@@ -550,7 +559,10 @@ namespace Omnix.Serialization.RocketPack
             {
                 result = 0;
 
-                if (!TryGetUInt64(sequence, out ulong ulong_result, out consumed)) return false;
+                if (!TryGetUInt64(sequence, out ulong ulong_result, out consumed))
+                {
+                    return false;
+                }
 
                 result = (long)(ulong_result >> 1) ^ (-((long)ulong_result & 1));
                 return true;

@@ -82,7 +82,10 @@ namespace Omnix.Collections
 
         public TimeSpan GetElapsedTime(T item)
         {
-            if (!_dic.TryGetValue(item, out var updateTime)) return _survivalTime;
+            if (!_dic.TryGetValue(item, out var updateTime))
+            {
+                return _survivalTime;
+            }
 
             var now = DateTime.UtcNow;
             return (now - updateTime);
@@ -227,7 +230,10 @@ namespace Omnix.Collections
 
                 foreach (var value in other)
                 {
-                    if (_dic.ContainsKey(value)) continue;
+                    if (_dic.ContainsKey(value))
+                    {
+                        continue;
+                    }
 
                     tempList.Add(value);
                 }

@@ -45,7 +45,11 @@ namespace Omnix.Serialization.RocketPack
 
         public override bool Equals(object? other)
         {
-            if (!(other is T)) return false;
+            if (!(other is T))
+            {
+                return false;
+            }
+
             return this.Equals((T)other);
         }
 

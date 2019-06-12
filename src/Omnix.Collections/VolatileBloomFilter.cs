@@ -57,7 +57,10 @@ namespace Omnix.Collections
         {
             for (int i = 0; i < hashes.Length; i++)
             {
-                if (!bits.Get(hashes[i])) return false;
+                if (!bits.Get(hashes[i]))
+                {
+                    return false;
+                }
             }
 
             return true;
@@ -85,7 +88,10 @@ namespace Omnix.Collections
 
                 foreach (var (updateTime, bits) in _map)
                 {
-                    if (Contains(bits, _hashes)) return (now - updateTime);
+                    if (Contains(bits, _hashes))
+                    {
+                        return (now - updateTime);
+                    }
                 }
 
                 return _survivalTime;
@@ -147,7 +153,10 @@ namespace Omnix.Collections
 
                 foreach (var bits in _map.Values)
                 {
-                    if (Contains(bits, _hashes)) return true;
+                    if (Contains(bits, _hashes))
+                    {
+                        return true;
+                    }
                 }
 
                 return false;

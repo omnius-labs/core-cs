@@ -83,7 +83,10 @@ namespace Omnix.Base.Extensions
 
             try
             {
-                if (lockObject != null) Monitor.Enter(lockObject, ref lockToken);
+                if (lockObject != null)
+                {
+                    Monitor.Enter(lockObject, ref lockToken);
+                }
 
                 var list = new List<T>(collection);
                 int n = list.Count;
@@ -100,16 +103,30 @@ namespace Omnix.Base.Extensions
             }
             finally
             {
-                if (lockToken) Monitor.Exit(lockObject);
+                if (lockToken)
+                {
+                    Monitor.Exit(lockObject);
+                }
             }
         }
 
         // http://neue.cc/2014/03/14_448.html
         public static async Task ForEachAsync<T>(this IEnumerable<T> source, Func<T, Task> action, int concurrency, CancellationToken cancellationToken = default, bool configureAwait = false)
         {
-            if (source == null) throw new ArgumentNullException("source");
-            if (action == null) throw new ArgumentNullException("action");
-            if (concurrency <= 0) throw new ArgumentOutOfRangeException("concurrency must be greater than 1.");
+            if (source == null)
+            {
+                throw new ArgumentNullException("source");
+            }
+
+            if (action == null)
+            {
+                throw new ArgumentNullException("action");
+            }
+
+            if (concurrency <= 0)
+            {
+                throw new ArgumentOutOfRangeException("concurrency must be greater than 1.");
+            }
 
             using (var semaphore = new SemaphoreSlim(initialCount: concurrency, maxCount: concurrency))
             {
@@ -118,7 +135,11 @@ namespace Omnix.Base.Extensions
 
                 foreach (var item in source)
                 {
-                    if (exceptionCount > 0) break;
+                    if (exceptionCount > 0)
+                    {
+                        break;
+                    }
+
                     cancellationToken.ThrowIfCancellationRequested();
 
                     await semaphore.WaitAsync(cancellationToken).ConfigureAwait(configureAwait);

@@ -25,14 +25,25 @@ namespace Omnix.Collections
 
                 for (; ; )
                 {
-                    if (!_bitReader.TryRead(1, out var value)) return false;
-                    if (value == 0) break;
+                    if (!_bitReader.TryRead(1, out var value))
+                    {
+                        return false;
+                    }
+
+                    if (value == 0)
+                    {
+                        break;
+                    }
 
                     result += (uint)_p;
                 }
 
                 {
-                    if (!_bitReader.TryRead(_log2p, out var value)) return false;
+                    if (!_bitReader.TryRead(_log2p, out var value))
+                    {
+                        return false;
+                    }
+
                     result += value;
                 }
 
@@ -69,9 +80,16 @@ namespace Omnix.Collections
                             for (; ; )
                             {
                                 length = (_segment.Length - _segmentOffset);
-                                if (length != 0) break;
+                                if (length != 0)
+                                {
+                                    break;
+                                }
 
-                                if (!_sequence.TryGet(ref _sequencePosition, out _segment)) return false;
+                                if (!_sequence.TryGet(ref _sequencePosition, out _segment))
+                                {
+                                    return false;
+                                }
+
                                 _segmentOffset = 0;
                             }
 

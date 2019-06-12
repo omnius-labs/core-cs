@@ -21,7 +21,10 @@ namespace Omnix.Io
         {
             get
             {
-                if (_disposed) throw new ObjectDisposedException(this.GetType().FullName);
+                if (_disposed)
+                {
+                    throw new ObjectDisposedException(this.GetType().FullName);
+                }
 
                 return _stream.CanRead;
             }
@@ -31,7 +34,10 @@ namespace Omnix.Io
         {
             get
             {
-                if (_disposed) throw new ObjectDisposedException(this.GetType().FullName);
+                if (_disposed)
+                {
+                    throw new ObjectDisposedException(this.GetType().FullName);
+                }
 
                 return _stream.CanWrite;
             }
@@ -41,7 +47,10 @@ namespace Omnix.Io
         {
             get
             {
-                if (_disposed) throw new ObjectDisposedException(this.GetType().FullName);
+                if (_disposed)
+                {
+                    throw new ObjectDisposedException(this.GetType().FullName);
+                }
 
                 return _stream.CanSeek;
             }
@@ -51,13 +60,19 @@ namespace Omnix.Io
         {
             get
             {
-                if (_disposed) throw new ObjectDisposedException(this.GetType().FullName);
+                if (_disposed)
+                {
+                    throw new ObjectDisposedException(this.GetType().FullName);
+                }
 
                 return _stream.Position;
             }
             set
             {
-                if (_disposed) throw new ObjectDisposedException(this.GetType().FullName);
+                if (_disposed)
+                {
+                    throw new ObjectDisposedException(this.GetType().FullName);
+                }
 
                 _stream.Position = value;
             }
@@ -67,7 +82,10 @@ namespace Omnix.Io
         {
             get
             {
-                if (_disposed) throw new ObjectDisposedException(this.GetType().FullName);
+                if (_disposed)
+                {
+                    throw new ObjectDisposedException(this.GetType().FullName);
+                }
 
                 return _stream.Length;
             }
@@ -75,28 +93,40 @@ namespace Omnix.Io
 
         public override long Seek(long offset, SeekOrigin origin)
         {
-            if (_disposed) throw new ObjectDisposedException(this.GetType().FullName);
+            if (_disposed)
+            {
+                throw new ObjectDisposedException(this.GetType().FullName);
+            }
 
             return _stream.Seek(offset, origin);
         }
 
         public override void SetLength(long value)
         {
-            if (_disposed) throw new ObjectDisposedException(this.GetType().FullName);
+            if (_disposed)
+            {
+                throw new ObjectDisposedException(this.GetType().FullName);
+            }
 
             _stream.SetLength(value);
         }
 
         public override int Read(byte[] buffer, int offset, int count)
         {
-            if (_disposed) throw new ObjectDisposedException(this.GetType().FullName);
+            if (_disposed)
+            {
+                throw new ObjectDisposedException(this.GetType().FullName);
+            }
 
             return _stream.Read(buffer, offset, count);
         }
 
         public override void Write(byte[] buffer, int offset, int count)
         {
-            if (_disposed) throw new ObjectDisposedException(this.GetType().FullName);
+            if (_disposed)
+            {
+                throw new ObjectDisposedException(this.GetType().FullName);
+            }
 
             _stream.Write(buffer, offset, count);
         }
@@ -117,7 +147,11 @@ namespace Omnix.Io
         {
             try
             {
-                if (_disposed) return;
+                if (_disposed)
+                {
+                    return;
+                }
+
                 _disposed = true;
 
                 if (disposing)

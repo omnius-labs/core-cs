@@ -70,7 +70,11 @@ namespace Omnix.Collections
 
                 for (; ; )
                 {
-                    if (!d.TryDecode(out var result)) break;
+                    if (!d.TryDecode(out var result))
+                    {
+                        break;
+                    }
+
                     current += result;
                     list_2.Add(current);
                 }

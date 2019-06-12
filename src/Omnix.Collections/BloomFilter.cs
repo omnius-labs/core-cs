@@ -21,7 +21,10 @@ namespace Omnix.Collections
         /// <param name="hashFunction">The function to hash the input values. Do not use GetHashCode(). If it is null, and T is string or int a hash function will be provided for you.</param>
         public BloomFilter(int capacity, Func<T, long> hashFunction)
         {
-            if (capacity < 1) throw new ArgumentOutOfRangeException("capacity", capacity, "capacity must be > 0");
+            if (capacity < 1)
+            {
+                throw new ArgumentOutOfRangeException("capacity", capacity, "capacity must be > 0");
+            }
 
             var errorRate = ComputeBestErrorRate(capacity);
 
@@ -38,8 +41,15 @@ namespace Omnix.Collections
         /// <param name="hashFunction">The function to hash the input values. Do not use GetHashCode(). If it is null, and T is string or int a hash function will be provided for you.</param>
         public BloomFilter(int capacity, double errorRate, Func<T, long> hashFunction)
         {
-            if (capacity < 1) throw new ArgumentOutOfRangeException("capacity", capacity, "capacity must be > 0");
-            if (errorRate >= 1 || errorRate <= 0) throw new ArgumentOutOfRangeException("errorRate", errorRate, string.Format("errorRate must be between 0 and 1, exclusive. Was {0}", errorRate));
+            if (capacity < 1)
+            {
+                throw new ArgumentOutOfRangeException("capacity", capacity, "capacity must be > 0");
+            }
+
+            if (errorRate >= 1 || errorRate <= 0)
+            {
+                throw new ArgumentOutOfRangeException("errorRate", errorRate, string.Format("errorRate must be between 0 and 1, exclusive. Was {0}", errorRate));
+            }
 
             _hashFunctionCount = ComputeBestK(capacity, errorRate);
             _hashBits = new BitArray(ComputeBestM(capacity, errorRate));
@@ -54,9 +64,20 @@ namespace Omnix.Collections
         /// <param name="hashFunction">The function to hash the input values. Do not use GetHashCode(). If it is null, and T is string or int a hash function will be provided for you.</param>
         public BloomFilter(int capacity, double errorRate, int hashFunctionCount, Func<T, long> hashFunction)
         {
-            if (capacity < 1) throw new ArgumentOutOfRangeException("capacity", capacity, "capacity must be > 0");
-            if (errorRate >= 1 || errorRate <= 0) throw new ArgumentOutOfRangeException("errorRate", errorRate, string.Format("errorRate must be between 0 and 1, exclusive. Was {0}", errorRate));
-            if (hashFunctionCount < 1) throw new ArgumentOutOfRangeException(string.Format("hashFunctionCount", hashFunctionCount, "hashFunctionCount must be > 0"));
+            if (capacity < 1)
+            {
+                throw new ArgumentOutOfRangeException("capacity", capacity, "capacity must be > 0");
+            }
+
+            if (errorRate >= 1 || errorRate <= 0)
+            {
+                throw new ArgumentOutOfRangeException("errorRate", errorRate, string.Format("errorRate must be between 0 and 1, exclusive. Was {0}", errorRate));
+            }
+
+            if (hashFunctionCount < 1)
+            {
+                throw new ArgumentOutOfRangeException(string.Format("hashFunctionCount", hashFunctionCount, "hashFunctionCount must be > 0"));
+            }
 
             _hashFunctionCount = hashFunctionCount;
             _hashBits = new BitArray(ComputeM(capacity, errorRate, hashFunctionCount));

@@ -101,11 +101,21 @@ namespace Omnix.Collections
         {
             lock (this.LockObject)
             {
-                if (_capacity != null && _list.Count + 1 > _capacity.Value) throw new OverflowException();
-                if (this.Filter(item)) return;
+                if (_capacity != null && _list.Count + 1 > _capacity.Value)
+                {
+                    throw new OverflowException();
+                }
+
+                if (this.Filter(item))
+                {
+                    return;
+                }
 
                 // 姑息な、メモリ消費量を減少させる策。
-                if (_list.Count < 16) _list.Capacity = _list.Count + 1;
+                if (_list.Count < 16)
+                {
+                    _list.Capacity = _list.Count + 1;
+                }
 
                 _list.Add(item);
             }

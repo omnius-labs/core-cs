@@ -24,13 +24,25 @@ namespace Omnix.Serialization
         {
             if (_convertStringCase == ConvertStringCase.Lower)
             {
-                if (c < 10) return (byte)(c + '0');
-                else return (byte)(c - 10 + 'a');
+                if (c < 10)
+                {
+                    return (byte)(c + '0');
+                }
+                else
+                {
+                    return (byte)(c - 10 + 'a');
+                }
             }
             else if (_convertStringCase == ConvertStringCase.Upper)
             {
-                if (c < 10) return (byte)(c + '0');
-                else return (byte)(c - 10 + 'A');
+                if (c < 10)
+                {
+                    return (byte)(c + '0');
+                }
+                else
+                {
+                    return (byte)(c - 10 + 'A');
+                }
             }
 
             throw new NotSupportedException();
@@ -125,7 +137,10 @@ namespace Omnix.Serialization
 
         public bool TryDecode(ReadOnlySpan<byte> text, IBufferWriter<byte> bufferWriter)
         {
-            if (bufferWriter == null) throw new ArgumentNullException(nameof(bufferWriter));
+            if (bufferWriter == null)
+            {
+                throw new ArgumentNullException(nameof(bufferWriter));
+            }
 
             if (text.IsEmpty)
             {

@@ -32,9 +32,13 @@ namespace Omnix.Base.Helpers
                 string item = iterator.GetTextElement();
 
                 if (Encoding.UTF8.GetByteCount(item) > 16)
+                {
                     yield return " ";
+                }
                 else
+                {
                     yield return item;
+                }
             }
         }
     }

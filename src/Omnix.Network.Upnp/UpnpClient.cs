@@ -46,7 +46,11 @@ namespace Omnix.Net.Upnp
 
                     foreach (var machineIp in hostEntry.AddressList)
                     {
-                        if (machineIp.AddressFamily != AddressFamily.InterNetwork) continue;
+                        if (machineIp.AddressFamily != AddressFamily.InterNetwork)
+                        {
+                            continue;
+                        }
+
                         (_contents, _location) = await GetContentsAndLocationFromDevice(IPAddress.Parse("239.255.255.250"), machineIp, token);
                     }
                 }
@@ -95,7 +99,10 @@ namespace Omnix.Net.Upnp
                     catch (SocketException e)
                     {
                         _logger.Info(e, "Failed to bind of socket.");
-                        if (i > 10) throw new UpnpClientException("Failed to bind of socket.", e);
+                        if (i > 10)
+                        {
+                            throw new UpnpClientException("Failed to bind of socket.", e);
+                        }
                     }
                 }
 
@@ -132,7 +139,10 @@ namespace Omnix.Net.Upnp
                         int dataLength = socket.Receive(data.AsSpan(), SocketFlags.None);
 
                         queryResponse = Encoding.ASCII.GetString(data, 0, dataLength);
-                        if (string.IsNullOrWhiteSpace(queryResponse)) continue;
+                        if (string.IsNullOrWhiteSpace(queryResponse))
+                        {
+                            continue;
+                        }
                     }
                     catch (SocketException e)
                     {
@@ -143,7 +153,10 @@ namespace Omnix.Net.Upnp
                     try
                     {
                         string location = Regex.Match(queryResponse, "^location.*?:(.*)", RegexOptions.Multiline | RegexOptions.IgnoreCase).Groups[1].Value.Trim();
-                        if (string.IsNullOrWhiteSpace(location)) continue;
+                        if (string.IsNullOrWhiteSpace(location))
+                        {
+                            continue;
+                        }
 
                         _logger.Debug("UPnP Router: " + targetIp.ToString());
                         _logger.Debug("UPnP Location: " + location);
@@ -155,8 +168,15 @@ namespace Omnix.Net.Upnp
                             contexts = await client.GetStringAsync(location);
                         }
 
-                        if (string.IsNullOrWhiteSpace(contexts)) continue;
-                        if (!_deviceTypeRegex.IsMatch(contexts)) continue;
+                        if (string.IsNullOrWhiteSpace(contexts))
+                        {
+                            continue;
+                        }
+
+                        if (!_deviceTypeRegex.IsMatch(contexts))
+                        {
+                            continue;
+                        }
 
                         return (contexts, new Uri(location));
                     }
@@ -172,7 +192,10 @@ namespace Omnix.Net.Upnp
 
         private static async ValueTask<string?> GetExternalIpAddressFromContents(string contents, string serviceType, string gatewayIp, int gatewayPort, CancellationToken token = default)
         {
-            if (contents == null || !contents.Contains(serviceType)) return null;
+            if (contents == null || !contents.Contains(serviceType))
+            {
+                return null;
+            }
 
             try
             {
@@ -207,7 +230,10 @@ namespace Omnix.Net.Upnp
 
         private static async ValueTask<bool> OpenPortFromContents(string contents, string serviceType, string gatewayIp, int gatewayPort, UpnpProtocolType protocol, string machineIp, int externalPort, int internalPort, string description, CancellationToken token = default)
         {
-            if (contents == null || !contents.Contains(serviceType)) return false;
+            if (contents == null || !contents.Contains(serviceType))
+            {
+                return false;
+            }
 
             try
             {
@@ -265,7 +291,10 @@ namespace Omnix.Net.Upnp
 
         private static async ValueTask<bool> ClosePortFromContents(string services, string serviceType, string gatewayIp, int gatewayPort, UpnpProtocolType protocol, int externalPort, CancellationToken token = default)
         {
-            if (services == null || !services.Contains(serviceType)) return false;
+            if (services == null || !services.Contains(serviceType))
+            {
+                return false;
+            }
 
             try
             {
@@ -318,7 +347,10 @@ namespace Omnix.Net.Upnp
 
         private static async ValueTask<dynamic?> GetPortEntryFromContents(string services, string serviceType, string gatewayIp, int gatewayPort, int index, CancellationToken token = default)
         {
-            if (services == null || !services.Contains(serviceType)) return null;
+            if (services == null || !services.Contains(serviceType))
+            {
+                return null;
+            }
 
             try
             {
@@ -376,26 +408,41 @@ namespace Omnix.Net.Upnp
 
         public async ValueTask<string> GetExternalIpAddress(CancellationToken token = default)
         {
-            if (_contents == null || _location == null) throw new UpnpClientException(nameof(UpnpClient) + " is not connected");
+            if (_contents == null || _location == null)
+            {
+                throw new UpnpClientException(nameof(UpnpClient) + " is not connected");
+            }
 
             string? result;
 
             result = await GetExternalIpAddressFromContents(_contents, "urn:schemas-upnp-org:service:WANIPConnection:1", _location.Host, _location.Port, token);
-            if (result != null) return result;
+            if (result != null)
+            {
+                return result;
+            }
 
             result = await GetExternalIpAddressFromContents(_contents, "urn:schemas-upnp-org:service:WANPPPConnection:1", _location.Host, _location.Port, token);
-            if (result != null) return result;
+            if (result != null)
+            {
+                return result;
+            }
 
             throw new UpnpClientException("Failed to get external ip address.");
         }
 
         public async ValueTask<bool> OpenPort(UpnpProtocolType protocol, int externalPort, int internalPort, string description, CancellationToken token = default)
         {
-            if (_contents == null || _location == null) throw new UpnpClientException(nameof(UpnpClient) + " is not connected");
+            if (_contents == null || _location == null)
+            {
+                throw new UpnpClientException(nameof(UpnpClient) + " is not connected");
+            }
 
             foreach (var ipAddress in await Dns.GetHostAddressesAsync(Dns.GetHostName()))
             {
-                if (ipAddress.AddressFamily != AddressFamily.InterNetwork) continue;
+                if (ipAddress.AddressFamily != AddressFamily.InterNetwork)
+                {
+                    continue;
+                }
 
                 if (await this.OpenPort(protocol, ipAddress.ToString(), externalPort, internalPort, description, token))
                 {
@@ -408,7 +455,10 @@ namespace Omnix.Net.Upnp
 
         public async ValueTask<bool> OpenPort(UpnpProtocolType protocol, string machineIp, int externalPort, int internalPort, string description, CancellationToken token = default)
         {
-            if (_contents == null || _location == null) throw new UpnpClientException(nameof(UpnpClient) + " is not connected");
+            if (_contents == null || _location == null)
+            {
+                throw new UpnpClientException(nameof(UpnpClient) + " is not connected");
+            }
 
             if (await OpenPortFromContents(_contents, "urn:schemas-upnp-org:service:WANIPConnection:1", _location.Host, _location.Port, protocol, machineIp, externalPort, internalPort, description, token))
             {
@@ -425,7 +475,10 @@ namespace Omnix.Net.Upnp
 
         public async ValueTask<bool> ClosePort(UpnpProtocolType protocol, int externalPort, CancellationToken token = default)
         {
-            if (_contents == null || _location == null) throw new UpnpClientException(nameof(UpnpClient) + " is not connected");
+            if (_contents == null || _location == null)
+            {
+                throw new UpnpClientException(nameof(UpnpClient) + " is not connected");
+            }
 
             if (await ClosePortFromContents(_contents, "urn:schemas-upnp-org:service:WANIPConnection:1", _location.Host, _location.Port, protocol, externalPort, token))
             {
@@ -442,22 +495,35 @@ namespace Omnix.Net.Upnp
 
         public async ValueTask<dynamic> GetPortEntry(int index, CancellationToken token = default)
         {
-            if (_contents == null || _location == null) throw new UpnpClientException(nameof(UpnpClient) + " is not connected");
+            if (_contents == null || _location == null)
+            {
+                throw new UpnpClientException(nameof(UpnpClient) + " is not connected");
+            }
 
             dynamic? result;
 
             result = await GetPortEntryFromContents(_contents, "urn:schemas-upnp-org:service:WANIPConnection:1", _location.Host, _location.Port, index, token);
-            if (!(result is null)) return result;
+            if (!(result is null))
+            {
+                return result;
+            }
 
             result = await GetPortEntryFromContents(_contents, "urn:schemas-upnp-org:service:WANPPPConnection:1", _location.Host, _location.Port, index, token);
-            if (!(result is null)) return result;
+            if (!(result is null))
+            {
+                return result;
+            }
 
             throw new UpnpClientException("Failed to get port entry.");
         }
 
         protected override void Dispose(bool disposing)
         {
-            if (_disposed) return;
+            if (_disposed)
+            {
+                return;
+            }
+
             _disposed = true;
 
             if (disposing)

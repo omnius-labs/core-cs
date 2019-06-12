@@ -24,9 +24,20 @@ namespace Omnix.Network.Connection.Secure
 
         public OmniSecureConnection(IConnection connection, OmniSecureConnectionOptions options)
         {
-            if (connection == null) throw new ArgumentNullException(nameof(connection));
-            if (options == null) throw new ArgumentNullException(nameof(options));
-            if (!EnumHelper.IsValid(options.Type)) throw new ArgumentException(nameof(options.Type));
+            if (connection == null)
+            {
+                throw new ArgumentNullException(nameof(connection));
+            }
+
+            if (options == null)
+            {
+                throw new ArgumentNullException(nameof(options));
+            }
+
+            if (!EnumHelper.IsValid(options.Type))
+            {
+                throw new ArgumentException(nameof(options.Type));
+            }
 
             _connection = connection;
             _options = options;
@@ -64,7 +75,10 @@ namespace Omnix.Network.Connection.Secure
 
             foreach (var item in list)
             {
-                if (hashSet.Contains(item)) return item;
+                if (hashSet.Contains(item))
+                {
+                    return item;
+                }
             }
 
             throw new OmniSecureConnectionException($"Overlap enum of {nameof(T)} could not be found.");
@@ -113,7 +127,10 @@ namespace Omnix.Network.Connection.Secure
 
                 await ValueTaskHelper.WhenAll(enqueueTask, dequeueTask);
 
-                if (receiveHelloMessage is null) throw new NullReferenceException();
+                if (receiveHelloMessage is null)
+                {
+                    throw new NullReferenceException();
+                }
             }
 
             _version = GetOverlapMaxEnum(sendHelloMessage.Versions, receiveHelloMessage.Versions);
@@ -193,7 +210,11 @@ namespace Omnix.Network.Connection.Secure
 
         protected override void Dispose(bool disposing)
         {
-            if (_disposed) return;
+            if (_disposed)
+            {
+                return;
+            }
+
             _disposed = true;
 
             if (disposing)

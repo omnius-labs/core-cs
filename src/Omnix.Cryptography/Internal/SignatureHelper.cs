@@ -18,7 +18,10 @@ namespace Omnix.Cryptography.Internal
 
         private static OmniHash CreateOmniHash(string name, ReadOnlySpan<byte> publicKey, OmniHashAlgorithmType hashAlgorithmType)
         {
-            if (name == null) throw new ArgumentNullException(nameof(name));
+            if (name == null)
+            {
+                throw new ArgumentNullException(nameof(name));
+            }
 
             using (var hub = new Hub())
             {
@@ -47,8 +50,15 @@ namespace Omnix.Cryptography.Internal
 
         public static OmniSignature GetOmniSignature(OmniDigitalSignature digitalSignature)
         {
-            if (digitalSignature is null) throw new ArgumentNullException(nameof(digitalSignature));
-            if (digitalSignature.Name == null) throw new ArgumentNullException(nameof(digitalSignature.Name));
+            if (digitalSignature is null)
+            {
+                throw new ArgumentNullException(nameof(digitalSignature));
+            }
+
+            if (digitalSignature.Name == null)
+            {
+                throw new ArgumentNullException(nameof(digitalSignature.Name));
+            }
 
             if (digitalSignature.AlgorithmType == OmniDigitalSignatureAlgorithmType.EcDsa_P521_Sha2_256)
             {
@@ -62,8 +72,15 @@ namespace Omnix.Cryptography.Internal
 
         public static OmniSignature GetOmniSignature(OmniCertificate certificate)
         {
-            if (certificate is null) throw new ArgumentNullException(nameof(certificate));
-            if (certificate.Name == null) throw new ArgumentNullException(nameof(certificate.Name));
+            if (certificate is null)
+            {
+                throw new ArgumentNullException(nameof(certificate));
+            }
+
+            if (certificate.Name == null)
+            {
+                throw new ArgumentNullException(nameof(certificate.Name));
+            }
 
             if (certificate.AlgorithmType == OmniDigitalSignatureAlgorithmType.EcDsa_P521_Sha2_256)
             {

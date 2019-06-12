@@ -43,7 +43,10 @@ namespace Omnix.Network.Connection.Multiplexer.V1
                         id |= (ulong)0x01;
                     }
 
-                    if (_hashSet.Add(id)) continue;
+                    if (_hashSet.Add(id))
+                    {
+                        continue;
+                    }
 
                     return id;
                 }

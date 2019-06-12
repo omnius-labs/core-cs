@@ -98,7 +98,10 @@ namespace Omnix.Collections
         {
             lock (this.LockObject)
             {
-                if (_capacity != null && _hashSet.Count + 1 > _capacity.Value) throw new OverflowException();
+                if (_capacity != null && _hashSet.Count + 1 > _capacity.Value)
+                {
+                    throw new OverflowException();
+                }
 
                 return _hashSet.Add(item);
             }
