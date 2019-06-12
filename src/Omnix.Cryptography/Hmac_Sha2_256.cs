@@ -41,7 +41,10 @@ namespace Omnix.Cryptography
 
         public static bool TryComputeHash(ReadOnlySequence<byte> sequence, ReadOnlySpan<byte> key, Span<byte> destination)
         {
-            if (destination.Length < 32) throw new ArgumentOutOfRangeException(nameof(destination));
+            if (destination.Length < 32)
+            {
+                throw new ArgumentOutOfRangeException(nameof(destination));
+            }
 
             Span<byte> extendedKey = stackalloc byte[_blockLength];
 
@@ -85,7 +88,10 @@ namespace Omnix.Cryptography
 
         public static bool TryComputeHash(ReadOnlySpan<byte> source, ReadOnlySpan<byte> key, Span<byte> destination)
         {
-            if (destination.Length < 32) throw new ArgumentOutOfRangeException(nameof(destination));
+            if (destination.Length < 32)
+            {
+                throw new ArgumentOutOfRangeException(nameof(destination));
+            }
 
             Span<byte> extendedKey = stackalloc byte[_blockLength];
 

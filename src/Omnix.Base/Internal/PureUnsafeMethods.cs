@@ -45,26 +45,40 @@ namespace Omnix.Base.Internal
 
             for (int i = (length / 8) - 1; i >= 0; i--, t_x += 8, t_y += 8)
             {
-                if (*((long*)t_x) != *((long*)t_y)) return false;
+                if (*((long*)t_x) != *((long*)t_y))
+                {
+                    return false;
+                }
             }
 
             if ((length & 4) != 0)
             {
-                if (*((int*)t_x) != *((int*)t_y)) return false;
+                if (*((int*)t_x) != *((int*)t_y))
+                {
+                    return false;
+                }
+
                 t_x += 4;
                 t_y += 4;
             }
 
             if ((length & 2) != 0)
             {
-                if (*((short*)t_x) != *((short*)t_y)) return false;
+                if (*((short*)t_x) != *((short*)t_y))
+                {
+                    return false;
+                }
+
                 t_x += 2;
                 t_y += 2;
             }
 
             if ((length & 1) != 0)
             {
-                if (*((byte*)t_x) != *((byte*)t_y)) return false;
+                if (*((byte*)t_x) != *((byte*)t_y))
+                {
+                    return false;
+                }
             }
 
             return true;
@@ -80,7 +94,10 @@ namespace Omnix.Base.Internal
             for (; len > 0; len--)
             {
                 c = (int)*t_x++ - (int)*t_y++;
-                if (c != 0) return c;
+                if (c != 0)
+                {
+                    return c;
+                }
             }
 
             return 0;

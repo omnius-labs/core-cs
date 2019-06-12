@@ -49,10 +49,16 @@ namespace Omnix.Serialization.RocketPack
             int result;
 
             result = this.Seconds.CompareTo(other.Seconds);
-            if (result != 0) return result;
+            if (result != 0)
+            {
+                return result;
+            }
 
             result = this.Nanos.CompareTo(other.Nanos);
-            if (result != 0) return result;
+            if (result != 0)
+            {
+                return result;
+            }
 
             return 0;
         }
@@ -64,7 +70,10 @@ namespace Omnix.Serialization.RocketPack
 
         public static Timestamp FromDateTime(DateTime dateTime)
         {
-            if (dateTime.Kind != DateTimeKind.Utc) throw new ArgumentException("Conversion from DateTime to Timestamp requires the DateTime kind to be Utc", "dateTime");
+            if (dateTime.Kind != DateTimeKind.Utc)
+            {
+                throw new ArgumentException("Conversion from DateTime to Timestamp requires the DateTime kind to be Utc", "dateTime");
+            }
 
             long ticks = dateTime.Ticks - DateTime.UnixEpoch.Ticks;
             long seconds = ticks / TimeSpan.TicksPerSecond;

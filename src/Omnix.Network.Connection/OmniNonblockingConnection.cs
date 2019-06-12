@@ -43,9 +43,20 @@ namespace Omnix.Network.Connection
 
         public OmniNonblockingConnection(Cap cap, OmniNonblockingConnectionOptions option)
         {
-            if (cap == null) throw new ArgumentNullException(nameof(cap));
-            if (cap.IsBlocking == true) throw new ArgumentException($"{nameof(cap)} is not nonblocking", nameof(cap));
-            if (option == null) throw new ArgumentNullException(nameof(option));
+            if (cap == null)
+            {
+                throw new ArgumentNullException(nameof(cap));
+            }
+
+            if (cap.IsBlocking == true)
+            {
+                throw new ArgumentException($"{nameof(cap)} is not nonblocking", nameof(cap));
+            }
+
+            if (option == null)
+            {
+                throw new ArgumentNullException(nameof(option));
+            }
 
             _cap = cap;
             _maxSendByteCount = Math.Max(256, option.MaxSendByteCount);
@@ -92,8 +103,15 @@ namespace Omnix.Network.Connection
 
         private int Send(int limit)
         {
-            if (_disposed) throw new ObjectDisposedException(this.GetType().FullName);
-            if (!this.IsConnected) throw new ConnectionException("Not connected");
+            if (_disposed)
+            {
+                throw new ObjectDisposedException(this.GetType().FullName);
+            }
+
+            if (!this.IsConnected)
+            {
+                throw new ConnectionException("Not connected");
+            }
 
             lock (_sendLockObject)
             {
@@ -102,14 +120,28 @@ namespace Omnix.Network.Connection
 
                 while (total < limit)
                 {
-                    if (_sendHeaderBufferPosition == -1 && !_sendContentHub.Writer.IsCompleted) break;
-                    if (++loopCount > 5) break;
+                    if (_sendHeaderBufferPosition == -1 && !_sendContentHub.Writer.IsCompleted)
+                    {
+                        break;
+                    }
+
+                    if (++loopCount > 5)
+                    {
+                        break;
+                    }
 
                     if (_sendHeaderBufferPosition < 4)
                     {
-                        if (!_cap.CanSend()) break;
+                        if (!_cap.CanSend())
+                        {
+                            break;
+                        }
+
                         int sendLength = _cap.Send(_sendHeaderBuffer.AsSpan().Slice(_sendHeaderBufferPosition));
-                        if (sendLength == 0) break;
+                        if (sendLength == 0)
+                        {
+                            break;
+                        }
 
                         _sendHeaderBufferPosition += sendLength;
                     }
@@ -128,9 +160,16 @@ namespace Omnix.Network.Connection
 
                             int readLength = Math.Min(limit - total, memory.Length);
 
-                            if (!_cap.CanSend()) break;
+                            if (!_cap.CanSend())
+                            {
+                                break;
+                            }
+
                             int sendLength = _cap.Send(memory.Span.Slice(0, readLength));
-                            if (sendLength == 0) break;
+                            if (sendLength == 0)
+                            {
+                                break;
+                            }
 
                             position = sequence.GetPosition(sendLength, position);
 
@@ -158,8 +197,15 @@ namespace Omnix.Network.Connection
 
         private int Receive(int limit)
         {
-            if (_disposed) throw new ObjectDisposedException(this.GetType().FullName);
-            if (!this.IsConnected) throw new ConnectionException("Not connected");
+            if (_disposed)
+            {
+                throw new ObjectDisposedException(this.GetType().FullName);
+            }
+
+            if (!this.IsConnected)
+            {
+                throw new ConnectionException("Not connected");
+            }
 
             lock (_receiveLockObject)
             {
@@ -168,23 +214,40 @@ namespace Omnix.Network.Connection
 
                 while (total < limit)
                 {
-                    if (_receiveContentHub.Writer.IsCompleted) break;
-                    if (++loopCount > 5) break;
+                    if (_receiveContentHub.Writer.IsCompleted)
+                    {
+                        break;
+                    }
+
+                    if (++loopCount > 5)
+                    {
+                        break;
+                    }
 
                     if (_receiveContentRemain == -1)
                     {
                         for (; ; )
                         {
-                            if (!_cap.CanReceive()) break;
+                            if (!_cap.CanReceive())
+                            {
+                                break;
+                            }
+
                             int receiveLength = _cap.Receive(_receiveHeaderBuffer.AsSpan().Slice(_receiveHeaderBufferPosition));
-                            if (receiveLength == 0) break;
+                            if (receiveLength == 0)
+                            {
+                                break;
+                            }
 
                             _receiveHeaderBufferPosition += receiveLength;
 
                             if (_receiveHeaderBufferPosition == 4)
                             {
                                 var contentLength = BinaryPrimitives.ReadInt32BigEndian(_receiveHeaderBuffer);
-                                if (contentLength > _maxReceiveByteCount) throw new ConnectionException("This message is too long");
+                                if (contentLength > _maxReceiveByteCount)
+                                {
+                                    throw new ConnectionException("This message is too long");
+                                }
 
                                 _receiveContentRemain = contentLength;
 
@@ -195,9 +258,16 @@ namespace Omnix.Network.Connection
 
                     while (_receiveContentRemain > 0)
                     {
-                        if (!_cap.CanReceive()) break;
+                        if (!_cap.CanReceive())
+                        {
+                            break;
+                        }
+
                         int receiveLength = _cap.Receive(_receiveContentHub.Writer.GetSpan(_receiveContentRemain).Slice(0, _receiveContentRemain));
-                        if (receiveLength == 0) break;
+                        if (receiveLength == 0)
+                        {
+                            break;
+                        }
 
                         _receiveContentHub.Writer.Advance(receiveLength);
                         _receiveContentRemain -= receiveLength;
@@ -230,7 +300,11 @@ namespace Omnix.Network.Connection
 
         public bool TryEnqueue(Action<IBufferWriter<byte>> action)
         {
-            if (!_sendSemaphoreSlim.Wait(0)) return false;
+            if (!_sendSemaphoreSlim.Wait(0))
+            {
+                return false;
+            }
+
             this.InternalEnqueue(action);
 
             return true;
@@ -259,7 +333,11 @@ namespace Omnix.Network.Connection
 
         public bool TryDequeue(Action<ReadOnlySequence<byte>> action)
         {
-            if (!_receiveSemaphoreSlim.Wait(0)) return false;
+            if (!_receiveSemaphoreSlim.Wait(0))
+            {
+                return false;
+            }
+
             this.InternalDequeue(action);
 
             return true;
@@ -279,7 +357,11 @@ namespace Omnix.Network.Connection
 
         protected override void Dispose(bool disposing)
         {
-            if (_disposed) return;
+            if (_disposed)
+            {
+                return;
+            }
+
             _disposed = true;
 
             if (disposing)

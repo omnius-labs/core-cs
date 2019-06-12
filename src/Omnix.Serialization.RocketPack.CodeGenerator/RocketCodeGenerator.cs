@@ -133,7 +133,11 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
 
             private bool TryWriteIndent()
             {
-                if (_wroteIndent) return false;
+                if (_wroteIndent)
+                {
+                    return false;
+                }
+
                 _wroteIndent = true;
 
                 for (int i = 0; i < _indentDepth; i++)

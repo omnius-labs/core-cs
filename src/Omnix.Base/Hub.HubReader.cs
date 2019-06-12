@@ -35,7 +35,10 @@ namespace Omnix.Base
             {
                 if (_sequence == null)
                 {
-                    if (!_pipeReader.TryRead(out var readResult)) throw new HubReaderException("Read failed.");
+                    if (!_pipeReader.TryRead(out var readResult))
+                    {
+                        throw new HubReaderException("Read failed.");
+                    }
 
                     _sequence = readResult.Buffer;
                 }

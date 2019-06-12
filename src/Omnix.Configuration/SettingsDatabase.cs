@@ -67,7 +67,10 @@ namespace Omnix.Configuration
                     for (; ; )
                     {
                         var readLength = gzipStream.Read(hub.Writer.GetSpan(1024 * 4));
-                        if (readLength < 0) break;
+                        if (readLength < 0)
+                        {
+                            break;
+                        }
 
                         hub.Writer.Advance(readLength);
                     }
@@ -228,7 +231,11 @@ namespace Omnix.Configuration
 
         protected override void Dispose(bool disposing)
         {
-            if (_disposed) return;
+            if (_disposed)
+            {
+                return;
+            }
+
             _disposed = true;
 
             if (disposing)

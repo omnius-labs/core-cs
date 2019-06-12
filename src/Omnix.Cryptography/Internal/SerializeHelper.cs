@@ -47,7 +47,11 @@ namespace Omnix.Cryptography.Internal
 
             while (sequence.Length > 0)
             {
-                if (!Varint.TryGetUInt64(sequence, out var length, out position)) throw new FormatException();
+                if (!Varint.TryGetUInt64(sequence, out var length, out position))
+                {
+                    throw new FormatException();
+                }
+
                 sequence = sequence.Slice(position);
 
                 list.Add(sequence.Slice(0, (int)length).ToArray());

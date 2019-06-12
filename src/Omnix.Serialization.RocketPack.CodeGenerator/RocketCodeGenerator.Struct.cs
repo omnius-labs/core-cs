@@ -30,10 +30,16 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
                 foreach (var targetInfo in new[] { _rocketFormatDefinition }.Union(_externalRocketPackDefinitions))
                 {
                     var enumInfo = targetInfo.Enums.FirstOrDefault(m => m.Name == n.TypeName);
-                    if (enumInfo != null) return enumInfo;
+                    if (enumInfo != null)
+                    {
+                        return enumInfo;
+                    }
 
                     var messageInfo = targetInfo.Messages.FirstOrDefault(m => m.Name == n.TypeName);
-                    if (messageInfo != null) return messageInfo;
+                    if (messageInfo != null)
+                    {
+                        return messageInfo;
+                    }
                 }
 
                 return null;
@@ -164,45 +170,129 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
                 switch (typeBase)
                 {
                     case BoolType type:
-                        if (!type.IsOptional) return "false";
-                        else return "null";
+                        if (!type.IsOptional)
+                        {
+                            return "false";
+                        }
+                        else
+                        {
+                            return "null";
+                        }
+
                     case IntType type:
-                        if (!type.IsOptional) return "0";
-                        else return "null";
+                        if (!type.IsOptional)
+                        {
+                            return "0";
+                        }
+                        else
+                        {
+                            return "null";
+                        }
+
                     case FloatType type when (type.Size == 32):
-                        if (!type.IsOptional) return "0.0F";
-                        else return "null";
+                        if (!type.IsOptional)
+                        {
+                            return "0.0F";
+                        }
+                        else
+                        {
+                            return "null";
+                        }
+
                     case FloatType type when (type.Size == 64):
-                        if (!type.IsOptional) return "0.0D";
-                        else return "null";
+                        if (!type.IsOptional)
+                        {
+                            return "0.0D";
+                        }
+                        else
+                        {
+                            return "null";
+                        }
+
                     case StringType type:
-                        if (!type.IsOptional) return "string.Empty";
-                        else return "null";
+                        if (!type.IsOptional)
+                        {
+                            return "string.Empty";
+                        }
+                        else
+                        {
+                            return "null";
+                        }
+
                     case TimestampType type:
-                        if (!type.IsOptional) return GetFullName("Timestamp") + ".Zero";
-                        else return "null";
+                        if (!type.IsOptional)
+                        {
+                            return GetFullName("Timestamp") + ".Zero";
+                        }
+                        else
+                        {
+                            return "null";
+                        }
+
                     case MemoryType type when (!type.IsUseMemoryPool):
-                        if (!type.IsOptional) return GetFullName("ReadOnlyMemory<>", "byte") + ".Empty";
-                        else return "null";
+                        if (!type.IsOptional)
+                        {
+                            return GetFullName("ReadOnlyMemory<>", "byte") + ".Empty";
+                        }
+                        else
+                        {
+                            return "null";
+                        }
+
                     case MemoryType type when (type.IsUseMemoryPool):
-                        if (!type.IsOptional) return GetFullName("MemoryOwner<>", "byte") + ".Empty";
-                        else return "null";
+                        if (!type.IsOptional)
+                        {
+                            return GetFullName("MemoryOwner<>", "byte") + ".Empty";
+                        }
+                        else
+                        {
+                            return "null";
+                        }
+
                     case ListType type:
-                        if (!type.IsOptional) return GetFullName("Array") + ".Empty<" + this.GetParameterTypeString(type.ElementType) + ">()";
-                        else return "null";
+                        if (!type.IsOptional)
+                        {
+                            return GetFullName("Array") + ".Empty<" + this.GetParameterTypeString(type.ElementType) + ">()";
+                        }
+                        else
+                        {
+                            return "null";
+                        }
+
                     case MapType type:
-                        if (!type.IsOptional) return "new " + GetFullName("Dictionary<,>", this.GetParameterTypeString(type.KeyType), this.GetParameterTypeString(type.ValueType)) + "()";
-                        else return "null";
+                        if (!type.IsOptional)
+                        {
+                            return "new " + GetFullName("Dictionary<,>", this.GetParameterTypeString(type.KeyType), this.GetParameterTypeString(type.ValueType)) + "()";
+                        }
+                        else
+                        {
+                            return "null";
+                        }
+
                     case CustomType type:
                         {
                             switch (this.CustomTypeResolver(type))
                             {
                                 case EnumDefinition elementEnumDefinition:
-                                    if (!type.IsOptional) return $"({elementEnumDefinition.Name})0";
-                                    else return "null";
+                                    if (!type.IsOptional)
+                                    {
+                                        return $"({elementEnumDefinition.Name})0";
+                                    }
+                                    else
+                                    {
+                                        return "null";
+                                    }
+
                                 case MessageDefinition elementMessageDefinition:
-                                    if (!type.IsOptional) return $"{elementMessageDefinition.Name}.Empty";
-                                    else return "null";
+                                    if (!type.IsOptional)
+                                    {
+                                        return $"{elementMessageDefinition.Name}.Empty";
+                                    }
+                                    else
+                                    {
+                                        return "null";
+                                    }
+
                                 default:
                                     throw new ArgumentException($"Type \"{type.TypeName}\" was not found", nameof(typeBase));
                             }
@@ -384,7 +474,10 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
                     isDefinedMaxLength |= this.Try_Write_Constructor_Define_MaxLength_Element(w, elementInfo.Name, elementInfo.Type);
                 }
 
-                if (isDefinedMaxLength) w.WriteLine();
+                if (isDefinedMaxLength)
+                {
+                    w.WriteLine();
+                }
             }
 
             private bool Try_Write_Constructor_Define_MaxLength_Element(CodeWriter w, string name, TypeBase type)
@@ -417,7 +510,10 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
                     isChecked = this.Try_Write_Constructor_Parameter_Check_Element(w, elementInfo);
                 }
 
-                if (isChecked) w.WriteLine();
+                if (isChecked)
+                {
+                    w.WriteLine();
+                }
             }
 
             private bool Try_Write_Constructor_Parameter_Check_Element(CodeWriter w, MessageElement elementInfo)
@@ -461,7 +557,10 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
                         w2.WriteLine("}");
                     }
 
-                    if (isChecked2) w.WriteLine(w2.ToString().TrimEnd());
+                    if (isChecked2)
+                    {
+                        w.WriteLine(w2.ToString().TrimEnd());
+                    }
 
                     isChecked |= isChecked2;
                 }
@@ -501,7 +600,10 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
                         w2.WriteLine("}");
                     }
 
-                    if (isChecked2) w.WriteLine(w2.ToString().TrimEnd());
+                    if (isChecked2)
+                    {
+                        w.WriteLine(w2.ToString().TrimEnd());
+                    }
 
                     isChecked |= isChecked2;
                 }
@@ -946,31 +1048,73 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
                 switch (type)
                 {
                     case BoolType boolType:
-                        if (!type.IsOptional) w.WriteLine($"w.Write({name});");
-                        else w.WriteLine($"w.Write({name}.Value);");
+                        if (!type.IsOptional)
+                        {
+                            w.WriteLine($"w.Write({name});");
+                        }
+                        else
+                        {
+                            w.WriteLine($"w.Write({name}.Value);");
+                        }
+
                         break;
                     case IntType inttype:
-                        if (!type.IsOptional) w.WriteLine($"w.Write({name});");
-                        else w.WriteLine($"w.Write({name}.Value);");
+                        if (!type.IsOptional)
+                        {
+                            w.WriteLine($"w.Write({name});");
+                        }
+                        else
+                        {
+                            w.WriteLine($"w.Write({name}.Value);");
+                        }
+
                         break;
                     case FloatType floatType:
-                        if (!type.IsOptional) w.WriteLine($"w.Write({name});");
-                        else w.WriteLine($"w.Write({name}.Value);");
+                        if (!type.IsOptional)
+                        {
+                            w.WriteLine($"w.Write({name});");
+                        }
+                        else
+                        {
+                            w.WriteLine($"w.Write({name}.Value);");
+                        }
+
                         break;
                     case StringType stringType:
                         w.WriteLine($"w.Write({name});");
                         break;
                     case TimestampType timestampType:
-                        if (!type.IsOptional) w.WriteLine($"w.Write({name});");
-                        else w.WriteLine($"w.Write({name}.Value);");
+                        if (!type.IsOptional)
+                        {
+                            w.WriteLine($"w.Write({name});");
+                        }
+                        else
+                        {
+                            w.WriteLine($"w.Write({name}.Value);");
+                        }
+
                         break;
                     case MemoryType memoryType when (memoryType.IsUseMemoryPool):
-                        if (!type.IsOptional) w.WriteLine($"w.Write({name}.Span);");
-                        else w.WriteLine($"w.Write({name}.Value.Span);");
+                        if (!type.IsOptional)
+                        {
+                            w.WriteLine($"w.Write({name}.Span);");
+                        }
+                        else
+                        {
+                            w.WriteLine($"w.Write({name}.Value.Span);");
+                        }
+
                         break;
                     case MemoryType memoryType when (!memoryType.IsUseMemoryPool):
-                        if (!type.IsOptional) w.WriteLine($"w.Write({name}.Span);");
-                        else w.WriteLine($"w.Write({name}.Value.Span);");
+                        if (!type.IsOptional)
+                        {
+                            w.WriteLine($"w.Write({name}.Span);");
+                        }
+                        else
+                        {
+                            w.WriteLine($"w.Write({name}.Value.Span);");
+                        }
+
                         break;
                     case ListType listType:
                         {
@@ -1014,12 +1158,26 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
                                 switch (enumDefinition.Type)
                                 {
                                     case IntType intType when (intType.IsSigned):
-                                        if (!intType.IsOptional) w.WriteLine($"w.Write((long){name});");
-                                        else w.WriteLine($"w.Write((long){name}.Value);");
+                                        if (!intType.IsOptional)
+                                        {
+                                            w.WriteLine($"w.Write((long){name});");
+                                        }
+                                        else
+                                        {
+                                            w.WriteLine($"w.Write((long){name}.Value);");
+                                        }
+
                                         break;
                                     case IntType intType when (!intType.IsSigned):
-                                        if (!intType.IsOptional) w.WriteLine($"w.Write((ulong){name});");
-                                        else w.WriteLine($"w.Write((ulong){name}.Value);");
+                                        if (!intType.IsOptional)
+                                        {
+                                            w.WriteLine($"w.Write((ulong){name});");
+                                        }
+                                        else
+                                        {
+                                            w.WriteLine($"w.Write((ulong){name}.Value);");
+                                        }
+
                                         break;
                                 }
                                 break;
@@ -1042,52 +1200,129 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
                 switch (messageElement.Type)
                 {
                     case BoolType type:
-                        if (!type.IsOptional) sb.Append($"value.{messageElement.Name} != false)");
-                        else sb.Append($"value.{messageElement.Name} != null)");
+                        if (!type.IsOptional)
+                        {
+                            sb.Append($"value.{messageElement.Name} != false)");
+                        }
+                        else
+                        {
+                            sb.Append($"value.{messageElement.Name} != null)");
+                        }
+
                         break;
                     case IntType type:
-                        if (!type.IsOptional) sb.Append($"value.{messageElement.Name} != 0)");
-                        else sb.Append($"value.{messageElement.Name} != null)");
+                        if (!type.IsOptional)
+                        {
+                            sb.Append($"value.{messageElement.Name} != 0)");
+                        }
+                        else
+                        {
+                            sb.Append($"value.{messageElement.Name} != null)");
+                        }
+
                         break;
                     case FloatType type when (type.Size == 32):
-                        if (!type.IsOptional) sb.Append($"value.{messageElement.Name} != 0.0F)");
-                        else sb.Append($"value.{messageElement.Name} != null)");
+                        if (!type.IsOptional)
+                        {
+                            sb.Append($"value.{messageElement.Name} != 0.0F)");
+                        }
+                        else
+                        {
+                            sb.Append($"value.{messageElement.Name} != null)");
+                        }
+
                         break;
                     case FloatType type when (type.Size == 64):
-                        if (!type.IsOptional) sb.Append($"value.{messageElement.Name} != 0.0D)");
-                        else sb.Append($"value.{messageElement.Name} != null)");
+                        if (!type.IsOptional)
+                        {
+                            sb.Append($"value.{messageElement.Name} != 0.0D)");
+                        }
+                        else
+                        {
+                            sb.Append($"value.{messageElement.Name} != null)");
+                        }
+
                         break;
                     case StringType type:
-                        if (!type.IsOptional) sb.Append($"value.{messageElement.Name} != string.Empty)");
-                        else sb.Append($"value.{messageElement.Name} != null)");
+                        if (!type.IsOptional)
+                        {
+                            sb.Append($"value.{messageElement.Name} != string.Empty)");
+                        }
+                        else
+                        {
+                            sb.Append($"value.{messageElement.Name} != null)");
+                        }
+
                         break;
                     case TimestampType type:
-                        if (!type.IsOptional) sb.Append($"value.{messageElement.Name} != {GetFullName("Timestamp")}.Zero)");
-                        else sb.Append($"value.{messageElement.Name} != null)");
+                        if (!type.IsOptional)
+                        {
+                            sb.Append($"value.{messageElement.Name} != {GetFullName("Timestamp")}.Zero)");
+                        }
+                        else
+                        {
+                            sb.Append($"value.{messageElement.Name} != null)");
+                        }
+
                         break;
                     case MemoryType type:
-                        if (!type.IsOptional) sb.Append($"!value.{messageElement.Name}.IsEmpty)");
-                        else sb.Append($"value.{messageElement.Name} != null)");
+                        if (!type.IsOptional)
+                        {
+                            sb.Append($"!value.{messageElement.Name}.IsEmpty)");
+                        }
+                        else
+                        {
+                            sb.Append($"value.{messageElement.Name} != null)");
+                        }
+
                         break;
                     case ListType type:
-                        if (!type.IsOptional) sb.Append($"value.{messageElement.Name}.Count != 0)");
-                        else sb.Append($"value.{messageElement.Name} != null)");
+                        if (!type.IsOptional)
+                        {
+                            sb.Append($"value.{messageElement.Name}.Count != 0)");
+                        }
+                        else
+                        {
+                            sb.Append($"value.{messageElement.Name} != null)");
+                        }
+
                         break;
                     case MapType type:
-                        if (!type.IsOptional) sb.Append($"value.{messageElement.Name}.Count != 0)");
-                        else sb.Append($"value.{messageElement.Name} != null)");
+                        if (!type.IsOptional)
+                        {
+                            sb.Append($"value.{messageElement.Name}.Count != 0)");
+                        }
+                        else
+                        {
+                            sb.Append($"value.{messageElement.Name} != null)");
+                        }
+
                         break;
                     case CustomType type:
                         {
                             switch (this.CustomTypeResolver(type))
                             {
                                 case EnumDefinition elementEnumDefinition:
-                                    if (!type.IsOptional) sb.Append($"value.{messageElement.Name} != ({elementEnumDefinition.Name})0)");
-                                    else sb.Append($"value.{messageElement.Name} != null)");
+                                    if (!type.IsOptional)
+                                    {
+                                        sb.Append($"value.{messageElement.Name} != ({elementEnumDefinition.Name})0)");
+                                    }
+                                    else
+                                    {
+                                        sb.Append($"value.{messageElement.Name} != null)");
+                                    }
+
                                     break;
                                 case MessageDefinition elementMessageDefinition:
-                                    if (!type.IsOptional) sb.Append($"value.{messageElement.Name} != {elementMessageDefinition.Name}.Empty)");
-                                    else sb.Append($"value.{messageElement.Name} != null)");
+                                    if (!type.IsOptional)
+                                    {
+                                        sb.Append($"value.{messageElement.Name} != {elementMessageDefinition.Name}.Empty)");
+                                    }
+                                    else
+                                    {
+                                        sb.Append($"value.{messageElement.Name} != null)");
+                                    }
+
                                     break;
                                 default:
                                     throw new ArgumentException($"Type \"{type.TypeName}\" was not found", nameof(messageElement.Type));

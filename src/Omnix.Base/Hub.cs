@@ -30,8 +30,16 @@ namespace Omnix.Base
 
         public void Reset()
         {
-            if (!_hubReader.IsCompleted) _hubReader.Complete();
-            if (!_hubWriter.IsCompleted) _hubWriter.Complete();
+            if (!_hubReader.IsCompleted)
+            {
+                _hubReader.Complete();
+            }
+
+            if (!_hubWriter.IsCompleted)
+            {
+                _hubWriter.Complete();
+            }
+
             _pipe.Reset();
 
             _hubReader.Reset();
@@ -40,7 +48,11 @@ namespace Omnix.Base
 
         protected override void Dispose(bool disposing)
         {
-            if (_disposed) return;
+            if (_disposed)
+            {
+                return;
+            }
+
             _disposed = true;
 
             if (disposing)

@@ -59,7 +59,10 @@ namespace Omnix.Base
                 get
                 {
                     var bytes = _bytes;
-                    if (bytes == null) throw new ObjectDisposedException(nameof(BufferPoolMemoryOwner));
+                    if (bytes == null)
+                    {
+                        throw new ObjectDisposedException(nameof(BufferPoolMemoryOwner));
+                    }
 
                     return new Memory<byte>(bytes, 0, _size);
                 }

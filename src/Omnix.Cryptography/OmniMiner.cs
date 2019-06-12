@@ -18,7 +18,10 @@ namespace Omnix.Cryptography
     {
         public static async ValueTask<OmniHashcash> Create(ReadOnlySequence<byte> sequence, ReadOnlyMemory<byte> key, OmniHashcashAlgorithmType hashcashAlgorithmType, int limit, TimeSpan timeout, CancellationToken token)
         {
-            if (!EnumHelper.IsValid(hashcashAlgorithmType)) throw new ArgumentException(nameof(OmniHashcashAlgorithmType));
+            if (!EnumHelper.IsValid(hashcashAlgorithmType))
+            {
+                throw new ArgumentException(nameof(OmniHashcashAlgorithmType));
+            }
 
             return await Task.Run(() =>
             {
@@ -36,7 +39,10 @@ namespace Omnix.Cryptography
 
         public static uint Verify(OmniHashcash hashcash, ReadOnlySequence<byte> sequence, ReadOnlyMemory<byte> key)
         {
-            if (hashcash is null) throw new ArgumentNullException(nameof(hashcash));
+            if (hashcash is null)
+            {
+                throw new ArgumentNullException(nameof(hashcash));
+            }
 
             if (hashcash.AlgorithmType == OmniHashcashAlgorithmType.Simple_Sha2_256)
             {
@@ -86,10 +92,20 @@ namespace Omnix.Cryptography
 
             public static byte[] Compute_Simple_Sha2_256(ReadOnlySpan<byte> value, int limit, TimeSpan timeout, CancellationToken token)
             {
-                if (value == null) throw new ArgumentNullException(nameof(value));
-                if (value.Length != 32) throw new ArgumentOutOfRangeException(nameof(value));
+                if (value == null)
+                {
+                    throw new ArgumentNullException(nameof(value));
+                }
 
-                if (limit < 0) limit = 256;
+                if (value.Length != 32)
+                {
+                    throw new ArgumentOutOfRangeException(nameof(value));
+                }
+
+                if (limit < 0)
+                {
+                    limit = 256;
+                }
 
                 var sw = Stopwatch.StartNew();
 
@@ -151,10 +167,25 @@ namespace Omnix.Cryptography
 
             public static uint Verify_Simple_Sha2_256(ReadOnlySpan<byte> key, ReadOnlySpan<byte> value)
             {
-                if (key == null) throw new ArgumentNullException(nameof(key));
-                if (key.Length != 32) throw new ArgumentOutOfRangeException(nameof(key));
-                if (value == null) throw new ArgumentNullException(nameof(value));
-                if (value.Length != 32) throw new ArgumentOutOfRangeException(nameof(value));
+                if (key == null)
+                {
+                    throw new ArgumentNullException(nameof(key));
+                }
+
+                if (key.Length != 32)
+                {
+                    throw new ArgumentOutOfRangeException(nameof(key));
+                }
+
+                if (value == null)
+                {
+                    throw new ArgumentNullException(nameof(value));
+                }
+
+                if (value.Length != 32)
+                {
+                    throw new ArgumentOutOfRangeException(nameof(value));
+                }
 
                 Span<byte> buffer = stackalloc byte[64];
 
@@ -171,8 +202,14 @@ namespace Omnix.Cryptography
                 {
                     for (int j = 0; j < 8; j++)
                     {
-                        if (((hash[i] << j) & 0x80) == 0) count++;
-                        else goto End;
+                        if (((hash[i] << j) & 0x80) == 0)
+                        {
+                            count++;
+                        }
+                        else
+                        {
+                            goto End;
+                        }
                     }
                 }
             End:

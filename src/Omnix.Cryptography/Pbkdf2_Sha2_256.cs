@@ -18,7 +18,10 @@ namespace Omnix.Cryptography
             const int hashLength = 32;
 
             int keyLength = destination.Length / hashLength;
-            if (destination.Length % hashLength != 0) keyLength++;
+            if (destination.Length % hashLength != 0)
+            {
+                keyLength++;
+            }
 
             var extendedkeyLength = (salt.Length + 4);
             Span<byte> extendedkey = extendedkeyLength <= 128 ? stackalloc byte[extendedkeyLength] : new byte[extendedkeyLength];

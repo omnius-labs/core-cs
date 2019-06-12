@@ -234,7 +234,10 @@ namespace Omnix.Network.Proxy
         private byte GetDestAddressType(string host)
         {
             IPAddress ipAddress;
-            if (!IPAddress.TryParse(host, out ipAddress)) return SOCKS5_ADDRTYPE_DOMAIN_NAME;
+            if (!IPAddress.TryParse(host, out ipAddress))
+            {
+                return SOCKS5_ADDRTYPE_DOMAIN_NAME;
+            }
 
             switch (ipAddress.AddressFamily)
             {

@@ -34,7 +34,11 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
                     {
                         var targetPath = Path.Combine(basePath, usingInfo.Path);
 
-                        if (!loadedPathSet.Add(targetPath)) continue;
+                        if (!loadedPathSet.Add(targetPath))
+                        {
+                            continue;
+                        }
+
                         usingPathList.Add(targetPath);
                     }
                 }

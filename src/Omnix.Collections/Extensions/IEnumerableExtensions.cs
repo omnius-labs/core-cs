@@ -24,7 +24,10 @@ namespace Omnix.Collections.Extensions
             }
             finally
             {
-                if (lockToken) Monitor.Exit(lockObject);
+                if (lockToken)
+                {
+                    Monitor.Exit(lockObject);
+                }
             }
         }
     }

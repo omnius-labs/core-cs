@@ -246,7 +246,10 @@ namespace Omnix.Serialization
 
         public bool TryDecode(ReadOnlySpan<byte> text, IBufferWriter<byte> bufferWriter)
         {
-            if (bufferWriter == null) throw new ArgumentNullException(nameof(bufferWriter));
+            if (bufferWriter == null)
+            {
+                throw new ArgumentNullException(nameof(bufferWriter));
+            }
 
             if (text.IsEmpty)
             {
@@ -287,11 +290,17 @@ namespace Omnix.Serialization
 
                         while (p_text_start != p_text_end)
                         {
-                            if (*p_text_start >= 128) return false; // Invalid b58 character
+                            if (*p_text_start >= 128)
+                            {
+                                return false; // Invalid b58 character
+                            }
 
                             // Decode base58 character
                             int carry = _base58Map[*p_text_start];
-                            if (carry == -1) return false; // Invalid b58 character
+                            if (carry == -1)
+                            {
+                                return false; // Invalid b58 character
+                            }
 
                             int i = 0;
 

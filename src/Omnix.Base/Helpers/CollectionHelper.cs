@@ -37,17 +37,42 @@ namespace Omnix.Base.Helpers
 
         public static bool Equals<T>(IList<T> source, IList<T> destination, IEqualityComparer<T> equalityComparer)
         {
-            if (source == null) throw new ArgumentNullException(nameof(source));
-            if (source == null) throw new ArgumentNullException(nameof(source));
-            if (destination == null) throw new ArgumentNullException(nameof(destination));
-            if (equalityComparer == null) throw new ArgumentNullException(nameof(equalityComparer));
+            if (source == null)
+            {
+                throw new ArgumentNullException(nameof(source));
+            }
 
-            if (object.ReferenceEquals(source, destination)) return true;
-            if (source.Count != destination.Count) return false;
+            if (source == null)
+            {
+                throw new ArgumentNullException(nameof(source));
+            }
+
+            if (destination == null)
+            {
+                throw new ArgumentNullException(nameof(destination));
+            }
+
+            if (equalityComparer == null)
+            {
+                throw new ArgumentNullException(nameof(equalityComparer));
+            }
+
+            if (object.ReferenceEquals(source, destination))
+            {
+                return true;
+            }
+
+            if (source.Count != destination.Count)
+            {
+                return false;
+            }
 
             for (int i = source.Count - 1; i >= 0; i--)
             {
-                if (!equalityComparer.Equals(source[i], destination[i])) return false;
+                if (!equalityComparer.Equals(source[i], destination[i]))
+                {
+                    return false;
+                }
             }
 
             return true;
@@ -55,22 +80,46 @@ namespace Omnix.Base.Helpers
 
         public static bool Equals<T>(IEnumerable<T> source, IEnumerable<T> destination, IEqualityComparer<T> equalityComparer)
         {
-            if (source == null) throw new ArgumentNullException(nameof(source));
-            if (destination == null) throw new ArgumentNullException(nameof(destination));
-            if (equalityComparer == null) throw new ArgumentNullException(nameof(equalityComparer));
+            if (source == null)
+            {
+                throw new ArgumentNullException(nameof(source));
+            }
 
-            if (object.ReferenceEquals(source, destination)) return true;
+            if (destination == null)
+            {
+                throw new ArgumentNullException(nameof(destination));
+            }
+
+            if (equalityComparer == null)
+            {
+                throw new ArgumentNullException(nameof(equalityComparer));
+            }
+
+            if (object.ReferenceEquals(source, destination))
+            {
+                return true;
+            }
 
             using (var s = source.GetEnumerator())
             using (var d = destination.GetEnumerator())
             {
                 while (s.MoveNext())
                 {
-                    if (!d.MoveNext()) return false;
-                    if (!equalityComparer.Equals(s.Current, d.Current)) return false;
+                    if (!d.MoveNext())
+                    {
+                        return false;
+                    }
+
+                    if (!equalityComparer.Equals(s.Current, d.Current))
+                    {
+                        return false;
+                    }
                 }
 
-                if (d.MoveNext()) return false;
+                if (d.MoveNext())
+                {
+                    return false;
+                }
             }
 
             return true;
@@ -78,18 +127,47 @@ namespace Omnix.Base.Helpers
 
         public static bool Equals<T>(IList<T> source, int sourceIndex, IList<T> destination, int destinationIndex, int length, IEqualityComparer<T> equalityComparer)
         {
-            if (source == null) throw new ArgumentNullException(nameof(source));
-            if (destination == null) throw new ArgumentNullException(nameof(destination));
-            if (equalityComparer == null) throw new ArgumentNullException(nameof(equalityComparer));
+            if (source == null)
+            {
+                throw new ArgumentNullException(nameof(source));
+            }
 
-            if (0 > (source.Count - sourceIndex)) throw new ArgumentOutOfRangeException(nameof(sourceIndex));
-            if (0 > (destination.Count - destinationIndex)) throw new ArgumentOutOfRangeException(nameof(destinationIndex));
-            if (length > (source.Count - sourceIndex)) throw new ArgumentOutOfRangeException(nameof(length));
-            if (length > (destination.Count - destinationIndex)) throw new ArgumentOutOfRangeException(nameof(length));
+            if (destination == null)
+            {
+                throw new ArgumentNullException(nameof(destination));
+            }
+
+            if (equalityComparer == null)
+            {
+                throw new ArgumentNullException(nameof(equalityComparer));
+            }
+
+            if (0 > (source.Count - sourceIndex))
+            {
+                throw new ArgumentOutOfRangeException(nameof(sourceIndex));
+            }
+
+            if (0 > (destination.Count - destinationIndex))
+            {
+                throw new ArgumentOutOfRangeException(nameof(destinationIndex));
+            }
+
+            if (length > (source.Count - sourceIndex))
+            {
+                throw new ArgumentOutOfRangeException(nameof(length));
+            }
+
+            if (length > (destination.Count - destinationIndex))
+            {
+                throw new ArgumentOutOfRangeException(nameof(length));
+            }
 
             for (int i = sourceIndex, j = destinationIndex, k = 0; k < length; i++, j++, k++)
             {
-                if (!equalityComparer.Equals(source[i], destination[j])) return false;
+                if (!equalityComparer.Equals(source[i], destination[j]))
+                {
+                    return false;
+                }
             }
 
             return true;
@@ -97,29 +175,56 @@ namespace Omnix.Base.Helpers
 
         public static bool Equals<T>(IEnumerable<T> source, int sourceIndex, IEnumerable<T> destination, int destinationIndex, int length, IEqualityComparer<T> equalityComparer)
         {
-            if (source == null) throw new ArgumentNullException(nameof(source));
-            if (destination == null) throw new ArgumentNullException(nameof(destination));
-            if (equalityComparer == null) throw new ArgumentNullException(nameof(equalityComparer));
+            if (source == null)
+            {
+                throw new ArgumentNullException(nameof(source));
+            }
+
+            if (destination == null)
+            {
+                throw new ArgumentNullException(nameof(destination));
+            }
+
+            if (equalityComparer == null)
+            {
+                throw new ArgumentNullException(nameof(equalityComparer));
+            }
 
             using (var s = source.GetEnumerator())
             using (var d = destination.GetEnumerator())
             {
                 for (int i = 0; i < sourceIndex; i++)
                 {
-                    if (!s.MoveNext()) throw new ArgumentOutOfRangeException(nameof(sourceIndex));
+                    if (!s.MoveNext())
+                    {
+                        throw new ArgumentOutOfRangeException(nameof(sourceIndex));
+                    }
                 }
 
                 for (int i = 0; i < destinationIndex; i++)
                 {
-                    if (!d.MoveNext()) throw new ArgumentOutOfRangeException(nameof(destinationIndex));
+                    if (!d.MoveNext())
+                    {
+                        throw new ArgumentOutOfRangeException(nameof(destinationIndex));
+                    }
                 }
 
                 for (int i = 0; i < length; i++)
                 {
-                    if (!s.MoveNext()) throw new ArgumentOutOfRangeException(nameof(length));
-                    if (!d.MoveNext()) throw new ArgumentOutOfRangeException(nameof(length));
+                    if (!s.MoveNext())
+                    {
+                        throw new ArgumentOutOfRangeException(nameof(length));
+                    }
 
-                    if (!equalityComparer.Equals(s.Current, d.Current)) return false;
+                    if (!d.MoveNext())
+                    {
+                        throw new ArgumentOutOfRangeException(nameof(length));
+                    }
+
+                    if (!equalityComparer.Equals(s.Current, d.Current))
+                    {
+                        return false;
+                    }
                 }
             }
 
@@ -158,10 +263,25 @@ namespace Omnix.Base.Helpers
 
                 if (x != null && y != null)
                 {
-                    if (0 > (source.Count - sourceIndex)) throw new ArgumentOutOfRangeException(nameof(sourceIndex));
-                    if (0 > (destination.Count - destinationIndex)) throw new ArgumentOutOfRangeException(nameof(destinationIndex));
-                    if (length > (source.Count - sourceIndex)) throw new ArgumentOutOfRangeException(nameof(length));
-                    if (length > (destination.Count - destinationIndex)) throw new ArgumentOutOfRangeException(nameof(length));
+                    if (0 > (source.Count - sourceIndex))
+                    {
+                        throw new ArgumentOutOfRangeException(nameof(sourceIndex));
+                    }
+
+                    if (0 > (destination.Count - destinationIndex))
+                    {
+                        throw new ArgumentOutOfRangeException(nameof(destinationIndex));
+                    }
+
+                    if (length > (source.Count - sourceIndex))
+                    {
+                        throw new ArgumentOutOfRangeException(nameof(length));
+                    }
+
+                    if (length > (destination.Count - destinationIndex))
+                    {
+                        throw new ArgumentOutOfRangeException(nameof(length));
+                    }
 
                     return BytesOperations.SequenceEqual(x.AsSpan(sourceIndex, length), y.AsSpan(destinationIndex, length));
                 }
@@ -181,18 +301,39 @@ namespace Omnix.Base.Helpers
 
         public static int Compare<T>(IList<T> source, IList<T> destination, IComparer<T> comparer)
         {
-            if (source == null) throw new ArgumentNullException(nameof(source));
-            if (destination == null) throw new ArgumentNullException(nameof(destination));
-            if (comparer == null) throw new ArgumentNullException(nameof(comparer));
+            if (source == null)
+            {
+                throw new ArgumentNullException(nameof(source));
+            }
 
-            if (object.ReferenceEquals(source, destination)) return 0;
-            if (source.Count != destination.Count) return (source.Count > destination.Count) ? 1 : -1;
+            if (destination == null)
+            {
+                throw new ArgumentNullException(nameof(destination));
+            }
+
+            if (comparer == null)
+            {
+                throw new ArgumentNullException(nameof(comparer));
+            }
+
+            if (object.ReferenceEquals(source, destination))
+            {
+                return 0;
+            }
+
+            if (source.Count != destination.Count)
+            {
+                return (source.Count > destination.Count) ? 1 : -1;
+            }
 
             int c = 0;
 
             for (int i = 0; i < source.Count; i++)
             {
-                if ((c = comparer.Compare(source[i], destination[i])) != 0) return c;
+                if ((c = comparer.Compare(source[i], destination[i])) != 0)
+                {
+                    return c;
+                }
             }
 
             return 0;
@@ -200,11 +341,25 @@ namespace Omnix.Base.Helpers
 
         public static int Compare<T>(IEnumerable<T> source, IEnumerable<T> destination, IComparer<T> comparer)
         {
-            if (source == null) throw new ArgumentNullException(nameof(source));
-            if (destination == null) throw new ArgumentNullException(nameof(destination));
-            if (comparer == null) throw new ArgumentNullException(nameof(comparer));
+            if (source == null)
+            {
+                throw new ArgumentNullException(nameof(source));
+            }
 
-            if (object.ReferenceEquals(source, destination)) return 0;
+            if (destination == null)
+            {
+                throw new ArgumentNullException(nameof(destination));
+            }
+
+            if (comparer == null)
+            {
+                throw new ArgumentNullException(nameof(comparer));
+            }
+
+            if (object.ReferenceEquals(source, destination))
+            {
+                return 0;
+            }
 
             int c = 0;
 
@@ -213,16 +368,29 @@ namespace Omnix.Base.Helpers
             {
                 while (s.MoveNext())
                 {
-                    if (!d.MoveNext()) return 1;
-                    if ((c = comparer.Compare(s.Current, d.Current)) != 0) break;
+                    if (!d.MoveNext())
+                    {
+                        return 1;
+                    }
+
+                    if ((c = comparer.Compare(s.Current, d.Current)) != 0)
+                    {
+                        break;
+                    }
                 }
 
                 while (s.MoveNext())
                 {
-                    if (!d.MoveNext()) return 1;
+                    if (!d.MoveNext())
+                    {
+                        return 1;
+                    }
                 }
 
-                if (d.MoveNext()) return -1;
+                if (d.MoveNext())
+                {
+                    return -1;
+                }
             }
 
             return c;
@@ -230,20 +398,49 @@ namespace Omnix.Base.Helpers
 
         public static int Compare<T>(IList<T> source, int sourceIndex, IList<T> destination, int destinationIndex, int length, IComparer<T> comparer)
         {
-            if (source == null) throw new ArgumentNullException(nameof(source));
-            if (destination == null) throw new ArgumentNullException(nameof(destination));
-            if (comparer == null) throw new ArgumentNullException(nameof(comparer));
+            if (source == null)
+            {
+                throw new ArgumentNullException(nameof(source));
+            }
 
-            if (0 > (source.Count - sourceIndex)) throw new ArgumentOutOfRangeException(nameof(sourceIndex));
-            if (0 > (destination.Count - destinationIndex)) throw new ArgumentOutOfRangeException(nameof(destinationIndex));
-            if (length > (source.Count - sourceIndex)) throw new ArgumentOutOfRangeException(nameof(length));
-            if (length > (destination.Count - destinationIndex)) throw new ArgumentOutOfRangeException(nameof(length));
+            if (destination == null)
+            {
+                throw new ArgumentNullException(nameof(destination));
+            }
+
+            if (comparer == null)
+            {
+                throw new ArgumentNullException(nameof(comparer));
+            }
+
+            if (0 > (source.Count - sourceIndex))
+            {
+                throw new ArgumentOutOfRangeException(nameof(sourceIndex));
+            }
+
+            if (0 > (destination.Count - destinationIndex))
+            {
+                throw new ArgumentOutOfRangeException(nameof(destinationIndex));
+            }
+
+            if (length > (source.Count - sourceIndex))
+            {
+                throw new ArgumentOutOfRangeException(nameof(length));
+            }
+
+            if (length > (destination.Count - destinationIndex))
+            {
+                throw new ArgumentOutOfRangeException(nameof(length));
+            }
 
             int c;
 
             for (int i = sourceIndex, j = destinationIndex, k = 0; k < length; i++, j++, k++)
             {
-                if ((c = comparer.Compare(source[i], destination[j])) != 0) return c;
+                if ((c = comparer.Compare(source[i], destination[j])) != 0)
+                {
+                    return c;
+                }
             }
 
             return 0;
@@ -251,31 +448,58 @@ namespace Omnix.Base.Helpers
 
         public static int Compare<T>(IEnumerable<T> source, int sourceIndex, IEnumerable<T> destination, int destinationIndex, int length, IComparer<T> comparer)
         {
-            if (source == null) throw new ArgumentNullException(nameof(source));
-            if (destination == null) throw new ArgumentNullException(nameof(destination));
-            if (comparer == null) throw new ArgumentNullException(nameof(comparer));
+            if (source == null)
+            {
+                throw new ArgumentNullException(nameof(source));
+            }
+
+            if (destination == null)
+            {
+                throw new ArgumentNullException(nameof(destination));
+            }
+
+            if (comparer == null)
+            {
+                throw new ArgumentNullException(nameof(comparer));
+            }
 
             using (var s = source.GetEnumerator())
             using (var d = destination.GetEnumerator())
             {
                 for (int i = 0; i < sourceIndex; i++)
                 {
-                    if (!s.MoveNext()) throw new ArgumentOutOfRangeException(nameof(sourceIndex));
+                    if (!s.MoveNext())
+                    {
+                        throw new ArgumentOutOfRangeException(nameof(sourceIndex));
+                    }
                 }
 
                 for (int i = 0; i < destinationIndex; i++)
                 {
-                    if (!d.MoveNext()) throw new ArgumentOutOfRangeException(nameof(destinationIndex));
+                    if (!d.MoveNext())
+                    {
+                        throw new ArgumentOutOfRangeException(nameof(destinationIndex));
+                    }
                 }
 
                 int c = 0;
 
                 for (int i = 0; i < length; i++)
                 {
-                    if (!s.MoveNext()) throw new ArgumentOutOfRangeException(nameof(length));
-                    if (!d.MoveNext()) throw new ArgumentOutOfRangeException(nameof(length));
+                    if (!s.MoveNext())
+                    {
+                        throw new ArgumentOutOfRangeException(nameof(length));
+                    }
 
-                    if ((c = comparer.Compare(s.Current, d.Current)) != 0) return c;
+                    if (!d.MoveNext())
+                    {
+                        throw new ArgumentOutOfRangeException(nameof(length));
+                    }
+
+                    if ((c = comparer.Compare(s.Current, d.Current)) != 0)
+                    {
+                        return c;
+                    }
                 }
             }
 
@@ -314,10 +538,25 @@ namespace Omnix.Base.Helpers
 
                 if (x != null && y != null)
                 {
-                    if (0 > (source.Count - sourceIndex)) throw new ArgumentOutOfRangeException(nameof(sourceIndex));
-                    if (0 > (destination.Count - destinationIndex)) throw new ArgumentOutOfRangeException(nameof(destinationIndex));
-                    if (length > (source.Count - sourceIndex)) throw new ArgumentOutOfRangeException(nameof(length));
-                    if (length > (destination.Count - destinationIndex)) throw new ArgumentOutOfRangeException(nameof(length));
+                    if (0 > (source.Count - sourceIndex))
+                    {
+                        throw new ArgumentOutOfRangeException(nameof(sourceIndex));
+                    }
+
+                    if (0 > (destination.Count - destinationIndex))
+                    {
+                        throw new ArgumentOutOfRangeException(nameof(destinationIndex));
+                    }
+
+                    if (length > (source.Count - sourceIndex))
+                    {
+                        throw new ArgumentOutOfRangeException(nameof(length));
+                    }
+
+                    if (length > (destination.Count - destinationIndex))
+                    {
+                        throw new ArgumentOutOfRangeException(nameof(length));
+                    }
 
                     return BytesOperations.Compare(x.AsSpan(sourceIndex, length), y.AsSpan(destinationIndex, length));
                 }

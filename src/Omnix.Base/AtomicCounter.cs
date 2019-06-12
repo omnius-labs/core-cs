@@ -35,15 +35,25 @@ namespace Omnix.Base
 
         public override bool Equals(object obj)
         {
-            if (!(obj is AtomicCounter)) return false;
+            if (!(obj is AtomicCounter))
+            {
+                return false;
+            }
 
             return this.Equals((AtomicCounter)obj);
         }
 
         public bool Equals(AtomicCounter other)
         {
-            if ((object)other == null) return false;
-            if (object.ReferenceEquals(this, other)) return true;
+            if ((object)other == null)
+            {
+                return false;
+            }
+
+            if (object.ReferenceEquals(this, other))
+            {
+                return true;
+            }
 
             return this.Value == other.Value;
         }

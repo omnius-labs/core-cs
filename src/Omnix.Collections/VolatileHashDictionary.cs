@@ -87,7 +87,10 @@ namespace Omnix.Collections
 
         public TimeSpan GetElapsedTime(TKey key)
         {
-            if (!_dic.TryGetValue(key, out var info)) return _survivalTime;
+            if (!_dic.TryGetValue(key, out var info))
+            {
+                return _survivalTime;
+            }
 
             var now = DateTime.UtcNow;
             return (now - info.UpdateTime);

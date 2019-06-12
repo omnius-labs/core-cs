@@ -58,8 +58,15 @@ namespace Omnix.Collections
 
         public void Add(T item)
         {
-            if (_capacity != null && _count + 1 > _capacity.Value) throw new OverflowException();
-            if (this.Filter(item)) return;
+            if (_capacity != null && _count + 1 > _capacity.Value)
+            {
+                throw new OverflowException();
+            }
+
+            if (this.Filter(item))
+            {
+                return;
+            }
 
             var currentItem = new Node(item);
             currentItem.Next = _firstNode;
@@ -78,7 +85,10 @@ namespace Omnix.Collections
         {
             for (var currentNode = _firstNode; currentNode != null; currentNode = currentNode.Next)
             {
-                if (_equalityComparer.Equals(currentNode.Value, item)) return true;
+                if (_equalityComparer.Equals(currentNode.Value, item))
+                {
+                    return true;
+                }
             }
 
             return false;
@@ -126,7 +136,10 @@ namespace Omnix.Collections
 
         public int RemoveAll(Predicate<T> match)
         {
-            if (match == null) throw new ArgumentNullException(nameof(match));
+            if (match == null)
+            {
+                throw new ArgumentNullException(nameof(match));
+            }
 
             int hitCount = 0;
 

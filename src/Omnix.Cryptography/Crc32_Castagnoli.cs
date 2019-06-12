@@ -100,7 +100,10 @@ namespace Omnix.Cryptography
 
         public static int ComputeHash(string value)
         {
-            if (value == null) throw new ArgumentNullException(nameof(value));
+            if (value == null)
+            {
+                throw new ArgumentNullException(nameof(value));
+            }
 
             using (var recyclableMemory = MemoryPool<byte>.Shared.Rent(_utf8Encoding.Value.GetMaxByteCount(value.Length)))
             {

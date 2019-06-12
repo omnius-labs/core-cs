@@ -33,7 +33,10 @@ namespace Omnix.Io
         {
             get
             {
-                if (_disposed) throw new ObjectDisposedException(this.GetType().FullName);
+                if (_disposed)
+                {
+                    throw new ObjectDisposedException(this.GetType().FullName);
+                }
 
                 return true;
             }
@@ -43,7 +46,10 @@ namespace Omnix.Io
         {
             get
             {
-                if (_disposed) throw new ObjectDisposedException(this.GetType().FullName);
+                if (_disposed)
+                {
+                    throw new ObjectDisposedException(this.GetType().FullName);
+                }
 
                 return true;
             }
@@ -53,7 +59,10 @@ namespace Omnix.Io
         {
             get
             {
-                if (_disposed) throw new ObjectDisposedException(this.GetType().FullName);
+                if (_disposed)
+                {
+                    throw new ObjectDisposedException(this.GetType().FullName);
+                }
 
                 return true;
             }
@@ -63,16 +72,29 @@ namespace Omnix.Io
         {
             get
             {
-                if (_disposed) throw new ObjectDisposedException(this.GetType().FullName);
+                if (_disposed)
+                {
+                    throw new ObjectDisposedException(this.GetType().FullName);
+                }
 
                 return _position;
             }
             set
             {
-                if (_disposed) throw new ObjectDisposedException(this.GetType().FullName);
-                if (value < 0 || this.Length < value) throw new ArgumentOutOfRangeException(nameof(value));
+                if (_disposed)
+                {
+                    throw new ObjectDisposedException(this.GetType().FullName);
+                }
 
-                if (_position == value) return;
+                if (value < 0 || this.Length < value)
+                {
+                    throw new ArgumentOutOfRangeException(nameof(value));
+                }
+
+                if (_position == value)
+                {
+                    return;
+                }
 
                 {
                     _currentBufferIndex = -1;
@@ -87,7 +109,10 @@ namespace Omnix.Io
         {
             get
             {
-                if (_disposed) throw new ObjectDisposedException(this.GetType().FullName);
+                if (_disposed)
+                {
+                    throw new ObjectDisposedException(this.GetType().FullName);
+                }
 
                 return _length;
             }
@@ -95,7 +120,10 @@ namespace Omnix.Io
 
         public override long Seek(long offset, SeekOrigin origin)
         {
-            if (_disposed) throw new ObjectDisposedException(this.GetType().FullName);
+            if (_disposed)
+            {
+                throw new ObjectDisposedException(this.GetType().FullName);
+            }
 
             if (origin == SeekOrigin.Begin)
             {
@@ -117,7 +145,10 @@ namespace Omnix.Io
 
         public override void SetLength(long value)
         {
-            if (_disposed) throw new ObjectDisposedException(this.GetType().FullName);
+            if (_disposed)
+            {
+                throw new ObjectDisposedException(this.GetType().FullName);
+            }
 
             this.Position = Math.Min(_position, value);
             _length = value;
@@ -145,11 +176,18 @@ namespace Omnix.Io
 
         public override int Read(Span<byte> buffer)
         {
-            if (_disposed) throw new ObjectDisposedException(this.GetType().FullName);
+            if (_disposed)
+            {
+                throw new ObjectDisposedException(this.GetType().FullName);
+            }
 
             int offset = 0;
             int count = (int)Math.Min(buffer.Length, this.Length - this.Position);
-            if (count == 0) return 0;
+            if (count == 0)
+            {
+                return 0;
+            }
+
             int readSumLength = 0;
 
             this.Search();
@@ -178,17 +216,35 @@ namespace Omnix.Io
 
         public override int Read(byte[] buffer, int offset, int count)
         {
-            if (_disposed) throw new ObjectDisposedException(this.GetType().FullName);
-            if (offset < 0 || buffer.Length < offset) throw new ArgumentOutOfRangeException(nameof(offset));
-            if (count < 0 || (buffer.Length - offset) < count) throw new ArgumentOutOfRangeException(nameof(count));
+            if (_disposed)
+            {
+                throw new ObjectDisposedException(this.GetType().FullName);
+            }
+
+            if (offset < 0 || buffer.Length < offset)
+            {
+                throw new ArgumentOutOfRangeException(nameof(offset));
+            }
+
+            if (count < 0 || (buffer.Length - offset) < count)
+            {
+                throw new ArgumentOutOfRangeException(nameof(count));
+            }
 
             return this.Read(buffer.AsSpan(offset, count));
         }
 
         public override void Write(ReadOnlySpan<byte> buffer)
         {
-            if (_disposed) throw new ObjectDisposedException(this.GetType().FullName);
-            if (buffer.Length == 0) return;
+            if (_disposed)
+            {
+                throw new ObjectDisposedException(this.GetType().FullName);
+            }
+
+            if (buffer.Length == 0)
+            {
+                return;
+            }
 
             this.Search();
 
@@ -202,7 +258,9 @@ namespace Omnix.Io
                 {
                     var tempBuffer = _bytesPool.GetArrayPool().Rent(_bufferSize);
                     if (_bufferSize < 1024 * 32)
+                    {
                         _bufferSize *= 2;
+                    }
 
                     _buffers.Add(tempBuffer);
                 }
@@ -229,24 +287,46 @@ namespace Omnix.Io
 
         public override void Write(byte[] buffer, int offset, int count)
         {
-            if (_disposed) throw new ObjectDisposedException(this.GetType().FullName);
-            if (offset < 0 || buffer.Length < offset) throw new ArgumentOutOfRangeException(nameof(offset));
-            if (count < 0 || (buffer.Length - offset) < count) throw new ArgumentOutOfRangeException(nameof(count));
-            if (count == 0) return;
+            if (_disposed)
+            {
+                throw new ObjectDisposedException(this.GetType().FullName);
+            }
+
+            if (offset < 0 || buffer.Length < offset)
+            {
+                throw new ArgumentOutOfRangeException(nameof(offset));
+            }
+
+            if (count < 0 || (buffer.Length - offset) < count)
+            {
+                throw new ArgumentOutOfRangeException(nameof(count));
+            }
+
+            if (count == 0)
+            {
+                return;
+            }
 
             this.Write(buffer.AsSpan(offset, count));
         }
 
         public override void Flush()
         {
-            if (_disposed) throw new ObjectDisposedException(this.GetType().FullName);
+            if (_disposed)
+            {
+                throw new ObjectDisposedException(this.GetType().FullName);
+            }
         }
 
         protected override void Dispose(bool disposing)
         {
             try
             {
-                if (_disposed) return;
+                if (_disposed)
+                {
+                    return;
+                }
+
                 _disposed = true;
 
                 if (disposing)

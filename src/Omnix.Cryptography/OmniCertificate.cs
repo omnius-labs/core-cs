@@ -8,7 +8,10 @@ namespace Omnix.Cryptography
     {
         public static OmniCertificate Create(OmniDigitalSignature digitalSignature, ReadOnlySequence<byte> sequence)
         {
-            if (digitalSignature is null) throw new ArgumentNullException(nameof(digitalSignature));
+            if (digitalSignature is null)
+            {
+                throw new ArgumentNullException(nameof(digitalSignature));
+            }
 
             ReadOnlyMemory<byte> value;
 

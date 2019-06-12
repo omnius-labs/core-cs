@@ -40,9 +40,20 @@ namespace Omnix.Correction
 
         public async Task Encode(ReadOnlyMemory<byte>[] sources, int[] index, Memory<byte>[] repairs, int packetLength, int concurrency = 1, CancellationToken token = default)
         {
-            if (sources == null) throw new ArgumentNullException(nameof(sources));
-            if (repairs == null) throw new ArgumentNullException(nameof(repairs));
-            if (index == null) throw new ArgumentNullException(nameof(index));
+            if (sources == null)
+            {
+                throw new ArgumentNullException(nameof(sources));
+            }
+
+            if (repairs == null)
+            {
+                throw new ArgumentNullException(nameof(repairs));
+            }
+
+            if (index == null)
+            {
+                throw new ArgumentNullException(nameof(index));
+            }
 
             await Enumerable.Range(0, repairs.Length).ForEachAsync(row =>
             {
@@ -75,8 +86,15 @@ namespace Omnix.Correction
 
         public async Task Decode(Memory<byte>[] packets, int[] index, int packetLength, int concurrency = 1, CancellationToken token = default)
         {
-            if (packets == null) throw new ArgumentNullException(nameof(packets));
-            if (index == null) throw new ArgumentNullException(nameof(index));
+            if (packets == null)
+            {
+                throw new ArgumentNullException(nameof(packets));
+            }
+
+            if (index == null)
+            {
+                throw new ArgumentNullException(nameof(index));
+            }
 
             Shuffle(packets, index, _k);
 
@@ -655,7 +673,10 @@ namespace Omnix.Correction
             public static void AddMul(ReadOnlySpan<byte> src, Span<byte> dst, byte c, int len)
             {
                 // nop, optimize
-                if (c == 0) return;
+                if (c == 0)
+                {
+                    return;
+                }
 
                 // use our multiplication table.
                 // Instead of doing gf_mul_table[c,x] for multiply, we'll save

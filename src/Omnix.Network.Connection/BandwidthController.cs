@@ -44,7 +44,10 @@ namespace Omnix.Network.Connection
 
             public void AddConsumedBytes(int size)
             {
-                if (size < 0) throw new ArgumentOutOfRangeException(nameof(size));
+                if (size < 0)
+                {
+                    throw new ArgumentOutOfRangeException(nameof(size));
+                }
 
                 lock (this.LockObject)
                 {

@@ -18,7 +18,10 @@ namespace Omnix.Base
             for (; ; )
             {
                 id = _current++;
-                if (!_idMap.ContainsKey(id)) break;
+                if (!_idMap.ContainsKey(id))
+                {
+                    break;
+                }
             }
 
             _objectMap.Add(item, id);
@@ -29,14 +32,20 @@ namespace Omnix.Base
 
         public int GetId(T item)
         {
-            if (_objectMap.TryGetValue(item, out int id)) return id;
+            if (_objectMap.TryGetValue(item, out int id))
+            {
+                return id;
+            }
 
             throw new KeyNotFoundException();
         }
 
         public T GetItem(int id)
         {
-            if (_idMap.TryGetValue(id, out T item)) return item;
+            if (_idMap.TryGetValue(id, out T item))
+            {
+                return item;
+            }
 
             throw new KeyNotFoundException();
         }
@@ -44,7 +53,10 @@ namespace Omnix.Base
         public void Remove(int id)
         {
             T item;
-            if (!_idMap.TryGetValue(id, out item)) return;
+            if (!_idMap.TryGetValue(id, out item))
+            {
+                return;
+            }
 
             _idMap.Remove(id);
             _objectMap.Remove(item);

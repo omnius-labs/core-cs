@@ -29,7 +29,10 @@ namespace Omnix.Base
 
         public void Enqueue(params T[] items)
         {
-            if (_disposed) throw new ObjectDisposedException(this.GetType().FullName);
+            if (_disposed)
+            {
+                throw new ObjectDisposedException(this.GetType().FullName);
+            }
 
             lock (_lockObject)
             {
@@ -42,7 +45,10 @@ namespace Omnix.Base
 
         public void Enqueue(IEnumerable<T> items)
         {
-            if (_disposed) throw new ObjectDisposedException(this.GetType().FullName);
+            if (_disposed)
+            {
+                throw new ObjectDisposedException(this.GetType().FullName);
+            }
 
             lock (_lockObject)
             {
@@ -57,7 +63,10 @@ namespace Omnix.Base
         {
             add
             {
-                if (_disposed) throw new ObjectDisposedException(this.GetType().FullName);
+                if (_disposed)
+                {
+                    throw new ObjectDisposedException(this.GetType().FullName);
+                }
 
                 lock (_lockObject)
                 {
@@ -66,12 +75,18 @@ namespace Omnix.Base
             }
             remove
             {
-                if (_disposed) throw new ObjectDisposedException(this.GetType().FullName);
+                if (_disposed)
+                {
+                    throw new ObjectDisposedException(this.GetType().FullName);
+                }
 
                 lock (_lockObject)
                 {
                     EventItem item;
-                    if (!_events.TryGetValue(value, out item)) return;
+                    if (!_events.TryGetValue(value, out item))
+                    {
+                        return;
+                    }
 
                     item.Dispose();
                     _events.Remove(value);
@@ -112,7 +127,10 @@ namespace Omnix.Base
 
                         for (; ; )
                         {
-                            if (_disposed) return;
+                            if (_disposed)
+                            {
+                                return;
+                            }
 
                             lock (_lockObject)
                             {
@@ -170,7 +188,11 @@ namespace Omnix.Base
 
             protected override void Dispose(bool disposing)
             {
-                if (_disposed) return;
+                if (_disposed)
+                {
+                    return;
+                }
+
                 _disposed = true;
 
                 if (disposing)
@@ -188,7 +210,11 @@ namespace Omnix.Base
 
         protected override void Dispose(bool disposing)
         {
-            if (_disposed) return;
+            if (_disposed)
+            {
+                return;
+            }
+
             _disposed = true;
 
             if (disposing)
