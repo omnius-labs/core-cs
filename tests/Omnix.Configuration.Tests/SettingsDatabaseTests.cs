@@ -1,5 +1,5 @@
 using System;
-using Omnix.Configuration.Tests.Primitives;
+using Omnix.Configuration.Primitives;
 using Xunit;
 
 namespace Omnix.Configuration
