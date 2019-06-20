@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Buffers;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -14,7 +14,7 @@ using Omnix.Network.Connection;
 using Omnix.Network.Connection.Tests.Internal;
 using Xunit;
 
-namespace Omnix.Network.Connection.Tests
+namespace Omnix.Network.Connection
 {
     public class OmniNonblockingConnectionTests
     {

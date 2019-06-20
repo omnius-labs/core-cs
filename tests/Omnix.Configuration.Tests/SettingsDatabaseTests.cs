@@ -2,7 +2,7 @@ using System;
 using Omnix.Configuration.Tests.Primitives;
 using Xunit;
 
-namespace Omnix.Configuration.Tests
+namespace Omnix.Configuration
 {
     public class SettingsDatabaseTests : TestsBase
     {

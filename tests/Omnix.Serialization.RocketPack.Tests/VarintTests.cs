@@ -1,10 +1,10 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using Omnix.Base;
 using Xunit;
 
-namespace Omnix.Serialization.RocketPack.Tests
+namespace Omnix.Serialization.RocketPack
 {
     public class VarintTests
     {

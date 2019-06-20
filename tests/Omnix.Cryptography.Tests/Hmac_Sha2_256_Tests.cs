@@ -9,7 +9,7 @@ using Omnix.Serialization;
 using Omnix.Serialization.Extensions;
 using Xunit;
 
-namespace Omnix.Cryptography.Tests
+namespace Omnix.Cryptography
 {
     public class Hmac_Sha2_256_Tests
     {

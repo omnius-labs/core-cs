@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Buffers;
 using System.Collections.Generic;
 using System.IO.Pipelines;
@@ -7,7 +7,7 @@ using Omnix.Base;
 using Xunit;
 using Omnix.Serialization.Extensions;
 
-namespace Omnix.Serialization.Tests
+namespace Omnix.Serialization
 {
     public class Base58BtcTests
     {

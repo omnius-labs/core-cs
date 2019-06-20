@@ -1,9 +1,9 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
-namespace Omnix.Configuration.Tests.Primitives
+namespace Omnix.Configuration.Primitives
 {
     public class TestsBase : IDisposable
     {

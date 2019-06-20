@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Omnix.Base
 {
-    public sealed class EventQueue<T> : DisposableBase
+    public sealed class LazyEvent<T> : DisposableBase
     {
         private static readonly NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
 
@@ -15,12 +15,12 @@ namespace Omnix.Base
         private readonly object _lockObject = new object();
         private volatile bool _disposed;
 
-        public EventQueue()
+        public LazyEvent()
         {
 
         }
 
-        public EventQueue(TimeSpan delay)
+        public LazyEvent(TimeSpan delay)
         {
             this.Delay = delay;
         }

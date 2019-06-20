@@ -1,9 +1,9 @@
-﻿using System;
+using System;
 using System.Collections;
 using Omnix.Base.Extensions;
 using Xunit;
 
-namespace Omnix.Base.Tests.Extensions
+namespace Omnix.Base.Extensions
 {
     public class StringExtensionTests
     {

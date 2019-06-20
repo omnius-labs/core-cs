@@ -1,11 +1,11 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using Omnix.Base;
 
-namespace Omnix.Network.Connection.Tests.Internal
+namespace Omnix.Network.Connection.Internal
 {
     internal static class SocketHelpers
     {
