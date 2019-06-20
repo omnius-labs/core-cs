@@ -8,7 +8,7 @@ using Omnix.Base.Extensions;
 
 namespace Omnix.Base
 {
-    internal sealed class EventScheduler : ServiceBase
+    public sealed class EventScheduler : ServiceBase
     {
         private static readonly NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
 
