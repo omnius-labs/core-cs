@@ -13,7 +13,7 @@ using Omnix.Network.Connection.Secure;
 using Xunit;
 using System.Linq;
 using System.Collections.Generic;
-using Omnix.Network.Connection.Tests.Internal;
+using Omnix.Network.Connection.Internal;
 using System.Diagnostics;
 
 namespace Omnix.Network.Connection

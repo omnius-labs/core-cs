@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 using Omnix.Base;
 using Omnix.Network;
 using Omnix.Network.Connection;
-using Omnix.Network.Connection.Tests.Internal;
+using Omnix.Network.Connection.Internal;
 using Xunit;
 
 namespace Omnix.Network.Connection
