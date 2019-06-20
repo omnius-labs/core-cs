@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Buffers;
 using System.IO;
 using System.Collections;
@@ -16,7 +16,7 @@ using System.Collections.Generic;
 using Omnix.Network.Connection.Tests.Internal;
 using System.Diagnostics;
 
-namespace Omnix.Network.Connection.Tests
+namespace Omnix.Network.Connection
 {
     public class OmniSecureConnectionTests
     {

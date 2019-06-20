@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading;
@@ -9,11 +9,11 @@ namespace Omnix.Base
     public sealed class AsyncLock
     {
         private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1);
-        private readonly Task<IDisposable> _releaser;
+        private readonly IDisposable _releaser;
 
         public AsyncLock()
         {
-            _releaser = Task.FromResult((IDisposable)new Releaser(this));
+            _releaser = new Releaser(this);
         }
 
         public async ValueTask<IDisposable> LockAsync()
@@ -27,7 +27,7 @@ namespace Omnix.Base
 
             return await wait.ContinueWith(
                 (_, state) => (IDisposable)state,
-                _releaser.Result,
+                _releaser,
                 CancellationToken.None,
                 TaskContinuationOptions.ExecuteSynchronously,
                 TaskScheduler.Default

@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Omnix.Net.Upnp;
 using Xunit;
 
-namespace Omnix.Network.Upnp.Tests
+namespace Omnix.Network.Upnp
 {
     public class UpnpClientTests
     {
@@ -21,7 +21,7 @@ namespace Omnix.Network.Upnp.Tests
                 }
                 catch (Exception)
                 {
-                    // UPnP‚ÉÚ‘±‚Å‚«‚È‚¢ŠÂ‹«‚¾‚Á‚½ê‡
+                    // UPnPã«æ¥ç¶šã§ããªã„ç’°å¢ƒã ã£ãŸå ´åˆ
                     return;
                 }
 

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Xunit;
 using Omnix.Serialization.RocketPack.CodeGenerator;
 using Omnix.Base;
@@ -10,7 +10,7 @@ using Omnix.Serialization.Extensions;
 using System.Security.Cryptography;
 using Omnix.Cryptography;
 
-namespace Omnix.Serialization.RocketPack.CodeGenerator.Tests
+namespace Omnix.Serialization.RocketPack.CodeGenerator
 {
     public class LoaderTests
     {
