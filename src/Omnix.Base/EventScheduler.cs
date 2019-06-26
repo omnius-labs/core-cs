@@ -15,7 +15,7 @@ namespace Omnix.Base
         /// <summary>
         /// 実行されるメソッド 
         /// </summary>
-        private readonly Action<CancellationToken> _callback;
+        private readonly Func<CancellationToken, Task> _callback;
 
         /// <summary>
         /// 現在実行中のタスク
@@ -34,7 +34,7 @@ namespace Omnix.Base
 
         private volatile bool _disposed;
 
-        public EventScheduler(Action<CancellationToken> callback)
+        public EventScheduler(Func<CancellationToken, Task> callback)
         {
             _callback = callback;
         }
@@ -59,23 +59,21 @@ namespace Omnix.Base
                         return;
                     }
 
-                    var task = Task.Factory.StartNew((state) =>
-                    {
-                        this.CallbackThread((CancellationToken)state);
-                    }, _tokenSource!.Token).ContinueWith((_) =>
-                    {
-                        lock (_lockObject)
+                    var task = this.OnCallbackAsync(_tokenSource!.Token)
+                        .ContinueWith((_) =>
                         {
-                            _currentTask = null;
-                        }
-                    });
+                            lock (_lockObject)
+                            {
+                                _currentTask = null;
+                            }
+                        });
 
                     _currentTask = task;
                 }
             }
         }
 
-        private void CallbackThread(CancellationToken token)
+        private async Task OnCallbackAsync(CancellationToken token)
         {
             try
             {
@@ -84,7 +82,7 @@ namespace Omnix.Base
                     return;
                 }
 
-                _callback.Invoke(token);
+                await _callback.Invoke(token);
             }
             catch (Exception e)
             {
@@ -145,7 +143,7 @@ namespace Omnix.Base
             _stateType = ServiceStateType.Stopped;
         }
 
-        public override async ValueTask Start()
+        public override async ValueTask StartAsync()
         {
             using (await _asyncLock.LockAsync())
             {
@@ -158,7 +156,7 @@ namespace Omnix.Base
             }
         }
 
-        public override async ValueTask Stop()
+        public override async ValueTask StopAsync()
         {
             using (await _asyncLock.LockAsync())
             {
@@ -171,7 +169,7 @@ namespace Omnix.Base
             }
         }
 
-        public override async ValueTask Restart()
+        public override async ValueTask RestartAsync()
         {
             using (await _asyncLock.LockAsync())
             {
@@ -191,7 +189,7 @@ namespace Omnix.Base
 
             if (disposing)
             {
-                this.Stop().AsTask().Wait();
+                this.StopAsync().AsTask().Wait();
             }
         }
     }

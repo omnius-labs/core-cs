@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -17,9 +17,9 @@ namespace Omnix.Base
     /// </summary>
     public abstract class ServiceBase : DisposableBase, IService
     {
-        public abstract ValueTask Start();
-        public abstract ValueTask Stop();
-        public abstract ValueTask Restart();
+        public abstract ValueTask StartAsync();
+        public abstract ValueTask StopAsync();
+        public abstract ValueTask RestartAsync();
 
         public abstract ServiceStateType StateType { get; }
     }
