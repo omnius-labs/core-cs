@@ -6,8 +6,8 @@ namespace Omnix.Base
     {
         ServiceStateType StateType { get; }
 
-        ValueTask Restart();
-        ValueTask Start();
-        ValueTask Stop();
+        ValueTask RestartAsync();
+        ValueTask StartAsync();
+        ValueTask StopAsync();
     }
 }
