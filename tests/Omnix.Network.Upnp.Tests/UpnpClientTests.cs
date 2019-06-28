@@ -17,7 +17,7 @@ namespace Omnix.Network.Upnp
 
                 try
                 {
-                    await upnp.Connect(tokenSource.Token);
+                    await upnp.ConnectAsync(tokenSource.Token);
                 }
                 catch (Exception)
                 {
@@ -25,7 +25,7 @@ namespace Omnix.Network.Upnp
                     return;
                 }
 
-                var ip = await upnp.GetExternalIpAddress(tokenSource.Token);
+                var ip = await upnp.GetExternalIpAddressAsync(tokenSource.Token);
                 Assert.True(ip != null);
             }
         }

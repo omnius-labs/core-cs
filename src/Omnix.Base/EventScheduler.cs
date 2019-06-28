@@ -15,14 +15,12 @@ namespace Omnix.Base
         /// <summary>
         /// 実行されるメソッド 
         /// </summary>
-        private readonly Func<CancellationToken, Task> _callback;
+        private readonly Func<CancellationToken, ValueTask> _callback;
 
         /// <summary>
         /// 現在実行中のタスク
         /// </summary>
-        private volatile Task? _currentTask;
-
-        private TimeSpan? _interval;
+        private ValueTask? _currentValueTask;
 
         private Timer? _timer;
         private CancellationTokenSource? _tokenSource;
@@ -34,14 +32,14 @@ namespace Omnix.Base
 
         private volatile bool _disposed;
 
-        public EventScheduler(Func<CancellationToken, Task> callback)
+        public EventScheduler(Func<CancellationToken, ValueTask> callback)
         {
             _callback = callback;
         }
 
         public override ServiceStateType StateType => _stateType;
 
-        public TimeSpan? Interval => _interval;
+        public TimeSpan? Interval { get; private set; }
 
         private async void Run()
         {
@@ -54,26 +52,32 @@ namespace Omnix.Base
 
                 lock (_lockObject)
                 {
-                    if (_currentTask != null)
+                    if (_currentValueTask != null)
                     {
                         return;
                     }
 
-                    var task = this.OnCallbackAsync(_tokenSource!.Token)
-                        .ContinueWith((_) =>
-                        {
-                            lock (_lockObject)
-                            {
-                                _currentTask = null;
-                            }
-                        });
+                    var valueTask = this.OnCallbackAsync(_tokenSource!.Token);
 
-                    _currentTask = task;
+                    if (valueTask.IsCompleted)
+                    {
+                        return;
+                    }
+
+                    _currentValueTask = valueTask;
+
+                    valueTask.AsTask().ContinueWith((_) =>
+                    {
+                        lock (_lockObject)
+                        {
+                            _currentValueTask = null;
+                        }
+                    });
                 }
             }
         }
 
-        private async Task OnCallbackAsync(CancellationToken token)
+        private async ValueTask OnCallbackAsync(CancellationToken token)
         {
             try
             {
@@ -99,7 +103,7 @@ namespace Omnix.Base
         {
             using (await _asyncLock.LockAsync())
             {
-                _interval = interval;
+                this.Interval = interval;
 
                 if (this.StateType != ServiceStateType.Running)
                 {
@@ -128,11 +132,11 @@ namespace Omnix.Base
             _timer!.Dispose();
             _tokenSource!.Cancel();
 
-            var currentTask = _currentTask;
+            var currentValueTask = _currentValueTask;
 
-            if (currentTask != null)
+            if (currentValueTask != null)
             {
-                await currentTask;
+                await currentValueTask.Value;
             }
 
             _tokenSource!.Dispose();

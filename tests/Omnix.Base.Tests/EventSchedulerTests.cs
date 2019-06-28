@@ -15,9 +15,12 @@ namespace Omnix.Base
             // 呼び出し回数
             int count = 0;
 
-            using var eventScheduler = new EventScheduler((token) =>
+            using var eventScheduler = new EventScheduler(async (token) =>
             {
-                Interlocked.Increment(ref count);
+                await Task.Run(() =>
+                {
+                    Interlocked.Increment(ref count);
+                });
             });
 
             // Stopped状態で実行されないことを確認する
@@ -30,7 +33,7 @@ namespace Omnix.Base
             Assert.True(count == 0);
 
             // Running状態に変更
-            await eventScheduler.Start();
+            await eventScheduler.StartAsync();
 
             // 実行されることを確認する
             eventScheduler.ExecuteImmediate();
@@ -48,9 +51,12 @@ namespace Omnix.Base
             // 呼び出し回数
             int count = 0;
 
-            using var eventScheduler = new EventScheduler((token) =>
+            using var eventScheduler = new EventScheduler(async (token) =>
             {
-                Interlocked.Increment(ref count);
+                await Task.Run(() =>
+                {
+                    Interlocked.Increment(ref count);
+                });
             });
 
             // 呼び出し間隔を1秒へ変更する
@@ -63,7 +69,7 @@ namespace Omnix.Base
             Assert.True(count == 0);
 
             // Running状態に変更
-            await eventScheduler.Start();
+            await eventScheduler.StartAsync();
 
             // 3秒待機する
             await Task.Delay(1000 * 3);
