@@ -3,10 +3,11 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp2.2</TargetFramework>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <IsPackable>true</IsPackable>
+    <Description></Description>
   </PropertyGroup>
-
+    
   <ItemGroup>
-    <PackageReference Include="NLog" Version="4.6.3" />
     <PackageReference Include="System.IO.Pipelines" Version="4.5.3" />
   </ItemGroup>
 

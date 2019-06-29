@@ -3,6 +3,8 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp2.2</TargetFramework>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <IsPackable>true</IsPackable>
+    <Description></Description>
   </PropertyGroup>
 
   <ItemGroup>

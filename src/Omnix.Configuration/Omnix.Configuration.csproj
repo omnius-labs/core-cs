@@ -5,10 +5,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="NLog" Version="4.6.3" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\Omnix.Base\Omnix.Base.csproj" />
     <ProjectReference Include="..\Omnix.Cryptography\Omnix.Cryptography.csproj" />
     <ProjectReference Include="..\Omnix.Io\Omnix.Io.csproj" />
