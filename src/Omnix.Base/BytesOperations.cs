@@ -46,7 +46,7 @@ namespace Omnix.Base
                 {
                     if (RuntimeInformation.ProcessArchitecture == Architecture.X64)
                     {
-                        _nativeLibraryManager = new NativeLibraryManager("Assemblies/Omnix.Base.win-x64.dll");
+                        _nativeLibraryManager = new NativeLibraryManager("omnix-base.x64.dll");
                     }
                     else
                     {
@@ -57,7 +57,7 @@ namespace Omnix.Base
                 {
                     if (RuntimeInformation.ProcessArchitecture == Architecture.X64)
                     {
-                        _nativeLibraryManager = new NativeLibraryManager("Assemblies/Omnix.Base.linux-x64.so");
+                        _nativeLibraryManager = new NativeLibraryManager("omnix-base.x64.so");
                     }
                     else
                     {
