@@ -3,14 +3,15 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp2.2</TargetFramework>
     <OutputType>Exe</OutputType>
+    <IsPackable>true</IsPackable>
+    <Description></Description>
+      
+    <PackAsTool>true</PackAsTool>
+    <ToolCommandName>rpc</ToolCommandName>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Sprache" Version="2.2.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Properties\" />
   </ItemGroup>
 
 </Project>

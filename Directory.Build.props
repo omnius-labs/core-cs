@@ -15,7 +15,7 @@
     <RootNamespace>$(ProjectName)</RootNamespace>
     <AssemblyName>$(ProjectName)</AssemblyName>
     <Title>$(ProjectName)</Title>
-    <BuildVersion>3</BuildVersion>
+    <BuildVersion>4</BuildVersion>
     <Version>0.0.1-alpha$(BuildVersion)</Version>
     <AssemblyVersion>0.0.1.$(BuildVersion)</AssemblyVersion>
     <FileVersion>$(AssemblyVersion)</FileVersion>
