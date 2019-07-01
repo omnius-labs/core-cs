@@ -15,24 +15,24 @@
     <Compile Include="$(ProjectDir)..\..\src\Omnix.Common\**\*.*">
       <Link>_Common\%(RecursiveDir)%(FileName)%(Extension)</Link>
     </Compile>
-    <None Update="Assemblies\Omnix.Base.linux-x64.so">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Assemblies\Omnix.Base.win-x64.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Assemblies\Omnix_Base_x64.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Assemblies\Omnix_Base_x64.so">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Assemblies\Omnix_Base_x86.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Assemblies\Omnix_Base_x86.so">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
+    <Content Include="build\netcoreapp2.2\Omnix.Base.targets">
+      <PackagePath>build/netcoreapp2.2/</PackagePath>
+      <Pack>true</Pack>
+    </Content>
+    <Content Include="runtimes\win\native\omnix-base.x64.dll">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        <Link>omnix-base.x64.dll</Link>
+        <Visible>false</Visible>
+        <Pack>true</Pack>
+        <PackagePath>runtimes\win\native\omnix-base.x64.dll</PackagePath>
+    </Content>
+    <Content Include="runtimes\linux\native\omnix-base.x64.so">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        <Link>omnix-base.x64.so</Link>
+        <Visible>false</Visible>
+        <Pack>true</Pack>
+        <PackagePath>runtimes\linux\native\omnix-base.x64.so</PackagePath>
+    </Content>
   </ItemGroup>
 
 </Project>

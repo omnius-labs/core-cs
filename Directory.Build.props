@@ -2,6 +2,10 @@
 <Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
   <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <BaseIntermediateOutputPath>$(MSBuildThisFileDirectory)tmp\obj\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
+    <BaseOutputPath Condition=" '$(BaseOutputPath)' == '' ">$(MSBuildThisFileDirectory)tmp\bin\$(MSBuildProjectName)\</BaseOutputPath>
+
     <LangVersion>8.0</LangVersion>
     <NullableContextOptions>enable</NullableContextOptions>
     <IsPackable>false</IsPackable>
@@ -11,8 +15,9 @@
     <RootNamespace>$(ProjectName)</RootNamespace>
     <AssemblyName>$(ProjectName)</AssemblyName>
     <Title>$(ProjectName)</Title>
-    <Version>0.0.1-alpha2 </Version>
-    <AssemblyVersion>0.0.1.2</AssemblyVersion>
+    <BuildVersion>3</BuildVersion>
+    <Version>0.0.1-alpha$(BuildVersion)</Version>
+    <AssemblyVersion>0.0.1.$(BuildVersion)</AssemblyVersion>
     <FileVersion>$(AssemblyVersion)</FileVersion>
     <Authors>Lyrise</Authors>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>

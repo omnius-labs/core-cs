@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Buffers;
 using System.Collections.Generic;
 using System.IO;
@@ -41,7 +41,7 @@ namespace Omnix.Cryptography
                 {
                     if (RuntimeInformation.ProcessArchitecture == Architecture.X64)
                     {
-                        _nativeLibraryManager = new NativeLibraryManager("Assemblies/Omnix.Security.win-x64.dll");
+                        _nativeLibraryManager = new NativeLibraryManager("omnix-cryptography.x64.dll");
                     }
                     else
                     {
@@ -52,7 +52,7 @@ namespace Omnix.Cryptography
                 {
                     if (RuntimeInformation.ProcessArchitecture == Architecture.X64)
                     {
-                        _nativeLibraryManager = new NativeLibraryManager("Assemblies/Omnix.Security.linux-x64.so");
+                        _nativeLibraryManager = new NativeLibraryManager("omnix-cryptography.x64.so");
                     }
                     else
                     {
@@ -70,6 +70,8 @@ namespace Omnix.Cryptography
             {
                 _nativeLibraryManager?.Dispose();
                 _nativeLibraryManager = null;
+
+                throw;
             }
         }
 

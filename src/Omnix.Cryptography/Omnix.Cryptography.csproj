@@ -6,6 +6,41 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Include="build\netcoreapp2.2\Omnix.Cryptography.targets">
+      <PackagePath>build/netcoreapp2.2/</PackagePath>
+      <Pack>true</Pack>
+    </Content>
+    <Content Include="runtimes\win\native\omnix-cryptography.x64.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Link>omnix-cryptography.x64.dll</Link>
+      <Visible>false</Visible>
+      <Pack>true</Pack>
+      <PackagePath>runtimes\win\native\omnix-cryptography.x64.dll</PackagePath>
+    </Content>
+    <Content Include="runtimes\win\native\hashcash.x64.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Link>hashcash.x64.exe</Link>
+      <Visible>false</Visible>
+      <Pack>true</Pack>
+      <PackagePath>runtimes\win\native\hashcash.x64.exe</PackagePath>
+    </Content>
+    <Content Include="runtimes\linux\native\omnix-cryptography.x64.so">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Link>omnix-cryptography.x64.so</Link>
+      <Visible>false</Visible>
+      <Pack>true</Pack>
+      <PackagePath>runtimes\linux\native\omnix-cryptography.x64.so</PackagePath>
+    </Content>
+    <Content Include="runtimes\linux\native\hashcash.x64">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Link>hashcash.x64</Link>
+      <Visible>false</Visible>
+      <Pack>true</Pack>
+      <PackagePath>runtimes\win\native\hashcash.x64</PackagePath>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="System.IO.Pipelines" Version="4.5.3" />
   </ItemGroup>
 
@@ -15,31 +50,6 @@
     <ProjectReference Include="..\Omnix.Io\Omnix.Io.csproj" />
     <ProjectReference Include="..\Omnix.Serialization.RocketPack\Omnix.Serialization.RocketPack.csproj" />
     <ProjectReference Include="..\Omnix.Serialization\Omnix.Serialization.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="Assemblies\hashcash.linux-x64">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Assemblies\hashcash.win-x64.exe">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Assemblies\Omnix.Cryptography.HashcashComputer.linux-x64">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Assemblies\Omnix.Cryptography.HashcashComputer.win-x64.exe">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Assemblies\Omnix.Cryptography.linux-x64.so">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Assemblies\Omnix.Cryptography.win-x64.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
 
 </Project>

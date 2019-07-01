@@ -65,7 +65,7 @@ namespace Omnix.Cryptography
                 {
                     if (RuntimeInformation.ProcessArchitecture == Architecture.X64)
                     {
-                        _path = "Assemblies/hashcash.win-x64.exe";
+                        _path = "hashcash.x64.exe";
                     }
                     else
                     {
@@ -77,7 +77,7 @@ namespace Omnix.Cryptography
 
                     if (RuntimeInformation.ProcessArchitecture == Architecture.X64)
                     {
-                        _path = "Assemblies/hashcash.linux-x64";
+                        _path = "hashcash.x64";
                     }
                     else
                     {

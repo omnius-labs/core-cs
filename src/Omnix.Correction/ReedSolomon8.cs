@@ -264,7 +264,7 @@ namespace Omnix.Correction
                     {
                         if (Environment.Is64BitProcess)
                         {
-                            _nativeLibraryManager = new NativeLibraryManager("Assemblies/Omnix.Correction.win-x64.dll");
+                            _nativeLibraryManager = new NativeLibraryManager("omnix-correction.x64.dll");
                         }
                         else
                         {
@@ -275,7 +275,7 @@ namespace Omnix.Correction
                     {
                         if (RuntimeInformation.ProcessArchitecture == Architecture.X64)
                         {
-                            _nativeLibraryManager = new NativeLibraryManager("Assemblies/Omnix.Correction.linux-x64.so");
+                            _nativeLibraryManager = new NativeLibraryManager("omnix-correction.x64.so");
                         }
                         else
                         {
