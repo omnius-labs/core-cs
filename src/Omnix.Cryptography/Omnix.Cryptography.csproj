@@ -6,37 +6,38 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="build\netcoreapp2.2\Omnix.Cryptography.targets">
+    <Content Include="Nuget\build\netcoreapp2.2\Omnix.Cryptography.targets">
       <PackagePath>build/netcoreapp2.2/</PackagePath>
       <Pack>true</Pack>
     </Content>
-    <Content Include="runtimes\win\native\omnix-cryptography.x64.dll">
+    <Content Include="Assemblies\Win\omnix-cryptography.x64.dll">
+      <CopyToOutputDirectory Condition=" '$(NativeDepsPlatform)' == 'Windows' ">PreserveNewest</CopyToOutputDirectory>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Link>omnix-cryptography.x64.dll</Link>
       <Visible>false</Visible>
       <Pack>true</Pack>
       <PackagePath>runtimes\win\native\omnix-cryptography.x64.dll</PackagePath>
     </Content>
-    <Content Include="runtimes\win\native\hashcash.x64.exe">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    <Content Include="Assemblies\Win\hashcash.x64.exe">
+      <CopyToOutputDirectory Condition=" '$(NativeDepsPlatform)' == 'Windows' ">PreserveNewest</CopyToOutputDirectory>
       <Link>hashcash.x64.exe</Link>
       <Visible>false</Visible>
       <Pack>true</Pack>
       <PackagePath>runtimes\win\native\hashcash.x64.exe</PackagePath>
     </Content>
-    <Content Include="runtimes\linux\native\omnix-cryptography.x64.so">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    <Content Include="Assemblies\Linux\omnix-cryptography.x64.so">
+      <CopyToOutputDirectory Condition=" '$(NativeDepsPlatform)' == 'Linux' ">PreserveNewest</CopyToOutputDirectory>
       <Link>omnix-cryptography.x64.so</Link>
       <Visible>false</Visible>
       <Pack>true</Pack>
       <PackagePath>runtimes\linux\native\omnix-cryptography.x64.so</PackagePath>
     </Content>
-    <Content Include="runtimes\linux\native\hashcash.x64">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    <Content Include="Assemblies\Linux\hashcash.x64">
+      <CopyToOutputDirectory Condition=" '$(NativeDepsPlatform)' == 'Linux' ">PreserveNewest</CopyToOutputDirectory>
       <Link>hashcash.x64</Link>
       <Visible>false</Visible>
       <Pack>true</Pack>
-      <PackagePath>runtimes\win\native\hashcash.x64</PackagePath>
+      <PackagePath>runtimes\linux\native\hashcash.x64</PackagePath>
     </Content>
   </ItemGroup>
 

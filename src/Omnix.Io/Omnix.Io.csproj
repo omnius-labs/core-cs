@@ -2,8 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.2</TargetFramework>
-    <IsPackable>true</IsPackable>
-    <Description></Description>
+    <IsPackable Condition=" '$(IsSubmodule)' != 'true' ">true</IsPackable>
   </PropertyGroup>
 
   <ItemGroup>
