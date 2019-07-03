@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
+  <Import Project="..\Directory.Build.props" Condition="Exists('..\Directory.Build.props')" />
+
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <BaseIntermediateOutputPath>$(MSBuildThisFileDirectory)tmp\obj\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
@@ -15,6 +17,7 @@
     <RootNamespace>$(ProjectName)</RootNamespace>
     <AssemblyName>$(ProjectName)</AssemblyName>
     <Title>$(ProjectName)</Title>
+    <Description>$(ProjectName)</Description>
     <BuildVersion>4</BuildVersion>
     <Version>0.0.1-alpha$(BuildVersion)</Version>
     <AssemblyVersion>0.0.1.$(BuildVersion)</AssemblyVersion>
@@ -37,4 +40,15 @@
     <PathMap>$(RepoRoot)=.</PathMap>
   </PropertyGroup>
 
+  <!-- Autodetect platform -->
+  <PropertyGroup Condition=" '$(OS)' != 'Unix' ">
+    <NativeDepsPlatform>Windows</NativeDepsPlatform>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(OS)' == 'Unix' And Exists('/Applications') And Exists('/Library') And Exists('/System') ">
+    <NativeDepsPlatform>Mac</NativeDepsPlatform>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(OS)' == 'Unix' And '$(NativeDepsPlatform)' == '' ">
+    <NativeDepsPlatform>Linux</NativeDepsPlatform>
+  </PropertyGroup>
+   
 </Project>
