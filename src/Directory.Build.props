@@ -3,11 +3,6 @@
 
   <Import Project="..\Directory.Build.props" Condition="Exists('..\Directory.Build.props')" />
 
-  <PropertyGroup Condition=" '$(IsPackable)' == 'true' ">
-    <SignAssembly>true</SignAssembly>
-    <AssemblyOriginatorKeyFile>$(MSBuildThisFileDirectory)..\open.snk</AssemblyOriginatorKeyFile>
-  </PropertyGroup>
-
   <ItemGroup>
     <PackageReference Include="NLog" Version="4.6.5" />
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0-beta2-18618-05">

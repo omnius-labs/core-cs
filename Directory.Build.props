@@ -18,8 +18,8 @@
     <AssemblyName>$(ProjectName)</AssemblyName>
     <Title>$(ProjectName)</Title>
     <Description>$(ProjectName)</Description>
-    <BuildVersion>4</BuildVersion>
-    <Version>0.0.1-alpha$(BuildVersion)</Version>
+    <BuildVersion>5</BuildVersion>
+    <Version>0.0.1-alpha.$(BuildVersion)</Version>
     <AssemblyVersion>0.0.1.$(BuildVersion)</AssemblyVersion>
     <FileVersion>$(AssemblyVersion)</FileVersion>
     <Authors>Lyrise</Authors>
@@ -33,6 +33,7 @@
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
   </PropertyGroup>
 
   <PropertyGroup>
