@@ -84,14 +84,14 @@
         "resolved": "4.5.3",
         "contentHash": "k6Ac5MuJ/GbFo7l/bB0Bxg0JxHReDi19eW1wuDGIy/iSIAJob0cNHChvILde/v4fdX1ZNmL2Nr7axKG21wbNLw=="
       },
-      "omnix.base": {
+      "Omnix.Base": {
         "type": "Project",
         "dependencies": {
           "NLog": "4.6.5",
           "System.IO.Pipelines": "4.5.3"
         }
       },
-      "omnix.collections": {
+      "Omnix.Collections": {
         "type": "Project",
         "dependencies": {
           "NLog": "4.6.5",
@@ -99,7 +99,7 @@
           "System.IO.Pipelines": "4.5.3"
         }
       },
-      "omnix.cryptography": {
+      "Omnix.Cryptography": {
         "type": "Project",
         "dependencies": {
           "NLog": "4.6.5",
@@ -111,14 +111,14 @@
           "System.IO.Pipelines": "4.5.3"
         }
       },
-      "omnix.io": {
+      "Omnix.Io": {
         "type": "Project",
         "dependencies": {
           "NLog": "4.6.5",
           "Omnix.Base": "0.0.1-alpha.5"
         }
       },
-      "omnix.serialization": {
+      "Omnix.Serialization": {
         "type": "Project",
         "dependencies": {
           "NLog": "4.6.5",
@@ -126,7 +126,7 @@
           "System.IO.Pipelines": "4.5.3"
         }
       },
-      "omnix.serialization.rocketpack": {
+      "Omnix.Serialization.RocketPack": {
         "type": "Project",
         "dependencies": {
           "NLog": "4.6.5",

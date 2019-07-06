@@ -1020,14 +1020,14 @@
           "xunit.extensibility.core": "[2.4.1]"
         }
       },
-      "omnix.base": {
+      "Omnix.Base": {
         "type": "Project",
         "dependencies": {
           "NLog": "4.6.5",
           "System.IO.Pipelines": "4.5.3"
         }
       },
-      "omnix.io": {
+      "Omnix.Io": {
         "type": "Project",
         "dependencies": {
           "NLog": "4.6.5",
