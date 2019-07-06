@@ -1,0 +1,9 @@
+setlocal
+cd %~dp0
+
+<<<<<<< Updated upstream
+dotnet restore
+dotnet test
+=======
+>>>>>>> Stashed changes
+powershell -File ./eng/run-test.ps1
