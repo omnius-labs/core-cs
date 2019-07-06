@@ -7,6 +7,8 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <BaseIntermediateOutputPath>$(MSBuildThisFileDirectory)tmp\obj\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
     <BaseOutputPath Condition=" '$(BaseOutputPath)' == '' ">$(MSBuildThisFileDirectory)tmp\bin\$(MSBuildProjectName)\</BaseOutputPath>
+    
+    <DebugType Condition=" '$(Configuration)' == 'Debug' ">Full</DebugType>
 
     <LangVersion>8.0</LangVersion>
     <NullableContextOptions>enable</NullableContextOptions>

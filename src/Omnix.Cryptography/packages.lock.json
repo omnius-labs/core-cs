@@ -85,14 +85,14 @@
           "Microsoft.NETCore.Platforms": "1.1.0"
         }
       },
-      "Omnix.Base": {
+      "omnix.base": {
         "type": "Project",
         "dependencies": {
           "NLog": "4.6.5",
           "System.IO.Pipelines": "4.5.3"
         }
       },
-      "Omnix.Collections": {
+      "omnix.collections": {
         "type": "Project",
         "dependencies": {
           "NLog": "4.6.5",
@@ -100,14 +100,14 @@
           "System.IO.Pipelines": "4.5.3"
         }
       },
-      "Omnix.Io": {
+      "omnix.io": {
         "type": "Project",
         "dependencies": {
           "NLog": "4.6.5",
           "Omnix.Base": "0.0.1-alpha.5"
         }
       },
-      "Omnix.Serialization": {
+      "omnix.serialization": {
         "type": "Project",
         "dependencies": {
           "NLog": "4.6.5",
@@ -115,7 +115,7 @@
           "System.IO.Pipelines": "4.5.3"
         }
       },
-      "Omnix.Serialization.RocketPack": {
+      "omnix.serialization.rocketpack": {
         "type": "Project",
         "dependencies": {
           "NLog": "4.6.5",
