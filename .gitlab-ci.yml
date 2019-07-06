@@ -10,6 +10,8 @@ test_windows_job:
   script: 
     - chcp 65001
     - cd "%CI_PROJECT_DIR%"
+    - dotnet restore
+    - dotnet test
     - call run-test.cmd
   artifacts:
     paths:
