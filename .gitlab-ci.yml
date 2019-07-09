@@ -12,7 +12,7 @@ test_windows_job:
     - cd "%CI_PROJECT_DIR%"
     - dotnet restore
     - dotnet test
-    - call run-test.cmd
+    - call run-code-coverage-test.cmd
   artifacts:
     paths:
       - tests/results

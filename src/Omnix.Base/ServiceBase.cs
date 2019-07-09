@@ -17,10 +17,49 @@ namespace Omnix.Base
     /// </summary>
     public abstract class ServiceBase : DisposableBase, IService
     {
-        public abstract ValueTask StartAsync();
-        public abstract ValueTask StopAsync();
-        public abstract ValueTask RestartAsync();
+        private readonly AsyncLock _asyncLock = new AsyncLock();
+        public virtual ServiceStateType StateType { get; protected set; }
 
-        public abstract ServiceStateType StateType { get; }
+        protected abstract ValueTask OnStart();
+        protected abstract ValueTask OnStop();
+
+        public virtual async ValueTask StartAsync()
+        {
+            using (await _asyncLock.LockAsync())
+            {
+                if (this.StateType != ServiceStateType.Stopped)
+                {
+                    return;
+                }
+
+                await this.OnStart();
+            }
+        }
+
+        public virtual async ValueTask StopAsync()
+        {
+            using (await _asyncLock.LockAsync())
+            {
+                if (this.StateType != ServiceStateType.Running)
+                {
+                    return;
+                }
+
+                await this.OnStop();
+            }
+        }
+
+        public virtual async ValueTask RestartAsync()
+        {
+            using (await _asyncLock.LockAsync())
+            {
+                if (this.StateType != ServiceStateType.Stopped)
+                {
+                    await this.OnStop();
+                }
+
+                await this.OnStart();
+            }
+        }
     }
 }

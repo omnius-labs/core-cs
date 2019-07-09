@@ -114,7 +114,7 @@ namespace Omnix.Base
             }
         }
 
-        private async ValueTask InternalStart()
+        protected override async ValueTask OnStart()
         {
             _stateType = ServiceStateType.Starting;
 
@@ -125,7 +125,7 @@ namespace Omnix.Base
             _stateType = ServiceStateType.Running;
         }
 
-        private async ValueTask InternalStop()
+        protected override async ValueTask OnStop()
         {
             _stateType = ServiceStateType.Stopping;
 
@@ -145,41 +145,6 @@ namespace Omnix.Base
             _tokenSource = null;
 
             _stateType = ServiceStateType.Stopped;
-        }
-
-        public override async ValueTask StartAsync()
-        {
-            using (await _asyncLock.LockAsync())
-            {
-                if (this.StateType != ServiceStateType.Stopped)
-                {
-                    return;
-                }
-
-                await this.InternalStart();
-            }
-        }
-
-        public override async ValueTask StopAsync()
-        {
-            using (await _asyncLock.LockAsync())
-            {
-                if (this.StateType != ServiceStateType.Running)
-                {
-                    return;
-                }
-
-                await this.InternalStop();
-            }
-        }
-
-        public override async ValueTask RestartAsync()
-        {
-            using (await _asyncLock.LockAsync())
-            {
-                await this.InternalStop();
-                await this.InternalStart();
-            }
         }
 
         protected override void Dispose(bool disposing)
