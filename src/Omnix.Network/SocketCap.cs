@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Net.Sockets;
 
 namespace Omnix.Network
@@ -8,8 +8,6 @@ namespace Omnix.Network
         private readonly Socket _socket;
 
         private volatile bool _isConnected;
-
-        private volatile bool _disposed;
 
         public SocketCap(Socket socket, bool blocking)
         {
@@ -49,10 +47,7 @@ namespace Omnix.Network
 
         public override int Receive(Span<byte> buffer)
         {
-            if (_disposed)
-            {
-                throw new ObjectDisposedException(this.GetType().FullName);
-            }
+            this.ThrowIfDisposingRequested();
 
             if (!_isConnected)
             {
@@ -73,10 +68,7 @@ namespace Omnix.Network
 
         public override int Send(ReadOnlySpan<byte> buffer)
         {
-            if (_disposed)
-            {
-                throw new ObjectDisposedException(this.GetType().FullName);
-            }
+            this.ThrowIfDisposingRequested();
 
             if (!_isConnected)
             {
@@ -97,13 +89,6 @@ namespace Omnix.Network
 
         protected override void Dispose(bool disposing)
         {
-            if (_disposed)
-            {
-                return;
-            }
-
-            _disposed = true;
-
             if (disposing)
             {
                 _socket.Dispose();

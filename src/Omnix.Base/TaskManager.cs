@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -15,7 +15,6 @@ namespace Omnix.Base
         private CancellationTokenSource? _tokenSource;
 
         private readonly AsyncLock _asyncLock = new AsyncLock();
-        private volatile bool _disposed;
 
         public TaskManager(Action<CancellationToken> callback)
         {
@@ -42,13 +41,6 @@ namespace Omnix.Base
 
         protected override void Dispose(bool disposing)
         {
-            if (_disposed)
-            {
-                return;
-            }
-
-            _disposed = true;
-
             if (disposing)
             {
                 _task?.Dispose();

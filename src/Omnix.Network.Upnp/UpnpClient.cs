@@ -24,8 +24,6 @@ namespace Omnix.Net.Upnp
 
         private readonly AsyncLock _lock = new AsyncLock();
 
-        private volatile bool _disposed;
-
         private readonly static Regex _deviceTypeRegex = new Regex(@"<(\s*)deviceType((\s*)|(\s+)(.*?))>(\s*)urn:schemas-upnp-org:device:InternetGatewayDevice:1(\s*)</(\s*)deviceType(\s*)>", RegexOptions.Singleline | RegexOptions.IgnoreCase);
         private readonly static Regex _controlUrlRegex = new Regex(@"<(\s*)controlURL((\s*)|(\s+)(.*?))>(\s*)(?<url>.*?)(\s*)</(\s*)controlURL(\s*)>", RegexOptions.Singleline | RegexOptions.IgnoreCase);
 
@@ -519,13 +517,6 @@ namespace Omnix.Net.Upnp
 
         protected override void Dispose(bool disposing)
         {
-            if (_disposed)
-            {
-                return;
-            }
-
-            _disposed = true;
-
             if (disposing)
             {
 

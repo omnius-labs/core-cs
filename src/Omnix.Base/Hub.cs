@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO.Pipelines;
 using System.Text;
@@ -10,7 +10,6 @@ namespace Omnix.Base
         private Pipe _pipe;
         private readonly HubReader _hubReader;
         private readonly HubWriter _hubWriter;
-        private volatile bool _disposed;
 
         public Hub()
             : this(new Pipe())
@@ -48,13 +47,6 @@ namespace Omnix.Base
 
         protected override void Dispose(bool disposing)
         {
-            if (_disposed)
-            {
-                return;
-            }
-
-            _disposed = true;
-
             if (disposing)
             {
                 this.Reset();

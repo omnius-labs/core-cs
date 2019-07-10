@@ -7,8 +7,6 @@ namespace Omnix.Base
 {
     public sealed class NativeLibraryManager : DisposableBase
     {
-        private volatile bool _disposed;
-
         IntPtr _moduleHandle = IntPtr.Zero;
 
         static class NativeMethods
@@ -104,13 +102,6 @@ namespace Omnix.Base
 
         protected override void Dispose(bool disposing)
         {
-            if (_disposed)
-            {
-                return;
-            }
-
-            _disposed = true;
-
             if (disposing)
             {
 
