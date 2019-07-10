@@ -13,7 +13,6 @@ namespace Omnix.Base
         private Dictionary<Delegate, EventItem> _events = new Dictionary<Delegate, EventItem>();
 
         private readonly object _lockObject = new object();
-        private volatile bool _disposed;
 
         public LazyEvent()
         {
@@ -29,10 +28,7 @@ namespace Omnix.Base
 
         public void Enqueue(params T[] items)
         {
-            if (_disposed)
-            {
-                throw new ObjectDisposedException(this.GetType().FullName);
-            }
+            this.ThrowIfDisposingRequested();
 
             lock (_lockObject)
             {
@@ -45,10 +41,7 @@ namespace Omnix.Base
 
         public void Enqueue(IEnumerable<T> items)
         {
-            if (_disposed)
-            {
-                throw new ObjectDisposedException(this.GetType().FullName);
-            }
+            this.ThrowIfDisposingRequested();
 
             lock (_lockObject)
             {
@@ -63,10 +56,7 @@ namespace Omnix.Base
         {
             add
             {
-                if (_disposed)
-                {
-                    throw new ObjectDisposedException(this.GetType().FullName);
-                }
+                this.ThrowIfDisposingRequested();
 
                 lock (_lockObject)
                 {
@@ -75,10 +65,7 @@ namespace Omnix.Base
             }
             remove
             {
-                if (_disposed)
-                {
-                    throw new ObjectDisposedException(this.GetType().FullName);
-                }
+                this.ThrowIfDisposingRequested();
 
                 lock (_lockObject)
                 {
@@ -106,7 +93,6 @@ namespace Omnix.Base
             private ManualResetEvent _delayResetEvent = new ManualResetEvent(false);
 
             private readonly object _lockObject = new object();
-            private volatile bool _disposed;
 
             public EventItem(Action<IEnumerable<T>> action, TimeSpan? delay)
             {
@@ -127,7 +113,7 @@ namespace Omnix.Base
 
                         for (; ; )
                         {
-                            if (_disposed)
+                            if (this.IsDisposed)
                             {
                                 return;
                             }
@@ -188,13 +174,6 @@ namespace Omnix.Base
 
             protected override void Dispose(bool disposing)
             {
-                if (_disposed)
-                {
-                    return;
-                }
-
-                _disposed = true;
-
                 if (disposing)
                 {
                     _queueResetEvent.Set();
@@ -210,13 +189,6 @@ namespace Omnix.Base
 
         protected override void Dispose(bool disposing)
         {
-            if (_disposed)
-            {
-                return;
-            }
-
-            _disposed = true;
-
             if (disposing)
             {
                 foreach (var eventItem in _events.Values)

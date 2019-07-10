@@ -39,8 +39,6 @@ namespace Omnix.Network.Connection
         private readonly object _sendLockObject = new object();
         private readonly object _receiveLockObject = new object();
 
-        private volatile bool _disposed;
-
         public OmniNonblockingConnection(Cap cap, OmniNonblockingConnectionOptions option)
         {
             if (cap == null)
@@ -103,10 +101,7 @@ namespace Omnix.Network.Connection
 
         private int Send(int limit)
         {
-            if (_disposed)
-            {
-                throw new ObjectDisposedException(this.GetType().FullName);
-            }
+            this.ThrowIfDisposingRequested();
 
             if (!this.IsConnected)
             {
@@ -197,10 +192,7 @@ namespace Omnix.Network.Connection
 
         private int Receive(int limit)
         {
-            if (_disposed)
-            {
-                throw new ObjectDisposedException(this.GetType().FullName);
-            }
+            this.ThrowIfDisposingRequested();
 
             if (!this.IsConnected)
             {
@@ -357,13 +349,6 @@ namespace Omnix.Network.Connection
 
         protected override void Dispose(bool disposing)
         {
-            if (_disposed)
-            {
-                return;
-            }
-
-            _disposed = true;
-
             if (disposing)
             {
                 _cap?.Dispose();

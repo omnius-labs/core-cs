@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Buffers;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -32,8 +32,6 @@ namespace Omnix.Network.Connection.Secure.V1.Internal
         private Status? _status;
 
         private RandomNumberGenerator _random = RandomNumberGenerator.Create();
-
-        private volatile bool _disposed;
 
         public SecureConnection(IConnection connection, OmniSecureConnectionOptions options)
         {
@@ -602,13 +600,6 @@ namespace Omnix.Network.Connection.Secure.V1.Internal
 
         protected override void Dispose(bool disposing)
         {
-            if (_disposed)
-            {
-                return;
-            }
-
-            _disposed = true;
-
             if (disposing)
             {
                 _random.Dispose();

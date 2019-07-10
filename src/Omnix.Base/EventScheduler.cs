@@ -30,8 +30,6 @@ namespace Omnix.Base
         private readonly AsyncLock _asyncLock = new AsyncLock();
         private readonly object _lockObject = new object();
 
-        private volatile bool _disposed;
-
         public EventScheduler(Func<CancellationToken, ValueTask> callback)
         {
             _callback = callback;
@@ -114,7 +112,11 @@ namespace Omnix.Base
             }
         }
 
-        protected override async ValueTask OnStart()
+        protected override async ValueTask OnInitializeAsync()
+        {
+        }
+
+        protected override async ValueTask OnStartAsync()
         {
             _stateType = ServiceStateType.Starting;
 
@@ -125,7 +127,7 @@ namespace Omnix.Base
             _stateType = ServiceStateType.Running;
         }
 
-        protected override async ValueTask OnStop()
+        protected override async ValueTask OnStopAsync()
         {
             _stateType = ServiceStateType.Stopping;
 
@@ -149,13 +151,6 @@ namespace Omnix.Base
 
         protected override void Dispose(bool disposing)
         {
-            if (_disposed)
-            {
-                return;
-            }
-
-            _disposed = true;
-
             if (disposing)
             {
                 this.StopAsync().AsTask().Wait();

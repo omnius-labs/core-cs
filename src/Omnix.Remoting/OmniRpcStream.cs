@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Buffers;
 using System.Buffers.Binary;
 using System.Collections.Generic;
@@ -15,8 +15,6 @@ namespace Omnix.Remoting
     {
         private readonly IConnection _connection;
         private readonly BufferPool _bufferPool;
-
-        private volatile bool _disposed;
 
         internal OmniRpcStream(IConnection connection, BufferPool bufferPool)
         {
@@ -105,13 +103,6 @@ namespace Omnix.Remoting
 
         protected override void Dispose(bool disposing)
         {
-            if (_disposed)
-            {
-                return;
-            }
-
-            _disposed = true;
-
             if (disposing)
             {
                 _connection?.Dispose();

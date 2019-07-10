@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Buffers;
 using System.Buffers.Binary;
 using System.Collections.Generic;
@@ -26,7 +26,6 @@ namespace Omnix.Network.Connection.Multiplexer
         private TaskManager _receiveTaskManager;
 
         private AsyncLock _asyncLock = new AsyncLock();
-        private volatile bool _disposed;
 
         public OmniConnectionMultiplexer(IConnection connection, BufferPool bufferPool)
         {

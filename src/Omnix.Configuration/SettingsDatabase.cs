@@ -10,13 +10,11 @@ using Omnix.Serialization.RocketPack;
 
 namespace Omnix.Configuration
 {
-    public class SettingsDatabase : DisposableBase, ISettingsDatabase
+    public class SettingsDatabase : DisposableBase
     {
         private static readonly NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
 
         private readonly FileStream _lockFileStream;
-
-        private volatile bool _disposed;
 
         public SettingsDatabase(string directoryPath)
         {
@@ -231,13 +229,6 @@ namespace Omnix.Configuration
 
         protected override void Dispose(bool disposing)
         {
-            if (_disposed)
-            {
-                return;
-            }
-
-            _disposed = true;
-
             if (disposing)
             {
                 _lockFileStream.Dispose();

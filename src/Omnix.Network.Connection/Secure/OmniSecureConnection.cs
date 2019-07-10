@@ -20,8 +20,6 @@ namespace Omnix.Network.Connection.Secure
         private OmniSecureConnectionVersion _version = OmniSecureConnectionVersion.Version1;
         private V1.Internal.SecureConnection? _secureConnection_v1;
 
-        private volatile bool _disposed;
-
         public OmniSecureConnection(IConnection connection, OmniSecureConnectionOptions options)
         {
             if (connection == null)
@@ -210,13 +208,6 @@ namespace Omnix.Network.Connection.Secure
 
         protected override void Dispose(bool disposing)
         {
-            if (_disposed)
-            {
-                return;
-            }
-
-            _disposed = true;
-
             if (disposing)
             {
                 _secureConnection_v1?.Dispose();

@@ -17,22 +17,38 @@ namespace Omnix.Base
     /// </summary>
     public abstract class ServiceBase : DisposableBase, IService
     {
+        private int _initialized = 0;
         private readonly AsyncLock _asyncLock = new AsyncLock();
+
         public virtual ServiceStateType StateType { get; protected set; }
 
-        protected abstract ValueTask OnStart();
-        protected abstract ValueTask OnStop();
+        protected abstract ValueTask OnInitializeAsync();
+        protected abstract ValueTask OnStartAsync();
+        protected abstract ValueTask OnStopAsync();
+
+        public virtual async ValueTask InitializeAysnc()
+        {
+            // 初期化済みの場合は処理しない
+            if (Interlocked.CompareExchange(ref _initialized, 1, 0) == 1)
+            {
+                return;
+            }
+
+            await this.OnInitializeAsync();
+        }
 
         public virtual async ValueTask StartAsync()
         {
             using (await _asyncLock.LockAsync())
             {
+                await this.InitializeAysnc();
+
                 if (this.StateType != ServiceStateType.Stopped)
                 {
                     return;
                 }
 
-                await this.OnStart();
+                await this.OnStartAsync();
             }
         }
 
@@ -45,7 +61,7 @@ namespace Omnix.Base
                     return;
                 }
 
-                await this.OnStop();
+                await this.OnStopAsync();
             }
         }
 
@@ -55,10 +71,10 @@ namespace Omnix.Base
             {
                 if (this.StateType != ServiceStateType.Stopped)
                 {
-                    await this.OnStop();
+                    await this.OnStopAsync();
                 }
 
-                await this.OnStart();
+                await this.OnStartAsync();
             }
         }
     }
