@@ -40,36 +40,30 @@ namespace Omnix.Serialization
 
                     foreach (var (input, output) in pattern)
                     {
-                        var pipe_base16 = new Pipe();
+                        var hub_base16 = new Hub();
 
                         // base16をデコードし、pipeに書き込む。
-                        base16.TryDecode(input, pipe_base16.Writer);
-                        pipe_base16.Writer.Complete();
-
-                        // base16のデコード結果を読み込む。
-                        pipe_base16.Reader.TryRead(out var readResult_base16);
+                        base16.TryDecode(input, hub_base16.Writer);
+                        hub_base16.Writer.Complete();
 
                         // base58Btcのテキストを取得する。
-                        base58Btc.TryEncode(readResult_base16.Buffer, out var text_base58);
+                        base58Btc.TryEncode(hub_base16.Reader.GetSequence(), out var text_base58);
 
                         Assert.True(BytesOperations.SequenceEqual(text_base58, UTF8Encoding.Default.GetBytes(output)));
 
-                        var pipe_base58Btc = new Pipe();
+                        var hub_base58Btc = new Hub();
 
                         // base58Btcをデコードし、pipeに書き込む。
-                        base58Btc.TryDecode(UTF8Encoding.Default.GetString(text_base58), pipe_base58Btc.Writer);
-                        pipe_base58Btc.Writer.Complete();
+                        base58Btc.TryDecode(UTF8Encoding.Default.GetString(text_base58), hub_base58Btc.Writer);
+                        hub_base58Btc.Writer.Complete();
 
-                        // base58Btcのデコード結果を読み込む。
-                        pipe_base58Btc.Reader.TryRead(out var readResult_base58Btc);
-
-                        Assert.True(BytesOperations.SequenceEqual(readResult_base58Btc.Buffer.ToArray(), readResult_base16.Buffer.ToArray()));
+                        Assert.True(BytesOperations.SequenceEqual(hub_base58Btc.Reader.GetSequence().ToArray(), hub_base16.Reader.GetSequence().ToArray()));
 
                         // base16のデコード結果を解放する。
-                        pipe_base16.Reader.Complete();
+                        hub_base16.Reader.Complete();
 
                         // base58Btcのデコード結果を解放する。
-                        pipe_base58Btc.Reader.Complete();
+                        hub_base58Btc.Reader.Complete();
                     }
                 }
             }
