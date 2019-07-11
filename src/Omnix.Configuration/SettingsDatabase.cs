@@ -1,5 +1,6 @@
 using System;
 using System.Buffers.Binary;
+using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using Omnix.Base;
@@ -18,22 +19,32 @@ namespace Omnix.Configuration
 
         public SettingsDatabase(string directoryPath)
         {
-            if (!Directory.Exists(directoryPath))
-            {
-                Directory.CreateDirectory(directoryPath);
-            }
-
             this.DirectoryPath = directoryPath;
 
             // 排他ロック
             _lockFileStream = new FileStream(Path.Combine(this.DirectoryPath, "lock"), FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
+
+            // フォルダを作成する
+            var directoryPathList = new List<string>();
+            directoryPathList.Add(directoryPath);
+            directoryPathList.Add(this.GeneratePath(EntityStatus.Temp));
+            directoryPathList.Add(this.GeneratePath(EntityStatus.Committed));
+            directoryPathList.Add(this.GeneratePath(EntityStatus.Backup));
+
+            foreach (var path in directoryPathList)
+            {
+                if (!Directory.Exists(path))
+                {
+                    Directory.CreateDirectory(path);
+                }
+            }
         }
 
         public string DirectoryPath { get; }
 
         private enum EntityStatus
         {
-            UnCommitted,
+            Temp,
             Committed,
             Backup,
         }
@@ -43,17 +54,18 @@ namespace Omnix.Configuration
             return Path.Combine(this.DirectoryPath, "Objects", entityStatus.ToString());
         }
 
-        public static bool TryGet<T>(string directoryPath, string name, out T value, IRocketPackFormatter<T> formatter)
+        private static bool TryGet<T>(string basePath, string name, out T value, IRocketPackFormatter<T> formatter)
         {
             value = default!;
 
-            string contentPath = Path.Combine(directoryPath, $"{name}.rpk.gz");
-            string crcPath = Path.Combine(directoryPath, $"{name}.crc");
-
-            using var hub = new Hub();
-
             try
             {
+                string directoryPath = Path.Combine(basePath, name);
+                string contentPath = Path.Combine(directoryPath, "rpb.gz");
+                string crcPath = Path.Combine(directoryPath, "crc");
+
+                using var hub = new Hub();
+
                 if (!File.Exists(contentPath) || !File.Exists(crcPath))
                 {
                     return false;
@@ -65,7 +77,7 @@ namespace Omnix.Configuration
                     for (; ; )
                     {
                         var readLength = gzipStream.Read(hub.Writer.GetSpan(1024 * 4));
-                        if (readLength < 0)
+                        if (readLength <= 0)
                         {
                             break;
                         }
@@ -103,65 +115,126 @@ namespace Omnix.Configuration
             return false;
         }
 
-        public static void Set<T>(string directoryPath, string name, T value, IRocketPackFormatter<T> formatter)
+        private static bool TrySet<T>(string basePath, string name, T value, IRocketPackFormatter<T> formatter)
         {
-            if (!Directory.Exists(directoryPath))
+            try
             {
-                Directory.CreateDirectory(directoryPath);
+                string directoryPath = Path.Combine(basePath, name);
+                string contentPath = Path.Combine(directoryPath, "rpb.gz");
+                string crcPath = Path.Combine(directoryPath, "crc");
+
+                if (!Directory.Exists(directoryPath))
+                {
+                    Directory.CreateDirectory(directoryPath);
+                }
+
+                using var hub = new Hub();
+
+                formatter.Serialize(new RocketPackWriter(hub.Writer, BufferPool.Shared), value, 0);
+                hub.Writer.Complete();
+
+                var sequence = hub.Reader.GetSequence();
+
+                using (var fileStream = new UnbufferedFileStream(contentPath, FileMode.Create, FileAccess.ReadWrite, FileShare.None, FileOptions.None, BufferPool.Shared))
+                using (var gzipStream = new GZipStream(fileStream, CompressionLevel.Fastest))
+                {
+                    var position = sequence.Start;
+
+                    while (sequence.TryGet(ref position, out var memory))
+                    {
+                        gzipStream.Write(memory.Span);
+                    }
+                }
+
+                using (var fileStream = new UnbufferedFileStream(crcPath, FileMode.Create, FileAccess.ReadWrite, FileShare.None, FileOptions.None, BufferPool.Shared))
+                {
+                    Span<byte> buffer = stackalloc byte[4];
+                    BinaryPrimitives.WriteInt32LittleEndian(buffer, Crc32_Castagnoli.ComputeHash(sequence));
+                    fileStream.Write(buffer);
+                }
+
+                return true;
+            }
+            catch (Exception e)
+            {
+                _logger.Error(e);
             }
 
-            string contentPath = Path.Combine(directoryPath, $"{name}.rpk.gz");
-            string crcPath = Path.Combine(directoryPath, $"{name}.crc");
+            return false;
+        }
 
-            using var hub = new Hub();
+        private void Commit(string name)
+        {
+            var temp = Path.Combine(this.GeneratePath(EntityStatus.Temp), name);
+            var committed = Path.Combine(this.GeneratePath(EntityStatus.Committed), name);
+            var backup = Path.Combine(this.GeneratePath(EntityStatus.Backup), name);
 
-            formatter.Serialize(new RocketPackWriter(hub.Writer, BufferPool.Shared), value, 0);
-            hub.Writer.Complete();
-
-            var sequence = hub.Reader.GetSequence();
-
-            using (var fileStream = new UnbufferedFileStream(contentPath, FileMode.Create, FileAccess.Write, FileShare.None, FileOptions.None, BufferPool.Shared))
-            using (var gzipStream = new GZipStream(fileStream, CompressionLevel.Fastest))
+            try
             {
-                var position = sequence.Start;
-
-                while (sequence.TryGet(ref position, out var memory))
+                if (Directory.Exists(backup))
                 {
-                    gzipStream.Write(memory.Span);
+                    Directory.Delete(backup, true);
                 }
             }
-
-            using (var fileStream = new UnbufferedFileStream(crcPath, FileMode.Create, FileAccess.Write, FileShare.None, FileOptions.None, BufferPool.Shared))
+            catch (Exception e)
             {
-                Span<byte> buffer = stackalloc byte[4];
-                BinaryPrimitives.WriteInt32LittleEndian(buffer, Crc32_Castagnoli.ComputeHash(sequence));
-                fileStream.Write(buffer);
+                _logger.Error(e);
+
+                throw e;
+            }
+
+            try
+            {
+                if (Directory.Exists(committed))
+                {
+                    Directory.Move(committed, backup);
+                }
+            }
+            catch (Exception e)
+            {
+                _logger.Error(e);
+
+                throw e;
+            }
+
+            try
+            {
+                if (Directory.Exists(temp))
+                {
+                    Directory.Move(temp, committed);
+                }
+            }
+            catch (Exception e)
+            {
+                _logger.Error(e);
+
+                throw e;
             }
         }
 
-        public int GetVersion()
+        public bool TryGetVersion(out uint version)
         {
-            foreach (var entityStatus in new[] { EntityStatus.UnCommitted, EntityStatus.Committed, EntityStatus.Backup })
+            version = 0;
+
+            if (this.TryGetContent("#Version", out var databaseVersion, SettingsDatabaseVersion.Formatter))
             {
-                if (TryGet(this.GeneratePath(entityStatus), "#Version", out var version1, SettingsDatabaseVersion.Formatter))
-                {
-                    return (int)version1.Value;
-                }
+                version = databaseVersion.Value;
+                return true;
             }
 
-            return 0;
+            return false;
         }
 
-        public void SetVersion(int version)
+        public bool TrySetVersion(uint version)
         {
-            Set(this.GeneratePath(EntityStatus.UnCommitted), "#Version", new SettingsDatabaseVersion((uint)version), SettingsDatabaseVersion.Formatter);
+            return this.TrySetContent("#Version", new SettingsDatabaseVersion(version), SettingsDatabaseVersion.Formatter);
         }
 
         public bool TryGetContent<T>(string name, out T value) where T : RocketPackMessageBase<T>
         {
             value = default!;
 
-            foreach (var entityStatus in new[] { EntityStatus.UnCommitted, EntityStatus.Committed, EntityStatus.Backup })
+            foreach (var entityStatus in new[] { EntityStatus.Committed, EntityStatus.Backup })
             {
                 if (TryGet(this.GeneratePath(entityStatus), name, out var result, RocketPackMessageBase<T>.Formatter))
                 {
@@ -177,7 +250,7 @@ namespace Omnix.Configuration
         {
             value = default!;
 
-            foreach (var entityStatus in new[] { EntityStatus.UnCommitted, EntityStatus.Committed, EntityStatus.Backup })
+            foreach (var entityStatus in new[] { EntityStatus.Committed, EntityStatus.Backup })
             {
                 if (TryGet(this.GeneratePath(entityStatus), name, out var result, formatter))
                 {
@@ -189,42 +262,28 @@ namespace Omnix.Configuration
             return false;
         }
 
-        public void SetContent<T>(string name, T value) where T : RocketPackMessageBase<T>
+        public bool TrySetContent<T>(string name, T value) where T : RocketPackMessageBase<T>
         {
-            Set(this.GeneratePath(EntityStatus.UnCommitted), name, value, RocketPackMessageBase<T>.Formatter);
-        }
-
-        public void SetContent<T>(string name, T value, IRocketPackFormatter<T> formatter)
-        {
-            Set(this.GeneratePath(EntityStatus.UnCommitted), name, value, formatter);
-        }
-
-        public void Commit()
-        {
-            var source = this.GeneratePath(EntityStatus.UnCommitted);
-            var destination = this.GeneratePath(EntityStatus.Committed);
-
-            if (!Directory.Exists(source))
+            if (!TrySet(this.GeneratePath(EntityStatus.Temp), name, value, RocketPackMessageBase<T>.Formatter))
             {
-                return;
+                return false;
             }
 
-            foreach (var path in Directory.EnumerateFiles(source, "*", SearchOption.AllDirectories))
-            {
-                File.Copy(source, Path.Combine(destination, Path.GetFileName(path)), true);
-            }
+            this.Commit(name);
 
-            Directory.Delete(source);
+            return true;
         }
 
-        public void Rollback()
+        public bool TrySetContent<T>(string name, T value, IRocketPackFormatter<T> formatter)
         {
-            var path = this.GeneratePath(EntityStatus.UnCommitted);
-
-            if (Directory.Exists(path))
+            if (!TrySet(this.GeneratePath(EntityStatus.Temp), name, value, formatter))
             {
-                Directory.Delete(path);
+                return false;
             }
+
+            this.Commit(name);
+
+            return true;
         }
 
         protected override void Dispose(bool disposing)
