@@ -100,7 +100,6 @@ namespace Omnix.Remoting
             {
                 if (rank > 256) throw new System.FormatException();
 
-                // Read property count
                 uint propertyCount = r.GetUInt32();
 
                 string p_type = string.Empty;
@@ -112,17 +111,17 @@ namespace Omnix.Remoting
                     uint id = r.GetUInt32();
                     switch (id)
                     {
-                        case 0: // Type
+                        case 0:
                             {
                                 p_type = r.GetString(8192);
                                 break;
                             }
-                        case 1: // Message
+                        case 1:
                             {
                                 p_message = r.GetString(8192);
                                 break;
                             }
-                        case 2: // StackTrace
+                        case 2:
                             {
                                 p_stackTrace = r.GetString(8192);
                                 break;

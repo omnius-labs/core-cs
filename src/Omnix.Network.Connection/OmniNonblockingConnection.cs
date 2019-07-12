@@ -133,7 +133,7 @@ namespace Omnix.Network.Connection
                         }
 
                         int sendLength = _cap.Send(_sendHeaderBuffer.AsSpan().Slice(_sendHeaderBufferPosition));
-                        if (sendLength == 0)
+                        if (sendLength <= 0)
                         {
                             break;
                         }
@@ -161,7 +161,7 @@ namespace Omnix.Network.Connection
                             }
 
                             int sendLength = _cap.Send(memory.Span.Slice(0, readLength));
-                            if (sendLength == 0)
+                            if (sendLength <= 0)
                             {
                                 break;
                             }
@@ -226,7 +226,7 @@ namespace Omnix.Network.Connection
                             }
 
                             int receiveLength = _cap.Receive(_receiveHeaderBuffer.AsSpan().Slice(_receiveHeaderBufferPosition));
-                            if (receiveLength == 0)
+                            if (receiveLength <= 0)
                             {
                                 break;
                             }
@@ -256,7 +256,7 @@ namespace Omnix.Network.Connection
                         }
 
                         int receiveLength = _cap.Receive(_receiveContentHub.Writer.GetSpan(_receiveContentRemain).Slice(0, _receiveContentRemain));
-                        if (receiveLength == 0)
+                        if (receiveLength <= 0)
                         {
                             break;
                         }

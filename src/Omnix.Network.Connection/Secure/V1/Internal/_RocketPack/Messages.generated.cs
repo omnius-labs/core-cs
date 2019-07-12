@@ -199,7 +199,6 @@ namespace Omnix.Network.Connection.Secure.V1.Internal
             {
                 if (rank > 256) throw new System.FormatException();
 
-                // Read property count
                 uint propertyCount = r.GetUInt32();
 
                 System.ReadOnlyMemory<byte> p_sessionId = System.ReadOnlyMemory<byte>.Empty;
@@ -214,17 +213,17 @@ namespace Omnix.Network.Connection.Secure.V1.Internal
                     uint id = r.GetUInt32();
                     switch (id)
                     {
-                        case 0: // SessionId
+                        case 0:
                             {
                                 p_sessionId = r.GetMemory(32);
                                 break;
                             }
-                        case 1: // AuthenticationType
+                        case 1:
                             {
                                 p_authenticationType = (AuthenticationType)r.GetUInt64();
                                 break;
                             }
-                        case 2: // KeyExchangeAlgorithms
+                        case 2:
                             {
                                 var length = r.GetUInt32();
                                 p_keyExchangeAlgorithms = new KeyExchangeAlgorithm[length];
@@ -234,7 +233,7 @@ namespace Omnix.Network.Connection.Secure.V1.Internal
                                 }
                                 break;
                             }
-                        case 3: // KeyDerivationAlgorithms
+                        case 3:
                             {
                                 var length = r.GetUInt32();
                                 p_keyDerivationAlgorithms = new KeyDerivationAlgorithm[length];
@@ -244,7 +243,7 @@ namespace Omnix.Network.Connection.Secure.V1.Internal
                                 }
                                 break;
                             }
-                        case 4: // CryptoAlgorithms
+                        case 4:
                             {
                                 var length = r.GetUInt32();
                                 p_cryptoAlgorithms = new CryptoAlgorithm[length];
@@ -254,7 +253,7 @@ namespace Omnix.Network.Connection.Secure.V1.Internal
                                 }
                                 break;
                             }
-                        case 5: // HashAlgorithms
+                        case 5:
                             {
                                 var length = r.GetUInt32();
                                 p_hashAlgorithms = new HashAlgorithm[length];
@@ -348,7 +347,6 @@ namespace Omnix.Network.Connection.Secure.V1.Internal
             {
                 if (rank > 256) throw new System.FormatException();
 
-                // Read property count
                 uint propertyCount = r.GetUInt32();
 
                 ProfileMessage p_profileMessage = ProfileMessage.Empty;
@@ -359,12 +357,12 @@ namespace Omnix.Network.Connection.Secure.V1.Internal
                     uint id = r.GetUInt32();
                     switch (id)
                     {
-                        case 0: // ProfileMessage
+                        case 0:
                             {
                                 p_profileMessage = ProfileMessage.Formatter.Deserialize(r, rank + 1);
                                 break;
                             }
-                        case 1: // AgreementPublicKey
+                        case 1:
                             {
                                 p_agreementPublicKey = OmniAgreementPublicKey.Formatter.Deserialize(r, rank + 1);
                                 break;
@@ -453,7 +451,6 @@ namespace Omnix.Network.Connection.Secure.V1.Internal
             {
                 if (rank > 256) throw new System.FormatException();
 
-                // Read property count
                 uint propertyCount = r.GetUInt32();
 
                 System.ReadOnlyMemory<byte>[] p_hashes = System.Array.Empty<System.ReadOnlyMemory<byte>>();
@@ -463,7 +460,7 @@ namespace Omnix.Network.Connection.Secure.V1.Internal
                     uint id = r.GetUInt32();
                     switch (id)
                     {
-                        case 0: // Hashes
+                        case 0:
                             {
                                 var length = r.GetUInt32();
                                 p_hashes = new System.ReadOnlyMemory<byte>[length];

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using BenchmarkDotNet.Attributes;
 using Omnix.Base;
 using System.Buffers;
@@ -35,7 +35,7 @@ namespace FormatterBenchmarks.Cases
 
                 var elementsList = new List<MessagePack_StringElements>();
 
-                for (int i = 0; i < 32; i++)
+                for (int i = 0; i < 32 * 1024; i++)
                 {
                     var elements = new MessagePack_StringElements()
                     {
@@ -64,7 +64,7 @@ namespace FormatterBenchmarks.Cases
 
                 var elementsList = new List<RocketPack_StringElements>();
 
-                for (int i = 0; i < 32; i++)
+                for (int i = 0; i < 32 * 1024; i++)
                 {
                     var X0 = GetRandomString(random);
                     var X1 = GetRandomString(random);

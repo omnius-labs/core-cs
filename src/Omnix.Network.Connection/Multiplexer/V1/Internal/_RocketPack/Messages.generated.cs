@@ -83,7 +83,6 @@ namespace Omnix.Network.Connection.Multiplexer.V1.Internal
             {
                 if (rank > 256) throw new System.FormatException();
 
-                // Read property count
                 uint propertyCount = r.GetUInt32();
 
                 ulong p_initialWindowSize = 0;
@@ -94,12 +93,12 @@ namespace Omnix.Network.Connection.Multiplexer.V1.Internal
                     uint id = r.GetUInt32();
                     switch (id)
                     {
-                        case 0: // InitialWindowSize
+                        case 0:
                             {
                                 p_initialWindowSize = r.GetUInt64();
                                 break;
                             }
-                        case 1: // MaxSessionAcceptQueueSize
+                        case 1:
                             {
                                 p_maxSessionAcceptQueueSize = r.GetUInt32();
                                 break;
@@ -172,7 +171,6 @@ namespace Omnix.Network.Connection.Multiplexer.V1.Internal
             {
                 if (rank > 256) throw new System.FormatException();
 
-                // Read property count
                 uint propertyCount = r.GetUInt32();
 
                 ulong p_sessionId = 0;
@@ -182,7 +180,7 @@ namespace Omnix.Network.Connection.Multiplexer.V1.Internal
                     uint id = r.GetUInt32();
                     switch (id)
                     {
-                        case 0: // SessionId
+                        case 0:
                             {
                                 p_sessionId = r.GetUInt64();
                                 break;
@@ -255,7 +253,6 @@ namespace Omnix.Network.Connection.Multiplexer.V1.Internal
             {
                 if (rank > 256) throw new System.FormatException();
 
-                // Read property count
                 uint propertyCount = r.GetUInt32();
 
                 ulong p_sessionId = 0;
@@ -265,7 +262,7 @@ namespace Omnix.Network.Connection.Multiplexer.V1.Internal
                     uint id = r.GetUInt32();
                     switch (id)
                     {
-                        case 0: // SessionId
+                        case 0:
                             {
                                 p_sessionId = r.GetUInt64();
                                 break;
@@ -351,7 +348,6 @@ namespace Omnix.Network.Connection.Multiplexer.V1.Internal
             {
                 if (rank > 256) throw new System.FormatException();
 
-                // Read property count
                 uint propertyCount = r.GetUInt32();
 
                 ulong p_sessionId = 0;
@@ -362,12 +358,12 @@ namespace Omnix.Network.Connection.Multiplexer.V1.Internal
                     uint id = r.GetUInt32();
                     switch (id)
                     {
-                        case 0: // SessionId
+                        case 0:
                             {
                                 p_sessionId = r.GetUInt64();
                                 break;
                             }
-                        case 1: // Size
+                        case 1:
                             {
                                 p_size = r.GetUInt64();
                                 break;
@@ -477,7 +473,6 @@ namespace Omnix.Network.Connection.Multiplexer.V1.Internal
             {
                 if (rank > 256) throw new System.FormatException();
 
-                // Read property count
                 uint propertyCount = r.GetUInt32();
 
                 ulong p_sessionId = 0;
@@ -489,17 +484,17 @@ namespace Omnix.Network.Connection.Multiplexer.V1.Internal
                     uint id = r.GetUInt32();
                     switch (id)
                     {
-                        case 0: // SessionId
+                        case 0:
                             {
                                 p_sessionId = r.GetUInt64();
                                 break;
                             }
-                        case 1: // IsCompleted
+                        case 1:
                             {
                                 p_isCompleted = r.GetBoolean();
                                 break;
                             }
-                        case 2: // Data
+                        case 2:
                             {
                                 p_data = r.GetRecyclableMemory(262144);
                                 break;
@@ -572,7 +567,6 @@ namespace Omnix.Network.Connection.Multiplexer.V1.Internal
             {
                 if (rank > 256) throw new System.FormatException();
 
-                // Read property count
                 uint propertyCount = r.GetUInt32();
 
                 ulong p_sessionId = 0;
@@ -582,7 +576,7 @@ namespace Omnix.Network.Connection.Multiplexer.V1.Internal
                     uint id = r.GetUInt32();
                     switch (id)
                     {
-                        case 0: // SessionId
+                        case 0:
                             {
                                 p_sessionId = r.GetUInt64();
                                 break;
@@ -668,7 +662,6 @@ namespace Omnix.Network.Connection.Multiplexer.V1.Internal
             {
                 if (rank > 256) throw new System.FormatException();
 
-                // Read property count
                 uint propertyCount = r.GetUInt32();
 
                 ulong p_sessionId = 0;
@@ -679,12 +672,12 @@ namespace Omnix.Network.Connection.Multiplexer.V1.Internal
                     uint id = r.GetUInt32();
                     switch (id)
                     {
-                        case 0: // SessionId
+                        case 0:
                             {
                                 p_sessionId = r.GetUInt64();
                                 break;
                             }
-                        case 1: // ErrorType
+                        case 1:
                             {
                                 p_errorType = (SessionErrorType)r.GetUInt64();
                                 break;

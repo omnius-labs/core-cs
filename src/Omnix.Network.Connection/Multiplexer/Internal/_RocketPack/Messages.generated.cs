@@ -80,7 +80,6 @@ namespace Omnix.Network.Connection.Multiplexer.Internal
             {
                 if (rank > 256) throw new System.FormatException();
 
-                // Read property count
                 uint propertyCount = r.GetUInt32();
 
                 CommunicatorVersion[] p_versions = System.Array.Empty<CommunicatorVersion>();
@@ -90,7 +89,7 @@ namespace Omnix.Network.Connection.Multiplexer.Internal
                     uint id = r.GetUInt32();
                     switch (id)
                     {
-                        case 0: // Versions
+                        case 0:
                             {
                                 var length = r.GetUInt32();
                                 p_versions = new CommunicatorVersion[length];

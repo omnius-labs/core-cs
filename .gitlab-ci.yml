@@ -10,9 +10,20 @@ test_windows_job:
   script: 
     - chcp 65001
     - cd "%CI_PROJECT_DIR%"
-    - dotnet restore
-    - dotnet test
-    - call run-code-coverage-test.cmd
+    - call run-test.cmd
   artifacts:
     paths:
-      - tests/results
+      - publish
+
+test_linux_job:
+  stage: test
+  tags: 
+    - linux
+  only:
+    - master
+  script: 
+    - cd "$CI_PROJECT_DIR"
+    - sh run-test.sh
+  artifacts:
+    paths:
+      - publish
