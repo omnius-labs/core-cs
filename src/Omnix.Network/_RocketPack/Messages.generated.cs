@@ -68,7 +68,6 @@ namespace Omnix.Network
             {
                 if (rank > 256) throw new System.FormatException();
 
-                // Read property count
                 uint propertyCount = r.GetUInt32();
 
                 string p_value = string.Empty;
@@ -78,7 +77,7 @@ namespace Omnix.Network
                     uint id = r.GetUInt32();
                     switch (id)
                     {
-                        case 0: // Value
+                        case 0:
                             {
                                 p_value = r.GetString(8192);
                                 break;

@@ -1,7 +1,7 @@
-
+﻿
 #nullable enable
 
-namespace Omnix.Serialization.RocketPack.CodeGenerator.Internal
+namespace Omnix.Serialization.RocketPack.CodeGenerator.Tests.Internal
 {
     internal enum Enum1 : sbyte
     {
@@ -194,7 +194,6 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator.Internal
             {
                 if (rank > 256) throw new System.FormatException();
 
-                // Read property count
                 uint propertyCount = r.GetUInt32();
 
                 bool p_x0 = false;
@@ -204,7 +203,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator.Internal
                     uint id = r.GetUInt32();
                     switch (id)
                     {
-                        case 0: // X0
+                        case 0:
                             {
                                 p_x0 = r.GetBoolean();
                                 break;
@@ -1113,7 +1112,6 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator.Internal
             {
                 if (rank > 256) throw new System.FormatException();
 
-                // Read property count
                 uint propertyCount = r.GetUInt32();
 
                 bool p_x0 = false;
@@ -1149,122 +1147,122 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator.Internal
                     uint id = r.GetUInt32();
                     switch (id)
                     {
-                        case 0: // X0
+                        case 0:
                             {
                                 p_x0 = r.GetBoolean();
                                 break;
                             }
-                        case 1: // X1
+                        case 1:
                             {
                                 p_x1 = r.GetInt8();
                                 break;
                             }
-                        case 2: // X2
+                        case 2:
                             {
                                 p_x2 = r.GetInt16();
                                 break;
                             }
-                        case 3: // X3
+                        case 3:
                             {
                                 p_x3 = r.GetInt32();
                                 break;
                             }
-                        case 4: // X4
+                        case 4:
                             {
                                 p_x4 = r.GetInt64();
                                 break;
                             }
-                        case 5: // X5
+                        case 5:
                             {
                                 p_x5 = r.GetUInt8();
                                 break;
                             }
-                        case 6: // X6
+                        case 6:
                             {
                                 p_x6 = r.GetUInt16();
                                 break;
                             }
-                        case 7: // X7
+                        case 7:
                             {
                                 p_x7 = r.GetUInt32();
                                 break;
                             }
-                        case 8: // X8
+                        case 8:
                             {
                                 p_x8 = r.GetUInt64();
                                 break;
                             }
-                        case 9: // X9
+                        case 9:
                             {
                                 p_x9 = (Enum1)r.GetInt64();
                                 break;
                             }
-                        case 10: // X10
+                        case 10:
                             {
                                 p_x10 = (Enum2)r.GetInt64();
                                 break;
                             }
-                        case 11: // X11
+                        case 11:
                             {
                                 p_x11 = (Enum3)r.GetInt64();
                                 break;
                             }
-                        case 12: // X12
+                        case 12:
                             {
                                 p_x12 = (Enum4)r.GetInt64();
                                 break;
                             }
-                        case 13: // X13
+                        case 13:
                             {
                                 p_x13 = (Enum5)r.GetUInt64();
                                 break;
                             }
-                        case 14: // X14
+                        case 14:
                             {
                                 p_x14 = (Enum6)r.GetUInt64();
                                 break;
                             }
-                        case 15: // X15
+                        case 15:
                             {
                                 p_x15 = (Enum7)r.GetUInt64();
                                 break;
                             }
-                        case 16: // X16
+                        case 16:
                             {
                                 p_x16 = (Enum8)r.GetUInt64();
                                 break;
                             }
-                        case 17: // X17
+                        case 17:
                             {
                                 p_x17 = r.GetFloat32();
                                 break;
                             }
-                        case 18: // X18
+                        case 18:
                             {
                                 p_x18 = r.GetFloat64();
                                 break;
                             }
-                        case 19: // X19
+                        case 19:
                             {
                                 p_x19 = r.GetString(128);
                                 break;
                             }
-                        case 20: // X20
+                        case 20:
                             {
                                 p_x20 = r.GetTimestamp();
                                 break;
                             }
-                        case 21: // X21
+                        case 21:
                             {
                                 p_x21 = r.GetMemory(256);
                                 break;
                             }
-                        case 22: // X22
+                        case 22:
                             {
                                 p_x22 = r.GetRecyclableMemory(256);
                                 break;
                             }
-                        case 23: // X23
+                        case 23:
                             {
                                 var length = r.GetUInt32();
                                 p_x23 = new string[length];
@@ -1274,7 +1272,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator.Internal
                                 }
                                 break;
                             }
-                        case 24: // X24
+                        case 24:
                             {
                                 var length = r.GetUInt32();
                                 p_x24 = new System.Collections.Generic.Dictionary<byte, string>();
@@ -1288,12 +1286,12 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator.Internal
                                 }
                                 break;
                             }
-                        case 25: // X25
+                        case 25:
                             {
                                 p_x25 = SmallMessageElement.Formatter.Deserialize(r, rank + 1);
                                 break;
                             }
-                        case 26: // X26
+                        case 26:
                             {
                                 p_x26 = MessageElement.Formatter.Deserialize(r, rank + 1);
                                 break;
@@ -1770,7 +1768,6 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator.Internal
             {
                 if (rank > 256) throw new System.FormatException();
 
-                // Read property count
                 uint propertyCount = r.GetUInt32();
 
                 bool? p_x0 = null;
@@ -1806,122 +1803,122 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator.Internal
                     uint id = r.GetUInt32();
                     switch (id)
                     {
-                        case 0: // X0
+                        case 0:
                             {
                                 p_x0 = r.GetBoolean();
                                 break;
                             }
-                        case 1: // X1
+                        case 1:
                             {
                                 p_x1 = r.GetInt8();
                                 break;
                             }
-                        case 2: // X2
+                        case 2:
                             {
                                 p_x2 = r.GetInt16();
                                 break;
                             }
-                        case 3: // X3
+                        case 3:
                             {
                                 p_x3 = r.GetInt32();
                                 break;
                             }
-                        case 4: // X4
+                        case 4:
                             {
                                 p_x4 = r.GetInt64();
                                 break;
                             }
-                        case 5: // X5
+                        case 5:
                             {
                                 p_x5 = r.GetUInt8();
                                 break;
                             }
-                        case 6: // X6
+                        case 6:
                             {
                                 p_x6 = r.GetUInt16();
                                 break;
                             }
-                        case 7: // X7
+                        case 7:
                             {
                                 p_x7 = r.GetUInt32();
                                 break;
                             }
-                        case 8: // X8
+                        case 8:
                             {
                                 p_x8 = r.GetUInt64();
                                 break;
                             }
-                        case 9: // X9
+                        case 9:
                             {
                                 p_x9 = (Enum1)r.GetInt64();
                                 break;
                             }
-                        case 10: // X10
+                        case 10:
                             {
                                 p_x10 = (Enum2)r.GetInt64();
                                 break;
                             }
-                        case 11: // X11
+                        case 11:
                             {
                                 p_x11 = (Enum3)r.GetInt64();
                                 break;
                             }
-                        case 12: // X12
+                        case 12:
                             {
                                 p_x12 = (Enum4)r.GetInt64();
                                 break;
                             }
-                        case 13: // X13
+                        case 13:
                             {
                                 p_x13 = (Enum5)r.GetUInt64();
                                 break;
                             }
-                        case 14: // X14
+                        case 14:
                             {
                                 p_x14 = (Enum6)r.GetUInt64();
                                 break;
                             }
-                        case 15: // X15
+                        case 15:
                             {
                                 p_x15 = (Enum7)r.GetUInt64();
                                 break;
                             }
-                        case 16: // X16
+                        case 16:
                             {
                                 p_x16 = (Enum8)r.GetUInt64();
                                 break;
                             }
-                        case 17: // X17
+                        case 17:
                             {
                                 p_x17 = r.GetFloat32();
                                 break;
                             }
-                        case 18: // X18
+                        case 18:
                             {
                                 p_x18 = r.GetFloat64();
                                 break;
                             }
-                        case 19: // X19
+                        case 19:
                             {
                                 p_x19 = r.GetString(128);
                                 break;
                             }
-                        case 20: // X20
+                        case 20:
                             {
                                 p_x20 = r.GetTimestamp();
                                 break;
                             }
-                        case 21: // X21
+                        case 21:
                             {
                                 p_x21 = r.GetMemory(256);
                                 break;
                             }
-                        case 22: // X22
+                        case 22:
                             {
                                 p_x22 = r.GetRecyclableMemory(256);
                                 break;
                             }
-                        case 23: // X23
+                        case 23:
                             {
                                 var length = r.GetUInt32();
                                 p_x23 = new string[length];
@@ -1931,7 +1928,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator.Internal
                                 }
                                 break;
                             }
-                        case 24: // X24
+                        case 24:
                             {
                                 var length = r.GetUInt32();
                                 p_x24 = new System.Collections.Generic.Dictionary<byte, string>();
@@ -1945,12 +1942,12 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator.Internal
                                 }
                                 break;
                             }
-                        case 25: // X25
+                        case 25:
                             {
                                 p_x25 = SmallMessageElement.Formatter.Deserialize(r, rank + 1);
                                 break;
                             }
-                        case 26: // X26
+                        case 26:
                             {
                                 p_x26 = MessageElement.Formatter.Deserialize(r, rank + 1);
                                 break;

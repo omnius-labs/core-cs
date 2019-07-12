@@ -227,7 +227,6 @@ namespace Omnix.Cryptography
             {
                 if (rank > 256) throw new System.FormatException();
 
-                // Read property count
                 uint propertyCount = r.GetUInt32();
 
                 Omnix.Serialization.RocketPack.Timestamp p_creationTime = Omnix.Serialization.RocketPack.Timestamp.Zero;
@@ -240,22 +239,22 @@ namespace Omnix.Cryptography
                     uint id = r.GetUInt32();
                     switch (id)
                     {
-                        case 0: // CreationTime
+                        case 0:
                             {
                                 p_creationTime = r.GetTimestamp();
                                 break;
                             }
-                        case 1: // AlgorithmType
+                        case 1:
                             {
                                 p_algorithmType = (OmniAgreementAlgorithmType)r.GetUInt64();
                                 break;
                             }
-                        case 2: // PublicKey
+                        case 2:
                             {
                                 p_publicKey = r.GetMemory(8192);
                                 break;
                             }
-                        case 3: // PrivateKey
+                        case 3:
                             {
                                 p_privateKey = r.GetMemory(8192);
                                 break;
@@ -358,7 +357,6 @@ namespace Omnix.Cryptography
             {
                 if (rank > 256) throw new System.FormatException();
 
-                // Read property count
                 uint propertyCount = r.GetUInt32();
 
                 Omnix.Serialization.RocketPack.Timestamp p_creationTime = Omnix.Serialization.RocketPack.Timestamp.Zero;
@@ -370,17 +368,17 @@ namespace Omnix.Cryptography
                     uint id = r.GetUInt32();
                     switch (id)
                     {
-                        case 0: // CreationTime
+                        case 0:
                             {
                                 p_creationTime = r.GetTimestamp();
                                 break;
                             }
-                        case 1: // AlgorithmType
+                        case 1:
                             {
                                 p_algorithmType = (OmniAgreementAlgorithmType)r.GetUInt64();
                                 break;
                             }
-                        case 2: // PublicKey
+                        case 2:
                             {
                                 p_publicKey = r.GetMemory(8192);
                                 break;
@@ -483,7 +481,6 @@ namespace Omnix.Cryptography
             {
                 if (rank > 256) throw new System.FormatException();
 
-                // Read property count
                 uint propertyCount = r.GetUInt32();
 
                 Omnix.Serialization.RocketPack.Timestamp p_creationTime = Omnix.Serialization.RocketPack.Timestamp.Zero;
@@ -495,17 +492,17 @@ namespace Omnix.Cryptography
                     uint id = r.GetUInt32();
                     switch (id)
                     {
-                        case 0: // CreationTime
+                        case 0:
                             {
                                 p_creationTime = r.GetTimestamp();
                                 break;
                             }
-                        case 1: // AlgorithmType
+                        case 1:
                             {
                                 p_algorithmType = (OmniAgreementAlgorithmType)r.GetUInt64();
                                 break;
                             }
-                        case 2: // PrivateKey
+                        case 2:
                             {
                                 p_privateKey = r.GetMemory(8192);
                                 break;
@@ -626,7 +623,6 @@ namespace Omnix.Cryptography
             {
                 if (rank > 256) throw new System.FormatException();
 
-                // Read property count
                 uint propertyCount = r.GetUInt32();
 
                 string p_name = string.Empty;
@@ -639,22 +635,22 @@ namespace Omnix.Cryptography
                     uint id = r.GetUInt32();
                     switch (id)
                     {
-                        case 0: // Name
+                        case 0:
                             {
                                 p_name = r.GetString(32);
                                 break;
                             }
-                        case 1: // AlgorithmType
+                        case 1:
                             {
                                 p_algorithmType = (OmniDigitalSignatureAlgorithmType)r.GetUInt64();
                                 break;
                             }
-                        case 2: // PublicKey
+                        case 2:
                             {
                                 p_publicKey = r.GetMemory(8192);
                                 break;
                             }
-                        case 3: // PrivateKey
+                        case 3:
                             {
                                 p_privateKey = r.GetMemory(8192);
                                 break;
@@ -775,7 +771,6 @@ namespace Omnix.Cryptography
             {
                 if (rank > 256) throw new System.FormatException();
 
-                // Read property count
                 uint propertyCount = r.GetUInt32();
 
                 string p_name = string.Empty;
@@ -788,22 +783,22 @@ namespace Omnix.Cryptography
                     uint id = r.GetUInt32();
                     switch (id)
                     {
-                        case 0: // Name
+                        case 0:
                             {
                                 p_name = r.GetString(32);
                                 break;
                             }
-                        case 1: // AlgorithmType
+                        case 1:
                             {
                                 p_algorithmType = (OmniDigitalSignatureAlgorithmType)r.GetUInt64();
                                 break;
                             }
-                        case 2: // PublicKey
+                        case 2:
                             {
                                 p_publicKey = r.GetMemory(8192);
                                 break;
                             }
-                        case 3: // Value
+                        case 3:
                             {
                                 p_value = r.GetMemory(8192);
                                 break;
@@ -893,7 +888,6 @@ namespace Omnix.Cryptography
             {
                 if (rank > 256) throw new System.FormatException();
 
-                // Read property count
                 uint propertyCount = r.GetUInt32();
 
                 string p_name = string.Empty;
@@ -904,12 +898,12 @@ namespace Omnix.Cryptography
                     uint id = r.GetUInt32();
                     switch (id)
                     {
-                        case 0: // Name
+                        case 0:
                             {
                                 p_name = r.GetString(32);
                                 break;
                             }
-                        case 1: // Hash
+                        case 1:
                             {
                                 p_hash = OmniHash.Formatter.Deserialize(r, rank + 1);
                                 break;
@@ -999,7 +993,6 @@ namespace Omnix.Cryptography
             {
                 if (rank > 256) throw new System.FormatException();
 
-                // Read property count
                 uint propertyCount = r.GetUInt32();
 
                 OmniHashcashAlgorithmType p_algorithmType = (OmniHashcashAlgorithmType)0;
@@ -1010,12 +1003,12 @@ namespace Omnix.Cryptography
                     uint id = r.GetUInt32();
                     switch (id)
                     {
-                        case 0: // AlgorithmType
+                        case 0:
                             {
                                 p_algorithmType = (OmniHashcashAlgorithmType)r.GetUInt64();
                                 break;
                             }
-                        case 1: // Key
+                        case 1:
                             {
                                 p_key = r.GetMemory(32);
                                 break;

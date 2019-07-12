@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using BenchmarkDotNet.Attributes;
 using Omnix.Base;
 using System.Buffers;
@@ -20,7 +20,7 @@ namespace FormatterBenchmarks.Cases
 
                 var elementsList = new List<MessagePack_IntElements>();
 
-                for (int i = 0; i < 32; i++)
+                for (int i = 0; i < 32 * 1024; i++)
                 {
                     var elements = new MessagePack_IntElements()
                     {
@@ -49,7 +49,7 @@ namespace FormatterBenchmarks.Cases
 
                 var elementsList = new List<RocketPack_IntElements>();
 
-                for (int i = 0; i < 32; i++)
+                for (int i = 0; i < 32 * 1024; i++)
                 {
                     var X0 = (uint)random.Next(0, 1024 * 256);
                     var X1 = (uint)random.Next(0, 1024 * 256);

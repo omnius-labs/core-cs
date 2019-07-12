@@ -79,7 +79,6 @@ namespace FormatterBenchmarks
             {
                 if (rank > 256) throw new System.FormatException();
 
-                // Read property count
                 uint propertyCount = r.GetUInt32();
 
                 RocketPack_BytesElements[] p_list = System.Array.Empty<RocketPack_BytesElements>();
@@ -89,7 +88,7 @@ namespace FormatterBenchmarks
                     uint id = r.GetUInt32();
                     switch (id)
                     {
-                        case 0: // List
+                        case 0:
                             {
                                 var length = r.GetUInt32();
                                 p_list = new RocketPack_BytesElements[length];
@@ -340,7 +339,6 @@ namespace FormatterBenchmarks
             {
                 if (rank > 256) throw new System.FormatException();
 
-                // Read property count
                 uint propertyCount = r.GetUInt32();
 
                 System.Buffers.IMemoryOwner<byte> p_x0 = Omnix.Base.SimpleMemoryOwner<byte>.Empty;
@@ -359,52 +357,52 @@ namespace FormatterBenchmarks
                     uint id = r.GetUInt32();
                     switch (id)
                     {
-                        case 0: // X0
+                        case 0:
                             {
                                 p_x0 = r.GetRecyclableMemory(1048576);
                                 break;
                             }
-                        case 1: // X1
+                        case 1:
                             {
                                 p_x1 = r.GetRecyclableMemory(1048576);
                                 break;
                             }
-                        case 2: // X2
+                        case 2:
                             {
                                 p_x2 = r.GetRecyclableMemory(1048576);
                                 break;
                             }
-                        case 3: // X3
+                        case 3:
                             {
                                 p_x3 = r.GetRecyclableMemory(1048576);
                                 break;
                             }
-                        case 4: // X4
+                        case 4:
                             {
                                 p_x4 = r.GetRecyclableMemory(1048576);
                                 break;
                             }
-                        case 5: // X5
+                        case 5:
                             {
                                 p_x5 = r.GetRecyclableMemory(1048576);
                                 break;
                             }
-                        case 6: // X6
+                        case 6:
                             {
                                 p_x6 = r.GetRecyclableMemory(1048576);
                                 break;
                             }
-                        case 7: // X7
+                        case 7:
                             {
                                 p_x7 = r.GetRecyclableMemory(1048576);
                                 break;
                             }
-                        case 8: // X8
+                        case 8:
                             {
                                 p_x8 = r.GetRecyclableMemory(1048576);
                                 break;
                             }
-                        case 9: // X9
+                        case 9:
                             {
                                 p_x9 = r.GetRecyclableMemory(1048576);
                                 break;
@@ -493,7 +491,6 @@ namespace FormatterBenchmarks
             {
                 if (rank > 256) throw new System.FormatException();
 
-                // Read property count
                 uint propertyCount = r.GetUInt32();
 
                 RocketPack_IntElements[] p_list = System.Array.Empty<RocketPack_IntElements>();
@@ -503,7 +500,7 @@ namespace FormatterBenchmarks
                     uint id = r.GetUInt32();
                     switch (id)
                     {
-                        case 0: // List
+                        case 0:
                             {
                                 var length = r.GetUInt32();
                                 p_list = new RocketPack_IntElements[length];
@@ -698,7 +695,6 @@ namespace FormatterBenchmarks
             {
                 if (rank > 256) throw new System.FormatException();
 
-                // Read property count
                 uint propertyCount = r.GetUInt32();
 
                 uint p_x0 = 0;
@@ -717,52 +713,52 @@ namespace FormatterBenchmarks
                     uint id = r.GetUInt32();
                     switch (id)
                     {
-                        case 0: // X0
+                        case 0:
                             {
                                 p_x0 = r.GetUInt32();
                                 break;
                             }
-                        case 1: // X1
+                        case 1:
                             {
                                 p_x1 = r.GetUInt32();
                                 break;
                             }
-                        case 2: // X2
+                        case 2:
                             {
                                 p_x2 = r.GetUInt32();
                                 break;
                             }
-                        case 3: // X3
+                        case 3:
                             {
                                 p_x3 = r.GetUInt32();
                                 break;
                             }
-                        case 4: // X4
+                        case 4:
                             {
                                 p_x4 = r.GetUInt32();
                                 break;
                             }
-                        case 5: // X5
+                        case 5:
                             {
                                 p_x5 = r.GetUInt32();
                                 break;
                             }
-                        case 6: // X6
+                        case 6:
                             {
                                 p_x6 = r.GetUInt32();
                                 break;
                             }
-                        case 7: // X7
+                        case 7:
                             {
                                 p_x7 = r.GetUInt32();
                                 break;
                             }
-                        case 8: // X8
+                        case 8:
                             {
                                 p_x8 = r.GetUInt32();
                                 break;
                             }
-                        case 9: // X9
+                        case 9:
                             {
                                 p_x9 = r.GetUInt32();
                                 break;
@@ -851,7 +847,6 @@ namespace FormatterBenchmarks
             {
                 if (rank > 256) throw new System.FormatException();
 
-                // Read property count
                 uint propertyCount = r.GetUInt32();
 
                 RocketPack_StringElements[] p_list = System.Array.Empty<RocketPack_StringElements>();
@@ -861,7 +856,7 @@ namespace FormatterBenchmarks
                     uint id = r.GetUInt32();
                     switch (id)
                     {
-                        case 0: // List
+                        case 0:
                             {
                                 var length = r.GetUInt32();
                                 p_list = new RocketPack_StringElements[length];
@@ -1088,7 +1083,6 @@ namespace FormatterBenchmarks
             {
                 if (rank > 256) throw new System.FormatException();
 
-                // Read property count
                 uint propertyCount = r.GetUInt32();
 
                 string p_x0 = string.Empty;
@@ -1107,52 +1101,52 @@ namespace FormatterBenchmarks
                     uint id = r.GetUInt32();
                     switch (id)
                     {
-                        case 0: // X0
+                        case 0:
                             {
                                 p_x0 = r.GetString(8192);
                                 break;
                             }
-                        case 1: // X1
+                        case 1:
                             {
                                 p_x1 = r.GetString(8192);
                                 break;
                             }
-                        case 2: // X2
+                        case 2:
                             {
                                 p_x2 = r.GetString(8192);
                                 break;
                             }
-                        case 3: // X3
+                        case 3:
                             {
                                 p_x3 = r.GetString(8192);
                                 break;
                             }
-                        case 4: // X4
+                        case 4:
                             {
                                 p_x4 = r.GetString(8192);
                                 break;
                             }
-                        case 5: // X5
+                        case 5:
                             {
                                 p_x5 = r.GetString(8192);
                                 break;
                             }
-                        case 6: // X6
+                        case 6:
                             {
                                 p_x6 = r.GetString(8192);
                                 break;
                             }
-                        case 7: // X7
+                        case 7:
                             {
                                 p_x7 = r.GetString(8192);
                                 break;
                             }
-                        case 8: // X8
+                        case 8:
                             {
                                 p_x8 = r.GetString(8192);
                                 break;
                             }
-                        case 9: // X9
+                        case 9:
                             {
                                 p_x9 = r.GetString(8192);
                                 break;
