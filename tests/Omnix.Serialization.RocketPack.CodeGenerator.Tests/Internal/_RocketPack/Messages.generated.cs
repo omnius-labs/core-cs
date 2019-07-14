@@ -1,7 +1,7 @@
 ﻿
 #nullable enable
 
-namespace Omnix.Serialization.RocketPack.CodeGenerator.Tests.Internal
+namespace Omnix.Serialization.RocketPack.CodeGenerator.Internal
 {
     internal enum Enum1 : sbyte
     {
