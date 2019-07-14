@@ -56,7 +56,7 @@
     <BaseOutputPath Condition=" '$(BaseOutputPath)' == '' ">$(MSBuildThisFileDirectory)tmp\bin\linux\$(MSBuildProjectName)\</BaseOutputPath>
   </PropertyGroup>
 
-  <PropertyGroup Condition=" '$(IsTest)' != 'true' ">
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
     <RepoRoot>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)'))</RepoRoot>
     <PathMap>$(RepoRoot)=.</PathMap>
   </PropertyGroup>
