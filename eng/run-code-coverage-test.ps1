@@ -9,8 +9,8 @@ ForEach ($folder in (Get-ChildItem -Path "tests" -Directory))
 
     dotnet test "$path" /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput="$output" /p:Exclude="[xunit*]*%2c[*.Tests]*" -v:n;
    
-    If ($LastExitCode -gt 0) {
-        exit
+	if (!$?) {
+        exit 1
     }
 }
 
