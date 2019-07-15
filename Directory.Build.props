@@ -10,14 +10,20 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
   </PropertyGroup>
 
+  <PropertyGroup>  
+    <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+    <RestoreLockedMode Condition=" '$(ContinuousIntegrationBuild)' == 'true' " >true</RestoreLockedMode>
+  </PropertyGroup>
+
   <PropertyGroup>
     <RootNamespace>$(ProjectName)</RootNamespace>
-    <AssemblyName>$(ProjectName)</AssemblyName>
     <Title>$(ProjectName)</Title>
     <Description>$(ProjectName)</Description>
-    <BuildVersion>5</BuildVersion>
-    <Version>0.0.1-alpha.$(BuildVersion)</Version>
-    <AssemblyVersion>0.0.1.$(BuildVersion)</AssemblyVersion>
+    <BuildVersion>1</BuildVersion>
+    <VersionPrefix>0.0.2</VersionPrefix>
+    <VersionSuffix>-alpha</VersionSuffix>
+    <Version>$(VersionPrefix)$(VersionSuffix).$(BuildVersion)</Version>
+    <AssemblyVersion>$(VersionPrefix).$(BuildVersion)</AssemblyVersion>
     <FileVersion>$(AssemblyVersion)</FileVersion>
     <Authors>Lyrise</Authors>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
@@ -61,4 +67,12 @@
     <PathMap>$(RepoRoot)=.</PathMap>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="NLog" Version="4.6.5" />
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0-beta2-18618-05">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+  
 </Project>
