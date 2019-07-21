@@ -85,7 +85,7 @@
           "Microsoft.NETCore.Platforms": "1.1.0"
         }
       },
-      "omnix.base": {
+      "Omnix.Base": {
         "type": "Project",
         "dependencies": {
           "NLog": "4.6.5",
