@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -23,7 +23,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
 
                 using (var reader = new StreamReader(usingPathList[i]))
                 {
-                    tempDefinition = RocketFormatParser.ParseV1(reader.ReadToEnd());
+                    tempDefinition = RocketFormatParser.ParseV1_0(reader.ReadToEnd());
                     results.Add(tempDefinition);
                 }
 

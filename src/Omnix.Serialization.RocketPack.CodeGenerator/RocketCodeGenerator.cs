@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Linq;
@@ -87,7 +87,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
 
         private static string GetFullName(string name, params string[] types)
         {
-            return name switch
+            var result = name switch
             {
                 "ReadOnlySequence<>" => $"System.Buffers.ReadOnlySequence<{types[0]}>",
                 "IBufferWriter<>" => $"System.Buffers.IBufferWriter<{types[0]}>",
@@ -113,11 +113,13 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
                 "RocketPackMessageBase<>" => $"Omnix.Serialization.RocketPack.RocketPackMessageBase<{types[0]}>",
                 "IDisposable" => "System.IDisposable",
                 "BufferPool" => "Omnix.Base.BufferPool",
-                "MemoryOwner<>" => $"Omnix.Base.SimpleMemoryOwner<{types[0]}>",
+                "SimpleMemoryOwner<>" => $"Omnix.Base.SimpleMemoryOwner<{types[0]}>",
                 "ArgumentNullException" => "System.ArgumentNullException",
                 "ArgumentOutOfRangeException" => "System.ArgumentOutOfRangeException",
                 _ => throw new InvalidOperationException(name)
             };
+
+            return "global::" + result;
         }
             
         private class CodeWriter
