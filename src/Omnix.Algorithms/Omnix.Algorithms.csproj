@@ -1,0 +1,56 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="Nuget\build\netcoreapp2.2\Omnix.Algorithms.targets">
+      <PackagePath>build/netcoreapp2.2/</PackagePath>
+      <Pack>true</Pack>
+    </Content>
+    <Content Include="Assemblies\Win\omnix-algorithms.x64.dll">
+      <CopyToOutputDirectory Condition=" '$(NativeDepsPlatform)' == 'Windows' ">PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Link>omnix-algorithms.x64.dll</Link>
+      <Visible>false</Visible>
+      <Pack>true</Pack>
+      <PackagePath>runtimes\win\native\omnix-cryptography.x64.dll</PackagePath>
+    </Content>
+    <Content Include="Assemblies\Win\hashcash.x64.exe">
+      <CopyToOutputDirectory Condition=" '$(NativeDepsPlatform)' == 'Windows' ">PreserveNewest</CopyToOutputDirectory>
+      <Link>hashcash.x64.exe</Link>
+      <Visible>false</Visible>
+      <Pack>true</Pack>
+      <PackagePath>runtimes\win\native\hashcash.x64.exe</PackagePath>
+    </Content>
+    <Content Include="Assemblies\Linux\omnix-algorithms.x64.so">
+      <CopyToOutputDirectory Condition=" '$(NativeDepsPlatform)' == 'Linux' ">PreserveNewest</CopyToOutputDirectory>
+      <Link>omnix-algorithms.x64.so</Link>
+      <Visible>false</Visible>
+      <Pack>true</Pack>
+      <PackagePath>runtimes\linux\native\omnix-cryptography.x64.so</PackagePath>
+    </Content>
+    <Content Include="Assemblies\Linux\hashcash.x64">
+      <CopyToOutputDirectory Condition=" '$(NativeDepsPlatform)' == 'Linux' ">PreserveNewest</CopyToOutputDirectory>
+      <Link>hashcash.x64</Link>
+      <Visible>false</Visible>
+      <Pack>true</Pack>
+      <PackagePath>runtimes\linux\native\hashcash.x64</PackagePath>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.IO.Pipelines" Version="4.5.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Omnix.Base\Omnix.Base.csproj" />
+    <ProjectReference Include="..\Omnix.Collections\Omnix.Collections.csproj" />
+    <ProjectReference Include="..\Omnix.Io\Omnix.Io.csproj" />
+    <ProjectReference Include="..\Omnix.Serialization.RocketPack\Omnix.Serialization.RocketPack.csproj" />
+    <ProjectReference Include="..\Omnix.Serialization\Omnix.Serialization.csproj" />
+  </ItemGroup>
+
+</Project>

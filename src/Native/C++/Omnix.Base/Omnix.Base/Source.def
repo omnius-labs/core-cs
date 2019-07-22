@@ -1,0 +1,10 @@
+LIBRARY Omnix.Base.dll
+
+EXPORTS
+	zero
+	copy
+	equals
+	compare
+	math_and
+	math_or
+	math_xor

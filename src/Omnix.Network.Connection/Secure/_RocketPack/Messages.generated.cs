@@ -1,4 +1,4 @@
-﻿using Omnix.Cryptography;
+﻿using Omnix.Algorithms.Cryptography;
 
 #nullable enable
 

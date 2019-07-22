@@ -1,0 +1,68 @@
+﻿syntax = v1.0;
+
+option csharp_namespace = "Omnix.Algorithms.Cryptography";
+
+enum OmniHashAlgorithmType : uint8 {
+    Sha2_256 = 0,
+}
+
+enum OmniAgreementAlgorithmType : uint8 {
+    EcDh_P521_Sha2_256 = 0,
+}
+
+enum OmniDigitalSignatureAlgorithmType : uint8 {
+    EcDsa_P521_Sha2_256 = 0,
+}
+
+enum OmniHashcashAlgorithmType : uint8
+{
+    Simple_Sha2_256 = 0,
+}
+
+small message OmniHash {
+    AlgorithmType: OmniHashAlgorithmType,
+    Value: memory(256),
+}
+
+message OmniAgreement {
+    CreationTime: timestamp = 0,
+    AlgorithmType: OmniAgreementAlgorithmType = 1,
+    PublicKey: memory(8192) = 2,
+    PrivateKey: memory(8192) = 3,
+}
+
+message OmniAgreementPublicKey {
+    CreationTime: timestamp = 0,
+    AlgorithmType: OmniAgreementAlgorithmType = 1,
+    PublicKey: memory(8192) = 2,
+}
+
+message OmniAgreementPrivateKey {
+    CreationTime: timestamp = 0,
+    AlgorithmType: OmniAgreementAlgorithmType = 1,
+    PrivateKey: memory(8192) = 2,
+}
+
+message OmniDigitalSignature {
+    Name: string(32) = 0,
+    AlgorithmType: OmniDigitalSignatureAlgorithmType = 1,
+    PublicKey: memory(8192) = 2,
+    PrivateKey: memory(8192) = 3,
+}
+
+message OmniCertificate {
+    Name: string(32) = 0,
+    AlgorithmType: OmniDigitalSignatureAlgorithmType = 1,
+    PublicKey: memory(8192) = 2,
+    Value: memory(8192) = 3,
+}
+
+message OmniSignature {
+    Name: string(32) = 0,
+    Hash: OmniHash = 1,
+}
+
+message OmniHashcash {
+    AlgorithmType: OmniHashcashAlgorithmType = 0,
+    Key: memory(32) = 1,
+}
