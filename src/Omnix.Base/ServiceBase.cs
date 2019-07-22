@@ -26,7 +26,7 @@ namespace Omnix.Base
         protected abstract ValueTask OnStartAsync();
         protected abstract ValueTask OnStopAsync();
 
-        public virtual async ValueTask InitializeAysnc()
+        protected virtual async ValueTask InitializeAysnc()
         {
             // 初期化済みの場合は処理しない
             if (Interlocked.CompareExchange(ref _initialized, 1, 0) == 1)

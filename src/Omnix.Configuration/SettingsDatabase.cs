@@ -115,7 +115,7 @@ namespace Omnix.Configuration
             return false;
         }
 
-        private static bool TrySet<T>(string basePath, string name, T value, IRocketPackFormatter<T> formatter)
+        private static void Set<T>(string basePath, string name, T value, IRocketPackFormatter<T> formatter)
         {
             try
             {
@@ -152,15 +152,13 @@ namespace Omnix.Configuration
                     BinaryPrimitives.WriteInt32LittleEndian(buffer, Crc32_Castagnoli.ComputeHash(sequence));
                     fileStream.Write(buffer);
                 }
-
-                return true;
             }
             catch (Exception e)
             {
                 _logger.Error(e);
-            }
 
-            return false;
+                throw e;
+            }
         }
 
         private void Commit(string name)
@@ -225,9 +223,9 @@ namespace Omnix.Configuration
             return false;
         }
 
-        public bool TrySetVersion(uint version)
+        public void SetVersion(uint version)
         {
-            return this.TrySetContent("#Version", new SettingsDatabaseVersion(version), SettingsDatabaseVersion.Formatter);
+            this.SetContent("#Version", new SettingsDatabaseVersion(version), SettingsDatabaseVersion.Formatter);
         }
 
         public bool TryGetContent<T>(string name, out T value) where T : RocketPackMessageBase<T>
@@ -262,28 +260,18 @@ namespace Omnix.Configuration
             return false;
         }
 
-        public bool TrySetContent<T>(string name, T value) where T : RocketPackMessageBase<T>
+        public void SetContent<T>(string name, T value) where T : RocketPackMessageBase<T>
         {
-            if (!TrySet(this.GeneratePath(EntityStatus.Temp), name, value, RocketPackMessageBase<T>.Formatter))
-            {
-                return false;
-            }
+            Set(this.GeneratePath(EntityStatus.Temp), name, value, RocketPackMessageBase<T>.Formatter);
 
             this.Commit(name);
-
-            return true;
         }
 
-        public bool TrySetContent<T>(string name, T value, IRocketPackFormatter<T> formatter)
+        public void SetContent<T>(string name, T value, IRocketPackFormatter<T> formatter)
         {
-            if (!TrySet(this.GeneratePath(EntityStatus.Temp), name, value, formatter))
-            {
-                return false;
-            }
+            Set(this.GeneratePath(EntityStatus.Temp), name, value, formatter);
 
             this.Commit(name);
-
-            return true;
         }
 
         protected override void Dispose(bool disposing)
