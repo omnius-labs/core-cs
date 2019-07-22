@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Sprache;
@@ -34,7 +34,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
 
     public static class RocketFormatParser
     {
-        public static RocketPackDefinition ParseV1(string text)
+        public static RocketPackDefinition ParseV1_0(string text)
         {
             var notWhiteSpace = Sprache.Parse.Char(x => !char.IsWhiteSpace(x), "not whitespace");
 
@@ -52,11 +52,11 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
                 from name in Parse.Char(x => ('0' <= x && x <= '9') || ('A' <= x && x <= 'Z') || ('a' <= x && x <= 'z') || x == '_', "Name").AtLeastOnce().Text()
                 select name;
 
-            // example: syntax = v1
+            // example: syntax = v1.0
             var syntaxParser =
                 from keyword in Parse.String("syntax").TokenWithSkipComment()
                 from equal in Parse.Char('=').TokenWithSkipComment()
-                from type in Parse.String("v1").TokenWithSkipComment()
+                from type in Parse.String("v1.0").TokenWithSkipComment()
                 from semicolon in Parse.Char(';').Or(Parse.Return(';')).TokenWithSkipComment()
                 select type;
 

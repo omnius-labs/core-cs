@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Linq;
@@ -178,7 +178,6 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
                         {
                             return "null";
                         }
-
                     case IntType type:
                         if (!type.IsOptional)
                         {
@@ -188,7 +187,6 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
                         {
                             return "null";
                         }
-
                     case FloatType type when (type.Size == 32):
                         if (!type.IsOptional)
                         {
@@ -198,7 +196,6 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
                         {
                             return "null";
                         }
-
                     case FloatType type when (type.Size == 64):
                         if (!type.IsOptional)
                         {
@@ -208,7 +205,6 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
                         {
                             return "null";
                         }
-
                     case StringType type:
                         if (!type.IsOptional)
                         {
@@ -218,7 +214,6 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
                         {
                             return "null";
                         }
-
                     case TimestampType type:
                         if (!type.IsOptional)
                         {
@@ -228,7 +223,6 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
                         {
                             return "null";
                         }
-
                     case MemoryType type when (!type.IsUseMemoryPool):
                         if (!type.IsOptional)
                         {
@@ -238,17 +232,15 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
                         {
                             return "null";
                         }
-
                     case MemoryType type when (type.IsUseMemoryPool):
                         if (!type.IsOptional)
                         {
-                            return GetFullName("MemoryOwner<>", "byte") + ".Empty";
+                            return GetFullName("SimpleMemoryOwner<>", "byte") + ".Empty";
                         }
                         else
                         {
                             return "null";
                         }
-
                     case ListType type:
                         if (!type.IsOptional)
                         {
@@ -258,7 +250,6 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
                         {
                             return "null";
                         }
-
                     case MapType type:
                         if (!type.IsOptional)
                         {
@@ -268,7 +259,6 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
                         {
                             return "null";
                         }
-
                     case CustomType type:
                         {
                             switch (this.CustomTypeResolver(type))
