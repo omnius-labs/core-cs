@@ -5,7 +5,6 @@ using System.IO;
 using System.IO.Compression;
 using Omnix.Base;
 using Omnix.Configuration.Internal;
-using Omnix.Cryptography;
 using Omnix.Io;
 using Omnix.Serialization.RocketPack;
 

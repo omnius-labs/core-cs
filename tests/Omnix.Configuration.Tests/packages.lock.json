@@ -1041,6 +1041,18 @@
           "xunit.extensibility.core": "[2.4.1]"
         }
       },
+      "Omnix.Algorithms": {
+        "type": "Project",
+        "dependencies": {
+          "NLog": "4.6.5",
+          "Omnix.Base": "0.0.2-alpha.1",
+          "Omnix.Collections": "0.0.2-alpha.1",
+          "Omnix.Io": "0.0.2-alpha.1",
+          "Omnix.Serialization": "0.0.2-alpha.1",
+          "Omnix.Serialization.RocketPack": "0.0.2-alpha.1",
+          "System.IO.Pipelines": "4.5.3"
+        }
+      },
       "Omnix.Base": {
         "type": "Project",
         "dependencies": {
@@ -1060,23 +1072,11 @@
         "type": "Project",
         "dependencies": {
           "NLog": "4.6.5",
+          "Omnix.Algorithms": "0.0.2-alpha.1",
           "Omnix.Base": "0.0.2-alpha.1",
-          "Omnix.Cryptography": "0.0.2-alpha.1",
           "Omnix.Io": "0.0.2-alpha.1",
           "Omnix.Serialization": "0.0.2-alpha.1",
           "Omnix.Serialization.RocketPack": "0.0.2-alpha.1"
-        }
-      },
-      "Omnix.Cryptography": {
-        "type": "Project",
-        "dependencies": {
-          "NLog": "4.6.5",
-          "Omnix.Base": "0.0.2-alpha.1",
-          "Omnix.Collections": "0.0.2-alpha.1",
-          "Omnix.Io": "0.0.2-alpha.1",
-          "Omnix.Serialization": "0.0.2-alpha.1",
-          "Omnix.Serialization.RocketPack": "0.0.2-alpha.1",
-          "System.IO.Pipelines": "4.5.3"
         }
       },
       "Omnix.Io": {

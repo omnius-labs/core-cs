@@ -1,4 +1,0 @@
-LIBRARY Omnix_Correction
-
-EXPORTS
-	mul

@@ -1,8 +1,8 @@
 # Readme
 
-## ProxyClientBase.cs, HttpProxyClient.cs, Socks5ProxyClient.cs
+## http://sourceforge.jp/projects/sfnet_starksoftproxyc/
 
-+ Url: <http://sourceforge.jp/projects/sfnet_starksoftproxyc/>
++ Files: ProxyClientBase.cs, HttpProxyClient.cs, Socks5ProxyClient.cs
 + License:
 
 ```

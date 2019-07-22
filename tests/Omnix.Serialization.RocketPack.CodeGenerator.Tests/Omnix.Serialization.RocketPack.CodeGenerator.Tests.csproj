@@ -7,7 +7,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Omnix.Collections\Omnix.Collections.csproj" />
-    <ProjectReference Include="..\..\src\Omnix.Cryptography\Omnix.Cryptography.csproj" />
+    <ProjectReference Include="..\..\src\Omnix.Cryptography\Omnix.Algorithms.csproj" />
     <ProjectReference Include="..\..\src\Omnix.Serialization.RocketPack.CodeGenerator\Omnix.Serialization.RocketPack.CodeGenerator.csproj" />
     <ProjectReference Include="..\..\src\Omnix.Serialization.RocketPack\Omnix.Serialization.RocketPack.csproj" />
   </ItemGroup>
