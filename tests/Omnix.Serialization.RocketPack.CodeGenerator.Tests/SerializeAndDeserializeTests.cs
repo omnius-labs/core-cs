@@ -8,7 +8,6 @@ using System.Text;
 using System.Diagnostics;
 using Omnix.Serialization.Extensions;
 using System.Security.Cryptography;
-using Omnix.Cryptography;
 
 namespace Omnix.Serialization.RocketPack.CodeGenerator
 {
@@ -18,7 +17,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
         public void HelloMessageTest()
         {
             var text = @"
-syntax = v1;
+syntax = v1.0;
 
 message NullableHelloMessage {
     X0: bool? = 0,
@@ -50,7 +49,7 @@ message NullableHelloMessage {
     X25: Message1 = 25,
     X26: SmallMessage1 = 26,
 }";
-            RocketFormatParser.ParseV1(text);
+            RocketFormatParser.ParseV1_0(text);
         }
     }
 }

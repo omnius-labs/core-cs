@@ -1,4 +1,4 @@
-﻿using Omnix.Algorithms.Cryptography;
+using Omnix.Algorithms.Cryptography;
 using Omnix.Network.Connection.Secure;
 
 #nullable enable
@@ -22,7 +22,7 @@ namespace Omnix.Network.Connection.Secure.Internal
             if (versions is null) throw new System.ArgumentNullException("versions");
             if (versions.Length > 32) throw new System.ArgumentOutOfRangeException("versions");
 
-            this.Versions = new Omnix.Collections.ReadOnlyListSlim<OmniSecureConnectionVersion>(versions);
+            this.Versions = new Omnix.DataStructures.ReadOnlyListSlim<OmniSecureConnectionVersion>(versions);
 
             {
                 var __h = new System.HashCode();
@@ -34,7 +34,7 @@ namespace Omnix.Network.Connection.Secure.Internal
             }
         }
 
-        public Omnix.Collections.ReadOnlyListSlim<OmniSecureConnectionVersion> Versions { get; }
+        public Omnix.DataStructures.ReadOnlyListSlim<OmniSecureConnectionVersion> Versions { get; }
 
         public override bool Equals(HelloMessage? target)
         {

@@ -1,4 +1,4 @@
-﻿
+
 #nullable enable
 
 namespace FormatterBenchmarks
@@ -24,7 +24,7 @@ namespace FormatterBenchmarks
                 if (n is null) throw new System.ArgumentNullException("n");
             }
 
-            this.List = new Omnix.Collections.ReadOnlyListSlim<RocketPack_BytesElements>(list);
+            this.List = new Omnix.DataStructures.ReadOnlyListSlim<RocketPack_BytesElements>(list);
 
             {
                 var __h = new System.HashCode();
@@ -36,7 +36,7 @@ namespace FormatterBenchmarks
             }
         }
 
-        public Omnix.Collections.ReadOnlyListSlim<RocketPack_BytesElements> List { get; }
+        public Omnix.DataStructures.ReadOnlyListSlim<RocketPack_BytesElements> List { get; }
 
         public override bool Equals(RocketPack_BytesElementsList? target)
         {
@@ -436,7 +436,7 @@ namespace FormatterBenchmarks
                 if (n is null) throw new System.ArgumentNullException("n");
             }
 
-            this.List = new Omnix.Collections.ReadOnlyListSlim<RocketPack_IntElements>(list);
+            this.List = new Omnix.DataStructures.ReadOnlyListSlim<RocketPack_IntElements>(list);
 
             {
                 var __h = new System.HashCode();
@@ -448,7 +448,7 @@ namespace FormatterBenchmarks
             }
         }
 
-        public Omnix.Collections.ReadOnlyListSlim<RocketPack_IntElements> List { get; }
+        public Omnix.DataStructures.ReadOnlyListSlim<RocketPack_IntElements> List { get; }
 
         public override bool Equals(RocketPack_IntElementsList? target)
         {
@@ -792,7 +792,7 @@ namespace FormatterBenchmarks
                 if (n is null) throw new System.ArgumentNullException("n");
             }
 
-            this.List = new Omnix.Collections.ReadOnlyListSlim<RocketPack_StringElements>(list);
+            this.List = new Omnix.DataStructures.ReadOnlyListSlim<RocketPack_StringElements>(list);
 
             {
                 var __h = new System.HashCode();
@@ -804,7 +804,7 @@ namespace FormatterBenchmarks
             }
         }
 
-        public Omnix.Collections.ReadOnlyListSlim<RocketPack_StringElements> List { get; }
+        public Omnix.DataStructures.ReadOnlyListSlim<RocketPack_StringElements> List { get; }
 
         public override bool Equals(RocketPack_StringElementsList? target)
         {

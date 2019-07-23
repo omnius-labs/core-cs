@@ -1,4 +1,4 @@
-﻿
+
 #nullable enable
 
 namespace Omnix.Network.Connection.Multiplexer.Internal
@@ -25,7 +25,7 @@ namespace Omnix.Network.Connection.Multiplexer.Internal
             if (versions is null) throw new System.ArgumentNullException("versions");
             if (versions.Length > 32) throw new System.ArgumentOutOfRangeException("versions");
 
-            this.Versions = new Omnix.Collections.ReadOnlyListSlim<CommunicatorVersion>(versions);
+            this.Versions = new Omnix.DataStructures.ReadOnlyListSlim<CommunicatorVersion>(versions);
 
             {
                 var __h = new System.HashCode();
@@ -37,7 +37,7 @@ namespace Omnix.Network.Connection.Multiplexer.Internal
             }
         }
 
-        public Omnix.Collections.ReadOnlyListSlim<CommunicatorVersion> Versions { get; }
+        public Omnix.DataStructures.ReadOnlyListSlim<CommunicatorVersion> Versions { get; }
 
         public override bool Equals(HelloMessage? target)
         {

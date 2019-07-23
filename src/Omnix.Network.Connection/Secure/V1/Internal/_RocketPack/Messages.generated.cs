@@ -1,4 +1,4 @@
-﻿using Omnix.Algorithms.Cryptography;
+using Omnix.Algorithms.Cryptography;
 
 #nullable enable
 
@@ -60,10 +60,10 @@ namespace Omnix.Network.Connection.Secure.V1.Internal
 
             this.SessionId = sessionId;
             this.AuthenticationType = authenticationType;
-            this.KeyExchangeAlgorithms = new Omnix.Collections.ReadOnlyListSlim<KeyExchangeAlgorithm>(keyExchangeAlgorithms);
-            this.KeyDerivationAlgorithms = new Omnix.Collections.ReadOnlyListSlim<KeyDerivationAlgorithm>(keyDerivationAlgorithms);
-            this.CryptoAlgorithms = new Omnix.Collections.ReadOnlyListSlim<CryptoAlgorithm>(cryptoAlgorithms);
-            this.HashAlgorithms = new Omnix.Collections.ReadOnlyListSlim<HashAlgorithm>(hashAlgorithms);
+            this.KeyExchangeAlgorithms = new Omnix.DataStructures.ReadOnlyListSlim<KeyExchangeAlgorithm>(keyExchangeAlgorithms);
+            this.KeyDerivationAlgorithms = new Omnix.DataStructures.ReadOnlyListSlim<KeyDerivationAlgorithm>(keyDerivationAlgorithms);
+            this.CryptoAlgorithms = new Omnix.DataStructures.ReadOnlyListSlim<CryptoAlgorithm>(cryptoAlgorithms);
+            this.HashAlgorithms = new Omnix.DataStructures.ReadOnlyListSlim<HashAlgorithm>(hashAlgorithms);
 
             {
                 var __h = new System.HashCode();
@@ -91,10 +91,10 @@ namespace Omnix.Network.Connection.Secure.V1.Internal
 
         public System.ReadOnlyMemory<byte> SessionId { get; }
         public AuthenticationType AuthenticationType { get; }
-        public Omnix.Collections.ReadOnlyListSlim<KeyExchangeAlgorithm> KeyExchangeAlgorithms { get; }
-        public Omnix.Collections.ReadOnlyListSlim<KeyDerivationAlgorithm> KeyDerivationAlgorithms { get; }
-        public Omnix.Collections.ReadOnlyListSlim<CryptoAlgorithm> CryptoAlgorithms { get; }
-        public Omnix.Collections.ReadOnlyListSlim<HashAlgorithm> HashAlgorithms { get; }
+        public Omnix.DataStructures.ReadOnlyListSlim<KeyExchangeAlgorithm> KeyExchangeAlgorithms { get; }
+        public Omnix.DataStructures.ReadOnlyListSlim<KeyDerivationAlgorithm> KeyDerivationAlgorithms { get; }
+        public Omnix.DataStructures.ReadOnlyListSlim<CryptoAlgorithm> CryptoAlgorithms { get; }
+        public Omnix.DataStructures.ReadOnlyListSlim<HashAlgorithm> HashAlgorithms { get; }
 
         public override bool Equals(ProfileMessage? target)
         {
@@ -396,7 +396,7 @@ namespace Omnix.Network.Connection.Secure.V1.Internal
                 if (n.Length > 32) throw new System.ArgumentOutOfRangeException("n");
             }
 
-            this.Hashes = new Omnix.Collections.ReadOnlyListSlim<System.ReadOnlyMemory<byte>>(hashes);
+            this.Hashes = new Omnix.DataStructures.ReadOnlyListSlim<System.ReadOnlyMemory<byte>>(hashes);
 
             {
                 var __h = new System.HashCode();
@@ -408,7 +408,7 @@ namespace Omnix.Network.Connection.Secure.V1.Internal
             }
         }
 
-        public Omnix.Collections.ReadOnlyListSlim<System.ReadOnlyMemory<byte>> Hashes { get; }
+        public Omnix.DataStructures.ReadOnlyListSlim<System.ReadOnlyMemory<byte>> Hashes { get; }
 
         public override bool Equals(AuthenticationMessage? target)
         {

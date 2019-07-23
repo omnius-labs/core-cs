@@ -772,6 +772,14 @@
           "runtime.native.System": "4.0.0"
         }
       },
+      "System.Runtime.Intrinsics.Experimental": {
+        "type": "Transitive",
+        "resolved": "4.5.0-rc1",
+        "contentHash": "jIphCuAuc3fmjLJ0v28GBSjEoXfM/U1dE9vQfB1RrX053247MaXloyzvdKfbkikGLOQOssCKM0mf0U6/ztCFiA==",
+        "dependencies": {
+          "Microsoft.NETCore.Platforms": "2.0.0"
+        }
+      },
       "System.Runtime.Loader": {
         "type": "Transitive",
         "resolved": "4.0.0",
@@ -1046,25 +1054,18 @@
         "dependencies": {
           "NLog": "4.6.5",
           "Omnix.Base": "0.0.2-alpha.1",
-          "Omnix.Collections": "0.0.2-alpha.1",
+          "Omnix.DataStructures": "0.0.2-alpha.1",
           "Omnix.Io": "0.0.2-alpha.1",
           "Omnix.Serialization": "0.0.2-alpha.1",
           "Omnix.Serialization.RocketPack": "0.0.2-alpha.1",
-          "System.IO.Pipelines": "4.5.3"
+          "System.IO.Pipelines": "4.5.3",
+          "System.Runtime.Intrinsics.Experimental": "4.5.0-rc1"
         }
       },
       "Omnix.Base": {
         "type": "Project",
         "dependencies": {
           "NLog": "4.6.5",
-          "System.IO.Pipelines": "4.5.3"
-        }
-      },
-      "Omnix.Collections": {
-        "type": "Project",
-        "dependencies": {
-          "NLog": "4.6.5",
-          "Omnix.Base": "0.0.2-alpha.1",
           "System.IO.Pipelines": "4.5.3"
         }
       },
@@ -1077,6 +1078,14 @@
           "Omnix.Io": "0.0.2-alpha.1",
           "Omnix.Serialization": "0.0.2-alpha.1",
           "Omnix.Serialization.RocketPack": "0.0.2-alpha.1"
+        }
+      },
+      "Omnix.DataStructures": {
+        "type": "Project",
+        "dependencies": {
+          "NLog": "4.6.5",
+          "Omnix.Base": "0.0.2-alpha.1",
+          "System.IO.Pipelines": "4.5.3"
         }
       },
       "Omnix.Io": {

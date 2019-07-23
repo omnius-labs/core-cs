@@ -10,11 +10,11 @@ using System.Threading.Tasks;
 using Omnix.Base;
 using Omnix.Base.Extensions;
 using Omnix.Base.Helpers;
-using Omnix.Cryptography;
 using Omnix.Io;
 using Omnix.Serialization;
 using System.Buffers.Binary;
 using Omnix.Network.Connection.Secure;
+using Omnix.Algorithms.Cryptography;
 
 namespace Omnix.Network.Connection.Secure.V1.Internal
 {

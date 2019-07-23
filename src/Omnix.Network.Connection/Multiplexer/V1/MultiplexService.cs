@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Buffers.Binary;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -7,7 +7,7 @@ using System.Threading.Channels;
 using System.Threading.Tasks;
 using Omnix.Base;
 using Omnix.Base.Extensions;
-using Omnix.Collections;
+using Omnix.DataStructures;
 using Omnix.Network.Connection.Multiplexer.V1.Internal;
 using Omnix.Serialization;
 

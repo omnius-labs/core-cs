@@ -3,6 +3,7 @@ using System.Buffers.Binary;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
+using Omnix.Algorithms.Cryptography;
 using Omnix.Base;
 using Omnix.Configuration.Internal;
 using Omnix.Io;
