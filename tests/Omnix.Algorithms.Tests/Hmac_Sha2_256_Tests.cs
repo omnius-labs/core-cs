@@ -4,12 +4,13 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
+using Omnix.Algorithms.Cryptography;
 using Omnix.Base;
 using Omnix.Serialization;
 using Omnix.Serialization.Extensions;
 using Xunit;
 
-namespace Omnix.Cryptography
+namespace Omnix.Algorithms
 {
     public class Hmac_Sha2_256_Tests
     {

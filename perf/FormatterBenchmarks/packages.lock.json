@@ -1187,7 +1187,7 @@
           "System.IO.Pipelines": "4.5.3"
         }
       },
-      "Omnix.Collections": {
+      "Omnix.DataStructures": {
         "type": "Project",
         "dependencies": {
           "NLog": "4.6.5",

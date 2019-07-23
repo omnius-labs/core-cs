@@ -36,6 +36,15 @@
         "resolved": "4.5.3",
         "contentHash": "k6Ac5MuJ/GbFo7l/bB0Bxg0JxHReDi19eW1wuDGIy/iSIAJob0cNHChvILde/v4fdX1ZNmL2Nr7axKG21wbNLw=="
       },
+      "System.Runtime.Intrinsics.Experimental": {
+        "type": "Direct",
+        "requested": "[4.5.0-rc1, )",
+        "resolved": "4.5.0-rc1",
+        "contentHash": "jIphCuAuc3fmjLJ0v28GBSjEoXfM/U1dE9vQfB1RrX053247MaXloyzvdKfbkikGLOQOssCKM0mf0U6/ztCFiA==",
+        "dependencies": {
+          "Microsoft.NETCore.Platforms": "2.0.0"
+        }
+      },
       "Microsoft.Build.Tasks.Git": {
         "type": "Transitive",
         "resolved": "1.0.0-beta2-18618-05",
@@ -92,7 +101,7 @@
           "System.IO.Pipelines": "4.5.3"
         }
       },
-      "Omnix.Collections": {
+      "Omnix.DataStructures": {
         "type": "Project",
         "dependencies": {
           "NLog": "4.6.5",

@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Omnix.Cryptography\Omnix.Algorithms.csproj" />
+    <ProjectReference Include="..\..\src\Omnix.Algorithms\Omnix.Algorithms.csproj" />
   </ItemGroup>
 
 </Project>

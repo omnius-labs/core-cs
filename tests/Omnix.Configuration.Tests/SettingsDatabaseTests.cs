@@ -17,7 +17,7 @@ namespace Omnix.Configuration
             {
                 uint setVersion = (uint)random.Next();
 
-                Assert.True(settings.TrySetVersion(setVersion));
+                settings.SetVersion(setVersion);
                 Assert.True(settings.TryGetVersion(out var getVersion));
                 Assert.True(setVersion == getVersion);
             }

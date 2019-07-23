@@ -12,9 +12,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Omnix.Algorithms\Omnix.Algorithms.csproj" />
     <ProjectReference Include="..\Omnix.Base\Omnix.Base.csproj" />
-    <ProjectReference Include="..\Omnix.Collections\Omnix.Collections.csproj" />
-    <ProjectReference Include="..\Omnix.Cryptography\Omnix.Algorithms.csproj" />
+    <ProjectReference Include="..\Omnix.DataStructures\Omnix.DataStructures.csproj" />
     <ProjectReference Include="..\Omnix.Network\Omnix.Network.csproj" />
     <ProjectReference Include="..\Omnix.Serialization.RocketPack\Omnix.Serialization.RocketPack.csproj" />
     <ProjectReference Include="..\Omnix.Serialization\Omnix.Serialization.csproj" />

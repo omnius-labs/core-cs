@@ -1,4 +1,4 @@
-﻿
+
 #nullable enable
 
 namespace Omnix.Serialization.RocketPack.CodeGenerator.Internal
@@ -280,8 +280,8 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator.Internal
             this.X20 = x20;
             this.X21 = x21;
             this.X22 = x22;
-            this.X23 = new Omnix.Collections.ReadOnlyListSlim<string>(x23);
-            this.X24 = new Omnix.Collections.ReadOnlyDictionarySlim<byte, string>(x24);
+            this.X23 = new Omnix.DataStructures.ReadOnlyListSlim<string>(x23);
+            this.X24 = new Omnix.DataStructures.ReadOnlyDictionarySlim<byte, string>(x24);
             this.X25 = x25;
             this.X26 = x26;
 
@@ -348,8 +348,8 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator.Internal
         public Omnix.Serialization.RocketPack.Timestamp X20 { get; }
         public System.ReadOnlyMemory<byte> X21 { get; }
         public System.ReadOnlyMemory<byte> X22 { get; }
-        public Omnix.Collections.ReadOnlyListSlim<string> X23 { get; }
-        public Omnix.Collections.ReadOnlyDictionarySlim<byte, string> X24 { get; }
+        public Omnix.DataStructures.ReadOnlyListSlim<string> X23 { get; }
+        public Omnix.DataStructures.ReadOnlyDictionarySlim<byte, string> X24 { get; }
         public SmallMessageElement X25 { get; }
         public MessageElement X26 { get; }
 
@@ -728,8 +728,8 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator.Internal
             this.X20 = x20;
             this.X21 = x21;
             _x22 = x22;
-            this.X23 = new Omnix.Collections.ReadOnlyListSlim<string>(x23);
-            this.X24 = new Omnix.Collections.ReadOnlyDictionarySlim<byte, string>(x24);
+            this.X23 = new Omnix.DataStructures.ReadOnlyListSlim<string>(x23);
+            this.X24 = new Omnix.DataStructures.ReadOnlyDictionarySlim<byte, string>(x24);
             this.X25 = x25;
             this.X26 = x26;
 
@@ -797,8 +797,8 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator.Internal
         public System.ReadOnlyMemory<byte> X21 { get; }
         private readonly System.Buffers.IMemoryOwner<byte> _x22;
         public System.ReadOnlyMemory<byte> X22 => _x22.Memory;
-        public Omnix.Collections.ReadOnlyListSlim<string> X23 { get; }
-        public Omnix.Collections.ReadOnlyDictionarySlim<byte, string> X24 { get; }
+        public Omnix.DataStructures.ReadOnlyListSlim<string> X23 { get; }
+        public Omnix.DataStructures.ReadOnlyDictionarySlim<byte, string> X24 { get; }
         public SmallMessageElement X25 { get; }
         public MessageElement X26 { get; }
 
@@ -1368,11 +1368,11 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator.Internal
             _x22 = x22;
             if(x23 != null)
             {
-                this.X23 = new Omnix.Collections.ReadOnlyListSlim<string>(x23);
+                this.X23 = new Omnix.DataStructures.ReadOnlyListSlim<string>(x23);
             }
             if(x24 != null)
             {
-                this.X24 = new Omnix.Collections.ReadOnlyDictionarySlim<byte, string>(x24);
+                this.X24 = new Omnix.DataStructures.ReadOnlyDictionarySlim<byte, string>(x24);
             }
             this.X25 = x25;
             this.X26 = x26;
@@ -1447,8 +1447,8 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator.Internal
         public System.ReadOnlyMemory<byte>? X21 { get; }
         private readonly System.Buffers.IMemoryOwner<byte>? _x22;
         public System.ReadOnlyMemory<byte>? X22 => _x22?.Memory;
-        public Omnix.Collections.ReadOnlyListSlim<string>? X23 { get; }
-        public Omnix.Collections.ReadOnlyDictionarySlim<byte, string>? X24 { get; }
+        public Omnix.DataStructures.ReadOnlyListSlim<string>? X23 { get; }
+        public Omnix.DataStructures.ReadOnlyDictionarySlim<byte, string>? X24 { get; }
         public SmallMessageElement? X25 { get; }
         public MessageElement? X26 { get; }
 
