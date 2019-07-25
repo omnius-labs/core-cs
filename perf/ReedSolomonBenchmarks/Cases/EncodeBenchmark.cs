@@ -51,5 +51,14 @@ namespace ReedSolomonBenchmarks.Cases
             r.Encode(_sources.Select(n => (ReadOnlyMemory<byte>)n).ToArray(), _indexes, _repairs, PacketLength).Wait();
             return _repairs;
         }
+
+        [Benchmark]
+        public object Avx2_Concurrency_4_Test()
+        {
+            var r = new ReedSolomon(8, 128, 256, BufferPool.Shared);
+            r.UseSimd = true;
+            r.Encode(_sources.Select(n => (ReadOnlyMemory<byte>)n).ToArray(), _indexes, _repairs, PacketLength, 4).Wait();
+            return _repairs;
+        }
     }
 }
