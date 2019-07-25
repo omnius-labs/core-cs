@@ -7,6 +7,8 @@ using Omnix.Base.Extensions;
 using System.Runtime.Intrinsics.X86;
 using System.Runtime.Intrinsics;
 
+[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("ReedSolomonBenchmarks")]
+
 namespace Omnix.Algorithms.Correction
 {
     // Reed-Solomon Erasure Coding 
@@ -27,7 +29,7 @@ namespace Omnix.Algorithms.Correction
             _encMatrix = _math.CreateEncodeMatrix(k, n);
         }
 
-        public bool UseSimd
+        internal bool UseSimd
         {
             get => _math.UseSimd;
             set => _math.UseSimd = value;
@@ -399,7 +401,6 @@ namespace Omnix.Algorithms.Correction
                 }
 
                 int i = 0;
-                int j = 0;
                 int lim = len;
 
                 if (_gfBits <= 8)
@@ -416,49 +417,51 @@ namespace Omnix.Algorithms.Correction
                         {
                             const int Unroll = 32;
 
+                            byte* buffer = stackalloc byte[256 / 8];
+
                             fixed (byte* ptr_dst = dst, ptr_src = src, ptr_gf_mulc = gf_mulc)
                             {
-                                for (; i < lim && (lim - i) > Unroll; i += Unroll, j += Unroll)
+                                for (; i < lim && (lim - i) > Unroll; i += Unroll)
                                 {
-                                    Vector256<byte> d1 = Avx.LoadVector256(ptr_dst + i);
+                                    var v1 = Avx.LoadVector256(ptr_dst + i);
 
-                                    Vector256<byte> s1 = Avx.SetVector256(
-                                        ptr_gf_mulc[ptr_src[j + 31]],
-                                        ptr_gf_mulc[ptr_src[j + 30]],
-                                        ptr_gf_mulc[ptr_src[j + 29]],
-                                        ptr_gf_mulc[ptr_src[j + 28]],
-                                        ptr_gf_mulc[ptr_src[j + 27]],
-                                        ptr_gf_mulc[ptr_src[j + 26]],
-                                        ptr_gf_mulc[ptr_src[j + 25]],
-                                        ptr_gf_mulc[ptr_src[j + 24]],
-                                        ptr_gf_mulc[ptr_src[j + 23]],
-                                        ptr_gf_mulc[ptr_src[j + 22]],
-                                        ptr_gf_mulc[ptr_src[j + 21]],
-                                        ptr_gf_mulc[ptr_src[j + 20]],
-                                        ptr_gf_mulc[ptr_src[j + 19]],
-                                        ptr_gf_mulc[ptr_src[j + 18]],
-                                        ptr_gf_mulc[ptr_src[j + 17]],
-                                        ptr_gf_mulc[ptr_src[j + 16]],
-                                        ptr_gf_mulc[ptr_src[j + 15]],
-                                        ptr_gf_mulc[ptr_src[j + 14]],
-                                        ptr_gf_mulc[ptr_src[j + 13]],
-                                        ptr_gf_mulc[ptr_src[j + 12]],
-                                        ptr_gf_mulc[ptr_src[j + 11]],
-                                        ptr_gf_mulc[ptr_src[j + 10]],
-                                        ptr_gf_mulc[ptr_src[j + 9]],
-                                        ptr_gf_mulc[ptr_src[j + 8]],
-                                        ptr_gf_mulc[ptr_src[j + 7]],
-                                        ptr_gf_mulc[ptr_src[j + 6]],
-                                        ptr_gf_mulc[ptr_src[j + 5]],
-                                        ptr_gf_mulc[ptr_src[j + 4]],
-                                        ptr_gf_mulc[ptr_src[j + 3]],
-                                        ptr_gf_mulc[ptr_src[j + 2]],
-                                        ptr_gf_mulc[ptr_src[j + 1]],
-                                        ptr_gf_mulc[ptr_src[j + 0]]);
+                                    buffer[0] = ptr_gf_mulc[ptr_src[i + 0]];
+                                    buffer[1] = ptr_gf_mulc[ptr_src[i + 1]];
+                                    buffer[2] = ptr_gf_mulc[ptr_src[i + 2]];
+                                    buffer[3] = ptr_gf_mulc[ptr_src[i + 3]];
+                                    buffer[4] = ptr_gf_mulc[ptr_src[i + 4]];
+                                    buffer[5] = ptr_gf_mulc[ptr_src[i + 5]];
+                                    buffer[6] = ptr_gf_mulc[ptr_src[i + 6]];
+                                    buffer[7] = ptr_gf_mulc[ptr_src[i + 7]];
+                                    buffer[8] = ptr_gf_mulc[ptr_src[i + 8]];
+                                    buffer[9] = ptr_gf_mulc[ptr_src[i + 9]];
+                                    buffer[10] = ptr_gf_mulc[ptr_src[i + 10]];
+                                    buffer[11] = ptr_gf_mulc[ptr_src[i + 11]];
+                                    buffer[12] = ptr_gf_mulc[ptr_src[i + 12]];
+                                    buffer[13] = ptr_gf_mulc[ptr_src[i + 13]];
+                                    buffer[14] = ptr_gf_mulc[ptr_src[i + 14]];
+                                    buffer[15] = ptr_gf_mulc[ptr_src[i + 15]];
+                                    buffer[16] = ptr_gf_mulc[ptr_src[i + 16]];
+                                    buffer[17] = ptr_gf_mulc[ptr_src[i + 17]];
+                                    buffer[18] = ptr_gf_mulc[ptr_src[i + 18]];
+                                    buffer[19] = ptr_gf_mulc[ptr_src[i + 19]];
+                                    buffer[20] = ptr_gf_mulc[ptr_src[i + 20]];
+                                    buffer[21] = ptr_gf_mulc[ptr_src[i + 21]];
+                                    buffer[22] = ptr_gf_mulc[ptr_src[i + 22]];
+                                    buffer[23] = ptr_gf_mulc[ptr_src[i + 23]];
+                                    buffer[24] = ptr_gf_mulc[ptr_src[i + 24]];
+                                    buffer[25] = ptr_gf_mulc[ptr_src[i + 25]];
+                                    buffer[26] = ptr_gf_mulc[ptr_src[i + 26]];
+                                    buffer[27] = ptr_gf_mulc[ptr_src[i + 27]];
+                                    buffer[28] = ptr_gf_mulc[ptr_src[i + 28]];
+                                    buffer[29] = ptr_gf_mulc[ptr_src[i + 29]];
+                                    buffer[30] = ptr_gf_mulc[ptr_src[i + 30]];
+                                    buffer[31] = ptr_gf_mulc[ptr_src[i + 31]];
+                                    var v2 = Avx.LoadVector256(buffer);
 
-                                    Vector256<byte> res1 = Avx2.Xor(d1, s1);
+                                    var res = Avx2.Xor(v1, v2);
 
-                                    Avx.Store(ptr_dst + i, res1);
+                                    Avx.Store(ptr_dst + i, res);
                                 }
                             }
                         }
@@ -469,33 +472,33 @@ namespace Omnix.Algorithms.Correction
 
                         // Not sure if loop unrolling has any real benefit in Java, but 
                         // what the hey.
-                        for (; i < lim && (lim - i) > Unroll; i += Unroll, j += Unroll)
+                        for (; i < lim && (lim - i) > Unroll; i += Unroll)
                         {
                             // dst ^= gf_mulc[x] is equal to mult then add (xor == add)
 
-                            dst[i] ^= gf_mulc[src[j]];
-                            dst[i + 1] ^= gf_mulc[src[j + 1]];
-                            dst[i + 2] ^= gf_mulc[src[j + 2]];
-                            dst[i + 3] ^= gf_mulc[src[j + 3]];
-                            dst[i + 4] ^= gf_mulc[src[j + 4]];
-                            dst[i + 5] ^= gf_mulc[src[j + 5]];
-                            dst[i + 6] ^= gf_mulc[src[j + 6]];
-                            dst[i + 7] ^= gf_mulc[src[j + 7]];
-                            dst[i + 8] ^= gf_mulc[src[j + 8]];
-                            dst[i + 9] ^= gf_mulc[src[j + 9]];
-                            dst[i + 10] ^= gf_mulc[src[j + 10]];
-                            dst[i + 11] ^= gf_mulc[src[j + 11]];
-                            dst[i + 12] ^= gf_mulc[src[j + 12]];
-                            dst[i + 13] ^= gf_mulc[src[j + 13]];
-                            dst[i + 14] ^= gf_mulc[src[j + 14]];
-                            dst[i + 15] ^= gf_mulc[src[j + 15]];
+                            dst[i] ^= gf_mulc[src[i]];
+                            dst[i + 1] ^= gf_mulc[src[i + 1]];
+                            dst[i + 2] ^= gf_mulc[src[i + 2]];
+                            dst[i + 3] ^= gf_mulc[src[i + 3]];
+                            dst[i + 4] ^= gf_mulc[src[i + 4]];
+                            dst[i + 5] ^= gf_mulc[src[i + 5]];
+                            dst[i + 6] ^= gf_mulc[src[i + 6]];
+                            dst[i + 7] ^= gf_mulc[src[i + 7]];
+                            dst[i + 8] ^= gf_mulc[src[i + 8]];
+                            dst[i + 9] ^= gf_mulc[src[i + 9]];
+                            dst[i + 10] ^= gf_mulc[src[i + 10]];
+                            dst[i + 11] ^= gf_mulc[src[i + 11]];
+                            dst[i + 12] ^= gf_mulc[src[i + 12]];
+                            dst[i + 13] ^= gf_mulc[src[i + 13]];
+                            dst[i + 14] ^= gf_mulc[src[i + 14]];
+                            dst[i + 15] ^= gf_mulc[src[i + 15]];
                         }
                     }
 
                     // final components
-                    for (; i < lim; i++, j++)
+                    for (; i < lim; i++)
                     {
-                        dst[i] ^= gf_mulc[src[j]];
+                        dst[i] ^= gf_mulc[src[i]];
                     }
                 }
                 else
@@ -504,11 +507,11 @@ namespace Omnix.Algorithms.Correction
                     int mulcPos = _gf_log[c];
 
                     // unroll your own damn loop.
-                    for (; i < lim; i++, j++)
+                    for (; i < lim; i++)
                     {
                         int y;
 
-                        if ((y = src[j]) != 0)
+                        if ((y = src[i]) != 0)
                         {
                             dst[i] ^= _gf_exp[mulcPos + _gf_log[y]];
                         }

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Omnix.Algorithms.Cryptography;
 using Xunit;
 
-namespace Omnix.Algorithms
+namespace Omnix.Algorithms.Cryptography
 {
     public class OmniMinerTests
     {
