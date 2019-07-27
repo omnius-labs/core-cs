@@ -1,14 +1,10 @@
 ﻿using System;
 using System.Buffers;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
 using Omnix.Serialization.Extensions;
 
 namespace Omnix.Serialization
 {
-    public static class OmniBase 
+    public static class OmniBase
     {
         private static readonly Lazy<Base16> _base16_Lower = new Lazy<Base16>(() => new Base16(ConvertStringCase.Lower));
         private static readonly Lazy<Base16> _base16_Upper = new Lazy<Base16>(() => new Base16(ConvertStringCase.Upper));

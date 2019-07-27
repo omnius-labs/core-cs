@@ -3,7 +3,7 @@
 
 namespace Omnix.Remoting
 {
-    public sealed partial class OmniRpcErrorMessage : Omnix.Serialization.RocketPack.RocketPackMessageBase<OmniRpcErrorMessage>
+    public sealed partial class OmniRpcErrorMessage : global::Omnix.Serialization.RocketPack.RocketPackMessageBase<OmniRpcErrorMessage>
     {
         static OmniRpcErrorMessage()
         {
@@ -19,19 +19,19 @@ namespace Omnix.Remoting
 
         public OmniRpcErrorMessage(string type, string message, string stackTrace)
         {
-            if (type is null) throw new System.ArgumentNullException("type");
-            if (type.Length > 8192) throw new System.ArgumentOutOfRangeException("type");
-            if (message is null) throw new System.ArgumentNullException("message");
-            if (message.Length > 8192) throw new System.ArgumentOutOfRangeException("message");
-            if (stackTrace is null) throw new System.ArgumentNullException("stackTrace");
-            if (stackTrace.Length > 8192) throw new System.ArgumentOutOfRangeException("stackTrace");
+            if (type is null) throw new global::System.ArgumentNullException("type");
+            if (type.Length > 8192) throw new global::System.ArgumentOutOfRangeException("type");
+            if (message is null) throw new global::System.ArgumentNullException("message");
+            if (message.Length > 8192) throw new global::System.ArgumentOutOfRangeException("message");
+            if (stackTrace is null) throw new global::System.ArgumentNullException("stackTrace");
+            if (stackTrace.Length > 8192) throw new global::System.ArgumentOutOfRangeException("stackTrace");
 
             this.Type = type;
             this.Message = message;
             this.StackTrace = stackTrace;
 
             {
-                var __h = new System.HashCode();
+                var __h = new global::System.HashCode();
                 if (this.Type != default) __h.Add(this.Type.GetHashCode());
                 if (this.Message != default) __h.Add(this.Message.GetHashCode());
                 if (this.StackTrace != default) __h.Add(this.StackTrace.GetHashCode());
@@ -56,11 +56,11 @@ namespace Omnix.Remoting
 
         public override int GetHashCode() => __hashCode;
 
-        private sealed class CustomFormatter : Omnix.Serialization.RocketPack.IRocketPackFormatter<OmniRpcErrorMessage>
+        private sealed class CustomFormatter : global::Omnix.Serialization.RocketPack.IRocketPackFormatter<OmniRpcErrorMessage>
         {
-            public void Serialize(Omnix.Serialization.RocketPack.RocketPackWriter w, OmniRpcErrorMessage value, int rank)
+            public void Serialize(global::Omnix.Serialization.RocketPack.RocketPackWriter w, OmniRpcErrorMessage value, int rank)
             {
-                if (rank > 256) throw new System.FormatException();
+                if (rank > 256) throw new global::System.FormatException();
 
                 {
                     uint propertyCount = 0;
@@ -96,9 +96,9 @@ namespace Omnix.Remoting
                 }
             }
 
-            public OmniRpcErrorMessage Deserialize(Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
+            public OmniRpcErrorMessage Deserialize(global::Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
             {
-                if (rank > 256) throw new System.FormatException();
+                if (rank > 256) throw new global::System.FormatException();
 
                 uint propertyCount = r.GetUInt32();
 

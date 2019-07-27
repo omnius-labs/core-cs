@@ -1,0 +1,10 @@
+syntax = v1.0;
+
+using "Omnix.Network.Connections.Secure.rpf";
+
+option csharp_namespace = "Omnix.Network.Connections.Secure.Internal";
+option csharp_access_level = "internal";
+
+message HelloMessage {
+    Versions: vector<OmniSecureConnectionVersion>(32) = 0,
+}

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Buffers;
-using System.IO;
 using System.Security.Cryptography;
 using Omnix.Common;
 
@@ -8,7 +7,7 @@ namespace Omnix.Base.Helpers
 {
     public static partial class ObjectHelper
     {
-        private static SipHasher _hashFunction;
+        private static readonly SipHasher _hashFunction;
 
         static ObjectHelper()
         {

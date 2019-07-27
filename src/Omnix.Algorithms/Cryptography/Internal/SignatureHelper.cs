@@ -1,18 +1,12 @@
 using System;
-using System.Buffers;
-using System.IO;
-using System.IO.Pipelines;
-using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
 using Omnix.Base;
-using Omnix.Io;
-using Omnix.Serialization;
 using Omnix.Serialization.RocketPack;
 
 namespace Omnix.Algorithms.Cryptography.Internal
 {
-    static class SignatureHelper
+    internal static class SignatureHelper
     {
         private static readonly ThreadLocal<Encoding> _encoding = new ThreadLocal<Encoding>(() => new UTF8Encoding(false));
 

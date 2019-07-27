@@ -177,7 +177,7 @@ namespace Omnix.DataStructures
 
             // default
             // http://www.cs.princeton.edu/courses/archive/spring02/cs493/lec7.pdf
-            return (double)Math.Pow(0.6185, int.MaxValue / capacity);
+            return Math.Pow(0.6185, int.MaxValue / capacity);
         }
 
         /// <summary>

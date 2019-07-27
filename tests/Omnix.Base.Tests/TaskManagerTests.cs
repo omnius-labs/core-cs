@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
@@ -24,7 +22,11 @@ namespace Omnix.Base
 
                 taskManager.Start();
 
-                if (taskManager.Task is null) throw new NullReferenceException();
+                if (taskManager.Task is null)
+                {
+                    throw new NullReferenceException();
+                }
+
                 await taskManager.Task;
 
                 Assert.True(flag);
@@ -51,7 +53,11 @@ namespace Omnix.Base
                     taskManager.Cancel();
                 });
 
-                if (taskManager.Task is null) throw new NullReferenceException();
+                if (taskManager.Task is null)
+                {
+                    throw new NullReferenceException();
+                }
+
                 await taskManager.Task;
 
                 Assert.True(flag);

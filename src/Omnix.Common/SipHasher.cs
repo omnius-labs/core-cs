@@ -2,8 +2,8 @@
 // MIT License
 
 using System;
-using System.Runtime.CompilerServices;
 using System.Buffers;
+using System.Runtime.CompilerServices;
 
 namespace Omnix.Common
 {
@@ -101,7 +101,7 @@ namespace Omnix.Common
         {
             ulong v0 = v_0, v1 = v_1, v2 = v_2, v3 = v_3;
 
-            ulong t = _tmp | (((ulong)_count) << 56);
+            ulong t = _tmp | (_count << 56);
 
             v3 ^= t;
             Round(ref v0, ref v1, ref v2, ref v3);

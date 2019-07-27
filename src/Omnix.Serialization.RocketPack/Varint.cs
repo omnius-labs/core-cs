@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Buffers;
-using System.IO;
-using System.Threading;
-using System.Buffers.Binary;
 using System.Runtime.CompilerServices;
 
 namespace Omnix.Serialization.RocketPack
@@ -12,7 +9,7 @@ namespace Omnix.Serialization.RocketPack
     /// <summary>
     /// <see cref="long"/>と<see cref="byte"/>[]の変換機能を提供します。
     /// </summary>
-    public unsafe static class Varint
+    public static unsafe class Varint
     {
         // bit count | first byte (in binary) | first byte (in hex)
         // --------- | ---------------------- | -------------------
@@ -82,7 +79,7 @@ namespace Omnix.Serialization.RocketPack
                         p[0] = Int16Code;
 
                         ushort* uint_p = (ushort*)(p + 1);
-                        *uint_p = (ushort)value;
+                        *uint_p = value;
                     }
 
                     writer.Advance(3);
@@ -133,7 +130,7 @@ namespace Omnix.Serialization.RocketPack
                         span[0] = Int32Code;
 
                         uint* uint_p = (uint*)(p + 1);
-                        *uint_p = (uint)value;
+                        *uint_p = value;
                     }
 
                     writer.Advance(5);
@@ -404,7 +401,7 @@ namespace Omnix.Serialization.RocketPack
             unchecked
             {
 
-                if( sequence.First.Length >= 2)
+                if (sequence.First.Length >= 2)
                 {
                     bool flag = InternalTryGetUInt8(sequence.First.Span, out value, out int int_consumed);
                     consumed = sequence.GetPosition(int_consumed);
@@ -430,7 +427,7 @@ namespace Omnix.Serialization.RocketPack
             unchecked
             {
 
-                if( sequence.First.Length >= 3)
+                if (sequence.First.Length >= 3)
                 {
                     bool flag = InternalTryGetUInt16(sequence.First.Span, out value, out int int_consumed);
                     consumed = sequence.GetPosition(int_consumed);
@@ -456,7 +453,7 @@ namespace Omnix.Serialization.RocketPack
             unchecked
             {
 
-                if( sequence.First.Length >= 5)
+                if (sequence.First.Length >= 5)
                 {
                     bool flag = InternalTryGetUInt32(sequence.First.Span, out value, out int int_consumed);
                     consumed = sequence.GetPosition(int_consumed);
@@ -481,7 +478,7 @@ namespace Omnix.Serialization.RocketPack
         {
             unchecked
             {
-                if( sequence.First.Length >= 9)
+                if (sequence.First.Length >= 9)
                 {
                     bool flag = InternalTryGetUInt64(sequence.First.Span, out value, out int int_consumed);
                     consumed = sequence.GetPosition(int_consumed);

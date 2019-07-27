@@ -4,7 +4,7 @@ option csharp_namespace = "FormatterBenchmarks";
 option csharp_access_level = "internal";
 
 message RocketPack_BytesElementsList {
-    List: vector<RocketPack_BytesElements>(100000) = 0,
+    List: vector<RocketPack_BytesElements>(1048576) = 0,
 }
 
 message RocketPack_BytesElements {
@@ -31,7 +31,7 @@ message RocketPack_BytesElements {
 }
 
 message RocketPack_IntElementsList {
-    List: vector<RocketPack_IntElements>(100000) = 0,
+    List: vector<RocketPack_IntElements>(1048576) = 0,
 }
 
 message RocketPack_IntElements {
@@ -48,7 +48,7 @@ message RocketPack_IntElements {
 }
 
 message RocketPack_StringElementsList {
-    List: vector<RocketPack_StringElements>(100000) = 0,
+    List: vector<RocketPack_StringElements>(1048576) = 0,
 }
 
 message RocketPack_StringElements {

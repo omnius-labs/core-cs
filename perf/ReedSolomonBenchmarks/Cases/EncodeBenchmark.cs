@@ -1,20 +1,19 @@
 using System;
 using System.Buffers;
-using System.Collections.Generic;
-using BenchmarkDotNet.Attributes;
-using ReedSolomonBenchmarks.Internal;
-using Omnix.Base;
-using Omnix.Algorithms.Correction;
 using System.Linq;
+using BenchmarkDotNet.Attributes;
+using Omnix.Algorithms.Correction;
+using Omnix.Base;
+using ReedSolomonBenchmarks.Internal;
 
 namespace ReedSolomonBenchmarks.Cases
 {
     [Config(typeof(BenchmarkConfig))]
     public class EncodeBenchmark
     {
-        private static int[] _indexes = new int[128];
-        private static Memory<byte>[] _sources = new Memory<byte>[128];
-        private static Memory<byte>[] _repairs = new Memory<byte>[128];
+        private static readonly int[] _indexes = new int[128];
+        private static readonly Memory<byte>[] _sources = new Memory<byte>[128];
+        private static readonly Memory<byte>[] _repairs = new Memory<byte>[128];
         private const int PacketLength = 1024 * 1024;
 
         static EncodeBenchmark()
@@ -37,8 +36,10 @@ namespace ReedSolomonBenchmarks.Cases
         [Benchmark(Baseline = true)]
         public object Managed_Test()
         {
-            var r = new ReedSolomon(8, 128, 256, BufferPool.Shared);
-            r.UseSimd = false;
+            var r = new ReedSolomon8(128, 256, BufferPool.Shared)
+            {
+                UseSimd = false
+            };
             r.Encode(_sources.Select(n => (ReadOnlyMemory<byte>)n).ToArray(), _indexes, _repairs, PacketLength).Wait();
             return _repairs;
         }
@@ -46,8 +47,10 @@ namespace ReedSolomonBenchmarks.Cases
         [Benchmark]
         public object Avx2_Test()
         {
-            var r = new ReedSolomon(8, 128, 256, BufferPool.Shared);
-            r.UseSimd = true;
+            var r = new ReedSolomon8(128, 256, BufferPool.Shared)
+            {
+                UseSimd = true
+            };
             r.Encode(_sources.Select(n => (ReadOnlyMemory<byte>)n).ToArray(), _indexes, _repairs, PacketLength).Wait();
             return _repairs;
         }
@@ -55,8 +58,10 @@ namespace ReedSolomonBenchmarks.Cases
         [Benchmark]
         public object Avx2_Concurrency_4_Test()
         {
-            var r = new ReedSolomon(8, 128, 256, BufferPool.Shared);
-            r.UseSimd = true;
+            var r = new ReedSolomon8(128, 256, BufferPool.Shared)
+            {
+                UseSimd = true
+            };
             r.Encode(_sources.Select(n => (ReadOnlyMemory<byte>)n).ToArray(), _indexes, _repairs, PacketLength, 4).Wait();
             return _repairs;
         }

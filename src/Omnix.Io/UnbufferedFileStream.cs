@@ -10,18 +10,18 @@ namespace Omnix.Io
     /// </summary>
     public class UnbufferedFileStream : Stream
     {
-        private string _path;
-        private BufferPool _bufferPool;
+        private readonly string _path;
+        private readonly BufferPool _bufferPool;
 
         private long _position;
         private long _length;
-        private FileStream _stream;
+        private readonly FileStream _stream;
 
         private bool _blockIsUpdated;
         private long _blockPosition;
         private int _blockOffset;
         private int _blockCount;
-        private byte[] _blockBuffer;
+        private readonly byte[] _blockBuffer;
 
         private bool _disposed;
 

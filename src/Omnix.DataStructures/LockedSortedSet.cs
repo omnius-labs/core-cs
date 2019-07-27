@@ -7,7 +7,7 @@ namespace Omnix.DataStructures
 {
     public class LockedSortedSet<T> : ISet<T>, ICollection<T>, IEnumerable<T>, ICollection, IEnumerable, ISynchronized
     {
-        private SortedSet<T> _sortedSet;
+        private readonly SortedSet<T> _sortedSet;
         private int? _capacity;
 
         public LockedSortedSet()

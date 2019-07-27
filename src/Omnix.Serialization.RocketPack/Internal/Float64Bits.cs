@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using System.Text;
 
 namespace Omnix.Serialization.RocketPack.Internal
 {
@@ -38,7 +36,7 @@ namespace Omnix.Serialization.RocketPack.Internal
         public Float64Bits(double value)
         {
             this = default(Float64Bits);
-            this.Value = value;
+            Value = value;
         }
 
         public Float64Bits(Span<byte> bigEndianBytes)
@@ -47,25 +45,25 @@ namespace Omnix.Serialization.RocketPack.Internal
 
             if (BitConverter.IsLittleEndian)
             {
-                this.Byte0 = bigEndianBytes[7];
-                this.Byte1 = bigEndianBytes[6];
-                this.Byte2 = bigEndianBytes[5];
-                this.Byte3 = bigEndianBytes[4];
-                this.Byte4 = bigEndianBytes[3];
-                this.Byte5 = bigEndianBytes[2];
-                this.Byte6 = bigEndianBytes[1];
-                this.Byte7 = bigEndianBytes[0];
+                Byte0 = bigEndianBytes[7];
+                Byte1 = bigEndianBytes[6];
+                Byte2 = bigEndianBytes[5];
+                Byte3 = bigEndianBytes[4];
+                Byte4 = bigEndianBytes[3];
+                Byte5 = bigEndianBytes[2];
+                Byte6 = bigEndianBytes[1];
+                Byte7 = bigEndianBytes[0];
             }
             else
             {
-                this.Byte0 = bigEndianBytes[0];
-                this.Byte1 = bigEndianBytes[1];
-                this.Byte2 = bigEndianBytes[2];
-                this.Byte3 = bigEndianBytes[3];
-                this.Byte4 = bigEndianBytes[4];
-                this.Byte5 = bigEndianBytes[5];
-                this.Byte6 = bigEndianBytes[6];
-                this.Byte7 = bigEndianBytes[7];
+                Byte0 = bigEndianBytes[0];
+                Byte1 = bigEndianBytes[1];
+                Byte2 = bigEndianBytes[2];
+                Byte3 = bigEndianBytes[3];
+                Byte4 = bigEndianBytes[4];
+                Byte5 = bigEndianBytes[5];
+                Byte6 = bigEndianBytes[6];
+                Byte7 = bigEndianBytes[7];
             }
         }
 
@@ -73,25 +71,25 @@ namespace Omnix.Serialization.RocketPack.Internal
         {
             if (BitConverter.IsLittleEndian)
             {
-                span[7] = this.Byte0;
-                span[6] = this.Byte1;
-                span[5] = this.Byte2;
-                span[4] = this.Byte3;
-                span[3] = this.Byte4;
-                span[2] = this.Byte5;
-                span[1] = this.Byte6;
-                span[0] = this.Byte7;
+                span[7] = Byte0;
+                span[6] = Byte1;
+                span[5] = Byte2;
+                span[4] = Byte3;
+                span[3] = Byte4;
+                span[2] = Byte5;
+                span[1] = Byte6;
+                span[0] = Byte7;
             }
             else
             {
-                span[0] = this.Byte0;
-                span[1] = this.Byte1;
-                span[2] = this.Byte2;
-                span[3] = this.Byte3;
-                span[4] = this.Byte4;
-                span[5] = this.Byte5;
-                span[6] = this.Byte6;
-                span[7] = this.Byte7;
+                span[0] = Byte0;
+                span[1] = Byte1;
+                span[2] = Byte2;
+                span[3] = Byte3;
+                span[4] = Byte4;
+                span[5] = Byte5;
+                span[6] = Byte6;
+                span[7] = Byte7;
             }
         }
     }

@@ -1,8 +1,5 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Buffers;
 using Xunit;
 
 namespace Omnix.Base
@@ -62,8 +59,14 @@ namespace Omnix.Base
             {
                 for (int type = 0; type < 2; type++)
                 {
-                    if (type == 0) BytesOperations.LoadNativeMethods();
-                    else if (type == 1) BytesOperations.LoadPureUnsafeMethods();
+                    if (type == 0)
+                    {
+                        BytesOperations.LoadNativeMethods();
+                    }
+                    else if (type == 1)
+                    {
+                        BytesOperations.LoadPureUnsafeMethods();
+                    }
 
                     this.InternalBitwiseTest();
                 }

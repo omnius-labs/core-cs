@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Dynamic;
 using System.IO;
 using System.Net;
@@ -24,8 +23,8 @@ namespace Omnix.Net.Upnp
 
         private readonly AsyncLock _lock = new AsyncLock();
 
-        private readonly static Regex _deviceTypeRegex = new Regex(@"<(\s*)deviceType((\s*)|(\s+)(.*?))>(\s*)urn:schemas-upnp-org:device:InternetGatewayDevice:1(\s*)</(\s*)deviceType(\s*)>", RegexOptions.Singleline | RegexOptions.IgnoreCase);
-        private readonly static Regex _controlUrlRegex = new Regex(@"<(\s*)controlURL((\s*)|(\s+)(.*?))>(\s*)(?<url>.*?)(\s*)</(\s*)controlURL(\s*)>", RegexOptions.Singleline | RegexOptions.IgnoreCase);
+        private static readonly Regex _deviceTypeRegex = new Regex(@"<(\s*)deviceType((\s*)|(\s+)(.*?))>(\s*)urn:schemas-upnp-org:device:InternetGatewayDevice:1(\s*)</(\s*)deviceType(\s*)>", RegexOptions.Singleline | RegexOptions.IgnoreCase);
+        private static readonly Regex _controlUrlRegex = new Regex(@"<(\s*)controlURL((\s*)|(\s+)(.*?))>(\s*)(?<url>.*?)(\s*)</(\s*)controlURL(\s*)>", RegexOptions.Singleline | RegexOptions.IgnoreCase);
 
         public UpnpClient()
         {
@@ -65,21 +64,22 @@ namespace Omnix.Net.Upnp
 
         private static async ValueTask<(string contents, Uri location)> GetContentsAndLocationFromDeviceAsync(IPAddress targetIp, IPAddress localIp, CancellationToken token = default)
         {
-            var querys = new List<string>();
-
-            querys.Add("M-SEARCH * HTTP/1.1\r\n" +
+            var querys = new List<string>
+            {
+                "M-SEARCH * HTTP/1.1\r\n" +
                 "Host: 239.255.255.250:1900\r\n" +
                 "Man: \"ssdp:discover\"\r\n" +
                 "ST: urn:schemas-upnp-org:service:WANIPConnection:1\r\n" +
                 "MX: 3\r\n" +
-                "\r\n");
+                "\r\n",
 
-            querys.Add("M-SEARCH * HTTP/1.1\r\n" +
+                "M-SEARCH * HTTP/1.1\r\n" +
                 "Host: 239.255.255.250:1900\r\n" +
                 "Man: \"ssdp:discover\"\r\n" +
                 "ST: urn:schemas-upnp-org:service:WANPPPConnection:1\r\n" +
                 "MX: 3\r\n" +
-                "\r\n");
+                "\r\n"
+            };
 
             var random = new Random();
 

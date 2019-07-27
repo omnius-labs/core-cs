@@ -1,6 +1,5 @@
 using System;
 using System.Collections;
-using Omnix.Base.Extensions;
 using Xunit;
 
 namespace Omnix.Base.Extensions

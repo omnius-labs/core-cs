@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Linq;
 
 namespace Omnix.Serialization.RocketPack.CodeGenerator
@@ -10,10 +9,10 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
         /// <summary>
         /// <see cref="EnumDefinition"/>からenumを生成します。
         /// </summary>
-        class EnumWriter
+        private class EnumWriter
         {
-            private RocketPackDefinition _rocketPackDefinition;
-            private string _accessLevel;
+            private readonly RocketPackDefinition _rocketPackDefinition;
+            private readonly string _accessLevel;
 
             public EnumWriter(RocketPackDefinition rocketPackDefinition)
             {

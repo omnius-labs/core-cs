@@ -1,15 +1,12 @@
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.IO.Pipelines;
-using Omnix.Base;
-using Omnix.Serialization;
 using System.Buffers;
+using System.Collections.Generic;
+using Omnix.Base;
 using Omnix.Serialization.RocketPack;
 
 namespace Omnix.Algorithms.Internal
 {
-    static class SerializeHelper
+    internal static class SerializeHelper
     {
         public static byte[] Encode(IEnumerable<ReadOnlyMemory<byte>> collection)
         {

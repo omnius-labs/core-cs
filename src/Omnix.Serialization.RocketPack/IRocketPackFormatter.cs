@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Omnix.Serialization.RocketPack
+﻿namespace Omnix.Serialization.RocketPack
 {
     public interface IRocketPackFormatter<T>
     {

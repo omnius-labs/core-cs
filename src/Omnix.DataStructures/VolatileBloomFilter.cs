@@ -1,10 +1,9 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Linq;
-using Omnix.Base;
 using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.CompilerServices;
+using Omnix.Base;
 using Omnix.Base.Extensions;
 
 namespace Omnix.DataStructures
@@ -21,7 +20,7 @@ namespace Omnix.DataStructures
         private readonly int _hashFunctionCount;
         private readonly int _bitCount;
 
-        private int[] _hashes;
+        private readonly int[] _hashes;
 
         public VolatileBloomFilter(int capacity, double errorRate, int hashFunctionCount, Func<T, long> hashFunction, TimeSpan unitTime, TimeSpan survivalTime)
         {

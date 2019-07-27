@@ -1,6 +1,4 @@
-using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
 using Sprache;
 
 namespace Omnix.Serialization.RocketPack.CodeGenerator
@@ -67,14 +65,14 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
                 from equal in Parse.Char('=').TokenWithSkipComment()
                 from value in stringLiteralParser.TokenWithSkipComment()
                 from semicolon in Parse.Char(';').Or(Parse.Return(';')).TokenWithSkipComment()
-                select new OptionDefinition( name,  value );
+                select new OptionDefinition(name, value);
 
             // example: using "RocketPack.Messages";
             var usingParser =
                 from keyword in Parse.String("using").TokenWithSkipComment()
                 from value in stringLiteralParser.TokenWithSkipComment()
                 from semicolon in Parse.Char(';').Or(Parse.Return(';')).TokenWithSkipComment()
-                select new UsingDefinition( value );
+                select new UsingDefinition(value);
 
             // example: [Recyclable]
             var attributeParser =
@@ -93,7 +91,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
             var boolTypeParser =
                 from type in Parse.String("bool").TokenWithSkipComment()
                 from isOptional in Parse.Char('?').Then(n => Parse.Return(true)).Or(Parse.Return(false)).TokenWithSkipComment()
-                select new BoolType(isOptional );
+                select new BoolType(isOptional);
 
             var floatTypeParser =
                 from type in Parse.String("float").TokenWithSkipComment()

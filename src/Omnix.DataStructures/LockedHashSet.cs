@@ -7,7 +7,7 @@ namespace Omnix.DataStructures
 {
     public class LockedHashSet<T> : ISet<T>, ICollection<T>, IEnumerable<T>, ICollection, IEnumerable, ISynchronized
     {
-        private HashSet<T> _hashSet;
+        private readonly HashSet<T> _hashSet;
         private int? _capacity;
 
         private readonly object _lockObject = new object();

@@ -1,13 +1,10 @@
-using System;
-using System.Collections.Generic;
 using System.IO.Pipelines;
-using System.Text;
 
 namespace Omnix.Base
 {
     public sealed partial class Hub : DisposableBase
     {
-        private Pipe _pipe;
+        private readonly Pipe _pipe;
         private readonly HubReader _hubReader;
         private readonly HubWriter _hubWriter;
 

@@ -1,14 +1,12 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
-using System.Runtime.InteropServices;
 using System.Text;
 
 namespace Omnix.Network
 {
-    partial class OmniAddress
+    public partial class OmniAddress
     {
         public string[] Decompose()
         {
@@ -92,7 +90,7 @@ namespace Omnix.Network
 
                                     ipAddress = hostEntry.AddressList[0];
                                 }
-                                catch (Exception e)
+                                catch (Exception)
                                 {
                                     return false;
                                 }

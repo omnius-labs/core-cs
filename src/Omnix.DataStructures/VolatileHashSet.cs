@@ -8,7 +8,7 @@ namespace Omnix.DataStructures
 {
     public class VolatileHashSet<T> : ICollection<T>, IEnumerable<T>, ICollection, IEnumerable, ISet<T>, IVolatileCollection, ISynchronized
     {
-        private Dictionary<T, DateTime> _dic;
+        private readonly Dictionary<T, DateTime> _dic;
         private readonly TimeSpan _survivalTime;
 
         private readonly object _lockObject = new object();

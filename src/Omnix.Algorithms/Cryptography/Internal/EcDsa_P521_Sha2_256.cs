@@ -1,16 +1,13 @@
 using System;
 using System.Buffers;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Security.Cryptography;
-using Omnix.Algorithms.Cryptography.Internal;
 using Omnix.Algorithms.Internal;
 
 namespace Omnix.Algorithms.Cryptography.Internal
 {
-    static class EcDsa_P521_Sha2_256
+    internal static class EcDsa_P521_Sha2_256
     {
         public static (byte[] publicKey, byte[] privateKey) CreateKeys()
         {

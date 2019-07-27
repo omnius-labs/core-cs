@@ -8,7 +8,7 @@ namespace Omnix.DataStructures
 {
     public partial class VolatileHashDictionary<TKey, TValue> : IDictionary<TKey, TValue>, ICollection<KeyValuePair<TKey, TValue>>, IEnumerable<KeyValuePair<TKey, TValue>>, IDictionary, ICollection, IEnumerable, IVolatileCollection, ISynchronized
     {
-        private Dictionary<TKey, Info<TValue>> _dic;
+        private readonly Dictionary<TKey, Info<TValue>> _dic;
         private readonly TimeSpan _survivalTime;
 
         public VolatileHashDictionary(TimeSpan survivalTime)
@@ -282,7 +282,7 @@ namespace Omnix.DataStructures
             {
                 lock (this.LockObject)
                 {
-                    return (ICollection)this.Keys;
+                    return this.Keys;
                 }
             }
         }
@@ -293,7 +293,7 @@ namespace Omnix.DataStructures
             {
                 lock (this.LockObject)
                 {
-                    return (ICollection)this.Values;
+                    return this.Values;
                 }
             }
         }

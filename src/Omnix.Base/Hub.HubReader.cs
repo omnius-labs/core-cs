@@ -1,18 +1,15 @@
 ﻿using System;
 using System.Buffers;
-using System.Collections.Generic;
 using System.IO.Pipelines;
-using System.Runtime.Serialization;
-using System.Text;
 
 namespace Omnix.Base
 {
-    partial class Hub
+    public partial class Hub
     {
         public sealed class HubReader
         {
-            private Pipe _pipe;
-            private PipeReader _pipeReader;
+            private readonly Pipe _pipe;
+            private readonly PipeReader _pipeReader;
             private ReadOnlySequence<byte>? _sequence;
             private long _position = 0;
             private bool _isCompleted = false;

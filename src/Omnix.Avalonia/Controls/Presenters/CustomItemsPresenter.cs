@@ -46,8 +46,8 @@ namespace Omnix.Avalonia.Controls.Presenters
         /// </summary>
         public ItemVirtualizationMode VirtualizationMode
         {
-            get { return GetValue(VirtualizationModeProperty); }
-            set { SetValue(VirtualizationModeProperty, value); }
+            get { return this.GetValue(VirtualizationModeProperty); }
+            set { this.SetValue(VirtualizationModeProperty, value); }
         }
 
         /// <summary>
@@ -59,7 +59,7 @@ namespace Omnix.Avalonia.Controls.Presenters
             set
             {
                 _canHorizontallyScroll = value;
-                InvalidateMeasure();
+                this.InvalidateMeasure();
             }
         }
 
@@ -72,33 +72,33 @@ namespace Omnix.Avalonia.Controls.Presenters
             set
             {
                 _canVerticallyScroll = value;
-                InvalidateMeasure();
+                this.InvalidateMeasure();
             }
         }
         /// <inheritdoc/>
         bool ILogicalScrollable.IsLogicalScrollEnabled
         {
-            get { return Virtualizer?.IsLogicalScrollEnabled ?? false; }
+            get { return this.Virtualizer?.IsLogicalScrollEnabled ?? false; }
         }
 
         /// <inheritdoc/>
-        Size IScrollable.Extent => Virtualizer?.Extent ?? Size.Empty;
+        Size IScrollable.Extent => this.Virtualizer?.Extent ?? Size.Empty;
 
         /// <inheritdoc/>
         Vector IScrollable.Offset
         {
-            get { return Virtualizer?.Offset ?? new Vector(); }
+            get { return this.Virtualizer?.Offset ?? new Vector(); }
             set
             {
-                if (Virtualizer != null)
+                if (this.Virtualizer != null)
                 {
-                    Virtualizer.Offset = CoerceOffset(value);
+                    this.Virtualizer.Offset = this.CoerceOffset(value);
                 }
             }
         }
 
         /// <inheritdoc/>
-        Size IScrollable.Viewport => Virtualizer?.Viewport ?? Bounds.Size;
+        Size IScrollable.Viewport => this.Virtualizer?.Viewport ?? this.Bounds.Size;
 
         /// <inheritdoc/>
         Action ILogicalScrollable.InvalidateScroll { get; set; }
@@ -120,40 +120,40 @@ namespace Omnix.Avalonia.Controls.Presenters
         /// <inheritdoc/>
         IControl ILogicalScrollable.GetControlInDirection(NavigationDirection direction, IControl from)
         {
-            return Virtualizer?.GetControlInDirection(direction, from);
+            return this.Virtualizer?.GetControlInDirection(direction, from);
         }
 
         public override void ScrollIntoView(object item)
         {
-            Virtualizer?.ScrollIntoView(item);
+            this.Virtualizer?.ScrollIntoView(item);
         }
 
         /// <inheritdoc/>
         protected override Size MeasureOverride(Size availableSize)
         {
-            return Virtualizer?.MeasureOverride(availableSize) ?? Size.Empty;
+            return this.Virtualizer?.MeasureOverride(availableSize) ?? Size.Empty;
         }
 
         protected override Size ArrangeOverride(Size finalSize)
         {
-            return Virtualizer?.ArrangeOverride(finalSize) ?? Size.Empty;
+            return this.Virtualizer?.ArrangeOverride(finalSize) ?? Size.Empty;
         }
 
         /// <inheritdoc/>
         protected override void PanelCreated(IPanel panel)
         {
-            Virtualizer?.Dispose();
-            Virtualizer = CustomItemVirtualizerBase.Create(this);
+            this.Virtualizer?.Dispose();
+            this.Virtualizer = CustomItemVirtualizerBase.Create(this);
             ((ILogicalScrollable)this).InvalidateScroll?.Invoke();
 
             KeyboardNavigation.SetTabNavigation(
-                (InputElement)Panel,
+                (InputElement)this.Panel,
                 KeyboardNavigation.GetTabNavigation(this));
         }
 
         protected override void ItemsChanged(NotifyCollectionChangedEventArgs e)
         {
-            Virtualizer?.ItemsChanged(Items, e);
+            this.Virtualizer?.ItemsChanged(this.Items, e);
         }
 
         private Vector CoerceOffset(Vector value)
@@ -166,8 +166,8 @@ namespace Omnix.Avalonia.Controls.Presenters
 
         private void VirtualizationModeChanged(AvaloniaPropertyChangedEventArgs e)
         {
-            Virtualizer?.Dispose();
-            Virtualizer = CustomItemVirtualizerBase.Create(this);
+            this.Virtualizer?.Dispose();
+            this.Virtualizer = CustomItemVirtualizerBase.Create(this);
             ((ILogicalScrollable)this).InvalidateScroll?.Invoke();
         }
     }

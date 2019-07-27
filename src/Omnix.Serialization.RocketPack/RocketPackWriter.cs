@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Buffers;
-using System.IO;
 using System.Runtime.CompilerServices;
 using System.Text;
-using System.Threading;
 using Omnix.Base;
 using Omnix.Serialization.RocketPack.Internal;
 
@@ -14,8 +12,8 @@ namespace Omnix.Serialization.RocketPack
     /// </summary>
     public sealed class RocketPackWriter
     {
-        private IBufferWriter<byte> _bufferWriter;
-        private BufferPool _bufferPool;
+        private readonly IBufferWriter<byte> _bufferWriter;
+        private readonly BufferPool _bufferPool;
 
         private static readonly Lazy<Encoding> _encoding = new Lazy<Encoding>(() => new UTF8Encoding(false));
 
@@ -47,7 +45,7 @@ namespace Omnix.Serialization.RocketPack
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Write(Timestamp value)
         {
-            this.Write((long)value.Seconds);
+            this.Write(value.Seconds);
             this.Write((uint)value.Nanos);
         }
 

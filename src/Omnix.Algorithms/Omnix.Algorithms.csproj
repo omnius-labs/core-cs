@@ -6,8 +6,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="Nuget\build\netcoreapp2.2\Omnix.Algorithms.targets">
-      <PackagePath>build/netcoreapp2.2/</PackagePath>
+    <Content Include="Nuget\build\netcoreapp3.0\Omnix.Algorithms.targets">
+      <PackagePath>build/netcoreapp3.0/</PackagePath>
       <Pack>true</Pack>
     </Content>
     <Content Include="Assemblies\Win\omnix-algorithms.x64.dll">

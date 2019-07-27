@@ -3,7 +3,7 @@
 
 namespace Omnix.Network
 {
-    public sealed partial class OmniAddress : Omnix.Serialization.RocketPack.RocketPackMessageBase<OmniAddress>
+    public sealed partial class OmniAddress : global::Omnix.Serialization.RocketPack.RocketPackMessageBase<OmniAddress>
     {
         static OmniAddress()
         {
@@ -17,13 +17,13 @@ namespace Omnix.Network
 
         public OmniAddress(string value)
         {
-            if (value is null) throw new System.ArgumentNullException("value");
-            if (value.Length > 8192) throw new System.ArgumentOutOfRangeException("value");
+            if (value is null) throw new global::System.ArgumentNullException("value");
+            if (value.Length > 8192) throw new global::System.ArgumentOutOfRangeException("value");
 
             this.Value = value;
 
             {
-                var __h = new System.HashCode();
+                var __h = new global::System.HashCode();
                 if (this.Value != default) __h.Add(this.Value.GetHashCode());
                 __hashCode = __h.ToHashCode();
             }
@@ -42,11 +42,11 @@ namespace Omnix.Network
 
         public override int GetHashCode() => __hashCode;
 
-        private sealed class CustomFormatter : Omnix.Serialization.RocketPack.IRocketPackFormatter<OmniAddress>
+        private sealed class CustomFormatter : global::Omnix.Serialization.RocketPack.IRocketPackFormatter<OmniAddress>
         {
-            public void Serialize(Omnix.Serialization.RocketPack.RocketPackWriter w, OmniAddress value, int rank)
+            public void Serialize(global::Omnix.Serialization.RocketPack.RocketPackWriter w, OmniAddress value, int rank)
             {
-                if (rank > 256) throw new System.FormatException();
+                if (rank > 256) throw new global::System.FormatException();
 
                 {
                     uint propertyCount = 0;
@@ -64,9 +64,9 @@ namespace Omnix.Network
                 }
             }
 
-            public OmniAddress Deserialize(Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
+            public OmniAddress Deserialize(global::Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
             {
-                if (rank > 256) throw new System.FormatException();
+                if (rank > 256) throw new global::System.FormatException();
 
                 uint propertyCount = r.GetUInt32();
 

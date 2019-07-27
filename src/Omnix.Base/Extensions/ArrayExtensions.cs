@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading;
-
-namespace Omnix.Base.Extensions
+﻿namespace Omnix.Base.Extensions
 {
     public static class ArrayExtensions
     {

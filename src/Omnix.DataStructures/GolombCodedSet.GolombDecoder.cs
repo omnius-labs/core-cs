@@ -1,16 +1,14 @@
 using System;
 using System.Buffers;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Omnix.DataStructures
 {
-    partial class GolombCodedSet
+    internal partial class GolombCodedSet
     {
-        class GolombDecoder
+        private class GolombDecoder
         {
-            private BitReader _bitReader;
-            private int _p, _log2p;
+            private readonly BitReader _bitReader;
+            private readonly int _p, _log2p;
 
             public GolombDecoder(ReadOnlySequence<byte> _sequence, int p)
             {
@@ -50,9 +48,9 @@ namespace Omnix.DataStructures
                 return true;
             }
 
-            unsafe class BitReader
+            private unsafe class BitReader
             {
-                private ReadOnlySequence<byte> _sequence;
+                private readonly ReadOnlySequence<byte> _sequence;
                 private SequencePosition _sequencePosition = new SequencePosition();
 
                 private ReadOnlyMemory<byte> _segment;
@@ -101,7 +99,7 @@ namespace Omnix.DataStructures
                                         ((uint)p_segment[0] << 24) |
                                         ((uint)p_segment[1] << 16) |
                                         ((uint)p_segment[2] << 8) |
-                                        ((uint)p_segment[3]);
+                                        p_segment[3];
                                     _segmentOffset += 4;
                                     _bitBufferCount += 32;
                                 }

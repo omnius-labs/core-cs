@@ -10,8 +10,8 @@ namespace FormatterBenchmarks.Cases
     [Config(typeof(BenchmarkConfig))]
     public class BytesDeserializeBenchmark
     {
-        private static byte[] _messagePack_Bytes;
-        private static byte[] _rocketPack_Bytes;
+        private static readonly byte[] _messagePack_Bytes;
+        private static readonly byte[] _rocketPack_Bytes;
 
         static BytesDeserializeBenchmark()
         {
@@ -20,7 +20,7 @@ namespace FormatterBenchmarks.Cases
 
                 var elementsList = new List<MessagePack_BytesElements>();
 
-                for (int i = 0; i < 32 * 1024; i++)
+                for (int i = 0; i < 1024; i++)
                 {
                     var elements = new MessagePack_BytesElements()
                     {
@@ -49,7 +49,7 @@ namespace FormatterBenchmarks.Cases
 
                 var elementsList = new List<RocketPack_BytesElements>();
 
-                for (int i = 0; i < 32 * 1024; i++)
+                for (int i = 0; i < 1024; i++)
                 {
                     var X0 = bufferPool.Rent(random.Next(0, 1024 * 256));
                     var X1 = bufferPool.Rent(random.Next(0, 1024 * 256));

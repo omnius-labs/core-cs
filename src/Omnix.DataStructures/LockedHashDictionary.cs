@@ -8,7 +8,7 @@ namespace Omnix.DataStructures
 {
     public sealed partial class LockedHashDictionary<TKey, TValue> : IDictionary<TKey, TValue>, ICollection<KeyValuePair<TKey, TValue>>, IDictionary, ICollection, IEnumerable<KeyValuePair<TKey, TValue>>, IEnumerable, ISynchronized
     {
-        private Dictionary<TKey, TValue> _dic;
+        private readonly Dictionary<TKey, TValue> _dic;
         private int? _capacity;
 
         private LockedCollection<TKey>? _keys;
@@ -263,7 +263,7 @@ namespace Omnix.DataStructures
             {
                 lock (this.LockObject)
                 {
-                    return (ICollection)this.Keys;
+                    return this.Keys;
                 }
             }
         }
@@ -274,7 +274,7 @@ namespace Omnix.DataStructures
             {
                 lock (this.LockObject)
                 {
-                    return (ICollection)this.Values;
+                    return this.Values;
                 }
             }
         }

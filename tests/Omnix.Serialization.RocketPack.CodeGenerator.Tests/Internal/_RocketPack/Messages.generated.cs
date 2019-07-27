@@ -1,4 +1,4 @@
-
+﻿
 #nullable enable
 
 namespace Omnix.Serialization.RocketPack.CodeGenerator.Internal
@@ -51,9 +51,9 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator.Internal
         No = 1,
     }
 
-    internal readonly struct SmallMessageElement : System.IEquatable<SmallMessageElement>
+    internal readonly struct SmallMessageElement : global::System.IEquatable<SmallMessageElement>
     {
-        public static Omnix.Serialization.RocketPack.IRocketPackFormatter<SmallMessageElement> Formatter { get; }
+        public static global::Omnix.Serialization.RocketPack.IRocketPackFormatter<SmallMessageElement> Formatter { get; }
         public static SmallMessageElement Empty { get; }
 
         static SmallMessageElement()
@@ -69,7 +69,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator.Internal
             this.X0 = x0;
 
             {
-                var __h = new System.HashCode();
+                var __h = new global::System.HashCode();
                 if (this.X0 != default) __h.Add(this.X0.GetHashCode());
                 __hashCode = __h.ToHashCode();
             }
@@ -77,13 +77,13 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator.Internal
 
         public bool X0 { get; }
 
-        public static SmallMessageElement Import(System.Buffers.ReadOnlySequence<byte> sequence, Omnix.Base.BufferPool bufferPool)
+        public static SmallMessageElement Import(global::System.Buffers.ReadOnlySequence<byte> sequence, global::Omnix.Base.BufferPool bufferPool)
         {
-            return Formatter.Deserialize(new Omnix.Serialization.RocketPack.RocketPackReader(sequence, bufferPool), 0);
+            return Formatter.Deserialize(new global::Omnix.Serialization.RocketPack.RocketPackReader(sequence, bufferPool), 0);
         }
-        public void Export(System.Buffers.IBufferWriter<byte> bufferWriter, Omnix.Base.BufferPool bufferPool)
+        public void Export(global::System.Buffers.IBufferWriter<byte> bufferWriter, global::Omnix.Base.BufferPool bufferPool)
         {
-            Formatter.Serialize(new Omnix.Serialization.RocketPack.RocketPackWriter(bufferWriter, bufferPool), this, 0);
+            Formatter.Serialize(new global::Omnix.Serialization.RocketPack.RocketPackWriter(bufferWriter, bufferPool), this, 0);
         }
         public static bool operator ==(SmallMessageElement left, SmallMessageElement right)
         {
@@ -108,11 +108,11 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator.Internal
 
         public override int GetHashCode() => __hashCode;
 
-        private sealed class CustomFormatter : Omnix.Serialization.RocketPack.IRocketPackFormatter<SmallMessageElement>
+        private sealed class CustomFormatter : global::Omnix.Serialization.RocketPack.IRocketPackFormatter<SmallMessageElement>
         {
-            public void Serialize(Omnix.Serialization.RocketPack.RocketPackWriter w, SmallMessageElement value, int rank)
+            public void Serialize(global::Omnix.Serialization.RocketPack.RocketPackWriter w, SmallMessageElement value, int rank)
             {
-                if (rank > 256) throw new System.FormatException();
+                if (rank > 256) throw new global::System.FormatException();
 
                 if (value.X0 != false)
                 {
@@ -120,9 +120,9 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator.Internal
                 }
             }
 
-            public SmallMessageElement Deserialize(Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
+            public SmallMessageElement Deserialize(global::Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
             {
-                if (rank > 256) throw new System.FormatException();
+                if (rank > 256) throw new global::System.FormatException();
 
                 bool p_x0 = false;
 
@@ -134,7 +134,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator.Internal
         }
     }
 
-    internal sealed partial class MessageElement : Omnix.Serialization.RocketPack.RocketPackMessageBase<MessageElement>
+    internal sealed partial class MessageElement : global::Omnix.Serialization.RocketPack.RocketPackMessageBase<MessageElement>
     {
         static MessageElement()
         {
@@ -149,7 +149,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator.Internal
             this.X0 = x0;
 
             {
-                var __h = new System.HashCode();
+                var __h = new global::System.HashCode();
                 if (this.X0 != default) __h.Add(this.X0.GetHashCode());
                 __hashCode = __h.ToHashCode();
             }
@@ -168,11 +168,11 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator.Internal
 
         public override int GetHashCode() => __hashCode;
 
-        private sealed class CustomFormatter : Omnix.Serialization.RocketPack.IRocketPackFormatter<MessageElement>
+        private sealed class CustomFormatter : global::Omnix.Serialization.RocketPack.IRocketPackFormatter<MessageElement>
         {
-            public void Serialize(Omnix.Serialization.RocketPack.RocketPackWriter w, MessageElement value, int rank)
+            public void Serialize(global::Omnix.Serialization.RocketPack.RocketPackWriter w, MessageElement value, int rank)
             {
-                if (rank > 256) throw new System.FormatException();
+                if (rank > 256) throw new global::System.FormatException();
 
                 {
                     uint propertyCount = 0;
@@ -190,9 +190,9 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator.Internal
                 }
             }
 
-            public MessageElement Deserialize(Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
+            public MessageElement Deserialize(global::Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
             {
-                if (rank > 256) throw new System.FormatException();
+                if (rank > 256) throw new global::System.FormatException();
 
                 uint propertyCount = r.GetUInt32();
 
@@ -216,15 +216,15 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator.Internal
         }
     }
 
-    internal readonly struct SmallMessage : System.IEquatable<SmallMessage>
+    internal readonly struct SmallMessage : global::System.IEquatable<SmallMessage>
     {
-        public static Omnix.Serialization.RocketPack.IRocketPackFormatter<SmallMessage> Formatter { get; }
+        public static global::Omnix.Serialization.RocketPack.IRocketPackFormatter<SmallMessage> Formatter { get; }
         public static SmallMessage Empty { get; }
 
         static SmallMessage()
         {
             SmallMessage.Formatter = new CustomFormatter();
-            SmallMessage.Empty = new SmallMessage(false, 0, 0, 0, 0, 0, 0, 0, 0, (Enum1)0, (Enum2)0, (Enum3)0, (Enum4)0, (Enum5)0, (Enum6)0, (Enum7)0, (Enum8)0, 0.0F, 0.0D, string.Empty, Omnix.Serialization.RocketPack.Timestamp.Zero, System.ReadOnlyMemory<byte>.Empty, System.ReadOnlyMemory<byte>.Empty, System.Array.Empty<string>(), new System.Collections.Generic.Dictionary<byte, string>(), SmallMessageElement.Empty, MessageElement.Empty);
+            SmallMessage.Empty = new SmallMessage(false, 0, 0, 0, 0, 0, 0, 0, 0, (Enum1)0, (Enum2)0, (Enum3)0, (Enum4)0, (Enum5)0, (Enum6)0, (Enum7)0, (Enum8)0, 0.0F, 0.0D, string.Empty, global::Omnix.Serialization.RocketPack.Timestamp.Zero, global::System.ReadOnlyMemory<byte>.Empty, global::System.ReadOnlyMemory<byte>.Empty, global::System.Array.Empty<string>(), new global::System.Collections.Generic.Dictionary<byte, string>(), SmallMessageElement.Empty, MessageElement.Empty);
         }
 
         private readonly int __hashCode;
@@ -235,27 +235,27 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator.Internal
         public static readonly int MaxX23Count = 16;
         public static readonly int MaxX24Count = 32;
 
-        public SmallMessage(bool x0, sbyte x1, short x2, int x3, long x4, byte x5, ushort x6, uint x7, ulong x8, Enum1 x9, Enum2 x10, Enum3 x11, Enum4 x12, Enum5 x13, Enum6 x14, Enum7 x15, Enum8 x16, float x17, double x18, string x19, Omnix.Serialization.RocketPack.Timestamp x20, System.ReadOnlyMemory<byte> x21, System.ReadOnlyMemory<byte> x22, string[] x23, System.Collections.Generic.Dictionary<byte, string> x24, SmallMessageElement x25, MessageElement x26)
+        public SmallMessage(bool x0, sbyte x1, short x2, int x3, long x4, byte x5, ushort x6, uint x7, ulong x8, Enum1 x9, Enum2 x10, Enum3 x11, Enum4 x12, Enum5 x13, Enum6 x14, Enum7 x15, Enum8 x16, float x17, double x18, string x19, global::Omnix.Serialization.RocketPack.Timestamp x20, global::System.ReadOnlyMemory<byte> x21, global::System.ReadOnlyMemory<byte> x22, string[] x23, global::System.Collections.Generic.Dictionary<byte, string> x24, SmallMessageElement x25, MessageElement x26)
         {
-            if (x19 is null) throw new System.ArgumentNullException("x19");
-            if (x19.Length > 128) throw new System.ArgumentOutOfRangeException("x19");
-            if (x21.Length > 256) throw new System.ArgumentOutOfRangeException("x21");
-            if (x22.Length > 256) throw new System.ArgumentOutOfRangeException("x22");
-            if (x23 is null) throw new System.ArgumentNullException("x23");
-            if (x23.Length > 16) throw new System.ArgumentOutOfRangeException("x23");
+            if (x19 is null) throw new global::System.ArgumentNullException("x19");
+            if (x19.Length > 128) throw new global::System.ArgumentOutOfRangeException("x19");
+            if (x21.Length > 256) throw new global::System.ArgumentOutOfRangeException("x21");
+            if (x22.Length > 256) throw new global::System.ArgumentOutOfRangeException("x22");
+            if (x23 is null) throw new global::System.ArgumentNullException("x23");
+            if (x23.Length > 16) throw new global::System.ArgumentOutOfRangeException("x23");
             foreach (var n in x23)
             {
-                if (n is null) throw new System.ArgumentNullException("n");
-                if (n.Length > 128) throw new System.ArgumentOutOfRangeException("n");
+                if (n is null) throw new global::System.ArgumentNullException("n");
+                if (n.Length > 128) throw new global::System.ArgumentOutOfRangeException("n");
             }
-            if (x24 is null) throw new System.ArgumentNullException("x24");
-            if (x24.Count > 32) throw new System.ArgumentOutOfRangeException("x24");
+            if (x24 is null) throw new global::System.ArgumentNullException("x24");
+            if (x24.Count > 32) throw new global::System.ArgumentOutOfRangeException("x24");
             foreach (var n in x24)
             {
-                if (n.Value is null) throw new System.ArgumentNullException("n.Value");
-                if (n.Value.Length > 128) throw new System.ArgumentOutOfRangeException("n.Value");
+                if (n.Value is null) throw new global::System.ArgumentNullException("n.Value");
+                if (n.Value.Length > 128) throw new global::System.ArgumentOutOfRangeException("n.Value");
             }
-            if (x26 is null) throw new System.ArgumentNullException("x26");
+            if (x26 is null) throw new global::System.ArgumentNullException("x26");
 
             this.X0 = x0;
             this.X1 = x1;
@@ -280,13 +280,13 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator.Internal
             this.X20 = x20;
             this.X21 = x21;
             this.X22 = x22;
-            this.X23 = new Omnix.DataStructures.ReadOnlyListSlim<string>(x23);
-            this.X24 = new Omnix.DataStructures.ReadOnlyDictionarySlim<byte, string>(x24);
+            this.X23 = new global::Omnix.DataStructures.ReadOnlyListSlim<string>(x23);
+            this.X24 = new global::Omnix.DataStructures.ReadOnlyDictionarySlim<byte, string>(x24);
             this.X25 = x25;
             this.X26 = x26;
 
             {
-                var __h = new System.HashCode();
+                var __h = new global::System.HashCode();
                 if (this.X0 != default) __h.Add(this.X0.GetHashCode());
                 if (this.X1 != default) __h.Add(this.X1.GetHashCode());
                 if (this.X2 != default) __h.Add(this.X2.GetHashCode());
@@ -308,8 +308,8 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator.Internal
                 if (this.X18 != default) __h.Add(this.X18.GetHashCode());
                 if (this.X19 != default) __h.Add(this.X19.GetHashCode());
                 if (this.X20 != default) __h.Add(this.X20.GetHashCode());
-                if (!this.X21.IsEmpty) __h.Add(Omnix.Base.Helpers.ObjectHelper.GetHashCode(this.X21.Span));
-                if (!this.X22.IsEmpty) __h.Add(Omnix.Base.Helpers.ObjectHelper.GetHashCode(this.X22.Span));
+                if (!this.X21.IsEmpty) __h.Add(global::Omnix.Base.Helpers.ObjectHelper.GetHashCode(this.X21.Span));
+                if (!this.X22.IsEmpty) __h.Add(global::Omnix.Base.Helpers.ObjectHelper.GetHashCode(this.X22.Span));
                 foreach (var n in this.X23)
                 {
                     if (n != default) __h.Add(n.GetHashCode());
@@ -345,21 +345,21 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator.Internal
         public float X17 { get; }
         public double X18 { get; }
         public string X19 { get; }
-        public Omnix.Serialization.RocketPack.Timestamp X20 { get; }
-        public System.ReadOnlyMemory<byte> X21 { get; }
-        public System.ReadOnlyMemory<byte> X22 { get; }
-        public Omnix.DataStructures.ReadOnlyListSlim<string> X23 { get; }
-        public Omnix.DataStructures.ReadOnlyDictionarySlim<byte, string> X24 { get; }
+        public global::Omnix.Serialization.RocketPack.Timestamp X20 { get; }
+        public global::System.ReadOnlyMemory<byte> X21 { get; }
+        public global::System.ReadOnlyMemory<byte> X22 { get; }
+        public global::Omnix.DataStructures.ReadOnlyListSlim<string> X23 { get; }
+        public global::Omnix.DataStructures.ReadOnlyDictionarySlim<byte, string> X24 { get; }
         public SmallMessageElement X25 { get; }
         public MessageElement X26 { get; }
 
-        public static SmallMessage Import(System.Buffers.ReadOnlySequence<byte> sequence, Omnix.Base.BufferPool bufferPool)
+        public static SmallMessage Import(global::System.Buffers.ReadOnlySequence<byte> sequence, global::Omnix.Base.BufferPool bufferPool)
         {
-            return Formatter.Deserialize(new Omnix.Serialization.RocketPack.RocketPackReader(sequence, bufferPool), 0);
+            return Formatter.Deserialize(new global::Omnix.Serialization.RocketPack.RocketPackReader(sequence, bufferPool), 0);
         }
-        public void Export(System.Buffers.IBufferWriter<byte> bufferWriter, Omnix.Base.BufferPool bufferPool)
+        public void Export(global::System.Buffers.IBufferWriter<byte> bufferWriter, global::Omnix.Base.BufferPool bufferPool)
         {
-            Formatter.Serialize(new Omnix.Serialization.RocketPack.RocketPackWriter(bufferWriter, bufferPool), this, 0);
+            Formatter.Serialize(new global::Omnix.Serialization.RocketPack.RocketPackWriter(bufferWriter, bufferPool), this, 0);
         }
         public static bool operator ==(SmallMessage left, SmallMessage right)
         {
@@ -397,10 +397,10 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator.Internal
             if (this.X17 != target.X17) return false;
             if (this.X19 != target.X19) return false;
             if (this.X20 != target.X20) return false;
-            if (!Omnix.Base.BytesOperations.SequenceEqual(this.X21.Span, target.X21.Span)) return false;
-            if (!Omnix.Base.BytesOperations.SequenceEqual(this.X22.Span, target.X22.Span)) return false;
-            if (!Omnix.Base.Helpers.CollectionHelper.Equals(this.X23, target.X23)) return false;
-            if (!Omnix.Base.Helpers.CollectionHelper.Equals(this.X24, target.X24)) return false;
+            if (!global::Omnix.Base.BytesOperations.SequenceEqual(this.X21.Span, target.X21.Span)) return false;
+            if (!global::Omnix.Base.BytesOperations.SequenceEqual(this.X22.Span, target.X22.Span)) return false;
+            if (!global::Omnix.Base.Helpers.CollectionHelper.Equals(this.X23, target.X23)) return false;
+            if (!global::Omnix.Base.Helpers.CollectionHelper.Equals(this.X24, target.X24)) return false;
             if (this.X25 != target.X25) return false;
             if (this.X26 != target.X26) return false;
 
@@ -409,11 +409,11 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator.Internal
 
         public override int GetHashCode() => __hashCode;
 
-        private sealed class CustomFormatter : Omnix.Serialization.RocketPack.IRocketPackFormatter<SmallMessage>
+        private sealed class CustomFormatter : global::Omnix.Serialization.RocketPack.IRocketPackFormatter<SmallMessage>
         {
-            public void Serialize(Omnix.Serialization.RocketPack.RocketPackWriter w, SmallMessage value, int rank)
+            public void Serialize(global::Omnix.Serialization.RocketPack.RocketPackWriter w, SmallMessage value, int rank)
             {
-                if (rank > 256) throw new System.FormatException();
+                if (rank > 256) throw new global::System.FormatException();
 
                 if (value.X0 != false)
                 {
@@ -495,7 +495,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator.Internal
                 {
                     w.Write(value.X19);
                 }
-                if (value.X20 != Omnix.Serialization.RocketPack.Timestamp.Zero)
+                if (value.X20 != global::Omnix.Serialization.RocketPack.Timestamp.Zero)
                 {
                     w.Write(value.X20);
                 }
@@ -534,9 +534,9 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator.Internal
                 }
             }
 
-            public SmallMessage Deserialize(Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
+            public SmallMessage Deserialize(global::Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
             {
-                if (rank > 256) throw new System.FormatException();
+                if (rank > 256) throw new global::System.FormatException();
 
                 bool p_x0 = false;
                 sbyte p_x1 = 0;
@@ -558,11 +558,11 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator.Internal
                 float p_x17 = 0.0F;
                 double p_x18 = 0.0D;
                 string p_x19 = string.Empty;
-                Omnix.Serialization.RocketPack.Timestamp p_x20 = Omnix.Serialization.RocketPack.Timestamp.Zero;
-                System.ReadOnlyMemory<byte> p_x21 = System.ReadOnlyMemory<byte>.Empty;
-                System.ReadOnlyMemory<byte> p_x22 = System.ReadOnlyMemory<byte>.Empty;
-                string[] p_x23 = System.Array.Empty<string>();
-                System.Collections.Generic.Dictionary<byte, string> p_x24 = new System.Collections.Generic.Dictionary<byte, string>();
+                global::Omnix.Serialization.RocketPack.Timestamp p_x20 = global::Omnix.Serialization.RocketPack.Timestamp.Zero;
+                global::System.ReadOnlyMemory<byte> p_x21 = global::System.ReadOnlyMemory<byte>.Empty;
+                global::System.ReadOnlyMemory<byte> p_x22 = global::System.ReadOnlyMemory<byte>.Empty;
+                string[] p_x23 = global::System.Array.Empty<string>();
+                global::System.Collections.Generic.Dictionary<byte, string> p_x24 = new global::System.Collections.Generic.Dictionary<byte, string>();
                 SmallMessageElement p_x25 = SmallMessageElement.Empty;
                 MessageElement p_x26 = MessageElement.Empty;
 
@@ -645,7 +645,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator.Internal
                 }
                 {
                     var length = r.GetUInt32();
-                    p_x24 = new System.Collections.Generic.Dictionary<byte, string>();
+                    p_x24 = new global::System.Collections.Generic.Dictionary<byte, string>();
                     byte t_key = 0;
                     string t_value = string.Empty;
                     for (int i = 0; i < length; i++)
@@ -666,12 +666,12 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator.Internal
         }
     }
 
-    internal sealed partial class Message : Omnix.Serialization.RocketPack.RocketPackMessageBase<Message>, System.IDisposable
+    internal sealed partial class Message : global::Omnix.Serialization.RocketPack.RocketPackMessageBase<Message>, global::System.IDisposable
     {
         static Message()
         {
             Message.Formatter = new CustomFormatter();
-            Message.Empty = new Message(false, 0, 0, 0, 0, 0, 0, 0, 0, (Enum1)0, (Enum2)0, (Enum3)0, (Enum4)0, (Enum5)0, (Enum6)0, (Enum7)0, (Enum8)0, 0.0F, 0.0D, string.Empty, Omnix.Serialization.RocketPack.Timestamp.Zero, System.ReadOnlyMemory<byte>.Empty, Omnix.Base.SimpleMemoryOwner<byte>.Empty, System.Array.Empty<string>(), new System.Collections.Generic.Dictionary<byte, string>(), SmallMessageElement.Empty, MessageElement.Empty);
+            Message.Empty = new Message(false, 0, 0, 0, 0, 0, 0, 0, 0, (Enum1)0, (Enum2)0, (Enum3)0, (Enum4)0, (Enum5)0, (Enum6)0, (Enum7)0, (Enum8)0, 0.0F, 0.0D, string.Empty, global::Omnix.Serialization.RocketPack.Timestamp.Zero, global::System.ReadOnlyMemory<byte>.Empty, global::Omnix.Base.SimpleMemoryOwner<byte>.Empty, global::System.Array.Empty<string>(), new global::System.Collections.Generic.Dictionary<byte, string>(), SmallMessageElement.Empty, MessageElement.Empty);
         }
 
         private readonly int __hashCode;
@@ -682,28 +682,28 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator.Internal
         public static readonly int MaxX23Count = 16;
         public static readonly int MaxX24Count = 32;
 
-        public Message(bool x0, sbyte x1, short x2, int x3, long x4, byte x5, ushort x6, uint x7, ulong x8, Enum1 x9, Enum2 x10, Enum3 x11, Enum4 x12, Enum5 x13, Enum6 x14, Enum7 x15, Enum8 x16, float x17, double x18, string x19, Omnix.Serialization.RocketPack.Timestamp x20, System.ReadOnlyMemory<byte> x21, System.Buffers.IMemoryOwner<byte> x22, string[] x23, System.Collections.Generic.Dictionary<byte, string> x24, SmallMessageElement x25, MessageElement x26)
+        public Message(bool x0, sbyte x1, short x2, int x3, long x4, byte x5, ushort x6, uint x7, ulong x8, Enum1 x9, Enum2 x10, Enum3 x11, Enum4 x12, Enum5 x13, Enum6 x14, Enum7 x15, Enum8 x16, float x17, double x18, string x19, global::Omnix.Serialization.RocketPack.Timestamp x20, global::System.ReadOnlyMemory<byte> x21, global::System.Buffers.IMemoryOwner<byte> x22, string[] x23, global::System.Collections.Generic.Dictionary<byte, string> x24, SmallMessageElement x25, MessageElement x26)
         {
-            if (x19 is null) throw new System.ArgumentNullException("x19");
-            if (x19.Length > 128) throw new System.ArgumentOutOfRangeException("x19");
-            if (x21.Length > 256) throw new System.ArgumentOutOfRangeException("x21");
-            if (x22 is null) throw new System.ArgumentNullException("x22");
-            if (x22.Memory.Length > 256) throw new System.ArgumentOutOfRangeException("x22");
-            if (x23 is null) throw new System.ArgumentNullException("x23");
-            if (x23.Length > 16) throw new System.ArgumentOutOfRangeException("x23");
+            if (x19 is null) throw new global::System.ArgumentNullException("x19");
+            if (x19.Length > 128) throw new global::System.ArgumentOutOfRangeException("x19");
+            if (x21.Length > 256) throw new global::System.ArgumentOutOfRangeException("x21");
+            if (x22 is null) throw new global::System.ArgumentNullException("x22");
+            if (x22.Memory.Length > 256) throw new global::System.ArgumentOutOfRangeException("x22");
+            if (x23 is null) throw new global::System.ArgumentNullException("x23");
+            if (x23.Length > 16) throw new global::System.ArgumentOutOfRangeException("x23");
             foreach (var n in x23)
             {
-                if (n is null) throw new System.ArgumentNullException("n");
-                if (n.Length > 128) throw new System.ArgumentOutOfRangeException("n");
+                if (n is null) throw new global::System.ArgumentNullException("n");
+                if (n.Length > 128) throw new global::System.ArgumentOutOfRangeException("n");
             }
-            if (x24 is null) throw new System.ArgumentNullException("x24");
-            if (x24.Count > 32) throw new System.ArgumentOutOfRangeException("x24");
+            if (x24 is null) throw new global::System.ArgumentNullException("x24");
+            if (x24.Count > 32) throw new global::System.ArgumentOutOfRangeException("x24");
             foreach (var n in x24)
             {
-                if (n.Value is null) throw new System.ArgumentNullException("n.Value");
-                if (n.Value.Length > 128) throw new System.ArgumentOutOfRangeException("n.Value");
+                if (n.Value is null) throw new global::System.ArgumentNullException("n.Value");
+                if (n.Value.Length > 128) throw new global::System.ArgumentOutOfRangeException("n.Value");
             }
-            if (x26 is null) throw new System.ArgumentNullException("x26");
+            if (x26 is null) throw new global::System.ArgumentNullException("x26");
 
             this.X0 = x0;
             this.X1 = x1;
@@ -728,13 +728,13 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator.Internal
             this.X20 = x20;
             this.X21 = x21;
             _x22 = x22;
-            this.X23 = new Omnix.DataStructures.ReadOnlyListSlim<string>(x23);
-            this.X24 = new Omnix.DataStructures.ReadOnlyDictionarySlim<byte, string>(x24);
+            this.X23 = new global::Omnix.DataStructures.ReadOnlyListSlim<string>(x23);
+            this.X24 = new global::Omnix.DataStructures.ReadOnlyDictionarySlim<byte, string>(x24);
             this.X25 = x25;
             this.X26 = x26;
 
             {
-                var __h = new System.HashCode();
+                var __h = new global::System.HashCode();
                 if (this.X0 != default) __h.Add(this.X0.GetHashCode());
                 if (this.X1 != default) __h.Add(this.X1.GetHashCode());
                 if (this.X2 != default) __h.Add(this.X2.GetHashCode());
@@ -756,8 +756,8 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator.Internal
                 if (this.X18 != default) __h.Add(this.X18.GetHashCode());
                 if (this.X19 != default) __h.Add(this.X19.GetHashCode());
                 if (this.X20 != default) __h.Add(this.X20.GetHashCode());
-                if (!this.X21.IsEmpty) __h.Add(Omnix.Base.Helpers.ObjectHelper.GetHashCode(this.X21.Span));
-                if (!this.X22.IsEmpty) __h.Add(Omnix.Base.Helpers.ObjectHelper.GetHashCode(this.X22.Span));
+                if (!this.X21.IsEmpty) __h.Add(global::Omnix.Base.Helpers.ObjectHelper.GetHashCode(this.X21.Span));
+                if (!this.X22.IsEmpty) __h.Add(global::Omnix.Base.Helpers.ObjectHelper.GetHashCode(this.X22.Span));
                 foreach (var n in this.X23)
                 {
                     if (n != default) __h.Add(n.GetHashCode());
@@ -793,12 +793,12 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator.Internal
         public float X17 { get; }
         public double X18 { get; }
         public string X19 { get; }
-        public Omnix.Serialization.RocketPack.Timestamp X20 { get; }
-        public System.ReadOnlyMemory<byte> X21 { get; }
-        private readonly System.Buffers.IMemoryOwner<byte> _x22;
-        public System.ReadOnlyMemory<byte> X22 => _x22.Memory;
-        public Omnix.DataStructures.ReadOnlyListSlim<string> X23 { get; }
-        public Omnix.DataStructures.ReadOnlyDictionarySlim<byte, string> X24 { get; }
+        public global::Omnix.Serialization.RocketPack.Timestamp X20 { get; }
+        public global::System.ReadOnlyMemory<byte> X21 { get; }
+        private readonly global::System.Buffers.IMemoryOwner<byte> _x22;
+        public global::System.ReadOnlyMemory<byte> X22 => _x22.Memory;
+        public global::Omnix.DataStructures.ReadOnlyListSlim<string> X23 { get; }
+        public global::Omnix.DataStructures.ReadOnlyDictionarySlim<byte, string> X24 { get; }
         public SmallMessageElement X25 { get; }
         public MessageElement X26 { get; }
 
@@ -826,10 +826,10 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator.Internal
             if (this.X17 != target.X17) return false;
             if (this.X19 != target.X19) return false;
             if (this.X20 != target.X20) return false;
-            if (!Omnix.Base.BytesOperations.SequenceEqual(this.X21.Span, target.X21.Span)) return false;
-            if (!Omnix.Base.BytesOperations.SequenceEqual(this.X22.Span, target.X22.Span)) return false;
-            if (!Omnix.Base.Helpers.CollectionHelper.Equals(this.X23, target.X23)) return false;
-            if (!Omnix.Base.Helpers.CollectionHelper.Equals(this.X24, target.X24)) return false;
+            if (!global::Omnix.Base.BytesOperations.SequenceEqual(this.X21.Span, target.X21.Span)) return false;
+            if (!global::Omnix.Base.BytesOperations.SequenceEqual(this.X22.Span, target.X22.Span)) return false;
+            if (!global::Omnix.Base.Helpers.CollectionHelper.Equals(this.X23, target.X23)) return false;
+            if (!global::Omnix.Base.Helpers.CollectionHelper.Equals(this.X24, target.X24)) return false;
             if (this.X25 != target.X25) return false;
             if (this.X26 != target.X26) return false;
 
@@ -843,11 +843,11 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator.Internal
             _x22?.Dispose();
         }
 
-        private sealed class CustomFormatter : Omnix.Serialization.RocketPack.IRocketPackFormatter<Message>
+        private sealed class CustomFormatter : global::Omnix.Serialization.RocketPack.IRocketPackFormatter<Message>
         {
-            public void Serialize(Omnix.Serialization.RocketPack.RocketPackWriter w, Message value, int rank)
+            public void Serialize(global::Omnix.Serialization.RocketPack.RocketPackWriter w, Message value, int rank)
             {
-                if (rank > 256) throw new System.FormatException();
+                if (rank > 256) throw new global::System.FormatException();
 
                 {
                     uint propertyCount = 0;
@@ -931,7 +931,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator.Internal
                     {
                         propertyCount++;
                     }
-                    if (value.X20 != Omnix.Serialization.RocketPack.Timestamp.Zero)
+                    if (value.X20 != global::Omnix.Serialization.RocketPack.Timestamp.Zero)
                     {
                         propertyCount++;
                     }
@@ -1062,7 +1062,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator.Internal
                     w.Write((uint)19);
                     w.Write(value.X19);
                 }
-                if (value.X20 != Omnix.Serialization.RocketPack.Timestamp.Zero)
+                if (value.X20 != global::Omnix.Serialization.RocketPack.Timestamp.Zero)
                 {
                     w.Write((uint)20);
                     w.Write(value.X20);
@@ -1108,9 +1108,9 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator.Internal
                 }
             }
 
-            public Message Deserialize(Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
+            public Message Deserialize(global::Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
             {
-                if (rank > 256) throw new System.FormatException();
+                if (rank > 256) throw new global::System.FormatException();
 
                 uint propertyCount = r.GetUInt32();
 
@@ -1134,11 +1134,11 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator.Internal
                 float p_x17 = 0.0F;
                 double p_x18 = 0.0D;
                 string p_x19 = string.Empty;
-                Omnix.Serialization.RocketPack.Timestamp p_x20 = Omnix.Serialization.RocketPack.Timestamp.Zero;
-                System.ReadOnlyMemory<byte> p_x21 = System.ReadOnlyMemory<byte>.Empty;
-                System.Buffers.IMemoryOwner<byte> p_x22 = Omnix.Base.SimpleMemoryOwner<byte>.Empty;
-                string[] p_x23 = System.Array.Empty<string>();
-                System.Collections.Generic.Dictionary<byte, string> p_x24 = new System.Collections.Generic.Dictionary<byte, string>();
+                global::Omnix.Serialization.RocketPack.Timestamp p_x20 = global::Omnix.Serialization.RocketPack.Timestamp.Zero;
+                global::System.ReadOnlyMemory<byte> p_x21 = global::System.ReadOnlyMemory<byte>.Empty;
+                global::System.Buffers.IMemoryOwner<byte> p_x22 = global::Omnix.Base.SimpleMemoryOwner<byte>.Empty;
+                string[] p_x23 = global::System.Array.Empty<string>();
+                global::System.Collections.Generic.Dictionary<byte, string> p_x24 = new global::System.Collections.Generic.Dictionary<byte, string>();
                 SmallMessageElement p_x25 = SmallMessageElement.Empty;
                 MessageElement p_x26 = MessageElement.Empty;
 
@@ -1275,7 +1275,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator.Internal
                         case 24:
                             {
                                 var length = r.GetUInt32();
-                                p_x24 = new System.Collections.Generic.Dictionary<byte, string>();
+                                p_x24 = new global::System.Collections.Generic.Dictionary<byte, string>();
                                 byte t_key = 0;
                                 string t_value = string.Empty;
                                 for (int i = 0; i < length; i++)
@@ -1304,7 +1304,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator.Internal
         }
     }
 
-    internal sealed partial class NullableMessage : Omnix.Serialization.RocketPack.RocketPackMessageBase<NullableMessage>, System.IDisposable
+    internal sealed partial class NullableMessage : global::Omnix.Serialization.RocketPack.RocketPackMessageBase<NullableMessage>, global::System.IDisposable
     {
         static NullableMessage()
         {
@@ -1320,27 +1320,27 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator.Internal
         public static readonly int MaxX23Count = 16;
         public static readonly int MaxX24Count = 32;
 
-        public NullableMessage(bool? x0, sbyte? x1, short? x2, int? x3, long? x4, byte? x5, ushort? x6, uint? x7, ulong? x8, Enum1? x9, Enum2? x10, Enum3? x11, Enum4? x12, Enum5? x13, Enum6? x14, Enum7? x15, Enum8? x16, float? x17, double? x18, string? x19, Omnix.Serialization.RocketPack.Timestamp? x20, System.ReadOnlyMemory<byte>? x21, System.Buffers.IMemoryOwner<byte>? x22, string[]? x23, System.Collections.Generic.Dictionary<byte, string>? x24, SmallMessageElement? x25, MessageElement? x26)
+        public NullableMessage(bool? x0, sbyte? x1, short? x2, int? x3, long? x4, byte? x5, ushort? x6, uint? x7, ulong? x8, Enum1? x9, Enum2? x10, Enum3? x11, Enum4? x12, Enum5? x13, Enum6? x14, Enum7? x15, Enum8? x16, float? x17, double? x18, string? x19, global::Omnix.Serialization.RocketPack.Timestamp? x20, global::System.ReadOnlyMemory<byte>? x21, global::System.Buffers.IMemoryOwner<byte>? x22, string[]? x23, global::System.Collections.Generic.Dictionary<byte, string>? x24, SmallMessageElement? x25, MessageElement? x26)
         {
-            if (!(x19 is null) && x19.Length > 128) throw new System.ArgumentOutOfRangeException("x19");
-            if (!(x21 is null) && x21.Value.Length > 256) throw new System.ArgumentOutOfRangeException("x21");
-            if (!(x22 is null) && x22.Memory.Length > 256) throw new System.ArgumentOutOfRangeException("x22");
-            if (!(x23 is null) && x23.Length > 16) throw new System.ArgumentOutOfRangeException("x23");
+            if (!(x19 is null) && x19.Length > 128) throw new global::System.ArgumentOutOfRangeException("x19");
+            if (!(x21 is null) && x21.Value.Length > 256) throw new global::System.ArgumentOutOfRangeException("x21");
+            if (!(x22 is null) && x22.Memory.Length > 256) throw new global::System.ArgumentOutOfRangeException("x22");
+            if (!(x23 is null) && x23.Length > 16) throw new global::System.ArgumentOutOfRangeException("x23");
             if (!(x23 is null))
             {
                 foreach (var n in x23)
                 {
-                    if (n is null) throw new System.ArgumentNullException("n");
-                    if (n.Length > 128) throw new System.ArgumentOutOfRangeException("n");
+                    if (n is null) throw new global::System.ArgumentNullException("n");
+                    if (n.Length > 128) throw new global::System.ArgumentOutOfRangeException("n");
                 }
             }
-            if (!(x24 is null) && x24.Count > 32) throw new System.ArgumentOutOfRangeException("x24");
+            if (!(x24 is null) && x24.Count > 32) throw new global::System.ArgumentOutOfRangeException("x24");
             if (!(x24 is null))
             {
                 foreach (var n in x24)
                 {
-                    if (n.Value is null) throw new System.ArgumentNullException("n.Value");
-                    if (n.Value.Length > 128) throw new System.ArgumentOutOfRangeException("n.Value");
+                    if (n.Value is null) throw new global::System.ArgumentNullException("n.Value");
+                    if (n.Value.Length > 128) throw new global::System.ArgumentOutOfRangeException("n.Value");
                 }
             }
             this.X0 = x0;
@@ -1368,17 +1368,17 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator.Internal
             _x22 = x22;
             if(x23 != null)
             {
-                this.X23 = new Omnix.DataStructures.ReadOnlyListSlim<string>(x23);
+                this.X23 = new global::Omnix.DataStructures.ReadOnlyListSlim<string>(x23);
             }
             if(x24 != null)
             {
-                this.X24 = new Omnix.DataStructures.ReadOnlyDictionarySlim<byte, string>(x24);
+                this.X24 = new global::Omnix.DataStructures.ReadOnlyDictionarySlim<byte, string>(x24);
             }
             this.X25 = x25;
             this.X26 = x26;
 
             {
-                var __h = new System.HashCode();
+                var __h = new global::System.HashCode();
                 if (this.X0 != default) __h.Add(this.X0.GetHashCode());
                 if (this.X1 != default) __h.Add(this.X1.GetHashCode());
                 if (this.X2 != default) __h.Add(this.X2.GetHashCode());
@@ -1400,8 +1400,8 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator.Internal
                 if (this.X18 != default) __h.Add(this.X18.GetHashCode());
                 if (this.X19 != default) __h.Add(this.X19.GetHashCode());
                 if (this.X20 != default) __h.Add(this.X20.GetHashCode());
-                if (!(this.X21 is null) && !this.X21.Value.IsEmpty) __h.Add(Omnix.Base.Helpers.ObjectHelper.GetHashCode(this.X21.Value.Span));
-                if (!(this.X22 is null) && !this.X22.Value.IsEmpty) __h.Add(Omnix.Base.Helpers.ObjectHelper.GetHashCode(this.X22.Value.Span));
+                if (!(this.X21 is null) && !this.X21.Value.IsEmpty) __h.Add(global::Omnix.Base.Helpers.ObjectHelper.GetHashCode(this.X21.Value.Span));
+                if (!(this.X22 is null) && !this.X22.Value.IsEmpty) __h.Add(global::Omnix.Base.Helpers.ObjectHelper.GetHashCode(this.X22.Value.Span));
                 if(this.X23 != null)
                 {
                     foreach (var n in this.X23)
@@ -1443,12 +1443,12 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator.Internal
         public float? X17 { get; }
         public double? X18 { get; }
         public string? X19 { get; }
-        public Omnix.Serialization.RocketPack.Timestamp? X20 { get; }
-        public System.ReadOnlyMemory<byte>? X21 { get; }
-        private readonly System.Buffers.IMemoryOwner<byte>? _x22;
-        public System.ReadOnlyMemory<byte>? X22 => _x22?.Memory;
-        public Omnix.DataStructures.ReadOnlyListSlim<string>? X23 { get; }
-        public Omnix.DataStructures.ReadOnlyDictionarySlim<byte, string>? X24 { get; }
+        public global::Omnix.Serialization.RocketPack.Timestamp? X20 { get; }
+        public global::System.ReadOnlyMemory<byte>? X21 { get; }
+        private readonly global::System.Buffers.IMemoryOwner<byte>? _x22;
+        public global::System.ReadOnlyMemory<byte>? X22 => _x22?.Memory;
+        public global::Omnix.DataStructures.ReadOnlyListSlim<string>? X23 { get; }
+        public global::Omnix.DataStructures.ReadOnlyDictionarySlim<byte, string>? X24 { get; }
         public SmallMessageElement? X25 { get; }
         public MessageElement? X26 { get; }
 
@@ -1477,13 +1477,13 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator.Internal
             if (this.X19 != target.X19) return false;
             if (this.X20 != target.X20) return false;
             if ((this.X21 is null) != (target.X21 is null)) return false;
-            if (!(this.X21 is null) && !(target.X21 is null) && !Omnix.Base.BytesOperations.SequenceEqual(this.X21.Value.Span, target.X21.Value.Span)) return false;
+            if (!(this.X21 is null) && !(target.X21 is null) && !global::Omnix.Base.BytesOperations.SequenceEqual(this.X21.Value.Span, target.X21.Value.Span)) return false;
             if ((this.X22 is null) != (target.X22 is null)) return false;
-            if (!(this.X22 is null) && !(target.X22 is null) && !Omnix.Base.BytesOperations.SequenceEqual(this.X22.Value.Span, target.X22.Value.Span)) return false;
+            if (!(this.X22 is null) && !(target.X22 is null) && !global::Omnix.Base.BytesOperations.SequenceEqual(this.X22.Value.Span, target.X22.Value.Span)) return false;
             if ((this.X23 is null) != (target.X23 is null)) return false;
-            if (!(this.X23 is null) && !(target.X23 is null) && !Omnix.Base.Helpers.CollectionHelper.Equals(this.X23, target.X23)) return false;
+            if (!(this.X23 is null) && !(target.X23 is null) && !global::Omnix.Base.Helpers.CollectionHelper.Equals(this.X23, target.X23)) return false;
             if ((this.X24 is null) != (target.X24 is null)) return false;
-            if (!(this.X24 is null) && !(target.X24 is null) && !Omnix.Base.Helpers.CollectionHelper.Equals(this.X24, target.X24)) return false;
+            if (!(this.X24 is null) && !(target.X24 is null) && !global::Omnix.Base.Helpers.CollectionHelper.Equals(this.X24, target.X24)) return false;
             if ((this.X25 is null) != (target.X25 is null)) return false;
             if (!(this.X25 is null) && !(target.X25 is null) && this.X25 != target.X25) return false;
             if ((this.X26 is null) != (target.X26 is null)) return false;
@@ -1499,11 +1499,11 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator.Internal
             _x22?.Dispose();
         }
 
-        private sealed class CustomFormatter : Omnix.Serialization.RocketPack.IRocketPackFormatter<NullableMessage>
+        private sealed class CustomFormatter : global::Omnix.Serialization.RocketPack.IRocketPackFormatter<NullableMessage>
         {
-            public void Serialize(Omnix.Serialization.RocketPack.RocketPackWriter w, NullableMessage value, int rank)
+            public void Serialize(global::Omnix.Serialization.RocketPack.RocketPackWriter w, NullableMessage value, int rank)
             {
-                if (rank > 256) throw new System.FormatException();
+                if (rank > 256) throw new global::System.FormatException();
 
                 {
                     uint propertyCount = 0;
@@ -1764,9 +1764,9 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator.Internal
                 }
             }
 
-            public NullableMessage Deserialize(Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
+            public NullableMessage Deserialize(global::Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
             {
-                if (rank > 256) throw new System.FormatException();
+                if (rank > 256) throw new global::System.FormatException();
 
                 uint propertyCount = r.GetUInt32();
 
@@ -1790,11 +1790,11 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator.Internal
                 float? p_x17 = null;
                 double? p_x18 = null;
                 string? p_x19 = null;
-                Omnix.Serialization.RocketPack.Timestamp? p_x20 = null;
-                System.ReadOnlyMemory<byte>? p_x21 = null;
-                System.Buffers.IMemoryOwner<byte>? p_x22 = null;
+                global::Omnix.Serialization.RocketPack.Timestamp? p_x20 = null;
+                global::System.ReadOnlyMemory<byte>? p_x21 = null;
+                global::System.Buffers.IMemoryOwner<byte>? p_x22 = null;
                 string[]? p_x23 = null;
-                System.Collections.Generic.Dictionary<byte, string>? p_x24 = null;
+                global::System.Collections.Generic.Dictionary<byte, string>? p_x24 = null;
                 SmallMessageElement? p_x25 = null;
                 MessageElement? p_x26 = null;
 
@@ -1931,7 +1931,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator.Internal
                         case 24:
                             {
                                 var length = r.GetUInt32();
-                                p_x24 = new System.Collections.Generic.Dictionary<byte, string>();
+                                p_x24 = new global::System.Collections.Generic.Dictionary<byte, string>();
                                 byte t_key = 0;
                                 string t_value = string.Empty;
                                 for (int i = 0; i < length; i++)

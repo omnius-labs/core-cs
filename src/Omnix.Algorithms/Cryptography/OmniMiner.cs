@@ -1,16 +1,11 @@
 using System;
 using System.Buffers;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Omnix.Base;
 using Omnix.Base.Helpers;
-using Omnix.Serialization;
-using Omnix.Serialization.Extensions;
 
 namespace Omnix.Algorithms.Cryptography
 {
@@ -109,12 +104,14 @@ namespace Omnix.Algorithms.Cryptography
 
                 var sw = Stopwatch.StartNew();
 
-                var info = new ProcessStartInfo(_path);
-                info.CreateNoWindow = true;
-                info.UseShellExecute = false;
-                info.RedirectStandardInput = true;
-                info.RedirectStandardOutput = true;
-                info.Arguments = $"--type=simple_sha2_256 --value={Convert.ToBase64String(value)}";
+                var info = new ProcessStartInfo(_path)
+                {
+                    CreateNoWindow = true,
+                    UseShellExecute = false,
+                    RedirectStandardInput = true,
+                    RedirectStandardOutput = true,
+                    Arguments = $"--type=simple_sha2_256 --value={Convert.ToBase64String(value)}"
+                };
 
                 int difficulty = 0;
                 byte[] key = new byte[32];

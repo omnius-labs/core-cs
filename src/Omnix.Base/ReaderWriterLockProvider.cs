@@ -8,7 +8,7 @@ namespace Omnix.Base
     /// </summary>
     public sealed class ReaderWriterLockProvider : DisposableBase
     {
-        private ReaderWriterLockSlim _lock;
+        private readonly ReaderWriterLockSlim _lock;
 
         public ReaderWriterLockProvider(LockRecursionPolicy recursionPolicy)
         {

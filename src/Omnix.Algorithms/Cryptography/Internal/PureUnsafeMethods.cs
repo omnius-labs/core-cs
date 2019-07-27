@@ -1,18 +1,13 @@
-using System;
-using System.Collections.Generic;
-using System.Runtime.InteropServices;
-using System.Text;
-
 namespace Omnix.Algorithms.Cryptography.Internal
 {
-    static unsafe class PureUnsafeMethods
+    internal static unsafe class PureUnsafeMethods
     {
         public static uint Crc32_Castagnoli_Compute(uint x, byte* src, int len)
         {
             return P_Crc32_Castagnoli.Compute(x, src, len);
         }
 
-        static class P_Crc32_Castagnoli
+        private static class P_Crc32_Castagnoli
         {
             private static readonly uint[] _table;
 

@@ -11,7 +11,7 @@ namespace Omnix.Base
     /// </summary>
     public static class RandomProvider
     {
-        private static ThreadLocal<Random> _randomWrapper = new ThreadLocal<Random>(() =>
+        private static readonly ThreadLocal<Random> _randomWrapper = new ThreadLocal<Random>(() =>
         {
             using (var rng = RandomNumberGenerator.Create())
             {

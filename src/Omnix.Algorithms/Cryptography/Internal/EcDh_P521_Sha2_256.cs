@@ -1,13 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using Omnix.Algorithms.Internal;
 
 namespace Omnix.Algorithms.Cryptography.Internal
 {
-    static class EcDh_P521_Sha2_256
+    internal static class EcDh_P521_Sha2_256
     {
         public static (byte[] publicKey, byte[] privateKey) CreateKeys()
         {
@@ -96,16 +95,20 @@ namespace Omnix.Algorithms.Cryptography.Internal
 
             public override ECParameters ExportExplicitParameters()
             {
-                var ecParams = new ECParameters();
-                ecParams.Q = _ecPoint;
+                var ecParams = new ECParameters
+                {
+                    Q = _ecPoint
+                };
                 return ecParams;
             }
 
             public override ECParameters ExportParameters()
             {
-                var ecParams = new ECParameters();
-                ecParams.Curve = _ecCurve;
-                ecParams.Q = _ecPoint;
+                var ecParams = new ECParameters
+                {
+                    Curve = _ecCurve,
+                    Q = _ecPoint
+                };
                 return ecParams;
             }
         }

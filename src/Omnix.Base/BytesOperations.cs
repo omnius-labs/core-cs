@@ -1,11 +1,10 @@
 using System;
-using System.IO;
 using System.Runtime.InteropServices;
 using Omnix.Base.Internal;
 
 namespace Omnix.Base
 {
-    public unsafe static class BytesOperations
+    public static unsafe class BytesOperations
     {
         private static NativeLibraryManager? _nativeLibraryManager;
 
@@ -99,7 +98,7 @@ namespace Omnix.Base
 
         [Obsolete("", true)]
         [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-        public new static bool Equals(object obj1, object obj2)
+        public static new bool Equals(object obj1, object obj2)
         {
             throw new NotImplementedException();
         }
@@ -158,6 +157,7 @@ namespace Omnix.Base
                 return _equals(p_x, p_y, source1.Length);
             }
         }
+
         public static bool SequenceEqual(ReadOnlySpan<byte> source1, ReadOnlySpan<byte> source2, int length)
         {
             if (length > source1.Length)

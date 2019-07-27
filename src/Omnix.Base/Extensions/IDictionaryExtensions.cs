@@ -39,9 +39,8 @@ namespace Omnix.Base.Extensions
                     Monitor.Enter(lockObject, ref lockToken);
                 }
 
-                TValue result;
 
-                if (!dictionary.TryGetValue(key, out result))
+                if (!dictionary.TryGetValue(key, out var result))
                 {
                     result = addValueFactory(key);
                     dictionary.Add(key, result);
@@ -90,9 +89,8 @@ namespace Omnix.Base.Extensions
                     Monitor.Enter(lockObject, ref lockToken);
                 }
 
-                TValue result;
 
-                if (!dictionary.TryGetValue(key, out result))
+                if (!dictionary.TryGetValue(key, out var result))
                 {
                     result = addValue;
                     dictionary.Add(key, result);
@@ -262,8 +260,7 @@ namespace Omnix.Base.Extensions
                     Monitor.Enter(lockObject, ref lockToken);
                 }
 
-                TValue result;
-                if (dictionary.TryGetValue(key, out result))
+                if (dictionary.TryGetValue(key, out var result))
                 {
                     return result;
                 }
@@ -309,8 +306,7 @@ namespace Omnix.Base.Extensions
                     Monitor.Enter(lockObject, ref lockToken);
                 }
 
-                TValue result;
-                if (dictionary.TryGetValue(key, out result))
+                if (dictionary.TryGetValue(key, out var result))
                 {
                     return result;
                 }

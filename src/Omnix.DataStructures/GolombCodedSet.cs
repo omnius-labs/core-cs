@@ -5,12 +5,11 @@ using System.Diagnostics;
 using System.IO.Pipelines;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Omnix.DataStructures
 {
     // TODO 実装中
-    partial class GolombCodedSet
+    internal partial class GolombCodedSet
     {
         public async void Test()
         {

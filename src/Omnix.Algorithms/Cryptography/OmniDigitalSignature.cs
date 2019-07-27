@@ -1,6 +1,5 @@
 using System;
 using System.Buffers;
-using System.IO;
 using Omnix.Algorithms.Cryptography.Internal;
 
 namespace Omnix.Algorithms.Cryptography

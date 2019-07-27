@@ -1,33 +1,33 @@
-
+﻿
 #nullable enable
 
 namespace FormatterBenchmarks
 {
-    internal sealed partial class RocketPack_BytesElementsList : Omnix.Serialization.RocketPack.RocketPackMessageBase<RocketPack_BytesElementsList>
+    internal sealed partial class RocketPack_BytesElementsList : global::Omnix.Serialization.RocketPack.RocketPackMessageBase<RocketPack_BytesElementsList>
     {
         static RocketPack_BytesElementsList()
         {
             RocketPack_BytesElementsList.Formatter = new CustomFormatter();
-            RocketPack_BytesElementsList.Empty = new RocketPack_BytesElementsList(System.Array.Empty<RocketPack_BytesElements>());
+            RocketPack_BytesElementsList.Empty = new RocketPack_BytesElementsList(global::System.Array.Empty<RocketPack_BytesElements>());
         }
 
         private readonly int __hashCode;
 
-        public static readonly int MaxListCount = 100000;
+        public static readonly int MaxListCount = 1048576;
 
         public RocketPack_BytesElementsList(RocketPack_BytesElements[] list)
         {
-            if (list is null) throw new System.ArgumentNullException("list");
-            if (list.Length > 100000) throw new System.ArgumentOutOfRangeException("list");
+            if (list is null) throw new global::System.ArgumentNullException("list");
+            if (list.Length > 1048576) throw new global::System.ArgumentOutOfRangeException("list");
             foreach (var n in list)
             {
-                if (n is null) throw new System.ArgumentNullException("n");
+                if (n is null) throw new global::System.ArgumentNullException("n");
             }
 
-            this.List = new Omnix.DataStructures.ReadOnlyListSlim<RocketPack_BytesElements>(list);
+            this.List = new global::Omnix.DataStructures.ReadOnlyListSlim<RocketPack_BytesElements>(list);
 
             {
-                var __h = new System.HashCode();
+                var __h = new global::System.HashCode();
                 foreach (var n in this.List)
                 {
                     if (n != default) __h.Add(n.GetHashCode());
@@ -36,24 +36,24 @@ namespace FormatterBenchmarks
             }
         }
 
-        public Omnix.DataStructures.ReadOnlyListSlim<RocketPack_BytesElements> List { get; }
+        public global::Omnix.DataStructures.ReadOnlyListSlim<RocketPack_BytesElements> List { get; }
 
         public override bool Equals(RocketPack_BytesElementsList? target)
         {
             if (target is null) return false;
             if (object.ReferenceEquals(this, target)) return true;
-            if (!Omnix.Base.Helpers.CollectionHelper.Equals(this.List, target.List)) return false;
+            if (!global::Omnix.Base.Helpers.CollectionHelper.Equals(this.List, target.List)) return false;
 
             return true;
         }
 
         public override int GetHashCode() => __hashCode;
 
-        private sealed class CustomFormatter : Omnix.Serialization.RocketPack.IRocketPackFormatter<RocketPack_BytesElementsList>
+        private sealed class CustomFormatter : global::Omnix.Serialization.RocketPack.IRocketPackFormatter<RocketPack_BytesElementsList>
         {
-            public void Serialize(Omnix.Serialization.RocketPack.RocketPackWriter w, RocketPack_BytesElementsList value, int rank)
+            public void Serialize(global::Omnix.Serialization.RocketPack.RocketPackWriter w, RocketPack_BytesElementsList value, int rank)
             {
-                if (rank > 256) throw new System.FormatException();
+                if (rank > 256) throw new global::System.FormatException();
 
                 {
                     uint propertyCount = 0;
@@ -75,13 +75,13 @@ namespace FormatterBenchmarks
                 }
             }
 
-            public RocketPack_BytesElementsList Deserialize(Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
+            public RocketPack_BytesElementsList Deserialize(global::Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
             {
-                if (rank > 256) throw new System.FormatException();
+                if (rank > 256) throw new global::System.FormatException();
 
                 uint propertyCount = r.GetUInt32();
 
-                RocketPack_BytesElements[] p_list = System.Array.Empty<RocketPack_BytesElements>();
+                RocketPack_BytesElements[] p_list = global::System.Array.Empty<RocketPack_BytesElements>();
 
                 for (; propertyCount > 0; propertyCount--)
                 {
@@ -106,12 +106,12 @@ namespace FormatterBenchmarks
         }
     }
 
-    internal sealed partial class RocketPack_BytesElements : Omnix.Serialization.RocketPack.RocketPackMessageBase<RocketPack_BytesElements>, System.IDisposable
+    internal sealed partial class RocketPack_BytesElements : global::Omnix.Serialization.RocketPack.RocketPackMessageBase<RocketPack_BytesElements>, global::System.IDisposable
     {
         static RocketPack_BytesElements()
         {
             RocketPack_BytesElements.Formatter = new CustomFormatter();
-            RocketPack_BytesElements.Empty = new RocketPack_BytesElements(Omnix.Base.SimpleMemoryOwner<byte>.Empty, Omnix.Base.SimpleMemoryOwner<byte>.Empty, Omnix.Base.SimpleMemoryOwner<byte>.Empty, Omnix.Base.SimpleMemoryOwner<byte>.Empty, Omnix.Base.SimpleMemoryOwner<byte>.Empty, Omnix.Base.SimpleMemoryOwner<byte>.Empty, Omnix.Base.SimpleMemoryOwner<byte>.Empty, Omnix.Base.SimpleMemoryOwner<byte>.Empty, Omnix.Base.SimpleMemoryOwner<byte>.Empty, Omnix.Base.SimpleMemoryOwner<byte>.Empty);
+            RocketPack_BytesElements.Empty = new RocketPack_BytesElements(global::Omnix.Base.SimpleMemoryOwner<byte>.Empty, global::Omnix.Base.SimpleMemoryOwner<byte>.Empty, global::Omnix.Base.SimpleMemoryOwner<byte>.Empty, global::Omnix.Base.SimpleMemoryOwner<byte>.Empty, global::Omnix.Base.SimpleMemoryOwner<byte>.Empty, global::Omnix.Base.SimpleMemoryOwner<byte>.Empty, global::Omnix.Base.SimpleMemoryOwner<byte>.Empty, global::Omnix.Base.SimpleMemoryOwner<byte>.Empty, global::Omnix.Base.SimpleMemoryOwner<byte>.Empty, global::Omnix.Base.SimpleMemoryOwner<byte>.Empty);
         }
 
         private readonly int __hashCode;
@@ -127,28 +127,28 @@ namespace FormatterBenchmarks
         public static readonly int MaxX8Length = 1048576;
         public static readonly int MaxX9Length = 1048576;
 
-        public RocketPack_BytesElements(System.Buffers.IMemoryOwner<byte> x0, System.Buffers.IMemoryOwner<byte> x1, System.Buffers.IMemoryOwner<byte> x2, System.Buffers.IMemoryOwner<byte> x3, System.Buffers.IMemoryOwner<byte> x4, System.Buffers.IMemoryOwner<byte> x5, System.Buffers.IMemoryOwner<byte> x6, System.Buffers.IMemoryOwner<byte> x7, System.Buffers.IMemoryOwner<byte> x8, System.Buffers.IMemoryOwner<byte> x9)
+        public RocketPack_BytesElements(global::System.Buffers.IMemoryOwner<byte> x0, global::System.Buffers.IMemoryOwner<byte> x1, global::System.Buffers.IMemoryOwner<byte> x2, global::System.Buffers.IMemoryOwner<byte> x3, global::System.Buffers.IMemoryOwner<byte> x4, global::System.Buffers.IMemoryOwner<byte> x5, global::System.Buffers.IMemoryOwner<byte> x6, global::System.Buffers.IMemoryOwner<byte> x7, global::System.Buffers.IMemoryOwner<byte> x8, global::System.Buffers.IMemoryOwner<byte> x9)
         {
-            if (x0 is null) throw new System.ArgumentNullException("x0");
-            if (x0.Memory.Length > 1048576) throw new System.ArgumentOutOfRangeException("x0");
-            if (x1 is null) throw new System.ArgumentNullException("x1");
-            if (x1.Memory.Length > 1048576) throw new System.ArgumentOutOfRangeException("x1");
-            if (x2 is null) throw new System.ArgumentNullException("x2");
-            if (x2.Memory.Length > 1048576) throw new System.ArgumentOutOfRangeException("x2");
-            if (x3 is null) throw new System.ArgumentNullException("x3");
-            if (x3.Memory.Length > 1048576) throw new System.ArgumentOutOfRangeException("x3");
-            if (x4 is null) throw new System.ArgumentNullException("x4");
-            if (x4.Memory.Length > 1048576) throw new System.ArgumentOutOfRangeException("x4");
-            if (x5 is null) throw new System.ArgumentNullException("x5");
-            if (x5.Memory.Length > 1048576) throw new System.ArgumentOutOfRangeException("x5");
-            if (x6 is null) throw new System.ArgumentNullException("x6");
-            if (x6.Memory.Length > 1048576) throw new System.ArgumentOutOfRangeException("x6");
-            if (x7 is null) throw new System.ArgumentNullException("x7");
-            if (x7.Memory.Length > 1048576) throw new System.ArgumentOutOfRangeException("x7");
-            if (x8 is null) throw new System.ArgumentNullException("x8");
-            if (x8.Memory.Length > 1048576) throw new System.ArgumentOutOfRangeException("x8");
-            if (x9 is null) throw new System.ArgumentNullException("x9");
-            if (x9.Memory.Length > 1048576) throw new System.ArgumentOutOfRangeException("x9");
+            if (x0 is null) throw new global::System.ArgumentNullException("x0");
+            if (x0.Memory.Length > 1048576) throw new global::System.ArgumentOutOfRangeException("x0");
+            if (x1 is null) throw new global::System.ArgumentNullException("x1");
+            if (x1.Memory.Length > 1048576) throw new global::System.ArgumentOutOfRangeException("x1");
+            if (x2 is null) throw new global::System.ArgumentNullException("x2");
+            if (x2.Memory.Length > 1048576) throw new global::System.ArgumentOutOfRangeException("x2");
+            if (x3 is null) throw new global::System.ArgumentNullException("x3");
+            if (x3.Memory.Length > 1048576) throw new global::System.ArgumentOutOfRangeException("x3");
+            if (x4 is null) throw new global::System.ArgumentNullException("x4");
+            if (x4.Memory.Length > 1048576) throw new global::System.ArgumentOutOfRangeException("x4");
+            if (x5 is null) throw new global::System.ArgumentNullException("x5");
+            if (x5.Memory.Length > 1048576) throw new global::System.ArgumentOutOfRangeException("x5");
+            if (x6 is null) throw new global::System.ArgumentNullException("x6");
+            if (x6.Memory.Length > 1048576) throw new global::System.ArgumentOutOfRangeException("x6");
+            if (x7 is null) throw new global::System.ArgumentNullException("x7");
+            if (x7.Memory.Length > 1048576) throw new global::System.ArgumentOutOfRangeException("x7");
+            if (x8 is null) throw new global::System.ArgumentNullException("x8");
+            if (x8.Memory.Length > 1048576) throw new global::System.ArgumentOutOfRangeException("x8");
+            if (x9 is null) throw new global::System.ArgumentNullException("x9");
+            if (x9.Memory.Length > 1048576) throw new global::System.ArgumentOutOfRangeException("x9");
 
             _x0 = x0;
             _x1 = x1;
@@ -162,56 +162,56 @@ namespace FormatterBenchmarks
             _x9 = x9;
 
             {
-                var __h = new System.HashCode();
-                if (!this.X0.IsEmpty) __h.Add(Omnix.Base.Helpers.ObjectHelper.GetHashCode(this.X0.Span));
-                if (!this.X1.IsEmpty) __h.Add(Omnix.Base.Helpers.ObjectHelper.GetHashCode(this.X1.Span));
-                if (!this.X2.IsEmpty) __h.Add(Omnix.Base.Helpers.ObjectHelper.GetHashCode(this.X2.Span));
-                if (!this.X3.IsEmpty) __h.Add(Omnix.Base.Helpers.ObjectHelper.GetHashCode(this.X3.Span));
-                if (!this.X4.IsEmpty) __h.Add(Omnix.Base.Helpers.ObjectHelper.GetHashCode(this.X4.Span));
-                if (!this.X5.IsEmpty) __h.Add(Omnix.Base.Helpers.ObjectHelper.GetHashCode(this.X5.Span));
-                if (!this.X6.IsEmpty) __h.Add(Omnix.Base.Helpers.ObjectHelper.GetHashCode(this.X6.Span));
-                if (!this.X7.IsEmpty) __h.Add(Omnix.Base.Helpers.ObjectHelper.GetHashCode(this.X7.Span));
-                if (!this.X8.IsEmpty) __h.Add(Omnix.Base.Helpers.ObjectHelper.GetHashCode(this.X8.Span));
-                if (!this.X9.IsEmpty) __h.Add(Omnix.Base.Helpers.ObjectHelper.GetHashCode(this.X9.Span));
+                var __h = new global::System.HashCode();
+                if (!this.X0.IsEmpty) __h.Add(global::Omnix.Base.Helpers.ObjectHelper.GetHashCode(this.X0.Span));
+                if (!this.X1.IsEmpty) __h.Add(global::Omnix.Base.Helpers.ObjectHelper.GetHashCode(this.X1.Span));
+                if (!this.X2.IsEmpty) __h.Add(global::Omnix.Base.Helpers.ObjectHelper.GetHashCode(this.X2.Span));
+                if (!this.X3.IsEmpty) __h.Add(global::Omnix.Base.Helpers.ObjectHelper.GetHashCode(this.X3.Span));
+                if (!this.X4.IsEmpty) __h.Add(global::Omnix.Base.Helpers.ObjectHelper.GetHashCode(this.X4.Span));
+                if (!this.X5.IsEmpty) __h.Add(global::Omnix.Base.Helpers.ObjectHelper.GetHashCode(this.X5.Span));
+                if (!this.X6.IsEmpty) __h.Add(global::Omnix.Base.Helpers.ObjectHelper.GetHashCode(this.X6.Span));
+                if (!this.X7.IsEmpty) __h.Add(global::Omnix.Base.Helpers.ObjectHelper.GetHashCode(this.X7.Span));
+                if (!this.X8.IsEmpty) __h.Add(global::Omnix.Base.Helpers.ObjectHelper.GetHashCode(this.X8.Span));
+                if (!this.X9.IsEmpty) __h.Add(global::Omnix.Base.Helpers.ObjectHelper.GetHashCode(this.X9.Span));
                 __hashCode = __h.ToHashCode();
             }
         }
 
-        private readonly System.Buffers.IMemoryOwner<byte> _x0;
-        public System.ReadOnlyMemory<byte> X0 => _x0.Memory;
-        private readonly System.Buffers.IMemoryOwner<byte> _x1;
-        public System.ReadOnlyMemory<byte> X1 => _x1.Memory;
-        private readonly System.Buffers.IMemoryOwner<byte> _x2;
-        public System.ReadOnlyMemory<byte> X2 => _x2.Memory;
-        private readonly System.Buffers.IMemoryOwner<byte> _x3;
-        public System.ReadOnlyMemory<byte> X3 => _x3.Memory;
-        private readonly System.Buffers.IMemoryOwner<byte> _x4;
-        public System.ReadOnlyMemory<byte> X4 => _x4.Memory;
-        private readonly System.Buffers.IMemoryOwner<byte> _x5;
-        public System.ReadOnlyMemory<byte> X5 => _x5.Memory;
-        private readonly System.Buffers.IMemoryOwner<byte> _x6;
-        public System.ReadOnlyMemory<byte> X6 => _x6.Memory;
-        private readonly System.Buffers.IMemoryOwner<byte> _x7;
-        public System.ReadOnlyMemory<byte> X7 => _x7.Memory;
-        private readonly System.Buffers.IMemoryOwner<byte> _x8;
-        public System.ReadOnlyMemory<byte> X8 => _x8.Memory;
-        private readonly System.Buffers.IMemoryOwner<byte> _x9;
-        public System.ReadOnlyMemory<byte> X9 => _x9.Memory;
+        private readonly global::System.Buffers.IMemoryOwner<byte> _x0;
+        public global::System.ReadOnlyMemory<byte> X0 => _x0.Memory;
+        private readonly global::System.Buffers.IMemoryOwner<byte> _x1;
+        public global::System.ReadOnlyMemory<byte> X1 => _x1.Memory;
+        private readonly global::System.Buffers.IMemoryOwner<byte> _x2;
+        public global::System.ReadOnlyMemory<byte> X2 => _x2.Memory;
+        private readonly global::System.Buffers.IMemoryOwner<byte> _x3;
+        public global::System.ReadOnlyMemory<byte> X3 => _x3.Memory;
+        private readonly global::System.Buffers.IMemoryOwner<byte> _x4;
+        public global::System.ReadOnlyMemory<byte> X4 => _x4.Memory;
+        private readonly global::System.Buffers.IMemoryOwner<byte> _x5;
+        public global::System.ReadOnlyMemory<byte> X5 => _x5.Memory;
+        private readonly global::System.Buffers.IMemoryOwner<byte> _x6;
+        public global::System.ReadOnlyMemory<byte> X6 => _x6.Memory;
+        private readonly global::System.Buffers.IMemoryOwner<byte> _x7;
+        public global::System.ReadOnlyMemory<byte> X7 => _x7.Memory;
+        private readonly global::System.Buffers.IMemoryOwner<byte> _x8;
+        public global::System.ReadOnlyMemory<byte> X8 => _x8.Memory;
+        private readonly global::System.Buffers.IMemoryOwner<byte> _x9;
+        public global::System.ReadOnlyMemory<byte> X9 => _x9.Memory;
 
         public override bool Equals(RocketPack_BytesElements? target)
         {
             if (target is null) return false;
             if (object.ReferenceEquals(this, target)) return true;
-            if (!Omnix.Base.BytesOperations.SequenceEqual(this.X0.Span, target.X0.Span)) return false;
-            if (!Omnix.Base.BytesOperations.SequenceEqual(this.X1.Span, target.X1.Span)) return false;
-            if (!Omnix.Base.BytesOperations.SequenceEqual(this.X2.Span, target.X2.Span)) return false;
-            if (!Omnix.Base.BytesOperations.SequenceEqual(this.X3.Span, target.X3.Span)) return false;
-            if (!Omnix.Base.BytesOperations.SequenceEqual(this.X4.Span, target.X4.Span)) return false;
-            if (!Omnix.Base.BytesOperations.SequenceEqual(this.X5.Span, target.X5.Span)) return false;
-            if (!Omnix.Base.BytesOperations.SequenceEqual(this.X6.Span, target.X6.Span)) return false;
-            if (!Omnix.Base.BytesOperations.SequenceEqual(this.X7.Span, target.X7.Span)) return false;
-            if (!Omnix.Base.BytesOperations.SequenceEqual(this.X8.Span, target.X8.Span)) return false;
-            if (!Omnix.Base.BytesOperations.SequenceEqual(this.X9.Span, target.X9.Span)) return false;
+            if (!global::Omnix.Base.BytesOperations.SequenceEqual(this.X0.Span, target.X0.Span)) return false;
+            if (!global::Omnix.Base.BytesOperations.SequenceEqual(this.X1.Span, target.X1.Span)) return false;
+            if (!global::Omnix.Base.BytesOperations.SequenceEqual(this.X2.Span, target.X2.Span)) return false;
+            if (!global::Omnix.Base.BytesOperations.SequenceEqual(this.X3.Span, target.X3.Span)) return false;
+            if (!global::Omnix.Base.BytesOperations.SequenceEqual(this.X4.Span, target.X4.Span)) return false;
+            if (!global::Omnix.Base.BytesOperations.SequenceEqual(this.X5.Span, target.X5.Span)) return false;
+            if (!global::Omnix.Base.BytesOperations.SequenceEqual(this.X6.Span, target.X6.Span)) return false;
+            if (!global::Omnix.Base.BytesOperations.SequenceEqual(this.X7.Span, target.X7.Span)) return false;
+            if (!global::Omnix.Base.BytesOperations.SequenceEqual(this.X8.Span, target.X8.Span)) return false;
+            if (!global::Omnix.Base.BytesOperations.SequenceEqual(this.X9.Span, target.X9.Span)) return false;
 
             return true;
         }
@@ -232,11 +232,11 @@ namespace FormatterBenchmarks
             _x9?.Dispose();
         }
 
-        private sealed class CustomFormatter : Omnix.Serialization.RocketPack.IRocketPackFormatter<RocketPack_BytesElements>
+        private sealed class CustomFormatter : global::Omnix.Serialization.RocketPack.IRocketPackFormatter<RocketPack_BytesElements>
         {
-            public void Serialize(Omnix.Serialization.RocketPack.RocketPackWriter w, RocketPack_BytesElements value, int rank)
+            public void Serialize(global::Omnix.Serialization.RocketPack.RocketPackWriter w, RocketPack_BytesElements value, int rank)
             {
-                if (rank > 256) throw new System.FormatException();
+                if (rank > 256) throw new global::System.FormatException();
 
                 {
                     uint propertyCount = 0;
@@ -335,22 +335,22 @@ namespace FormatterBenchmarks
                 }
             }
 
-            public RocketPack_BytesElements Deserialize(Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
+            public RocketPack_BytesElements Deserialize(global::Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
             {
-                if (rank > 256) throw new System.FormatException();
+                if (rank > 256) throw new global::System.FormatException();
 
                 uint propertyCount = r.GetUInt32();
 
-                System.Buffers.IMemoryOwner<byte> p_x0 = Omnix.Base.SimpleMemoryOwner<byte>.Empty;
-                System.Buffers.IMemoryOwner<byte> p_x1 = Omnix.Base.SimpleMemoryOwner<byte>.Empty;
-                System.Buffers.IMemoryOwner<byte> p_x2 = Omnix.Base.SimpleMemoryOwner<byte>.Empty;
-                System.Buffers.IMemoryOwner<byte> p_x3 = Omnix.Base.SimpleMemoryOwner<byte>.Empty;
-                System.Buffers.IMemoryOwner<byte> p_x4 = Omnix.Base.SimpleMemoryOwner<byte>.Empty;
-                System.Buffers.IMemoryOwner<byte> p_x5 = Omnix.Base.SimpleMemoryOwner<byte>.Empty;
-                System.Buffers.IMemoryOwner<byte> p_x6 = Omnix.Base.SimpleMemoryOwner<byte>.Empty;
-                System.Buffers.IMemoryOwner<byte> p_x7 = Omnix.Base.SimpleMemoryOwner<byte>.Empty;
-                System.Buffers.IMemoryOwner<byte> p_x8 = Omnix.Base.SimpleMemoryOwner<byte>.Empty;
-                System.Buffers.IMemoryOwner<byte> p_x9 = Omnix.Base.SimpleMemoryOwner<byte>.Empty;
+                global::System.Buffers.IMemoryOwner<byte> p_x0 = global::Omnix.Base.SimpleMemoryOwner<byte>.Empty;
+                global::System.Buffers.IMemoryOwner<byte> p_x1 = global::Omnix.Base.SimpleMemoryOwner<byte>.Empty;
+                global::System.Buffers.IMemoryOwner<byte> p_x2 = global::Omnix.Base.SimpleMemoryOwner<byte>.Empty;
+                global::System.Buffers.IMemoryOwner<byte> p_x3 = global::Omnix.Base.SimpleMemoryOwner<byte>.Empty;
+                global::System.Buffers.IMemoryOwner<byte> p_x4 = global::Omnix.Base.SimpleMemoryOwner<byte>.Empty;
+                global::System.Buffers.IMemoryOwner<byte> p_x5 = global::Omnix.Base.SimpleMemoryOwner<byte>.Empty;
+                global::System.Buffers.IMemoryOwner<byte> p_x6 = global::Omnix.Base.SimpleMemoryOwner<byte>.Empty;
+                global::System.Buffers.IMemoryOwner<byte> p_x7 = global::Omnix.Base.SimpleMemoryOwner<byte>.Empty;
+                global::System.Buffers.IMemoryOwner<byte> p_x8 = global::Omnix.Base.SimpleMemoryOwner<byte>.Empty;
+                global::System.Buffers.IMemoryOwner<byte> p_x9 = global::Omnix.Base.SimpleMemoryOwner<byte>.Empty;
 
                 for (; propertyCount > 0; propertyCount--)
                 {
@@ -415,31 +415,31 @@ namespace FormatterBenchmarks
         }
     }
 
-    internal sealed partial class RocketPack_IntElementsList : Omnix.Serialization.RocketPack.RocketPackMessageBase<RocketPack_IntElementsList>
+    internal sealed partial class RocketPack_IntElementsList : global::Omnix.Serialization.RocketPack.RocketPackMessageBase<RocketPack_IntElementsList>
     {
         static RocketPack_IntElementsList()
         {
             RocketPack_IntElementsList.Formatter = new CustomFormatter();
-            RocketPack_IntElementsList.Empty = new RocketPack_IntElementsList(System.Array.Empty<RocketPack_IntElements>());
+            RocketPack_IntElementsList.Empty = new RocketPack_IntElementsList(global::System.Array.Empty<RocketPack_IntElements>());
         }
 
         private readonly int __hashCode;
 
-        public static readonly int MaxListCount = 100000;
+        public static readonly int MaxListCount = 1048576;
 
         public RocketPack_IntElementsList(RocketPack_IntElements[] list)
         {
-            if (list is null) throw new System.ArgumentNullException("list");
-            if (list.Length > 100000) throw new System.ArgumentOutOfRangeException("list");
+            if (list is null) throw new global::System.ArgumentNullException("list");
+            if (list.Length > 1048576) throw new global::System.ArgumentOutOfRangeException("list");
             foreach (var n in list)
             {
-                if (n is null) throw new System.ArgumentNullException("n");
+                if (n is null) throw new global::System.ArgumentNullException("n");
             }
 
-            this.List = new Omnix.DataStructures.ReadOnlyListSlim<RocketPack_IntElements>(list);
+            this.List = new global::Omnix.DataStructures.ReadOnlyListSlim<RocketPack_IntElements>(list);
 
             {
-                var __h = new System.HashCode();
+                var __h = new global::System.HashCode();
                 foreach (var n in this.List)
                 {
                     if (n != default) __h.Add(n.GetHashCode());
@@ -448,24 +448,24 @@ namespace FormatterBenchmarks
             }
         }
 
-        public Omnix.DataStructures.ReadOnlyListSlim<RocketPack_IntElements> List { get; }
+        public global::Omnix.DataStructures.ReadOnlyListSlim<RocketPack_IntElements> List { get; }
 
         public override bool Equals(RocketPack_IntElementsList? target)
         {
             if (target is null) return false;
             if (object.ReferenceEquals(this, target)) return true;
-            if (!Omnix.Base.Helpers.CollectionHelper.Equals(this.List, target.List)) return false;
+            if (!global::Omnix.Base.Helpers.CollectionHelper.Equals(this.List, target.List)) return false;
 
             return true;
         }
 
         public override int GetHashCode() => __hashCode;
 
-        private sealed class CustomFormatter : Omnix.Serialization.RocketPack.IRocketPackFormatter<RocketPack_IntElementsList>
+        private sealed class CustomFormatter : global::Omnix.Serialization.RocketPack.IRocketPackFormatter<RocketPack_IntElementsList>
         {
-            public void Serialize(Omnix.Serialization.RocketPack.RocketPackWriter w, RocketPack_IntElementsList value, int rank)
+            public void Serialize(global::Omnix.Serialization.RocketPack.RocketPackWriter w, RocketPack_IntElementsList value, int rank)
             {
-                if (rank > 256) throw new System.FormatException();
+                if (rank > 256) throw new global::System.FormatException();
 
                 {
                     uint propertyCount = 0;
@@ -487,13 +487,13 @@ namespace FormatterBenchmarks
                 }
             }
 
-            public RocketPack_IntElementsList Deserialize(Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
+            public RocketPack_IntElementsList Deserialize(global::Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
             {
-                if (rank > 256) throw new System.FormatException();
+                if (rank > 256) throw new global::System.FormatException();
 
                 uint propertyCount = r.GetUInt32();
 
-                RocketPack_IntElements[] p_list = System.Array.Empty<RocketPack_IntElements>();
+                RocketPack_IntElements[] p_list = global::System.Array.Empty<RocketPack_IntElements>();
 
                 for (; propertyCount > 0; propertyCount--)
                 {
@@ -518,7 +518,7 @@ namespace FormatterBenchmarks
         }
     }
 
-    internal sealed partial class RocketPack_IntElements : Omnix.Serialization.RocketPack.RocketPackMessageBase<RocketPack_IntElements>
+    internal sealed partial class RocketPack_IntElements : global::Omnix.Serialization.RocketPack.RocketPackMessageBase<RocketPack_IntElements>
     {
         static RocketPack_IntElements()
         {
@@ -542,7 +542,7 @@ namespace FormatterBenchmarks
             this.X9 = x9;
 
             {
-                var __h = new System.HashCode();
+                var __h = new global::System.HashCode();
                 if (this.X0 != default) __h.Add(this.X0.GetHashCode());
                 if (this.X1 != default) __h.Add(this.X1.GetHashCode());
                 if (this.X2 != default) __h.Add(this.X2.GetHashCode());
@@ -588,11 +588,11 @@ namespace FormatterBenchmarks
 
         public override int GetHashCode() => __hashCode;
 
-        private sealed class CustomFormatter : Omnix.Serialization.RocketPack.IRocketPackFormatter<RocketPack_IntElements>
+        private sealed class CustomFormatter : global::Omnix.Serialization.RocketPack.IRocketPackFormatter<RocketPack_IntElements>
         {
-            public void Serialize(Omnix.Serialization.RocketPack.RocketPackWriter w, RocketPack_IntElements value, int rank)
+            public void Serialize(global::Omnix.Serialization.RocketPack.RocketPackWriter w, RocketPack_IntElements value, int rank)
             {
-                if (rank > 256) throw new System.FormatException();
+                if (rank > 256) throw new global::System.FormatException();
 
                 {
                     uint propertyCount = 0;
@@ -691,9 +691,9 @@ namespace FormatterBenchmarks
                 }
             }
 
-            public RocketPack_IntElements Deserialize(Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
+            public RocketPack_IntElements Deserialize(global::Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
             {
-                if (rank > 256) throw new System.FormatException();
+                if (rank > 256) throw new global::System.FormatException();
 
                 uint propertyCount = r.GetUInt32();
 
@@ -771,31 +771,31 @@ namespace FormatterBenchmarks
         }
     }
 
-    internal sealed partial class RocketPack_StringElementsList : Omnix.Serialization.RocketPack.RocketPackMessageBase<RocketPack_StringElementsList>
+    internal sealed partial class RocketPack_StringElementsList : global::Omnix.Serialization.RocketPack.RocketPackMessageBase<RocketPack_StringElementsList>
     {
         static RocketPack_StringElementsList()
         {
             RocketPack_StringElementsList.Formatter = new CustomFormatter();
-            RocketPack_StringElementsList.Empty = new RocketPack_StringElementsList(System.Array.Empty<RocketPack_StringElements>());
+            RocketPack_StringElementsList.Empty = new RocketPack_StringElementsList(global::System.Array.Empty<RocketPack_StringElements>());
         }
 
         private readonly int __hashCode;
 
-        public static readonly int MaxListCount = 100000;
+        public static readonly int MaxListCount = 1048576;
 
         public RocketPack_StringElementsList(RocketPack_StringElements[] list)
         {
-            if (list is null) throw new System.ArgumentNullException("list");
-            if (list.Length > 100000) throw new System.ArgumentOutOfRangeException("list");
+            if (list is null) throw new global::System.ArgumentNullException("list");
+            if (list.Length > 1048576) throw new global::System.ArgumentOutOfRangeException("list");
             foreach (var n in list)
             {
-                if (n is null) throw new System.ArgumentNullException("n");
+                if (n is null) throw new global::System.ArgumentNullException("n");
             }
 
-            this.List = new Omnix.DataStructures.ReadOnlyListSlim<RocketPack_StringElements>(list);
+            this.List = new global::Omnix.DataStructures.ReadOnlyListSlim<RocketPack_StringElements>(list);
 
             {
-                var __h = new System.HashCode();
+                var __h = new global::System.HashCode();
                 foreach (var n in this.List)
                 {
                     if (n != default) __h.Add(n.GetHashCode());
@@ -804,24 +804,24 @@ namespace FormatterBenchmarks
             }
         }
 
-        public Omnix.DataStructures.ReadOnlyListSlim<RocketPack_StringElements> List { get; }
+        public global::Omnix.DataStructures.ReadOnlyListSlim<RocketPack_StringElements> List { get; }
 
         public override bool Equals(RocketPack_StringElementsList? target)
         {
             if (target is null) return false;
             if (object.ReferenceEquals(this, target)) return true;
-            if (!Omnix.Base.Helpers.CollectionHelper.Equals(this.List, target.List)) return false;
+            if (!global::Omnix.Base.Helpers.CollectionHelper.Equals(this.List, target.List)) return false;
 
             return true;
         }
 
         public override int GetHashCode() => __hashCode;
 
-        private sealed class CustomFormatter : Omnix.Serialization.RocketPack.IRocketPackFormatter<RocketPack_StringElementsList>
+        private sealed class CustomFormatter : global::Omnix.Serialization.RocketPack.IRocketPackFormatter<RocketPack_StringElementsList>
         {
-            public void Serialize(Omnix.Serialization.RocketPack.RocketPackWriter w, RocketPack_StringElementsList value, int rank)
+            public void Serialize(global::Omnix.Serialization.RocketPack.RocketPackWriter w, RocketPack_StringElementsList value, int rank)
             {
-                if (rank > 256) throw new System.FormatException();
+                if (rank > 256) throw new global::System.FormatException();
 
                 {
                     uint propertyCount = 0;
@@ -843,13 +843,13 @@ namespace FormatterBenchmarks
                 }
             }
 
-            public RocketPack_StringElementsList Deserialize(Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
+            public RocketPack_StringElementsList Deserialize(global::Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
             {
-                if (rank > 256) throw new System.FormatException();
+                if (rank > 256) throw new global::System.FormatException();
 
                 uint propertyCount = r.GetUInt32();
 
-                RocketPack_StringElements[] p_list = System.Array.Empty<RocketPack_StringElements>();
+                RocketPack_StringElements[] p_list = global::System.Array.Empty<RocketPack_StringElements>();
 
                 for (; propertyCount > 0; propertyCount--)
                 {
@@ -874,7 +874,7 @@ namespace FormatterBenchmarks
         }
     }
 
-    internal sealed partial class RocketPack_StringElements : Omnix.Serialization.RocketPack.RocketPackMessageBase<RocketPack_StringElements>
+    internal sealed partial class RocketPack_StringElements : global::Omnix.Serialization.RocketPack.RocketPackMessageBase<RocketPack_StringElements>
     {
         static RocketPack_StringElements()
         {
@@ -897,26 +897,26 @@ namespace FormatterBenchmarks
 
         public RocketPack_StringElements(string x0, string x1, string x2, string x3, string x4, string x5, string x6, string x7, string x8, string x9)
         {
-            if (x0 is null) throw new System.ArgumentNullException("x0");
-            if (x0.Length > 8192) throw new System.ArgumentOutOfRangeException("x0");
-            if (x1 is null) throw new System.ArgumentNullException("x1");
-            if (x1.Length > 8192) throw new System.ArgumentOutOfRangeException("x1");
-            if (x2 is null) throw new System.ArgumentNullException("x2");
-            if (x2.Length > 8192) throw new System.ArgumentOutOfRangeException("x2");
-            if (x3 is null) throw new System.ArgumentNullException("x3");
-            if (x3.Length > 8192) throw new System.ArgumentOutOfRangeException("x3");
-            if (x4 is null) throw new System.ArgumentNullException("x4");
-            if (x4.Length > 8192) throw new System.ArgumentOutOfRangeException("x4");
-            if (x5 is null) throw new System.ArgumentNullException("x5");
-            if (x5.Length > 8192) throw new System.ArgumentOutOfRangeException("x5");
-            if (x6 is null) throw new System.ArgumentNullException("x6");
-            if (x6.Length > 8192) throw new System.ArgumentOutOfRangeException("x6");
-            if (x7 is null) throw new System.ArgumentNullException("x7");
-            if (x7.Length > 8192) throw new System.ArgumentOutOfRangeException("x7");
-            if (x8 is null) throw new System.ArgumentNullException("x8");
-            if (x8.Length > 8192) throw new System.ArgumentOutOfRangeException("x8");
-            if (x9 is null) throw new System.ArgumentNullException("x9");
-            if (x9.Length > 8192) throw new System.ArgumentOutOfRangeException("x9");
+            if (x0 is null) throw new global::System.ArgumentNullException("x0");
+            if (x0.Length > 8192) throw new global::System.ArgumentOutOfRangeException("x0");
+            if (x1 is null) throw new global::System.ArgumentNullException("x1");
+            if (x1.Length > 8192) throw new global::System.ArgumentOutOfRangeException("x1");
+            if (x2 is null) throw new global::System.ArgumentNullException("x2");
+            if (x2.Length > 8192) throw new global::System.ArgumentOutOfRangeException("x2");
+            if (x3 is null) throw new global::System.ArgumentNullException("x3");
+            if (x3.Length > 8192) throw new global::System.ArgumentOutOfRangeException("x3");
+            if (x4 is null) throw new global::System.ArgumentNullException("x4");
+            if (x4.Length > 8192) throw new global::System.ArgumentOutOfRangeException("x4");
+            if (x5 is null) throw new global::System.ArgumentNullException("x5");
+            if (x5.Length > 8192) throw new global::System.ArgumentOutOfRangeException("x5");
+            if (x6 is null) throw new global::System.ArgumentNullException("x6");
+            if (x6.Length > 8192) throw new global::System.ArgumentOutOfRangeException("x6");
+            if (x7 is null) throw new global::System.ArgumentNullException("x7");
+            if (x7.Length > 8192) throw new global::System.ArgumentOutOfRangeException("x7");
+            if (x8 is null) throw new global::System.ArgumentNullException("x8");
+            if (x8.Length > 8192) throw new global::System.ArgumentOutOfRangeException("x8");
+            if (x9 is null) throw new global::System.ArgumentNullException("x9");
+            if (x9.Length > 8192) throw new global::System.ArgumentOutOfRangeException("x9");
 
             this.X0 = x0;
             this.X1 = x1;
@@ -930,7 +930,7 @@ namespace FormatterBenchmarks
             this.X9 = x9;
 
             {
-                var __h = new System.HashCode();
+                var __h = new global::System.HashCode();
                 if (this.X0 != default) __h.Add(this.X0.GetHashCode());
                 if (this.X1 != default) __h.Add(this.X1.GetHashCode());
                 if (this.X2 != default) __h.Add(this.X2.GetHashCode());
@@ -976,11 +976,11 @@ namespace FormatterBenchmarks
 
         public override int GetHashCode() => __hashCode;
 
-        private sealed class CustomFormatter : Omnix.Serialization.RocketPack.IRocketPackFormatter<RocketPack_StringElements>
+        private sealed class CustomFormatter : global::Omnix.Serialization.RocketPack.IRocketPackFormatter<RocketPack_StringElements>
         {
-            public void Serialize(Omnix.Serialization.RocketPack.RocketPackWriter w, RocketPack_StringElements value, int rank)
+            public void Serialize(global::Omnix.Serialization.RocketPack.RocketPackWriter w, RocketPack_StringElements value, int rank)
             {
-                if (rank > 256) throw new System.FormatException();
+                if (rank > 256) throw new global::System.FormatException();
 
                 {
                     uint propertyCount = 0;
@@ -1079,9 +1079,9 @@ namespace FormatterBenchmarks
                 }
             }
 
-            public RocketPack_StringElements Deserialize(Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
+            public RocketPack_StringElements Deserialize(global::Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
             {
-                if (rank > 256) throw new System.FormatException();
+                if (rank > 256) throw new global::System.FormatException();
 
                 uint propertyCount = r.GetUInt32();
 
