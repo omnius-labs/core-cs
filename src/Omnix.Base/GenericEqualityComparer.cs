@@ -1,14 +1,13 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Omnix.Base
 {
     // https://qiita.com/s-matsuba/items/1ee6bcc1bc5d721fc978
     public class GenericEqualityComparer<T> : IEqualityComparer<T>
     {
-        private Func<T, T, bool> _predicate;
-        private Func<T, int> _getHashCode;
+        private readonly Func<T, T, bool> _predicate;
+        private readonly Func<T, int> _getHashCode;
 
         public GenericEqualityComparer(Func<T, T, bool> predicate)
             : this(predicate, obj => obj?.GetHashCode() ?? 0)

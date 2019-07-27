@@ -1,14 +1,13 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Threading;
 using Omnix.Base;
 
 namespace Omnix.DataStructures
 {
     public class LockedList<T> : IList<T>, ICollection<T>, IEnumerable<T>, IList, ICollection, IEnumerable, ISynchronized
     {
-        private List<T> _list;
+        private readonly List<T> _list;
         private int? _capacity;
 
         public LockedList()

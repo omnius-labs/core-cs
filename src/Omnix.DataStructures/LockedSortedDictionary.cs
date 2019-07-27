@@ -8,7 +8,7 @@ namespace Omnix.DataStructures
 {
     public partial class LockedSortedDictionary<TKey, TValue> : IDictionary<TKey, TValue>, ICollection<KeyValuePair<TKey, TValue>>, IDictionary, ICollection, IEnumerable<KeyValuePair<TKey, TValue>>, IEnumerable, ISynchronized
     {
-        private SortedDictionary<TKey, TValue> _dic;
+        private readonly SortedDictionary<TKey, TValue> _dic;
         private int? _capacity;
 
         private LockedCollection<TKey>? _keys;
@@ -63,7 +63,7 @@ namespace Omnix.DataStructures
             lock (this.LockObject)
             {
                 var array = new KeyValuePair<TKey, TValue>[_dic.Count];
-                ((IDictionary<TKey, TValue>)_dic).CopyTo(array, 0);
+                _dic.CopyTo(array, 0);
 
                 return array;
             }
@@ -245,7 +245,7 @@ namespace Omnix.DataStructures
             {
                 lock (this.LockObject)
                 {
-                    return (ICollection)this.Keys;
+                    return this.Keys;
                 }
             }
         }
@@ -256,7 +256,7 @@ namespace Omnix.DataStructures
             {
                 lock (this.LockObject)
                 {
-                    return (ICollection)this.Values;
+                    return this.Values;
                 }
             }
         }
@@ -333,7 +333,7 @@ namespace Omnix.DataStructures
         {
             lock (this.LockObject)
             {
-                ((IDictionary<TKey, TValue>)_dic).CopyTo(array, arrayIndex);
+                _dic.CopyTo(array, arrayIndex);
             }
         }
 

@@ -1,13 +1,4 @@
-using System;
 using Xunit;
-using Omnix.Serialization.RocketPack.CodeGenerator;
-using Omnix.Base;
-using System.Buffers;
-using System.Collections.Generic;
-using System.Text;
-using System.Diagnostics;
-using Omnix.Serialization.Extensions;
-using System.Security.Cryptography;
 
 namespace Omnix.Serialization.RocketPack.CodeGenerator
 {

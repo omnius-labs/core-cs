@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Linq;
+using System.Text;
 
 namespace Omnix.Serialization.RocketPack.CodeGenerator
 {
@@ -121,10 +121,10 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
 
             return "global::" + result;
         }
-            
+
         private class CodeWriter
         {
-            private StringBuilder _sb = new StringBuilder();
+            private readonly StringBuilder _sb = new StringBuilder();
             private int _indentDepth = 0;
             private bool _wroteIndent = false;
 

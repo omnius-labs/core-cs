@@ -1,16 +1,14 @@
 using System;
 using System.Buffers;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Omnix.DataStructures
 {
-    partial class GolombCodedSet
+    internal partial class GolombCodedSet
     {
-        class GolombEncoder
+        private class GolombEncoder
         {
-            private BitWriter _bitWriter;
-            private int _p, _log2p;
+            private readonly BitWriter _bitWriter;
+            private readonly int _p, _log2p;
 
             public GolombEncoder(IBufferWriter<byte> bufferWriter, int p)
             {
@@ -33,9 +31,9 @@ namespace Omnix.DataStructures
                 _bitWriter.Flush();
             }
 
-            unsafe class BitWriter
+            private unsafe class BitWriter
             {
-                private IBufferWriter<byte> _bufferWriter;
+                private readonly IBufferWriter<byte> _bufferWriter;
 
                 private ulong _bitBuffer;
                 private int _bitBufferCount;

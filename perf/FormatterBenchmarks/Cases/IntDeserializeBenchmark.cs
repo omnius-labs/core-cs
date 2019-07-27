@@ -1,17 +1,17 @@
 using System;
-using BenchmarkDotNet.Attributes;
-using Omnix.Base;
 using System.Buffers;
-using FormatterBenchmarks.Internal;
 using System.Collections.Generic;
+using BenchmarkDotNet.Attributes;
+using FormatterBenchmarks.Internal;
+using Omnix.Base;
 
 namespace FormatterBenchmarks.Cases
 {
     [Config(typeof(BenchmarkConfig))]
     public class IntDeserializeBenchmark
     {
-        private static byte[] _messagePack_Bytes;
-        private static byte[] _rocketPack_Bytes;
+        private static readonly byte[] _messagePack_Bytes;
+        private static readonly byte[] _rocketPack_Bytes;
 
         static IntDeserializeBenchmark()
         {
@@ -87,7 +87,7 @@ namespace FormatterBenchmarks.Cases
         [Benchmark]
         public object RocketPack_IntPropertiesMessage_DeserializeTest()
         {
-           return RocketPack_IntElementsList.Import(new ReadOnlySequence<byte>(_rocketPack_Bytes), BufferPool.Shared);
+            return RocketPack_IntElementsList.Import(new ReadOnlySequence<byte>(_rocketPack_Bytes), BufferPool.Shared);
         }
     }
 }

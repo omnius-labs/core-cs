@@ -1,15 +1,14 @@
 using System;
 using System.IO;
-using System.Reflection;
 using System.Runtime.InteropServices;
 
 namespace Omnix.Base
 {
     public sealed class NativeLibraryManager : DisposableBase
     {
-        IntPtr _moduleHandle = IntPtr.Zero;
+        private IntPtr _moduleHandle = IntPtr.Zero;
 
-        static class NativeMethods
+        private static class NativeMethods
         {
             public static class Windows
             {
@@ -26,7 +25,7 @@ namespace Omnix.Base
 
             public static class Linux
             {
-                const int RTLD_NOW = 2;
+                private const int RTLD_NOW = 2;
 
                 [DllImport("libdl.so")]
                 private static extern IntPtr dlopen(string fileName, int flags);

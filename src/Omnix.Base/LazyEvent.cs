@@ -10,7 +10,7 @@ namespace Omnix.Base
     {
         private static readonly NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
 
-        private Dictionary<Delegate, EventItem> _events = new Dictionary<Delegate, EventItem>();
+        private readonly Dictionary<Delegate, EventItem> _events = new Dictionary<Delegate, EventItem>();
 
         private readonly object _lockObject = new object();
 
@@ -60,7 +60,7 @@ namespace Omnix.Base
 
                 lock (_lockObject)
                 {
-                    _events.Add(value, new EventItem(value, Delay));
+                    _events.Add(value, new EventItem(value, this.Delay));
                 }
             }
             remove
@@ -69,8 +69,7 @@ namespace Omnix.Base
 
                 lock (_lockObject)
                 {
-                    EventItem item;
-                    if (!_events.TryGetValue(value, out item))
+                    if (!_events.TryGetValue(value, out var item))
                     {
                         return;
                     }
@@ -81,16 +80,16 @@ namespace Omnix.Base
             }
         }
 
-        class EventItem : DisposableBase
+        private class EventItem : DisposableBase
         {
-            private Action<IEnumerable<T>> _action;
-            private TimeSpan? _delay;
+            private readonly Action<IEnumerable<T>> _action;
+            private readonly TimeSpan? _delay;
 
-            private Task _task;
+            private readonly Task _task;
 
-            private LinkedList<T> _queue = new LinkedList<T>();
-            private ManualResetEvent _queueResetEvent = new ManualResetEvent(false);
-            private ManualResetEvent _delayResetEvent = new ManualResetEvent(false);
+            private readonly LinkedList<T> _queue = new LinkedList<T>();
+            private readonly ManualResetEvent _queueResetEvent = new ManualResetEvent(false);
+            private readonly ManualResetEvent _delayResetEvent = new ManualResetEvent(false);
 
             private readonly object _lockObject = new object();
 

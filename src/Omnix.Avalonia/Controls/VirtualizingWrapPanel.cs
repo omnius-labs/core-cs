@@ -9,8 +9,6 @@ using System.Diagnostics;
 using System.Linq;
 using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Controls.Primitives;
-using Avalonia.Input;
 using Avalonia.Layout;
 using Omnix.Avalonia.Controls.Primitives;
 using static System.Math;
@@ -27,16 +25,16 @@ namespace Omnix.Avalonia.Controls
         private double _pixelOffset;
         private double _crossAxisOffset;
         private bool _forceRemeasure;
-        private List<double> _lineLengths = new List<double>();
+        private readonly List<double> _lineLengths = new List<double>();
 
         private double _takenLineSpace;
-        public int ScrollQuantum => Orientation == Orientation.Horizontal ? (int)Math.Max(1, _availableSpace.Width / _averageItemSize) : (int)Math.Max(1, _availableSpace.Height / _averageItemSize);
+        public int ScrollQuantum => this.Orientation == Orientation.Horizontal ? (int)Math.Max(1, _availableSpace.Width / _averageItemSize) : (int)Math.Max(1, _availableSpace.Height / _averageItemSize);
 
         bool IVirtualizingPanel.IsFull
         {
             get
             {
-                return Orientation == Orientation.Vertical ?
+                return this.Orientation == Orientation.Vertical ?
                     _takenSpace >= _availableSpace.Width :
                     _takenSpace >= _availableSpace.Height;
             }
@@ -45,14 +43,14 @@ namespace Omnix.Avalonia.Controls
         public IVirtualizingController Controller { get; set; }
 
         int IVirtualizingPanel.OverflowCount => _canBeRemoved;
-        Orientation IVirtualizingPanel.ScrollDirection => Orientation == Orientation.Horizontal ? Orientation.Vertical : Orientation.Horizontal;
+        Orientation IVirtualizingPanel.ScrollDirection => this.Orientation == Orientation.Horizontal ? Orientation.Vertical : Orientation.Horizontal;
         double IVirtualizingPanel.AverageItemSize => _averageItemSize;
 
         double IVirtualizingPanel.PixelOverflow
         {
             get
             {
-                var bounds = Orientation == Orientation.Vertical ?
+                var bounds = this.Orientation == Orientation.Vertical ?
                     _availableSpace.Width : _availableSpace.Height;
                 return Math.Max(0, _takenSpace - bounds);
             }
@@ -67,7 +65,7 @@ namespace Omnix.Avalonia.Controls
                 if (_pixelOffset != value)
                 {
                     _pixelOffset = value;
-                    InvalidateArrange();
+                    this.InvalidateArrange();
                 }
             }
         }
@@ -81,14 +79,14 @@ namespace Omnix.Avalonia.Controls
                 if (_crossAxisOffset != value)
                 {
                     _crossAxisOffset = value;
-                    InvalidateArrange();
+                    this.InvalidateArrange();
                 }
             }
         }
 
         void IVirtualizingPanel.ForceInvalidateMeasure()
         {
-            InvalidateMeasure();
+            this.InvalidateMeasure();
             _forceRemeasure = true;
         }
 
@@ -103,7 +101,7 @@ namespace Omnix.Avalonia.Controls
             {
                 _forceRemeasure = false;
                 _availableSpace = availableSize;
-                Controller?.UpdateControls();
+                this.Controller?.UpdateControls();
             }
 
             return base.MeasureOverride(availableSize);
@@ -118,23 +116,23 @@ namespace Omnix.Avalonia.Controls
             _lineLengths.Clear();
             _averageItemSize = 0;
             _averageCount = 0;
-            var result = Arrange(finalSize);
+            var result = this.Arrange(finalSize);
 
             _takenSpace += _pixelOffset;
-            Controller?.UpdateControls();
+            this.Controller?.UpdateControls();
             return result;
         }
 
         protected Size Arrange(Size finalSize)
         {
             double accumulatedV = 0;
-            var uvFinalSize = CreateUVSize(finalSize);
-            var lineSize = CreateUVSize();
+            var uvFinalSize = this.CreateUVSize(finalSize);
+            var lineSize = this.CreateUVSize();
             int firstChildInLineindex = 0;
-            for (int index = 0; index < Children.Count; index++)
+            for (int index = 0; index < this.Children.Count; index++)
             {
-                var child = Children[index];
-                var childSize = CreateUVSize(child.DesiredSize);
+                var child = this.Children[index];
+                var childSize = this.CreateUVSize(child.DesiredSize);
                 if (lineSize.U + childSize.U <= uvFinalSize.U) // same line
                 {
                     lineSize.U += childSize.U;
@@ -143,8 +141,8 @@ namespace Omnix.Avalonia.Controls
                 }
                 else // moving to next line
                 {
-                    var controlsInLine = GetContolsBetween(firstChildInLineindex, index);
-                    ArrangeLine(accumulatedV, lineSize.V, controlsInLine);
+                    var controlsInLine = this.GetContolsBetween(firstChildInLineindex, index);
+                    this.ArrangeLine(accumulatedV, lineSize.V, controlsInLine);
                     accumulatedV += lineSize.V;
                     lineSize = childSize;
                     firstChildInLineindex = index;
@@ -152,25 +150,25 @@ namespace Omnix.Avalonia.Controls
                 }
             }
 
-            if (firstChildInLineindex < Children.Count)
+            if (firstChildInLineindex < this.Children.Count)
             {
-                var controlsInLine = GetContolsBetween(firstChildInLineindex, Children.Count);
-                ArrangeLine(accumulatedV, lineSize.V, controlsInLine);
+                var controlsInLine = this.GetContolsBetween(firstChildInLineindex, this.Children.Count);
+                this.ArrangeLine(accumulatedV, lineSize.V, controlsInLine);
             }
             return finalSize;
         }
         private IEnumerable<IControl> GetContolsBetween(int first, int last)
         {
-            return Children.Skip(first).Take(last - first);
+            return this.Children.Skip(first).Take(last - first);
         }
 
         private void ArrangeLine(double v, double lineV, IEnumerable<IControl> contols)
         {
             double u = 0;
-            bool isHorizontal = (Orientation == Orientation.Horizontal);
+            bool isHorizontal = (this.Orientation == Orientation.Horizontal);
             foreach (var child in contols)
             {
-                var childSize = CreateUVSize(child.DesiredSize);
+                var childSize = this.CreateUVSize(child.DesiredSize);
                 var x = isHorizontal ? u : v;
                 var y = isHorizontal ? v : u;
                 var width = isHorizontal ? childSize.U : lineV;
@@ -184,7 +182,7 @@ namespace Omnix.Avalonia.Controls
                 child.Arrange(rect);
 
                 u += childSize.U;
-                AddToAverageItemSize(childSize.V);
+                this.AddToAverageItemSize(childSize.V);
 
                 if (rect.Bottom >= _takenSpace)
                 {
@@ -207,7 +205,7 @@ namespace Omnix.Avalonia.Controls
                 case NotifyCollectionChangedAction.Add:
                     foreach (IControl control in e.NewItems)
                     {
-                        UpdateAdd(control);
+                        this.UpdateAdd(control);
                     }
 
                     break;
@@ -215,7 +213,7 @@ namespace Omnix.Avalonia.Controls
                 case NotifyCollectionChangedAction.Remove:
                     foreach (IControl control in e.OldItems)
                     {
-                        UpdateRemove(control);
+                        this.UpdateRemove(control);
                     }
 
                     break;
@@ -225,7 +223,7 @@ namespace Omnix.Avalonia.Controls
 
         private void UpdateAdd(IControl child)
         {
-            var bounds = Bounds;
+            var bounds = this.Bounds;
             var gap = 0;
 
             child.Measure(_availableSpace);
@@ -233,7 +231,7 @@ namespace Omnix.Avalonia.Controls
             var height = child.DesiredSize.Height;
             var width = child.DesiredSize.Width;
 
-            if (Orientation == Orientation.Horizontal)
+            if (this.Orientation == Orientation.Horizontal)
             {
                 if (_takenLineSpace + width > _availableSpace.Width)
                 {
@@ -251,7 +249,7 @@ namespace Omnix.Avalonia.Controls
 
                     _lineLengths[_lineLengths.Count - 1] += width;
                 }
-                AddToAverageItemSize(height);
+                this.AddToAverageItemSize(height);
             }
             else
             {
@@ -264,19 +262,19 @@ namespace Omnix.Avalonia.Controls
                 {
                     _takenLineSpace += height;
                 }
-                AddToAverageItemSize(width);
+                this.AddToAverageItemSize(width);
             }
         }
 
         private void UpdateRemove(IControl child)
         {
-            var bounds = Bounds;
+            var bounds = this.Bounds;
             var gap = 0;
 
             var height = child.DesiredSize.Height;
             var width = child.DesiredSize.Width;
 
-            if (Orientation == Orientation.Horizontal)
+            if (this.Orientation == Orientation.Horizontal)
             {
                 if (_takenLineSpace - width <= 0)
                 {
@@ -288,7 +286,7 @@ namespace Omnix.Avalonia.Controls
                 {
                     _takenLineSpace -= width;
                 }
-                AddToAverageItemSize(height);
+                this.AddToAverageItemSize(height);
             }
             else
             {
@@ -301,7 +299,7 @@ namespace Omnix.Avalonia.Controls
                 {
                     _takenLineSpace -= height;
                 }
-                AddToAverageItemSize(width);
+                this.AddToAverageItemSize(width);
             }
 
             if (_canBeRemoved > 0)
@@ -322,9 +320,9 @@ namespace Omnix.Avalonia.Controls
             --_averageCount;
         }
 
-        private UVSize CreateUVSize(Size size) => new UVSize(Orientation, size);
+        private UVSize CreateUVSize(Size size) => new UVSize(this.Orientation, size);
 
-        private UVSize CreateUVSize() => new UVSize(Orientation);
+        private UVSize CreateUVSize() => new UVSize(this.Orientation);
 
         /// <summary>
         /// Used to not not write sepearate code for horizontal and vertical orientation.
@@ -344,8 +342,8 @@ namespace Omnix.Avalonia.Controls
             {
                 U = V = 0d;
                 _orientation = orientation;
-                Width = width;
-                Height = height;
+                this.Width = width;
+                this.Height = height;
             }
 
             internal UVSize(Orientation orientation, Size size)
@@ -393,7 +391,7 @@ namespace Omnix.Avalonia.Controls
 
             public Size ToSize()
             {
-                return new Size(Width, Height);
+                return new Size(this.Width, this.Height);
             }
         }
     }

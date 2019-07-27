@@ -9,7 +9,7 @@ namespace Omnix.DataStructures
     {
         public sealed class LockedCollection<T> : ICollection<T>, IEnumerable<T>, ICollection, IEnumerable, ISynchronized
         {
-            private ICollection<T> _collection;
+            private readonly ICollection<T> _collection;
 
             internal LockedCollection(ICollection<T> collection, object lockObject)
             {

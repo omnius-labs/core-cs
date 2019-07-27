@@ -9,7 +9,7 @@ namespace Omnix.DataStructures
     {
         public sealed class VolatileKeyCollection : ICollection<TKey>, IEnumerable<TKey>, ICollection, IEnumerable, ISynchronized
         {
-            private ICollection<TKey> _collection;
+            private readonly ICollection<TKey> _collection;
 
             internal VolatileKeyCollection(ICollection<TKey> collection, object lockObject)
             {

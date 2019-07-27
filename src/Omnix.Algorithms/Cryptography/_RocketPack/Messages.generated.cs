@@ -23,46 +23,46 @@ namespace Omnix.Algorithms.Cryptography
         Simple_Sha2_256 = 0,
     }
 
-    public readonly struct OmniHash : System.IEquatable<OmniHash>
+    public readonly struct OmniHash : global::System.IEquatable<OmniHash>
     {
-        public static Omnix.Serialization.RocketPack.IRocketPackFormatter<OmniHash> Formatter { get; }
+        public static global::Omnix.Serialization.RocketPack.IRocketPackFormatter<OmniHash> Formatter { get; }
         public static OmniHash Empty { get; }
 
         static OmniHash()
         {
             OmniHash.Formatter = new CustomFormatter();
-            OmniHash.Empty = new OmniHash((OmniHashAlgorithmType)0, System.ReadOnlyMemory<byte>.Empty);
+            OmniHash.Empty = new OmniHash((OmniHashAlgorithmType)0, global::System.ReadOnlyMemory<byte>.Empty);
         }
 
         private readonly int __hashCode;
 
         public static readonly int MaxValueLength = 256;
 
-        public OmniHash(OmniHashAlgorithmType algorithmType, System.ReadOnlyMemory<byte> value)
+        public OmniHash(OmniHashAlgorithmType algorithmType, global::System.ReadOnlyMemory<byte> value)
         {
-            if (value.Length > 256) throw new System.ArgumentOutOfRangeException("value");
+            if (value.Length > 256) throw new global::System.ArgumentOutOfRangeException("value");
 
             this.AlgorithmType = algorithmType;
             this.Value = value;
 
             {
-                var __h = new System.HashCode();
+                var __h = new global::System.HashCode();
                 if (this.AlgorithmType != default) __h.Add(this.AlgorithmType.GetHashCode());
-                if (!this.Value.IsEmpty) __h.Add(Omnix.Base.Helpers.ObjectHelper.GetHashCode(this.Value.Span));
+                if (!this.Value.IsEmpty) __h.Add(global::Omnix.Base.Helpers.ObjectHelper.GetHashCode(this.Value.Span));
                 __hashCode = __h.ToHashCode();
             }
         }
 
         public OmniHashAlgorithmType AlgorithmType { get; }
-        public System.ReadOnlyMemory<byte> Value { get; }
+        public global::System.ReadOnlyMemory<byte> Value { get; }
 
-        public static OmniHash Import(System.Buffers.ReadOnlySequence<byte> sequence, Omnix.Base.BufferPool bufferPool)
+        public static OmniHash Import(global::System.Buffers.ReadOnlySequence<byte> sequence, global::Omnix.Base.BufferPool bufferPool)
         {
-            return Formatter.Deserialize(new Omnix.Serialization.RocketPack.RocketPackReader(sequence, bufferPool), 0);
+            return Formatter.Deserialize(new global::Omnix.Serialization.RocketPack.RocketPackReader(sequence, bufferPool), 0);
         }
-        public void Export(System.Buffers.IBufferWriter<byte> bufferWriter, Omnix.Base.BufferPool bufferPool)
+        public void Export(global::System.Buffers.IBufferWriter<byte> bufferWriter, global::Omnix.Base.BufferPool bufferPool)
         {
-            Formatter.Serialize(new Omnix.Serialization.RocketPack.RocketPackWriter(bufferWriter, bufferPool), this, 0);
+            Formatter.Serialize(new global::Omnix.Serialization.RocketPack.RocketPackWriter(bufferWriter, bufferPool), this, 0);
         }
         public static bool operator ==(OmniHash left, OmniHash right)
         {
@@ -81,18 +81,18 @@ namespace Omnix.Algorithms.Cryptography
         public bool Equals(OmniHash target)
         {
             if (this.AlgorithmType != target.AlgorithmType) return false;
-            if (!Omnix.Base.BytesOperations.SequenceEqual(this.Value.Span, target.Value.Span)) return false;
+            if (!global::Omnix.Base.BytesOperations.SequenceEqual(this.Value.Span, target.Value.Span)) return false;
 
             return true;
         }
 
         public override int GetHashCode() => __hashCode;
 
-        private sealed class CustomFormatter : Omnix.Serialization.RocketPack.IRocketPackFormatter<OmniHash>
+        private sealed class CustomFormatter : global::Omnix.Serialization.RocketPack.IRocketPackFormatter<OmniHash>
         {
-            public void Serialize(Omnix.Serialization.RocketPack.RocketPackWriter w, OmniHash value, int rank)
+            public void Serialize(global::Omnix.Serialization.RocketPack.RocketPackWriter w, OmniHash value, int rank)
             {
-                if (rank > 256) throw new System.FormatException();
+                if (rank > 256) throw new global::System.FormatException();
 
                 if (value.AlgorithmType != (OmniHashAlgorithmType)0)
                 {
@@ -104,12 +104,12 @@ namespace Omnix.Algorithms.Cryptography
                 }
             }
 
-            public OmniHash Deserialize(Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
+            public OmniHash Deserialize(global::Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
             {
-                if (rank > 256) throw new System.FormatException();
+                if (rank > 256) throw new global::System.FormatException();
 
                 OmniHashAlgorithmType p_algorithmType = (OmniHashAlgorithmType)0;
-                System.ReadOnlyMemory<byte> p_value = System.ReadOnlyMemory<byte>.Empty;
+                global::System.ReadOnlyMemory<byte> p_value = global::System.ReadOnlyMemory<byte>.Empty;
 
                 {
                     p_algorithmType = (OmniHashAlgorithmType)r.GetUInt64();
@@ -122,12 +122,12 @@ namespace Omnix.Algorithms.Cryptography
         }
     }
 
-    public sealed partial class OmniAgreement : Omnix.Serialization.RocketPack.RocketPackMessageBase<OmniAgreement>
+    public sealed partial class OmniAgreement : global::Omnix.Serialization.RocketPack.RocketPackMessageBase<OmniAgreement>
     {
         static OmniAgreement()
         {
             OmniAgreement.Formatter = new CustomFormatter();
-            OmniAgreement.Empty = new OmniAgreement(Omnix.Serialization.RocketPack.Timestamp.Zero, (OmniAgreementAlgorithmType)0, System.ReadOnlyMemory<byte>.Empty, System.ReadOnlyMemory<byte>.Empty);
+            OmniAgreement.Empty = new OmniAgreement(global::Omnix.Serialization.RocketPack.Timestamp.Zero, (OmniAgreementAlgorithmType)0, global::System.ReadOnlyMemory<byte>.Empty, global::System.ReadOnlyMemory<byte>.Empty);
         }
 
         private readonly int __hashCode;
@@ -135,10 +135,10 @@ namespace Omnix.Algorithms.Cryptography
         public static readonly int MaxPublicKeyLength = 8192;
         public static readonly int MaxPrivateKeyLength = 8192;
 
-        public OmniAgreement(Omnix.Serialization.RocketPack.Timestamp creationTime, OmniAgreementAlgorithmType algorithmType, System.ReadOnlyMemory<byte> publicKey, System.ReadOnlyMemory<byte> privateKey)
+        public OmniAgreement(global::Omnix.Serialization.RocketPack.Timestamp creationTime, OmniAgreementAlgorithmType algorithmType, global::System.ReadOnlyMemory<byte> publicKey, global::System.ReadOnlyMemory<byte> privateKey)
         {
-            if (publicKey.Length > 8192) throw new System.ArgumentOutOfRangeException("publicKey");
-            if (privateKey.Length > 8192) throw new System.ArgumentOutOfRangeException("privateKey");
+            if (publicKey.Length > 8192) throw new global::System.ArgumentOutOfRangeException("publicKey");
+            if (privateKey.Length > 8192) throw new global::System.ArgumentOutOfRangeException("privateKey");
 
             this.CreationTime = creationTime;
             this.AlgorithmType = algorithmType;
@@ -146,19 +146,19 @@ namespace Omnix.Algorithms.Cryptography
             this.PrivateKey = privateKey;
 
             {
-                var __h = new System.HashCode();
+                var __h = new global::System.HashCode();
                 if (this.CreationTime != default) __h.Add(this.CreationTime.GetHashCode());
                 if (this.AlgorithmType != default) __h.Add(this.AlgorithmType.GetHashCode());
-                if (!this.PublicKey.IsEmpty) __h.Add(Omnix.Base.Helpers.ObjectHelper.GetHashCode(this.PublicKey.Span));
-                if (!this.PrivateKey.IsEmpty) __h.Add(Omnix.Base.Helpers.ObjectHelper.GetHashCode(this.PrivateKey.Span));
+                if (!this.PublicKey.IsEmpty) __h.Add(global::Omnix.Base.Helpers.ObjectHelper.GetHashCode(this.PublicKey.Span));
+                if (!this.PrivateKey.IsEmpty) __h.Add(global::Omnix.Base.Helpers.ObjectHelper.GetHashCode(this.PrivateKey.Span));
                 __hashCode = __h.ToHashCode();
             }
         }
 
-        public Omnix.Serialization.RocketPack.Timestamp CreationTime { get; }
+        public global::Omnix.Serialization.RocketPack.Timestamp CreationTime { get; }
         public OmniAgreementAlgorithmType AlgorithmType { get; }
-        public System.ReadOnlyMemory<byte> PublicKey { get; }
-        public System.ReadOnlyMemory<byte> PrivateKey { get; }
+        public global::System.ReadOnlyMemory<byte> PublicKey { get; }
+        public global::System.ReadOnlyMemory<byte> PrivateKey { get; }
 
         public override bool Equals(OmniAgreement? target)
         {
@@ -166,23 +166,23 @@ namespace Omnix.Algorithms.Cryptography
             if (object.ReferenceEquals(this, target)) return true;
             if (this.CreationTime != target.CreationTime) return false;
             if (this.AlgorithmType != target.AlgorithmType) return false;
-            if (!Omnix.Base.BytesOperations.SequenceEqual(this.PublicKey.Span, target.PublicKey.Span)) return false;
-            if (!Omnix.Base.BytesOperations.SequenceEqual(this.PrivateKey.Span, target.PrivateKey.Span)) return false;
+            if (!global::Omnix.Base.BytesOperations.SequenceEqual(this.PublicKey.Span, target.PublicKey.Span)) return false;
+            if (!global::Omnix.Base.BytesOperations.SequenceEqual(this.PrivateKey.Span, target.PrivateKey.Span)) return false;
 
             return true;
         }
 
         public override int GetHashCode() => __hashCode;
 
-        private sealed class CustomFormatter : Omnix.Serialization.RocketPack.IRocketPackFormatter<OmniAgreement>
+        private sealed class CustomFormatter : global::Omnix.Serialization.RocketPack.IRocketPackFormatter<OmniAgreement>
         {
-            public void Serialize(Omnix.Serialization.RocketPack.RocketPackWriter w, OmniAgreement value, int rank)
+            public void Serialize(global::Omnix.Serialization.RocketPack.RocketPackWriter w, OmniAgreement value, int rank)
             {
-                if (rank > 256) throw new System.FormatException();
+                if (rank > 256) throw new global::System.FormatException();
 
                 {
                     uint propertyCount = 0;
-                    if (value.CreationTime != Omnix.Serialization.RocketPack.Timestamp.Zero)
+                    if (value.CreationTime != global::Omnix.Serialization.RocketPack.Timestamp.Zero)
                     {
                         propertyCount++;
                     }
@@ -201,7 +201,7 @@ namespace Omnix.Algorithms.Cryptography
                     w.Write(propertyCount);
                 }
 
-                if (value.CreationTime != Omnix.Serialization.RocketPack.Timestamp.Zero)
+                if (value.CreationTime != global::Omnix.Serialization.RocketPack.Timestamp.Zero)
                 {
                     w.Write((uint)0);
                     w.Write(value.CreationTime);
@@ -223,16 +223,16 @@ namespace Omnix.Algorithms.Cryptography
                 }
             }
 
-            public OmniAgreement Deserialize(Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
+            public OmniAgreement Deserialize(global::Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
             {
-                if (rank > 256) throw new System.FormatException();
+                if (rank > 256) throw new global::System.FormatException();
 
                 uint propertyCount = r.GetUInt32();
 
-                Omnix.Serialization.RocketPack.Timestamp p_creationTime = Omnix.Serialization.RocketPack.Timestamp.Zero;
+                global::Omnix.Serialization.RocketPack.Timestamp p_creationTime = global::Omnix.Serialization.RocketPack.Timestamp.Zero;
                 OmniAgreementAlgorithmType p_algorithmType = (OmniAgreementAlgorithmType)0;
-                System.ReadOnlyMemory<byte> p_publicKey = System.ReadOnlyMemory<byte>.Empty;
-                System.ReadOnlyMemory<byte> p_privateKey = System.ReadOnlyMemory<byte>.Empty;
+                global::System.ReadOnlyMemory<byte> p_publicKey = global::System.ReadOnlyMemory<byte>.Empty;
+                global::System.ReadOnlyMemory<byte> p_privateKey = global::System.ReadOnlyMemory<byte>.Empty;
 
                 for (; propertyCount > 0; propertyCount--)
                 {
@@ -267,38 +267,38 @@ namespace Omnix.Algorithms.Cryptography
         }
     }
 
-    public sealed partial class OmniAgreementPublicKey : Omnix.Serialization.RocketPack.RocketPackMessageBase<OmniAgreementPublicKey>
+    public sealed partial class OmniAgreementPublicKey : global::Omnix.Serialization.RocketPack.RocketPackMessageBase<OmniAgreementPublicKey>
     {
         static OmniAgreementPublicKey()
         {
             OmniAgreementPublicKey.Formatter = new CustomFormatter();
-            OmniAgreementPublicKey.Empty = new OmniAgreementPublicKey(Omnix.Serialization.RocketPack.Timestamp.Zero, (OmniAgreementAlgorithmType)0, System.ReadOnlyMemory<byte>.Empty);
+            OmniAgreementPublicKey.Empty = new OmniAgreementPublicKey(global::Omnix.Serialization.RocketPack.Timestamp.Zero, (OmniAgreementAlgorithmType)0, global::System.ReadOnlyMemory<byte>.Empty);
         }
 
         private readonly int __hashCode;
 
         public static readonly int MaxPublicKeyLength = 8192;
 
-        public OmniAgreementPublicKey(Omnix.Serialization.RocketPack.Timestamp creationTime, OmniAgreementAlgorithmType algorithmType, System.ReadOnlyMemory<byte> publicKey)
+        public OmniAgreementPublicKey(global::Omnix.Serialization.RocketPack.Timestamp creationTime, OmniAgreementAlgorithmType algorithmType, global::System.ReadOnlyMemory<byte> publicKey)
         {
-            if (publicKey.Length > 8192) throw new System.ArgumentOutOfRangeException("publicKey");
+            if (publicKey.Length > 8192) throw new global::System.ArgumentOutOfRangeException("publicKey");
 
             this.CreationTime = creationTime;
             this.AlgorithmType = algorithmType;
             this.PublicKey = publicKey;
 
             {
-                var __h = new System.HashCode();
+                var __h = new global::System.HashCode();
                 if (this.CreationTime != default) __h.Add(this.CreationTime.GetHashCode());
                 if (this.AlgorithmType != default) __h.Add(this.AlgorithmType.GetHashCode());
-                if (!this.PublicKey.IsEmpty) __h.Add(Omnix.Base.Helpers.ObjectHelper.GetHashCode(this.PublicKey.Span));
+                if (!this.PublicKey.IsEmpty) __h.Add(global::Omnix.Base.Helpers.ObjectHelper.GetHashCode(this.PublicKey.Span));
                 __hashCode = __h.ToHashCode();
             }
         }
 
-        public Omnix.Serialization.RocketPack.Timestamp CreationTime { get; }
+        public global::Omnix.Serialization.RocketPack.Timestamp CreationTime { get; }
         public OmniAgreementAlgorithmType AlgorithmType { get; }
-        public System.ReadOnlyMemory<byte> PublicKey { get; }
+        public global::System.ReadOnlyMemory<byte> PublicKey { get; }
 
         public override bool Equals(OmniAgreementPublicKey? target)
         {
@@ -306,22 +306,22 @@ namespace Omnix.Algorithms.Cryptography
             if (object.ReferenceEquals(this, target)) return true;
             if (this.CreationTime != target.CreationTime) return false;
             if (this.AlgorithmType != target.AlgorithmType) return false;
-            if (!Omnix.Base.BytesOperations.SequenceEqual(this.PublicKey.Span, target.PublicKey.Span)) return false;
+            if (!global::Omnix.Base.BytesOperations.SequenceEqual(this.PublicKey.Span, target.PublicKey.Span)) return false;
 
             return true;
         }
 
         public override int GetHashCode() => __hashCode;
 
-        private sealed class CustomFormatter : Omnix.Serialization.RocketPack.IRocketPackFormatter<OmniAgreementPublicKey>
+        private sealed class CustomFormatter : global::Omnix.Serialization.RocketPack.IRocketPackFormatter<OmniAgreementPublicKey>
         {
-            public void Serialize(Omnix.Serialization.RocketPack.RocketPackWriter w, OmniAgreementPublicKey value, int rank)
+            public void Serialize(global::Omnix.Serialization.RocketPack.RocketPackWriter w, OmniAgreementPublicKey value, int rank)
             {
-                if (rank > 256) throw new System.FormatException();
+                if (rank > 256) throw new global::System.FormatException();
 
                 {
                     uint propertyCount = 0;
-                    if (value.CreationTime != Omnix.Serialization.RocketPack.Timestamp.Zero)
+                    if (value.CreationTime != global::Omnix.Serialization.RocketPack.Timestamp.Zero)
                     {
                         propertyCount++;
                     }
@@ -336,7 +336,7 @@ namespace Omnix.Algorithms.Cryptography
                     w.Write(propertyCount);
                 }
 
-                if (value.CreationTime != Omnix.Serialization.RocketPack.Timestamp.Zero)
+                if (value.CreationTime != global::Omnix.Serialization.RocketPack.Timestamp.Zero)
                 {
                     w.Write((uint)0);
                     w.Write(value.CreationTime);
@@ -353,15 +353,15 @@ namespace Omnix.Algorithms.Cryptography
                 }
             }
 
-            public OmniAgreementPublicKey Deserialize(Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
+            public OmniAgreementPublicKey Deserialize(global::Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
             {
-                if (rank > 256) throw new System.FormatException();
+                if (rank > 256) throw new global::System.FormatException();
 
                 uint propertyCount = r.GetUInt32();
 
-                Omnix.Serialization.RocketPack.Timestamp p_creationTime = Omnix.Serialization.RocketPack.Timestamp.Zero;
+                global::Omnix.Serialization.RocketPack.Timestamp p_creationTime = global::Omnix.Serialization.RocketPack.Timestamp.Zero;
                 OmniAgreementAlgorithmType p_algorithmType = (OmniAgreementAlgorithmType)0;
-                System.ReadOnlyMemory<byte> p_publicKey = System.ReadOnlyMemory<byte>.Empty;
+                global::System.ReadOnlyMemory<byte> p_publicKey = global::System.ReadOnlyMemory<byte>.Empty;
 
                 for (; propertyCount > 0; propertyCount--)
                 {
@@ -391,38 +391,38 @@ namespace Omnix.Algorithms.Cryptography
         }
     }
 
-    public sealed partial class OmniAgreementPrivateKey : Omnix.Serialization.RocketPack.RocketPackMessageBase<OmniAgreementPrivateKey>
+    public sealed partial class OmniAgreementPrivateKey : global::Omnix.Serialization.RocketPack.RocketPackMessageBase<OmniAgreementPrivateKey>
     {
         static OmniAgreementPrivateKey()
         {
             OmniAgreementPrivateKey.Formatter = new CustomFormatter();
-            OmniAgreementPrivateKey.Empty = new OmniAgreementPrivateKey(Omnix.Serialization.RocketPack.Timestamp.Zero, (OmniAgreementAlgorithmType)0, System.ReadOnlyMemory<byte>.Empty);
+            OmniAgreementPrivateKey.Empty = new OmniAgreementPrivateKey(global::Omnix.Serialization.RocketPack.Timestamp.Zero, (OmniAgreementAlgorithmType)0, global::System.ReadOnlyMemory<byte>.Empty);
         }
 
         private readonly int __hashCode;
 
         public static readonly int MaxPrivateKeyLength = 8192;
 
-        public OmniAgreementPrivateKey(Omnix.Serialization.RocketPack.Timestamp creationTime, OmniAgreementAlgorithmType algorithmType, System.ReadOnlyMemory<byte> privateKey)
+        public OmniAgreementPrivateKey(global::Omnix.Serialization.RocketPack.Timestamp creationTime, OmniAgreementAlgorithmType algorithmType, global::System.ReadOnlyMemory<byte> privateKey)
         {
-            if (privateKey.Length > 8192) throw new System.ArgumentOutOfRangeException("privateKey");
+            if (privateKey.Length > 8192) throw new global::System.ArgumentOutOfRangeException("privateKey");
 
             this.CreationTime = creationTime;
             this.AlgorithmType = algorithmType;
             this.PrivateKey = privateKey;
 
             {
-                var __h = new System.HashCode();
+                var __h = new global::System.HashCode();
                 if (this.CreationTime != default) __h.Add(this.CreationTime.GetHashCode());
                 if (this.AlgorithmType != default) __h.Add(this.AlgorithmType.GetHashCode());
-                if (!this.PrivateKey.IsEmpty) __h.Add(Omnix.Base.Helpers.ObjectHelper.GetHashCode(this.PrivateKey.Span));
+                if (!this.PrivateKey.IsEmpty) __h.Add(global::Omnix.Base.Helpers.ObjectHelper.GetHashCode(this.PrivateKey.Span));
                 __hashCode = __h.ToHashCode();
             }
         }
 
-        public Omnix.Serialization.RocketPack.Timestamp CreationTime { get; }
+        public global::Omnix.Serialization.RocketPack.Timestamp CreationTime { get; }
         public OmniAgreementAlgorithmType AlgorithmType { get; }
-        public System.ReadOnlyMemory<byte> PrivateKey { get; }
+        public global::System.ReadOnlyMemory<byte> PrivateKey { get; }
 
         public override bool Equals(OmniAgreementPrivateKey? target)
         {
@@ -430,22 +430,22 @@ namespace Omnix.Algorithms.Cryptography
             if (object.ReferenceEquals(this, target)) return true;
             if (this.CreationTime != target.CreationTime) return false;
             if (this.AlgorithmType != target.AlgorithmType) return false;
-            if (!Omnix.Base.BytesOperations.SequenceEqual(this.PrivateKey.Span, target.PrivateKey.Span)) return false;
+            if (!global::Omnix.Base.BytesOperations.SequenceEqual(this.PrivateKey.Span, target.PrivateKey.Span)) return false;
 
             return true;
         }
 
         public override int GetHashCode() => __hashCode;
 
-        private sealed class CustomFormatter : Omnix.Serialization.RocketPack.IRocketPackFormatter<OmniAgreementPrivateKey>
+        private sealed class CustomFormatter : global::Omnix.Serialization.RocketPack.IRocketPackFormatter<OmniAgreementPrivateKey>
         {
-            public void Serialize(Omnix.Serialization.RocketPack.RocketPackWriter w, OmniAgreementPrivateKey value, int rank)
+            public void Serialize(global::Omnix.Serialization.RocketPack.RocketPackWriter w, OmniAgreementPrivateKey value, int rank)
             {
-                if (rank > 256) throw new System.FormatException();
+                if (rank > 256) throw new global::System.FormatException();
 
                 {
                     uint propertyCount = 0;
-                    if (value.CreationTime != Omnix.Serialization.RocketPack.Timestamp.Zero)
+                    if (value.CreationTime != global::Omnix.Serialization.RocketPack.Timestamp.Zero)
                     {
                         propertyCount++;
                     }
@@ -460,7 +460,7 @@ namespace Omnix.Algorithms.Cryptography
                     w.Write(propertyCount);
                 }
 
-                if (value.CreationTime != Omnix.Serialization.RocketPack.Timestamp.Zero)
+                if (value.CreationTime != global::Omnix.Serialization.RocketPack.Timestamp.Zero)
                 {
                     w.Write((uint)0);
                     w.Write(value.CreationTime);
@@ -477,15 +477,15 @@ namespace Omnix.Algorithms.Cryptography
                 }
             }
 
-            public OmniAgreementPrivateKey Deserialize(Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
+            public OmniAgreementPrivateKey Deserialize(global::Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
             {
-                if (rank > 256) throw new System.FormatException();
+                if (rank > 256) throw new global::System.FormatException();
 
                 uint propertyCount = r.GetUInt32();
 
-                Omnix.Serialization.RocketPack.Timestamp p_creationTime = Omnix.Serialization.RocketPack.Timestamp.Zero;
+                global::Omnix.Serialization.RocketPack.Timestamp p_creationTime = global::Omnix.Serialization.RocketPack.Timestamp.Zero;
                 OmniAgreementAlgorithmType p_algorithmType = (OmniAgreementAlgorithmType)0;
-                System.ReadOnlyMemory<byte> p_privateKey = System.ReadOnlyMemory<byte>.Empty;
+                global::System.ReadOnlyMemory<byte> p_privateKey = global::System.ReadOnlyMemory<byte>.Empty;
 
                 for (; propertyCount > 0; propertyCount--)
                 {
@@ -515,12 +515,12 @@ namespace Omnix.Algorithms.Cryptography
         }
     }
 
-    public sealed partial class OmniDigitalSignature : Omnix.Serialization.RocketPack.RocketPackMessageBase<OmniDigitalSignature>
+    public sealed partial class OmniDigitalSignature : global::Omnix.Serialization.RocketPack.RocketPackMessageBase<OmniDigitalSignature>
     {
         static OmniDigitalSignature()
         {
             OmniDigitalSignature.Formatter = new CustomFormatter();
-            OmniDigitalSignature.Empty = new OmniDigitalSignature(string.Empty, (OmniDigitalSignatureAlgorithmType)0, System.ReadOnlyMemory<byte>.Empty, System.ReadOnlyMemory<byte>.Empty);
+            OmniDigitalSignature.Empty = new OmniDigitalSignature(string.Empty, (OmniDigitalSignatureAlgorithmType)0, global::System.ReadOnlyMemory<byte>.Empty, global::System.ReadOnlyMemory<byte>.Empty);
         }
 
         private readonly int __hashCode;
@@ -529,12 +529,12 @@ namespace Omnix.Algorithms.Cryptography
         public static readonly int MaxPublicKeyLength = 8192;
         public static readonly int MaxPrivateKeyLength = 8192;
 
-        public OmniDigitalSignature(string name, OmniDigitalSignatureAlgorithmType algorithmType, System.ReadOnlyMemory<byte> publicKey, System.ReadOnlyMemory<byte> privateKey)
+        public OmniDigitalSignature(string name, OmniDigitalSignatureAlgorithmType algorithmType, global::System.ReadOnlyMemory<byte> publicKey, global::System.ReadOnlyMemory<byte> privateKey)
         {
-            if (name is null) throw new System.ArgumentNullException("name");
-            if (name.Length > 32) throw new System.ArgumentOutOfRangeException("name");
-            if (publicKey.Length > 8192) throw new System.ArgumentOutOfRangeException("publicKey");
-            if (privateKey.Length > 8192) throw new System.ArgumentOutOfRangeException("privateKey");
+            if (name is null) throw new global::System.ArgumentNullException("name");
+            if (name.Length > 32) throw new global::System.ArgumentOutOfRangeException("name");
+            if (publicKey.Length > 8192) throw new global::System.ArgumentOutOfRangeException("publicKey");
+            if (privateKey.Length > 8192) throw new global::System.ArgumentOutOfRangeException("privateKey");
 
             this.Name = name;
             this.AlgorithmType = algorithmType;
@@ -542,19 +542,19 @@ namespace Omnix.Algorithms.Cryptography
             this.PrivateKey = privateKey;
 
             {
-                var __h = new System.HashCode();
+                var __h = new global::System.HashCode();
                 if (this.Name != default) __h.Add(this.Name.GetHashCode());
                 if (this.AlgorithmType != default) __h.Add(this.AlgorithmType.GetHashCode());
-                if (!this.PublicKey.IsEmpty) __h.Add(Omnix.Base.Helpers.ObjectHelper.GetHashCode(this.PublicKey.Span));
-                if (!this.PrivateKey.IsEmpty) __h.Add(Omnix.Base.Helpers.ObjectHelper.GetHashCode(this.PrivateKey.Span));
+                if (!this.PublicKey.IsEmpty) __h.Add(global::Omnix.Base.Helpers.ObjectHelper.GetHashCode(this.PublicKey.Span));
+                if (!this.PrivateKey.IsEmpty) __h.Add(global::Omnix.Base.Helpers.ObjectHelper.GetHashCode(this.PrivateKey.Span));
                 __hashCode = __h.ToHashCode();
             }
         }
 
         public string Name { get; }
         public OmniDigitalSignatureAlgorithmType AlgorithmType { get; }
-        public System.ReadOnlyMemory<byte> PublicKey { get; }
-        public System.ReadOnlyMemory<byte> PrivateKey { get; }
+        public global::System.ReadOnlyMemory<byte> PublicKey { get; }
+        public global::System.ReadOnlyMemory<byte> PrivateKey { get; }
 
         public override bool Equals(OmniDigitalSignature? target)
         {
@@ -562,19 +562,19 @@ namespace Omnix.Algorithms.Cryptography
             if (object.ReferenceEquals(this, target)) return true;
             if (this.Name != target.Name) return false;
             if (this.AlgorithmType != target.AlgorithmType) return false;
-            if (!Omnix.Base.BytesOperations.SequenceEqual(this.PublicKey.Span, target.PublicKey.Span)) return false;
-            if (!Omnix.Base.BytesOperations.SequenceEqual(this.PrivateKey.Span, target.PrivateKey.Span)) return false;
+            if (!global::Omnix.Base.BytesOperations.SequenceEqual(this.PublicKey.Span, target.PublicKey.Span)) return false;
+            if (!global::Omnix.Base.BytesOperations.SequenceEqual(this.PrivateKey.Span, target.PrivateKey.Span)) return false;
 
             return true;
         }
 
         public override int GetHashCode() => __hashCode;
 
-        private sealed class CustomFormatter : Omnix.Serialization.RocketPack.IRocketPackFormatter<OmniDigitalSignature>
+        private sealed class CustomFormatter : global::Omnix.Serialization.RocketPack.IRocketPackFormatter<OmniDigitalSignature>
         {
-            public void Serialize(Omnix.Serialization.RocketPack.RocketPackWriter w, OmniDigitalSignature value, int rank)
+            public void Serialize(global::Omnix.Serialization.RocketPack.RocketPackWriter w, OmniDigitalSignature value, int rank)
             {
-                if (rank > 256) throw new System.FormatException();
+                if (rank > 256) throw new global::System.FormatException();
 
                 {
                     uint propertyCount = 0;
@@ -619,16 +619,16 @@ namespace Omnix.Algorithms.Cryptography
                 }
             }
 
-            public OmniDigitalSignature Deserialize(Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
+            public OmniDigitalSignature Deserialize(global::Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
             {
-                if (rank > 256) throw new System.FormatException();
+                if (rank > 256) throw new global::System.FormatException();
 
                 uint propertyCount = r.GetUInt32();
 
                 string p_name = string.Empty;
                 OmniDigitalSignatureAlgorithmType p_algorithmType = (OmniDigitalSignatureAlgorithmType)0;
-                System.ReadOnlyMemory<byte> p_publicKey = System.ReadOnlyMemory<byte>.Empty;
-                System.ReadOnlyMemory<byte> p_privateKey = System.ReadOnlyMemory<byte>.Empty;
+                global::System.ReadOnlyMemory<byte> p_publicKey = global::System.ReadOnlyMemory<byte>.Empty;
+                global::System.ReadOnlyMemory<byte> p_privateKey = global::System.ReadOnlyMemory<byte>.Empty;
 
                 for (; propertyCount > 0; propertyCount--)
                 {
@@ -663,12 +663,12 @@ namespace Omnix.Algorithms.Cryptography
         }
     }
 
-    public sealed partial class OmniCertificate : Omnix.Serialization.RocketPack.RocketPackMessageBase<OmniCertificate>
+    public sealed partial class OmniCertificate : global::Omnix.Serialization.RocketPack.RocketPackMessageBase<OmniCertificate>
     {
         static OmniCertificate()
         {
             OmniCertificate.Formatter = new CustomFormatter();
-            OmniCertificate.Empty = new OmniCertificate(string.Empty, (OmniDigitalSignatureAlgorithmType)0, System.ReadOnlyMemory<byte>.Empty, System.ReadOnlyMemory<byte>.Empty);
+            OmniCertificate.Empty = new OmniCertificate(string.Empty, (OmniDigitalSignatureAlgorithmType)0, global::System.ReadOnlyMemory<byte>.Empty, global::System.ReadOnlyMemory<byte>.Empty);
         }
 
         private readonly int __hashCode;
@@ -677,12 +677,12 @@ namespace Omnix.Algorithms.Cryptography
         public static readonly int MaxPublicKeyLength = 8192;
         public static readonly int MaxValueLength = 8192;
 
-        public OmniCertificate(string name, OmniDigitalSignatureAlgorithmType algorithmType, System.ReadOnlyMemory<byte> publicKey, System.ReadOnlyMemory<byte> value)
+        public OmniCertificate(string name, OmniDigitalSignatureAlgorithmType algorithmType, global::System.ReadOnlyMemory<byte> publicKey, global::System.ReadOnlyMemory<byte> value)
         {
-            if (name is null) throw new System.ArgumentNullException("name");
-            if (name.Length > 32) throw new System.ArgumentOutOfRangeException("name");
-            if (publicKey.Length > 8192) throw new System.ArgumentOutOfRangeException("publicKey");
-            if (value.Length > 8192) throw new System.ArgumentOutOfRangeException("value");
+            if (name is null) throw new global::System.ArgumentNullException("name");
+            if (name.Length > 32) throw new global::System.ArgumentOutOfRangeException("name");
+            if (publicKey.Length > 8192) throw new global::System.ArgumentOutOfRangeException("publicKey");
+            if (value.Length > 8192) throw new global::System.ArgumentOutOfRangeException("value");
 
             this.Name = name;
             this.AlgorithmType = algorithmType;
@@ -690,19 +690,19 @@ namespace Omnix.Algorithms.Cryptography
             this.Value = value;
 
             {
-                var __h = new System.HashCode();
+                var __h = new global::System.HashCode();
                 if (this.Name != default) __h.Add(this.Name.GetHashCode());
                 if (this.AlgorithmType != default) __h.Add(this.AlgorithmType.GetHashCode());
-                if (!this.PublicKey.IsEmpty) __h.Add(Omnix.Base.Helpers.ObjectHelper.GetHashCode(this.PublicKey.Span));
-                if (!this.Value.IsEmpty) __h.Add(Omnix.Base.Helpers.ObjectHelper.GetHashCode(this.Value.Span));
+                if (!this.PublicKey.IsEmpty) __h.Add(global::Omnix.Base.Helpers.ObjectHelper.GetHashCode(this.PublicKey.Span));
+                if (!this.Value.IsEmpty) __h.Add(global::Omnix.Base.Helpers.ObjectHelper.GetHashCode(this.Value.Span));
                 __hashCode = __h.ToHashCode();
             }
         }
 
         public string Name { get; }
         public OmniDigitalSignatureAlgorithmType AlgorithmType { get; }
-        public System.ReadOnlyMemory<byte> PublicKey { get; }
-        public System.ReadOnlyMemory<byte> Value { get; }
+        public global::System.ReadOnlyMemory<byte> PublicKey { get; }
+        public global::System.ReadOnlyMemory<byte> Value { get; }
 
         public override bool Equals(OmniCertificate? target)
         {
@@ -710,19 +710,19 @@ namespace Omnix.Algorithms.Cryptography
             if (object.ReferenceEquals(this, target)) return true;
             if (this.Name != target.Name) return false;
             if (this.AlgorithmType != target.AlgorithmType) return false;
-            if (!Omnix.Base.BytesOperations.SequenceEqual(this.PublicKey.Span, target.PublicKey.Span)) return false;
-            if (!Omnix.Base.BytesOperations.SequenceEqual(this.Value.Span, target.Value.Span)) return false;
+            if (!global::Omnix.Base.BytesOperations.SequenceEqual(this.PublicKey.Span, target.PublicKey.Span)) return false;
+            if (!global::Omnix.Base.BytesOperations.SequenceEqual(this.Value.Span, target.Value.Span)) return false;
 
             return true;
         }
 
         public override int GetHashCode() => __hashCode;
 
-        private sealed class CustomFormatter : Omnix.Serialization.RocketPack.IRocketPackFormatter<OmniCertificate>
+        private sealed class CustomFormatter : global::Omnix.Serialization.RocketPack.IRocketPackFormatter<OmniCertificate>
         {
-            public void Serialize(Omnix.Serialization.RocketPack.RocketPackWriter w, OmniCertificate value, int rank)
+            public void Serialize(global::Omnix.Serialization.RocketPack.RocketPackWriter w, OmniCertificate value, int rank)
             {
-                if (rank > 256) throw new System.FormatException();
+                if (rank > 256) throw new global::System.FormatException();
 
                 {
                     uint propertyCount = 0;
@@ -767,16 +767,16 @@ namespace Omnix.Algorithms.Cryptography
                 }
             }
 
-            public OmniCertificate Deserialize(Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
+            public OmniCertificate Deserialize(global::Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
             {
-                if (rank > 256) throw new System.FormatException();
+                if (rank > 256) throw new global::System.FormatException();
 
                 uint propertyCount = r.GetUInt32();
 
                 string p_name = string.Empty;
                 OmniDigitalSignatureAlgorithmType p_algorithmType = (OmniDigitalSignatureAlgorithmType)0;
-                System.ReadOnlyMemory<byte> p_publicKey = System.ReadOnlyMemory<byte>.Empty;
-                System.ReadOnlyMemory<byte> p_value = System.ReadOnlyMemory<byte>.Empty;
+                global::System.ReadOnlyMemory<byte> p_publicKey = global::System.ReadOnlyMemory<byte>.Empty;
+                global::System.ReadOnlyMemory<byte> p_value = global::System.ReadOnlyMemory<byte>.Empty;
 
                 for (; propertyCount > 0; propertyCount--)
                 {
@@ -811,7 +811,7 @@ namespace Omnix.Algorithms.Cryptography
         }
     }
 
-    public sealed partial class OmniSignature : Omnix.Serialization.RocketPack.RocketPackMessageBase<OmniSignature>
+    public sealed partial class OmniSignature : global::Omnix.Serialization.RocketPack.RocketPackMessageBase<OmniSignature>
     {
         static OmniSignature()
         {
@@ -825,13 +825,13 @@ namespace Omnix.Algorithms.Cryptography
 
         public OmniSignature(string name, OmniHash hash)
         {
-            if (name is null) throw new System.ArgumentNullException("name");
-            if (name.Length > 32) throw new System.ArgumentOutOfRangeException("name");
+            if (name is null) throw new global::System.ArgumentNullException("name");
+            if (name.Length > 32) throw new global::System.ArgumentOutOfRangeException("name");
             this.Name = name;
             this.Hash = hash;
 
             {
-                var __h = new System.HashCode();
+                var __h = new global::System.HashCode();
                 if (this.Name != default) __h.Add(this.Name.GetHashCode());
                 if (this.Hash != default) __h.Add(this.Hash.GetHashCode());
                 __hashCode = __h.ToHashCode();
@@ -853,11 +853,11 @@ namespace Omnix.Algorithms.Cryptography
 
         public override int GetHashCode() => __hashCode;
 
-        private sealed class CustomFormatter : Omnix.Serialization.RocketPack.IRocketPackFormatter<OmniSignature>
+        private sealed class CustomFormatter : global::Omnix.Serialization.RocketPack.IRocketPackFormatter<OmniSignature>
         {
-            public void Serialize(Omnix.Serialization.RocketPack.RocketPackWriter w, OmniSignature value, int rank)
+            public void Serialize(global::Omnix.Serialization.RocketPack.RocketPackWriter w, OmniSignature value, int rank)
             {
-                if (rank > 256) throw new System.FormatException();
+                if (rank > 256) throw new global::System.FormatException();
 
                 {
                     uint propertyCount = 0;
@@ -884,9 +884,9 @@ namespace Omnix.Algorithms.Cryptography
                 }
             }
 
-            public OmniSignature Deserialize(Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
+            public OmniSignature Deserialize(global::Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
             {
-                if (rank > 256) throw new System.FormatException();
+                if (rank > 256) throw new global::System.FormatException();
 
                 uint propertyCount = r.GetUInt32();
 
@@ -916,53 +916,53 @@ namespace Omnix.Algorithms.Cryptography
         }
     }
 
-    public sealed partial class OmniHashcash : Omnix.Serialization.RocketPack.RocketPackMessageBase<OmniHashcash>
+    public sealed partial class OmniHashcash : global::Omnix.Serialization.RocketPack.RocketPackMessageBase<OmniHashcash>
     {
         static OmniHashcash()
         {
             OmniHashcash.Formatter = new CustomFormatter();
-            OmniHashcash.Empty = new OmniHashcash((OmniHashcashAlgorithmType)0, System.ReadOnlyMemory<byte>.Empty);
+            OmniHashcash.Empty = new OmniHashcash((OmniHashcashAlgorithmType)0, global::System.ReadOnlyMemory<byte>.Empty);
         }
 
         private readonly int __hashCode;
 
         public static readonly int MaxKeyLength = 32;
 
-        public OmniHashcash(OmniHashcashAlgorithmType algorithmType, System.ReadOnlyMemory<byte> key)
+        public OmniHashcash(OmniHashcashAlgorithmType algorithmType, global::System.ReadOnlyMemory<byte> key)
         {
-            if (key.Length > 32) throw new System.ArgumentOutOfRangeException("key");
+            if (key.Length > 32) throw new global::System.ArgumentOutOfRangeException("key");
 
             this.AlgorithmType = algorithmType;
             this.Key = key;
 
             {
-                var __h = new System.HashCode();
+                var __h = new global::System.HashCode();
                 if (this.AlgorithmType != default) __h.Add(this.AlgorithmType.GetHashCode());
-                if (!this.Key.IsEmpty) __h.Add(Omnix.Base.Helpers.ObjectHelper.GetHashCode(this.Key.Span));
+                if (!this.Key.IsEmpty) __h.Add(global::Omnix.Base.Helpers.ObjectHelper.GetHashCode(this.Key.Span));
                 __hashCode = __h.ToHashCode();
             }
         }
 
         public OmniHashcashAlgorithmType AlgorithmType { get; }
-        public System.ReadOnlyMemory<byte> Key { get; }
+        public global::System.ReadOnlyMemory<byte> Key { get; }
 
         public override bool Equals(OmniHashcash? target)
         {
             if (target is null) return false;
             if (object.ReferenceEquals(this, target)) return true;
             if (this.AlgorithmType != target.AlgorithmType) return false;
-            if (!Omnix.Base.BytesOperations.SequenceEqual(this.Key.Span, target.Key.Span)) return false;
+            if (!global::Omnix.Base.BytesOperations.SequenceEqual(this.Key.Span, target.Key.Span)) return false;
 
             return true;
         }
 
         public override int GetHashCode() => __hashCode;
 
-        private sealed class CustomFormatter : Omnix.Serialization.RocketPack.IRocketPackFormatter<OmniHashcash>
+        private sealed class CustomFormatter : global::Omnix.Serialization.RocketPack.IRocketPackFormatter<OmniHashcash>
         {
-            public void Serialize(Omnix.Serialization.RocketPack.RocketPackWriter w, OmniHashcash value, int rank)
+            public void Serialize(global::Omnix.Serialization.RocketPack.RocketPackWriter w, OmniHashcash value, int rank)
             {
-                if (rank > 256) throw new System.FormatException();
+                if (rank > 256) throw new global::System.FormatException();
 
                 {
                     uint propertyCount = 0;
@@ -989,14 +989,14 @@ namespace Omnix.Algorithms.Cryptography
                 }
             }
 
-            public OmniHashcash Deserialize(Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
+            public OmniHashcash Deserialize(global::Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
             {
-                if (rank > 256) throw new System.FormatException();
+                if (rank > 256) throw new global::System.FormatException();
 
                 uint propertyCount = r.GetUInt32();
 
                 OmniHashcashAlgorithmType p_algorithmType = (OmniHashcashAlgorithmType)0;
-                System.ReadOnlyMemory<byte> p_key = System.ReadOnlyMemory<byte>.Empty;
+                global::System.ReadOnlyMemory<byte> p_key = global::System.ReadOnlyMemory<byte>.Empty;
 
                 for (; propertyCount > 0; propertyCount--)
                 {

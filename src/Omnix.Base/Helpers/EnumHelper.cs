@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Collections.Concurrent;
 
 namespace Omnix.Base.Helpers
@@ -15,7 +13,7 @@ namespace Omnix.Base.Helpers
 
         private static class EnumInfo<T>
         {
-            private static ConcurrentDictionary<T, bool> _resultMap = new ConcurrentDictionary<T, bool>();
+            private static readonly ConcurrentDictionary<T, bool> _resultMap = new ConcurrentDictionary<T, bool>();
 
             public static bool IsValid(T value)
             {

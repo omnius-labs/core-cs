@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using Omnix.Base;
 
 namespace Omnix.Base.Helpers
 {
@@ -8,7 +7,7 @@ namespace Omnix.Base.Helpers
     {
         [Obsolete]
         [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-        public new static bool Equals(object obj1, object obj2)
+        public static new bool Equals(object obj1, object obj2)
         {
             throw new NotImplementedException();
         }

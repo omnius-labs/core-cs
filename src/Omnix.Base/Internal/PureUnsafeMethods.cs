@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Runtime.InteropServices;
-using System.Text;
 
 namespace Omnix.Base.Internal
 {
@@ -30,7 +27,7 @@ namespace Omnix.Base.Internal
 
             if ((length & 1) != 0)
             {
-                *((byte*)t_s) = 0;
+                *t_s = 0;
             }
         }
 
@@ -75,7 +72,7 @@ namespace Omnix.Base.Internal
 
             if ((length & 1) != 0)
             {
-                if (*((byte*)t_x) != *((byte*)t_y))
+                if (*t_x != *t_y)
                 {
                     return false;
                 }
@@ -93,7 +90,7 @@ namespace Omnix.Base.Internal
 
             for (; len > 0; len--)
             {
-                c = (int)*t_x++ - (int)*t_y++;
+                c = *t_x++ - *t_y++;
                 if (c != 0)
                 {
                     return c;
@@ -131,7 +128,7 @@ namespace Omnix.Base.Internal
 
             if ((length & 1) != 0)
             {
-                *((byte*)t_buffer) = (byte)(*((byte*)t_x) & *((byte*)t_y));
+                *t_buffer = (byte)(*t_x & *t_y);
             }
         }
 
@@ -163,7 +160,7 @@ namespace Omnix.Base.Internal
 
             if ((length & 1) != 0)
             {
-                *((byte*)t_buffer) = (byte)(*((byte*)t_x) | *((byte*)t_y));
+                *t_buffer = (byte)(*t_x | *t_y);
             }
         }
 
@@ -195,7 +192,7 @@ namespace Omnix.Base.Internal
 
             if ((length & 1) != 0)
             {
-                *((byte*)t_buffer) = (byte)(*((byte*)t_x) ^ *((byte*)t_y));
+                *t_buffer = (byte)(*t_x ^ *t_y);
             }
         }
     }

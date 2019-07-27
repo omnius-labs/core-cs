@@ -1,14 +1,13 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using Omnix.Base;
 
 namespace Omnix.DataStructures
 {
     public class LockedQueue<T> : ICollection<T>, IEnumerable<T>, ICollection, IEnumerable, ISynchronized
     {
-        private Queue<T> _queue;
+        private readonly Queue<T> _queue;
         private int? _capacity;
 
         public LockedQueue()

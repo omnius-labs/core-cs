@@ -12,7 +12,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Omnix.Serialization", "src\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Omnix.Io", "src\Omnix.Io\Omnix.Io.csproj", "{09C88A71-040E-4BBC-8D87-0A73CC6356E8}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Omnix.Network.Connection", "src\Omnix.Network.Connection\Omnix.Network.Connection.csproj", "{A2C149EC-E028-4ABE-B066-9AF501452E24}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Omnix.Network.Connections", "src\Omnix.Network.Connections\Omnix.Network.Connections.csproj", "{A2C149EC-E028-4ABE-B066-9AF501452E24}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Omnix.Network", "src\Omnix.Network\Omnix.Network.csproj", "{7FB3BB3A-27AF-488E-83D1-996E5FD0BC0B}"
 EndProject
@@ -36,7 +36,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Omnix.Serialization.RocketP
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Omnix.Io.Tests", "tests\Omnix.Io.Tests\Omnix.Io.Tests.csproj", "{95D06ED4-9182-48E1-8ED6-F185958893DC}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Omnix.Network.Connection.Tests", "tests\Omnix.Network.Connection.Tests\Omnix.Network.Connection.Tests.csproj", "{4B0A0305-E1EF-4C80-85ED-0500CD3B876E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Omnix.Network.Connections.Tests", "tests\Omnix.Network.Connections.Tests\Omnix.Network.Connections.Tests.csproj", "{4B0A0305-E1EF-4C80-85ED-0500CD3B876E}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Omnix.Network.Upnp.Tests", "tests\Omnix.Network.Upnp.Tests\Omnix.Network.Upnp.Tests.csproj", "{520BA6DB-4476-43F0-9AF2-568841863716}"
 EndProject
@@ -52,7 +52,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Omnix.Configuration", "src\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Omnix.Configuration.Tests", "tests\Omnix.Configuration.Tests\Omnix.Configuration.Tests.csproj", "{7CB6EF50-A481-4D28-8DD7-D5E66CE31BE6}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Omnix.Network.Proxy", "src\Omnix.Network.Proxy\Omnix.Network.Proxy.csproj", "{F132831B-F356-4963-8ED0-C86FA5892BA9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Omnix.Network.Proxies", "src\Omnix.Network.Proxies\Omnix.Network.Proxies.csproj", "{F132831B-F356-4963-8ED0-C86FA5892BA9}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Omnix.Avalonia", "src\Omnix.Avalonia\Omnix.Avalonia.csproj", "{A144FD06-4134-4A78-AD4C-0265762A7A24}"
 EndProject

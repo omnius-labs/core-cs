@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Linq;
+using System.Text;
 
 namespace Omnix.Serialization.RocketPack.CodeGenerator
 {
@@ -10,7 +10,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
         /// <summary>
         /// <see cref="MessageDefinition"/>からclassを生成します。
         /// </summary>
-        class StructWriter
+        private class StructWriter
         {
             private readonly RocketPackDefinition _rocketFormatDefinition;
             private readonly IList<RocketPackDefinition> _externalRocketPackDefinitions;
@@ -1005,7 +1005,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
 
                     foreach (var elementInfo in messageFormat.Elements)
                     {
-                        w.WriteLine($"{this.GetParameterTypeString(elementInfo.Type)} p_{GetFieldName(elementInfo.Name)} = {GetDefaultValueString(elementInfo.Type)};");
+                        w.WriteLine($"{this.GetParameterTypeString(elementInfo.Type)} p_{GetFieldName(elementInfo.Name)} = {this.GetDefaultValueString(elementInfo.Type)};");
                     }
 
                     w.WriteLine();
@@ -1385,8 +1385,8 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
                         {
                             w.WriteLine("var length = r.GetUInt32();");
                             w.WriteLine($"{name} = new {GetFullName("Dictionary<,>", this.GetParameterTypeString(mapType.KeyType), this.GetParameterTypeString(mapType.ValueType))}();");
-                            w.WriteLine($"{this.GetParameterTypeString(mapType.KeyType)} t_key = {GetDefaultValueString(mapType.KeyType)};");
-                            w.WriteLine($"{this.GetParameterTypeString(mapType.ValueType)} t_value = {GetDefaultValueString(mapType.ValueType)};");
+                            w.WriteLine($"{this.GetParameterTypeString(mapType.KeyType)} t_key = {this.GetDefaultValueString(mapType.KeyType)};");
+                            w.WriteLine($"{this.GetParameterTypeString(mapType.ValueType)} t_value = {this.GetDefaultValueString(mapType.ValueType)};");
 
                             w.WriteLine("for (int i = 0; i < length; i++)");
                             w.WriteLine("{");

@@ -8,7 +8,7 @@ namespace Omnix.Io
     /// </summary>
     public class NeverCloseStream : Stream
     {
-        private Stream _stream;
+        private readonly Stream _stream;
 
         private bool _disposed;
 

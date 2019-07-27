@@ -5,8 +5,8 @@ namespace Omnix.Base
 {
     public sealed class ObjectIdMap<T> : IEnumerable<KeyValuePair<int, T>>, IEnumerable
     {
-        private Dictionary<T, int> _objectMap = new Dictionary<T, int>();
-        private Dictionary<int, T> _idMap = new Dictionary<int, T>();
+        private readonly Dictionary<T, int> _objectMap = new Dictionary<T, int>();
+        private readonly Dictionary<int, T> _idMap = new Dictionary<int, T>();
         private int _current;
 
         private readonly object _lockObject = new object();
@@ -42,7 +42,7 @@ namespace Omnix.Base
 
         public T GetItem(int id)
         {
-            if (_idMap.TryGetValue(id, out T item))
+            if (_idMap.TryGetValue(id, out var item))
             {
                 return item;
             }
@@ -52,8 +52,7 @@ namespace Omnix.Base
 
         public void Remove(int id)
         {
-            T item;
-            if (!_idMap.TryGetValue(id, out item))
+            if (!_idMap.TryGetValue(id, out var item))
             {
                 return;
             }

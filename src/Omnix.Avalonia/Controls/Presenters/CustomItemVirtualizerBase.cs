@@ -29,17 +29,17 @@ namespace Omnix.Avalonia.Controls.Presenters
         /// <param name="owner"></param>
         public CustomItemVirtualizerBase(CustomItemsPresenter owner)
         {
-            Owner = owner;
-            Items = owner.Items;
-            ItemCount = owner.Items.Count();
+            this.Owner = owner;
+            this.Items = owner.Items;
+            this.ItemCount = owner.Items.Count();
 
-            var panel = VirtualizingPanel;
+            var panel = this.VirtualizingPanel;
 
             if (panel != null)
             {
                 _subscriptions = panel.GetObservable(Panel.BoundsProperty)
                     .Skip(1)
-                    .Subscribe(_ => InvalidateScroll());
+                    .Subscribe(_ => this.InvalidateScroll());
             }
         }
 
@@ -51,7 +51,7 @@ namespace Omnix.Avalonia.Controls.Presenters
         /// <summary>
         /// Gets the <see cref="IVirtualizingPanel"/> which will host the items.
         /// </summary>
-        public IVirtualizingPanel VirtualizingPanel => Owner.Panel as IVirtualizingPanel;
+        public IVirtualizingPanel VirtualizingPanel => this.Owner.Panel as IVirtualizingPanel;
 
         /// <summary>
         /// Gets the items to display.
@@ -76,7 +76,7 @@ namespace Omnix.Avalonia.Controls.Presenters
         /// <summary>
         /// Gets a value indicating whether the items should be scroll horizontally or vertically.
         /// </summary>
-        public bool Vertical => VirtualizingPanel?.ScrollDirection == Orientation.Vertical;
+        public bool Vertical => this.VirtualizingPanel?.ScrollDirection == Orientation.Vertical;
 
         /// <summary>
         /// Gets a value indicating whether logical scrolling is enabled.
@@ -105,9 +105,9 @@ namespace Omnix.Avalonia.Controls.Presenters
         {
             get
             {
-                return Vertical ?
-                    new Size(Owner.Panel.DesiredSize.Width, ExtentValue) :
-                    new Size(ExtentValue, Owner.Panel.DesiredSize.Height);
+                return this.Vertical ?
+                    new Size(this.Owner.Panel.DesiredSize.Width, this.ExtentValue) :
+                    new Size(this.ExtentValue, this.Owner.Panel.DesiredSize.Height);
             }
         }
 
@@ -118,9 +118,9 @@ namespace Omnix.Avalonia.Controls.Presenters
         {
             get
             {
-                return Vertical ?
-                    new Size(Owner.Panel.Bounds.Width, ViewportValue) :
-                    new Size(ViewportValue, Owner.Panel.Bounds.Height);
+                return this.Vertical ?
+                    new Size(this.Owner.Panel.Bounds.Width, this.ViewportValue) :
+                    new Size(this.ViewportValue, this.Owner.Panel.Bounds.Height);
             }
         }
 
@@ -131,27 +131,27 @@ namespace Omnix.Avalonia.Controls.Presenters
         {
             get
             {
-                return Vertical ? new Vector(_crossAxisOffset, OffsetValue) : new Vector(OffsetValue, _crossAxisOffset);
+                return this.Vertical ? new Vector(_crossAxisOffset, this.OffsetValue) : new Vector(this.OffsetValue, _crossAxisOffset);
             }
 
             set
             {
                 var oldCrossAxisOffset = _crossAxisOffset;
 
-                if (Vertical)
+                if (this.Vertical)
                 {
-                    OffsetValue = value.Y;
+                    this.OffsetValue = value.Y;
                     _crossAxisOffset = value.X;
                 }
                 else
                 {
-                    OffsetValue = value.X;
+                    this.OffsetValue = value.X;
                     _crossAxisOffset = value.Y;
                 }
 
                 if (_crossAxisOffset != oldCrossAxisOffset)
                 {
-                    Owner.InvalidateArrange();
+                    this.Owner.InvalidateArrange();
                 }
             }
         }
@@ -188,8 +188,8 @@ namespace Omnix.Avalonia.Controls.Presenters
         /// <returns>The desired size for the control.</returns>
         public virtual Size MeasureOverride(Size availableSize)
         {
-            Owner.Panel.Measure(availableSize);
-            return Owner.Panel.DesiredSize;
+            this.Owner.Panel.Measure(availableSize);
+            return this.Owner.Panel.DesiredSize;
         }
 
         /// <summary>
@@ -199,15 +199,15 @@ namespace Omnix.Avalonia.Controls.Presenters
         /// <returns>The actual size used.</returns>
         public virtual Size ArrangeOverride(Size finalSize)
         {
-            if (VirtualizingPanel != null)
+            if (this.VirtualizingPanel != null)
             {
-                VirtualizingPanel.CrossAxisOffset = _crossAxisOffset;
-                Owner.Panel.Arrange(new Rect(finalSize));
+                this.VirtualizingPanel.CrossAxisOffset = _crossAxisOffset;
+                this.Owner.Panel.Arrange(new Rect(finalSize));
             }
             else
             {
-                var origin = Vertical ? new Point(-_crossAxisOffset, 0) : new Point(0, _crossAxisOffset);
-                Owner.Panel.Arrange(new Rect(origin, finalSize));
+                var origin = this.Vertical ? new Point(-_crossAxisOffset, 0) : new Point(0, _crossAxisOffset);
+                this.Owner.Panel.Arrange(new Rect(origin, finalSize));
             }
 
             return finalSize;
@@ -238,8 +238,8 @@ namespace Omnix.Avalonia.Controls.Presenters
         /// <param name="e">A description of the change.</param>
         public virtual void ItemsChanged(IEnumerable items, NotifyCollectionChangedEventArgs e)
         {
-            Items = items;
-            ItemCount = items.Count();
+            this.Items = items;
+            this.ItemCount = items.Count();
         }
 
         /// <summary>
@@ -256,18 +256,18 @@ namespace Omnix.Avalonia.Controls.Presenters
             _subscriptions?.Dispose();
             _subscriptions = null;
 
-            if (VirtualizingPanel != null)
+            if (this.VirtualizingPanel != null)
             {
-                VirtualizingPanel.Controller = null;
-                VirtualizingPanel.Children.Clear();
+                this.VirtualizingPanel.Controller = null;
+                this.VirtualizingPanel.Children.Clear();
             }
 
-            Owner.ItemContainerGenerator.Clear();
+            this.Owner.ItemContainerGenerator.Clear();
         }
 
         /// <summary>
         /// Invalidates the current scroll.
         /// </summary>
-        protected void InvalidateScroll() => ((ILogicalScrollable)Owner).InvalidateScroll?.Invoke();
+        protected void InvalidateScroll() => ((ILogicalScrollable)this.Owner).InvalidateScroll?.Invoke();
     }
 }

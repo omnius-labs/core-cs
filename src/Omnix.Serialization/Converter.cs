@@ -1,12 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.IO.Compression;
-using System.Linq;
-using Omnix.Base;
-using Omnix.Serialization;
-
-namespace Omnix.Serialization
+﻿namespace Omnix.Serialization
 {
     // TODO
     // FileConverter

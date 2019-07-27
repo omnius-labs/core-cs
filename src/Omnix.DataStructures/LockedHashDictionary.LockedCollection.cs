@@ -5,11 +5,11 @@ using Omnix.Base;
 
 namespace Omnix.DataStructures
 {
-    partial class LockedHashDictionary<TKey, TValue>
+    public partial class LockedHashDictionary<TKey, TValue>
     {
         public sealed class LockedCollection<T> : ICollection<T>, IEnumerable<T>, ICollection, IEnumerable, ISynchronized
         {
-            private ICollection<T> _collection;
+            private readonly ICollection<T> _collection;
 
             internal LockedCollection(ICollection<T> collection, object lockObject)
             {

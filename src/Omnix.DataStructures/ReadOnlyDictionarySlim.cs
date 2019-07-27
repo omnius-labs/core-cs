@@ -1,7 +1,5 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Omnix.DataStructures
 {
@@ -32,7 +30,7 @@ namespace Omnix.DataStructures
             return _map.ContainsKey(key);
         }
 
-        public Dictionary<TKey,TValue>.Enumerator GetEnumerator()
+        public Dictionary<TKey, TValue>.Enumerator GetEnumerator()
         {
             return _map.GetEnumerator();
         }

@@ -11,12 +11,12 @@ namespace Omnix.Io
     /// </summary>
     public class RecyclableMemoryStream : Stream
     {
-        private BufferPool _bytesPool;
+        private readonly BufferPool _bytesPool;
 
         private long _position;
         private long _length;
 
-        private List<byte[]> _buffers = new List<byte[]>();
+        private readonly List<byte[]> _buffers = new List<byte[]>();
         private int _bufferSize = 32;
 
         private int _currentBufferIndex;

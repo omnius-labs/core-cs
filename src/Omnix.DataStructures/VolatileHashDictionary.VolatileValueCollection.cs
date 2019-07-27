@@ -10,7 +10,7 @@ namespace Omnix.DataStructures
     {
         public sealed class VolatileValueCollection : ICollection<TValue>, IEnumerable<TValue>, ICollection, IEnumerable, ISynchronized
         {
-            private ICollection<Info<TValue>> _collection;
+            private readonly ICollection<Info<TValue>> _collection;
 
             internal VolatileValueCollection(ICollection<Info<TValue>> collection, object lockObject)
             {

@@ -21,15 +21,14 @@ namespace Omnix.Configuration
         {
             this.DirectoryPath = directoryPath;
 
-            // 排他ロック
-            _lockFileStream = new FileStream(Path.Combine(this.DirectoryPath, "lock"), FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
-
             // フォルダを作成する
-            var directoryPathList = new List<string>();
-            directoryPathList.Add(directoryPath);
-            directoryPathList.Add(this.GeneratePath(EntityStatus.Temp));
-            directoryPathList.Add(this.GeneratePath(EntityStatus.Committed));
-            directoryPathList.Add(this.GeneratePath(EntityStatus.Backup));
+            var directoryPathList = new List<string>
+            {
+                this.DirectoryPath,
+                this.GeneratePath(EntityStatus.Temp),
+                this.GeneratePath(EntityStatus.Committed),
+                this.GeneratePath(EntityStatus.Backup)
+            };
 
             foreach (var path in directoryPathList)
             {
@@ -38,6 +37,9 @@ namespace Omnix.Configuration
                     Directory.CreateDirectory(path);
                 }
             }
+
+            // 排他ロック
+            _lockFileStream = new FileStream(Path.Combine(this.DirectoryPath, "lock"), FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
         }
 
         public string DirectoryPath { get; }

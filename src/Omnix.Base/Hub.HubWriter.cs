@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Buffers;
-using System.Collections.Generic;
 using System.IO.Pipelines;
-using System.Text;
-using System.Threading;
 
 namespace Omnix.Base
 {
-    partial class Hub
+    public partial class Hub
     {
         public sealed class HubWriter : IBufferWriter<byte>
         {

@@ -12,11 +12,11 @@ set TOOL_PATH=%cd%\tools\win\Omnix.Serialization.RocketPack.CodeGenerator\Omnix.
 
 "%TOOL_PATH%" %cd%\formats\Omnix.Network.rpf %cd%\src\Omnix.Network\_RocketPack\Messages.generated.cs
 
-"%TOOL_PATH%" %cd%\formats\Omnix.Network.Connection.Secure.rpf %cd%\src\Omnix.Network.Connection\Secure\_RocketPack\Messages.generated.cs
-"%TOOL_PATH%" %cd%\formats\Omnix.Network.Connection.Secure.Internal.rpf %cd%\src\Omnix.Network.Connection\Secure\Internal\_RocketPack\Messages.generated.cs
-"%TOOL_PATH%" %cd%\formats\Omnix.Network.Connection.Secure.V1.Internal.rpf %cd%\src\Omnix.Network.Connection\Secure\V1\Internal\_RocketPack\Messages.generated.cs
-"%TOOL_PATH%" %cd%\formats\Omnix.Network.Connection.Multiplexer.Internal.rpf %cd%\src\Omnix.Network.Connection\Multiplexer\Internal\_RocketPack\Messages.generated.cs
-"%TOOL_PATH%" %cd%\formats\Omnix.Network.Connection.Multiplexer.V1.Internal.rpf %cd%\src\Omnix.Network.Connection\Multiplexer\V1\Internal\_RocketPack\Messages.generated.cs
+"%TOOL_PATH%" %cd%\formats\Omnix.Network.Connections.Secure.rpf %cd%\src\Omnix.Network.Connections\Secure\_RocketPack\Messages.generated.cs
+"%TOOL_PATH%" %cd%\formats\Omnix.Network.Connections.Secure.Internal.rpf %cd%\src\Omnix.Network.Connections\Secure\Internal\_RocketPack\Messages.generated.cs
+"%TOOL_PATH%" %cd%\formats\Omnix.Network.Connections.Secure.V1.Internal.rpf %cd%\src\Omnix.Network.Connections\Secure\V1\Internal\_RocketPack\Messages.generated.cs
+"%TOOL_PATH%" %cd%\formats\Omnix.Network.Connections.Multiplexer.Internal.rpf %cd%\src\Omnix.Network.Connections\Multiplexer\Internal\_RocketPack\Messages.generated.cs
+"%TOOL_PATH%" %cd%\formats\Omnix.Network.Connections.Multiplexer.V1.Internal.rpf %cd%\src\Omnix.Network.Connections\Multiplexer\V1\Internal\_RocketPack\Messages.generated.cs
 
 "%TOOL_PATH%" %cd%\formats\Omnix.Remoting.rpf %cd%\src\Omnix.Remoting\_RocketPack\Messages.generated.cs
 

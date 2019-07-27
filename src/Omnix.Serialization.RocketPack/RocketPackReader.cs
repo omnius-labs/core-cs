@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Buffers;
-using System.IO;
 using System.Runtime.CompilerServices;
 using System.Text;
-using System.Threading;
 using Omnix.Base;
 using Omnix.Serialization.RocketPack.Internal;
 
@@ -15,7 +13,7 @@ namespace Omnix.Serialization.RocketPack
     public sealed class RocketPackReader
     {
         private ReadOnlySequence<byte> _sequence;
-        private BufferPool _bufferPool;
+        private readonly BufferPool _bufferPool;
 
         private static readonly Lazy<Encoding> _encoding = new Lazy<Encoding>(() => new UTF8Encoding(false));
 

@@ -1,18 +1,16 @@
-using BenchmarkDotNet.Attributes;
-using Omnix.Base;
-using FormatterBenchmarks.Internal;
-using System.Collections.Generic;
 using System;
-using System.IO.Pipelines;
-using System.Buffers;
+using System.Collections.Generic;
+using BenchmarkDotNet.Attributes;
+using FormatterBenchmarks.Internal;
+using Omnix.Base;
 
 namespace FormatterBenchmarks.Cases
 {
     [Config(typeof(BenchmarkConfig))]
     public class IntSerializeBenchmark
     {
-        static MessagePack_IntElementsList _messagePack_Message;
-        static RocketPack_IntElementsList _rocketPack_Message;
+        private static readonly MessagePack_IntElementsList _messagePack_Message;
+        private static readonly RocketPack_IntElementsList _rocketPack_Message;
 
         static IntSerializeBenchmark()
         {
@@ -40,7 +38,7 @@ namespace FormatterBenchmarks.Cases
                     elementsList.Add(elements);
                 }
 
-              _messagePack_Message = new MessagePack_IntElementsList() { List = elementsList.ToArray() };
+                _messagePack_Message = new MessagePack_IntElementsList() { List = elementsList.ToArray() };
             }
 
             using (var hub = new Hub())

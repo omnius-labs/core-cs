@@ -1,17 +1,17 @@
-using BenchmarkDotNet.Attributes;
-using Omnix.Base;
-using FormatterBenchmarks.Internal;
-using System.Collections.Generic;
 using System;
+using System.Collections.Generic;
 using System.Text;
+using BenchmarkDotNet.Attributes;
+using FormatterBenchmarks.Internal;
+using Omnix.Base;
 
 namespace FormatterBenchmarks.Cases
 {
     [Config(typeof(BenchmarkConfig))]
     public class StringSerializeBenchmark
     {
-        static MessagePack_StringElementsList _messagePack_Message;
-        static RocketPack_StringElementsList _rocketPack_Message;
+        private static readonly MessagePack_StringElementsList _messagePack_Message;
+        private static readonly RocketPack_StringElementsList _rocketPack_Message;
 
         static StringSerializeBenchmark()
         {

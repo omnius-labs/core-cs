@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using System.Text;
 
 namespace Omnix.Serialization.RocketPack.Internal
 {
@@ -26,7 +24,7 @@ namespace Omnix.Serialization.RocketPack.Internal
         public Float32Bits(float value)
         {
             this = default(Float32Bits);
-            this.Value = value;
+            Value = value;
         }
 
         public Float32Bits(Span<byte> bigEndianBytes)
@@ -35,17 +33,17 @@ namespace Omnix.Serialization.RocketPack.Internal
 
             if (BitConverter.IsLittleEndian)
             {
-                this.Byte0 = bigEndianBytes[3];
-                this.Byte1 = bigEndianBytes[2];
-                this.Byte2 = bigEndianBytes[1];
-                this.Byte3 = bigEndianBytes[0];
+                Byte0 = bigEndianBytes[3];
+                Byte1 = bigEndianBytes[2];
+                Byte2 = bigEndianBytes[1];
+                Byte3 = bigEndianBytes[0];
             }
             else
             {
-                this.Byte0 = bigEndianBytes[0];
-                this.Byte1 = bigEndianBytes[1];
-                this.Byte2 = bigEndianBytes[2];
-                this.Byte3 = bigEndianBytes[3];
+                Byte0 = bigEndianBytes[0];
+                Byte1 = bigEndianBytes[1];
+                Byte2 = bigEndianBytes[2];
+                Byte3 = bigEndianBytes[3];
             }
         }
 
@@ -53,17 +51,17 @@ namespace Omnix.Serialization.RocketPack.Internal
         {
             if (BitConverter.IsLittleEndian)
             {
-                span[3] = this.Byte0;
-                span[2] = this.Byte1;
-                span[1] = this.Byte2;
-                span[0] = this.Byte3;
+                span[3] = Byte0;
+                span[2] = Byte1;
+                span[1] = Byte2;
+                span[0] = Byte3;
             }
             else
             {
-                span[0] = this.Byte0;
-                span[1] = this.Byte1;
-                span[2] = this.Byte2;
-                span[3] = this.Byte3;
+                span[0] = Byte0;
+                span[1] = Byte1;
+                span[2] = Byte2;
+                span[3] = Byte3;
             }
         }
     }

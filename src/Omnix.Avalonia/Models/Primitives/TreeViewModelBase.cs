@@ -1,7 +1,6 @@
-using Avalonia.Controls;
+using System.Collections.Generic;
 using Omnix.Base;
 using Reactive.Bindings;
-using System.Collections.Generic;
 
 namespace Omnix.Avalonia.Models.Primitives
 {

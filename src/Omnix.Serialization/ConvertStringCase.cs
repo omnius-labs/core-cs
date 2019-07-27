@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Omnix.Serialization
+﻿namespace Omnix.Serialization
 {
     public enum ConvertStringCase
     {

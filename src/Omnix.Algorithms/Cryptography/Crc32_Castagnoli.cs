@@ -1,22 +1,20 @@
 using System;
 using System.Buffers;
-using System.Collections.Generic;
-using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
-using Omnix.Base;
 using Omnix.Algorithms.Cryptography.Internal;
+using Omnix.Base;
 
 namespace Omnix.Algorithms.Cryptography
 {
-    public unsafe static class Crc32_Castagnoli
+    public static unsafe class Crc32_Castagnoli
     {
         private static readonly ThreadLocal<Encoding> _utf8Encoding = new ThreadLocal<Encoding>(() => new UTF8Encoding(false));
 
         private static NativeLibraryManager? _nativeLibraryManager;
 
-        delegate uint ComputeDelegate(uint x, byte* src, int len);
+        private delegate uint ComputeDelegate(uint x, byte* src, int len);
         private static ComputeDelegate _compute;
 
         static Crc32_Castagnoli()

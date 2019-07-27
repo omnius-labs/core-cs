@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Buffers;
-using System.Collections.Generic;
-using System.IO.Pipelines;
 using System.Text;
 using Omnix.Base;
-using Omnix.Base.Extensions;
 
 namespace Omnix.Serialization.Extensions
 {

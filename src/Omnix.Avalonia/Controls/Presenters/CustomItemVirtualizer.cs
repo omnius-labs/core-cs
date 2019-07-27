@@ -38,69 +38,69 @@ namespace Omnix.Avalonia.Controls.Presenters
 
         public event EventHandler ChildrenChanged;
 
-        private int ScrollQuantum => (VirtualizingPanel as IScrollQuantum)?.ScrollQuantum ?? 1;
+        private int ScrollQuantum => (this.VirtualizingPanel as IScrollQuantum)?.ScrollQuantum ?? 1;
 
         /// <inheritdoc/>
         public override bool IsLogicalScrollEnabled => true;
 
         /// <inheritdoc/>
-        public override double ExtentValue => Math.Ceiling((double)ItemCount / ScrollQuantum);
+        public override double ExtentValue => Math.Ceiling((double)this.ItemCount / this.ScrollQuantum);
 
         /// <inheritdoc/>
         public override double OffsetValue
         {
             get
             {
-                var offset = VirtualizingPanel.PixelOffset > 0 ? 1 : 0;
-                return FirstIndex / ScrollQuantum + offset;
+                var offset = this.VirtualizingPanel.PixelOffset > 0 ? 1 : 0;
+                return this.FirstIndex / this.ScrollQuantum + offset;
             }
 
             set
             {
-                var panel = VirtualizingPanel;
+                var panel = this.VirtualizingPanel;
                 var offset = panel.PixelOffset > 0 ? 1 : 0;
-                var current = FirstIndex / ScrollQuantum + offset;
+                var current = this.FirstIndex / this.ScrollQuantum + offset;
                 var delta = ((int)value - current);
 
-                delta *= ScrollQuantum;
+                delta *= this.ScrollQuantum;
 
                 if (delta != 0)
                 {
-                    var newLastIndex = (NextIndex - 1) + delta;
+                    var newLastIndex = (this.NextIndex - 1) + delta;
 
-                    if (newLastIndex < ItemCount)
+                    if (newLastIndex < this.ItemCount)
                     {
                         if (panel.PixelOffset > 0)
                         {
                             panel.PixelOffset = 0;
-                            delta += ScrollQuantum;
+                            delta += this.ScrollQuantum;
                         }
 
                         if (delta != 0)
                         {
-                            RecycleContainersForMove(delta);
+                            this.RecycleContainersForMove(delta);
                         }
                     }
                     else
                     {
                         // We're moving to a partially obscured item at the end of the list so
                         // offset the panel by the height of the first item.
-                        var firstIndex = ItemCount - panel.Children.Count;
-                        firstIndex = (int)Math.Ceiling((double)firstIndex / (double)ScrollQuantum) * ScrollQuantum;
-                        RecycleContainersForMove(firstIndex - FirstIndex);
+                        var firstIndex = this.ItemCount - panel.Children.Count;
+                        firstIndex = (int)Math.Ceiling(firstIndex / (double)this.ScrollQuantum) * this.ScrollQuantum;
+                        this.RecycleContainersForMove(firstIndex - this.FirstIndex);
 
                         double pixelOffset;
                         var child = panel.Children[0];
 
                         if (child.IsArrangeValid)
                         {
-                            pixelOffset = VirtualizingPanel.ScrollDirection == Orientation.Vertical ?
+                            pixelOffset = this.VirtualizingPanel.ScrollDirection == Orientation.Vertical ?
                                                     child.Bounds.Height :
                                                     child.Bounds.Width;
                         }
                         else
                         {
-                            pixelOffset = VirtualizingPanel.ScrollDirection == Orientation.Vertical ?
+                            pixelOffset = this.VirtualizingPanel.ScrollDirection == Orientation.Vertical ?
                                                     child.DesiredSize.Height :
                                                     child.DesiredSize.Width;
                         }
@@ -119,16 +119,16 @@ namespace Omnix.Avalonia.Controls.Presenters
             get
             {
                 // If we can't fit the last items in the panel fully, subtract 1 line from the viewport.
-                var overflow = VirtualizingPanel.PixelOverflow > 0 ? 1 : 0;
-                return Math.Ceiling((double)VirtualizingPanel.Children.Count / ScrollQuantum) - overflow;
+                var overflow = this.VirtualizingPanel.PixelOverflow > 0 ? 1 : 0;
+                return Math.Ceiling((double)this.VirtualizingPanel.Children.Count / this.ScrollQuantum) - overflow;
             }
         }
 
         /// <inheritdoc/>
         public override Size MeasureOverride(Size availableSize)
         {
-            var scrollable = (ILogicalScrollable)Owner;
-            var visualRoot = Owner.GetVisualRoot();
+            var scrollable = (ILogicalScrollable)this.Owner;
+            var visualRoot = this.Owner.GetVisualRoot();
             var maxAvailableSize = (visualRoot as WindowBase)?.PlatformImpl?.MaxClientSize
                  ?? (visualRoot as TopLevel)?.ClientSize;
 
@@ -136,7 +136,7 @@ namespace Omnix.Avalonia.Controls.Presenters
             // fill the available space, but to do that we *don't* want to materialize all our
             // items! Take a look at the root of the tree for a MaxClientSize and use that as
             // the available size.
-            if (VirtualizingPanel.ScrollDirection == Orientation.Vertical)
+            if (this.VirtualizingPanel.ScrollDirection == Orientation.Vertical)
             {
                 if (availableSize.Height == double.PositiveInfinity)
                 {
@@ -167,15 +167,15 @@ namespace Omnix.Avalonia.Controls.Presenters
                 }
             }
 
-            Owner.Panel.Measure(availableSize);
-            return Owner.Panel.DesiredSize;
+            this.Owner.Panel.Measure(availableSize);
+            return this.Owner.Panel.DesiredSize;
         }
 
         /// <inheritdoc/>
         public override void UpdateControls()
         {
-            CreateAndRemoveContainers();
-            InvalidateScroll();
+            this.CreateAndRemoveContainers();
+            this.InvalidateScroll();
 
             this.ChildrenChanged?.Invoke(this, EventArgs.Empty);
         }
@@ -185,28 +185,28 @@ namespace Omnix.Avalonia.Controls.Presenters
         {
             base.ItemsChanged(items, e);
 
-            var panel = VirtualizingPanel;
+            var panel = this.VirtualizingPanel;
 
             if (items != null)
             {
                 switch (e.Action)
                 {
                     case NotifyCollectionChangedAction.Add:
-                        CreateAndRemoveContainers();
+                        this.CreateAndRemoveContainers();
 
-                        if (e.NewStartingIndex < NextIndex)
+                        if (e.NewStartingIndex < this.NextIndex)
                         {
-                            RecycleContainers();
+                            this.RecycleContainers();
                         }
 
                         panel.ForceInvalidateMeasure();
                         break;
 
                     case NotifyCollectionChangedAction.Remove:
-                        if (e.OldStartingIndex >= FirstIndex &&
-                            e.OldStartingIndex < NextIndex)
+                        if (e.OldStartingIndex >= this.FirstIndex &&
+                            e.OldStartingIndex < this.NextIndex)
                         {
-                            RecycleContainersOnRemove();
+                            this.RecycleContainersOnRemove();
                         }
 
                         panel.ForceInvalidateMeasure();
@@ -214,40 +214,40 @@ namespace Omnix.Avalonia.Controls.Presenters
 
                     case NotifyCollectionChangedAction.Move:
                     case NotifyCollectionChangedAction.Replace:
-                        RecycleContainers();
+                        this.RecycleContainers();
                         break;
 
                     case NotifyCollectionChangedAction.Reset:
-                        RecycleContainersOnRemove();
-                        CreateAndRemoveContainers();
+                        this.RecycleContainersOnRemove();
+                        this.CreateAndRemoveContainers();
                         panel.ForceInvalidateMeasure();
                         break;
                 }
             }
             else
             {
-                Owner.ItemContainerGenerator.Clear();
-                VirtualizingPanel.Children.Clear();
-                FirstIndex = NextIndex = 0;
+                this.Owner.ItemContainerGenerator.Clear();
+                this.VirtualizingPanel.Children.Clear();
+                this.FirstIndex = this.NextIndex = 0;
             }
 
             // If we are scrolled to view a partially visible last item but controls were added
             // then we need to return to a non-offset scroll position.
-            if (panel.PixelOffset != 0 && FirstIndex + panel.Children.Count < ItemCount)
+            if (panel.PixelOffset != 0 && this.FirstIndex + panel.Children.Count < this.ItemCount)
             {
                 panel.PixelOffset = 0;
-                RecycleContainersForMove(ScrollQuantum);
+                this.RecycleContainersForMove(this.ScrollQuantum);
             }
 
-            InvalidateScroll();
+            this.InvalidateScroll();
         }
 
         public override IControl GetControlInDirection(NavigationDirection direction, IControl from)
         {
-            var generator = Owner.ItemContainerGenerator;
-            var panel = VirtualizingPanel;
+            var generator = this.Owner.ItemContainerGenerator;
+            var panel = this.VirtualizingPanel;
             var itemIndex = generator.IndexFromContainer(from);
-            var vertical = VirtualizingPanel.ScrollDirection == Orientation.Vertical;
+            var vertical = this.VirtualizingPanel.ScrollDirection == Orientation.Vertical;
 
             if (itemIndex == -1)
             {
@@ -263,15 +263,15 @@ namespace Omnix.Avalonia.Controls.Presenters
                     break;
 
                 case NavigationDirection.Last:
-                    newItemIndex = ItemCount - 1;
+                    newItemIndex = this.ItemCount - 1;
                     break;
 
                 case NavigationDirection.Up:
                     if (vertical)
                     {
-                        newItemIndex = itemIndex - ScrollQuantum;
+                        newItemIndex = itemIndex - this.ScrollQuantum;
                     }
-                    else if (ScrollQuantum > 1)
+                    else if (this.ScrollQuantum > 1)
                     {
                         newItemIndex = itemIndex - 1;
                     }
@@ -280,9 +280,9 @@ namespace Omnix.Avalonia.Controls.Presenters
                 case NavigationDirection.Down:
                     if (vertical)
                     {
-                        newItemIndex = itemIndex + ScrollQuantum;
+                        newItemIndex = itemIndex + this.ScrollQuantum;
                     }
-                    else if (ScrollQuantum > 1)
+                    else if (this.ScrollQuantum > 1)
                     {
                         newItemIndex = itemIndex + 1;
                     }
@@ -292,9 +292,9 @@ namespace Omnix.Avalonia.Controls.Presenters
                 case NavigationDirection.Left:
                     if (!vertical)
                     {
-                        newItemIndex = itemIndex - ScrollQuantum;
+                        newItemIndex = itemIndex - this.ScrollQuantum;
                     }
-                    else if (ScrollQuantum > 1)
+                    else if (this.ScrollQuantum > 1)
                     {
                         newItemIndex = itemIndex - 1;
                     }
@@ -303,33 +303,33 @@ namespace Omnix.Avalonia.Controls.Presenters
                 case NavigationDirection.Right:
                     if (!vertical)
                     {
-                        newItemIndex = itemIndex + ScrollQuantum;
+                        newItemIndex = itemIndex + this.ScrollQuantum;
                     }
-                    else if (ScrollQuantum > 1)
+                    else if (this.ScrollQuantum > 1)
                     {
                         newItemIndex = itemIndex + 1;
                     }
                     break;
 
                 case NavigationDirection.PageUp:
-                    newItemIndex = Math.Max(0, itemIndex - (int)ViewportValue);
+                    newItemIndex = Math.Max(0, itemIndex - (int)this.ViewportValue);
                     break;
 
                 case NavigationDirection.PageDown:
-                    newItemIndex = Math.Min(ItemCount - 1, itemIndex + (int)ViewportValue);
+                    newItemIndex = Math.Min(this.ItemCount - 1, itemIndex + (int)this.ViewportValue);
                     break;
             }
-            return ScrollIntoView(newItemIndex);
+            return this.ScrollIntoView(newItemIndex);
         }
 
         /// <inheritdoc/>
         public override void ScrollIntoView(object item)
         {
-            var index = Items.IndexOf(item);
+            var index = this.Items.IndexOf(item);
 
             if (index != -1)
             {
-                ScrollIntoView(index);
+                this.ScrollIntoView(index);
             }
         }
 
@@ -339,45 +339,45 @@ namespace Omnix.Avalonia.Controls.Presenters
         /// </summary>
         private void CreateAndRemoveContainers()
         {
-            var generator = Owner.ItemContainerGenerator;
-            var panel = VirtualizingPanel;
+            var generator = this.Owner.ItemContainerGenerator;
+            var panel = this.VirtualizingPanel;
 
-            if (Items != null && panel.IsAttachedToVisualTree)
+            if (this.Items != null && panel.IsAttachedToVisualTree)
             {
-                var memberSelector = Owner.MemberSelector;
-                var index = FirstIndex - 1;
+                var memberSelector = this.Owner.MemberSelector;
+                var index = this.FirstIndex - 1;
                 var step = 1;
 
                 // check scroll alignment - add to start until aligned
-                var toAdd = FirstIndex % ScrollQuantum;
+                var toAdd = this.FirstIndex % this.ScrollQuantum;
 
                 // add to start of panel
                 for (int i = 0; i < toAdd; i++)
                 {
-                    var materialized = generator.Materialize(index, Items.ElementAt(index), memberSelector);
+                    var materialized = generator.Materialize(index, this.Items.ElementAt(index), memberSelector);
                     panel.Children.Insert(0, materialized.ContainerControl);
                     --index;
-                    --FirstIndex;
+                    --this.FirstIndex;
                 }
-                index = NextIndex;
+                index = this.NextIndex;
 
                 if (!panel.IsFull)
                 {
                     while (!panel.IsFull && index >= 0)
                     {
-                        if (index >= ItemCount)
+                        if (index >= this.ItemCount)
                         {
                             // We can fit more containers in the panel, but we're at the end of the
                             // items. If we're scrolled to the top (FirstIndex == 0), then there are
                             // no more items to create. Otherwise, go backwards adding containers to
                             // the beginning of the panel.
-                            if (FirstIndex == 0)
+                            if (this.FirstIndex == 0)
                             {
                                 break;
                             }
                             else
                             {
-                                index = FirstIndex - 1;
+                                index = this.FirstIndex - 1;
                                 step = -1;
                             }
                         }
@@ -390,13 +390,13 @@ namespace Omnix.Avalonia.Controls.Presenters
                             {
                                 break;
                             }
-                            toAdd = (index + 1) % ScrollQuantum == 0 ? ScrollQuantum : (index + 1) % ScrollQuantum;
+                            toAdd = (index + 1) % this.ScrollQuantum == 0 ? this.ScrollQuantum : (index + 1) % this.ScrollQuantum;
                         }
 
                         for (int i = 0; i < toAdd; i++)
                         {
 
-                            var materialized = generator.Materialize(index, Items.ElementAt(index), memberSelector);
+                            var materialized = generator.Materialize(index, this.Items.ElementAt(index), memberSelector);
 
                             if (step == 1)
                             {
@@ -414,19 +414,19 @@ namespace Omnix.Avalonia.Controls.Presenters
 
                     if (step == 1)
                     {
-                        NextIndex = index;
+                        this.NextIndex = index;
                     }
                     else
                     {
-                        NextIndex = ItemCount;
-                        FirstIndex = index + 1;
+                        this.NextIndex = this.ItemCount;
+                        this.FirstIndex = index + 1;
                     }
                 }
             }
 
             if (panel.OverflowCount > 0)
             {
-                RemoveContainers(panel.OverflowCount);
+                this.RemoveContainers(panel.OverflowCount);
             }
         }
 
@@ -440,15 +440,15 @@ namespace Omnix.Avalonia.Controls.Presenters
         /// </remarks>
         private void RecycleContainers()
         {
-            var panel = VirtualizingPanel;
-            var generator = Owner.ItemContainerGenerator;
-            var selector = Owner.MemberSelector;
+            var panel = this.VirtualizingPanel;
+            var generator = this.Owner.ItemContainerGenerator;
+            var selector = this.Owner.MemberSelector;
             var containers = generator.Containers.ToList();
-            var itemIndex = FirstIndex;
+            var itemIndex = this.FirstIndex;
 
             foreach (var container in containers)
             {
-                var item = Items.ElementAt(itemIndex);
+                var item = this.Items.ElementAt(itemIndex);
 
                 if (!object.Equals(container.Item, item))
                 {
@@ -477,12 +477,12 @@ namespace Omnix.Avalonia.Controls.Presenters
         /// </remarks>
         private void RecycleContainersForMove(int delta)
         {
-            var panel = VirtualizingPanel;
-            var generator = Owner.ItemContainerGenerator;
-            var selector = Owner.MemberSelector;
+            var panel = this.VirtualizingPanel;
+            var generator = this.Owner.ItemContainerGenerator;
+            var selector = this.Owner.MemberSelector;
 
             // validate delta it should never overflow last index or generate index < 0 
-            var clampedDelta = MathUtilities.Clamp(delta, -FirstIndex, ItemCount - FirstIndex - panel.Children.Count);
+            var clampedDelta = MathUtilities.Clamp(delta, -this.FirstIndex, this.ItemCount - this.FirstIndex - panel.Children.Count);
             if (clampedDelta == 0)
             {
                 return;
@@ -496,18 +496,18 @@ namespace Omnix.Avalonia.Controls.Presenters
             int toAdd = 0;
             if (delta < 0)
             {
-                toAdd = panel.Children.Count - panel.Children.Count / ScrollQuantum * ScrollQuantum;
-                toAdd = (ScrollQuantum - toAdd) % ScrollQuantum;
+                toAdd = panel.Children.Count - panel.Children.Count / this.ScrollQuantum * this.ScrollQuantum;
+                toAdd = (this.ScrollQuantum - toAdd) % this.ScrollQuantum;
                 first += toAdd;
                 count -= toAdd;
             }
 
-            var oldItemIndex = FirstIndex + first;
+            var oldItemIndex = this.FirstIndex + first;
             var newItemIndex = oldItemIndex + delta + ((panel.Children.Count - count) * sign);
 
             for (var i = 0; i < count - (delta - clampedDelta); ++i)
             {
-                var item = Items.ElementAt(newItemIndex);
+                var item = this.Items.ElementAt(newItemIndex);
 
                 if (!generator.TryRecycle(oldItemIndex, newItemIndex, item, selector))
                 {
@@ -519,7 +519,7 @@ namespace Omnix.Avalonia.Controls.Presenters
             }
             for (var i = 0; i < toAdd; i++)
             {
-                var materialized = generator.Materialize(newItemIndex, Items.ElementAt(newItemIndex), selector);
+                var materialized = generator.Materialize(newItemIndex, this.Items.ElementAt(newItemIndex), selector);
                 panel.Children.Add(materialized.ContainerControl);
                 newItemIndex++;
             }
@@ -539,11 +539,11 @@ namespace Omnix.Avalonia.Controls.Presenters
             if (clampedDelta < delta)
             {
                 panel.Children.RemoveRange(panel.Children.Count - (delta - clampedDelta), (delta - clampedDelta));
-                Owner.ItemContainerGenerator.Dematerialize(oldItemIndex, (delta - clampedDelta));
+                this.Owner.ItemContainerGenerator.Dematerialize(oldItemIndex, (delta - clampedDelta));
             }
 
-            FirstIndex += delta;
-            NextIndex = FirstIndex + panel.Children.Count;
+            this.FirstIndex += delta;
+            this.NextIndex = this.FirstIndex + panel.Children.Count;
         }
 
         /// <summary>
@@ -551,35 +551,35 @@ namespace Omnix.Avalonia.Controls.Presenters
         /// </summary>
         private void RecycleContainersOnRemove()
         {
-            var panel = VirtualizingPanel;
+            var panel = this.VirtualizingPanel;
 
-            if (NextIndex <= ItemCount)
+            if (this.NextIndex <= this.ItemCount)
             {
                 // Items have been removed but FirstIndex..NextIndex is still a valid range in the
                 // items, so just recycle the containers to adapt to the new state.
-                RecycleContainers();
+                this.RecycleContainers();
             }
             else
             {
                 // Items have been removed and now the range FirstIndex..NextIndex goes out of 
                 // the item bounds. Remove any excess containers, try to scroll up and then recycle
                 // the containers to make sure they point to the correct item.
-                var newFirstIndex = Math.Max(0, FirstIndex - (NextIndex - ItemCount));
-                newFirstIndex += newFirstIndex % ScrollQuantum;
-                var delta = newFirstIndex - FirstIndex;
-                var newNextIndex = NextIndex + delta;
+                var newFirstIndex = Math.Max(0, this.FirstIndex - (this.NextIndex - this.ItemCount));
+                newFirstIndex += newFirstIndex % this.ScrollQuantum;
+                var delta = newFirstIndex - this.FirstIndex;
+                var newNextIndex = this.NextIndex + delta;
 
-                if (newNextIndex > ItemCount)
+                if (newNextIndex > this.ItemCount)
                 {
-                    RemoveContainers(newNextIndex - ItemCount);
+                    this.RemoveContainers(newNextIndex - this.ItemCount);
                 }
 
                 if (delta != 0)
                 {
-                    RecycleContainersForMove(delta);
+                    this.RecycleContainersForMove(delta);
                 }
 
-                RecycleContainers();
+                this.RecycleContainers();
             }
         }
 
@@ -590,11 +590,11 @@ namespace Omnix.Avalonia.Controls.Presenters
         /// <param name="count">The number of containers to remove.</param>
         private void RemoveContainers(int count)
         {
-            var index = VirtualizingPanel.Children.Count - count;
+            var index = this.VirtualizingPanel.Children.Count - count;
 
-            VirtualizingPanel.Children.RemoveRange(index, count);
-            Owner.ItemContainerGenerator.Dematerialize(FirstIndex + index, count);
-            NextIndex -= count;
+            this.VirtualizingPanel.Children.RemoveRange(index, count);
+            this.Owner.ItemContainerGenerator.Dematerialize(this.FirstIndex + index, count);
+            this.NextIndex -= count;
         }
 
         /// <summary>
@@ -604,30 +604,30 @@ namespace Omnix.Avalonia.Controls.Presenters
         /// <returns>The container that was brought into view.</returns>
         private IControl ScrollIntoView(int index)
         {
-            var panel = VirtualizingPanel;
-            var generator = Owner.ItemContainerGenerator;
+            var panel = this.VirtualizingPanel;
+            var generator = this.Owner.ItemContainerGenerator;
             var newOffset = -1.0;
 
-            if (index >= 0 && index < ItemCount)
+            if (index >= 0 && index < this.ItemCount)
             {
-                var offset = panel.PixelOffset > 0 ? ScrollQuantum : 0;
+                var offset = panel.PixelOffset > 0 ? this.ScrollQuantum : 0;
 
-                if (index <= FirstIndex + offset)
+                if (index <= this.FirstIndex + offset)
                 {
                     newOffset = index;
                 }
-                else if (index >= NextIndex)
+                else if (index >= this.NextIndex)
                 {
-                    newOffset = index - Math.Ceiling(ViewportValue - 1);
+                    newOffset = index - Math.Ceiling(this.ViewportValue - 1);
                 }
 
                 if (newOffset != -1)
                 {
-                    OffsetValue = newOffset / ScrollQuantum;
+                    this.OffsetValue = newOffset / this.ScrollQuantum;
                 }
 
                 var container = generator.ContainerFromIndex(index);
-                var layoutManager = (Owner.GetVisualRoot() as ILayoutRoot)?.LayoutManager;
+                var layoutManager = (this.Owner.GetVisualRoot() as ILayoutRoot)?.LayoutManager;
 
                 // We need to do a layout here because it's possible that the container we moved to
                 // is only partially visible due to differing item sizes. If the container is only 
@@ -641,14 +641,14 @@ namespace Omnix.Avalonia.Controls.Presenters
                     {
                         if (container.Bounds.Y < panel.Bounds.Y || container.Bounds.Bottom > panel.Bounds.Bottom)
                         {
-                            OffsetValue += 1;
+                            this.OffsetValue += 1;
                         }
                     }
                     else
                     {
                         if (container.Bounds.X < panel.Bounds.X || container.Bounds.Right > panel.Bounds.Right)
                         {
-                            OffsetValue += 1;
+                            this.OffsetValue += 1;
                         }
                     }
                 }
@@ -666,7 +666,7 @@ namespace Omnix.Avalonia.Controls.Presenters
         /// <returns>The coerced value.</returns>
         private double CoerceOffset(double value)
         {
-            var max = Math.Max(ExtentValue - ViewportValue, 0);
+            var max = Math.Max(this.ExtentValue - this.ViewportValue, 0);
             return MathUtilities.Clamp(value, 0, max);
         }
     }

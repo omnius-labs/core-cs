@@ -1,6 +1,5 @@
 ﻿using System.IO;
 using Omnix.Base;
-using Omnix.Io;
 
 namespace Omnix.Serialization.RocketPack.Helpers
 {

@@ -3,9 +3,9 @@
 
 namespace Omnix.Configuration.Internal
 {
-    public readonly struct SettingsDatabaseVersion : System.IEquatable<SettingsDatabaseVersion>
+    public readonly struct SettingsDatabaseVersion : global::System.IEquatable<SettingsDatabaseVersion>
     {
-        public static Omnix.Serialization.RocketPack.IRocketPackFormatter<SettingsDatabaseVersion> Formatter { get; }
+        public static global::Omnix.Serialization.RocketPack.IRocketPackFormatter<SettingsDatabaseVersion> Formatter { get; }
         public static SettingsDatabaseVersion Empty { get; }
 
         static SettingsDatabaseVersion()
@@ -21,7 +21,7 @@ namespace Omnix.Configuration.Internal
             this.Value = value;
 
             {
-                var __h = new System.HashCode();
+                var __h = new global::System.HashCode();
                 if (this.Value != default) __h.Add(this.Value.GetHashCode());
                 __hashCode = __h.ToHashCode();
             }
@@ -29,13 +29,13 @@ namespace Omnix.Configuration.Internal
 
         public uint Value { get; }
 
-        public static SettingsDatabaseVersion Import(System.Buffers.ReadOnlySequence<byte> sequence, Omnix.Base.BufferPool bufferPool)
+        public static SettingsDatabaseVersion Import(global::System.Buffers.ReadOnlySequence<byte> sequence, global::Omnix.Base.BufferPool bufferPool)
         {
-            return Formatter.Deserialize(new Omnix.Serialization.RocketPack.RocketPackReader(sequence, bufferPool), 0);
+            return Formatter.Deserialize(new global::Omnix.Serialization.RocketPack.RocketPackReader(sequence, bufferPool), 0);
         }
-        public void Export(System.Buffers.IBufferWriter<byte> bufferWriter, Omnix.Base.BufferPool bufferPool)
+        public void Export(global::System.Buffers.IBufferWriter<byte> bufferWriter, global::Omnix.Base.BufferPool bufferPool)
         {
-            Formatter.Serialize(new Omnix.Serialization.RocketPack.RocketPackWriter(bufferWriter, bufferPool), this, 0);
+            Formatter.Serialize(new global::Omnix.Serialization.RocketPack.RocketPackWriter(bufferWriter, bufferPool), this, 0);
         }
         public static bool operator ==(SettingsDatabaseVersion left, SettingsDatabaseVersion right)
         {
@@ -60,11 +60,11 @@ namespace Omnix.Configuration.Internal
 
         public override int GetHashCode() => __hashCode;
 
-        private sealed class CustomFormatter : Omnix.Serialization.RocketPack.IRocketPackFormatter<SettingsDatabaseVersion>
+        private sealed class CustomFormatter : global::Omnix.Serialization.RocketPack.IRocketPackFormatter<SettingsDatabaseVersion>
         {
-            public void Serialize(Omnix.Serialization.RocketPack.RocketPackWriter w, SettingsDatabaseVersion value, int rank)
+            public void Serialize(global::Omnix.Serialization.RocketPack.RocketPackWriter w, SettingsDatabaseVersion value, int rank)
             {
-                if (rank > 256) throw new System.FormatException();
+                if (rank > 256) throw new global::System.FormatException();
 
                 if (value.Value != 0)
                 {
@@ -72,9 +72,9 @@ namespace Omnix.Configuration.Internal
                 }
             }
 
-            public SettingsDatabaseVersion Deserialize(Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
+            public SettingsDatabaseVersion Deserialize(global::Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
             {
-                if (rank > 256) throw new System.FormatException();
+                if (rank > 256) throw new global::System.FormatException();
 
                 uint p_value = 0;
 

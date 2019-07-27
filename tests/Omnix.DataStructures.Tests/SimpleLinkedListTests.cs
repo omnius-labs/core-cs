@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Omnix.Base.Helpers;
 using Xunit;
 
@@ -9,13 +8,15 @@ namespace Omnix.DataStructures
 {
     public class SimpleLinkedListTests
     {
-        private Random _random = new Random();
+        private readonly Random _random = new Random();
 
         [Fact]
         public void SimpleLinkedListTest()
         {
-            var linkedList = new SimpleLinkedList<int>();
-            linkedList.Add(0);
+            var linkedList = new SimpleLinkedList<int>
+            {
+                0
+            };
             Assert.True(linkedList.Count == 1);
             Assert.True(linkedList.Contains(0));
             Assert.False(linkedList.Contains(1));

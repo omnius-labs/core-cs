@@ -11,7 +11,7 @@ namespace Omnix.DataStructures
 
         private int? _capacity;
 
-        private IEqualityComparer<T> _equalityComparer = EqualityComparer<T>.Default;
+        private readonly IEqualityComparer<T> _equalityComparer = EqualityComparer<T>.Default;
 
         public SimpleLinkedList()
         {
@@ -58,8 +58,10 @@ namespace Omnix.DataStructures
                 throw new OverflowException();
             }
 
-            var currentItem = new Node(item);
-            currentItem.Next = _firstNode;
+            var currentItem = new Node(item)
+            {
+                Next = _firstNode
+            };
 
             _firstNode = currentItem;
             _count++;
