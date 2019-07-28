@@ -4,7 +4,7 @@ using Omnix.Base;
 
 namespace Omnix.Serialization.RocketPack
 {
-    public abstract class RocketPackMessageBase<T> : IEquatable<T?>
+    public abstract class RocketPackMessageBase<T> : IEquatable<T>
         where T : RocketPackMessageBase<T>
     {
         static RocketPackMessageBase()
@@ -51,6 +51,6 @@ namespace Omnix.Serialization.RocketPack
             return this.Equals((T)other);
         }
 
-        public abstract bool Equals(T? other);
+        public abstract bool Equals(T other);
     }
 }
