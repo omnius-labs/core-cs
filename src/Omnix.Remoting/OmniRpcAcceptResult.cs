@@ -1,4 +1,4 @@
-﻿namespace Omnix.Remoting
+namespace Omnix.Remoting
 {
     public readonly struct OmniRpcAcceptResult
     {

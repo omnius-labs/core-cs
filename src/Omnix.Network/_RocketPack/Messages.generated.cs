@@ -31,7 +31,7 @@ namespace Omnix.Network
 
         public string Value { get; }
 
-        public override bool Equals(OmniAddress? target)
+        public override bool Equals(OmniAddress target)
         {
             if (target is null) return false;
             if (object.ReferenceEquals(this, target)) return true;

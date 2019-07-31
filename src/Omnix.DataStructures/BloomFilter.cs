@@ -59,9 +59,6 @@ namespace Omnix.DataStructures
         /// <summary>
         /// Creates a new Bloom filter.
         /// </summary>
-        /// <param name="capacity">The anticipated number of items to be added to the filter. More than this number of items can be added, but the error rate will exceed what is expected.</param>
-        /// <param name="errorRate">The accepable false-positive rate (e.g., 0.01F = 1%)</param>
-        /// <param name="hashFunction">The function to hash the input values. Do not use GetHashCode(). If it is null, and T is string or int a hash function will be provided for you.</param>
         public BloomFilter(int capacity, double errorRate, int hashFunctionCount, Func<T, long> hashFunction)
         {
             if (capacity < 1)
@@ -106,9 +103,9 @@ namespace Omnix.DataStructures
             return (int)Math.Ceiling(capacity * Math.Log(errorRate, (1.0 / Math.Pow(2, Math.Log(2.0)))));
         }
 
-        private static int ComputeM(int n, double p, int k)
+        private static int ComputeM(int capacity, double errorRate, int hashFunctionCount)
         {
-            return (int)Math.Ceiling(n * ((-k) / Math.Log(1 - Math.Exp(Math.Log(p) / k))));
+            return (int)Math.Ceiling(capacity * (-hashFunctionCount / Math.Log(1 - Math.Exp(Math.Log(errorRate) / hashFunctionCount))));
         }
 
         /// <summary>
@@ -183,9 +180,6 @@ namespace Omnix.DataStructures
         /// <summary>
         /// Performs Dillinger and Manolios double hashing.
         /// </summary>
-        /// <param name="primaryHash"> The primary hash. </param>
-        /// <param name="secondaryHash"> The secondary hash. </param>
-        /// <param name="i"> The i. </param>
         /// <returns> The <see cref="int"/>. </returns>
         private int ComputeHash(long hash, int i)
         {

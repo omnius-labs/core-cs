@@ -47,12 +47,12 @@ namespace Omnix.Network
 
                     if (ipAddress.AddressFamily == AddressFamily.InterNetwork)
                     {
-                        omniAddress = new OmniAddress($"/ip4/{ipAddress.Address}/tcp/{port}");
+                        omniAddress = new OmniAddress($"/ip4/{ipAddress.ToString()}/tcp/{port}");
                         return true;
                     }
                     else if (ipAddress.AddressFamily == AddressFamily.InterNetworkV6)
                     {
-                        omniAddress = new OmniAddress($"/ip6/{ipAddress.Address}/tcp/{port}");
+                        omniAddress = new OmniAddress($"/ip6/{ipAddress.ToString()}/tcp/{port}");
                         return true;
                     }
 

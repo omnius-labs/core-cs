@@ -39,7 +39,7 @@ namespace Omnix.Network.Connections.Multiplexer.Internal
 
         public global::Omnix.DataStructures.ReadOnlyListSlim<CommunicatorVersion> Versions { get; }
 
-        public override bool Equals(HelloMessage? target)
+        public override bool Equals(HelloMessage target)
         {
             if (target is null) return false;
             if (object.ReferenceEquals(this, target)) return true;

@@ -157,7 +157,7 @@ namespace Omnix.Avalonia.Controls.Presenters
         }
 
         /// <summary>
-        /// Creates an <see cref="CustomItemVirtualizerBase"/> based on an item presenter's 
+        /// Creates an <see cref="CustomItemVirtualizerBase"/> based on an item presenter's
         /// <see cref="ItemVirtualizationMode"/>.
         /// </summary>
         /// <param name="owner">The items presenter.</param>
@@ -230,7 +230,7 @@ namespace Omnix.Avalonia.Controls.Presenters
         }
 
         /// <summary>
-        /// Called when the items for the presenter change, either because 
+        /// Called when the items for the presenter change, either because
         /// <see cref="ItemsPresenterBase.Items"/> has been set, the items collection has been
         /// modified, or the panel has been created.
         /// </summary>

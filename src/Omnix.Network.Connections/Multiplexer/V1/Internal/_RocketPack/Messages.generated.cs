@@ -36,7 +36,7 @@ namespace Omnix.Network.Connections.Multiplexer.V1.Internal
         public ulong InitialWindowSize { get; }
         public uint MaxSessionAcceptQueueSize { get; }
 
-        public override bool Equals(ProfileMessage? target)
+        public override bool Equals(ProfileMessage target)
         {
             if (target is null) return false;
             if (object.ReferenceEquals(this, target)) return true;
@@ -134,7 +134,7 @@ namespace Omnix.Network.Connections.Multiplexer.V1.Internal
 
         public ulong SessionId { get; }
 
-        public override bool Equals(SessionConnectMessage? target)
+        public override bool Equals(SessionConnectMessage target)
         {
             if (target is null) return false;
             if (object.ReferenceEquals(this, target)) return true;
@@ -216,7 +216,7 @@ namespace Omnix.Network.Connections.Multiplexer.V1.Internal
 
         public ulong SessionId { get; }
 
-        public override bool Equals(SessionAcceptMessage? target)
+        public override bool Equals(SessionAcceptMessage target)
         {
             if (target is null) return false;
             if (object.ReferenceEquals(this, target)) return true;
@@ -301,7 +301,7 @@ namespace Omnix.Network.Connections.Multiplexer.V1.Internal
         public ulong SessionId { get; }
         public ulong Size { get; }
 
-        public override bool Equals(SessionUpdateWindowSizeMessage? target)
+        public override bool Equals(SessionUpdateWindowSizeMessage target)
         {
             if (target is null) return false;
             if (object.ReferenceEquals(this, target)) return true;
@@ -411,7 +411,7 @@ namespace Omnix.Network.Connections.Multiplexer.V1.Internal
         private readonly global::System.Buffers.IMemoryOwner<byte> _data;
         public global::System.ReadOnlyMemory<byte> Data => _data.Memory;
 
-        public override bool Equals(SessionDataMessage? target)
+        public override bool Equals(SessionDataMessage target)
         {
             if (target is null) return false;
             if (object.ReferenceEquals(this, target)) return true;
@@ -530,7 +530,7 @@ namespace Omnix.Network.Connections.Multiplexer.V1.Internal
 
         public ulong SessionId { get; }
 
-        public override bool Equals(SessionCloseMessage? target)
+        public override bool Equals(SessionCloseMessage target)
         {
             if (target is null) return false;
             if (object.ReferenceEquals(this, target)) return true;
@@ -615,7 +615,7 @@ namespace Omnix.Network.Connections.Multiplexer.V1.Internal
         public ulong SessionId { get; }
         public SessionErrorType ErrorType { get; }
 
-        public override bool Equals(SessionErrorMessage? target)
+        public override bool Equals(SessionErrorMessage target)
         {
             if (target is null) return false;
             if (object.ReferenceEquals(this, target)) return true;

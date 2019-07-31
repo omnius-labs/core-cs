@@ -160,7 +160,7 @@ namespace Omnix.Algorithms.Cryptography
         public global::System.ReadOnlyMemory<byte> PublicKey { get; }
         public global::System.ReadOnlyMemory<byte> PrivateKey { get; }
 
-        public override bool Equals(OmniAgreement? target)
+        public override bool Equals(OmniAgreement target)
         {
             if (target is null) return false;
             if (object.ReferenceEquals(this, target)) return true;
@@ -300,7 +300,7 @@ namespace Omnix.Algorithms.Cryptography
         public OmniAgreementAlgorithmType AlgorithmType { get; }
         public global::System.ReadOnlyMemory<byte> PublicKey { get; }
 
-        public override bool Equals(OmniAgreementPublicKey? target)
+        public override bool Equals(OmniAgreementPublicKey target)
         {
             if (target is null) return false;
             if (object.ReferenceEquals(this, target)) return true;
@@ -424,7 +424,7 @@ namespace Omnix.Algorithms.Cryptography
         public OmniAgreementAlgorithmType AlgorithmType { get; }
         public global::System.ReadOnlyMemory<byte> PrivateKey { get; }
 
-        public override bool Equals(OmniAgreementPrivateKey? target)
+        public override bool Equals(OmniAgreementPrivateKey target)
         {
             if (target is null) return false;
             if (object.ReferenceEquals(this, target)) return true;
@@ -556,7 +556,7 @@ namespace Omnix.Algorithms.Cryptography
         public global::System.ReadOnlyMemory<byte> PublicKey { get; }
         public global::System.ReadOnlyMemory<byte> PrivateKey { get; }
 
-        public override bool Equals(OmniDigitalSignature? target)
+        public override bool Equals(OmniDigitalSignature target)
         {
             if (target is null) return false;
             if (object.ReferenceEquals(this, target)) return true;
@@ -704,7 +704,7 @@ namespace Omnix.Algorithms.Cryptography
         public global::System.ReadOnlyMemory<byte> PublicKey { get; }
         public global::System.ReadOnlyMemory<byte> Value { get; }
 
-        public override bool Equals(OmniCertificate? target)
+        public override bool Equals(OmniCertificate target)
         {
             if (target is null) return false;
             if (object.ReferenceEquals(this, target)) return true;
@@ -841,7 +841,7 @@ namespace Omnix.Algorithms.Cryptography
         public string Name { get; }
         public OmniHash Hash { get; }
 
-        public override bool Equals(OmniSignature? target)
+        public override bool Equals(OmniSignature target)
         {
             if (target is null) return false;
             if (object.ReferenceEquals(this, target)) return true;
@@ -946,7 +946,7 @@ namespace Omnix.Algorithms.Cryptography
         public OmniHashcashAlgorithmType AlgorithmType { get; }
         public global::System.ReadOnlyMemory<byte> Key { get; }
 
-        public override bool Equals(OmniHashcash? target)
+        public override bool Equals(OmniHashcash target)
         {
             if (target is null) return false;
             if (object.ReferenceEquals(this, target)) return true;

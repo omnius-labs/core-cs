@@ -1,4 +1,4 @@
-﻿namespace Omnix.Net.Upnp
+namespace Omnix.Net.Upnp
 {
     public enum UpnpProtocolType
     {

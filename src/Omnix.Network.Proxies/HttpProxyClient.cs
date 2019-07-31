@@ -115,7 +115,7 @@ namespace Omnix.Network.Proxies
                 // ignore all of them]
                 // <CR><LF>    // Last Empty Line
 
-                // create an byte response array  
+                // create an byte response array
                 var sb = new StringBuilder();
 
                 {
@@ -157,7 +157,7 @@ namespace Omnix.Network.Proxies
                     break;
             }
 
-            // throw a new application exception 
+            // throw a new application exception
             throw new ProxyClientException(msg);
         }
 

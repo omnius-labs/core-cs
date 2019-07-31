@@ -157,7 +157,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator.Internal
 
         public bool X0 { get; }
 
-        public override bool Equals(MessageElement? target)
+        public override bool Equals(MessageElement target)
         {
             if (target is null) return false;
             if (object.ReferenceEquals(this, target)) return true;
@@ -802,7 +802,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator.Internal
         public SmallMessageElement X25 { get; }
         public MessageElement X26 { get; }
 
-        public override bool Equals(Message? target)
+        public override bool Equals(Message target)
         {
             if (target is null) return false;
             if (object.ReferenceEquals(this, target)) return true;
@@ -1452,7 +1452,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator.Internal
         public SmallMessageElement? X25 { get; }
         public MessageElement? X26 { get; }
 
-        public override bool Equals(NullableMessage? target)
+        public override bool Equals(NullableMessage target)
         {
             if (target is null) return false;
             if (object.ReferenceEquals(this, target)) return true;

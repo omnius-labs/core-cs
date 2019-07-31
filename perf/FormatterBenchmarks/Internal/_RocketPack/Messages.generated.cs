@@ -38,7 +38,7 @@ namespace FormatterBenchmarks
 
         public global::Omnix.DataStructures.ReadOnlyListSlim<RocketPack_BytesElements> List { get; }
 
-        public override bool Equals(RocketPack_BytesElementsList? target)
+        public override bool Equals(RocketPack_BytesElementsList target)
         {
             if (target is null) return false;
             if (object.ReferenceEquals(this, target)) return true;
@@ -198,7 +198,7 @@ namespace FormatterBenchmarks
         private readonly global::System.Buffers.IMemoryOwner<byte> _x9;
         public global::System.ReadOnlyMemory<byte> X9 => _x9.Memory;
 
-        public override bool Equals(RocketPack_BytesElements? target)
+        public override bool Equals(RocketPack_BytesElements target)
         {
             if (target is null) return false;
             if (object.ReferenceEquals(this, target)) return true;
@@ -450,7 +450,7 @@ namespace FormatterBenchmarks
 
         public global::Omnix.DataStructures.ReadOnlyListSlim<RocketPack_IntElements> List { get; }
 
-        public override bool Equals(RocketPack_IntElementsList? target)
+        public override bool Equals(RocketPack_IntElementsList target)
         {
             if (target is null) return false;
             if (object.ReferenceEquals(this, target)) return true;
@@ -568,7 +568,7 @@ namespace FormatterBenchmarks
         public uint X8 { get; }
         public uint X9 { get; }
 
-        public override bool Equals(RocketPack_IntElements? target)
+        public override bool Equals(RocketPack_IntElements target)
         {
             if (target is null) return false;
             if (object.ReferenceEquals(this, target)) return true;
@@ -806,7 +806,7 @@ namespace FormatterBenchmarks
 
         public global::Omnix.DataStructures.ReadOnlyListSlim<RocketPack_StringElements> List { get; }
 
-        public override bool Equals(RocketPack_StringElementsList? target)
+        public override bool Equals(RocketPack_StringElementsList target)
         {
             if (target is null) return false;
             if (object.ReferenceEquals(this, target)) return true;
@@ -956,7 +956,7 @@ namespace FormatterBenchmarks
         public string X8 { get; }
         public string X9 { get; }
 
-        public override bool Equals(RocketPack_StringElements? target)
+        public override bool Equals(RocketPack_StringElements target)
         {
             if (target is null) return false;
             if (object.ReferenceEquals(this, target)) return true;

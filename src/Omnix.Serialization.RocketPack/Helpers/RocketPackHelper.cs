@@ -1,4 +1,4 @@
-﻿using System.IO;
+using System.IO;
 using Omnix.Base;
 
 namespace Omnix.Serialization.RocketPack.Helpers

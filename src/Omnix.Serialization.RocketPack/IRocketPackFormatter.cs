@@ -1,4 +1,4 @@
-﻿namespace Omnix.Serialization.RocketPack
+namespace Omnix.Serialization.RocketPack
 {
     public interface IRocketPackFormatter<T>
     {
