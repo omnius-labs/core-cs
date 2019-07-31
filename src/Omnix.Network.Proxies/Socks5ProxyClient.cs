@@ -160,7 +160,7 @@ namespace Omnix.Network.Proxies
                 //  * X'80' to X'FE' RESERVED FOR PRIVATE METHODS
                 //  * X'FF' NO ACCEPTABLE METHODS
 
-                // receive the server response 
+                // receive the server response
                 var response = new byte[2];
                 stream.Read(response, 0, response.Length);
 
@@ -305,7 +305,7 @@ namespace Omnix.Network.Proxies
                 //   * DOMAINNAME: X'03'
                 //   * IP V6 address: X'04'
                 // * DST.ADDR desired destination address
-                // * DST.PORT desired destination port in network octet order            
+                // * DST.PORT desired destination port in network octet order
 
                 var request = new byte[4 + destAddr.Length + 2];
                 request[0] = SOCKS5_VERSION_NUMBER;

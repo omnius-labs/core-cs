@@ -10,7 +10,7 @@ namespace Omnix.Base
         private static readonly NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
 
         /// <summary>
-        /// 実行されるメソッド 
+        /// 実行されるメソッド
         /// </summary>
         private readonly Func<CancellationToken, ValueTask> _callback;
 

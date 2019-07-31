@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Omnix.Base;
 
 namespace Omnix.Network

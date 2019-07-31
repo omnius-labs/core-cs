@@ -1,4 +1,4 @@
-﻿namespace Omnix.Serialization
+namespace Omnix.Serialization
 {
     // TODO
     // FileConverter

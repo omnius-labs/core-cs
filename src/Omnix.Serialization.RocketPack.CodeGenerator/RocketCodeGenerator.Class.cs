@@ -811,7 +811,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
 
             private void Write_Equals(CodeWriter w, MessageDefinition messageDefinition)
             {
-                w.WriteLine($"public override bool Equals({messageDefinition.Name}? target)");
+                w.WriteLine($"public override bool Equals({messageDefinition.Name} target)");
                 w.WriteLine("{");
 
                 w.PushIndent();

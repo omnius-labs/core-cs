@@ -96,7 +96,7 @@ namespace Omnix.Network.Connections.Secure.V1.Internal
         public global::Omnix.DataStructures.ReadOnlyListSlim<CryptoAlgorithm> CryptoAlgorithms { get; }
         public global::Omnix.DataStructures.ReadOnlyListSlim<HashAlgorithm> HashAlgorithms { get; }
 
-        public override bool Equals(ProfileMessage? target)
+        public override bool Equals(ProfileMessage target)
         {
             if (target is null) return false;
             if (object.ReferenceEquals(this, target)) return true;
@@ -300,7 +300,7 @@ namespace Omnix.Network.Connections.Secure.V1.Internal
         public ProfileMessage ProfileMessage { get; }
         public OmniAgreementPublicKey AgreementPublicKey { get; }
 
-        public override bool Equals(VerificationMessage? target)
+        public override bool Equals(VerificationMessage target)
         {
             if (target is null) return false;
             if (object.ReferenceEquals(this, target)) return true;
@@ -410,7 +410,7 @@ namespace Omnix.Network.Connections.Secure.V1.Internal
 
         public global::Omnix.DataStructures.ReadOnlyListSlim<global::System.ReadOnlyMemory<byte>> Hashes { get; }
 
-        public override bool Equals(AuthenticationMessage? target)
+        public override bool Equals(AuthenticationMessage target)
         {
             if (target is null) return false;
             if (object.ReferenceEquals(this, target)) return true;

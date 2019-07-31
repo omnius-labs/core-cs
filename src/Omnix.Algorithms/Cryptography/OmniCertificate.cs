@@ -32,7 +32,7 @@ namespace Omnix.Algorithms.Cryptography
             return this.GetOmniSignature().ToString();
         }
 
-        private OmniSignature _signature;
+        private OmniSignature? _signature;
 
         public OmniSignature GetOmniSignature()
         {

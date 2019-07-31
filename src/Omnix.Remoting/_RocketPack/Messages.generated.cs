@@ -43,7 +43,7 @@ namespace Omnix.Remoting
         public string Message { get; }
         public string StackTrace { get; }
 
-        public override bool Equals(OmniRpcErrorMessage? target)
+        public override bool Equals(OmniRpcErrorMessage target)
         {
             if (target is null) return false;
             if (object.ReferenceEquals(this, target)) return true;

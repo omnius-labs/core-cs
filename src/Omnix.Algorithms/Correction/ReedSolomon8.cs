@@ -465,7 +465,7 @@ namespace Omnix.Algorithms.Correction
                 {
                     const int Unroll = 16; // unroll the loop 16 times.
 
-                    // Not sure if loop unrolling has any real benefit in Java, but 
+                    // Not sure if loop unrolling has any real benefit in Java, but
                     // what the hey.
                     for (; i < lim && (lim - i) > Unroll; i += Unroll)
                     {
@@ -579,7 +579,7 @@ namespace Omnix.Algorithms.Correction
                         throw new ArgumentException("XXX pivot not found!");
                     }
 
-                    // Ok, we've found a pivot by this point, so we can set the 
+                    // Ok, we've found a pivot by this point, so we can set the
                     // foundPiv variable back to false.  The reason that this is
                     // so shittily laid out is that the original code had goto's :(
                     foundPiv = false;
@@ -778,7 +778,7 @@ namespace Omnix.Algorithms.Correction
                  * k*k vandermonde matrix, multiply right the bottom n-k rows
                  * by the inverse, and construct the identity matrix at the top.
                  */
-                // much faster than invertMatrix 
+                // much faster than invertMatrix
                 this.InvertVandermonde(tmpMatrix, k);
                 this.MatMul(tmpMatrix, k * k, tmpMatrix, 0, encMatrix, k * k, n - k, k, k);
 

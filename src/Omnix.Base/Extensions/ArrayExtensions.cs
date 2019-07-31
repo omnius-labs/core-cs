@@ -1,4 +1,4 @@
-﻿namespace Omnix.Base.Extensions
+namespace Omnix.Base.Extensions
 {
     public static class ArrayExtensions
     {

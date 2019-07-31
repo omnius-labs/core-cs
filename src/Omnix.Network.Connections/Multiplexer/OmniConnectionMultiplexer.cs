@@ -51,7 +51,7 @@ namespace Omnix.Network.Connections.Multiplexer
                 }
             }
 
-            throw new ArgumentException(); 
+            throw new ArgumentException();
         }
 
         private void SetPriority(IConnection connection, TPriority priority)

@@ -1,4 +1,4 @@
-﻿namespace FormatterBenchmarks.Internal
+namespace FormatterBenchmarks.Internal
 {
     [MessagePack.MessagePackObject]
     public class MessagePack_BytesElementsList

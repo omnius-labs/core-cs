@@ -1,4 +1,4 @@
-﻿using Omnix.Remoting.Internal;
+using Omnix.Remoting.Internal;
 using Omnix.Serialization.RocketPack;
 
 namespace Omnix.Remoting
