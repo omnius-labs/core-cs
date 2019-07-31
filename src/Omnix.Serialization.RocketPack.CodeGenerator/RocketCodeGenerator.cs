@@ -178,7 +178,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
 
             public override string ToString()
             {
-                return _sb.ToString();
+                return _sb.ToString().Replace("\r\n", "\n");
             }
         }
     }

@@ -1,4 +1,4 @@
-﻿
+
 #nullable enable
 
 namespace Omnix.Network.Connections.Multiplexer.Internal

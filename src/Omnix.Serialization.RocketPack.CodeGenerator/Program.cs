@@ -41,9 +41,8 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
                 }
             }
 
-            using (var writer = new StreamWriter(destinationFilePath, false, Encoding.UTF8))
+            using (var writer = new StreamWriter(destinationFilePath, false, new UTF8Encoding(false)))
             {
-                writer.NewLine = "\n";
                 writer.Write(RocketCodeGenerator.Generate(result.definition, result.externalDefinitions));
             }
         }
