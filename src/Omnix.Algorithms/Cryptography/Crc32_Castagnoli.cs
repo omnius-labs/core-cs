@@ -4,6 +4,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using Omnix.Algorithms.Cryptography.Internal;
+using Omnix.Algorithms.Internal;
 using Omnix.Base;
 
 namespace Omnix.Algorithms.Cryptography
@@ -11,78 +12,6 @@ namespace Omnix.Algorithms.Cryptography
     public static unsafe class Crc32_Castagnoli
     {
         private static readonly ThreadLocal<Encoding> _utf8Encoding = new ThreadLocal<Encoding>(() => new UTF8Encoding(false));
-
-        private static NativeLibraryManager? _nativeLibraryManager;
-
-        private delegate uint ComputeDelegate(uint x, byte* src, int len);
-        private static ComputeDelegate _compute;
-
-        static Crc32_Castagnoli()
-        {
-            try
-            {
-                LoadNativeMethods();
-            }
-            catch (Exception)
-            {
-                LoadPureUnsafeMethods();
-            }
-        }
-
-        internal static void LoadNativeMethods()
-        {
-            _nativeLibraryManager?.Dispose();
-
-            try
-            {
-                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-                {
-                    if (RuntimeInformation.ProcessArchitecture == Architecture.X64)
-                    {
-                        _nativeLibraryManager = new NativeLibraryManager("omnix-cryptography.x64.dll");
-                    }
-                    else
-                    {
-                        throw new NotSupportedException();
-                    }
-                }
-                else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-                {
-                    if (RuntimeInformation.ProcessArchitecture == Architecture.X64)
-                    {
-                        _nativeLibraryManager = new NativeLibraryManager("omnix-cryptography.x64.so");
-                    }
-                    else
-                    {
-                        throw new NotSupportedException();
-                    }
-                }
-                else
-                {
-                    throw new NotSupportedException();
-                }
-
-                _compute = _nativeLibraryManager.GetMethod<ComputeDelegate>("compute_Crc32_Castagnoli");
-            }
-            catch (Exception)
-            {
-                _nativeLibraryManager?.Dispose();
-                _nativeLibraryManager = null;
-
-                throw;
-            }
-        }
-
-        internal static void LoadPureUnsafeMethods()
-        {
-            if (_nativeLibraryManager != null)
-            {
-                _nativeLibraryManager.Dispose();
-                _nativeLibraryManager = null;
-            }
-
-            _compute = PureUnsafeMethods.Crc32_Castagnoli_Compute;
-        }
 
         public static int ComputeHash(ReadOnlySpan<byte> memory)
         {
@@ -92,7 +21,7 @@ namespace Omnix.Algorithms.Cryptography
             {
                 var t_buffer = p_buffer;
 
-                x = _compute(x, t_buffer, memory.Length);
+                x = NativeMethods.Crc32_Castagnoli.Compute(x, t_buffer, memory.Length);
             }
 
             return (int)(x ^ 0xFFFFFFFF);
@@ -121,7 +50,7 @@ namespace Omnix.Algorithms.Cryptography
             {
                 fixed (byte* p_segment = segment.Span)
                 {
-                    x = _compute(x, p_segment, segment.Length);
+                    x = NativeMethods.Crc32_Castagnoli.Compute(x, p_segment, segment.Length);
                 }
             }
 

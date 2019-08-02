@@ -515,7 +515,7 @@ namespace Omnix.Net.Upnp
             throw new UpnpClientException("Failed to get port entry.");
         }
 
-        protected override void Dispose(bool disposing)
+        protected override void OnDispose(bool disposing)
         {
             if (disposing)
             {

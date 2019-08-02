@@ -3,6 +3,7 @@ using System.Buffers.Binary;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
+using System.Threading.Tasks;
 using Omnix.Algorithms.Cryptography;
 using Omnix.Base;
 using Omnix.Configuration.Internal;
@@ -103,7 +104,8 @@ namespace Omnix.Configuration
                     }
                 }
 
-                value = formatter.Deserialize(new RocketPackReader(sequence, BufferPool.Shared), 0);
+                var reader = new RocketPackReader(sequence, BufferPool.Shared);
+                value = formatter.Deserialize(ref reader, 0);
 
                 hub.Reader.Complete();
 
@@ -132,7 +134,8 @@ namespace Omnix.Configuration
 
                 using var hub = new Hub();
 
-                formatter.Serialize(new RocketPackWriter(hub.Writer, BufferPool.Shared), value, 0);
+                var writer = new RocketPackWriter(hub.Writer, BufferPool.Shared);
+                formatter.Serialize(ref writer, value, 0);
                 hub.Writer.Complete();
 
                 var sequence = hub.Reader.GetSequence();
@@ -276,7 +279,7 @@ namespace Omnix.Configuration
             this.Commit(name);
         }
 
-        protected override void Dispose(bool disposing)
+        protected override void OnDispose(bool disposing)
         {
             if (disposing)
             {

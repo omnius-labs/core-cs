@@ -50,7 +50,7 @@ namespace Omnix.Network.Connections.Multiplexer.V1.Internal
 
         private sealed class CustomFormatter : global::Omnix.Serialization.RocketPack.IRocketPackFormatter<ProfileMessage>
         {
-            public void Serialize(global::Omnix.Serialization.RocketPack.RocketPackWriter w, ProfileMessage value, int rank)
+            public void Serialize(ref global::Omnix.Serialization.RocketPack.RocketPackWriter w, ProfileMessage value, int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
@@ -79,7 +79,7 @@ namespace Omnix.Network.Connections.Multiplexer.V1.Internal
                 }
             }
 
-            public ProfileMessage Deserialize(global::Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
+            public ProfileMessage Deserialize(ref global::Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
@@ -147,7 +147,7 @@ namespace Omnix.Network.Connections.Multiplexer.V1.Internal
 
         private sealed class CustomFormatter : global::Omnix.Serialization.RocketPack.IRocketPackFormatter<SessionConnectMessage>
         {
-            public void Serialize(global::Omnix.Serialization.RocketPack.RocketPackWriter w, SessionConnectMessage value, int rank)
+            public void Serialize(ref global::Omnix.Serialization.RocketPack.RocketPackWriter w, SessionConnectMessage value, int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
@@ -167,7 +167,7 @@ namespace Omnix.Network.Connections.Multiplexer.V1.Internal
                 }
             }
 
-            public SessionConnectMessage Deserialize(global::Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
+            public SessionConnectMessage Deserialize(ref global::Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
@@ -229,7 +229,7 @@ namespace Omnix.Network.Connections.Multiplexer.V1.Internal
 
         private sealed class CustomFormatter : global::Omnix.Serialization.RocketPack.IRocketPackFormatter<SessionAcceptMessage>
         {
-            public void Serialize(global::Omnix.Serialization.RocketPack.RocketPackWriter w, SessionAcceptMessage value, int rank)
+            public void Serialize(ref global::Omnix.Serialization.RocketPack.RocketPackWriter w, SessionAcceptMessage value, int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
@@ -249,7 +249,7 @@ namespace Omnix.Network.Connections.Multiplexer.V1.Internal
                 }
             }
 
-            public SessionAcceptMessage Deserialize(global::Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
+            public SessionAcceptMessage Deserialize(ref global::Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
@@ -315,7 +315,7 @@ namespace Omnix.Network.Connections.Multiplexer.V1.Internal
 
         private sealed class CustomFormatter : global::Omnix.Serialization.RocketPack.IRocketPackFormatter<SessionUpdateWindowSizeMessage>
         {
-            public void Serialize(global::Omnix.Serialization.RocketPack.RocketPackWriter w, SessionUpdateWindowSizeMessage value, int rank)
+            public void Serialize(ref global::Omnix.Serialization.RocketPack.RocketPackWriter w, SessionUpdateWindowSizeMessage value, int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
@@ -344,7 +344,7 @@ namespace Omnix.Network.Connections.Multiplexer.V1.Internal
                 }
             }
 
-            public SessionUpdateWindowSizeMessage Deserialize(global::Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
+            public SessionUpdateWindowSizeMessage Deserialize(ref global::Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
@@ -431,7 +431,7 @@ namespace Omnix.Network.Connections.Multiplexer.V1.Internal
 
         private sealed class CustomFormatter : global::Omnix.Serialization.RocketPack.IRocketPackFormatter<SessionDataMessage>
         {
-            public void Serialize(global::Omnix.Serialization.RocketPack.RocketPackWriter w, SessionDataMessage value, int rank)
+            public void Serialize(ref global::Omnix.Serialization.RocketPack.RocketPackWriter w, SessionDataMessage value, int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
@@ -469,7 +469,7 @@ namespace Omnix.Network.Connections.Multiplexer.V1.Internal
                 }
             }
 
-            public SessionDataMessage Deserialize(global::Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
+            public SessionDataMessage Deserialize(ref global::Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
@@ -543,7 +543,7 @@ namespace Omnix.Network.Connections.Multiplexer.V1.Internal
 
         private sealed class CustomFormatter : global::Omnix.Serialization.RocketPack.IRocketPackFormatter<SessionCloseMessage>
         {
-            public void Serialize(global::Omnix.Serialization.RocketPack.RocketPackWriter w, SessionCloseMessage value, int rank)
+            public void Serialize(ref global::Omnix.Serialization.RocketPack.RocketPackWriter w, SessionCloseMessage value, int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
@@ -563,7 +563,7 @@ namespace Omnix.Network.Connections.Multiplexer.V1.Internal
                 }
             }
 
-            public SessionCloseMessage Deserialize(global::Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
+            public SessionCloseMessage Deserialize(ref global::Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
@@ -629,7 +629,7 @@ namespace Omnix.Network.Connections.Multiplexer.V1.Internal
 
         private sealed class CustomFormatter : global::Omnix.Serialization.RocketPack.IRocketPackFormatter<SessionErrorMessage>
         {
-            public void Serialize(global::Omnix.Serialization.RocketPack.RocketPackWriter w, SessionErrorMessage value, int rank)
+            public void Serialize(ref global::Omnix.Serialization.RocketPack.RocketPackWriter w, SessionErrorMessage value, int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
@@ -658,7 +658,7 @@ namespace Omnix.Network.Connections.Multiplexer.V1.Internal
                 }
             }
 
-            public SessionErrorMessage Deserialize(global::Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
+            public SessionErrorMessage Deserialize(ref global::Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 

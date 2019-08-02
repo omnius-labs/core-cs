@@ -79,11 +79,13 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator.Internal
 
         public static SmallMessageElement Import(global::System.Buffers.ReadOnlySequence<byte> sequence, global::Omnix.Base.BufferPool bufferPool)
         {
-            return Formatter.Deserialize(new global::Omnix.Serialization.RocketPack.RocketPackReader(sequence, bufferPool), 0);
+            var reader = new global::Omnix.Serialization.RocketPack.RocketPackReader(sequence, bufferPool);
+            return Formatter.Deserialize(ref reader, 0);
         }
         public void Export(global::System.Buffers.IBufferWriter<byte> bufferWriter, global::Omnix.Base.BufferPool bufferPool)
         {
-            Formatter.Serialize(new global::Omnix.Serialization.RocketPack.RocketPackWriter(bufferWriter, bufferPool), this, 0);
+            var writer = new global::Omnix.Serialization.RocketPack.RocketPackWriter(bufferWriter, bufferPool);
+            Formatter.Serialize(ref writer, this, 0);
         }
         public static bool operator ==(SmallMessageElement left, SmallMessageElement right)
         {
@@ -110,7 +112,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator.Internal
 
         private sealed class CustomFormatter : global::Omnix.Serialization.RocketPack.IRocketPackFormatter<SmallMessageElement>
         {
-            public void Serialize(global::Omnix.Serialization.RocketPack.RocketPackWriter w, SmallMessageElement value, int rank)
+            public void Serialize(ref global::Omnix.Serialization.RocketPack.RocketPackWriter w, SmallMessageElement value, int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
@@ -120,7 +122,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator.Internal
                 }
             }
 
-            public SmallMessageElement Deserialize(global::Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
+            public SmallMessageElement Deserialize(ref global::Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
@@ -170,7 +172,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator.Internal
 
         private sealed class CustomFormatter : global::Omnix.Serialization.RocketPack.IRocketPackFormatter<MessageElement>
         {
-            public void Serialize(global::Omnix.Serialization.RocketPack.RocketPackWriter w, MessageElement value, int rank)
+            public void Serialize(ref global::Omnix.Serialization.RocketPack.RocketPackWriter w, MessageElement value, int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
@@ -190,7 +192,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator.Internal
                 }
             }
 
-            public MessageElement Deserialize(global::Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
+            public MessageElement Deserialize(ref global::Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
@@ -355,11 +357,13 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator.Internal
 
         public static SmallMessage Import(global::System.Buffers.ReadOnlySequence<byte> sequence, global::Omnix.Base.BufferPool bufferPool)
         {
-            return Formatter.Deserialize(new global::Omnix.Serialization.RocketPack.RocketPackReader(sequence, bufferPool), 0);
+            var reader = new global::Omnix.Serialization.RocketPack.RocketPackReader(sequence, bufferPool);
+            return Formatter.Deserialize(ref reader, 0);
         }
         public void Export(global::System.Buffers.IBufferWriter<byte> bufferWriter, global::Omnix.Base.BufferPool bufferPool)
         {
-            Formatter.Serialize(new global::Omnix.Serialization.RocketPack.RocketPackWriter(bufferWriter, bufferPool), this, 0);
+            var writer = new global::Omnix.Serialization.RocketPack.RocketPackWriter(bufferWriter, bufferPool);
+            Formatter.Serialize(ref writer, this, 0);
         }
         public static bool operator ==(SmallMessage left, SmallMessage right)
         {
@@ -411,7 +415,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator.Internal
 
         private sealed class CustomFormatter : global::Omnix.Serialization.RocketPack.IRocketPackFormatter<SmallMessage>
         {
-            public void Serialize(global::Omnix.Serialization.RocketPack.RocketPackWriter w, SmallMessage value, int rank)
+            public void Serialize(ref global::Omnix.Serialization.RocketPack.RocketPackWriter w, SmallMessage value, int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
@@ -526,15 +530,15 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator.Internal
                 }
                 if (value.X25 != SmallMessageElement.Empty)
                 {
-                    SmallMessageElement.Formatter.Serialize(w, value.X25, rank + 1);
+                    SmallMessageElement.Formatter.Serialize(ref w, value.X25, rank + 1);
                 }
                 if (value.X26 != MessageElement.Empty)
                 {
-                    MessageElement.Formatter.Serialize(w, value.X26, rank + 1);
+                    MessageElement.Formatter.Serialize(ref w, value.X26, rank + 1);
                 }
             }
 
-            public SmallMessage Deserialize(global::Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
+            public SmallMessage Deserialize(ref global::Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
@@ -656,10 +660,10 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator.Internal
                     }
                 }
                 {
-                    p_x25 = SmallMessageElement.Formatter.Deserialize(r, rank + 1);
+                    p_x25 = SmallMessageElement.Formatter.Deserialize(ref r, rank + 1);
                 }
                 {
-                    p_x26 = MessageElement.Formatter.Deserialize(r, rank + 1);
+                    p_x26 = MessageElement.Formatter.Deserialize(ref r, rank + 1);
                 }
                 return new SmallMessage(p_x0, p_x1, p_x2, p_x3, p_x4, p_x5, p_x6, p_x7, p_x8, p_x9, p_x10, p_x11, p_x12, p_x13, p_x14, p_x15, p_x16, p_x17, p_x18, p_x19, p_x20, p_x21, p_x22, p_x23, p_x24, p_x25, p_x26);
             }
@@ -845,7 +849,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator.Internal
 
         private sealed class CustomFormatter : global::Omnix.Serialization.RocketPack.IRocketPackFormatter<Message>
         {
-            public void Serialize(global::Omnix.Serialization.RocketPack.RocketPackWriter w, Message value, int rank)
+            public void Serialize(ref global::Omnix.Serialization.RocketPack.RocketPackWriter w, Message value, int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
@@ -1099,16 +1103,16 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator.Internal
                 if (value.X25 != SmallMessageElement.Empty)
                 {
                     w.Write((uint)25);
-                    SmallMessageElement.Formatter.Serialize(w, value.X25, rank + 1);
+                    SmallMessageElement.Formatter.Serialize(ref w, value.X25, rank + 1);
                 }
                 if (value.X26 != MessageElement.Empty)
                 {
                     w.Write((uint)26);
-                    MessageElement.Formatter.Serialize(w, value.X26, rank + 1);
+                    MessageElement.Formatter.Serialize(ref w, value.X26, rank + 1);
                 }
             }
 
-            public Message Deserialize(global::Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
+            public Message Deserialize(ref global::Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
@@ -1288,12 +1292,12 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator.Internal
                             }
                         case 25:
                             {
-                                p_x25 = SmallMessageElement.Formatter.Deserialize(r, rank + 1);
+                                p_x25 = SmallMessageElement.Formatter.Deserialize(ref r, rank + 1);
                                 break;
                             }
                         case 26:
                             {
-                                p_x26 = MessageElement.Formatter.Deserialize(r, rank + 1);
+                                p_x26 = MessageElement.Formatter.Deserialize(ref r, rank + 1);
                                 break;
                             }
                     }
@@ -1501,7 +1505,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator.Internal
 
         private sealed class CustomFormatter : global::Omnix.Serialization.RocketPack.IRocketPackFormatter<NullableMessage>
         {
-            public void Serialize(global::Omnix.Serialization.RocketPack.RocketPackWriter w, NullableMessage value, int rank)
+            public void Serialize(ref global::Omnix.Serialization.RocketPack.RocketPackWriter w, NullableMessage value, int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
@@ -1755,16 +1759,16 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator.Internal
                 if (value.X25 != null)
                 {
                     w.Write((uint)25);
-                    SmallMessageElement.Formatter.Serialize(w, value.X25.Value, rank + 1);
+                    SmallMessageElement.Formatter.Serialize(ref w, value.X25.Value, rank + 1);
                 }
                 if (value.X26 != null)
                 {
                     w.Write((uint)26);
-                    MessageElement.Formatter.Serialize(w, value.X26, rank + 1);
+                    MessageElement.Formatter.Serialize(ref w, value.X26, rank + 1);
                 }
             }
 
-            public NullableMessage Deserialize(global::Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
+            public NullableMessage Deserialize(ref global::Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
@@ -1944,12 +1948,12 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator.Internal
                             }
                         case 25:
                             {
-                                p_x25 = SmallMessageElement.Formatter.Deserialize(r, rank + 1);
+                                p_x25 = SmallMessageElement.Formatter.Deserialize(ref r, rank + 1);
                                 break;
                             }
                         case 26:
                             {
-                                p_x26 = MessageElement.Formatter.Deserialize(r, rank + 1);
+                                p_x26 = MessageElement.Formatter.Deserialize(ref r, rank + 1);
                                 break;
                             }
                     }

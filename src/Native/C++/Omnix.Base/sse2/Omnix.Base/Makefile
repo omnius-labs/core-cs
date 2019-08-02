@@ -3,7 +3,7 @@ CC = gcc
 CXX = g++
 LDFLAGS = -lm
 
-SRCS = Unsafe.cpp
+SRCS = BytesOperations.cpp
 OBJS := $(SRCS:.cpp=.o)
 
 TARGET = omnix-base.so

@@ -5,5 +5,6 @@ cd %BAT_DIR%
 
 set MSBUILD_PATH="C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Current\Bin\MSBuild.exe"
 
-%MSBUILD_PATH% Omnix.Base\Omnix.Base.sln /p:Configuration=Release;Platform="x64" /t:rebuild /m
-%MSBUILD_PATH% Omnix.Algorithms\Omnix.Algorithms.sln /p:Configuration=Release;Platform="x64" /t:rebuild /m
+%MSBUILD_PATH% Omnix.Base\sse2\Omnix.Base.sln /p:Configuration=Release;Platform="x64" /t:rebuild /m
+%MSBUILD_PATH% Omnix.Algorithms\sse2\Omnix.Algorithms.sln /p:Configuration=Release;Platform="x64" /t:rebuild /m
+%MSBUILD_PATH% Omnix.Algorithms\avx2\Omnix.Algorithms.sln /p:Configuration=Release;Platform="x64" /t:rebuild /m

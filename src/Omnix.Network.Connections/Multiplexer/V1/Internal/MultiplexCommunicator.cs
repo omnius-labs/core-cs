@@ -1,4 +1,5 @@
 using System;
+using System.Buffers;
 using System.Threading;
 using System.Threading.Tasks;
 using Omnix.Base;
@@ -92,12 +93,14 @@ namespace Omnix.Network.Connections.Multiplexer.V1.Internal
 
             await _connection.DequeueAsync((sequence) =>
             {
-                if (!Varint.TryGetUInt64(sequence, out var type, out var comsumed))
+                var reader = new SequenceReader<byte>(sequence);
+
+                if (!Varint.TryGetUInt64(ref reader, out var type))
                 {
                     throw new FormatException();
                 }
 
-                sequence = sequence.Slice(comsumed);
+                sequence = sequence.Slice(reader.Position);
 
                 switch ((PacketType)type)
                 {

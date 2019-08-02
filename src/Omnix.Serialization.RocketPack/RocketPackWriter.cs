@@ -10,12 +10,12 @@ namespace Omnix.Serialization.RocketPack
     /// <summary>
     /// RocketPackフォーマットのシリアライズ機能を提供します。
     /// </summary>
-    public sealed class RocketPackWriter
+    public ref struct RocketPackWriter
     {
-        private readonly IBufferWriter<byte> _bufferWriter;
-        private readonly BufferPool _bufferPool;
-
         private static readonly Lazy<Encoding> _encoding = new Lazy<Encoding>(() => new UTF8Encoding(false));
+
+        private IBufferWriter<byte> _bufferWriter;
+        private BufferPool _bufferPool;
 
         public RocketPackWriter(IBufferWriter<byte> bufferWriter, BufferPool bufferPool)
         {
@@ -24,7 +24,7 @@ namespace Omnix.Serialization.RocketPack
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void Write(string value)
+        public void Write(in string value)
         {
             using (var memoryOwner = _bufferPool.Rent(_encoding.Value.GetMaxByteCount(value.Length)))
             {
@@ -36,87 +36,89 @@ namespace Omnix.Serialization.RocketPack
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void Write(ReadOnlySpan<byte> value)
+        public void Write(in ReadOnlySpan<byte> value)
         {
             Varint.SetUInt32((uint)value.Length, _bufferWriter);
             _bufferWriter.Write(value);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void Write(Timestamp value)
+        public void Write(in Timestamp value)
         {
             this.Write(value.Seconds);
             this.Write((uint)value.Nanos);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void Write(bool value)
+        public void Write(in bool value)
         {
             _bufferWriter.GetSpan(1)[0] = !value ? (byte)0x00 : (byte)0x01;
             _bufferWriter.Advance(1);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void Write(byte value)
+        public void Write(in byte value)
         {
             Varint.SetUInt64(value, _bufferWriter);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void Write(ushort value)
+        public void Write(in ushort value)
         {
             Varint.SetUInt64(value, _bufferWriter);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void Write(uint value)
+        public void Write(in uint value)
         {
             Varint.SetUInt64(value, _bufferWriter);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void Write(ulong value)
+        public void Write(in ulong value)
         {
             Varint.SetUInt64(value, _bufferWriter);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void Write(sbyte value)
+        public void Write(in sbyte value)
         {
             Varint.SetInt64(value, _bufferWriter);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void Write(short value)
+        public void Write(in short value)
         {
             Varint.SetInt64(value, _bufferWriter);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void Write(int value)
+        public void Write(in int value)
         {
             Varint.SetInt64(value, _bufferWriter);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void Write(long value)
+        public void Write(in long value)
         {
             Varint.SetInt64(value, _bufferWriter);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public unsafe void Write(float value)
+        public void Write(in float value)
         {
             var f = new Float32Bits(value);
-            f.CopyTo(_bufferWriter.GetSpan(4));
+            var tempSpan = _bufferWriter.GetSpan(4);
+            f.CopyTo(ref tempSpan);
             _bufferWriter.Advance(4);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public unsafe void Write(double value)
+        public void Write(in double value)
         {
             var f = new Float64Bits(value);
-            f.CopyTo(_bufferWriter.GetSpan(8));
+            var tempSpan = _bufferWriter.GetSpan(8);
+            f.CopyTo(ref tempSpan);
             _bufferWriter.Advance(8);
         }
     }
