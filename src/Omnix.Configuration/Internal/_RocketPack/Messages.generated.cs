@@ -31,11 +31,13 @@ namespace Omnix.Configuration.Internal
 
         public static SettingsDatabaseVersion Import(global::System.Buffers.ReadOnlySequence<byte> sequence, global::Omnix.Base.BufferPool bufferPool)
         {
-            return Formatter.Deserialize(new global::Omnix.Serialization.RocketPack.RocketPackReader(sequence, bufferPool), 0);
+            var reader = new global::Omnix.Serialization.RocketPack.RocketPackReader(sequence, bufferPool);
+            return Formatter.Deserialize(ref reader, 0);
         }
         public void Export(global::System.Buffers.IBufferWriter<byte> bufferWriter, global::Omnix.Base.BufferPool bufferPool)
         {
-            Formatter.Serialize(new global::Omnix.Serialization.RocketPack.RocketPackWriter(bufferWriter, bufferPool), this, 0);
+            var writer = new global::Omnix.Serialization.RocketPack.RocketPackWriter(bufferWriter, bufferPool);
+            Formatter.Serialize(ref writer, this, 0);
         }
         public static bool operator ==(SettingsDatabaseVersion left, SettingsDatabaseVersion right)
         {
@@ -62,7 +64,7 @@ namespace Omnix.Configuration.Internal
 
         private sealed class CustomFormatter : global::Omnix.Serialization.RocketPack.IRocketPackFormatter<SettingsDatabaseVersion>
         {
-            public void Serialize(global::Omnix.Serialization.RocketPack.RocketPackWriter w, SettingsDatabaseVersion value, int rank)
+            public void Serialize(ref global::Omnix.Serialization.RocketPack.RocketPackWriter w, SettingsDatabaseVersion value, int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
@@ -72,7 +74,7 @@ namespace Omnix.Configuration.Internal
                 }
             }
 
-            public SettingsDatabaseVersion Deserialize(global::Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
+            public SettingsDatabaseVersion Deserialize(ref global::Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 

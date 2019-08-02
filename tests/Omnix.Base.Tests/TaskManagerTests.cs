@@ -10,6 +10,7 @@ namespace Omnix.Base
         [Fact]
         public async void StartAndWaitTest()
         {
+            // Start
             {
                 bool flag = false;
 
@@ -34,6 +35,7 @@ namespace Omnix.Base
                 taskManager.Dispose();
             }
 
+            // Wait
             {
                 bool flag = false;
 

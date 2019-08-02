@@ -114,7 +114,7 @@ namespace Omnix.Network.Connections.Secure.V1.Internal
 
         private sealed class CustomFormatter : global::Omnix.Serialization.RocketPack.IRocketPackFormatter<ProfileMessage>
         {
-            public void Serialize(global::Omnix.Serialization.RocketPack.RocketPackWriter w, ProfileMessage value, int rank)
+            public void Serialize(ref global::Omnix.Serialization.RocketPack.RocketPackWriter w, ProfileMessage value, int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
@@ -195,7 +195,7 @@ namespace Omnix.Network.Connections.Secure.V1.Internal
                 }
             }
 
-            public ProfileMessage Deserialize(global::Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
+            public ProfileMessage Deserialize(ref global::Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
@@ -314,7 +314,7 @@ namespace Omnix.Network.Connections.Secure.V1.Internal
 
         private sealed class CustomFormatter : global::Omnix.Serialization.RocketPack.IRocketPackFormatter<VerificationMessage>
         {
-            public void Serialize(global::Omnix.Serialization.RocketPack.RocketPackWriter w, VerificationMessage value, int rank)
+            public void Serialize(ref global::Omnix.Serialization.RocketPack.RocketPackWriter w, VerificationMessage value, int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
@@ -334,16 +334,16 @@ namespace Omnix.Network.Connections.Secure.V1.Internal
                 if (value.ProfileMessage != ProfileMessage.Empty)
                 {
                     w.Write((uint)0);
-                    ProfileMessage.Formatter.Serialize(w, value.ProfileMessage, rank + 1);
+                    ProfileMessage.Formatter.Serialize(ref w, value.ProfileMessage, rank + 1);
                 }
                 if (value.AgreementPublicKey != OmniAgreementPublicKey.Empty)
                 {
                     w.Write((uint)1);
-                    OmniAgreementPublicKey.Formatter.Serialize(w, value.AgreementPublicKey, rank + 1);
+                    OmniAgreementPublicKey.Formatter.Serialize(ref w, value.AgreementPublicKey, rank + 1);
                 }
             }
 
-            public VerificationMessage Deserialize(global::Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
+            public VerificationMessage Deserialize(ref global::Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
@@ -359,12 +359,12 @@ namespace Omnix.Network.Connections.Secure.V1.Internal
                     {
                         case 0:
                             {
-                                p_profileMessage = ProfileMessage.Formatter.Deserialize(r, rank + 1);
+                                p_profileMessage = ProfileMessage.Formatter.Deserialize(ref r, rank + 1);
                                 break;
                             }
                         case 1:
                             {
-                                p_agreementPublicKey = OmniAgreementPublicKey.Formatter.Deserialize(r, rank + 1);
+                                p_agreementPublicKey = OmniAgreementPublicKey.Formatter.Deserialize(ref r, rank + 1);
                                 break;
                             }
                     }
@@ -423,7 +423,7 @@ namespace Omnix.Network.Connections.Secure.V1.Internal
 
         private sealed class CustomFormatter : global::Omnix.Serialization.RocketPack.IRocketPackFormatter<AuthenticationMessage>
         {
-            public void Serialize(global::Omnix.Serialization.RocketPack.RocketPackWriter w, AuthenticationMessage value, int rank)
+            public void Serialize(ref global::Omnix.Serialization.RocketPack.RocketPackWriter w, AuthenticationMessage value, int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
@@ -447,7 +447,7 @@ namespace Omnix.Network.Connections.Secure.V1.Internal
                 }
             }
 
-            public AuthenticationMessage Deserialize(global::Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
+            public AuthenticationMessage Deserialize(ref global::Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 

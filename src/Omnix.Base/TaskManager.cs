@@ -39,7 +39,7 @@ namespace Omnix.Base
             _tokenSource?.Cancel();
         }
 
-        protected override void Dispose(bool disposing)
+        protected override void OnDispose(bool disposing)
         {
             if (disposing)
             {

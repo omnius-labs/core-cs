@@ -58,11 +58,13 @@ namespace Omnix.Algorithms.Cryptography
 
         public static OmniHash Import(global::System.Buffers.ReadOnlySequence<byte> sequence, global::Omnix.Base.BufferPool bufferPool)
         {
-            return Formatter.Deserialize(new global::Omnix.Serialization.RocketPack.RocketPackReader(sequence, bufferPool), 0);
+            var reader = new global::Omnix.Serialization.RocketPack.RocketPackReader(sequence, bufferPool);
+            return Formatter.Deserialize(ref reader, 0);
         }
         public void Export(global::System.Buffers.IBufferWriter<byte> bufferWriter, global::Omnix.Base.BufferPool bufferPool)
         {
-            Formatter.Serialize(new global::Omnix.Serialization.RocketPack.RocketPackWriter(bufferWriter, bufferPool), this, 0);
+            var writer = new global::Omnix.Serialization.RocketPack.RocketPackWriter(bufferWriter, bufferPool);
+            Formatter.Serialize(ref writer, this, 0);
         }
         public static bool operator ==(OmniHash left, OmniHash right)
         {
@@ -90,7 +92,7 @@ namespace Omnix.Algorithms.Cryptography
 
         private sealed class CustomFormatter : global::Omnix.Serialization.RocketPack.IRocketPackFormatter<OmniHash>
         {
-            public void Serialize(global::Omnix.Serialization.RocketPack.RocketPackWriter w, OmniHash value, int rank)
+            public void Serialize(ref global::Omnix.Serialization.RocketPack.RocketPackWriter w, OmniHash value, int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
@@ -104,7 +106,7 @@ namespace Omnix.Algorithms.Cryptography
                 }
             }
 
-            public OmniHash Deserialize(global::Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
+            public OmniHash Deserialize(ref global::Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
@@ -176,7 +178,7 @@ namespace Omnix.Algorithms.Cryptography
 
         private sealed class CustomFormatter : global::Omnix.Serialization.RocketPack.IRocketPackFormatter<OmniAgreement>
         {
-            public void Serialize(global::Omnix.Serialization.RocketPack.RocketPackWriter w, OmniAgreement value, int rank)
+            public void Serialize(ref global::Omnix.Serialization.RocketPack.RocketPackWriter w, OmniAgreement value, int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
@@ -223,7 +225,7 @@ namespace Omnix.Algorithms.Cryptography
                 }
             }
 
-            public OmniAgreement Deserialize(global::Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
+            public OmniAgreement Deserialize(ref global::Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
@@ -315,7 +317,7 @@ namespace Omnix.Algorithms.Cryptography
 
         private sealed class CustomFormatter : global::Omnix.Serialization.RocketPack.IRocketPackFormatter<OmniAgreementPublicKey>
         {
-            public void Serialize(global::Omnix.Serialization.RocketPack.RocketPackWriter w, OmniAgreementPublicKey value, int rank)
+            public void Serialize(ref global::Omnix.Serialization.RocketPack.RocketPackWriter w, OmniAgreementPublicKey value, int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
@@ -353,7 +355,7 @@ namespace Omnix.Algorithms.Cryptography
                 }
             }
 
-            public OmniAgreementPublicKey Deserialize(global::Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
+            public OmniAgreementPublicKey Deserialize(ref global::Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
@@ -439,7 +441,7 @@ namespace Omnix.Algorithms.Cryptography
 
         private sealed class CustomFormatter : global::Omnix.Serialization.RocketPack.IRocketPackFormatter<OmniAgreementPrivateKey>
         {
-            public void Serialize(global::Omnix.Serialization.RocketPack.RocketPackWriter w, OmniAgreementPrivateKey value, int rank)
+            public void Serialize(ref global::Omnix.Serialization.RocketPack.RocketPackWriter w, OmniAgreementPrivateKey value, int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
@@ -477,7 +479,7 @@ namespace Omnix.Algorithms.Cryptography
                 }
             }
 
-            public OmniAgreementPrivateKey Deserialize(global::Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
+            public OmniAgreementPrivateKey Deserialize(ref global::Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
@@ -572,7 +574,7 @@ namespace Omnix.Algorithms.Cryptography
 
         private sealed class CustomFormatter : global::Omnix.Serialization.RocketPack.IRocketPackFormatter<OmniDigitalSignature>
         {
-            public void Serialize(global::Omnix.Serialization.RocketPack.RocketPackWriter w, OmniDigitalSignature value, int rank)
+            public void Serialize(ref global::Omnix.Serialization.RocketPack.RocketPackWriter w, OmniDigitalSignature value, int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
@@ -619,7 +621,7 @@ namespace Omnix.Algorithms.Cryptography
                 }
             }
 
-            public OmniDigitalSignature Deserialize(global::Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
+            public OmniDigitalSignature Deserialize(ref global::Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
@@ -720,7 +722,7 @@ namespace Omnix.Algorithms.Cryptography
 
         private sealed class CustomFormatter : global::Omnix.Serialization.RocketPack.IRocketPackFormatter<OmniCertificate>
         {
-            public void Serialize(global::Omnix.Serialization.RocketPack.RocketPackWriter w, OmniCertificate value, int rank)
+            public void Serialize(ref global::Omnix.Serialization.RocketPack.RocketPackWriter w, OmniCertificate value, int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
@@ -767,7 +769,7 @@ namespace Omnix.Algorithms.Cryptography
                 }
             }
 
-            public OmniCertificate Deserialize(global::Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
+            public OmniCertificate Deserialize(ref global::Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
@@ -855,7 +857,7 @@ namespace Omnix.Algorithms.Cryptography
 
         private sealed class CustomFormatter : global::Omnix.Serialization.RocketPack.IRocketPackFormatter<OmniSignature>
         {
-            public void Serialize(global::Omnix.Serialization.RocketPack.RocketPackWriter w, OmniSignature value, int rank)
+            public void Serialize(ref global::Omnix.Serialization.RocketPack.RocketPackWriter w, OmniSignature value, int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
@@ -880,11 +882,11 @@ namespace Omnix.Algorithms.Cryptography
                 if (value.Hash != OmniHash.Empty)
                 {
                     w.Write((uint)1);
-                    OmniHash.Formatter.Serialize(w, value.Hash, rank + 1);
+                    OmniHash.Formatter.Serialize(ref w, value.Hash, rank + 1);
                 }
             }
 
-            public OmniSignature Deserialize(global::Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
+            public OmniSignature Deserialize(ref global::Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
@@ -905,7 +907,7 @@ namespace Omnix.Algorithms.Cryptography
                             }
                         case 1:
                             {
-                                p_hash = OmniHash.Formatter.Deserialize(r, rank + 1);
+                                p_hash = OmniHash.Formatter.Deserialize(ref r, rank + 1);
                                 break;
                             }
                     }
@@ -960,7 +962,7 @@ namespace Omnix.Algorithms.Cryptography
 
         private sealed class CustomFormatter : global::Omnix.Serialization.RocketPack.IRocketPackFormatter<OmniHashcash>
         {
-            public void Serialize(global::Omnix.Serialization.RocketPack.RocketPackWriter w, OmniHashcash value, int rank)
+            public void Serialize(ref global::Omnix.Serialization.RocketPack.RocketPackWriter w, OmniHashcash value, int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
@@ -989,7 +991,7 @@ namespace Omnix.Algorithms.Cryptography
                 }
             }
 
-            public OmniHashcash Deserialize(global::Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
+            public OmniHashcash Deserialize(ref global::Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 

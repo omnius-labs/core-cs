@@ -595,7 +595,7 @@ namespace Omnix.Network.Connections.Secure.V1.Internal
             public byte[] OtherHmacKey { get; set; }
         }
 
-        protected override void Dispose(bool disposing)
+        protected override void OnDispose(bool disposing)
         {
             if (disposing)
             {

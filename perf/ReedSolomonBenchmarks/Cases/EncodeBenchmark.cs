@@ -3,6 +3,7 @@ using System.Buffers;
 using System.Linq;
 using BenchmarkDotNet.Attributes;
 using Omnix.Algorithms.Correction;
+using Omnix.Algorithms.Internal;
 using Omnix.Base;
 using ReedSolomonBenchmarks.Internal;
 
@@ -34,35 +35,32 @@ namespace ReedSolomonBenchmarks.Cases
         }
 
         [Benchmark(Baseline = true)]
-        public object Managed_Test()
+        public object PureUnsafe_Test()
         {
-            var r = new ReedSolomon8(128, 256, BufferPool.Shared)
-            {
-                UseSimd = false
-            };
+            NativeMethods.ReedSolomon8.LoadPureUnsafeMethods();
+
+            var r = new ReedSolomon8(128, 256, BufferPool.Shared);
             r.Encode(_sources.Select(n => (ReadOnlyMemory<byte>)n).ToArray(), _indexes, _repairs, PacketLength).Wait();
             return _repairs;
         }
 
         [Benchmark]
-        public object Avx2_Test()
+        public object Native_Test()
         {
-            var r = new ReedSolomon8(128, 256, BufferPool.Shared)
-            {
-                UseSimd = true
-            };
+            NativeMethods.ReedSolomon8.TryLoadNativeMethods();
+
+            var r = new ReedSolomon8(128, 256, BufferPool.Shared);
             r.Encode(_sources.Select(n => (ReadOnlyMemory<byte>)n).ToArray(), _indexes, _repairs, PacketLength).Wait();
             return _repairs;
         }
 
         [Benchmark]
-        public object Avx2_Concurrency_4_Test()
+        public object Native_Concurrency_2_Test()
         {
-            var r = new ReedSolomon8(128, 256, BufferPool.Shared)
-            {
-                UseSimd = true
-            };
-            r.Encode(_sources.Select(n => (ReadOnlyMemory<byte>)n).ToArray(), _indexes, _repairs, PacketLength, 4).Wait();
+            NativeMethods.ReedSolomon8.TryLoadNativeMethods();
+
+            var r = new ReedSolomon8(128, 256, BufferPool.Shared);
+            r.Encode(_sources.Select(n => (ReadOnlyMemory<byte>)n).ToArray(), _indexes, _repairs, PacketLength, concurrency: 2).Wait();
             return _repairs;
         }
     }

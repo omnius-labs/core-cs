@@ -1,4 +1,0 @@
-LIBRARY Omnix.Algorithms.dll
-
-EXPORTS
-	compute_crc32_castagnoli

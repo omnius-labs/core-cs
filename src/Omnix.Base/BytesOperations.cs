@@ -6,96 +6,6 @@ namespace Omnix.Base
 {
     public static unsafe class BytesOperations
     {
-        private static NativeLibraryManager? _nativeLibraryManager;
-
-        private delegate void ZeroDelegate(byte* source, int length);
-        private delegate void CopyDelegate(byte* source, byte* destination, int length);
-        [return: MarshalAs(UnmanagedType.U1)]
-        private delegate bool EqualsDelegate(byte* source1, byte* source2, int length);
-        private delegate int CompareDelegate(byte* source1, byte* source2, int length);
-        private delegate void BitwiseOperationDelegate(byte* source1, byte* source2, byte* result, int length);
-
-        private static ZeroDelegate _zero;
-        private static CopyDelegate _copy;
-        private static EqualsDelegate _equals;
-        private static CompareDelegate _compare;
-        private static BitwiseOperationDelegate _and;
-        private static BitwiseOperationDelegate _or;
-        private static BitwiseOperationDelegate _xor;
-
-        static BytesOperations()
-        {
-            try
-            {
-                LoadNativeMethods();
-            }
-            catch (Exception)
-            {
-                LoadPureUnsafeMethods();
-            }
-        }
-
-        internal static void LoadNativeMethods()
-        {
-            _nativeLibraryManager?.Dispose();
-
-            try
-            {
-                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-                {
-                    if (RuntimeInformation.ProcessArchitecture == Architecture.X64)
-                    {
-                        _nativeLibraryManager = new NativeLibraryManager("omnix-base.x64.dll");
-                    }
-                    else
-                    {
-                        throw new NotSupportedException();
-                    }
-                }
-                else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-                {
-                    if (RuntimeInformation.ProcessArchitecture == Architecture.X64)
-                    {
-                        _nativeLibraryManager = new NativeLibraryManager("omnix-base.x64.so");
-                    }
-                    else
-                    {
-                        throw new NotSupportedException();
-                    }
-                }
-                else
-                {
-                    throw new NotSupportedException();
-                }
-
-                _zero = _nativeLibraryManager.GetMethod<ZeroDelegate>("zero");
-                _copy = _nativeLibraryManager.GetMethod<CopyDelegate>("copy");
-                _equals = _nativeLibraryManager.GetMethod<EqualsDelegate>("equals");
-                _compare = _nativeLibraryManager.GetMethod<CompareDelegate>("compare");
-                _and = _nativeLibraryManager.GetMethod<BitwiseOperationDelegate>("math_and");
-                _or = _nativeLibraryManager.GetMethod<BitwiseOperationDelegate>("math_or");
-                _xor = _nativeLibraryManager.GetMethod<BitwiseOperationDelegate>("math_xor");
-            }
-            catch (Exception)
-            {
-                _nativeLibraryManager?.Dispose();
-                _nativeLibraryManager = null;
-
-                throw;
-            }
-        }
-
-        internal static void LoadPureUnsafeMethods()
-        {
-            _zero = PureUnsafeMethods.Zero;
-            _copy = PureUnsafeMethods.Copy;
-            _equals = PureUnsafeMethods.Equals;
-            _compare = PureUnsafeMethods.Compare;
-            _and = PureUnsafeMethods.And;
-            _or = PureUnsafeMethods.Or;
-            _xor = PureUnsafeMethods.Xor;
-        }
-
         [Obsolete("", true)]
         [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
         public static new bool Equals(object obj1, object obj2)
@@ -112,7 +22,7 @@ namespace Omnix.Base
 
             fixed (byte* p = source)
             {
-                _zero(p, source.Length);
+                NativeMethods.BytesOperations.Zero(p, source.Length);
             }
         }
 
@@ -154,7 +64,7 @@ namespace Omnix.Base
 
             fixed (byte* p_x = source1, p_y = source2)
             {
-                return _equals(p_x, p_y, source1.Length);
+                return NativeMethods.BytesOperations.Equals(p_x, p_y, source1.Length);
             }
         }
 
@@ -172,7 +82,7 @@ namespace Omnix.Base
 
             fixed (byte* p_x = source1, p_y = source2)
             {
-                return _equals(p_x, p_y, length);
+                return NativeMethods.BytesOperations.Equals(p_x, p_y, length);
             }
         }
 
@@ -190,26 +100,26 @@ namespace Omnix.Base
 
             fixed (byte* p_x = source1, p_y = source2)
             {
-                return _compare(p_x, p_y, source1.Length);
+                return NativeMethods.BytesOperations.Compare(p_x, p_y, source1.Length);
             }
         }
 
         public static void And(ReadOnlySpan<byte> source1, ReadOnlySpan<byte> source2, Span<byte> destination)
         {
-            BytesOperations.BitwiseOperation(_and, source1, source2, destination);
+            BitwiseOperation(NativeMethods.BytesOperations.And, source1, source2, destination);
         }
 
         public static void Or(ReadOnlySpan<byte> source1, ReadOnlySpan<byte> source2, Span<byte> destination)
         {
-            BytesOperations.BitwiseOperation(_or, source1, source2, destination);
+            BitwiseOperation(NativeMethods.BytesOperations.Or, source1, source2, destination);
         }
 
         public static void Xor(ReadOnlySpan<byte> source1, ReadOnlySpan<byte> source2, Span<byte> destination)
         {
-            BytesOperations.BitwiseOperation(_xor, source1, source2, destination);
+            BitwiseOperation(NativeMethods.BytesOperations.Xor, source1, source2, destination);
         }
 
-        private static void BitwiseOperation(BitwiseOperationDelegate bitwiseOperation, ReadOnlySpan<byte> source1, ReadOnlySpan<byte> source2, Span<byte> destination)
+        private static void BitwiseOperation(NativeMethods.BytesOperations.BitwiseOperationDelegate bitwiseOperation, ReadOnlySpan<byte> source1, ReadOnlySpan<byte> source2, Span<byte> destination)
         {
             // Zero
             {
@@ -217,26 +127,30 @@ namespace Omnix.Base
 
                 if (destination.Length > targetRange)
                 {
-                    BytesOperations.Zero(destination.Slice(targetRange, destination.Length - targetRange));
+                    Zero(destination.Slice(targetRange, destination.Length - targetRange));
                 }
             }
 
+            // Copy
             if (source1.Length > source2.Length && destination.Length > source2.Length)
             {
-                BytesOperations.Copy(source1, destination, Math.Min(source1.Length, destination.Length) - source2.Length);
+                Copy(source1, destination, Math.Min(source1.Length, destination.Length) - source2.Length);
             }
             else if (source2.Length > source1.Length && destination.Length > source1.Length)
             {
-                BytesOperations.Copy(source2, destination, Math.Min(source2.Length, destination.Length) - source1.Length);
+                Copy(source2, destination, Math.Min(source2.Length, destination.Length) - source1.Length);
             }
 
-            int length = Math.Min(Math.Min(source1.Length, source2.Length), destination.Length);
-
-            fixed (byte* p_x = source1, p_y = source2)
+            // BitwiseOperation
             {
-                fixed (byte* p_buffer = destination)
+                int length = Math.Min(Math.Min(source1.Length, source2.Length), destination.Length);
+
+                fixed (byte* p_x = source1, p_y = source2)
                 {
-                    bitwiseOperation(p_x, p_y, p_buffer, length);
+                    fixed (byte* p_buffer = destination)
+                    {
+                        bitwiseOperation(p_x, p_y, p_buffer, length);
+                    }
                 }
             }
         }

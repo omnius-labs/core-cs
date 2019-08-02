@@ -2,6 +2,7 @@ using System;
 using System.Buffers;
 using System.Linq;
 using System.Threading.Tasks;
+using Omnix.Algorithms.Internal;
 using Omnix.Base;
 using Omnix.Base.Extensions;
 using Xunit;
@@ -81,9 +82,25 @@ namespace Omnix.Algorithms.Correction
         [Fact]
         public async Task RandomEncodeAndDecodeTest()
         {
-            for (int i = 0; i < 128; i++)
+            try
             {
-                await this.RandomEncodeAndDecode();
+                Assert.True(NativeMethods.ReedSolomon8.TryLoadNativeMethods());
+
+                for (int i = 0; i < 128; i++)
+                {
+                    await this.RandomEncodeAndDecode();
+                }
+
+                NativeMethods.ReedSolomon8.LoadPureUnsafeMethods();
+
+                for (int i = 0; i < 128; i++)
+                {
+                    await this.RandomEncodeAndDecode();
+                }
+            }
+            finally
+            {
+                Assert.True(NativeMethods.ReedSolomon8.TryLoadNativeMethods());
             }
         }
     }
