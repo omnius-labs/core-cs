@@ -146,12 +146,17 @@ namespace Omnix.Base
             _stateType = ServiceStateType.Stopped;
         }
 
-        protected override void Dispose(bool disposing)
+        protected override void OnDispose(bool disposing)
         {
             if (disposing)
             {
                 this.StopAsync().AsTask().Wait();
             }
+        }
+
+        protected override async ValueTask OnDisposeAsync()
+        {
+            await this.StopAsync();
         }
     }
 }

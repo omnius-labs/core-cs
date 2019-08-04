@@ -1,4 +1,4 @@
-﻿#include "stdafx.h"
+#include "stdafx.h"
 #include "Crc32_Castagnoli.h"
 
 Crc32_Castagnoli::Crc32_Castagnoli()
@@ -30,17 +30,19 @@ Crc32_Castagnoli::~Crc32_Castagnoli()
 
 }
 
-uint32_t Crc32_Castagnoli::compute(uint32_t x, byte* source, int32_t length) const
+uint32_t Crc32_Castagnoli::Compute(const uint32_t x, const byte* source, const int32_t length) const
 {
+    int v = x;
+
     for (int32_t i = 0; i < length; i++)
     {
-        x = (x >> 8) ^ _table[((byte)(x & 0xff)) ^ source[i]];
+        v = (v >> 8) ^ _table[((byte)(v & 0xff)) ^ source[i]];
     }
 
-    return x;
+    return v;
 }
 
-uint32_t compute_crc32_castagnoli(uint32_t x, byte* source, int32_t length)
+uint32_t Crc32_Castagnoli_Compute(const uint32_t x, const byte* source, const int32_t length)
 {
-    return _crc32_castagnoli.compute(x, source, length);
+    return _crc32_castagnoli.Compute(x, source, length);
 }

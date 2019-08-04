@@ -28,7 +28,7 @@ namespace Omnix.Serialization.RocketPack
         private const byte Int64Code = 0x83;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void SetUInt8(byte value, IBufferWriter<byte> writer)
+        public static void SetUInt8(in byte value, IBufferWriter<byte> writer)
         {
             unchecked
             {
@@ -51,7 +51,7 @@ namespace Omnix.Serialization.RocketPack
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void SetUInt16(ushort value, IBufferWriter<byte> writer)
+        public static void SetUInt16(in ushort value, IBufferWriter<byte> writer)
         {
             unchecked
             {
@@ -88,7 +88,7 @@ namespace Omnix.Serialization.RocketPack
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void SetUInt32(uint value, IBufferWriter<byte> writer)
+        public static void SetUInt32(in uint value, IBufferWriter<byte> writer)
         {
             unchecked
             {
@@ -139,7 +139,7 @@ namespace Omnix.Serialization.RocketPack
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void SetUInt64(ulong value, IBufferWriter<byte> writer)
+        public static void SetUInt64(in ulong value, IBufferWriter<byte> writer)
         {
             unchecked
             {
@@ -204,7 +204,7 @@ namespace Omnix.Serialization.RocketPack
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void SetInt8(sbyte value, IBufferWriter<byte> writer)
+        public static void SetInt8(in sbyte value, IBufferWriter<byte> writer)
         {
             unchecked
             {
@@ -213,7 +213,7 @@ namespace Omnix.Serialization.RocketPack
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void SetInt16(short value, IBufferWriter<byte> writer)
+        public static void SetInt16(in short value, IBufferWriter<byte> writer)
         {
             unchecked
             {
@@ -222,7 +222,7 @@ namespace Omnix.Serialization.RocketPack
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void SetInt32(int value, IBufferWriter<byte> writer)
+        public static void SetInt32(in int value, IBufferWriter<byte> writer)
         {
             unchecked
             {
@@ -231,7 +231,7 @@ namespace Omnix.Serialization.RocketPack
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void SetInt64(long value, IBufferWriter<byte> writer)
+        public static void SetInt64(in long value, IBufferWriter<byte> writer)
         {
             unchecked
             {
@@ -240,7 +240,7 @@ namespace Omnix.Serialization.RocketPack
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static bool InternalTryGetUInt8(ReadOnlySpan<byte> span, out byte value, out int consumed)
+        private static bool InternalTryGetUInt8(in ReadOnlySpan<byte> span, out byte value, out int consumed)
         {
             unchecked
             {
@@ -273,7 +273,7 @@ namespace Omnix.Serialization.RocketPack
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static bool InternalTryGetUInt16(ReadOnlySpan<byte> span, out ushort value, out int consumed)
+        private static bool InternalTryGetUInt16(in ReadOnlySpan<byte> span, out ushort value, out int consumed)
         {
             unchecked
             {
@@ -310,7 +310,7 @@ namespace Omnix.Serialization.RocketPack
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static bool InternalTryGetUInt32(ReadOnlySpan<byte> span, out uint value, out int consumed)
+        private static bool InternalTryGetUInt32(in ReadOnlySpan<byte> span, out uint value, out int consumed)
         {
             unchecked
             {
@@ -351,7 +351,7 @@ namespace Omnix.Serialization.RocketPack
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static bool InternalTryGetUInt64(ReadOnlySpan<byte> span, out ulong value, out int consumed)
+        private static bool InternalTryGetUInt64(in ReadOnlySpan<byte> span, out ulong value, out int consumed)
         {
             unchecked
             {
@@ -396,116 +396,169 @@ namespace Omnix.Serialization.RocketPack
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool TryGetUInt8(ReadOnlySequence<byte> sequence, out byte value, out SequencePosition consumed)
+        public static bool TryGetUInt8(ref SequenceReader<byte> reader, out byte value)
         {
+            value = 0;
+
             unchecked
             {
-
-                if (sequence.First.Length >= 2)
+                if (reader.UnreadSpan.Length >= 2)
                 {
-                    bool flag = InternalTryGetUInt8(sequence.First.Span, out value, out int int_consumed);
-                    consumed = sequence.GetPosition(int_consumed);
+                    if (!InternalTryGetUInt8(reader.UnreadSpan, out value, out int consumed))
+                    {
+                        return false;
+                    }
 
-                    return flag;
+                    reader.Advance(consumed);
+                    return true;
                 }
                 else
                 {
-                    Span<byte> span = stackalloc byte[(int)Math.Min(2, sequence.Length)];
-                    sequence.CopyTo(span);
+                    int size = (int)Math.Min(2, reader.Remaining);
+                    byte* buffer = stackalloc byte[size];
+                    var tempSpan = new Span<byte>(buffer, size);
 
-                    bool flag = InternalTryGetUInt8(span, out value, out int int_consumed);
-                    consumed = sequence.GetPosition(int_consumed);
+                    if (!reader.TryCopyTo(tempSpan))
+                    {
+                        return false;
+                    }
 
-                    return flag;
+                    if (!InternalTryGetUInt8(tempSpan, out value, out int consumed))
+                    {
+                        return false;
+                    }
+
+                    reader.Advance(consumed);
+                    return true;
                 }
             }
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool TryGetUInt16(ReadOnlySequence<byte> sequence, out ushort value, out SequencePosition consumed)
+        public static bool TryGetUInt16(ref SequenceReader<byte> reader, out ushort value)
         {
+            value = 0;
+
             unchecked
             {
-
-                if (sequence.First.Length >= 3)
+                if (reader.UnreadSpan.Length >= 3)
                 {
-                    bool flag = InternalTryGetUInt16(sequence.First.Span, out value, out int int_consumed);
-                    consumed = sequence.GetPosition(int_consumed);
+                    if (!InternalTryGetUInt16(reader.UnreadSpan, out value, out int consumed))
+                    {
+                        return false;
+                    }
 
-                    return flag;
+                    reader.Advance(consumed);
+                    return true;
                 }
                 else
                 {
-                    Span<byte> span = stackalloc byte[(int)Math.Min(3, sequence.Length)];
-                    sequence.CopyTo(span);
+                    int size = (int)Math.Min(3, reader.Remaining);
+                    byte* buffer = stackalloc byte[size];
+                    var tempSpan = new Span<byte>(buffer, size);
 
-                    bool flag = InternalTryGetUInt16(span, out value, out int int_consumed);
-                    consumed = sequence.GetPosition(int_consumed);
+                    if (!reader.TryCopyTo(tempSpan))
+                    {
+                        return false;
+                    }
 
-                    return flag;
+                    if (!InternalTryGetUInt16(tempSpan, out value, out int consumed))
+                    {
+                        return false;
+                    }
+
+                    reader.Advance(consumed);
+                    return true;
                 }
             }
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool TryGetUInt32(ReadOnlySequence<byte> sequence, out uint value, out SequencePosition consumed)
+        public static bool TryGetUInt32(ref SequenceReader<byte> reader, out uint value)
         {
+            value = 0;
+
             unchecked
             {
-
-                if (sequence.First.Length >= 5)
+                if (reader.UnreadSpan.Length >= 5)
                 {
-                    bool flag = InternalTryGetUInt32(sequence.First.Span, out value, out int int_consumed);
-                    consumed = sequence.GetPosition(int_consumed);
+                    if (!InternalTryGetUInt32(reader.UnreadSpan, out value, out int consumed))
+                    {
+                        return false;
+                    }
 
-                    return flag;
+                    reader.Advance(consumed);
+                    return true;
                 }
                 else
                 {
-                    Span<byte> span = stackalloc byte[(int)Math.Min(5, sequence.Length)];
-                    sequence.CopyTo(span);
+                    int size = (int)Math.Min(5, reader.Remaining);
+                    byte* buffer = stackalloc byte[size];
+                    var tempSpan = new Span<byte>(buffer, size);
 
-                    bool flag = InternalTryGetUInt32(span, out value, out int int_consumed);
-                    consumed = sequence.GetPosition(int_consumed);
+                    if (!reader.TryCopyTo(tempSpan))
+                    {
+                        return false;
+                    }
 
-                    return flag;
+                    if (!InternalTryGetUInt32(tempSpan, out value, out int consumed))
+                    {
+                        return false;
+                    }
+
+                    reader.Advance(consumed);
+                    return true;
                 }
             }
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool TryGetUInt64(ReadOnlySequence<byte> sequence, out ulong value, out SequencePosition consumed)
+        public static bool TryGetUInt64(ref SequenceReader<byte> reader, out ulong value)
         {
+            value = 0;
+
             unchecked
             {
-                if (sequence.First.Length >= 9)
+                if (reader.UnreadSpan.Length >= 9)
                 {
-                    bool flag = InternalTryGetUInt64(sequence.First.Span, out value, out int int_consumed);
-                    consumed = sequence.GetPosition(int_consumed);
+                    if (!InternalTryGetUInt64(reader.UnreadSpan, out value, out int consumed))
+                    {
+                        return false;
+                    }
 
-                    return flag;
+                    reader.Advance(consumed);
+                    return true;
                 }
                 else
                 {
-                    Span<byte> span = stackalloc byte[(int)Math.Min(9, sequence.Length)];
-                    sequence.CopyTo(span);
+                    int size = (int)Math.Min(9, reader.Remaining);
+                    byte* buffer = stackalloc byte[size];
+                    var tempSpan = new Span<byte>(buffer, size);
 
-                    bool flag = InternalTryGetUInt64(span, out value, out int int_consumed);
-                    consumed = sequence.GetPosition(int_consumed);
+                    if (!reader.TryCopyTo(tempSpan))
+                    {
+                        return false;
+                    }
 
-                    return flag;
+                    if (!InternalTryGetUInt64(tempSpan, out value, out int consumed))
+                    {
+                        return false;
+                    }
+
+                    reader.Advance(consumed);
+                    return true;
                 }
             }
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool TryGetInt8(ReadOnlySequence<byte> sequence, out sbyte result, out SequencePosition consumed)
+        public static bool TryGetInt8(ref SequenceReader<byte> reader, out sbyte result)
         {
             unchecked
             {
                 result = 0;
 
-                if (!TryGetUInt8(sequence, out byte byte_result, out consumed))
+                if (!TryGetUInt8(ref reader, out byte byte_result))
                 {
                     return false;
                 }
@@ -516,13 +569,13 @@ namespace Omnix.Serialization.RocketPack
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool TryGetInt16(ReadOnlySequence<byte> sequence, out short result, out SequencePosition consumed)
+        public static bool TryGetInt16(ref SequenceReader<byte> reader, out short result)
         {
             unchecked
             {
                 result = 0;
 
-                if (!TryGetUInt16(sequence, out ushort ushort_result, out consumed))
+                if (!TryGetUInt16(ref reader, out ushort ushort_result))
                 {
                     return false;
                 }
@@ -533,13 +586,13 @@ namespace Omnix.Serialization.RocketPack
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool TryGetInt32(ReadOnlySequence<byte> sequence, out int result, out SequencePosition consumed)
+        public static bool TryGetInt32(ref SequenceReader<byte> reader, out int result)
         {
             unchecked
             {
                 result = 0;
 
-                if (!TryGetUInt32(sequence, out uint uint_result, out consumed))
+                if (!TryGetUInt32(ref reader, out uint uint_result))
                 {
                     return false;
                 }
@@ -550,13 +603,13 @@ namespace Omnix.Serialization.RocketPack
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool TryGetInt64(ReadOnlySequence<byte> sequence, out long result, out SequencePosition consumed)
+        public static bool TryGetInt64(ref SequenceReader<byte> reader, out long result)
         {
             unchecked
             {
                 result = 0;
 
-                if (!TryGetUInt64(sequence, out ulong ulong_result, out consumed))
+                if (!TryGetUInt64(ref reader, out ulong ulong_result))
                 {
                     return false;
                 }

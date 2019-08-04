@@ -1,4 +1,5 @@
 using System;
+using System.Buffers;
 using System.Collections.Generic;
 using BenchmarkDotNet.Attributes;
 using FormatterBenchmarks.Internal;
@@ -19,7 +20,7 @@ namespace FormatterBenchmarks.Cases
 
                 var elementsList = new List<MessagePack_BytesElements>();
 
-                for (int i = 0; i < 1024; i++)
+                for (int i = 0; i < 10; i++)
                 {
                     var elements = new MessagePack_BytesElements()
                     {
@@ -48,7 +49,7 @@ namespace FormatterBenchmarks.Cases
 
                 var elementsList = new List<RocketPack_BytesElements>();
 
-                for (int i = 0; i < 1024; i++)
+                for (int i = 0; i < 10; i++)
                 {
                     var X0 = bufferPool.Rent(random.Next(0, 1024 * 256));
                     var X1 = bufferPool.Rent(random.Next(0, 1024 * 256));
@@ -78,9 +79,9 @@ namespace FormatterBenchmarks.Cases
         [Benchmark]
         public object RocketPack_BytesMessage_SerializeTest()
         {
-            var hub = new Hub();
-            _rocketPack_Message.Export(hub.Writer, BufferPool.Shared);
-            return hub;
+            var writer = new ArrayBufferWriter<byte>();
+            _rocketPack_Message.Export(writer, BufferPool.Shared);
+            return writer;
         }
     }
 }

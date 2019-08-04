@@ -7,7 +7,11 @@ namespace Omnix.Base
     {
         public static IMemoryOwner<T> Empty { get; } = new SimpleMemoryOwner<T>();
 
-        public Memory<T> Memory => Memory<T>.Empty;
+        public SimpleMemoryOwner() => this.Memory = Memory<T>.Empty;
+        public SimpleMemoryOwner(Memory<T> memory) => this.Memory = memory;
+
+        public Memory<T> Memory { get; }
+
         public void Dispose() { }
     }
 }

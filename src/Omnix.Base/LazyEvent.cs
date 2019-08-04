@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Omnix.Base.Extensions;
 
 namespace Omnix.Base
 {
@@ -171,7 +172,7 @@ namespace Omnix.Base
                 }
             }
 
-            protected override void Dispose(bool disposing)
+            protected override void OnDispose(bool disposing)
             {
                 if (disposing)
                 {
@@ -184,9 +185,20 @@ namespace Omnix.Base
                     _task.Wait();
                 }
             }
+
+            protected override async ValueTask OnDisposeAsync()
+            {
+                _queueResetEvent.Set();
+                _queueResetEvent.Dispose();
+
+                _delayResetEvent.Set();
+                _delayResetEvent.Dispose();
+
+                await _task;
+            }
         }
 
-        protected override void Dispose(bool disposing)
+        protected override void OnDispose(bool disposing)
         {
             if (disposing)
             {
@@ -197,6 +209,20 @@ namespace Omnix.Base
 
                 _events.Clear();
             }
+        }
+
+        protected override async ValueTask OnDisposeAsync()
+        {
+            var valueTaskList = new List<ValueTask>();
+
+            foreach (var eventItem in _events.Values)
+            {
+                valueTaskList.Add(eventItem.DisposeAsync());
+            }
+
+            await ValueTaskHelper.WhenAll(valueTaskList.ToArray());
+
+            _events.Clear();
         }
     }
 }

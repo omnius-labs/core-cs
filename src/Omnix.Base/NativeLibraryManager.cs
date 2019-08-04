@@ -99,7 +99,7 @@ namespace Omnix.Base
             throw new NotSupportedException();
         }
 
-        protected override void Dispose(bool disposing)
+        protected override void OnDispose(bool disposing)
         {
             if (disposing)
             {

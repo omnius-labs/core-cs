@@ -18,12 +18,14 @@ namespace Omnix.Serialization.RocketPack
 
         public static T Import(ReadOnlySequence<byte> sequence, BufferPool bufferPool)
         {
-            return Formatter.Deserialize(new RocketPackReader(sequence, bufferPool), 0);
+            var reader = new RocketPackReader(sequence, bufferPool);
+            return Formatter.Deserialize(ref reader, 0);
         }
 
         public void Export(IBufferWriter<byte> bufferWriter, BufferPool bufferPool)
         {
-            Formatter.Serialize(new RocketPackWriter(bufferWriter, bufferPool), (T)this, 0);
+            var writer = new RocketPackWriter(bufferWriter, bufferPool);
+            Formatter.Serialize(ref writer, (T)this, 0);
         }
 
         public static bool operator ==(RocketPackMessageBase<T>? left, RocketPackMessageBase<T>? right)

@@ -1,4 +1,5 @@
 using System;
+using System.Buffers;
 using System.Threading.Tasks;
 using Omnix.Base;
 using Omnix.Network.Connections;
@@ -38,7 +39,9 @@ namespace Omnix.Remoting
 
             await connection.DequeueAsync((sequence) =>
             {
-                if (!Varint.TryGetUInt64(sequence, out type, out _))
+                var reader = new SequenceReader<byte>(sequence);
+
+                if (!Varint.TryGetUInt64(ref reader, out type))
                 {
                     throw new FormatException();
                 }

@@ -52,7 +52,7 @@ namespace Omnix.Network.Connections.Multiplexer.Internal
 
         private sealed class CustomFormatter : global::Omnix.Serialization.RocketPack.IRocketPackFormatter<HelloMessage>
         {
-            public void Serialize(global::Omnix.Serialization.RocketPack.RocketPackWriter w, HelloMessage value, int rank)
+            public void Serialize(ref global::Omnix.Serialization.RocketPack.RocketPackWriter w, HelloMessage value, int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
@@ -76,7 +76,7 @@ namespace Omnix.Network.Connections.Multiplexer.Internal
                 }
             }
 
-            public HelloMessage Deserialize(global::Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
+            public HelloMessage Deserialize(ref global::Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 

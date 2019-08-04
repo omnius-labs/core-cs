@@ -58,7 +58,7 @@ namespace Omnix.Remoting
 
         private sealed class CustomFormatter : global::Omnix.Serialization.RocketPack.IRocketPackFormatter<OmniRpcErrorMessage>
         {
-            public void Serialize(global::Omnix.Serialization.RocketPack.RocketPackWriter w, OmniRpcErrorMessage value, int rank)
+            public void Serialize(ref global::Omnix.Serialization.RocketPack.RocketPackWriter w, OmniRpcErrorMessage value, int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
@@ -96,7 +96,7 @@ namespace Omnix.Remoting
                 }
             }
 
-            public OmniRpcErrorMessage Deserialize(global::Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
+            public OmniRpcErrorMessage Deserialize(ref global::Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 

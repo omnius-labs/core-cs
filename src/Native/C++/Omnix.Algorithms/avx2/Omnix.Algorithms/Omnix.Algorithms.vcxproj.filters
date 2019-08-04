@@ -24,6 +24,9 @@
     <ClInclude Include="Crc32_Castagnoli.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ReedSolomon8.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -33,6 +36,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Crc32_Castagnoli.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ReedSolomon8.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

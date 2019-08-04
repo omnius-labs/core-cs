@@ -1,8 +1,8 @@
 using System;
 using System.Linq;
-using System.Runtime.Intrinsics.X86;
 using System.Threading;
 using System.Threading.Tasks;
+using Omnix.Algorithms.Internal;
 using Omnix.Base;
 using Omnix.Base.Extensions;
 
@@ -26,12 +26,6 @@ namespace Omnix.Algorithms.Correction
             _n = n;
             _bufferPool = bufferPool;
             _encMatrix = _math.CreateEncodeMatrix(k, n);
-        }
-
-        internal bool UseSimd
-        {
-            get => _math.UseSimd;
-            set => _math.UseSimd = value;
         }
 
         public async Task Encode(ReadOnlyMemory<byte>[] sources, int[] index, Memory<byte>[] repairs, int packetLength, int concurrency = 1, CancellationToken token = default)
@@ -210,8 +204,6 @@ namespace Omnix.Algorithms.Correction
                 this.InitMulTable();
             }
 
-            public bool UseSimd { get; set; } = true;
-
             public void GenerateGF()
             {
                 const string primPoly = "101110001";
@@ -359,135 +351,42 @@ namespace Omnix.Algorithms.Correction
                     return;
                 }
 
-                int i = 0;
-                int lim = len;
-
                 // use our multiplication table.
                 // Instead of doing gf_mul_table[c,x] for multiply, we'll save
                 // the gf_mul_table[c] to a local variable since it is going to
                 // be used many times.
                 byte[] gf_mulc = _gf_mul_table![c];
 
-                if (this.UseSimd)
+                fixed (byte* ptr_dst = dst, ptr_src = src, ptr_gf_mulc = gf_mulc)
                 {
-                    /*if (Avx2.IsSupported)
-                    {
-                        const int Unroll = 32;
-
-                        byte* buffer = stackalloc byte[256 / 8];
-
-                        fixed (byte* ptr_dst = dst, ptr_src = src, ptr_gf_mulc = gf_mulc)
-                        {
-                            for (; i < lim && (lim - i) > Unroll; i += Unroll)
-                            {
-                                var v1 = Avx.LoadVector256(ptr_dst + i);
-
-                                buffer[0] = ptr_gf_mulc[ptr_src[i + 0]];
-                                buffer[1] = ptr_gf_mulc[ptr_src[i + 1]];
-                                buffer[2] = ptr_gf_mulc[ptr_src[i + 2]];
-                                buffer[3] = ptr_gf_mulc[ptr_src[i + 3]];
-                                buffer[4] = ptr_gf_mulc[ptr_src[i + 4]];
-                                buffer[5] = ptr_gf_mulc[ptr_src[i + 5]];
-                                buffer[6] = ptr_gf_mulc[ptr_src[i + 6]];
-                                buffer[7] = ptr_gf_mulc[ptr_src[i + 7]];
-                                buffer[8] = ptr_gf_mulc[ptr_src[i + 8]];
-                                buffer[9] = ptr_gf_mulc[ptr_src[i + 9]];
-                                buffer[10] = ptr_gf_mulc[ptr_src[i + 10]];
-                                buffer[11] = ptr_gf_mulc[ptr_src[i + 11]];
-                                buffer[12] = ptr_gf_mulc[ptr_src[i + 12]];
-                                buffer[13] = ptr_gf_mulc[ptr_src[i + 13]];
-                                buffer[14] = ptr_gf_mulc[ptr_src[i + 14]];
-                                buffer[15] = ptr_gf_mulc[ptr_src[i + 15]];
-                                buffer[16] = ptr_gf_mulc[ptr_src[i + 16]];
-                                buffer[17] = ptr_gf_mulc[ptr_src[i + 17]];
-                                buffer[18] = ptr_gf_mulc[ptr_src[i + 18]];
-                                buffer[19] = ptr_gf_mulc[ptr_src[i + 19]];
-                                buffer[20] = ptr_gf_mulc[ptr_src[i + 20]];
-                                buffer[21] = ptr_gf_mulc[ptr_src[i + 21]];
-                                buffer[22] = ptr_gf_mulc[ptr_src[i + 22]];
-                                buffer[23] = ptr_gf_mulc[ptr_src[i + 23]];
-                                buffer[24] = ptr_gf_mulc[ptr_src[i + 24]];
-                                buffer[25] = ptr_gf_mulc[ptr_src[i + 25]];
-                                buffer[26] = ptr_gf_mulc[ptr_src[i + 26]];
-                                buffer[27] = ptr_gf_mulc[ptr_src[i + 27]];
-                                buffer[28] = ptr_gf_mulc[ptr_src[i + 28]];
-                                buffer[29] = ptr_gf_mulc[ptr_src[i + 29]];
-                                buffer[30] = ptr_gf_mulc[ptr_src[i + 30]];
-                                buffer[31] = ptr_gf_mulc[ptr_src[i + 31]];
-                                var v2 = Avx.LoadVector256(buffer);
-
-                                var res = Avx2.Xor(v1, v2);
-
-                                Avx.Store(ptr_dst + i, res);
-                            }
-                        }
-                    }
-                    else */
-                    if (Sse2.IsSupported)
-                    {
-                        const int Unroll = 16;
-
-                        byte* buffer = stackalloc byte[128 / 8];
-
-                        fixed (byte* ptr_dst = dst, ptr_src = src, ptr_gf_mulc = gf_mulc)
-                        {
-                            for (; i < lim && (lim - i) > Unroll; i += Unroll)
-                            {
-                                var v1 = Sse2.LoadVector128(ptr_dst + i);
-
-                                buffer[0] = ptr_gf_mulc[ptr_src[i + 0]];
-                                buffer[1] = ptr_gf_mulc[ptr_src[i + 1]];
-                                buffer[2] = ptr_gf_mulc[ptr_src[i + 2]];
-                                buffer[3] = ptr_gf_mulc[ptr_src[i + 3]];
-                                buffer[4] = ptr_gf_mulc[ptr_src[i + 4]];
-                                buffer[5] = ptr_gf_mulc[ptr_src[i + 5]];
-                                buffer[6] = ptr_gf_mulc[ptr_src[i + 6]];
-                                buffer[7] = ptr_gf_mulc[ptr_src[i + 7]];
-                                buffer[8] = ptr_gf_mulc[ptr_src[i + 8]];
-                                buffer[9] = ptr_gf_mulc[ptr_src[i + 9]];
-                                buffer[10] = ptr_gf_mulc[ptr_src[i + 10]];
-                                buffer[11] = ptr_gf_mulc[ptr_src[i + 11]];
-                                buffer[12] = ptr_gf_mulc[ptr_src[i + 12]];
-                                buffer[13] = ptr_gf_mulc[ptr_src[i + 13]];
-                                buffer[14] = ptr_gf_mulc[ptr_src[i + 14]];
-                                buffer[15] = ptr_gf_mulc[ptr_src[i + 15]];
-
-                                var v2 = Sse2.LoadVector128(buffer);
-
-                                var res = Sse2.Xor(v1, v2);
-
-                                Sse2.Store(ptr_dst + i, res);
-                            }
-                        }
-                    }
+                    NativeMethods.ReedSolomon8.Mul(ptr_src, ptr_dst, ptr_gf_mulc, len);
                 }
 
+                /*
+                const int Unroll = 16; // unroll the loop 16 times.
+
+                // Not sure if loop unrolling has any real benefit in Java, but
+                // what the hey.
+                for (; i < lim && (lim - i) > Unroll; i += Unroll)
                 {
-                    const int Unroll = 16; // unroll the loop 16 times.
+                    // dst ^= gf_mulc[x] is equal to mult then add (xor == add)
 
-                    // Not sure if loop unrolling has any real benefit in Java, but
-                    // what the hey.
-                    for (; i < lim && (lim - i) > Unroll; i += Unroll)
-                    {
-                        // dst ^= gf_mulc[x] is equal to mult then add (xor == add)
-
-                        dst[i] ^= gf_mulc[src[i]];
-                        dst[i + 1] ^= gf_mulc[src[i + 1]];
-                        dst[i + 2] ^= gf_mulc[src[i + 2]];
-                        dst[i + 3] ^= gf_mulc[src[i + 3]];
-                        dst[i + 4] ^= gf_mulc[src[i + 4]];
-                        dst[i + 5] ^= gf_mulc[src[i + 5]];
-                        dst[i + 6] ^= gf_mulc[src[i + 6]];
-                        dst[i + 7] ^= gf_mulc[src[i + 7]];
-                        dst[i + 8] ^= gf_mulc[src[i + 8]];
-                        dst[i + 9] ^= gf_mulc[src[i + 9]];
-                        dst[i + 10] ^= gf_mulc[src[i + 10]];
-                        dst[i + 11] ^= gf_mulc[src[i + 11]];
-                        dst[i + 12] ^= gf_mulc[src[i + 12]];
-                        dst[i + 13] ^= gf_mulc[src[i + 13]];
-                        dst[i + 14] ^= gf_mulc[src[i + 14]];
-                        dst[i + 15] ^= gf_mulc[src[i + 15]];
-                    }
+                    dst[i] ^= gf_mulc[src[i]];
+                    dst[i + 1] ^= gf_mulc[src[i + 1]];
+                    dst[i + 2] ^= gf_mulc[src[i + 2]];
+                    dst[i + 3] ^= gf_mulc[src[i + 3]];
+                    dst[i + 4] ^= gf_mulc[src[i + 4]];
+                    dst[i + 5] ^= gf_mulc[src[i + 5]];
+                    dst[i + 6] ^= gf_mulc[src[i + 6]];
+                    dst[i + 7] ^= gf_mulc[src[i + 7]];
+                    dst[i + 8] ^= gf_mulc[src[i + 8]];
+                    dst[i + 9] ^= gf_mulc[src[i + 9]];
+                    dst[i + 10] ^= gf_mulc[src[i + 10]];
+                    dst[i + 11] ^= gf_mulc[src[i + 11]];
+                    dst[i + 12] ^= gf_mulc[src[i + 12]];
+                    dst[i + 13] ^= gf_mulc[src[i + 13]];
+                    dst[i + 14] ^= gf_mulc[src[i + 14]];
+                    dst[i + 15] ^= gf_mulc[src[i + 15]];
                 }
 
                 // final components
@@ -495,6 +394,7 @@ namespace Omnix.Algorithms.Correction
                 {
                     dst[i] ^= gf_mulc[src[i]];
                 }
+                */
             }
 
             public void MatMul(byte[] a, int aStart, byte[] b, int bStart, byte[] c, int cStart, int n, int k, int m)

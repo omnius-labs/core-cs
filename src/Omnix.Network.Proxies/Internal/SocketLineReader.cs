@@ -51,7 +51,7 @@ namespace Omnix.Network.Proxies.Internal
             }
         }
 
-        protected override void Dispose(bool isDisposing)
+        protected override void OnDispose(bool isDisposing)
         {
 
         }
