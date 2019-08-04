@@ -44,7 +44,7 @@ namespace Omnix.Network
 
         private sealed class CustomFormatter : global::Omnix.Serialization.RocketPack.IRocketPackFormatter<OmniAddress>
         {
-            public void Serialize(global::Omnix.Serialization.RocketPack.RocketPackWriter w, OmniAddress value, int rank)
+            public void Serialize(ref global::Omnix.Serialization.RocketPack.RocketPackWriter w, OmniAddress value, int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
@@ -64,7 +64,7 @@ namespace Omnix.Network
                 }
             }
 
-            public OmniAddress Deserialize(global::Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
+            public OmniAddress Deserialize(ref global::Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 

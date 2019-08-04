@@ -1,5 +1,5 @@
-﻿#include "stdafx.h"
-#include "Unsafe.h"
+#include "stdafx.h"
+#include "BytesOperations.h"
 
 #if _WIN64 || __amd64__
 #define PORTABLE_64_BIT
@@ -16,12 +16,12 @@
 //#include "wmmintrin.h" //AES
 //#include "immintrin.h" //AVX
 
-void zero(byte* src, int32_t len)
+void BytesOperations_Zero(byte* src, int32_t len)
 {
 	memset(src, 0x00, len * sizeof(byte));
 }
 
-void copy(byte* src, byte* dst, int32_t len)
+void BytesOperations_Copy(byte* src, byte* dst, int32_t len)
 {
 #if defined (PORTABLE_64_BIT)
 	if (len >= 16)
@@ -93,7 +93,7 @@ void copy(byte* src, byte* dst, int32_t len)
 }
 
 // https://gist.github.com/karthick18/1361842
-bool equals(byte* x, byte* y, int32_t len)
+bool BytesOperations_Equals(byte* x, byte* y, int32_t len)
 {
 #if defined (PORTABLE_64_BIT)
 	if (len >= 16)
@@ -172,7 +172,7 @@ bool equals(byte* x, byte* y, int32_t len)
 #endif
 }
 
-int32_t compare(byte* x, byte* y, int32_t len)
+int32_t BytesOperations_Compare(byte* x, byte* y, int32_t len)
 {
 	int32_t c = 0;
 
@@ -185,7 +185,7 @@ int32_t compare(byte* x, byte* y, int32_t len)
 	return 0;
 }
 
-void math_and(byte* x, byte* y, byte* result, int32_t len)
+void BytesOperations_And(byte* x, byte* y, byte* result, int32_t len)
 {
 #if defined (PORTABLE_64_BIT)
 	if (len >= 16)
@@ -260,7 +260,7 @@ void math_and(byte* x, byte* y, byte* result, int32_t len)
 #endif
 }
 
-void math_or(byte* x, byte* y, byte* result, int32_t len)
+void BytesOperations_Or(byte* x, byte* y, byte* result, int32_t len)
 {
 #if defined (PORTABLE_64_BIT)
 	if (len >= 16)
@@ -335,7 +335,7 @@ void math_or(byte* x, byte* y, byte* result, int32_t len)
 #endif
 }
 
-void math_xor(byte* x, byte* y, byte* result, int32_t len)
+void BytesOperations_Xor(byte* x, byte* y, byte* result, int32_t len)
 {
 #if defined (PORTABLE_64_BIT)
 	if (len >= 16)

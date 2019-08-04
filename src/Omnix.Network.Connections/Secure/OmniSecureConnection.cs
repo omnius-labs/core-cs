@@ -206,11 +206,19 @@ namespace Omnix.Network.Connections.Secure
             }
         }
 
-        protected override void Dispose(bool disposing)
+        protected override void OnDispose(bool disposing)
         {
             if (disposing)
             {
                 _secureConnection_v1?.Dispose();
+            }
+        }
+
+        protected override async ValueTask OnDisposeAsync()
+        {
+            if (_secureConnection_v1 != null)
+            {
+                await _secureConnection_v1.DisposeAsync();
             }
         }
     }

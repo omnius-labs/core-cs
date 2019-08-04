@@ -1,4 +1,5 @@
 using System;
+using System.Buffers;
 using System.Collections.Generic;
 using System.Text;
 using BenchmarkDotNet.Attributes;
@@ -93,9 +94,9 @@ namespace FormatterBenchmarks.Cases
         [Benchmark]
         public object RocketPack_StringPropertiesMessage_SerializeTest()
         {
-            var hub = new Hub();
-            _rocketPack_Message.Export(hub.Writer, BufferPool.Shared);
-            return hub;
+            var writer = new ArrayBufferWriter<byte>();
+            _rocketPack_Message.Export(writer, BufferPool.Shared);
+            return writer;
         }
     }
 }

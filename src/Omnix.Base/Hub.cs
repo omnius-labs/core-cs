@@ -42,7 +42,7 @@ namespace Omnix.Base
             _hubWriter.Reset();
         }
 
-        protected override void Dispose(bool disposing)
+        protected override void OnDispose(bool disposing)
         {
             if (disposing)
             {

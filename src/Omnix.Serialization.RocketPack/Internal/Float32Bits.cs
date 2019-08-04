@@ -21,13 +21,13 @@ namespace Omnix.Serialization.RocketPack.Internal
         [FieldOffset(3)]
         public readonly byte Byte3;
 
-        public Float32Bits(float value)
+        public Float32Bits(in float value)
         {
             this = default(Float32Bits);
             Value = value;
         }
 
-        public Float32Bits(Span<byte> bigEndianBytes)
+        public Float32Bits(in Span<byte> bigEndianBytes)
         {
             this = default(Float32Bits);
 
@@ -47,7 +47,7 @@ namespace Omnix.Serialization.RocketPack.Internal
             }
         }
 
-        public void CopyTo(Span<byte> span)
+        public void CopyTo(ref Span<byte> span)
         {
             if (BitConverter.IsLittleEndian)
             {

@@ -10,30 +10,26 @@ namespace Omnix.Serialization.RocketPack
     /// <summary>
     /// RocketPackフォーマットのデシリアライズ機能を提供します。
     /// </summary>
-    public sealed class RocketPackReader
+    public unsafe ref struct RocketPackReader
     {
-        private ReadOnlySequence<byte> _sequence;
-        private readonly BufferPool _bufferPool;
-
         private static readonly Lazy<Encoding> _encoding = new Lazy<Encoding>(() => new UTF8Encoding(false));
 
-        public RocketPackReader(ReadOnlySequence<byte> sequence, BufferPool bufferPool)
+        private SequenceReader<byte> _reader;
+        private BufferPool _bufferPool;
+
+        public RocketPackReader(ReadOnlySequence<byte> sequence, in BufferPool bufferPool)
         {
-            _sequence = sequence;
+            _reader = new SequenceReader<byte>(sequence);
             _bufferPool = bufferPool;
         }
 
-        public long Available => _sequence.Length;
-
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public IMemoryOwner<byte> GetRecyclableMemory(int limit)
+        public IMemoryOwner<byte> GetRecyclableMemory(in int limit)
         {
-            if (!Varint.TryGetUInt32(_sequence, out uint length, out var consumed))
+            if (!Varint.TryGetUInt32(ref _reader, out uint length))
             {
                 throw new FormatException();
             }
-
-            _sequence = _sequence.Slice(consumed);
 
             if (length > limit)
             {
@@ -42,21 +38,19 @@ namespace Omnix.Serialization.RocketPack
 
             var memoryOwner = _bufferPool.Rent((int)length);
 
-            _sequence.Slice(0, length).CopyTo(memoryOwner.Memory.Span);
-            _sequence = _sequence.Slice(length);
+            _reader.TryCopyTo(memoryOwner.Memory.Span);
+            _reader.Advance(length);
 
             return memoryOwner;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public ReadOnlyMemory<byte> GetMemory(int limit)
+        public ReadOnlyMemory<byte> GetMemory(in int limit)
         {
-            if (!Varint.TryGetUInt32(_sequence, out uint length, out var consumed))
+            if (!Varint.TryGetUInt32(ref _reader, out uint length))
             {
                 throw new FormatException();
             }
-
-            _sequence = _sequence.Slice(consumed);
 
             if (length > limit)
             {
@@ -65,21 +59,19 @@ namespace Omnix.Serialization.RocketPack
 
             var result = new byte[(int)length];
 
-            _sequence.Slice(0, length).CopyTo(result.AsSpan());
-            _sequence = _sequence.Slice(length);
+            _reader.TryCopyTo(result.AsSpan());
+            _reader.Advance(length);
 
             return new ReadOnlyMemory<byte>(result);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public string GetString(int limit)
+        public string GetString(in int limit)
         {
-            if (!Varint.TryGetUInt32(_sequence, out uint length, out var consumed))
+            if (!Varint.TryGetUInt32(ref _reader, out uint length))
             {
                 throw new FormatException();
             }
-
-            _sequence = _sequence.Slice(consumed);
 
             if (length > limit)
             {
@@ -88,8 +80,8 @@ namespace Omnix.Serialization.RocketPack
 
             using (var memoryOwner = _bufferPool.Rent((int)length))
             {
-                _sequence.Slice(0, length).CopyTo(memoryOwner.Memory.Span);
-                _sequence = _sequence.Slice(length);
+                _reader.TryCopyTo(memoryOwner.Memory.Span);
+                _reader.Advance(length);
 
                 return _encoding.Value.GetString(memoryOwner.Memory.Span);
             }
@@ -99,7 +91,7 @@ namespace Omnix.Serialization.RocketPack
         public Timestamp GetTimestamp()
         {
             long seconds = this.GetInt64();
-            int nanos = (int)this.GetUInt64();
+            int nanos = (int)this.GetUInt32();
 
             return new Timestamp(seconds, nanos);
         }
@@ -107,12 +99,10 @@ namespace Omnix.Serialization.RocketPack
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool GetBoolean()
         {
-            if (!Varint.TryGetUInt64(_sequence, out ulong result, out var consumed))
+            if (!Varint.TryGetUInt64(ref _reader, out ulong result))
             {
                 throw new FormatException();
             }
-
-            _sequence = _sequence.Slice(consumed);
 
             return (result != 0);
         }
@@ -120,12 +110,10 @@ namespace Omnix.Serialization.RocketPack
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ulong GetUInt64()
         {
-            if (!Varint.TryGetUInt64(_sequence, out ulong result, out var consumed))
+            if (!Varint.TryGetUInt64(ref _reader, out ulong result))
             {
                 throw new FormatException();
             }
-
-            _sequence = _sequence.Slice(consumed);
 
             return result;
         }
@@ -133,12 +121,10 @@ namespace Omnix.Serialization.RocketPack
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public byte GetUInt8()
         {
-            if (!Varint.TryGetUInt8(_sequence, out byte result, out var consumed))
+            if (!Varint.TryGetUInt8(ref _reader, out byte result))
             {
                 throw new FormatException();
             }
-
-            _sequence = _sequence.Slice(consumed);
 
             return result;
         }
@@ -146,12 +132,10 @@ namespace Omnix.Serialization.RocketPack
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ushort GetUInt16()
         {
-            if (!Varint.TryGetUInt16(_sequence, out ushort result, out var consumed))
+            if (!Varint.TryGetUInt16(ref _reader, out ushort result))
             {
                 throw new FormatException();
             }
-
-            _sequence = _sequence.Slice(consumed);
 
             return result;
         }
@@ -159,12 +143,10 @@ namespace Omnix.Serialization.RocketPack
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public uint GetUInt32()
         {
-            if (!Varint.TryGetUInt32(_sequence, out uint result, out var consumed))
+            if (!Varint.TryGetUInt32(ref _reader, out uint result))
             {
                 throw new FormatException();
             }
-
-            _sequence = _sequence.Slice(consumed);
 
             return result;
         }
@@ -172,12 +154,10 @@ namespace Omnix.Serialization.RocketPack
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public sbyte GetInt8()
         {
-            if (!Varint.TryGetInt8(_sequence, out sbyte result, out var consumed))
+            if (!Varint.TryGetInt8(ref _reader, out sbyte result))
             {
                 throw new FormatException();
             }
-
-            _sequence = _sequence.Slice(consumed);
 
             return result;
         }
@@ -185,12 +165,10 @@ namespace Omnix.Serialization.RocketPack
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public short GetInt16()
         {
-            if (!Varint.TryGetInt16(_sequence, out short result, out var consumed))
+            if (!Varint.TryGetInt16(ref _reader, out short result))
             {
                 throw new FormatException();
             }
-
-            _sequence = _sequence.Slice(consumed);
 
             return result;
         }
@@ -198,12 +176,10 @@ namespace Omnix.Serialization.RocketPack
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public int GetInt32()
         {
-            if (!Varint.TryGetInt32(_sequence, out int result, out var consumed))
+            if (!Varint.TryGetInt32(ref _reader, out int result))
             {
                 throw new FormatException();
             }
-
-            _sequence = _sequence.Slice(consumed);
 
             return result;
         }
@@ -211,12 +187,10 @@ namespace Omnix.Serialization.RocketPack
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public long GetInt64()
         {
-            if (!Varint.TryGetInt64(_sequence, out long result, out var consumed))
+            if (!Varint.TryGetInt64(ref _reader, out long result))
             {
                 throw new FormatException();
             }
-
-            _sequence = _sequence.Slice(consumed);
 
             return result;
         }
@@ -224,13 +198,13 @@ namespace Omnix.Serialization.RocketPack
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public float GetFloat32()
         {
-            const int BytesLength = 4;
-            Span<byte> bytes = stackalloc byte[BytesLength];
+            const int Size = 4;
+            byte* buffer = stackalloc byte[Size];
+            var tempSpan = new Span<byte>(buffer, Size);
 
-            _sequence.Slice(0, BytesLength).CopyTo(bytes);
-            _sequence = _sequence.Slice(BytesLength);
+            _reader.TryCopyTo(tempSpan);
 
-            var f = new Float32Bits(bytes);
+            var f = new Float32Bits(tempSpan);
 
             return f.Value;
         }
@@ -238,13 +212,13 @@ namespace Omnix.Serialization.RocketPack
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public double GetFloat64()
         {
-            const int BytesLength = 8;
-            Span<byte> bytes = stackalloc byte[BytesLength];
+            const int Size = 8;
+            byte* buffer = stackalloc byte[Size];
+            var tempSpan = new Span<byte>(buffer, Size);
 
-            _sequence.Slice(0, BytesLength).CopyTo(bytes);
-            _sequence = _sequence.Slice(BytesLength);
+            _reader.TryCopyTo(tempSpan);
 
-            var f = new Float64Bits(bytes);
+            var f = new Float64Bits(tempSpan);
 
             return f.Value;
         }

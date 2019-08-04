@@ -34,19 +34,23 @@ namespace Omnix.Algorithms.Internal
             var list = new List<byte[]>();
 
             var sequence = new ReadOnlySequence<byte>(memory);
-            var position = sequence.GetPosition(0);
+            var reader = new SequenceReader<byte>(sequence);
 
-            while (sequence.Length > 0)
+            while (reader.Remaining > 0)
             {
-                if (!Varint.TryGetUInt64(sequence, out var length, out position))
+                if (!Varint.TryGetUInt64(ref reader, out var length))
                 {
                     throw new FormatException();
                 }
 
-                sequence = sequence.Slice(position);
+                var buffer = new byte[length];
+                if (!reader.TryCopyTo(buffer))
+                {
+                    throw new FormatException();
+                }
+                reader.Advance((long)length);
 
-                list.Add(sequence.Slice(0, (int)length).ToArray());
-                sequence = sequence.Slice((long)length);
+                list.Add(buffer);
             }
 
             return list.ToArray();

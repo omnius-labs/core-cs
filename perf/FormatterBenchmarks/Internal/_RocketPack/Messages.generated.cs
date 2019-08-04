@@ -51,7 +51,7 @@ namespace FormatterBenchmarks
 
         private sealed class CustomFormatter : global::Omnix.Serialization.RocketPack.IRocketPackFormatter<RocketPack_BytesElementsList>
         {
-            public void Serialize(global::Omnix.Serialization.RocketPack.RocketPackWriter w, RocketPack_BytesElementsList value, int rank)
+            public void Serialize(ref global::Omnix.Serialization.RocketPack.RocketPackWriter w, RocketPack_BytesElementsList value, int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
@@ -70,12 +70,12 @@ namespace FormatterBenchmarks
                     w.Write((uint)value.List.Count);
                     foreach (var n in value.List)
                     {
-                        RocketPack_BytesElements.Formatter.Serialize(w, n, rank + 1);
+                        RocketPack_BytesElements.Formatter.Serialize(ref w, n, rank + 1);
                     }
                 }
             }
 
-            public RocketPack_BytesElementsList Deserialize(global::Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
+            public RocketPack_BytesElementsList Deserialize(ref global::Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
@@ -94,7 +94,7 @@ namespace FormatterBenchmarks
                                 p_list = new RocketPack_BytesElements[length];
                                 for (int i = 0; i < p_list.Length; i++)
                                 {
-                                    p_list[i] = RocketPack_BytesElements.Formatter.Deserialize(r, rank + 1);
+                                    p_list[i] = RocketPack_BytesElements.Formatter.Deserialize(ref r, rank + 1);
                                 }
                                 break;
                             }
@@ -234,7 +234,7 @@ namespace FormatterBenchmarks
 
         private sealed class CustomFormatter : global::Omnix.Serialization.RocketPack.IRocketPackFormatter<RocketPack_BytesElements>
         {
-            public void Serialize(global::Omnix.Serialization.RocketPack.RocketPackWriter w, RocketPack_BytesElements value, int rank)
+            public void Serialize(ref global::Omnix.Serialization.RocketPack.RocketPackWriter w, RocketPack_BytesElements value, int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
@@ -335,7 +335,7 @@ namespace FormatterBenchmarks
                 }
             }
 
-            public RocketPack_BytesElements Deserialize(global::Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
+            public RocketPack_BytesElements Deserialize(ref global::Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
@@ -463,7 +463,7 @@ namespace FormatterBenchmarks
 
         private sealed class CustomFormatter : global::Omnix.Serialization.RocketPack.IRocketPackFormatter<RocketPack_IntElementsList>
         {
-            public void Serialize(global::Omnix.Serialization.RocketPack.RocketPackWriter w, RocketPack_IntElementsList value, int rank)
+            public void Serialize(ref global::Omnix.Serialization.RocketPack.RocketPackWriter w, RocketPack_IntElementsList value, int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
@@ -482,12 +482,12 @@ namespace FormatterBenchmarks
                     w.Write((uint)value.List.Count);
                     foreach (var n in value.List)
                     {
-                        RocketPack_IntElements.Formatter.Serialize(w, n, rank + 1);
+                        RocketPack_IntElements.Formatter.Serialize(ref w, n, rank + 1);
                     }
                 }
             }
 
-            public RocketPack_IntElementsList Deserialize(global::Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
+            public RocketPack_IntElementsList Deserialize(ref global::Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
@@ -506,7 +506,7 @@ namespace FormatterBenchmarks
                                 p_list = new RocketPack_IntElements[length];
                                 for (int i = 0; i < p_list.Length; i++)
                                 {
-                                    p_list[i] = RocketPack_IntElements.Formatter.Deserialize(r, rank + 1);
+                                    p_list[i] = RocketPack_IntElements.Formatter.Deserialize(ref r, rank + 1);
                                 }
                                 break;
                             }
@@ -590,7 +590,7 @@ namespace FormatterBenchmarks
 
         private sealed class CustomFormatter : global::Omnix.Serialization.RocketPack.IRocketPackFormatter<RocketPack_IntElements>
         {
-            public void Serialize(global::Omnix.Serialization.RocketPack.RocketPackWriter w, RocketPack_IntElements value, int rank)
+            public void Serialize(ref global::Omnix.Serialization.RocketPack.RocketPackWriter w, RocketPack_IntElements value, int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
@@ -691,7 +691,7 @@ namespace FormatterBenchmarks
                 }
             }
 
-            public RocketPack_IntElements Deserialize(global::Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
+            public RocketPack_IntElements Deserialize(ref global::Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
@@ -819,7 +819,7 @@ namespace FormatterBenchmarks
 
         private sealed class CustomFormatter : global::Omnix.Serialization.RocketPack.IRocketPackFormatter<RocketPack_StringElementsList>
         {
-            public void Serialize(global::Omnix.Serialization.RocketPack.RocketPackWriter w, RocketPack_StringElementsList value, int rank)
+            public void Serialize(ref global::Omnix.Serialization.RocketPack.RocketPackWriter w, RocketPack_StringElementsList value, int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
@@ -838,12 +838,12 @@ namespace FormatterBenchmarks
                     w.Write((uint)value.List.Count);
                     foreach (var n in value.List)
                     {
-                        RocketPack_StringElements.Formatter.Serialize(w, n, rank + 1);
+                        RocketPack_StringElements.Formatter.Serialize(ref w, n, rank + 1);
                     }
                 }
             }
 
-            public RocketPack_StringElementsList Deserialize(global::Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
+            public RocketPack_StringElementsList Deserialize(ref global::Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
@@ -862,7 +862,7 @@ namespace FormatterBenchmarks
                                 p_list = new RocketPack_StringElements[length];
                                 for (int i = 0; i < p_list.Length; i++)
                                 {
-                                    p_list[i] = RocketPack_StringElements.Formatter.Deserialize(r, rank + 1);
+                                    p_list[i] = RocketPack_StringElements.Formatter.Deserialize(ref r, rank + 1);
                                 }
                                 break;
                             }
@@ -978,7 +978,7 @@ namespace FormatterBenchmarks
 
         private sealed class CustomFormatter : global::Omnix.Serialization.RocketPack.IRocketPackFormatter<RocketPack_StringElements>
         {
-            public void Serialize(global::Omnix.Serialization.RocketPack.RocketPackWriter w, RocketPack_StringElements value, int rank)
+            public void Serialize(ref global::Omnix.Serialization.RocketPack.RocketPackWriter w, RocketPack_StringElements value, int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
@@ -1079,7 +1079,7 @@ namespace FormatterBenchmarks
                 }
             }
 
-            public RocketPack_StringElements Deserialize(global::Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
+            public RocketPack_StringElements Deserialize(ref global::Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 

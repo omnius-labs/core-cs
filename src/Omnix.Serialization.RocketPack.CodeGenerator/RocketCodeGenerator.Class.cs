@@ -977,7 +977,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
                 w.PushIndent();
 
                 {
-                    w.WriteLine($"public void Serialize({GetFullName("RocketPackWriter")} w, {messageFormat.Name} value, int rank)");
+                    w.WriteLine($"public void Serialize(ref {GetFullName("RocketPackWriter")} w, {messageFormat.Name} value, int rank)");
                     w.WriteLine("{");
 
                     w.PushIndent();
@@ -1027,7 +1027,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
                 w.WriteLine();
 
                 {
-                    w.WriteLine($"public {messageFormat.Name} Deserialize({GetFullName("RocketPackReader")} r, int rank)");
+                    w.WriteLine($"public {messageFormat.Name} Deserialize(ref {GetFullName("RocketPackReader")} r, int rank)");
                     w.WriteLine("{");
 
                     w.PushIndent();
@@ -1241,16 +1241,16 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
                                 }
                                 break;
                             case MessageDefinition messageDefinition when (messageDefinition.FormatType == MessageFormatType.Medium):
-                                w.WriteLine($"{messageDefinition.Name}.Formatter.Serialize(w, {name}, rank + 1);");
+                                w.WriteLine($"{messageDefinition.Name}.Formatter.Serialize(ref w, {name}, rank + 1);");
                                 break;
                             case MessageDefinition messageDefinition when (messageDefinition.FormatType == MessageFormatType.Small):
                                 if (!type.IsOptional)
                                 {
-                                    w.WriteLine($"{messageDefinition.Name}.Formatter.Serialize(w, {name}, rank + 1);");
+                                    w.WriteLine($"{messageDefinition.Name}.Formatter.Serialize(ref w, {name}, rank + 1);");
                                 }
                                 else
                                 {
-                                    w.WriteLine($"{messageDefinition.Name}.Formatter.Serialize(w, {name}.Value, rank + 1);");
+                                    w.WriteLine($"{messageDefinition.Name}.Formatter.Serialize(ref w, {name}.Value, rank + 1);");
                                 }
                                 break;
                         }
@@ -1493,10 +1493,10 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
                                 }
                                 break;
                             case MessageDefinition messageInfo when (messageInfo.FormatType == MessageFormatType.Medium):
-                                w.WriteLine($"{name} = {messageInfo.Name}.Formatter.Deserialize(r, rank + 1);");
+                                w.WriteLine($"{name} = {messageInfo.Name}.Formatter.Deserialize(ref r, rank + 1);");
                                 break;
                             case MessageDefinition messageInfo when (messageInfo.FormatType == MessageFormatType.Small):
-                                w.WriteLine($"{name} = {messageInfo.Name}.Formatter.Deserialize(r, rank + 1);");
+                                w.WriteLine($"{name} = {messageInfo.Name}.Formatter.Deserialize(ref r, rank + 1);");
                                 break;
                         }
                         break;

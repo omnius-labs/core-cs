@@ -34,7 +34,8 @@ namespace Omnix.Remoting
             {
                 bufferWriter.GetSpan(1)[0] = (byte)PacketType.Message;
                 bufferWriter.Advance(1);
-                RocketPackMessageBase<TMessage>.Formatter.Serialize(new RocketPackWriter(bufferWriter, _bufferPool), message, 0);
+                var writer = new RocketPackWriter(bufferWriter, _bufferPool);
+                RocketPackMessageBase<TMessage>.Formatter.Serialize(ref writer, message, 0);
             }, token);
         }
 
@@ -79,7 +80,8 @@ namespace Omnix.Remoting
                 switch ((PacketType)type[0])
                 {
                     case PacketType.Message:
-                        var message = RocketPackMessageBase<TMessage>.Formatter.Deserialize(new RocketPackReader(sequence, _bufferPool), 0);
+                        var reader = new RocketPackReader(sequence, _bufferPool);
+                        var message = RocketPackMessageBase<TMessage>.Formatter.Deserialize(ref reader, 0);
                         receiveResult = new OmniRpcStreamReceiveResult<TMessage>(message, null, false, false);
                         break;
                     case PacketType.ErrorMessage:
@@ -98,7 +100,7 @@ namespace Omnix.Remoting
             return receiveResult;
         }
 
-        protected override void Dispose(bool disposing)
+        protected override void OnDispose(bool disposing)
         {
             if (disposing)
             {
