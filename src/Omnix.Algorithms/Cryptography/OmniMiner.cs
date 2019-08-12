@@ -1,7 +1,9 @@
 using System;
 using System.Buffers;
 using System.Diagnostics;
+using System.IO;
 using System.Runtime.InteropServices;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Omnix.Base;
@@ -117,7 +119,6 @@ namespace Omnix.Algorithms.Cryptography
                 byte[] key = new byte[32];
 
                 using (var process = Process.Start(info))
-                using (token.Register(() => process.Kill()))
                 {
                     process.PriorityClass = ProcessPriorityClass.Idle;
 
@@ -125,9 +126,12 @@ namespace Omnix.Algorithms.Cryptography
                     {
                         try
                         {
-                            for (; ; )
+                            while (!process.HasExited)
                             {
-                                var result = process.StandardOutput.ReadLine().Split(" ");
+                                var line = process.StandardOutput.ReadLine();
+                                if (line is null) return;
+
+                                var result = line.Split(" ");
                                 difficulty = int.Parse(result[0]);
                                 key = Convert.FromBase64String(result[1]);
                             }
@@ -142,13 +146,19 @@ namespace Omnix.Algorithms.Cryptography
                     {
                         try
                         {
-                            while (token.IsCancellationRequested && sw.Elapsed < timeout && difficulty < limit)
+                            using (var w = new StreamWriter(process.StandardInput.BaseStream, new UTF8Encoding(false)))
                             {
-                                Thread.Sleep(1000);
-                                process.StandardInput.WriteLine("a");
-                            }
+                                w.NewLine = "\n";
 
-                            process.StandardInput.WriteLine("e");
+                                while (!process.HasExited && !token.WaitHandle.WaitOne(1000) && sw.Elapsed < timeout && difficulty < limit)
+                                {
+                                    w.WriteLine("a");
+                                    w.Flush();
+                                }
+
+                                w.WriteLine("e");
+                                w.Flush();
+                            }
                         }
                         catch (Exception e)
                         {

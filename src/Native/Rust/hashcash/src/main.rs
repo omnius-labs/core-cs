@@ -88,7 +88,7 @@ fn main() {
                 thread::sleep(Duration::from_secs(1));
                 let result = time_to_receive_alive.lock().unwrap();
 
-                if result.elapsed().as_secs() > 10 {
+                if result.elapsed().as_secs() > 5 {
                     process::exit(1);
                 }
             });
@@ -98,13 +98,15 @@ fn main() {
             let time_to_receive_alive = time_to_receive_alive.clone();
 
             thread::spawn(move || loop {
-                let mut buffer = String::new();
-                std::io::stdin().read_to_string(&mut buffer).unwrap();
+                let mut input = String::new();
+                std::io::stdin().read_line(&mut input).unwrap();
+                let input = input.trim();
 
-                if buffer == "a" {
+                if input == "a" {
                     let mut time_to_receive_alive = time_to_receive_alive.lock().unwrap();
                     *time_to_receive_alive = Instant::now();
-                } else if buffer == "e" {
+                    println!("{}", input);
+                } else if input == "e" {
                     process::exit(1);
                 }
             })
