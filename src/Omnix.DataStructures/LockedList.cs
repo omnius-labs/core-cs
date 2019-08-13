@@ -6,6 +6,7 @@ using Omnix.Base;
 namespace Omnix.DataStructures
 {
     public class LockedList<T> : IList<T>, ICollection<T>, IEnumerable<T>, IList, ICollection, IEnumerable, ISynchronized
+        where T : notnull
     {
         private readonly List<T> _list;
         private int? _capacity;

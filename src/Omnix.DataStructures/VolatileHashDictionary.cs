@@ -1,12 +1,14 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Omnix.Base;
 
 namespace Omnix.DataStructures
 {
     public partial class VolatileHashDictionary<TKey, TValue> : IDictionary<TKey, TValue>, ICollection<KeyValuePair<TKey, TValue>>, IEnumerable<KeyValuePair<TKey, TValue>>, IDictionary, ICollection, IEnumerable, IVolatileCollection, ISynchronized
+        where TKey : notnull
     {
         private readonly Dictionary<TKey, Info<TValue>> _dic;
         private readonly TimeSpan _survivalTime;
@@ -316,8 +318,13 @@ namespace Omnix.DataStructures
             }
         }
 
-        void IDictionary.Add(object key, object value)
+        void IDictionary.Add(object key, object? value)
         {
+            if (value is null)
+            {
+                throw new NullReferenceException(nameof(value));
+            }
+
             lock (this.LockObject)
             {
                 this.Add((TKey)key, (TValue)value);

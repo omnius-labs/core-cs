@@ -32,8 +32,9 @@ namespace Omnix.Serialization.RocketPack
             return (int)(this.Seconds ^ this.Nanos);
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
+            if (!(obj is Timestamp)) return false;
             return this.Equals((Timestamp)obj);
         }
 

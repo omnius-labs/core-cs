@@ -7,6 +7,7 @@ using Omnix.Base;
 namespace Omnix.DataStructures
 {
     public partial class LockedSortedDictionary<TKey, TValue> : IDictionary<TKey, TValue>, ICollection<KeyValuePair<TKey, TValue>>, IDictionary, ICollection, IEnumerable<KeyValuePair<TKey, TValue>>, IEnumerable, ISynchronized
+        where TKey : notnull
     {
         private readonly SortedDictionary<TKey, TValue> _dic;
         private int? _capacity;
@@ -279,8 +280,13 @@ namespace Omnix.DataStructures
             }
         }
 
-        void IDictionary.Add(object key, object value)
+        void IDictionary.Add(object key, object? value)
         {
+            if (value is null)
+            {
+                throw new NullReferenceException(nameof(value));
+            }
+
             lock (this.LockObject)
             {
                 this.Add((TKey)key, (TValue)value);

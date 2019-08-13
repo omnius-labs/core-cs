@@ -798,7 +798,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
                 w.WriteLine("}");
 
 
-                w.WriteLine("public override bool Equals(object other)");
+                w.WriteLine("public override bool Equals(object? other)");
                 w.WriteLine("{");
                 w.PushIndent();
                 w.WriteLine($"if (!(other is {messageDefinition.Name})) return false;");

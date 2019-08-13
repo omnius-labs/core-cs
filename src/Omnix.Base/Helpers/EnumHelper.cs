@@ -11,7 +11,8 @@ namespace Omnix.Base.Helpers
             return EnumInfo<T>.IsValid(value);
         }
 
-        private static class EnumInfo<T>
+        private static class EnumInfo<T> 
+            where T: Enum
         {
             private static readonly ConcurrentDictionary<T, bool> _resultMap = new ConcurrentDictionary<T, bool>();
 

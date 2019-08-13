@@ -17,28 +17,28 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
 
             for (int i = 0; i < usingPathList.Count; i++)
             {
+                var filePath = usingPathList[i];
+                var basePath = Path.GetDirectoryName(filePath);
+                if (basePath is null) continue;
+
                 RocketPackDefinition tempDefinition;
 
-                using (var reader = new StreamReader(usingPathList[i]))
+                using (var reader = new StreamReader(filePath))
                 {
                     tempDefinition = RocketFormatParser.ParseV1_0(reader.ReadToEnd());
                     results.Add(tempDefinition);
                 }
 
+                foreach (var usingInfo in tempDefinition.Usings)
                 {
-                    var basePath = Path.GetDirectoryName(usingPathList[i]);
+                    var targetPath = Path.Combine(basePath, usingInfo.Path);
 
-                    foreach (var usingInfo in tempDefinition.Usings)
+                    if (!loadedPathSet.Add(targetPath))
                     {
-                        var targetPath = Path.Combine(basePath, usingInfo.Path);
-
-                        if (!loadedPathSet.Add(targetPath))
-                        {
-                            continue;
-                        }
-
-                        usingPathList.Add(targetPath);
+                        continue;
                     }
+
+                    usingPathList.Add(targetPath);
                 }
             }
 

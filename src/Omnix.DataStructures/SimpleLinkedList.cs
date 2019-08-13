@@ -169,7 +169,7 @@ namespace Omnix.DataStructures
 
         bool ICollection.IsSynchronized => false;
 
-        object? ICollection.SyncRoot => null;
+        object ICollection.SyncRoot => null!;
 
         void ICollection.CopyTo(Array array, int index)
         {

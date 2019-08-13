@@ -39,28 +39,12 @@ namespace Omnix.Network.Proxies
         private const byte SOCKS5_ADDRTYPE_DOMAIN_NAME = 0x03;
         private const byte SOCKS5_ADDRTYPE_IPV6 = 0x04;
 
-        private readonly string _proxyUserName;
-        private readonly string _proxyPassword;
-        private SocksAuthentication _proxyAuthMethod;
         private readonly string _destinationHost;
         private readonly int _destinationPort;
+        private readonly string? _proxyUsername;
+        private readonly string? _proxyPassword;
+
         private readonly object _lockObject = new object();
-
-        /// <summary>
-        /// Authentication itemType.
-        /// </summary>
-        private enum SocksAuthentication
-        {
-            /// <summary>
-            /// No authentication used.
-            /// </summary>
-            None,
-
-            /// <summary>
-            /// Username and password authentication.
-            /// </summary>
-            UsernamePassword
-        }
 
         public Socks5ProxyClient(string destinationHost, int destinationPort)
         {
@@ -77,10 +61,10 @@ namespace Omnix.Network.Proxies
             _destinationPort = destinationPort;
         }
 
-        public Socks5ProxyClient(string proxyUserName, string proxyPassword, string destinationHost, int destinationPort)
+        public Socks5ProxyClient(string proxyUsername, string proxyPassword, string destinationHost, int destinationPort)
             : this(destinationHost, destinationPort)
         {
-            _proxyUserName = proxyUserName;
+            _proxyUsername = proxyUsername;
             _proxyPassword = proxyPassword;
         }
 
@@ -88,9 +72,6 @@ namespace Omnix.Network.Proxies
         {
             try
             {
-                // determine which authentication method the client would like to use
-                this.DetermineClientAuthMethod();
-
                 // negotiate which authentication methods are supported / accepted by the server
                 this.NegotiateServerAuthMethod(socket);
 
@@ -100,19 +81,6 @@ namespace Omnix.Network.Proxies
             catch (Exception ex)
             {
                 throw new ProxyClientException(string.Format(CultureInfo.InvariantCulture, "Connection to proxy host {0} on port {1} failed.", ((System.Net.IPEndPoint)socket.RemoteEndPoint).Address.ToString(), ((System.Net.IPEndPoint)socket.RemoteEndPoint).Port.ToString()), ex);
-            }
-        }
-
-        private void DetermineClientAuthMethod()
-        {
-            // set the authentication itemType used based on values inputed by the user
-            if (_proxyUserName != null && _proxyPassword != null)
-            {
-                _proxyAuthMethod = SocksAuthentication.UsernamePassword;
-            }
-            else
-            {
-                _proxyAuthMethod = SocksAuthentication.None;
             }
         }
 
@@ -171,19 +139,16 @@ namespace Omnix.Network.Proxies
                 // if the server does not accept any of our supported authenication methods then throw an error
                 if (acceptedAuthMethod == SOCKS5_AUTH_METHOD_REPLY_NO_ACCEPTABLE_METHODS)
                 {
-                    socket.Dispose();
                     throw new ProxyClientException("The proxy destination does not accept the supported proxy client authentication methods.");
-                }
-
-                // if the server accepts a username and password authentication and none is provided by the user then throw an error
-                if (acceptedAuthMethod == SOCKS5_AUTH_METHOD_USERNAME_PASSWORD && _proxyAuthMethod == SocksAuthentication.None)
-                {
-                    socket.Dispose();
-                    throw new ProxyClientException("The proxy destination requires a username and password for authentication.");
                 }
 
                 if (acceptedAuthMethod == SOCKS5_AUTH_METHOD_USERNAME_PASSWORD)
                 {
+                    if (_proxyUsername is null || _proxyPassword is null)
+                    {
+                        throw new ProxyClientException("The proxy destination requires a username and password for authentication.");
+                    }
+
                     // USERNAME / PASSWORD SERVER REQUEST
                     // Once the SOCKS V5 server has started, and the client has selected the
                     // Username/Password Authentication protocol, the Username/Password
@@ -196,12 +161,12 @@ namespace Omnix.Network.Proxies
                     //       | 1  |  1   | 1 to 255 |  1   | 1 to 255 |
                     //       +----+------+----------+------+----------+
 
-                    var credentials = new byte[_proxyUserName.Length + _proxyPassword.Length + 3];
+                    var credentials = new byte[_proxyUsername.Length + _proxyPassword.Length + 3];
                     credentials[0] = SOCKS5_VERSION_NUMBER;
-                    credentials[1] = (byte)_proxyUserName.Length;
-                    Array.Copy(Encoding.ASCII.GetBytes(_proxyUserName), 0, credentials, 2, _proxyUserName.Length);
-                    credentials[_proxyUserName.Length + 2] = (byte)_proxyPassword.Length;
-                    Array.Copy(Encoding.ASCII.GetBytes(_proxyPassword), 0, credentials, _proxyUserName.Length + 3, _proxyPassword.Length);
+                    credentials[1] = (byte)_proxyUsername.Length;
+                    Array.Copy(Encoding.ASCII.GetBytes(_proxyUsername), 0, credentials, 2, _proxyUsername.Length);
+                    credentials[_proxyUsername.Length + 2] = (byte)_proxyPassword.Length;
+                    Array.Copy(Encoding.ASCII.GetBytes(_proxyPassword), 0, credentials, _proxyUsername.Length + 3, _proxyPassword.Length);
 
                     // USERNAME / PASSWORD SERVER RESPONSE
                     // The server verifies the supplied UNAME and PASSWD, and sends the
@@ -265,7 +230,7 @@ namespace Omnix.Network.Proxies
                     Encoding.ASCII.GetBytes(host).CopyTo(bytes, 1);
                     return bytes;
                 default:
-                    return null;
+                    throw new ProxyClientException($"Not supported address type: {addressType}");
             }
         }
 

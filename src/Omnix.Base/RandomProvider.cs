@@ -23,7 +23,7 @@ namespace Omnix.Base
 
         public static Random GetThreadRandom()
         {
-            return _randomWrapper.Value;
+            return _randomWrapper.Value!;
         }
     }
 }

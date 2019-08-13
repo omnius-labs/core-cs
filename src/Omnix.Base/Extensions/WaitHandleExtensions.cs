@@ -45,7 +45,7 @@ namespace Omnix.Base.Extensions
 
             var registration = ThreadPool.RegisterWaitForSingleObject(handle, (state, localTimeout) =>
             {
-                var localTcs = (TaskCompletionSource<object?>)state;
+                var localTcs = (TaskCompletionSource<object?>)state!;
 
                 if (localTimeout)
                 {
@@ -56,7 +56,7 @@ namespace Omnix.Base.Extensions
                     localTcs.TrySetResult(null);
                 }
             }, tcs, timeout, executeOnlyOnce: true);
-            tcs.Task.ContinueWith((_, state) => ((RegisteredWaitHandle)state).Unregister(null), registration, TaskScheduler.Default);
+            tcs.Task.ContinueWith((_, state) => ((RegisteredWaitHandle)state!).Unregister(null), registration, TaskScheduler.Default);
 
             return tcs.Task;
         }

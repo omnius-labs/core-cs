@@ -7,6 +7,7 @@ namespace Omnix.DataStructures.Extensions
     public static class IEnumerableExtensions
     {
         public static LockedList<T> ToLockedList<T>(this IEnumerable<T> list)
+            where T : notnull
         {
             object? lockObject = ExtensionHelper.GetLockObject(list);
 
@@ -14,7 +15,10 @@ namespace Omnix.DataStructures.Extensions
 
             try
             {
-                Monitor.Enter(lockObject, ref lockToken);
+                if (lockObject != null)
+                {
+                    Monitor.Enter(lockObject, ref lockToken);
+                }
 
                 return new LockedList<T>(list);
             }
@@ -22,7 +26,7 @@ namespace Omnix.DataStructures.Extensions
             {
                 if (lockToken)
                 {
-                    Monitor.Exit(lockObject);
+                    Monitor.Exit(lockObject!);
                 }
             }
         }

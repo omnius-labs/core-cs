@@ -7,6 +7,7 @@ using Omnix.Base;
 namespace Omnix.DataStructures
 {
     public class VolatileHashSet<T> : ICollection<T>, IEnumerable<T>, ICollection, IEnumerable, ISet<T>, IVolatileCollection, ISynchronized
+        where T : notnull
     {
         private readonly Dictionary<T, DateTime> _dic;
         private readonly TimeSpan _survivalTime;

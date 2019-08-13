@@ -4,6 +4,7 @@ using System.Collections.Generic;
 namespace Omnix.DataStructures
 {
     public sealed class ReadOnlyDictionarySlim<TKey, TValue> : IReadOnlyDictionary<TKey, TValue>
+        where TKey : notnull
     {
         public static ReadOnlyDictionarySlim<TKey, TValue> Empty { get; }
 

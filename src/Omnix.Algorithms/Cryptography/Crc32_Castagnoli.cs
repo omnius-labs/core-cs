@@ -34,9 +34,9 @@ namespace Omnix.Algorithms.Cryptography
                 throw new ArgumentNullException(nameof(value));
             }
 
-            using (var recyclableMemory = MemoryPool<byte>.Shared.Rent(_utf8Encoding.Value.GetMaxByteCount(value.Length)))
+            using (var recyclableMemory = MemoryPool<byte>.Shared.Rent(_utf8Encoding.Value!.GetMaxByteCount(value.Length)))
             {
-                var length = _utf8Encoding.Value.GetBytes(value, recyclableMemory.Memory.Span);
+                var length = _utf8Encoding.Value!.GetBytes(value, recyclableMemory.Memory.Span);
 
                 return ComputeHash(recyclableMemory.Memory.Span.Slice(0, length));
             }

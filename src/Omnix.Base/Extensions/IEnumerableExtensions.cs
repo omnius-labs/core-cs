@@ -58,7 +58,7 @@ namespace Omnix.Base.Extensions
             }
         }
 
-        public static object ElementAt(this IEnumerable items, int index)
+        public static object? ElementAt(this IEnumerable items, int index)
         {
             if (items is IList list)
             {
@@ -105,7 +105,7 @@ namespace Omnix.Base.Extensions
             {
                 if (lockToken)
                 {
-                    Monitor.Exit(lockObject);
+                    Monitor.Exit(lockObject!);
                 }
             }
         }
@@ -150,7 +150,7 @@ namespace Omnix.Base.Extensions
                         if (t.IsFaulted)
                         {
                             Interlocked.Increment(ref exceptionCount);
-                            throw t.Exception;
+                            throw t.Exception!;
                         }
                     });
                     tasks.Add(task);
