@@ -28,7 +28,7 @@ namespace Omnix.Base
             _tokenSource = new CancellationTokenSource();
             _task = new Task((state) =>
             {
-                var tokenSource = (CancellationTokenSource)state;
+                var tokenSource = (CancellationTokenSource)state!;
                 _callback(tokenSource.Token);
             }, _tokenSource, _tokenSource.Token, TaskCreationOptions.LongRunning);
             _task.Start();

@@ -74,7 +74,7 @@ namespace Omnix.Algorithms.Cryptography
         {
             return !(left == right);
         }
-        public override bool Equals(object other)
+        public override bool Equals(object? other)
         {
             if (!(other is OmniHash)) return false;
             return this.Equals((OmniHash)other);

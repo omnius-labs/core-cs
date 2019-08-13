@@ -8,6 +8,7 @@ namespace Omnix.Base.Extensions
     public static class IDictionaryExtensions
     {
         public static TValue AddOrUpdate<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key, Func<TKey, TValue> addValueFactory, Func<TKey, TValue, TValue> updateValueFactory)
+            where TKey : notnull
         {
             if (dictionary == null)
             {
@@ -39,7 +40,6 @@ namespace Omnix.Base.Extensions
                     Monitor.Enter(lockObject, ref lockToken);
                 }
 
-
                 if (!dictionary.TryGetValue(key, out var result))
                 {
                     result = addValueFactory(key);
@@ -57,12 +57,13 @@ namespace Omnix.Base.Extensions
             {
                 if (lockToken)
                 {
-                    Monitor.Exit(lockObject);
+                    Monitor.Exit(lockObject!);
                 }
             }
         }
 
         public static TValue AddOrUpdate<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key, TValue addValue, Func<TKey, TValue, TValue> updateValueFactory)
+            where TKey : notnull
         {
             if (dictionary == null)
             {
@@ -107,12 +108,13 @@ namespace Omnix.Base.Extensions
             {
                 if (lockToken)
                 {
-                    Monitor.Exit(lockObject);
+                    Monitor.Exit(lockObject!);
                 }
             }
         }
 
         public static bool TryUpdate<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key, TValue newValue, Predicate<TValue> match)
+            where TKey : notnull
         {
             if (dictionary == null)
             {
@@ -152,12 +154,13 @@ namespace Omnix.Base.Extensions
             {
                 if (lockToken)
                 {
-                    Monitor.Exit(lockObject);
+                    Monitor.Exit(lockObject!);
                 }
             }
         }
 
         public static bool TryRemove<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key, out TValue value)
+            where TKey : notnull
         {
             if (dictionary == null)
             {
@@ -187,12 +190,13 @@ namespace Omnix.Base.Extensions
             {
                 if (lockToken)
                 {
-                    Monitor.Exit(lockObject);
+                    Monitor.Exit(lockObject!);
                 }
             }
         }
 
         public static bool TryAdd<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key, TValue value)
+            where TKey : notnull
         {
             if (dictionary == null)
             {
@@ -228,12 +232,13 @@ namespace Omnix.Base.Extensions
             {
                 if (lockToken)
                 {
-                    Monitor.Exit(lockObject);
+                    Monitor.Exit(lockObject!);
                 }
             }
         }
 
         public static TValue GetOrAdd<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key, Func<TKey, TValue> valueFactory)
+            where TKey : notnull
         {
             if (dictionary == null)
             {
@@ -274,12 +279,13 @@ namespace Omnix.Base.Extensions
             {
                 if (lockToken)
                 {
-                    Monitor.Exit(lockObject);
+                    Monitor.Exit(lockObject!);
                 }
             }
         }
 
         public static TValue GetOrAdd<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key, TValue value)
+            where TKey : notnull
         {
             if (dictionary == null)
             {
@@ -319,7 +325,7 @@ namespace Omnix.Base.Extensions
             {
                 if (lockToken)
                 {
-                    Monitor.Exit(lockObject);
+                    Monitor.Exit(lockObject!);
                 }
             }
         }

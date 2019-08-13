@@ -4,6 +4,8 @@ using System.Linq;
 using Omnix.Base.Helpers;
 using Xunit;
 
+#pragma warning disable xUnit2017
+
 namespace Omnix.DataStructures
 {
     public class SimpleLinkedListTests

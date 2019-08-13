@@ -95,7 +95,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator.Internal
         {
             return !(left == right);
         }
-        public override bool Equals(object other)
+        public override bool Equals(object? other)
         {
             if (!(other is SmallMessageElement)) return false;
             return this.Equals((SmallMessageElement)other);
@@ -373,7 +373,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator.Internal
         {
             return !(left == right);
         }
-        public override bool Equals(object other)
+        public override bool Equals(object? other)
         {
             if (!(other is SmallMessage)) return false;
             return this.Equals((SmallMessage)other);

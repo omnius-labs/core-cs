@@ -33,7 +33,7 @@ namespace Omnix.Base
             return this.Value.GetHashCode();
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             if (!(obj is AtomicCounter))
             {

@@ -47,7 +47,7 @@ namespace Omnix.Configuration.Internal
         {
             return !(left == right);
         }
-        public override bool Equals(object other)
+        public override bool Equals(object? other)
         {
             if (!(other is SettingsDatabaseVersion)) return false;
             return this.Equals((SettingsDatabaseVersion)other);

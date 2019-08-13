@@ -4,6 +4,7 @@ using System.Collections.Generic;
 namespace Omnix.Base
 {
     public sealed class ObjectIdMap<T> : IEnumerable<KeyValuePair<int, T>>, IEnumerable
+        where T : notnull
     {
         private readonly Dictionary<T, int> _objectMap = new Dictionary<T, int>();
         private readonly Dictionary<int, T> _idMap = new Dictionary<int, T>();

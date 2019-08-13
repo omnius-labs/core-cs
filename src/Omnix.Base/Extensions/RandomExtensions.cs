@@ -33,7 +33,7 @@ namespace Omnix.Base.Extensions
             {
                 if (lockToken)
                 {
-                    Monitor.Exit(lockObject);
+                    Monitor.Exit(lockObject!);
                 }
             }
         }

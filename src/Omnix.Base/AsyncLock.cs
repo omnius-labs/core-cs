@@ -24,7 +24,7 @@ namespace Omnix.Base
             }
 
             return await wait.ContinueWith(
-                (_, state) => (IDisposable)state,
+                (_, state) => (IDisposable)state!,
                 _releaser,
                 CancellationToken.None,
                 TaskContinuationOptions.ExecuteSynchronously,

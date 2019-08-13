@@ -163,7 +163,7 @@ namespace Omnix.Network.Proxies
 
         private HttpResponseCodes ParseResponse(string response, out string text)
         {
-            text = null;
+            text = string.Empty;
 
             // get rid of the LF character if it exists and then split the string on all CR
             string line = response.Replace('\n', ' ').Split('\r')[0];
