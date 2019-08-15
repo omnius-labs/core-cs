@@ -30,15 +30,18 @@ namespace Omnix.Network.Connections.Secure.V1.Internal
         Password = 1,
     }
 
-    internal sealed partial class ProfileMessage : global::Omnix.Serialization.RocketPack.RocketPackMessageBase<ProfileMessage>
+    internal sealed partial class ProfileMessage : global::Omnix.Serialization.RocketPack.IRocketPackMessage<ProfileMessage>
     {
+        public static global::Omnix.Serialization.RocketPack.IRocketPackFormatter<ProfileMessage> Formatter { get; }
+        public static ProfileMessage Empty { get; }
+
         static ProfileMessage()
         {
-            ProfileMessage.Formatter = new CustomFormatter();
+            ProfileMessage.Formatter = new ___CustomFormatter();
             ProfileMessage.Empty = new ProfileMessage(global::System.ReadOnlyMemory<byte>.Empty, (AuthenticationType)0, global::System.Array.Empty<KeyExchangeAlgorithm>(), global::System.Array.Empty<KeyDerivationAlgorithm>(), global::System.Array.Empty<CryptoAlgorithm>(), global::System.Array.Empty<HashAlgorithm>());
         }
 
-        private readonly int __hashCode;
+        private readonly global::System.Lazy<int> ___hashCode;
 
         public static readonly int MaxSessionIdLength = 32;
         public static readonly int MaxKeyExchangeAlgorithmsCount = 32;
@@ -65,28 +68,29 @@ namespace Omnix.Network.Connections.Secure.V1.Internal
             this.CryptoAlgorithms = new global::Omnix.DataStructures.ReadOnlyListSlim<CryptoAlgorithm>(cryptoAlgorithms);
             this.HashAlgorithms = new global::Omnix.DataStructures.ReadOnlyListSlim<HashAlgorithm>(hashAlgorithms);
 
+            ___hashCode = new global::System.Lazy<int>(() =>
             {
-                var __h = new global::System.HashCode();
-                if (!this.SessionId.IsEmpty) __h.Add(global::Omnix.Base.Helpers.ObjectHelper.GetHashCode(this.SessionId.Span));
-                if (this.AuthenticationType != default) __h.Add(this.AuthenticationType.GetHashCode());
-                foreach (var n in this.KeyExchangeAlgorithms)
+                var ___h = new global::System.HashCode();
+                if (!sessionId.IsEmpty) ___h.Add(global::Omnix.Base.Helpers.ObjectHelper.GetHashCode(sessionId.Span));
+                if (authenticationType != default) ___h.Add(authenticationType.GetHashCode());
+                foreach (var n in keyExchangeAlgorithms)
                 {
-                    if (n != default) __h.Add(n.GetHashCode());
+                    if (n != default) ___h.Add(n.GetHashCode());
                 }
-                foreach (var n in this.KeyDerivationAlgorithms)
+                foreach (var n in keyDerivationAlgorithms)
                 {
-                    if (n != default) __h.Add(n.GetHashCode());
+                    if (n != default) ___h.Add(n.GetHashCode());
                 }
-                foreach (var n in this.CryptoAlgorithms)
+                foreach (var n in cryptoAlgorithms)
                 {
-                    if (n != default) __h.Add(n.GetHashCode());
+                    if (n != default) ___h.Add(n.GetHashCode());
                 }
-                foreach (var n in this.HashAlgorithms)
+                foreach (var n in hashAlgorithms)
                 {
-                    if (n != default) __h.Add(n.GetHashCode());
+                    if (n != default) ___h.Add(n.GetHashCode());
                 }
-                __hashCode = __h.ToHashCode();
-            }
+                return ___h.ToHashCode();
+            });
         }
 
         public global::System.ReadOnlyMemory<byte> SessionId { get; }
@@ -96,7 +100,31 @@ namespace Omnix.Network.Connections.Secure.V1.Internal
         public global::Omnix.DataStructures.ReadOnlyListSlim<CryptoAlgorithm> CryptoAlgorithms { get; }
         public global::Omnix.DataStructures.ReadOnlyListSlim<HashAlgorithm> HashAlgorithms { get; }
 
-        public override bool Equals(ProfileMessage target)
+        public static ProfileMessage Import(global::System.Buffers.ReadOnlySequence<byte> sequence, global::Omnix.Base.BufferPool bufferPool)
+        {
+            var reader = new global::Omnix.Serialization.RocketPack.RocketPackReader(sequence, bufferPool);
+            return Formatter.Deserialize(ref reader, 0);
+        }
+        public void Export(global::System.Buffers.IBufferWriter<byte> bufferWriter, global::Omnix.Base.BufferPool bufferPool)
+        {
+            var writer = new global::Omnix.Serialization.RocketPack.RocketPackWriter(bufferWriter, bufferPool);
+            Formatter.Serialize(ref writer, this, 0);
+        }
+
+        public static bool operator ==(ProfileMessage? left, ProfileMessage? right)
+        {
+            return (right is null) ? (left is null) : right.Equals(left);
+        }
+        public static bool operator !=(ProfileMessage? left, ProfileMessage? right)
+        {
+            return !(left == right);
+        }
+        public override bool Equals(object? other)
+        {
+            if (!(other is ProfileMessage)) return false;
+            return this.Equals((ProfileMessage)other);
+        }
+        public bool Equals(ProfileMessage? target)
         {
             if (target is null) return false;
             if (object.ReferenceEquals(this, target)) return true;
@@ -109,12 +137,11 @@ namespace Omnix.Network.Connections.Secure.V1.Internal
 
             return true;
         }
+        public override int GetHashCode() => ___hashCode.Value!;
 
-        public override int GetHashCode() => __hashCode;
-
-        private sealed class CustomFormatter : global::Omnix.Serialization.RocketPack.IRocketPackFormatter<ProfileMessage>
+        private sealed class ___CustomFormatter : global::Omnix.Serialization.RocketPack.IRocketPackFormatter<ProfileMessage>
         {
-            public void Serialize(ref global::Omnix.Serialization.RocketPack.RocketPackWriter w, ProfileMessage value, int rank)
+            public void Serialize(ref global::Omnix.Serialization.RocketPack.RocketPackWriter w, in ProfileMessage value, in int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
@@ -195,7 +222,7 @@ namespace Omnix.Network.Connections.Secure.V1.Internal
                 }
             }
 
-            public ProfileMessage Deserialize(ref global::Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
+            public ProfileMessage Deserialize(ref global::Omnix.Serialization.RocketPack.RocketPackReader r, in int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
@@ -271,15 +298,18 @@ namespace Omnix.Network.Connections.Secure.V1.Internal
         }
     }
 
-    internal sealed partial class VerificationMessage : global::Omnix.Serialization.RocketPack.RocketPackMessageBase<VerificationMessage>
+    internal sealed partial class VerificationMessage : global::Omnix.Serialization.RocketPack.IRocketPackMessage<VerificationMessage>
     {
+        public static global::Omnix.Serialization.RocketPack.IRocketPackFormatter<VerificationMessage> Formatter { get; }
+        public static VerificationMessage Empty { get; }
+
         static VerificationMessage()
         {
-            VerificationMessage.Formatter = new CustomFormatter();
+            VerificationMessage.Formatter = new ___CustomFormatter();
             VerificationMessage.Empty = new VerificationMessage(ProfileMessage.Empty, OmniAgreementPublicKey.Empty);
         }
 
-        private readonly int __hashCode;
+        private readonly global::System.Lazy<int> ___hashCode;
 
         public VerificationMessage(ProfileMessage profileMessage, OmniAgreementPublicKey agreementPublicKey)
         {
@@ -289,18 +319,43 @@ namespace Omnix.Network.Connections.Secure.V1.Internal
             this.ProfileMessage = profileMessage;
             this.AgreementPublicKey = agreementPublicKey;
 
+            ___hashCode = new global::System.Lazy<int>(() =>
             {
-                var __h = new global::System.HashCode();
-                if (this.ProfileMessage != default) __h.Add(this.ProfileMessage.GetHashCode());
-                if (this.AgreementPublicKey != default) __h.Add(this.AgreementPublicKey.GetHashCode());
-                __hashCode = __h.ToHashCode();
-            }
+                var ___h = new global::System.HashCode();
+                if (profileMessage != default) ___h.Add(profileMessage.GetHashCode());
+                if (agreementPublicKey != default) ___h.Add(agreementPublicKey.GetHashCode());
+                return ___h.ToHashCode();
+            });
         }
 
         public ProfileMessage ProfileMessage { get; }
         public OmniAgreementPublicKey AgreementPublicKey { get; }
 
-        public override bool Equals(VerificationMessage target)
+        public static VerificationMessage Import(global::System.Buffers.ReadOnlySequence<byte> sequence, global::Omnix.Base.BufferPool bufferPool)
+        {
+            var reader = new global::Omnix.Serialization.RocketPack.RocketPackReader(sequence, bufferPool);
+            return Formatter.Deserialize(ref reader, 0);
+        }
+        public void Export(global::System.Buffers.IBufferWriter<byte> bufferWriter, global::Omnix.Base.BufferPool bufferPool)
+        {
+            var writer = new global::Omnix.Serialization.RocketPack.RocketPackWriter(bufferWriter, bufferPool);
+            Formatter.Serialize(ref writer, this, 0);
+        }
+
+        public static bool operator ==(VerificationMessage? left, VerificationMessage? right)
+        {
+            return (right is null) ? (left is null) : right.Equals(left);
+        }
+        public static bool operator !=(VerificationMessage? left, VerificationMessage? right)
+        {
+            return !(left == right);
+        }
+        public override bool Equals(object? other)
+        {
+            if (!(other is VerificationMessage)) return false;
+            return this.Equals((VerificationMessage)other);
+        }
+        public bool Equals(VerificationMessage? target)
         {
             if (target is null) return false;
             if (object.ReferenceEquals(this, target)) return true;
@@ -309,12 +364,11 @@ namespace Omnix.Network.Connections.Secure.V1.Internal
 
             return true;
         }
+        public override int GetHashCode() => ___hashCode.Value!;
 
-        public override int GetHashCode() => __hashCode;
-
-        private sealed class CustomFormatter : global::Omnix.Serialization.RocketPack.IRocketPackFormatter<VerificationMessage>
+        private sealed class ___CustomFormatter : global::Omnix.Serialization.RocketPack.IRocketPackFormatter<VerificationMessage>
         {
-            public void Serialize(ref global::Omnix.Serialization.RocketPack.RocketPackWriter w, VerificationMessage value, int rank)
+            public void Serialize(ref global::Omnix.Serialization.RocketPack.RocketPackWriter w, in VerificationMessage value, in int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
@@ -343,7 +397,7 @@ namespace Omnix.Network.Connections.Secure.V1.Internal
                 }
             }
 
-            public VerificationMessage Deserialize(ref global::Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
+            public VerificationMessage Deserialize(ref global::Omnix.Serialization.RocketPack.RocketPackReader r, in int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
@@ -375,15 +429,18 @@ namespace Omnix.Network.Connections.Secure.V1.Internal
         }
     }
 
-    internal sealed partial class AuthenticationMessage : global::Omnix.Serialization.RocketPack.RocketPackMessageBase<AuthenticationMessage>
+    internal sealed partial class AuthenticationMessage : global::Omnix.Serialization.RocketPack.IRocketPackMessage<AuthenticationMessage>
     {
+        public static global::Omnix.Serialization.RocketPack.IRocketPackFormatter<AuthenticationMessage> Formatter { get; }
+        public static AuthenticationMessage Empty { get; }
+
         static AuthenticationMessage()
         {
-            AuthenticationMessage.Formatter = new CustomFormatter();
+            AuthenticationMessage.Formatter = new ___CustomFormatter();
             AuthenticationMessage.Empty = new AuthenticationMessage(global::System.Array.Empty<global::System.ReadOnlyMemory<byte>>());
         }
 
-        private readonly int __hashCode;
+        private readonly global::System.Lazy<int> ___hashCode;
 
         public static readonly int MaxHashesCount = 32;
 
@@ -398,19 +455,44 @@ namespace Omnix.Network.Connections.Secure.V1.Internal
 
             this.Hashes = new global::Omnix.DataStructures.ReadOnlyListSlim<global::System.ReadOnlyMemory<byte>>(hashes);
 
+            ___hashCode = new global::System.Lazy<int>(() =>
             {
-                var __h = new global::System.HashCode();
-                foreach (var n in this.Hashes)
+                var ___h = new global::System.HashCode();
+                foreach (var n in hashes)
                 {
-                    if (!n.IsEmpty) __h.Add(global::Omnix.Base.Helpers.ObjectHelper.GetHashCode(n.Span));
+                    if (!n.IsEmpty) ___h.Add(global::Omnix.Base.Helpers.ObjectHelper.GetHashCode(n.Span));
                 }
-                __hashCode = __h.ToHashCode();
-            }
+                return ___h.ToHashCode();
+            });
         }
 
         public global::Omnix.DataStructures.ReadOnlyListSlim<global::System.ReadOnlyMemory<byte>> Hashes { get; }
 
-        public override bool Equals(AuthenticationMessage target)
+        public static AuthenticationMessage Import(global::System.Buffers.ReadOnlySequence<byte> sequence, global::Omnix.Base.BufferPool bufferPool)
+        {
+            var reader = new global::Omnix.Serialization.RocketPack.RocketPackReader(sequence, bufferPool);
+            return Formatter.Deserialize(ref reader, 0);
+        }
+        public void Export(global::System.Buffers.IBufferWriter<byte> bufferWriter, global::Omnix.Base.BufferPool bufferPool)
+        {
+            var writer = new global::Omnix.Serialization.RocketPack.RocketPackWriter(bufferWriter, bufferPool);
+            Formatter.Serialize(ref writer, this, 0);
+        }
+
+        public static bool operator ==(AuthenticationMessage? left, AuthenticationMessage? right)
+        {
+            return (right is null) ? (left is null) : right.Equals(left);
+        }
+        public static bool operator !=(AuthenticationMessage? left, AuthenticationMessage? right)
+        {
+            return !(left == right);
+        }
+        public override bool Equals(object? other)
+        {
+            if (!(other is AuthenticationMessage)) return false;
+            return this.Equals((AuthenticationMessage)other);
+        }
+        public bool Equals(AuthenticationMessage? target)
         {
             if (target is null) return false;
             if (object.ReferenceEquals(this, target)) return true;
@@ -418,12 +500,11 @@ namespace Omnix.Network.Connections.Secure.V1.Internal
 
             return true;
         }
+        public override int GetHashCode() => ___hashCode.Value!;
 
-        public override int GetHashCode() => __hashCode;
-
-        private sealed class CustomFormatter : global::Omnix.Serialization.RocketPack.IRocketPackFormatter<AuthenticationMessage>
+        private sealed class ___CustomFormatter : global::Omnix.Serialization.RocketPack.IRocketPackFormatter<AuthenticationMessage>
         {
-            public void Serialize(ref global::Omnix.Serialization.RocketPack.RocketPackWriter w, AuthenticationMessage value, int rank)
+            public void Serialize(ref global::Omnix.Serialization.RocketPack.RocketPackWriter w, in AuthenticationMessage value, in int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
@@ -447,7 +528,7 @@ namespace Omnix.Network.Connections.Secure.V1.Internal
                 }
             }
 
-            public AuthenticationMessage Deserialize(ref global::Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
+            public AuthenticationMessage Deserialize(ref global::Omnix.Serialization.RocketPack.RocketPackReader r, in int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 

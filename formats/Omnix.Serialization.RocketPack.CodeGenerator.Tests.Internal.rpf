@@ -43,15 +43,18 @@ enum Enum8: uint64 {
     No = 1,
 }
 
-small message SmallMessageElement {
+[csharp_struct]
+small message SmallMessageStructElement {
     X0: bool,
 } 
 
-message MessageElement {
+[csharp_struct]
+message MessageStructElement {
     X0: bool = 0,
 } 
 
-small message SmallMessage {
+[csharp_struct]
+small message SmallStructMessage {
     X0: bool,
     X1: int8,
     X2: int16,
@@ -74,15 +77,16 @@ small message SmallMessage {
     X19: string(128), // maximum bytes size is 128
     X20: timestamp,
     X21: memory(256), // maximum bytes size is 256
-    [Recyclable]
-    X22: memory(256), // use recyclable memory
+    [csharp_recyclable]
+    X22: memory(256), // use csharp_recyclable memory
     X23: vector<string(128)>(16),
     X24: map<uint8, string(128)>(32),
-    X25: SmallMessageElement,
-    X26: MessageElement,
+    X25: SmallMessageStructElement,
+    X26: MessageStructElement,
 }
 
-message Message {
+[csharp_struct]
+message MessageStruct {
     X0: bool = 0,
     X1: int8 = 1,
     X2: int16 = 2,
@@ -105,15 +109,16 @@ message Message {
     X19: string(128) = 19, // maximum bytes size is 128
     X20: timestamp = 20,
     X21: memory(256) = 21, // maximum bytes size is 256
-    [Recyclable]
-    X22: memory(256) = 22, // use recyclable memory
+    [csharp_recyclable]
+    X22: memory(256) = 22, // use csharp_recyclable memory
     X23: vector<string(128)>(16) = 23,
     X24: map<uint8, string(128)>(32) = 24,
-    X25: SmallMessageElement = 25,
-    X26: MessageElement = 26,
+    X25: SmallMessageStructElement = 25,
+    X26: MessageStructElement = 26,
 }
 
-message NullableMessage {
+[csharp_struct]
+message NullableMessageStruct {
     X0: bool? = 0,
     X1: int8? = 1,
     X2: int16? = 2,
@@ -136,10 +141,111 @@ message NullableMessage {
     X19: string(128)? = 19, // maximum bytes size is 128
     X20: timestamp? = 20,
     X21: memory(256)? = 21, // maximum bytes size is 256
-    [Recyclable]
-    X22: memory(256)? = 22, // use recyclable memory
+    [csharp_recyclable]
+    X22: memory(256)? = 22, // use csharp_recyclable memory
     X23: vector<string(128)>(16)? = 23,
     X24: map<uint8, string(128)>(32)? = 24,
-    X25: SmallMessageElement? = 25,
-    X26: MessageElement? = 26,
+    X25: SmallMessageStructElement? = 25,
+    X26: MessageStructElement? = 26,
+}
+
+small message SmallMessageClassElement {
+    X0: bool,
+} 
+
+message MessageClassElement {
+    X0: bool = 0,
+} 
+
+small message SmallClassMessage {
+    X0: bool,
+    X1: int8,
+    X2: int16,
+    X3: int32,
+    X4: int64,
+    X5: uint8,
+    X6: uint16,
+    X7: uint32,
+    X8: uint64,
+    X9: Enum1,
+    X10: Enum2,
+    X11: Enum3,
+    X12: Enum4,
+    X13: Enum5,
+    X14: Enum6,
+    X15: Enum7,
+    X16: Enum8,
+    X17: float32,
+    X18: float64,
+    X19: string(128), // maximum bytes size is 128
+    X20: timestamp,
+    X21: memory(256), // maximum bytes size is 256
+    [csharp_recyclable]
+    X22: memory(256), // use csharp_recyclable memory
+    X23: vector<string(128)>(16),
+    X24: map<uint8, string(128)>(32),
+    X25: SmallMessageClassElement,
+    X26: MessageClassElement,
+}
+
+message MessageClass {
+    X0: bool = 0,
+    X1: int8 = 1,
+    X2: int16 = 2,
+    X3: int32 = 3,
+    X4: int64 = 4,
+    X5: uint8 = 5,
+    X6: uint16 = 6,
+    X7: uint32 = 7,
+    X8: uint64 = 8,
+    X9: Enum1 = 9,
+    X10: Enum2 = 10,
+    X11: Enum3 = 11,
+    X12: Enum4 = 12,
+    X13: Enum5 = 13,
+    X14: Enum6 = 14,
+    X15: Enum7 = 15,
+    X16: Enum8 = 16,
+    X17: float32 = 17,
+    X18: float64 = 18,
+    X19: string(128) = 19, // maximum bytes size is 128
+    X20: timestamp = 20,
+    X21: memory(256) = 21, // maximum bytes size is 256
+    [csharp_recyclable]
+    X22: memory(256) = 22, // use csharp_recyclable memory
+    X23: vector<string(128)>(16) = 23,
+    X24: map<uint8, string(128)>(32) = 24,
+    X25: SmallMessageClassElement = 25,
+    X26: MessageClassElement = 26,
+}
+
+message NullableMessageClass {
+    X0: bool? = 0,
+    X1: int8? = 1,
+    X2: int16? = 2,
+    X3: int32? = 3,
+    X4: int64? = 4,
+    X5: uint8? = 5,
+    X6: uint16? = 6,
+    X7: uint32? = 7,
+    X8: uint64? = 8,
+    X9: Enum1? = 9,
+    X10: Enum2? = 10,
+    X11: Enum3? = 11,
+    X12: Enum4? = 12,
+    X13: Enum5? = 13,
+    X14: Enum6? = 14,
+    X15: Enum7? = 15,
+    X16: Enum8? = 16,
+    X17: float32? = 17,
+    X18: float64? = 18,
+    X19: string(128)? = 19, // maximum bytes size is 128
+    X20: timestamp? = 20,
+    X21: memory(256)? = 21, // maximum bytes size is 256
+    [csharp_recyclable]
+    X22: memory(256)? = 22, // use csharp_recyclable memory
+    X23: vector<string(128)>(16)? = 23,
+    X24: map<uint8, string(128)>(32)? = 24,
+    X25: SmallMessageClassElement? = 25,
+    X26: MessageClassElement? = 26,
 }

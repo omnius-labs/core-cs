@@ -10,33 +10,61 @@ namespace Omnix.Network.Connections.Multiplexer.V1.Internal
         NotFoundSessionId = 2,
     }
 
-    internal sealed partial class ProfileMessage : global::Omnix.Serialization.RocketPack.RocketPackMessageBase<ProfileMessage>
+    internal sealed partial class ProfileMessage : global::Omnix.Serialization.RocketPack.IRocketPackMessage<ProfileMessage>
     {
+        public static global::Omnix.Serialization.RocketPack.IRocketPackFormatter<ProfileMessage> Formatter { get; }
+        public static ProfileMessage Empty { get; }
+
         static ProfileMessage()
         {
-            ProfileMessage.Formatter = new CustomFormatter();
+            ProfileMessage.Formatter = new ___CustomFormatter();
             ProfileMessage.Empty = new ProfileMessage(0, 0);
         }
 
-        private readonly int __hashCode;
+        private readonly global::System.Lazy<int> ___hashCode;
 
         public ProfileMessage(ulong initialWindowSize, uint maxSessionAcceptQueueSize)
         {
             this.InitialWindowSize = initialWindowSize;
             this.MaxSessionAcceptQueueSize = maxSessionAcceptQueueSize;
 
+            ___hashCode = new global::System.Lazy<int>(() =>
             {
-                var __h = new global::System.HashCode();
-                if (this.InitialWindowSize != default) __h.Add(this.InitialWindowSize.GetHashCode());
-                if (this.MaxSessionAcceptQueueSize != default) __h.Add(this.MaxSessionAcceptQueueSize.GetHashCode());
-                __hashCode = __h.ToHashCode();
-            }
+                var ___h = new global::System.HashCode();
+                if (initialWindowSize != default) ___h.Add(initialWindowSize.GetHashCode());
+                if (maxSessionAcceptQueueSize != default) ___h.Add(maxSessionAcceptQueueSize.GetHashCode());
+                return ___h.ToHashCode();
+            });
         }
 
         public ulong InitialWindowSize { get; }
         public uint MaxSessionAcceptQueueSize { get; }
 
-        public override bool Equals(ProfileMessage target)
+        public static ProfileMessage Import(global::System.Buffers.ReadOnlySequence<byte> sequence, global::Omnix.Base.BufferPool bufferPool)
+        {
+            var reader = new global::Omnix.Serialization.RocketPack.RocketPackReader(sequence, bufferPool);
+            return Formatter.Deserialize(ref reader, 0);
+        }
+        public void Export(global::System.Buffers.IBufferWriter<byte> bufferWriter, global::Omnix.Base.BufferPool bufferPool)
+        {
+            var writer = new global::Omnix.Serialization.RocketPack.RocketPackWriter(bufferWriter, bufferPool);
+            Formatter.Serialize(ref writer, this, 0);
+        }
+
+        public static bool operator ==(ProfileMessage? left, ProfileMessage? right)
+        {
+            return (right is null) ? (left is null) : right.Equals(left);
+        }
+        public static bool operator !=(ProfileMessage? left, ProfileMessage? right)
+        {
+            return !(left == right);
+        }
+        public override bool Equals(object? other)
+        {
+            if (!(other is ProfileMessage)) return false;
+            return this.Equals((ProfileMessage)other);
+        }
+        public bool Equals(ProfileMessage? target)
         {
             if (target is null) return false;
             if (object.ReferenceEquals(this, target)) return true;
@@ -45,12 +73,11 @@ namespace Omnix.Network.Connections.Multiplexer.V1.Internal
 
             return true;
         }
+        public override int GetHashCode() => ___hashCode.Value!;
 
-        public override int GetHashCode() => __hashCode;
-
-        private sealed class CustomFormatter : global::Omnix.Serialization.RocketPack.IRocketPackFormatter<ProfileMessage>
+        private sealed class ___CustomFormatter : global::Omnix.Serialization.RocketPack.IRocketPackFormatter<ProfileMessage>
         {
-            public void Serialize(ref global::Omnix.Serialization.RocketPack.RocketPackWriter w, ProfileMessage value, int rank)
+            public void Serialize(ref global::Omnix.Serialization.RocketPack.RocketPackWriter w, in ProfileMessage value, in int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
@@ -79,7 +106,7 @@ namespace Omnix.Network.Connections.Multiplexer.V1.Internal
                 }
             }
 
-            public ProfileMessage Deserialize(ref global::Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
+            public ProfileMessage Deserialize(ref global::Omnix.Serialization.RocketPack.RocketPackReader r, in int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
@@ -111,30 +138,58 @@ namespace Omnix.Network.Connections.Multiplexer.V1.Internal
         }
     }
 
-    internal sealed partial class SessionConnectMessage : global::Omnix.Serialization.RocketPack.RocketPackMessageBase<SessionConnectMessage>
+    internal sealed partial class SessionConnectMessage : global::Omnix.Serialization.RocketPack.IRocketPackMessage<SessionConnectMessage>
     {
+        public static global::Omnix.Serialization.RocketPack.IRocketPackFormatter<SessionConnectMessage> Formatter { get; }
+        public static SessionConnectMessage Empty { get; }
+
         static SessionConnectMessage()
         {
-            SessionConnectMessage.Formatter = new CustomFormatter();
+            SessionConnectMessage.Formatter = new ___CustomFormatter();
             SessionConnectMessage.Empty = new SessionConnectMessage(0);
         }
 
-        private readonly int __hashCode;
+        private readonly global::System.Lazy<int> ___hashCode;
 
         public SessionConnectMessage(ulong sessionId)
         {
             this.SessionId = sessionId;
 
+            ___hashCode = new global::System.Lazy<int>(() =>
             {
-                var __h = new global::System.HashCode();
-                if (this.SessionId != default) __h.Add(this.SessionId.GetHashCode());
-                __hashCode = __h.ToHashCode();
-            }
+                var ___h = new global::System.HashCode();
+                if (sessionId != default) ___h.Add(sessionId.GetHashCode());
+                return ___h.ToHashCode();
+            });
         }
 
         public ulong SessionId { get; }
 
-        public override bool Equals(SessionConnectMessage target)
+        public static SessionConnectMessage Import(global::System.Buffers.ReadOnlySequence<byte> sequence, global::Omnix.Base.BufferPool bufferPool)
+        {
+            var reader = new global::Omnix.Serialization.RocketPack.RocketPackReader(sequence, bufferPool);
+            return Formatter.Deserialize(ref reader, 0);
+        }
+        public void Export(global::System.Buffers.IBufferWriter<byte> bufferWriter, global::Omnix.Base.BufferPool bufferPool)
+        {
+            var writer = new global::Omnix.Serialization.RocketPack.RocketPackWriter(bufferWriter, bufferPool);
+            Formatter.Serialize(ref writer, this, 0);
+        }
+
+        public static bool operator ==(SessionConnectMessage? left, SessionConnectMessage? right)
+        {
+            return (right is null) ? (left is null) : right.Equals(left);
+        }
+        public static bool operator !=(SessionConnectMessage? left, SessionConnectMessage? right)
+        {
+            return !(left == right);
+        }
+        public override bool Equals(object? other)
+        {
+            if (!(other is SessionConnectMessage)) return false;
+            return this.Equals((SessionConnectMessage)other);
+        }
+        public bool Equals(SessionConnectMessage? target)
         {
             if (target is null) return false;
             if (object.ReferenceEquals(this, target)) return true;
@@ -142,12 +197,11 @@ namespace Omnix.Network.Connections.Multiplexer.V1.Internal
 
             return true;
         }
+        public override int GetHashCode() => ___hashCode.Value!;
 
-        public override int GetHashCode() => __hashCode;
-
-        private sealed class CustomFormatter : global::Omnix.Serialization.RocketPack.IRocketPackFormatter<SessionConnectMessage>
+        private sealed class ___CustomFormatter : global::Omnix.Serialization.RocketPack.IRocketPackFormatter<SessionConnectMessage>
         {
-            public void Serialize(ref global::Omnix.Serialization.RocketPack.RocketPackWriter w, SessionConnectMessage value, int rank)
+            public void Serialize(ref global::Omnix.Serialization.RocketPack.RocketPackWriter w, in SessionConnectMessage value, in int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
@@ -167,7 +221,7 @@ namespace Omnix.Network.Connections.Multiplexer.V1.Internal
                 }
             }
 
-            public SessionConnectMessage Deserialize(ref global::Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
+            public SessionConnectMessage Deserialize(ref global::Omnix.Serialization.RocketPack.RocketPackReader r, in int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
@@ -193,30 +247,58 @@ namespace Omnix.Network.Connections.Multiplexer.V1.Internal
         }
     }
 
-    internal sealed partial class SessionAcceptMessage : global::Omnix.Serialization.RocketPack.RocketPackMessageBase<SessionAcceptMessage>
+    internal sealed partial class SessionAcceptMessage : global::Omnix.Serialization.RocketPack.IRocketPackMessage<SessionAcceptMessage>
     {
+        public static global::Omnix.Serialization.RocketPack.IRocketPackFormatter<SessionAcceptMessage> Formatter { get; }
+        public static SessionAcceptMessage Empty { get; }
+
         static SessionAcceptMessage()
         {
-            SessionAcceptMessage.Formatter = new CustomFormatter();
+            SessionAcceptMessage.Formatter = new ___CustomFormatter();
             SessionAcceptMessage.Empty = new SessionAcceptMessage(0);
         }
 
-        private readonly int __hashCode;
+        private readonly global::System.Lazy<int> ___hashCode;
 
         public SessionAcceptMessage(ulong sessionId)
         {
             this.SessionId = sessionId;
 
+            ___hashCode = new global::System.Lazy<int>(() =>
             {
-                var __h = new global::System.HashCode();
-                if (this.SessionId != default) __h.Add(this.SessionId.GetHashCode());
-                __hashCode = __h.ToHashCode();
-            }
+                var ___h = new global::System.HashCode();
+                if (sessionId != default) ___h.Add(sessionId.GetHashCode());
+                return ___h.ToHashCode();
+            });
         }
 
         public ulong SessionId { get; }
 
-        public override bool Equals(SessionAcceptMessage target)
+        public static SessionAcceptMessage Import(global::System.Buffers.ReadOnlySequence<byte> sequence, global::Omnix.Base.BufferPool bufferPool)
+        {
+            var reader = new global::Omnix.Serialization.RocketPack.RocketPackReader(sequence, bufferPool);
+            return Formatter.Deserialize(ref reader, 0);
+        }
+        public void Export(global::System.Buffers.IBufferWriter<byte> bufferWriter, global::Omnix.Base.BufferPool bufferPool)
+        {
+            var writer = new global::Omnix.Serialization.RocketPack.RocketPackWriter(bufferWriter, bufferPool);
+            Formatter.Serialize(ref writer, this, 0);
+        }
+
+        public static bool operator ==(SessionAcceptMessage? left, SessionAcceptMessage? right)
+        {
+            return (right is null) ? (left is null) : right.Equals(left);
+        }
+        public static bool operator !=(SessionAcceptMessage? left, SessionAcceptMessage? right)
+        {
+            return !(left == right);
+        }
+        public override bool Equals(object? other)
+        {
+            if (!(other is SessionAcceptMessage)) return false;
+            return this.Equals((SessionAcceptMessage)other);
+        }
+        public bool Equals(SessionAcceptMessage? target)
         {
             if (target is null) return false;
             if (object.ReferenceEquals(this, target)) return true;
@@ -224,12 +306,11 @@ namespace Omnix.Network.Connections.Multiplexer.V1.Internal
 
             return true;
         }
+        public override int GetHashCode() => ___hashCode.Value!;
 
-        public override int GetHashCode() => __hashCode;
-
-        private sealed class CustomFormatter : global::Omnix.Serialization.RocketPack.IRocketPackFormatter<SessionAcceptMessage>
+        private sealed class ___CustomFormatter : global::Omnix.Serialization.RocketPack.IRocketPackFormatter<SessionAcceptMessage>
         {
-            public void Serialize(ref global::Omnix.Serialization.RocketPack.RocketPackWriter w, SessionAcceptMessage value, int rank)
+            public void Serialize(ref global::Omnix.Serialization.RocketPack.RocketPackWriter w, in SessionAcceptMessage value, in int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
@@ -249,7 +330,7 @@ namespace Omnix.Network.Connections.Multiplexer.V1.Internal
                 }
             }
 
-            public SessionAcceptMessage Deserialize(ref global::Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
+            public SessionAcceptMessage Deserialize(ref global::Omnix.Serialization.RocketPack.RocketPackReader r, in int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
@@ -275,33 +356,61 @@ namespace Omnix.Network.Connections.Multiplexer.V1.Internal
         }
     }
 
-    internal sealed partial class SessionUpdateWindowSizeMessage : global::Omnix.Serialization.RocketPack.RocketPackMessageBase<SessionUpdateWindowSizeMessage>
+    internal sealed partial class SessionUpdateWindowSizeMessage : global::Omnix.Serialization.RocketPack.IRocketPackMessage<SessionUpdateWindowSizeMessage>
     {
+        public static global::Omnix.Serialization.RocketPack.IRocketPackFormatter<SessionUpdateWindowSizeMessage> Formatter { get; }
+        public static SessionUpdateWindowSizeMessage Empty { get; }
+
         static SessionUpdateWindowSizeMessage()
         {
-            SessionUpdateWindowSizeMessage.Formatter = new CustomFormatter();
+            SessionUpdateWindowSizeMessage.Formatter = new ___CustomFormatter();
             SessionUpdateWindowSizeMessage.Empty = new SessionUpdateWindowSizeMessage(0, 0);
         }
 
-        private readonly int __hashCode;
+        private readonly global::System.Lazy<int> ___hashCode;
 
         public SessionUpdateWindowSizeMessage(ulong sessionId, ulong size)
         {
             this.SessionId = sessionId;
             this.Size = size;
 
+            ___hashCode = new global::System.Lazy<int>(() =>
             {
-                var __h = new global::System.HashCode();
-                if (this.SessionId != default) __h.Add(this.SessionId.GetHashCode());
-                if (this.Size != default) __h.Add(this.Size.GetHashCode());
-                __hashCode = __h.ToHashCode();
-            }
+                var ___h = new global::System.HashCode();
+                if (sessionId != default) ___h.Add(sessionId.GetHashCode());
+                if (size != default) ___h.Add(size.GetHashCode());
+                return ___h.ToHashCode();
+            });
         }
 
         public ulong SessionId { get; }
         public ulong Size { get; }
 
-        public override bool Equals(SessionUpdateWindowSizeMessage target)
+        public static SessionUpdateWindowSizeMessage Import(global::System.Buffers.ReadOnlySequence<byte> sequence, global::Omnix.Base.BufferPool bufferPool)
+        {
+            var reader = new global::Omnix.Serialization.RocketPack.RocketPackReader(sequence, bufferPool);
+            return Formatter.Deserialize(ref reader, 0);
+        }
+        public void Export(global::System.Buffers.IBufferWriter<byte> bufferWriter, global::Omnix.Base.BufferPool bufferPool)
+        {
+            var writer = new global::Omnix.Serialization.RocketPack.RocketPackWriter(bufferWriter, bufferPool);
+            Formatter.Serialize(ref writer, this, 0);
+        }
+
+        public static bool operator ==(SessionUpdateWindowSizeMessage? left, SessionUpdateWindowSizeMessage? right)
+        {
+            return (right is null) ? (left is null) : right.Equals(left);
+        }
+        public static bool operator !=(SessionUpdateWindowSizeMessage? left, SessionUpdateWindowSizeMessage? right)
+        {
+            return !(left == right);
+        }
+        public override bool Equals(object? other)
+        {
+            if (!(other is SessionUpdateWindowSizeMessage)) return false;
+            return this.Equals((SessionUpdateWindowSizeMessage)other);
+        }
+        public bool Equals(SessionUpdateWindowSizeMessage? target)
         {
             if (target is null) return false;
             if (object.ReferenceEquals(this, target)) return true;
@@ -310,12 +419,11 @@ namespace Omnix.Network.Connections.Multiplexer.V1.Internal
 
             return true;
         }
+        public override int GetHashCode() => ___hashCode.Value!;
 
-        public override int GetHashCode() => __hashCode;
-
-        private sealed class CustomFormatter : global::Omnix.Serialization.RocketPack.IRocketPackFormatter<SessionUpdateWindowSizeMessage>
+        private sealed class ___CustomFormatter : global::Omnix.Serialization.RocketPack.IRocketPackFormatter<SessionUpdateWindowSizeMessage>
         {
-            public void Serialize(ref global::Omnix.Serialization.RocketPack.RocketPackWriter w, SessionUpdateWindowSizeMessage value, int rank)
+            public void Serialize(ref global::Omnix.Serialization.RocketPack.RocketPackWriter w, in SessionUpdateWindowSizeMessage value, in int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
@@ -344,7 +452,7 @@ namespace Omnix.Network.Connections.Multiplexer.V1.Internal
                 }
             }
 
-            public SessionUpdateWindowSizeMessage Deserialize(ref global::Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
+            public SessionUpdateWindowSizeMessage Deserialize(ref global::Omnix.Serialization.RocketPack.RocketPackReader r, in int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
@@ -376,15 +484,18 @@ namespace Omnix.Network.Connections.Multiplexer.V1.Internal
         }
     }
 
-    internal sealed partial class SessionDataMessage : global::Omnix.Serialization.RocketPack.RocketPackMessageBase<SessionDataMessage>, global::System.IDisposable
+    internal sealed partial class SessionDataMessage : global::Omnix.Serialization.RocketPack.IRocketPackMessage<SessionDataMessage>, global::System.IDisposable
     {
+        public static global::Omnix.Serialization.RocketPack.IRocketPackFormatter<SessionDataMessage> Formatter { get; }
+        public static SessionDataMessage Empty { get; }
+
         static SessionDataMessage()
         {
-            SessionDataMessage.Formatter = new CustomFormatter();
+            SessionDataMessage.Formatter = new ___CustomFormatter();
             SessionDataMessage.Empty = new SessionDataMessage(0, false, global::Omnix.Base.SimpleMemoryOwner<byte>.Empty);
         }
 
-        private readonly int __hashCode;
+        private readonly global::System.Lazy<int> ___hashCode;
 
         public static readonly int MaxDataLength = 262144;
 
@@ -397,13 +508,14 @@ namespace Omnix.Network.Connections.Multiplexer.V1.Internal
             this.IsCompleted = isCompleted;
             _data = data;
 
+            ___hashCode = new global::System.Lazy<int>(() =>
             {
-                var __h = new global::System.HashCode();
-                if (this.SessionId != default) __h.Add(this.SessionId.GetHashCode());
-                if (this.IsCompleted != default) __h.Add(this.IsCompleted.GetHashCode());
-                if (!this.Data.IsEmpty) __h.Add(global::Omnix.Base.Helpers.ObjectHelper.GetHashCode(this.Data.Span));
-                __hashCode = __h.ToHashCode();
-            }
+                var ___h = new global::System.HashCode();
+                if (sessionId != default) ___h.Add(sessionId.GetHashCode());
+                if (isCompleted != default) ___h.Add(isCompleted.GetHashCode());
+                if (!data.Memory.IsEmpty) ___h.Add(global::Omnix.Base.Helpers.ObjectHelper.GetHashCode(data.Memory.Span));
+                return ___h.ToHashCode();
+            });
         }
 
         public ulong SessionId { get; }
@@ -411,7 +523,31 @@ namespace Omnix.Network.Connections.Multiplexer.V1.Internal
         private readonly global::System.Buffers.IMemoryOwner<byte> _data;
         public global::System.ReadOnlyMemory<byte> Data => _data.Memory;
 
-        public override bool Equals(SessionDataMessage target)
+        public static SessionDataMessage Import(global::System.Buffers.ReadOnlySequence<byte> sequence, global::Omnix.Base.BufferPool bufferPool)
+        {
+            var reader = new global::Omnix.Serialization.RocketPack.RocketPackReader(sequence, bufferPool);
+            return Formatter.Deserialize(ref reader, 0);
+        }
+        public void Export(global::System.Buffers.IBufferWriter<byte> bufferWriter, global::Omnix.Base.BufferPool bufferPool)
+        {
+            var writer = new global::Omnix.Serialization.RocketPack.RocketPackWriter(bufferWriter, bufferPool);
+            Formatter.Serialize(ref writer, this, 0);
+        }
+
+        public static bool operator ==(SessionDataMessage? left, SessionDataMessage? right)
+        {
+            return (right is null) ? (left is null) : right.Equals(left);
+        }
+        public static bool operator !=(SessionDataMessage? left, SessionDataMessage? right)
+        {
+            return !(left == right);
+        }
+        public override bool Equals(object? other)
+        {
+            if (!(other is SessionDataMessage)) return false;
+            return this.Equals((SessionDataMessage)other);
+        }
+        public bool Equals(SessionDataMessage? target)
         {
             if (target is null) return false;
             if (object.ReferenceEquals(this, target)) return true;
@@ -421,17 +557,16 @@ namespace Omnix.Network.Connections.Multiplexer.V1.Internal
 
             return true;
         }
-
-        public override int GetHashCode() => __hashCode;
+        public override int GetHashCode() => ___hashCode.Value!;
 
         public void Dispose()
         {
             _data?.Dispose();
         }
 
-        private sealed class CustomFormatter : global::Omnix.Serialization.RocketPack.IRocketPackFormatter<SessionDataMessage>
+        private sealed class ___CustomFormatter : global::Omnix.Serialization.RocketPack.IRocketPackFormatter<SessionDataMessage>
         {
-            public void Serialize(ref global::Omnix.Serialization.RocketPack.RocketPackWriter w, SessionDataMessage value, int rank)
+            public void Serialize(ref global::Omnix.Serialization.RocketPack.RocketPackWriter w, in SessionDataMessage value, in int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
@@ -469,7 +604,7 @@ namespace Omnix.Network.Connections.Multiplexer.V1.Internal
                 }
             }
 
-            public SessionDataMessage Deserialize(ref global::Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
+            public SessionDataMessage Deserialize(ref global::Omnix.Serialization.RocketPack.RocketPackReader r, in int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
@@ -507,30 +642,58 @@ namespace Omnix.Network.Connections.Multiplexer.V1.Internal
         }
     }
 
-    internal sealed partial class SessionCloseMessage : global::Omnix.Serialization.RocketPack.RocketPackMessageBase<SessionCloseMessage>
+    internal sealed partial class SessionCloseMessage : global::Omnix.Serialization.RocketPack.IRocketPackMessage<SessionCloseMessage>
     {
+        public static global::Omnix.Serialization.RocketPack.IRocketPackFormatter<SessionCloseMessage> Formatter { get; }
+        public static SessionCloseMessage Empty { get; }
+
         static SessionCloseMessage()
         {
-            SessionCloseMessage.Formatter = new CustomFormatter();
+            SessionCloseMessage.Formatter = new ___CustomFormatter();
             SessionCloseMessage.Empty = new SessionCloseMessage(0);
         }
 
-        private readonly int __hashCode;
+        private readonly global::System.Lazy<int> ___hashCode;
 
         public SessionCloseMessage(ulong sessionId)
         {
             this.SessionId = sessionId;
 
+            ___hashCode = new global::System.Lazy<int>(() =>
             {
-                var __h = new global::System.HashCode();
-                if (this.SessionId != default) __h.Add(this.SessionId.GetHashCode());
-                __hashCode = __h.ToHashCode();
-            }
+                var ___h = new global::System.HashCode();
+                if (sessionId != default) ___h.Add(sessionId.GetHashCode());
+                return ___h.ToHashCode();
+            });
         }
 
         public ulong SessionId { get; }
 
-        public override bool Equals(SessionCloseMessage target)
+        public static SessionCloseMessage Import(global::System.Buffers.ReadOnlySequence<byte> sequence, global::Omnix.Base.BufferPool bufferPool)
+        {
+            var reader = new global::Omnix.Serialization.RocketPack.RocketPackReader(sequence, bufferPool);
+            return Formatter.Deserialize(ref reader, 0);
+        }
+        public void Export(global::System.Buffers.IBufferWriter<byte> bufferWriter, global::Omnix.Base.BufferPool bufferPool)
+        {
+            var writer = new global::Omnix.Serialization.RocketPack.RocketPackWriter(bufferWriter, bufferPool);
+            Formatter.Serialize(ref writer, this, 0);
+        }
+
+        public static bool operator ==(SessionCloseMessage? left, SessionCloseMessage? right)
+        {
+            return (right is null) ? (left is null) : right.Equals(left);
+        }
+        public static bool operator !=(SessionCloseMessage? left, SessionCloseMessage? right)
+        {
+            return !(left == right);
+        }
+        public override bool Equals(object? other)
+        {
+            if (!(other is SessionCloseMessage)) return false;
+            return this.Equals((SessionCloseMessage)other);
+        }
+        public bool Equals(SessionCloseMessage? target)
         {
             if (target is null) return false;
             if (object.ReferenceEquals(this, target)) return true;
@@ -538,12 +701,11 @@ namespace Omnix.Network.Connections.Multiplexer.V1.Internal
 
             return true;
         }
+        public override int GetHashCode() => ___hashCode.Value!;
 
-        public override int GetHashCode() => __hashCode;
-
-        private sealed class CustomFormatter : global::Omnix.Serialization.RocketPack.IRocketPackFormatter<SessionCloseMessage>
+        private sealed class ___CustomFormatter : global::Omnix.Serialization.RocketPack.IRocketPackFormatter<SessionCloseMessage>
         {
-            public void Serialize(ref global::Omnix.Serialization.RocketPack.RocketPackWriter w, SessionCloseMessage value, int rank)
+            public void Serialize(ref global::Omnix.Serialization.RocketPack.RocketPackWriter w, in SessionCloseMessage value, in int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
@@ -563,7 +725,7 @@ namespace Omnix.Network.Connections.Multiplexer.V1.Internal
                 }
             }
 
-            public SessionCloseMessage Deserialize(ref global::Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
+            public SessionCloseMessage Deserialize(ref global::Omnix.Serialization.RocketPack.RocketPackReader r, in int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
@@ -589,33 +751,61 @@ namespace Omnix.Network.Connections.Multiplexer.V1.Internal
         }
     }
 
-    internal sealed partial class SessionErrorMessage : global::Omnix.Serialization.RocketPack.RocketPackMessageBase<SessionErrorMessage>
+    internal sealed partial class SessionErrorMessage : global::Omnix.Serialization.RocketPack.IRocketPackMessage<SessionErrorMessage>
     {
+        public static global::Omnix.Serialization.RocketPack.IRocketPackFormatter<SessionErrorMessage> Formatter { get; }
+        public static SessionErrorMessage Empty { get; }
+
         static SessionErrorMessage()
         {
-            SessionErrorMessage.Formatter = new CustomFormatter();
+            SessionErrorMessage.Formatter = new ___CustomFormatter();
             SessionErrorMessage.Empty = new SessionErrorMessage(0, (SessionErrorType)0);
         }
 
-        private readonly int __hashCode;
+        private readonly global::System.Lazy<int> ___hashCode;
 
         public SessionErrorMessage(ulong sessionId, SessionErrorType errorType)
         {
             this.SessionId = sessionId;
             this.ErrorType = errorType;
 
+            ___hashCode = new global::System.Lazy<int>(() =>
             {
-                var __h = new global::System.HashCode();
-                if (this.SessionId != default) __h.Add(this.SessionId.GetHashCode());
-                if (this.ErrorType != default) __h.Add(this.ErrorType.GetHashCode());
-                __hashCode = __h.ToHashCode();
-            }
+                var ___h = new global::System.HashCode();
+                if (sessionId != default) ___h.Add(sessionId.GetHashCode());
+                if (errorType != default) ___h.Add(errorType.GetHashCode());
+                return ___h.ToHashCode();
+            });
         }
 
         public ulong SessionId { get; }
         public SessionErrorType ErrorType { get; }
 
-        public override bool Equals(SessionErrorMessage target)
+        public static SessionErrorMessage Import(global::System.Buffers.ReadOnlySequence<byte> sequence, global::Omnix.Base.BufferPool bufferPool)
+        {
+            var reader = new global::Omnix.Serialization.RocketPack.RocketPackReader(sequence, bufferPool);
+            return Formatter.Deserialize(ref reader, 0);
+        }
+        public void Export(global::System.Buffers.IBufferWriter<byte> bufferWriter, global::Omnix.Base.BufferPool bufferPool)
+        {
+            var writer = new global::Omnix.Serialization.RocketPack.RocketPackWriter(bufferWriter, bufferPool);
+            Formatter.Serialize(ref writer, this, 0);
+        }
+
+        public static bool operator ==(SessionErrorMessage? left, SessionErrorMessage? right)
+        {
+            return (right is null) ? (left is null) : right.Equals(left);
+        }
+        public static bool operator !=(SessionErrorMessage? left, SessionErrorMessage? right)
+        {
+            return !(left == right);
+        }
+        public override bool Equals(object? other)
+        {
+            if (!(other is SessionErrorMessage)) return false;
+            return this.Equals((SessionErrorMessage)other);
+        }
+        public bool Equals(SessionErrorMessage? target)
         {
             if (target is null) return false;
             if (object.ReferenceEquals(this, target)) return true;
@@ -624,12 +814,11 @@ namespace Omnix.Network.Connections.Multiplexer.V1.Internal
 
             return true;
         }
+        public override int GetHashCode() => ___hashCode.Value!;
 
-        public override int GetHashCode() => __hashCode;
-
-        private sealed class CustomFormatter : global::Omnix.Serialization.RocketPack.IRocketPackFormatter<SessionErrorMessage>
+        private sealed class ___CustomFormatter : global::Omnix.Serialization.RocketPack.IRocketPackFormatter<SessionErrorMessage>
         {
-            public void Serialize(ref global::Omnix.Serialization.RocketPack.RocketPackWriter w, SessionErrorMessage value, int rank)
+            public void Serialize(ref global::Omnix.Serialization.RocketPack.RocketPackWriter w, in SessionErrorMessage value, in int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
@@ -658,7 +847,7 @@ namespace Omnix.Network.Connections.Multiplexer.V1.Internal
                 }
             }
 
-            public SessionErrorMessage Deserialize(ref global::Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
+            public SessionErrorMessage Deserialize(ref global::Omnix.Serialization.RocketPack.RocketPackReader r, in int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 

@@ -233,13 +233,13 @@ namespace Omnix.Configuration
             this.SetContent("#Version", new SettingsDatabaseVersion(version), SettingsDatabaseVersion.Formatter);
         }
 
-        public bool TryGetContent<T>(string name, out T value) where T : RocketPackMessageBase<T>
+        public bool TryGetContent<T>(string name, out T value) where T : IRocketPackMessage<T>
         {
             value = default!;
 
             foreach (var entityStatus in new[] { EntityStatus.Committed, EntityStatus.Backup })
             {
-                if (TryGet(this.GeneratePath(entityStatus), name, out var result, RocketPackMessageBase<T>.Formatter))
+                if (TryGet(this.GeneratePath(entityStatus), name, out var result, IRocketPackMessage<T>.Formatter))
                 {
                     value = result;
                     return true;
@@ -265,9 +265,9 @@ namespace Omnix.Configuration
             return false;
         }
 
-        public void SetContent<T>(string name, T value) where T : RocketPackMessageBase<T>
+        public void SetContent<T>(string name, T value) where T : IRocketPackMessage<T>
         {
-            Set(this.GeneratePath(EntityStatus.Temp), name, value, RocketPackMessageBase<T>.Formatter);
+            Set(this.GeneratePath(EntityStatus.Temp), name, value, IRocketPackMessage<T>.Formatter);
 
             this.Commit(name);
         }

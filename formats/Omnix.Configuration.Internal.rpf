@@ -2,6 +2,7 @@
 
 option csharp_namespace = "Omnix.Configuration.Internal";
 
+[csharp_struct]
 small message SettingsDatabaseVersion {
     Value: uint32,
 }

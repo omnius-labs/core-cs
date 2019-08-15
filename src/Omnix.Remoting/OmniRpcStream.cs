@@ -28,14 +28,14 @@ namespace Omnix.Remoting
         }
 
         public async ValueTask SendMessageAsync<TMessage>(TMessage message, CancellationToken token = default)
-            where TMessage : RocketPackMessageBase<TMessage>
+            where TMessage : IRocketPackMessage<TMessage>
         {
             await _connection.EnqueueAsync((bufferWriter) =>
             {
                 bufferWriter.GetSpan(1)[0] = (byte)PacketType.Message;
                 bufferWriter.Advance(1);
                 var writer = new RocketPackWriter(bufferWriter, _bufferPool);
-                RocketPackMessageBase<TMessage>.Formatter.Serialize(ref writer, message, 0);
+                IRocketPackMessage<TMessage>.Formatter.Serialize(ref writer, message, 0);
             }, token);
         }
 
@@ -68,7 +68,7 @@ namespace Omnix.Remoting
         }
 
         public async ValueTask<OmniRpcStreamReceiveResult<TMessage>> ReceiveAsync<TMessage>(CancellationToken token = default)
-            where TMessage : RocketPackMessageBase<TMessage>
+            where TMessage : IRocketPackMessage<TMessage>
         {
             OmniRpcStreamReceiveResult<TMessage> receiveResult = default;
 
@@ -81,18 +81,18 @@ namespace Omnix.Remoting
                 {
                     case PacketType.Message:
                         var reader = new RocketPackReader(sequence, _bufferPool);
-                        var message = RocketPackMessageBase<TMessage>.Formatter.Deserialize(ref reader, 0);
+                        var message = IRocketPackMessage<TMessage>.Formatter.Deserialize(ref reader, 0);
                         receiveResult = new OmniRpcStreamReceiveResult<TMessage>(message, null, false, false);
                         break;
                     case PacketType.ErrorMessage:
                         var errorMessage = OmniRpcErrorMessage.Import(sequence, _bufferPool);
-                        receiveResult = new OmniRpcStreamReceiveResult<TMessage>(null, errorMessage, false, false);
+                        receiveResult = new OmniRpcStreamReceiveResult<TMessage>(default, errorMessage, false, false);
                         break;
                     case PacketType.Canceled:
-                        receiveResult = new OmniRpcStreamReceiveResult<TMessage>(null, null, true, false);
+                        receiveResult = new OmniRpcStreamReceiveResult<TMessage>(default, null, true, false);
                         break;
                     case PacketType.Completed:
-                        receiveResult = new OmniRpcStreamReceiveResult<TMessage>(null, null, false, true);
+                        receiveResult = new OmniRpcStreamReceiveResult<TMessage>(default, null, false, true);
                         break;
                 }
             }, token);

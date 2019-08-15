@@ -6,7 +6,7 @@ namespace Omnix.Serialization.RocketPack.Helpers
     public static class RocketPackHelper
     {
         public static T StreamToMessage<T>(Stream inStream)
-            where T : RocketPackMessageBase<T>
+            where T : IRocketPackMessage<T>
         {
             using var hub = new Hub();
 
@@ -25,11 +25,11 @@ namespace Omnix.Serialization.RocketPack.Helpers
 
             hub.Writer.Complete();
 
-            return RocketPackMessageBase<T>.Import(hub.Reader.GetSequence(), BufferPool.Shared);
+            return IRocketPackMessage<T>.Import(hub.Reader.GetSequence(), BufferPool.Shared);
         }
 
         public static void MessageToStream<T>(T message, Stream stream)
-            where T : RocketPackMessageBase<T>
+            where T : IRocketPackMessage<T>
         {
             using var hub = new Hub();
 

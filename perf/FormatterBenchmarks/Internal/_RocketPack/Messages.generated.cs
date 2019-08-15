@@ -3,15 +3,18 @@
 
 namespace FormatterBenchmarks
 {
-    internal sealed partial class RocketPack_BytesElementsList : global::Omnix.Serialization.RocketPack.RocketPackMessageBase<RocketPack_BytesElementsList>
+    internal sealed partial class RocketPack_BytesElementsList : global::Omnix.Serialization.RocketPack.IRocketPackMessage<RocketPack_BytesElementsList>
     {
+        public static global::Omnix.Serialization.RocketPack.IRocketPackFormatter<RocketPack_BytesElementsList> Formatter { get; }
+        public static RocketPack_BytesElementsList Empty { get; }
+
         static RocketPack_BytesElementsList()
         {
-            RocketPack_BytesElementsList.Formatter = new CustomFormatter();
+            RocketPack_BytesElementsList.Formatter = new ___CustomFormatter();
             RocketPack_BytesElementsList.Empty = new RocketPack_BytesElementsList(global::System.Array.Empty<RocketPack_BytesElements>());
         }
 
-        private readonly int __hashCode;
+        private readonly global::System.Lazy<int> ___hashCode;
 
         public static readonly int MaxListCount = 1048576;
 
@@ -26,19 +29,44 @@ namespace FormatterBenchmarks
 
             this.List = new global::Omnix.DataStructures.ReadOnlyListSlim<RocketPack_BytesElements>(list);
 
+            ___hashCode = new global::System.Lazy<int>(() =>
             {
-                var __h = new global::System.HashCode();
-                foreach (var n in this.List)
+                var ___h = new global::System.HashCode();
+                foreach (var n in list)
                 {
-                    if (n != default) __h.Add(n.GetHashCode());
+                    if (n != default) ___h.Add(n.GetHashCode());
                 }
-                __hashCode = __h.ToHashCode();
-            }
+                return ___h.ToHashCode();
+            });
         }
 
         public global::Omnix.DataStructures.ReadOnlyListSlim<RocketPack_BytesElements> List { get; }
 
-        public override bool Equals(RocketPack_BytesElementsList target)
+        public static RocketPack_BytesElementsList Import(global::System.Buffers.ReadOnlySequence<byte> sequence, global::Omnix.Base.BufferPool bufferPool)
+        {
+            var reader = new global::Omnix.Serialization.RocketPack.RocketPackReader(sequence, bufferPool);
+            return Formatter.Deserialize(ref reader, 0);
+        }
+        public void Export(global::System.Buffers.IBufferWriter<byte> bufferWriter, global::Omnix.Base.BufferPool bufferPool)
+        {
+            var writer = new global::Omnix.Serialization.RocketPack.RocketPackWriter(bufferWriter, bufferPool);
+            Formatter.Serialize(ref writer, this, 0);
+        }
+
+        public static bool operator ==(RocketPack_BytesElementsList? left, RocketPack_BytesElementsList? right)
+        {
+            return (right is null) ? (left is null) : right.Equals(left);
+        }
+        public static bool operator !=(RocketPack_BytesElementsList? left, RocketPack_BytesElementsList? right)
+        {
+            return !(left == right);
+        }
+        public override bool Equals(object? other)
+        {
+            if (!(other is RocketPack_BytesElementsList)) return false;
+            return this.Equals((RocketPack_BytesElementsList)other);
+        }
+        public bool Equals(RocketPack_BytesElementsList? target)
         {
             if (target is null) return false;
             if (object.ReferenceEquals(this, target)) return true;
@@ -46,12 +74,11 @@ namespace FormatterBenchmarks
 
             return true;
         }
+        public override int GetHashCode() => ___hashCode.Value!;
 
-        public override int GetHashCode() => __hashCode;
-
-        private sealed class CustomFormatter : global::Omnix.Serialization.RocketPack.IRocketPackFormatter<RocketPack_BytesElementsList>
+        private sealed class ___CustomFormatter : global::Omnix.Serialization.RocketPack.IRocketPackFormatter<RocketPack_BytesElementsList>
         {
-            public void Serialize(ref global::Omnix.Serialization.RocketPack.RocketPackWriter w, RocketPack_BytesElementsList value, int rank)
+            public void Serialize(ref global::Omnix.Serialization.RocketPack.RocketPackWriter w, in RocketPack_BytesElementsList value, in int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
@@ -75,7 +102,7 @@ namespace FormatterBenchmarks
                 }
             }
 
-            public RocketPack_BytesElementsList Deserialize(ref global::Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
+            public RocketPack_BytesElementsList Deserialize(ref global::Omnix.Serialization.RocketPack.RocketPackReader r, in int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
@@ -106,15 +133,18 @@ namespace FormatterBenchmarks
         }
     }
 
-    internal sealed partial class RocketPack_BytesElements : global::Omnix.Serialization.RocketPack.RocketPackMessageBase<RocketPack_BytesElements>, global::System.IDisposable
+    internal sealed partial class RocketPack_BytesElements : global::Omnix.Serialization.RocketPack.IRocketPackMessage<RocketPack_BytesElements>, global::System.IDisposable
     {
+        public static global::Omnix.Serialization.RocketPack.IRocketPackFormatter<RocketPack_BytesElements> Formatter { get; }
+        public static RocketPack_BytesElements Empty { get; }
+
         static RocketPack_BytesElements()
         {
-            RocketPack_BytesElements.Formatter = new CustomFormatter();
+            RocketPack_BytesElements.Formatter = new ___CustomFormatter();
             RocketPack_BytesElements.Empty = new RocketPack_BytesElements(global::Omnix.Base.SimpleMemoryOwner<byte>.Empty, global::Omnix.Base.SimpleMemoryOwner<byte>.Empty, global::Omnix.Base.SimpleMemoryOwner<byte>.Empty, global::Omnix.Base.SimpleMemoryOwner<byte>.Empty, global::Omnix.Base.SimpleMemoryOwner<byte>.Empty, global::Omnix.Base.SimpleMemoryOwner<byte>.Empty, global::Omnix.Base.SimpleMemoryOwner<byte>.Empty, global::Omnix.Base.SimpleMemoryOwner<byte>.Empty, global::Omnix.Base.SimpleMemoryOwner<byte>.Empty, global::Omnix.Base.SimpleMemoryOwner<byte>.Empty);
         }
 
-        private readonly int __hashCode;
+        private readonly global::System.Lazy<int> ___hashCode;
 
         public static readonly int MaxX0Length = 1048576;
         public static readonly int MaxX1Length = 1048576;
@@ -161,20 +191,21 @@ namespace FormatterBenchmarks
             _x8 = x8;
             _x9 = x9;
 
+            ___hashCode = new global::System.Lazy<int>(() =>
             {
-                var __h = new global::System.HashCode();
-                if (!this.X0.IsEmpty) __h.Add(global::Omnix.Base.Helpers.ObjectHelper.GetHashCode(this.X0.Span));
-                if (!this.X1.IsEmpty) __h.Add(global::Omnix.Base.Helpers.ObjectHelper.GetHashCode(this.X1.Span));
-                if (!this.X2.IsEmpty) __h.Add(global::Omnix.Base.Helpers.ObjectHelper.GetHashCode(this.X2.Span));
-                if (!this.X3.IsEmpty) __h.Add(global::Omnix.Base.Helpers.ObjectHelper.GetHashCode(this.X3.Span));
-                if (!this.X4.IsEmpty) __h.Add(global::Omnix.Base.Helpers.ObjectHelper.GetHashCode(this.X4.Span));
-                if (!this.X5.IsEmpty) __h.Add(global::Omnix.Base.Helpers.ObjectHelper.GetHashCode(this.X5.Span));
-                if (!this.X6.IsEmpty) __h.Add(global::Omnix.Base.Helpers.ObjectHelper.GetHashCode(this.X6.Span));
-                if (!this.X7.IsEmpty) __h.Add(global::Omnix.Base.Helpers.ObjectHelper.GetHashCode(this.X7.Span));
-                if (!this.X8.IsEmpty) __h.Add(global::Omnix.Base.Helpers.ObjectHelper.GetHashCode(this.X8.Span));
-                if (!this.X9.IsEmpty) __h.Add(global::Omnix.Base.Helpers.ObjectHelper.GetHashCode(this.X9.Span));
-                __hashCode = __h.ToHashCode();
-            }
+                var ___h = new global::System.HashCode();
+                if (!x0.Memory.IsEmpty) ___h.Add(global::Omnix.Base.Helpers.ObjectHelper.GetHashCode(x0.Memory.Span));
+                if (!x1.Memory.IsEmpty) ___h.Add(global::Omnix.Base.Helpers.ObjectHelper.GetHashCode(x1.Memory.Span));
+                if (!x2.Memory.IsEmpty) ___h.Add(global::Omnix.Base.Helpers.ObjectHelper.GetHashCode(x2.Memory.Span));
+                if (!x3.Memory.IsEmpty) ___h.Add(global::Omnix.Base.Helpers.ObjectHelper.GetHashCode(x3.Memory.Span));
+                if (!x4.Memory.IsEmpty) ___h.Add(global::Omnix.Base.Helpers.ObjectHelper.GetHashCode(x4.Memory.Span));
+                if (!x5.Memory.IsEmpty) ___h.Add(global::Omnix.Base.Helpers.ObjectHelper.GetHashCode(x5.Memory.Span));
+                if (!x6.Memory.IsEmpty) ___h.Add(global::Omnix.Base.Helpers.ObjectHelper.GetHashCode(x6.Memory.Span));
+                if (!x7.Memory.IsEmpty) ___h.Add(global::Omnix.Base.Helpers.ObjectHelper.GetHashCode(x7.Memory.Span));
+                if (!x8.Memory.IsEmpty) ___h.Add(global::Omnix.Base.Helpers.ObjectHelper.GetHashCode(x8.Memory.Span));
+                if (!x9.Memory.IsEmpty) ___h.Add(global::Omnix.Base.Helpers.ObjectHelper.GetHashCode(x9.Memory.Span));
+                return ___h.ToHashCode();
+            });
         }
 
         private readonly global::System.Buffers.IMemoryOwner<byte> _x0;
@@ -198,7 +229,31 @@ namespace FormatterBenchmarks
         private readonly global::System.Buffers.IMemoryOwner<byte> _x9;
         public global::System.ReadOnlyMemory<byte> X9 => _x9.Memory;
 
-        public override bool Equals(RocketPack_BytesElements target)
+        public static RocketPack_BytesElements Import(global::System.Buffers.ReadOnlySequence<byte> sequence, global::Omnix.Base.BufferPool bufferPool)
+        {
+            var reader = new global::Omnix.Serialization.RocketPack.RocketPackReader(sequence, bufferPool);
+            return Formatter.Deserialize(ref reader, 0);
+        }
+        public void Export(global::System.Buffers.IBufferWriter<byte> bufferWriter, global::Omnix.Base.BufferPool bufferPool)
+        {
+            var writer = new global::Omnix.Serialization.RocketPack.RocketPackWriter(bufferWriter, bufferPool);
+            Formatter.Serialize(ref writer, this, 0);
+        }
+
+        public static bool operator ==(RocketPack_BytesElements? left, RocketPack_BytesElements? right)
+        {
+            return (right is null) ? (left is null) : right.Equals(left);
+        }
+        public static bool operator !=(RocketPack_BytesElements? left, RocketPack_BytesElements? right)
+        {
+            return !(left == right);
+        }
+        public override bool Equals(object? other)
+        {
+            if (!(other is RocketPack_BytesElements)) return false;
+            return this.Equals((RocketPack_BytesElements)other);
+        }
+        public bool Equals(RocketPack_BytesElements? target)
         {
             if (target is null) return false;
             if (object.ReferenceEquals(this, target)) return true;
@@ -215,8 +270,7 @@ namespace FormatterBenchmarks
 
             return true;
         }
-
-        public override int GetHashCode() => __hashCode;
+        public override int GetHashCode() => ___hashCode.Value!;
 
         public void Dispose()
         {
@@ -232,114 +286,27 @@ namespace FormatterBenchmarks
             _x9?.Dispose();
         }
 
-        private sealed class CustomFormatter : global::Omnix.Serialization.RocketPack.IRocketPackFormatter<RocketPack_BytesElements>
+        private sealed class ___CustomFormatter : global::Omnix.Serialization.RocketPack.IRocketPackFormatter<RocketPack_BytesElements>
         {
-            public void Serialize(ref global::Omnix.Serialization.RocketPack.RocketPackWriter w, RocketPack_BytesElements value, int rank)
+            public void Serialize(ref global::Omnix.Serialization.RocketPack.RocketPackWriter w, in RocketPack_BytesElements value, in int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
-                {
-                    uint propertyCount = 0;
-                    if (!value.X0.IsEmpty)
-                    {
-                        propertyCount++;
-                    }
-                    if (!value.X1.IsEmpty)
-                    {
-                        propertyCount++;
-                    }
-                    if (!value.X2.IsEmpty)
-                    {
-                        propertyCount++;
-                    }
-                    if (!value.X3.IsEmpty)
-                    {
-                        propertyCount++;
-                    }
-                    if (!value.X4.IsEmpty)
-                    {
-                        propertyCount++;
-                    }
-                    if (!value.X5.IsEmpty)
-                    {
-                        propertyCount++;
-                    }
-                    if (!value.X6.IsEmpty)
-                    {
-                        propertyCount++;
-                    }
-                    if (!value.X7.IsEmpty)
-                    {
-                        propertyCount++;
-                    }
-                    if (!value.X8.IsEmpty)
-                    {
-                        propertyCount++;
-                    }
-                    if (!value.X9.IsEmpty)
-                    {
-                        propertyCount++;
-                    }
-                    w.Write(propertyCount);
-                }
-
-                if (!value.X0.IsEmpty)
-                {
-                    w.Write((uint)0);
-                    w.Write(value.X0.Span);
-                }
-                if (!value.X1.IsEmpty)
-                {
-                    w.Write((uint)1);
-                    w.Write(value.X1.Span);
-                }
-                if (!value.X2.IsEmpty)
-                {
-                    w.Write((uint)2);
-                    w.Write(value.X2.Span);
-                }
-                if (!value.X3.IsEmpty)
-                {
-                    w.Write((uint)3);
-                    w.Write(value.X3.Span);
-                }
-                if (!value.X4.IsEmpty)
-                {
-                    w.Write((uint)4);
-                    w.Write(value.X4.Span);
-                }
-                if (!value.X5.IsEmpty)
-                {
-                    w.Write((uint)5);
-                    w.Write(value.X5.Span);
-                }
-                if (!value.X6.IsEmpty)
-                {
-                    w.Write((uint)6);
-                    w.Write(value.X6.Span);
-                }
-                if (!value.X7.IsEmpty)
-                {
-                    w.Write((uint)7);
-                    w.Write(value.X7.Span);
-                }
-                if (!value.X8.IsEmpty)
-                {
-                    w.Write((uint)8);
-                    w.Write(value.X8.Span);
-                }
-                if (!value.X9.IsEmpty)
-                {
-                    w.Write((uint)9);
-                    w.Write(value.X9.Span);
-                }
+                w.Write(value.X0.Span);
+                w.Write(value.X1.Span);
+                w.Write(value.X2.Span);
+                w.Write(value.X3.Span);
+                w.Write(value.X4.Span);
+                w.Write(value.X5.Span);
+                w.Write(value.X6.Span);
+                w.Write(value.X7.Span);
+                w.Write(value.X8.Span);
+                w.Write(value.X9.Span);
             }
 
-            public RocketPack_BytesElements Deserialize(ref global::Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
+            public RocketPack_BytesElements Deserialize(ref global::Omnix.Serialization.RocketPack.RocketPackReader r, in int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
-
-                uint propertyCount = r.GetUInt32();
 
                 global::System.Buffers.IMemoryOwner<byte> p_x0 = global::Omnix.Base.SimpleMemoryOwner<byte>.Empty;
                 global::System.Buffers.IMemoryOwner<byte> p_x1 = global::Omnix.Base.SimpleMemoryOwner<byte>.Empty;
@@ -352,78 +319,53 @@ namespace FormatterBenchmarks
                 global::System.Buffers.IMemoryOwner<byte> p_x8 = global::Omnix.Base.SimpleMemoryOwner<byte>.Empty;
                 global::System.Buffers.IMemoryOwner<byte> p_x9 = global::Omnix.Base.SimpleMemoryOwner<byte>.Empty;
 
-                for (; propertyCount > 0; propertyCount--)
                 {
-                    uint id = r.GetUInt32();
-                    switch (id)
-                    {
-                        case 0:
-                            {
-                                p_x0 = r.GetRecyclableMemory(1048576);
-                                break;
-                            }
-                        case 1:
-                            {
-                                p_x1 = r.GetRecyclableMemory(1048576);
-                                break;
-                            }
-                        case 2:
-                            {
-                                p_x2 = r.GetRecyclableMemory(1048576);
-                                break;
-                            }
-                        case 3:
-                            {
-                                p_x3 = r.GetRecyclableMemory(1048576);
-                                break;
-                            }
-                        case 4:
-                            {
-                                p_x4 = r.GetRecyclableMemory(1048576);
-                                break;
-                            }
-                        case 5:
-                            {
-                                p_x5 = r.GetRecyclableMemory(1048576);
-                                break;
-                            }
-                        case 6:
-                            {
-                                p_x6 = r.GetRecyclableMemory(1048576);
-                                break;
-                            }
-                        case 7:
-                            {
-                                p_x7 = r.GetRecyclableMemory(1048576);
-                                break;
-                            }
-                        case 8:
-                            {
-                                p_x8 = r.GetRecyclableMemory(1048576);
-                                break;
-                            }
-                        case 9:
-                            {
-                                p_x9 = r.GetRecyclableMemory(1048576);
-                                break;
-                            }
-                    }
+                    p_x0 = r.GetRecyclableMemory(1048576);
                 }
-
+                {
+                    p_x1 = r.GetRecyclableMemory(1048576);
+                }
+                {
+                    p_x2 = r.GetRecyclableMemory(1048576);
+                }
+                {
+                    p_x3 = r.GetRecyclableMemory(1048576);
+                }
+                {
+                    p_x4 = r.GetRecyclableMemory(1048576);
+                }
+                {
+                    p_x5 = r.GetRecyclableMemory(1048576);
+                }
+                {
+                    p_x6 = r.GetRecyclableMemory(1048576);
+                }
+                {
+                    p_x7 = r.GetRecyclableMemory(1048576);
+                }
+                {
+                    p_x8 = r.GetRecyclableMemory(1048576);
+                }
+                {
+                    p_x9 = r.GetRecyclableMemory(1048576);
+                }
                 return new RocketPack_BytesElements(p_x0, p_x1, p_x2, p_x3, p_x4, p_x5, p_x6, p_x7, p_x8, p_x9);
             }
         }
     }
 
-    internal sealed partial class RocketPack_IntElementsList : global::Omnix.Serialization.RocketPack.RocketPackMessageBase<RocketPack_IntElementsList>
+    internal sealed partial class RocketPack_IntElementsList : global::Omnix.Serialization.RocketPack.IRocketPackMessage<RocketPack_IntElementsList>
     {
+        public static global::Omnix.Serialization.RocketPack.IRocketPackFormatter<RocketPack_IntElementsList> Formatter { get; }
+        public static RocketPack_IntElementsList Empty { get; }
+
         static RocketPack_IntElementsList()
         {
-            RocketPack_IntElementsList.Formatter = new CustomFormatter();
+            RocketPack_IntElementsList.Formatter = new ___CustomFormatter();
             RocketPack_IntElementsList.Empty = new RocketPack_IntElementsList(global::System.Array.Empty<RocketPack_IntElements>());
         }
 
-        private readonly int __hashCode;
+        private readonly global::System.Lazy<int> ___hashCode;
 
         public static readonly int MaxListCount = 1048576;
 
@@ -438,19 +380,44 @@ namespace FormatterBenchmarks
 
             this.List = new global::Omnix.DataStructures.ReadOnlyListSlim<RocketPack_IntElements>(list);
 
+            ___hashCode = new global::System.Lazy<int>(() =>
             {
-                var __h = new global::System.HashCode();
-                foreach (var n in this.List)
+                var ___h = new global::System.HashCode();
+                foreach (var n in list)
                 {
-                    if (n != default) __h.Add(n.GetHashCode());
+                    if (n != default) ___h.Add(n.GetHashCode());
                 }
-                __hashCode = __h.ToHashCode();
-            }
+                return ___h.ToHashCode();
+            });
         }
 
         public global::Omnix.DataStructures.ReadOnlyListSlim<RocketPack_IntElements> List { get; }
 
-        public override bool Equals(RocketPack_IntElementsList target)
+        public static RocketPack_IntElementsList Import(global::System.Buffers.ReadOnlySequence<byte> sequence, global::Omnix.Base.BufferPool bufferPool)
+        {
+            var reader = new global::Omnix.Serialization.RocketPack.RocketPackReader(sequence, bufferPool);
+            return Formatter.Deserialize(ref reader, 0);
+        }
+        public void Export(global::System.Buffers.IBufferWriter<byte> bufferWriter, global::Omnix.Base.BufferPool bufferPool)
+        {
+            var writer = new global::Omnix.Serialization.RocketPack.RocketPackWriter(bufferWriter, bufferPool);
+            Formatter.Serialize(ref writer, this, 0);
+        }
+
+        public static bool operator ==(RocketPack_IntElementsList? left, RocketPack_IntElementsList? right)
+        {
+            return (right is null) ? (left is null) : right.Equals(left);
+        }
+        public static bool operator !=(RocketPack_IntElementsList? left, RocketPack_IntElementsList? right)
+        {
+            return !(left == right);
+        }
+        public override bool Equals(object? other)
+        {
+            if (!(other is RocketPack_IntElementsList)) return false;
+            return this.Equals((RocketPack_IntElementsList)other);
+        }
+        public bool Equals(RocketPack_IntElementsList? target)
         {
             if (target is null) return false;
             if (object.ReferenceEquals(this, target)) return true;
@@ -458,12 +425,11 @@ namespace FormatterBenchmarks
 
             return true;
         }
+        public override int GetHashCode() => ___hashCode.Value!;
 
-        public override int GetHashCode() => __hashCode;
-
-        private sealed class CustomFormatter : global::Omnix.Serialization.RocketPack.IRocketPackFormatter<RocketPack_IntElementsList>
+        private sealed class ___CustomFormatter : global::Omnix.Serialization.RocketPack.IRocketPackFormatter<RocketPack_IntElementsList>
         {
-            public void Serialize(ref global::Omnix.Serialization.RocketPack.RocketPackWriter w, RocketPack_IntElementsList value, int rank)
+            public void Serialize(ref global::Omnix.Serialization.RocketPack.RocketPackWriter w, in RocketPack_IntElementsList value, in int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
@@ -487,7 +453,7 @@ namespace FormatterBenchmarks
                 }
             }
 
-            public RocketPack_IntElementsList Deserialize(ref global::Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
+            public RocketPack_IntElementsList Deserialize(ref global::Omnix.Serialization.RocketPack.RocketPackReader r, in int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
@@ -518,15 +484,18 @@ namespace FormatterBenchmarks
         }
     }
 
-    internal sealed partial class RocketPack_IntElements : global::Omnix.Serialization.RocketPack.RocketPackMessageBase<RocketPack_IntElements>
+    internal sealed partial class RocketPack_IntElements : global::Omnix.Serialization.RocketPack.IRocketPackMessage<RocketPack_IntElements>
     {
+        public static global::Omnix.Serialization.RocketPack.IRocketPackFormatter<RocketPack_IntElements> Formatter { get; }
+        public static RocketPack_IntElements Empty { get; }
+
         static RocketPack_IntElements()
         {
-            RocketPack_IntElements.Formatter = new CustomFormatter();
+            RocketPack_IntElements.Formatter = new ___CustomFormatter();
             RocketPack_IntElements.Empty = new RocketPack_IntElements(0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
         }
 
-        private readonly int __hashCode;
+        private readonly global::System.Lazy<int> ___hashCode;
 
         public RocketPack_IntElements(uint x0, uint x1, uint x2, uint x3, uint x4, uint x5, uint x6, uint x7, uint x8, uint x9)
         {
@@ -541,20 +510,21 @@ namespace FormatterBenchmarks
             this.X8 = x8;
             this.X9 = x9;
 
+            ___hashCode = new global::System.Lazy<int>(() =>
             {
-                var __h = new global::System.HashCode();
-                if (this.X0 != default) __h.Add(this.X0.GetHashCode());
-                if (this.X1 != default) __h.Add(this.X1.GetHashCode());
-                if (this.X2 != default) __h.Add(this.X2.GetHashCode());
-                if (this.X3 != default) __h.Add(this.X3.GetHashCode());
-                if (this.X4 != default) __h.Add(this.X4.GetHashCode());
-                if (this.X5 != default) __h.Add(this.X5.GetHashCode());
-                if (this.X6 != default) __h.Add(this.X6.GetHashCode());
-                if (this.X7 != default) __h.Add(this.X7.GetHashCode());
-                if (this.X8 != default) __h.Add(this.X8.GetHashCode());
-                if (this.X9 != default) __h.Add(this.X9.GetHashCode());
-                __hashCode = __h.ToHashCode();
-            }
+                var ___h = new global::System.HashCode();
+                if (x0 != default) ___h.Add(x0.GetHashCode());
+                if (x1 != default) ___h.Add(x1.GetHashCode());
+                if (x2 != default) ___h.Add(x2.GetHashCode());
+                if (x3 != default) ___h.Add(x3.GetHashCode());
+                if (x4 != default) ___h.Add(x4.GetHashCode());
+                if (x5 != default) ___h.Add(x5.GetHashCode());
+                if (x6 != default) ___h.Add(x6.GetHashCode());
+                if (x7 != default) ___h.Add(x7.GetHashCode());
+                if (x8 != default) ___h.Add(x8.GetHashCode());
+                if (x9 != default) ___h.Add(x9.GetHashCode());
+                return ___h.ToHashCode();
+            });
         }
 
         public uint X0 { get; }
@@ -568,7 +538,31 @@ namespace FormatterBenchmarks
         public uint X8 { get; }
         public uint X9 { get; }
 
-        public override bool Equals(RocketPack_IntElements target)
+        public static RocketPack_IntElements Import(global::System.Buffers.ReadOnlySequence<byte> sequence, global::Omnix.Base.BufferPool bufferPool)
+        {
+            var reader = new global::Omnix.Serialization.RocketPack.RocketPackReader(sequence, bufferPool);
+            return Formatter.Deserialize(ref reader, 0);
+        }
+        public void Export(global::System.Buffers.IBufferWriter<byte> bufferWriter, global::Omnix.Base.BufferPool bufferPool)
+        {
+            var writer = new global::Omnix.Serialization.RocketPack.RocketPackWriter(bufferWriter, bufferPool);
+            Formatter.Serialize(ref writer, this, 0);
+        }
+
+        public static bool operator ==(RocketPack_IntElements? left, RocketPack_IntElements? right)
+        {
+            return (right is null) ? (left is null) : right.Equals(left);
+        }
+        public static bool operator !=(RocketPack_IntElements? left, RocketPack_IntElements? right)
+        {
+            return !(left == right);
+        }
+        public override bool Equals(object? other)
+        {
+            if (!(other is RocketPack_IntElements)) return false;
+            return this.Equals((RocketPack_IntElements)other);
+        }
+        public bool Equals(RocketPack_IntElements? target)
         {
             if (target is null) return false;
             if (object.ReferenceEquals(this, target)) return true;
@@ -585,117 +579,29 @@ namespace FormatterBenchmarks
 
             return true;
         }
+        public override int GetHashCode() => ___hashCode.Value!;
 
-        public override int GetHashCode() => __hashCode;
-
-        private sealed class CustomFormatter : global::Omnix.Serialization.RocketPack.IRocketPackFormatter<RocketPack_IntElements>
+        private sealed class ___CustomFormatter : global::Omnix.Serialization.RocketPack.IRocketPackFormatter<RocketPack_IntElements>
         {
-            public void Serialize(ref global::Omnix.Serialization.RocketPack.RocketPackWriter w, RocketPack_IntElements value, int rank)
+            public void Serialize(ref global::Omnix.Serialization.RocketPack.RocketPackWriter w, in RocketPack_IntElements value, in int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
-                {
-                    uint propertyCount = 0;
-                    if (value.X0 != 0)
-                    {
-                        propertyCount++;
-                    }
-                    if (value.X1 != 0)
-                    {
-                        propertyCount++;
-                    }
-                    if (value.X2 != 0)
-                    {
-                        propertyCount++;
-                    }
-                    if (value.X3 != 0)
-                    {
-                        propertyCount++;
-                    }
-                    if (value.X4 != 0)
-                    {
-                        propertyCount++;
-                    }
-                    if (value.X5 != 0)
-                    {
-                        propertyCount++;
-                    }
-                    if (value.X6 != 0)
-                    {
-                        propertyCount++;
-                    }
-                    if (value.X7 != 0)
-                    {
-                        propertyCount++;
-                    }
-                    if (value.X8 != 0)
-                    {
-                        propertyCount++;
-                    }
-                    if (value.X9 != 0)
-                    {
-                        propertyCount++;
-                    }
-                    w.Write(propertyCount);
-                }
-
-                if (value.X0 != 0)
-                {
-                    w.Write((uint)0);
-                    w.Write(value.X0);
-                }
-                if (value.X1 != 0)
-                {
-                    w.Write((uint)1);
-                    w.Write(value.X1);
-                }
-                if (value.X2 != 0)
-                {
-                    w.Write((uint)2);
-                    w.Write(value.X2);
-                }
-                if (value.X3 != 0)
-                {
-                    w.Write((uint)3);
-                    w.Write(value.X3);
-                }
-                if (value.X4 != 0)
-                {
-                    w.Write((uint)4);
-                    w.Write(value.X4);
-                }
-                if (value.X5 != 0)
-                {
-                    w.Write((uint)5);
-                    w.Write(value.X5);
-                }
-                if (value.X6 != 0)
-                {
-                    w.Write((uint)6);
-                    w.Write(value.X6);
-                }
-                if (value.X7 != 0)
-                {
-                    w.Write((uint)7);
-                    w.Write(value.X7);
-                }
-                if (value.X8 != 0)
-                {
-                    w.Write((uint)8);
-                    w.Write(value.X8);
-                }
-                if (value.X9 != 0)
-                {
-                    w.Write((uint)9);
-                    w.Write(value.X9);
-                }
+                w.Write(value.X0);
+                w.Write(value.X1);
+                w.Write(value.X2);
+                w.Write(value.X3);
+                w.Write(value.X4);
+                w.Write(value.X5);
+                w.Write(value.X6);
+                w.Write(value.X7);
+                w.Write(value.X8);
+                w.Write(value.X9);
             }
 
-            public RocketPack_IntElements Deserialize(ref global::Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
+            public RocketPack_IntElements Deserialize(ref global::Omnix.Serialization.RocketPack.RocketPackReader r, in int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
-
-                uint propertyCount = r.GetUInt32();
 
                 uint p_x0 = 0;
                 uint p_x1 = 0;
@@ -708,78 +614,53 @@ namespace FormatterBenchmarks
                 uint p_x8 = 0;
                 uint p_x9 = 0;
 
-                for (; propertyCount > 0; propertyCount--)
                 {
-                    uint id = r.GetUInt32();
-                    switch (id)
-                    {
-                        case 0:
-                            {
-                                p_x0 = r.GetUInt32();
-                                break;
-                            }
-                        case 1:
-                            {
-                                p_x1 = r.GetUInt32();
-                                break;
-                            }
-                        case 2:
-                            {
-                                p_x2 = r.GetUInt32();
-                                break;
-                            }
-                        case 3:
-                            {
-                                p_x3 = r.GetUInt32();
-                                break;
-                            }
-                        case 4:
-                            {
-                                p_x4 = r.GetUInt32();
-                                break;
-                            }
-                        case 5:
-                            {
-                                p_x5 = r.GetUInt32();
-                                break;
-                            }
-                        case 6:
-                            {
-                                p_x6 = r.GetUInt32();
-                                break;
-                            }
-                        case 7:
-                            {
-                                p_x7 = r.GetUInt32();
-                                break;
-                            }
-                        case 8:
-                            {
-                                p_x8 = r.GetUInt32();
-                                break;
-                            }
-                        case 9:
-                            {
-                                p_x9 = r.GetUInt32();
-                                break;
-                            }
-                    }
+                    p_x0 = r.GetUInt32();
                 }
-
+                {
+                    p_x1 = r.GetUInt32();
+                }
+                {
+                    p_x2 = r.GetUInt32();
+                }
+                {
+                    p_x3 = r.GetUInt32();
+                }
+                {
+                    p_x4 = r.GetUInt32();
+                }
+                {
+                    p_x5 = r.GetUInt32();
+                }
+                {
+                    p_x6 = r.GetUInt32();
+                }
+                {
+                    p_x7 = r.GetUInt32();
+                }
+                {
+                    p_x8 = r.GetUInt32();
+                }
+                {
+                    p_x9 = r.GetUInt32();
+                }
                 return new RocketPack_IntElements(p_x0, p_x1, p_x2, p_x3, p_x4, p_x5, p_x6, p_x7, p_x8, p_x9);
             }
         }
     }
 
-    internal sealed partial class RocketPack_StringElementsList : global::Omnix.Serialization.RocketPack.RocketPackMessageBase<RocketPack_StringElementsList>
+    internal sealed partial class RocketPack_StringElementsList : global::Omnix.Serialization.RocketPack.IRocketPackMessage<RocketPack_StringElementsList>
     {
+        public static global::Omnix.Serialization.RocketPack.IRocketPackFormatter<RocketPack_StringElementsList> Formatter { get; }
+        public static RocketPack_StringElementsList Empty { get; }
+
         static RocketPack_StringElementsList()
         {
-            RocketPack_StringElementsList.Formatter = new CustomFormatter();
+            RocketPack_StringElementsList.Formatter = new ___CustomFormatter();
             RocketPack_StringElementsList.Empty = new RocketPack_StringElementsList(global::System.Array.Empty<RocketPack_StringElements>());
         }
 
-        private readonly int __hashCode;
+        private readonly global::System.Lazy<int> ___hashCode;
 
         public static readonly int MaxListCount = 1048576;
 
@@ -794,19 +675,44 @@ namespace FormatterBenchmarks
 
             this.List = new global::Omnix.DataStructures.ReadOnlyListSlim<RocketPack_StringElements>(list);
 
+            ___hashCode = new global::System.Lazy<int>(() =>
             {
-                var __h = new global::System.HashCode();
-                foreach (var n in this.List)
+                var ___h = new global::System.HashCode();
+                foreach (var n in list)
                 {
-                    if (n != default) __h.Add(n.GetHashCode());
+                    if (n != default) ___h.Add(n.GetHashCode());
                 }
-                __hashCode = __h.ToHashCode();
-            }
+                return ___h.ToHashCode();
+            });
         }
 
         public global::Omnix.DataStructures.ReadOnlyListSlim<RocketPack_StringElements> List { get; }
 
-        public override bool Equals(RocketPack_StringElementsList target)
+        public static RocketPack_StringElementsList Import(global::System.Buffers.ReadOnlySequence<byte> sequence, global::Omnix.Base.BufferPool bufferPool)
+        {
+            var reader = new global::Omnix.Serialization.RocketPack.RocketPackReader(sequence, bufferPool);
+            return Formatter.Deserialize(ref reader, 0);
+        }
+        public void Export(global::System.Buffers.IBufferWriter<byte> bufferWriter, global::Omnix.Base.BufferPool bufferPool)
+        {
+            var writer = new global::Omnix.Serialization.RocketPack.RocketPackWriter(bufferWriter, bufferPool);
+            Formatter.Serialize(ref writer, this, 0);
+        }
+
+        public static bool operator ==(RocketPack_StringElementsList? left, RocketPack_StringElementsList? right)
+        {
+            return (right is null) ? (left is null) : right.Equals(left);
+        }
+        public static bool operator !=(RocketPack_StringElementsList? left, RocketPack_StringElementsList? right)
+        {
+            return !(left == right);
+        }
+        public override bool Equals(object? other)
+        {
+            if (!(other is RocketPack_StringElementsList)) return false;
+            return this.Equals((RocketPack_StringElementsList)other);
+        }
+        public bool Equals(RocketPack_StringElementsList? target)
         {
             if (target is null) return false;
             if (object.ReferenceEquals(this, target)) return true;
@@ -814,12 +720,11 @@ namespace FormatterBenchmarks
 
             return true;
         }
+        public override int GetHashCode() => ___hashCode.Value!;
 
-        public override int GetHashCode() => __hashCode;
-
-        private sealed class CustomFormatter : global::Omnix.Serialization.RocketPack.IRocketPackFormatter<RocketPack_StringElementsList>
+        private sealed class ___CustomFormatter : global::Omnix.Serialization.RocketPack.IRocketPackFormatter<RocketPack_StringElementsList>
         {
-            public void Serialize(ref global::Omnix.Serialization.RocketPack.RocketPackWriter w, RocketPack_StringElementsList value, int rank)
+            public void Serialize(ref global::Omnix.Serialization.RocketPack.RocketPackWriter w, in RocketPack_StringElementsList value, in int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
@@ -843,7 +748,7 @@ namespace FormatterBenchmarks
                 }
             }
 
-            public RocketPack_StringElementsList Deserialize(ref global::Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
+            public RocketPack_StringElementsList Deserialize(ref global::Omnix.Serialization.RocketPack.RocketPackReader r, in int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
@@ -874,15 +779,18 @@ namespace FormatterBenchmarks
         }
     }
 
-    internal sealed partial class RocketPack_StringElements : global::Omnix.Serialization.RocketPack.RocketPackMessageBase<RocketPack_StringElements>
+    internal sealed partial class RocketPack_StringElements : global::Omnix.Serialization.RocketPack.IRocketPackMessage<RocketPack_StringElements>
     {
+        public static global::Omnix.Serialization.RocketPack.IRocketPackFormatter<RocketPack_StringElements> Formatter { get; }
+        public static RocketPack_StringElements Empty { get; }
+
         static RocketPack_StringElements()
         {
-            RocketPack_StringElements.Formatter = new CustomFormatter();
+            RocketPack_StringElements.Formatter = new ___CustomFormatter();
             RocketPack_StringElements.Empty = new RocketPack_StringElements(string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty);
         }
 
-        private readonly int __hashCode;
+        private readonly global::System.Lazy<int> ___hashCode;
 
         public static readonly int MaxX0Length = 8192;
         public static readonly int MaxX1Length = 8192;
@@ -929,20 +837,21 @@ namespace FormatterBenchmarks
             this.X8 = x8;
             this.X9 = x9;
 
+            ___hashCode = new global::System.Lazy<int>(() =>
             {
-                var __h = new global::System.HashCode();
-                if (this.X0 != default) __h.Add(this.X0.GetHashCode());
-                if (this.X1 != default) __h.Add(this.X1.GetHashCode());
-                if (this.X2 != default) __h.Add(this.X2.GetHashCode());
-                if (this.X3 != default) __h.Add(this.X3.GetHashCode());
-                if (this.X4 != default) __h.Add(this.X4.GetHashCode());
-                if (this.X5 != default) __h.Add(this.X5.GetHashCode());
-                if (this.X6 != default) __h.Add(this.X6.GetHashCode());
-                if (this.X7 != default) __h.Add(this.X7.GetHashCode());
-                if (this.X8 != default) __h.Add(this.X8.GetHashCode());
-                if (this.X9 != default) __h.Add(this.X9.GetHashCode());
-                __hashCode = __h.ToHashCode();
-            }
+                var ___h = new global::System.HashCode();
+                if (x0 != default) ___h.Add(x0.GetHashCode());
+                if (x1 != default) ___h.Add(x1.GetHashCode());
+                if (x2 != default) ___h.Add(x2.GetHashCode());
+                if (x3 != default) ___h.Add(x3.GetHashCode());
+                if (x4 != default) ___h.Add(x4.GetHashCode());
+                if (x5 != default) ___h.Add(x5.GetHashCode());
+                if (x6 != default) ___h.Add(x6.GetHashCode());
+                if (x7 != default) ___h.Add(x7.GetHashCode());
+                if (x8 != default) ___h.Add(x8.GetHashCode());
+                if (x9 != default) ___h.Add(x9.GetHashCode());
+                return ___h.ToHashCode();
+            });
         }
 
         public string X0 { get; }
@@ -956,7 +865,31 @@ namespace FormatterBenchmarks
         public string X8 { get; }
         public string X9 { get; }
 
-        public override bool Equals(RocketPack_StringElements target)
+        public static RocketPack_StringElements Import(global::System.Buffers.ReadOnlySequence<byte> sequence, global::Omnix.Base.BufferPool bufferPool)
+        {
+            var reader = new global::Omnix.Serialization.RocketPack.RocketPackReader(sequence, bufferPool);
+            return Formatter.Deserialize(ref reader, 0);
+        }
+        public void Export(global::System.Buffers.IBufferWriter<byte> bufferWriter, global::Omnix.Base.BufferPool bufferPool)
+        {
+            var writer = new global::Omnix.Serialization.RocketPack.RocketPackWriter(bufferWriter, bufferPool);
+            Formatter.Serialize(ref writer, this, 0);
+        }
+
+        public static bool operator ==(RocketPack_StringElements? left, RocketPack_StringElements? right)
+        {
+            return (right is null) ? (left is null) : right.Equals(left);
+        }
+        public static bool operator !=(RocketPack_StringElements? left, RocketPack_StringElements? right)
+        {
+            return !(left == right);
+        }
+        public override bool Equals(object? other)
+        {
+            if (!(other is RocketPack_StringElements)) return false;
+            return this.Equals((RocketPack_StringElements)other);
+        }
+        public bool Equals(RocketPack_StringElements? target)
         {
             if (target is null) return false;
             if (object.ReferenceEquals(this, target)) return true;
@@ -973,117 +906,29 @@ namespace FormatterBenchmarks
 
             return true;
         }
+        public override int GetHashCode() => ___hashCode.Value!;
 
-        public override int GetHashCode() => __hashCode;
-
-        private sealed class CustomFormatter : global::Omnix.Serialization.RocketPack.IRocketPackFormatter<RocketPack_StringElements>
+        private sealed class ___CustomFormatter : global::Omnix.Serialization.RocketPack.IRocketPackFormatter<RocketPack_StringElements>
         {
-            public void Serialize(ref global::Omnix.Serialization.RocketPack.RocketPackWriter w, RocketPack_StringElements value, int rank)
+            public void Serialize(ref global::Omnix.Serialization.RocketPack.RocketPackWriter w, in RocketPack_StringElements value, in int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
-                {
-                    uint propertyCount = 0;
-                    if (value.X0 != string.Empty)
-                    {
-                        propertyCount++;
-                    }
-                    if (value.X1 != string.Empty)
-                    {
-                        propertyCount++;
-                    }
-                    if (value.X2 != string.Empty)
-                    {
-                        propertyCount++;
-                    }
-                    if (value.X3 != string.Empty)
-                    {
-                        propertyCount++;
-                    }
-                    if (value.X4 != string.Empty)
-                    {
-                        propertyCount++;
-                    }
-                    if (value.X5 != string.Empty)
-                    {
-                        propertyCount++;
-                    }
-                    if (value.X6 != string.Empty)
-                    {
-                        propertyCount++;
-                    }
-                    if (value.X7 != string.Empty)
-                    {
-                        propertyCount++;
-                    }
-                    if (value.X8 != string.Empty)
-                    {
-                        propertyCount++;
-                    }
-                    if (value.X9 != string.Empty)
-                    {
-                        propertyCount++;
-                    }
-                    w.Write(propertyCount);
-                }
-
-                if (value.X0 != string.Empty)
-                {
-                    w.Write((uint)0);
-                    w.Write(value.X0);
-                }
-                if (value.X1 != string.Empty)
-                {
-                    w.Write((uint)1);
-                    w.Write(value.X1);
-                }
-                if (value.X2 != string.Empty)
-                {
-                    w.Write((uint)2);
-                    w.Write(value.X2);
-                }
-                if (value.X3 != string.Empty)
-                {
-                    w.Write((uint)3);
-                    w.Write(value.X3);
-                }
-                if (value.X4 != string.Empty)
-                {
-                    w.Write((uint)4);
-                    w.Write(value.X4);
-                }
-                if (value.X5 != string.Empty)
-                {
-                    w.Write((uint)5);
-                    w.Write(value.X5);
-                }
-                if (value.X6 != string.Empty)
-                {
-                    w.Write((uint)6);
-                    w.Write(value.X6);
-                }
-                if (value.X7 != string.Empty)
-                {
-                    w.Write((uint)7);
-                    w.Write(value.X7);
-                }
-                if (value.X8 != string.Empty)
-                {
-                    w.Write((uint)8);
-                    w.Write(value.X8);
-                }
-                if (value.X9 != string.Empty)
-                {
-                    w.Write((uint)9);
-                    w.Write(value.X9);
-                }
+                w.Write(value.X0);
+                w.Write(value.X1);
+                w.Write(value.X2);
+                w.Write(value.X3);
+                w.Write(value.X4);
+                w.Write(value.X5);
+                w.Write(value.X6);
+                w.Write(value.X7);
+                w.Write(value.X8);
+                w.Write(value.X9);
             }
 
-            public RocketPack_StringElements Deserialize(ref global::Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
+            public RocketPack_StringElements Deserialize(ref global::Omnix.Serialization.RocketPack.RocketPackReader r, in int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
-
-                uint propertyCount = r.GetUInt32();
 
                 string p_x0 = string.Empty;
                 string p_x1 = string.Empty;
@@ -1096,64 +941,36 @@ namespace FormatterBenchmarks
                 string p_x8 = string.Empty;
                 string p_x9 = string.Empty;
 
-                for (; propertyCount > 0; propertyCount--)
                 {
-                    uint id = r.GetUInt32();
-                    switch (id)
-                    {
-                        case 0:
-                            {
-                                p_x0 = r.GetString(8192);
-                                break;
-                            }
-                        case 1:
-                            {
-                                p_x1 = r.GetString(8192);
-                                break;
-                            }
-                        case 2:
-                            {
-                                p_x2 = r.GetString(8192);
-                                break;
-                            }
-                        case 3:
-                            {
-                                p_x3 = r.GetString(8192);
-                                break;
-                            }
-                        case 4:
-                            {
-                                p_x4 = r.GetString(8192);
-                                break;
-                            }
-                        case 5:
-                            {
-                                p_x5 = r.GetString(8192);
-                                break;
-                            }
-                        case 6:
-                            {
-                                p_x6 = r.GetString(8192);
-                                break;
-                            }
-                        case 7:
-                            {
-                                p_x7 = r.GetString(8192);
-                                break;
-                            }
-                        case 8:
-                            {
-                                p_x8 = r.GetString(8192);
-                                break;
-                            }
-                        case 9:
-                            {
-                                p_x9 = r.GetString(8192);
-                                break;
-                            }
-                    }
+                    p_x0 = r.GetString(8192);
                 }
-
+                {
+                    p_x1 = r.GetString(8192);
+                }
+                {
+                    p_x2 = r.GetString(8192);
+                }
+                {
+                    p_x3 = r.GetString(8192);
+                }
+                {
+                    p_x4 = r.GetString(8192);
+                }
+                {
+                    p_x5 = r.GetString(8192);
+                }
+                {
+                    p_x6 = r.GetString(8192);
+                }
+                {
+                    p_x7 = r.GetString(8192);
+                }
+                {
+                    p_x8 = r.GetString(8192);
+                }
+                {
+                    p_x9 = r.GetString(8192);
+                }
                 return new RocketPack_StringElements(p_x0, p_x1, p_x2, p_x3, p_x4, p_x5, p_x6, p_x7, p_x8, p_x9);
             }
         }
