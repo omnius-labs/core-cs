@@ -3,27 +3,27 @@
 
 namespace Omnix.Configuration.Internal
 {
-    public readonly struct SettingsDatabaseVersion : global::System.IEquatable<SettingsDatabaseVersion>
+    public readonly struct SettingsDatabaseVersion : global::Omnix.Serialization.RocketPack.IRocketPackMessage<SettingsDatabaseVersion>
     {
         public static global::Omnix.Serialization.RocketPack.IRocketPackFormatter<SettingsDatabaseVersion> Formatter { get; }
         public static SettingsDatabaseVersion Empty { get; }
 
         static SettingsDatabaseVersion()
         {
-            SettingsDatabaseVersion.Formatter = new CustomFormatter();
+            SettingsDatabaseVersion.Formatter = new ___CustomFormatter();
             SettingsDatabaseVersion.Empty = new SettingsDatabaseVersion(0);
         }
 
-        private readonly int __hashCode;
+        private readonly int ___hashCode;
 
         public SettingsDatabaseVersion(uint value)
         {
             this.Value = value;
 
             {
-                var __h = new global::System.HashCode();
-                if (this.Value != default) __h.Add(this.Value.GetHashCode());
-                __hashCode = __h.ToHashCode();
+                var ___h = new global::System.HashCode();
+                if (value != default) ___h.Add(value.GetHashCode());
+                ___hashCode = ___h.ToHashCode();
             }
         }
 
@@ -39,6 +39,7 @@ namespace Omnix.Configuration.Internal
             var writer = new global::Omnix.Serialization.RocketPack.RocketPackWriter(bufferWriter, bufferPool);
             Formatter.Serialize(ref writer, this, 0);
         }
+
         public static bool operator ==(SettingsDatabaseVersion left, SettingsDatabaseVersion right)
         {
             return right.Equals(left);
@@ -52,29 +53,24 @@ namespace Omnix.Configuration.Internal
             if (!(other is SettingsDatabaseVersion)) return false;
             return this.Equals((SettingsDatabaseVersion)other);
         }
-
         public bool Equals(SettingsDatabaseVersion target)
         {
             if (this.Value != target.Value) return false;
 
             return true;
         }
+        public override int GetHashCode() => ___hashCode;
 
-        public override int GetHashCode() => __hashCode;
-
-        private sealed class CustomFormatter : global::Omnix.Serialization.RocketPack.IRocketPackFormatter<SettingsDatabaseVersion>
+        private sealed class ___CustomFormatter : global::Omnix.Serialization.RocketPack.IRocketPackFormatter<SettingsDatabaseVersion>
         {
-            public void Serialize(ref global::Omnix.Serialization.RocketPack.RocketPackWriter w, SettingsDatabaseVersion value, int rank)
+            public void Serialize(ref global::Omnix.Serialization.RocketPack.RocketPackWriter w, in SettingsDatabaseVersion value, in int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
-                if (value.Value != 0)
-                {
-                    w.Write(value.Value);
-                }
+                w.Write(value.Value);
             }
 
-            public SettingsDatabaseVersion Deserialize(ref global::Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
+            public SettingsDatabaseVersion Deserialize(ref global::Omnix.Serialization.RocketPack.RocketPackReader r, in int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 

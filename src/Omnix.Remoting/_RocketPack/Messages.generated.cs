@@ -3,15 +3,18 @@
 
 namespace Omnix.Remoting
 {
-    public sealed partial class OmniRpcErrorMessage : global::Omnix.Serialization.RocketPack.RocketPackMessageBase<OmniRpcErrorMessage>
+    public sealed partial class OmniRpcErrorMessage : global::Omnix.Serialization.RocketPack.IRocketPackMessage<OmniRpcErrorMessage>
     {
+        public static global::Omnix.Serialization.RocketPack.IRocketPackFormatter<OmniRpcErrorMessage> Formatter { get; }
+        public static OmniRpcErrorMessage Empty { get; }
+
         static OmniRpcErrorMessage()
         {
-            OmniRpcErrorMessage.Formatter = new CustomFormatter();
+            OmniRpcErrorMessage.Formatter = new ___CustomFormatter();
             OmniRpcErrorMessage.Empty = new OmniRpcErrorMessage(string.Empty, string.Empty, string.Empty);
         }
 
-        private readonly int __hashCode;
+        private readonly global::System.Lazy<int> ___hashCode;
 
         public static readonly int MaxTypeLength = 8192;
         public static readonly int MaxMessageLength = 8192;
@@ -30,20 +33,45 @@ namespace Omnix.Remoting
             this.Message = message;
             this.StackTrace = stackTrace;
 
+            ___hashCode = new global::System.Lazy<int>(() =>
             {
-                var __h = new global::System.HashCode();
-                if (this.Type != default) __h.Add(this.Type.GetHashCode());
-                if (this.Message != default) __h.Add(this.Message.GetHashCode());
-                if (this.StackTrace != default) __h.Add(this.StackTrace.GetHashCode());
-                __hashCode = __h.ToHashCode();
-            }
+                var ___h = new global::System.HashCode();
+                if (type != default) ___h.Add(type.GetHashCode());
+                if (message != default) ___h.Add(message.GetHashCode());
+                if (stackTrace != default) ___h.Add(stackTrace.GetHashCode());
+                return ___h.ToHashCode();
+            });
         }
 
         public string Type { get; }
         public string Message { get; }
         public string StackTrace { get; }
 
-        public override bool Equals(OmniRpcErrorMessage target)
+        public static OmniRpcErrorMessage Import(global::System.Buffers.ReadOnlySequence<byte> sequence, global::Omnix.Base.BufferPool bufferPool)
+        {
+            var reader = new global::Omnix.Serialization.RocketPack.RocketPackReader(sequence, bufferPool);
+            return Formatter.Deserialize(ref reader, 0);
+        }
+        public void Export(global::System.Buffers.IBufferWriter<byte> bufferWriter, global::Omnix.Base.BufferPool bufferPool)
+        {
+            var writer = new global::Omnix.Serialization.RocketPack.RocketPackWriter(bufferWriter, bufferPool);
+            Formatter.Serialize(ref writer, this, 0);
+        }
+
+        public static bool operator ==(OmniRpcErrorMessage? left, OmniRpcErrorMessage? right)
+        {
+            return (right is null) ? (left is null) : right.Equals(left);
+        }
+        public static bool operator !=(OmniRpcErrorMessage? left, OmniRpcErrorMessage? right)
+        {
+            return !(left == right);
+        }
+        public override bool Equals(object? other)
+        {
+            if (!(other is OmniRpcErrorMessage)) return false;
+            return this.Equals((OmniRpcErrorMessage)other);
+        }
+        public bool Equals(OmniRpcErrorMessage? target)
         {
             if (target is null) return false;
             if (object.ReferenceEquals(this, target)) return true;
@@ -53,12 +81,11 @@ namespace Omnix.Remoting
 
             return true;
         }
+        public override int GetHashCode() => ___hashCode.Value!;
 
-        public override int GetHashCode() => __hashCode;
-
-        private sealed class CustomFormatter : global::Omnix.Serialization.RocketPack.IRocketPackFormatter<OmniRpcErrorMessage>
+        private sealed class ___CustomFormatter : global::Omnix.Serialization.RocketPack.IRocketPackFormatter<OmniRpcErrorMessage>
         {
-            public void Serialize(ref global::Omnix.Serialization.RocketPack.RocketPackWriter w, OmniRpcErrorMessage value, int rank)
+            public void Serialize(ref global::Omnix.Serialization.RocketPack.RocketPackWriter w, in OmniRpcErrorMessage value, in int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
@@ -96,7 +123,7 @@ namespace Omnix.Remoting
                 }
             }
 
-            public OmniRpcErrorMessage Deserialize(ref global::Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
+            public OmniRpcErrorMessage Deserialize(ref global::Omnix.Serialization.RocketPack.RocketPackReader r, in int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 

@@ -5,15 +5,18 @@ using Omnix.Network.Connections.Secure;
 
 namespace Omnix.Network.Connections.Secure.Internal
 {
-    internal sealed partial class HelloMessage : global::Omnix.Serialization.RocketPack.RocketPackMessageBase<HelloMessage>
+    internal sealed partial class HelloMessage : global::Omnix.Serialization.RocketPack.IRocketPackMessage<HelloMessage>
     {
+        public static global::Omnix.Serialization.RocketPack.IRocketPackFormatter<HelloMessage> Formatter { get; }
+        public static HelloMessage Empty { get; }
+
         static HelloMessage()
         {
-            HelloMessage.Formatter = new CustomFormatter();
+            HelloMessage.Formatter = new ___CustomFormatter();
             HelloMessage.Empty = new HelloMessage(global::System.Array.Empty<OmniSecureConnectionVersion>());
         }
 
-        private readonly int __hashCode;
+        private readonly global::System.Lazy<int> ___hashCode;
 
         public static readonly int MaxVersionsCount = 32;
 
@@ -24,19 +27,44 @@ namespace Omnix.Network.Connections.Secure.Internal
 
             this.Versions = new global::Omnix.DataStructures.ReadOnlyListSlim<OmniSecureConnectionVersion>(versions);
 
+            ___hashCode = new global::System.Lazy<int>(() =>
             {
-                var __h = new global::System.HashCode();
-                foreach (var n in this.Versions)
+                var ___h = new global::System.HashCode();
+                foreach (var n in versions)
                 {
-                    if (n != default) __h.Add(n.GetHashCode());
+                    if (n != default) ___h.Add(n.GetHashCode());
                 }
-                __hashCode = __h.ToHashCode();
-            }
+                return ___h.ToHashCode();
+            });
         }
 
         public global::Omnix.DataStructures.ReadOnlyListSlim<OmniSecureConnectionVersion> Versions { get; }
 
-        public override bool Equals(HelloMessage target)
+        public static HelloMessage Import(global::System.Buffers.ReadOnlySequence<byte> sequence, global::Omnix.Base.BufferPool bufferPool)
+        {
+            var reader = new global::Omnix.Serialization.RocketPack.RocketPackReader(sequence, bufferPool);
+            return Formatter.Deserialize(ref reader, 0);
+        }
+        public void Export(global::System.Buffers.IBufferWriter<byte> bufferWriter, global::Omnix.Base.BufferPool bufferPool)
+        {
+            var writer = new global::Omnix.Serialization.RocketPack.RocketPackWriter(bufferWriter, bufferPool);
+            Formatter.Serialize(ref writer, this, 0);
+        }
+
+        public static bool operator ==(HelloMessage? left, HelloMessage? right)
+        {
+            return (right is null) ? (left is null) : right.Equals(left);
+        }
+        public static bool operator !=(HelloMessage? left, HelloMessage? right)
+        {
+            return !(left == right);
+        }
+        public override bool Equals(object? other)
+        {
+            if (!(other is HelloMessage)) return false;
+            return this.Equals((HelloMessage)other);
+        }
+        public bool Equals(HelloMessage? target)
         {
             if (target is null) return false;
             if (object.ReferenceEquals(this, target)) return true;
@@ -44,12 +72,11 @@ namespace Omnix.Network.Connections.Secure.Internal
 
             return true;
         }
+        public override int GetHashCode() => ___hashCode.Value!;
 
-        public override int GetHashCode() => __hashCode;
-
-        private sealed class CustomFormatter : global::Omnix.Serialization.RocketPack.IRocketPackFormatter<HelloMessage>
+        private sealed class ___CustomFormatter : global::Omnix.Serialization.RocketPack.IRocketPackFormatter<HelloMessage>
         {
-            public void Serialize(ref global::Omnix.Serialization.RocketPack.RocketPackWriter w, HelloMessage value, int rank)
+            public void Serialize(ref global::Omnix.Serialization.RocketPack.RocketPackWriter w, in HelloMessage value, in int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
@@ -73,7 +100,7 @@ namespace Omnix.Network.Connections.Secure.Internal
                 }
             }
 
-            public HelloMessage Deserialize(ref global::Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
+            public HelloMessage Deserialize(ref global::Omnix.Serialization.RocketPack.RocketPackReader r, in int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 

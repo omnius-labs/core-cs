@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Omnix.Serialization.RocketPack.CodeGenerator
 {
@@ -26,160 +25,36 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
                     w.WriteLine($"using {name};");
                 }
             }
-
             w.WriteLine();
 
             w.WriteLine("#nullable enable");
-
             w.WriteLine();
 
             // namespaceの宣言を行う。
-            {
-                var option = definition.Options.First(n => n.Name == "csharp_namespace");
-
-                w.WriteLine($"namespace {option.Value}");
-            }
-
+            w.WriteLine($"namespace {definition.Options.First(n => n.Name == "csharp_namespace").Value}");
             w.WriteLine("{");
-            w.PushIndent();
 
-            var enumWriter = new EnumWriter(definition);
-            var classWriter = new ClassWriter(definition, externalDefinitions);
-            var structWriter = new StructWriter(definition, externalDefinitions);
-
-            foreach (var enumInfo in definition.Enums)
+            using (w.Indent())
             {
-                // Enum
-                enumWriter.Write(w, enumInfo);
+                var enumWriter = new EnumWriter(definition);
+                var messageWriter = new MessageWriter(definition, externalDefinitions);
 
-                w.WriteLine();
-            }
-
-            foreach (var messageInfo in definition.Messages)
-            {
-                if (messageInfo.FormatType == MessageFormatType.Medium)
+                foreach (var enumInfo in definition.Enums)
                 {
-                    // Class
-                    classWriter.Write(w, messageInfo);
-                }
-                else if (messageInfo.FormatType == MessageFormatType.Small)
-                {
-                    // Struct
-                    structWriter.Write(w, messageInfo);
+                    enumWriter.Write(w, enumInfo);
+                    w.WriteLine();
                 }
 
-                w.WriteLine();
+                foreach (var messageInfo in definition.Messages)
+                {
+                    messageWriter.Write(w, messageInfo);
+                    w.WriteLine();
+                }
             }
 
-            w.PopIndent();
             w.WriteLine("}");
 
             return w.ToString();
-        }
-
-        /// <summary>
-        /// プロパティ名からフィールド変数名を生成します。
-        /// </summary>
-        private static string GetFieldName(string name)
-        {
-            return name[0].ToString().ToLower() + name.Substring(1);
-        }
-
-        private static string GetFullName(string name, params string[] types)
-        {
-            var result = name switch
-            {
-                "ReadOnlySequence<>" => $"System.Buffers.ReadOnlySequence<{types[0]}>",
-                "IBufferWriter<>" => $"System.Buffers.IBufferWriter<{types[0]}>",
-                "IEquatable<>" => $"System.IEquatable<{types[0]}>",
-                "RocketPackReader" => "Omnix.Serialization.RocketPack.RocketPackReader",
-                "RocketPackWriter" => "Omnix.Serialization.RocketPack.RocketPackWriter",
-                "IRocketPackFormatter<>" => $"Omnix.Serialization.RocketPack.IRocketPackFormatter<{types[0]}>",
-                "FormatException" => "System.FormatException",
-                "BytesOperations" => "Omnix.Base.BytesOperations",
-                "CollectionHelper" => "Omnix.Base.Helpers.CollectionHelper",
-                "ObjectHelper" => "Omnix.Base.Helpers.ObjectHelper",
-                "HashCode" => "System.HashCode",
-                "Array" => "System.Array",
-                "Timestamp" => "Omnix.Serialization.RocketPack.Timestamp",
-                "IMemoryOwner<>" => $"System.Buffers.IMemoryOwner<{types[0]}>",
-                "Span<>" => $"System.Span<{types[0]}>",
-                "ReadOnlySpan<>" => $"System.ReadOnlySpan<{types[0]}>",
-                "Memory<>" => $"System.Memory<{types[0]}>",
-                "ReadOnlyMemory<>" => $"System.ReadOnlyMemory<{types[0]}>",
-                "ReadOnlyListSlim<>" => $"Omnix.DataStructures.ReadOnlyListSlim<{types[0]}>",
-                "ReadOnlyDictionarySlim<,>" => $"Omnix.DataStructures.ReadOnlyDictionarySlim<{types[0]}, {types[1]}>",
-                "Dictionary<,>" => $"System.Collections.Generic.Dictionary<{types[0]}, {types[1]}>",
-                "RocketPackMessageBase<>" => $"Omnix.Serialization.RocketPack.RocketPackMessageBase<{types[0]}>",
-                "IDisposable" => "System.IDisposable",
-                "BufferPool" => "Omnix.Base.BufferPool",
-                "SimpleMemoryOwner<>" => $"Omnix.Base.SimpleMemoryOwner<{types[0]}>",
-                "ArgumentNullException" => "System.ArgumentNullException",
-                "ArgumentOutOfRangeException" => "System.ArgumentOutOfRangeException",
-                _ => throw new InvalidOperationException(name)
-            };
-
-            return "global::" + result;
-        }
-
-        private class CodeWriter
-        {
-            private readonly StringBuilder _sb = new StringBuilder();
-            private int _indentDepth = 0;
-            private bool _wroteIndent = false;
-
-            public CodeWriter()
-            {
-
-            }
-
-            private bool TryWriteIndent()
-            {
-                if (_wroteIndent)
-                {
-                    return false;
-                }
-
-                _wroteIndent = true;
-
-                for (int i = 0; i < _indentDepth; i++)
-                {
-                    _sb.Append("    ");
-                }
-
-                return true;
-            }
-
-            public void WriteLine()
-            {
-                _sb.AppendLine();
-                _wroteIndent = false;
-            }
-
-            public void WriteLine(string value)
-            {
-                foreach (var line in value.Split(new string[] { "\r\n", "\r", "\n" }, options: StringSplitOptions.None))
-                {
-                    this.TryWriteIndent();
-                    _sb.AppendLine(line);
-                    _wroteIndent = false;
-                }
-            }
-
-            public void PushIndent()
-            {
-                _indentDepth++;
-            }
-
-            public void PopIndent()
-            {
-                _indentDepth--;
-            }
-
-            public override string ToString()
-            {
-                return _sb.ToString().Replace("\r\n", "\n");
-            }
         }
     }
 }

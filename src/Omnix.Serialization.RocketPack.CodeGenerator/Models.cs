@@ -92,6 +92,9 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
         public MessageFormatType FormatType { get; }
         public string Name { get; }
         public IList<MessageElement> Elements { get; }
+
+        public bool IsClass { get; set; }
+        public bool IsStruct { get; set; }
     }
 
     public sealed class MessageElement
@@ -174,6 +177,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
         }
 
         public int MaxLength { get; }
+
         public bool IsUseMemoryPool { get; set; }
     }
 

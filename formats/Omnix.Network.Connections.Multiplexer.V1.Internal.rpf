@@ -24,7 +24,7 @@ message SessionUpdateWindowSizeMessage {
 message SessionDataMessage {
     SessionId: uint64 = 0,
     IsCompleted: bool = 1,
-    [Recyclable]
+    [csharp_recyclable]
     Data: memory(262144) = 2,
 }
 

@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using Sprache;
 
@@ -74,7 +75,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
                 from semicolon in Parse.Char(';').Or(Parse.Return(';')).TokenWithSkipComment()
                 select new UsingDefinition(value);
 
-            // example: [Recyclable]
+            // example: [csharp_recyclable]
             var attributeParser =
                 from beginTag in Parse.Char('[').TokenWithSkipComment()
                 from name in Parse.CharExcept(']').AtLeastOnce().TokenWithSkipComment().Text()
@@ -253,12 +254,39 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
 
             var result = formatParser.Parse(text);
 
-            // Medium形式のメッセージのMemoryタイプの属性に[Recyclable]が設定されている場合は、IsUseMemoryPoolフラグを立てる。
-            foreach (var messageInfo in result.Messages.Where(n => n.FormatType == MessageFormatType.Medium))
+            // メッセージの属性に[csharp_class]が設定されている場合は、classとして出力する。
+            // メッセージの属性に[csharp_struct]が設定されている場合は、structとして出力する。
+            foreach (var messageInfo in result.Messages)
+            {
+                if (messageInfo.Attributes.Contains("csharp_class"))
+                {
+                    messageInfo.IsClass = true;
+                }
+                else if (messageInfo.Attributes.Contains("csharp_struct"))
+                {
+                    messageInfo.IsStruct = true;
+                }
+                else
+                {
+                    messageInfo.IsClass = true;
+                }
+            }
+
+            // Small形式のメッセージはOptional型は認めない。
+            foreach (var messageInfo in result.Messages.Where(n => n.FormatType == MessageFormatType.Small))
+            {
+                if (messageInfo.Elements.Any(n => n.Type.IsOptional))
+                {
+                    throw new Exception();
+                }
+            }
+
+            // Medium形式のメッセージのmemoryタイプの属性に[csharp_recyclable]が設定されている場合は、IsUseMemoryPoolフラグを立てる。
+            foreach (var messageInfo in result.Messages)
             {
                 foreach (var elementInfo in messageInfo.Elements)
                 {
-                    if (elementInfo.Type is MemoryType memoryTypeInfo && elementInfo.Attributes.Contains("Recyclable"))
+                    if (elementInfo.Type is MemoryType memoryTypeInfo && elementInfo.Attributes.Contains("csharp_recyclable"))
                     {
                         memoryTypeInfo.IsUseMemoryPool = true;
                     }

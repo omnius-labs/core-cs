@@ -3,15 +3,18 @@
 
 namespace Omnix.Network
 {
-    public sealed partial class OmniAddress : global::Omnix.Serialization.RocketPack.RocketPackMessageBase<OmniAddress>
+    public sealed partial class OmniAddress : global::Omnix.Serialization.RocketPack.IRocketPackMessage<OmniAddress>
     {
+        public static global::Omnix.Serialization.RocketPack.IRocketPackFormatter<OmniAddress> Formatter { get; }
+        public static OmniAddress Empty { get; }
+
         static OmniAddress()
         {
-            OmniAddress.Formatter = new CustomFormatter();
+            OmniAddress.Formatter = new ___CustomFormatter();
             OmniAddress.Empty = new OmniAddress(string.Empty);
         }
 
-        private readonly int __hashCode;
+        private readonly global::System.Lazy<int> ___hashCode;
 
         public static readonly int MaxValueLength = 8192;
 
@@ -22,16 +25,41 @@ namespace Omnix.Network
 
             this.Value = value;
 
+            ___hashCode = new global::System.Lazy<int>(() =>
             {
-                var __h = new global::System.HashCode();
-                if (this.Value != default) __h.Add(this.Value.GetHashCode());
-                __hashCode = __h.ToHashCode();
-            }
+                var ___h = new global::System.HashCode();
+                if (value != default) ___h.Add(value.GetHashCode());
+                return ___h.ToHashCode();
+            });
         }
 
         public string Value { get; }
 
-        public override bool Equals(OmniAddress target)
+        public static OmniAddress Import(global::System.Buffers.ReadOnlySequence<byte> sequence, global::Omnix.Base.BufferPool bufferPool)
+        {
+            var reader = new global::Omnix.Serialization.RocketPack.RocketPackReader(sequence, bufferPool);
+            return Formatter.Deserialize(ref reader, 0);
+        }
+        public void Export(global::System.Buffers.IBufferWriter<byte> bufferWriter, global::Omnix.Base.BufferPool bufferPool)
+        {
+            var writer = new global::Omnix.Serialization.RocketPack.RocketPackWriter(bufferWriter, bufferPool);
+            Formatter.Serialize(ref writer, this, 0);
+        }
+
+        public static bool operator ==(OmniAddress? left, OmniAddress? right)
+        {
+            return (right is null) ? (left is null) : right.Equals(left);
+        }
+        public static bool operator !=(OmniAddress? left, OmniAddress? right)
+        {
+            return !(left == right);
+        }
+        public override bool Equals(object? other)
+        {
+            if (!(other is OmniAddress)) return false;
+            return this.Equals((OmniAddress)other);
+        }
+        public bool Equals(OmniAddress? target)
         {
             if (target is null) return false;
             if (object.ReferenceEquals(this, target)) return true;
@@ -39,12 +67,11 @@ namespace Omnix.Network
 
             return true;
         }
+        public override int GetHashCode() => ___hashCode.Value!;
 
-        public override int GetHashCode() => __hashCode;
-
-        private sealed class CustomFormatter : global::Omnix.Serialization.RocketPack.IRocketPackFormatter<OmniAddress>
+        private sealed class ___CustomFormatter : global::Omnix.Serialization.RocketPack.IRocketPackFormatter<OmniAddress>
         {
-            public void Serialize(ref global::Omnix.Serialization.RocketPack.RocketPackWriter w, OmniAddress value, int rank)
+            public void Serialize(ref global::Omnix.Serialization.RocketPack.RocketPackWriter w, in OmniAddress value, in int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
@@ -64,7 +91,7 @@ namespace Omnix.Network
                 }
             }
 
-            public OmniAddress Deserialize(ref global::Omnix.Serialization.RocketPack.RocketPackReader r, int rank)
+            public OmniAddress Deserialize(ref global::Omnix.Serialization.RocketPack.RocketPackReader r, in int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 

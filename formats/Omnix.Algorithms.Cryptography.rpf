@@ -19,6 +19,7 @@ enum OmniHashcashAlgorithmType : uint8
     Simple_Sha2_256 = 0,
 }
 
+[csharp_struct]
 small message OmniHash {
     AlgorithmType: OmniHashAlgorithmType,
     Value: memory(256),

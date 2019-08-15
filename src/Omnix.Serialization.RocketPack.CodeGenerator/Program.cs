@@ -29,7 +29,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
 
         private static void Run(string definitionFilePath, string destinationFilePath)
         {
-            var result = RocketFormatLoader.Load(definitionFilePath);
+            var (definition, externalDefinitions) = RocketFormatLoader.Load(definitionFilePath);
 
             // 出力先フォルダが存在しない場合は作成する
             {
@@ -43,7 +43,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
 
             using (var writer = new StreamWriter(destinationFilePath, false, new UTF8Encoding(false)))
             {
-                writer.Write(RocketCodeGenerator.Generate(result.definition, result.externalDefinitions));
+                writer.Write(RocketCodeGenerator.Generate(definition, externalDefinitions));
             }
         }
     }

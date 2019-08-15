@@ -1,21 +1,27 @@
+using System.Diagnostics.CodeAnalysis;
 using Omnix.Remoting.Internal;
 using Omnix.Serialization.RocketPack;
 
 namespace Omnix.Remoting
 {
     public readonly struct OmniRpcStreamReceiveResult<TMessage>
-        where TMessage : RocketPackMessageBase<TMessage>
+        where TMessage : IRocketPackMessage<TMessage>
     {
-        private readonly TMessage? _message;
+        private readonly TMessage _message;
         private readonly OmniRpcErrorMessage? _errorMessage;
         private readonly OmniRpcStreamReceiveResultFlags _resultFlags;
 
-        public OmniRpcStreamReceiveResult(TMessage? message, OmniRpcErrorMessage? errorMessage, bool isCanceled, bool isCompleted)
+        public OmniRpcStreamReceiveResult([AllowNull] TMessage message, OmniRpcErrorMessage? errorMessage, bool isCanceled, bool isCompleted)
         {
             _message = message;
             _errorMessage = errorMessage;
 
             _resultFlags = OmniRpcStreamReceiveResultFlags.None;
+
+            if (!(errorMessage is null))
+            {
+                _resultFlags |= OmniRpcStreamReceiveResultFlags.Error;
+            }
 
             if (isCanceled)
             {
@@ -26,12 +32,12 @@ namespace Omnix.Remoting
             {
                 _resultFlags |= OmniRpcStreamReceiveResultFlags.Completed;
             }
-
-            if (!(errorMessage is null))
-            {
-                _resultFlags |= OmniRpcStreamReceiveResultFlags.Error;
-            }
         }
+
+        [MaybeNull]
+        public TMessage Message => _message;
+
+        public OmniRpcErrorMessage? ErrorMessage => _errorMessage;
 
         public bool IsMessage => (_resultFlags & OmniRpcStreamReceiveResultFlags.None) != 0;
 
