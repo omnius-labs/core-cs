@@ -263,14 +263,14 @@ namespace Omnix.Network.Connections.Secure.V1.Internal
 
                 using (var stream = new MemoryStream(kdfResult))
                 {
-                    if (_type == OmniSecureConnectionType.Connect)
+                    if (_type == OmniSecureConnectionType.Connected)
                     {
                         stream.Read(myCryptoKey, 0, myCryptoKey.Length);
                         stream.Read(otherCryptoKey, 0, otherCryptoKey.Length);
                         stream.Read(myHmacKey, 0, myHmacKey.Length);
                         stream.Read(otherHmacKey, 0, otherHmacKey.Length);
                     }
-                    else if (_type == OmniSecureConnectionType.Accept)
+                    else if (_type == OmniSecureConnectionType.Accepted)
                     {
                         stream.Read(otherCryptoKey, 0, otherCryptoKey.Length);
                         stream.Read(myCryptoKey, 0, myCryptoKey.Length);
