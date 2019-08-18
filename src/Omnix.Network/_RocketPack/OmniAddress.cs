@@ -128,9 +128,9 @@ namespace Omnix.Network
             }
         }
 
-        public static class Windows
+        public static class FileSystem
         {
-            public static class FileSystem
+            public static class Windows
             {
                 public static bool TryEncoding(string path, out OmniAddress? omniAddress)
                 {
