@@ -9,14 +9,14 @@ namespace Omnix.Base
     /// </summary>
     public sealed class TaskManager : DisposableBase
     {
-        private readonly Action<CancellationToken> _callback;
+        private readonly Func<CancellationToken, ValueTask> _callback;
 
         private Task? _task;
         private CancellationTokenSource? _tokenSource;
 
         private readonly AsyncLock _asyncLock = new AsyncLock();
 
-        public TaskManager(Action<CancellationToken> callback)
+        public TaskManager(Func<CancellationToken, ValueTask> callback)
         {
             _callback = callback;
         }
@@ -26,10 +26,10 @@ namespace Omnix.Base
         public void Start()
         {
             _tokenSource = new CancellationTokenSource();
-            _task = new Task((state) =>
+            _task = new Task(async (state) =>
             {
                 var tokenSource = (CancellationTokenSource)state!;
-                _callback(tokenSource.Token);
+                await _callback(tokenSource.Token);
             }, _tokenSource, _tokenSource.Token, TaskCreationOptions.LongRunning);
             _task.Start();
         }
