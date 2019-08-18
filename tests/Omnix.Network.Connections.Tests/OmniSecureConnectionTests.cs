@@ -33,8 +33,8 @@ namespace Omnix.Network.Connections
 
             using (var baseConnection1 = new OmniNonblockingConnection(new SocketCap(socket1, false), options))
             using (var baseConnection2 = new OmniNonblockingConnection(new SocketCap(socket2, false), options))
-            using (var connection1 = new OmniSecureConnection(baseConnection1, new OmniSecureConnectionOptions() { Type = OmniSecureConnectionType.Connect }))
-            using (var connection2 = new OmniSecureConnection(baseConnection2, new OmniSecureConnectionOptions() { Type = OmniSecureConnectionType.Accept }))
+            using (var connection1 = new OmniSecureConnection(baseConnection1, new OmniSecureConnectionOptions() { Type = OmniSecureConnectionType.Connected }))
+            using (var connection2 = new OmniSecureConnection(baseConnection2, new OmniSecureConnectionOptions() { Type = OmniSecureConnectionType.Accepted }))
             {
                 // ハンドシェイクを行う
                 {

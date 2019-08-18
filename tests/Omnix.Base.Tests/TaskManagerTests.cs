@@ -14,7 +14,7 @@ namespace Omnix.Base
             {
                 bool flag = false;
 
-                var taskManager = new TaskManager((_) =>
+                var taskManager = new TaskManager(async (_) =>
                 {
                     flag = true;
                 });
@@ -39,7 +39,7 @@ namespace Omnix.Base
             {
                 bool flag = false;
 
-                var taskManager = new TaskManager((token) =>
+                var taskManager = new TaskManager(async (token) =>
                 {
                     token.WaitHandle.WaitOne();
                     flag = true;
