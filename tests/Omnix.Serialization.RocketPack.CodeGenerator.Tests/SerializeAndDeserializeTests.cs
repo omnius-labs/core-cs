@@ -40,7 +40,7 @@ message NullableHelloMessage {
     X25: Message1 = 25,
     X26: SmallMessage1 = 26,
 }";
-            RocketFormatParser.ParseV1_0(text);
+            FormatParser.ParseV1_0(text);
         }
     }
 }
