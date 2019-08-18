@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Omnix.Serialization.RocketPack.CodeGenerator
 {
-    public static class RocketFormatLoader
+    public static class FormatLoader
     {
         public static (RocketPackDefinition definition, IEnumerable<RocketPackDefinition> externalDefinitions) Load(string definitionFilePath)
         {
@@ -25,7 +25,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
 
                 using (var reader = new StreamReader(filePath))
                 {
-                    tempDefinition = RocketFormatParser.ParseV1_0(reader.ReadToEnd());
+                    tempDefinition = FormatParser.ParseV1_0(reader.ReadToEnd());
                     results.Add(tempDefinition);
                 }
 

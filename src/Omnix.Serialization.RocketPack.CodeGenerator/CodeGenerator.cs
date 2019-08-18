@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Omnix.Serialization.RocketPack.CodeGenerator
 {
-    public static partial class RocketCodeGenerator
+    public static partial class CodeGenerator
     {
         public static string Generate(RocketPackDefinition definition, IEnumerable<RocketPackDefinition> externalDefinitions)
         {

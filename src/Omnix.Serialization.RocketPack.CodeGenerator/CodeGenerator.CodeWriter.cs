@@ -3,7 +3,7 @@ using System.Text;
 
 namespace Omnix.Serialization.RocketPack.CodeGenerator
 {
-    public static partial class RocketCodeGenerator
+    public static partial class CodeGenerator
     {
         private class CodeWriter
         {

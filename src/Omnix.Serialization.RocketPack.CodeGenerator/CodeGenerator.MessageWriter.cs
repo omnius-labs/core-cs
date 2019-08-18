@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Omnix.Serialization.RocketPack.CodeGenerator
 {
-    public static partial class RocketCodeGenerator
+    public static partial class CodeGenerator
     {
         private sealed class MessageWriter
         {
@@ -958,7 +958,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
                 }
                 else if (messageDefinition.IsClass)
                 {
-                    w.WriteLine($"public override int GetHashCode() => {HashCodeName}.Value!;");
+                    w.WriteLine($"public override int GetHashCode() => {HashCodeName}.Value;");
                 }
             }
 

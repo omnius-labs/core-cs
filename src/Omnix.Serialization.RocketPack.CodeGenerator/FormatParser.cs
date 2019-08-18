@@ -31,7 +31,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
         }
     }
 
-    public static class RocketFormatParser
+    public static class FormatParser
     {
         public static RocketPackDefinition ParseV1_0(string text)
         {
