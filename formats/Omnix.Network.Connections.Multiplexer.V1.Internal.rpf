@@ -1,6 +1,6 @@
 syntax = v1.0;
 
-option csharp_namespace = "Omnix.Network.Connections.Multiplexer.V1.Internal";
+namespace "Omnix.Network.Connections.Multiplexer.V1.Internal";
 option csharp_access_level = "internal";
 
 message ProfileMessage {
