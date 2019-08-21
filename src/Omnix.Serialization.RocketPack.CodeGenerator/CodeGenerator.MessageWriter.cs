@@ -108,9 +108,9 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
                     FloatType type when (type.Size == 64) => "double" + (type.IsOptional ? "?" : ""),
                     StringType type => "string" + (type.IsOptional ? "?" : ""),
                     TimestampType type => GetTypeFullName("Timestamp") + (type.IsOptional ? "?" : ""),
-                    MemoryType type when (type.IsUseMemoryPool) => GetTypeFullName("IMemoryOwner<>", "byte") + (type.IsOptional ? "?" : ""),
-                    MemoryType type when (!type.IsUseMemoryPool) => GetTypeFullName("ReadOnlyMemory<>", "byte") + (type.IsOptional ? "?" : ""),
-                    ListType type => $"{this.GetParameterTypeString(type.ElementType)}[]" + (type.IsOptional ? "?" : ""),
+                    BytesType type when (type.IsUseMemoryPool) => GetTypeFullName("IMemoryOwner<>", "byte") + (type.IsOptional ? "?" : ""),
+                    BytesType type when (!type.IsUseMemoryPool) => GetTypeFullName("ReadOnlyMemory<>", "byte") + (type.IsOptional ? "?" : ""),
+                    VectorType type => $"{this.GetParameterTypeString(type.ElementType)}[]" + (type.IsOptional ? "?" : ""),
                     MapType type => GetTypeFullName("Dictionary<,>", this.GetParameterTypeString(type.KeyType), this.GetParameterTypeString(type.ValueType)) + (type.IsOptional ? "?" : ""),
                     CustomType type => this.CustomTypeResolver(type) switch
                     {
@@ -140,9 +140,9 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
                     FloatType type when (type.Size == 64) => "double" + (type.IsOptional ? "?" : ""),
                     StringType type => "string" + (type.IsOptional ? "?" : ""),
                     TimestampType type => GetTypeFullName("Timestamp") + (type.IsOptional ? "?" : ""),
-                    MemoryType type when (!type.IsUseMemoryPool) => GetTypeFullName("ReadOnlyMemory<>", "byte") + (type.IsOptional ? "?" : ""),
-                    MemoryType type when (type.IsUseMemoryPool) => GetTypeFullName("ReadOnlyMemory<>", "byte") + (type.IsOptional ? "?" : ""),
-                    ListType type => GetTypeFullName("ReadOnlyListSlim<>", this.GetParameterTypeString(type.ElementType)) + (type.IsOptional ? "?" : ""),
+                    BytesType type when (!type.IsUseMemoryPool) => GetTypeFullName("ReadOnlyMemory<>", "byte") + (type.IsOptional ? "?" : ""),
+                    BytesType type when (type.IsUseMemoryPool) => GetTypeFullName("ReadOnlyMemory<>", "byte") + (type.IsOptional ? "?" : ""),
+                    VectorType type => GetTypeFullName("ReadOnlyListSlim<>", this.GetParameterTypeString(type.ElementType)) + (type.IsOptional ? "?" : ""),
                     MapType type => GetTypeFullName("ReadOnlyDictionarySlim<,>", this.GetParameterTypeString(type.KeyType), this.GetParameterTypeString(type.ValueType)) + (type.IsOptional ? "?" : ""),
                     CustomType type => this.CustomTypeResolver(type) switch
                     {
@@ -165,9 +165,9 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
                     FloatType type when (type.Size == 64) => type.IsOptional ? "null" : "0.0D",
                     StringType type => type.IsOptional ? "null" : "string.Empty",
                     TimestampType type => type.IsOptional ? "null" : GetTypeFullName("Timestamp") + ".Zero",
-                    MemoryType type when (!type.IsUseMemoryPool) => type.IsOptional ? "null" : GetTypeFullName("ReadOnlyMemory<>", "byte") + ".Empty",
-                    MemoryType type when (type.IsUseMemoryPool) => type.IsOptional ? "null" : GetTypeFullName("SimpleMemoryOwner<>", "byte") + ".Empty",
-                    ListType type => type.IsOptional ? "null" : GetTypeFullName("Array") + ".Empty<" + this.GetParameterTypeString(type.ElementType) + ">()",
+                    BytesType type when (!type.IsUseMemoryPool) => type.IsOptional ? "null" : GetTypeFullName("ReadOnlyMemory<>", "byte") + ".Empty",
+                    BytesType type when (type.IsUseMemoryPool) => type.IsOptional ? "null" : GetTypeFullName("SimpleMemoryOwner<>", "byte") + ".Empty",
+                    VectorType type => type.IsOptional ? "null" : GetTypeFullName("Array") + ".Empty<" + this.GetParameterTypeString(type.ElementType) + ">()",
                     MapType type => type.IsOptional
                             ? "null"
                             : "new " + GetTypeFullName("Dictionary<,>", this.GetParameterTypeString(type.KeyType), this.GetParameterTypeString(type.ValueType)) + "()",
@@ -185,7 +185,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
             {
                 if (messageDefinition.IsStruct)
                 {
-                    if (messageDefinition.Elements.Select(n => n.Type).OfType<MemoryType>().Any(n => n.IsUseMemoryPool))
+                    if (messageDefinition.Elements.Select(n => n.Type).OfType<BytesType>().Any(n => n.IsUseMemoryPool))
                     {
                         w.WriteLine($"{_accessLevel} readonly struct {messageDefinition.Name} : {GetTypeFullName("IRocketPackMessage<>", messageDefinition.Name)}, {GetTypeFullName("IDisposable")}");
                     }
@@ -196,7 +196,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
                 }
                 else if (messageDefinition.IsClass)
                 {
-                    if (messageDefinition.Elements.Select(n => n.Type).OfType<MemoryType>().Any(n => n.IsUseMemoryPool))
+                    if (messageDefinition.Elements.Select(n => n.Type).OfType<BytesType>().Any(n => n.IsUseMemoryPool))
                     {
                         w.WriteLine($"{_accessLevel} sealed partial class {messageDefinition.Name} : {GetTypeFullName("IRocketPackMessage<>", messageDefinition.Name)}, {GetTypeFullName("IDisposable")}");
                     }
@@ -225,7 +225,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
                     this.Write_Equals(w, messageDefinition);
                     w.WriteLine();
 
-                    if (messageDefinition.Elements.Select(n => n.Type).OfType<MemoryType>().Any(n => n.IsUseMemoryPool))
+                    if (messageDefinition.Elements.Select(n => n.Type).OfType<BytesType>().Any(n => n.IsUseMemoryPool))
                     {
                         this.Write_Dispose(w, messageDefinition);
                         w.WriteLine();
@@ -328,10 +328,10 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
                 {
                     switch (elementInfo.Type)
                     {
-                        case MemoryType type when (type.IsUseMemoryPool):
+                        case BytesType type when (type.IsUseMemoryPool):
                             w.WriteLine($"_{GenerateFieldName(elementInfo.Name)} = {GenerateFieldName(elementInfo.Name)};");
                             break;
-                        case ListType type:
+                        case VectorType type:
                             if (type.IsOptional)
                             {
                                 w.WriteLine($"if({GenerateFieldName(elementInfo.Name)} != null)");
@@ -414,10 +414,10 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
                     case StringType stringType:
                         w.WriteLine($"public static readonly int Max{name}Length = {stringType.MaxLength};");
                         return true;
-                    case MemoryType memoryType:
+                    case BytesType memoryType:
                         w.WriteLine($"public static readonly int Max{name}Length = {memoryType.MaxLength};");
                         return true;
-                    case ListType listType:
+                    case VectorType listType:
                         w.WriteLine($"public static readonly int Max{name}Count = {listType.MaxLength};");
                         return true;
                     case MapType mapType:
@@ -450,7 +450,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
                 isChecked |= this.Try_Write_Constructor_Parameter_Check_Element_Null(w, GenerateFieldName(elementInfo.Name), elementInfo.Type);
                 isChecked |= this.Try_Write_Constructor_Parameter_Check_Element_MaxLength(w, GenerateFieldName(elementInfo.Name), elementInfo.Type);
 
-                if (elementInfo.Type is ListType listType)
+                if (elementInfo.Type is VectorType listType)
                 {
                     var w2 = new CodeWriter();
                     bool isChecked2 = false;
@@ -539,10 +539,10 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
                     case StringType stringType when (!type.IsOptional):
                         w.WriteLine($"if ({name} is null) throw new {GetTypeFullName("ArgumentNullException")}(\"{name}\");");
                         return true;
-                    case MemoryType memoryType when (!type.IsOptional && memoryType.IsUseMemoryPool):
+                    case BytesType memoryType when (!type.IsOptional && memoryType.IsUseMemoryPool):
                         w.WriteLine($"if ({name} is null) throw new {GetTypeFullName("ArgumentNullException")}(\"{name}\");");
                         return true;
-                    case ListType listType when (!type.IsOptional):
+                    case VectorType listType when (!type.IsOptional):
                         w.WriteLine($"if ({name} is null) throw new {GetTypeFullName("ArgumentNullException")}(\"{name}\");");
                         return true;
                     case MapType mapType when (!type.IsOptional):
@@ -573,19 +573,19 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
                         property = "Length";
                         maxLength = stringType.MaxLength;
                         break;
-                    case MemoryType memoryType when (!memoryType.IsUseMemoryPool && !memoryType.IsOptional):
+                    case BytesType memoryType when (!memoryType.IsUseMemoryPool && !memoryType.IsOptional):
                         property = "Length";
                         maxLength = memoryType.MaxLength;
                         break;
-                    case MemoryType memoryType when (!memoryType.IsUseMemoryPool && memoryType.IsOptional):
+                    case BytesType memoryType when (!memoryType.IsUseMemoryPool && memoryType.IsOptional):
                         property = "Value.Length";
                         maxLength = memoryType.MaxLength;
                         break;
-                    case MemoryType memoryType when (memoryType.IsUseMemoryPool):
+                    case BytesType memoryType when (memoryType.IsUseMemoryPool):
                         property = "Memory.Length";
                         maxLength = memoryType.MaxLength;
                         break;
-                    case ListType listType:
+                    case VectorType listType:
                         property = "Length";
                         maxLength = listType.MaxLength;
                         break;
@@ -671,7 +671,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
                     case TimestampType timestampType:
                         w.WriteLine($"if ({parameterName} != default) {hashCodeName}.Add({parameterName}.GetHashCode());");
                         break;
-                    case MemoryType memoryType when (!memoryType.IsOptional):
+                    case BytesType memoryType when (!memoryType.IsOptional):
                         if (!memoryType.IsUseMemoryPool)
                         {
                             w.WriteLine($"if (!{parameterName}.IsEmpty) {hashCodeName}.Add({GetTypeFullName("ObjectHelper")}.GetHashCode({parameterName}.Span));");
@@ -681,7 +681,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
                             w.WriteLine($"if (!{parameterName}.Memory.IsEmpty) {hashCodeName}.Add({GetTypeFullName("ObjectHelper")}.GetHashCode({parameterName}.Memory.Span));");
                         }
                         break;
-                    case MemoryType memoryType when (memoryType.IsOptional):
+                    case BytesType memoryType when (memoryType.IsOptional):
                         if (!memoryType.IsUseMemoryPool)
                         {
                             w.WriteLine($"if (!({parameterName} is null) && !{parameterName}.Value.IsEmpty) {hashCodeName}.Add({GetTypeFullName("ObjectHelper")}.GetHashCode({parameterName}.Value.Span));");
@@ -691,7 +691,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
                             w.WriteLine($"if (!({parameterName} is null) && !{parameterName}.Memory.IsEmpty) {hashCodeName}.Add({GetTypeFullName("ObjectHelper")}.GetHashCode({parameterName}.Memory.Span));");
                         }
                         break;
-                    case ListType listType:
+                    case VectorType listType:
                         {
                             if (type.IsOptional)
                             {
@@ -876,7 +876,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
                             case TimestampType type:
                                 w.WriteLine($"if (this.{element.Name} != target.{element.Name}) return false;");
                                 break;
-                            case MemoryType type:
+                            case BytesType type:
                                 if (!type.IsOptional)
                                 {
                                     w.WriteLine($"if (!{GetTypeFullName("BytesOperations")}.SequenceEqual(this.{element.Name}.Span, target.{element.Name}.Span)) return false;");
@@ -887,7 +887,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
                                     w.WriteLine($"if (!(this.{element.Name} is null) && !(target.{element.Name} is null) && !{GetTypeFullName("BytesOperations")}.SequenceEqual(this.{element.Name}.Value.Span, target.{element.Name}.Value.Span)) return false;");
                                 }
                                 break;
-                            case ListType type:
+                            case VectorType type:
                                 if (!type.IsOptional)
                                 {
                                     w.WriteLine($"if (!{GetTypeFullName("CollectionHelper")}.Equals(this.{element.Name}, target.{element.Name})) return false;");
@@ -968,7 +968,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
                 {
                     switch (element.Type)
                     {
-                        case MemoryType type when (type.IsUseMemoryPool):
+                        case BytesType type when (type.IsUseMemoryPool):
                             if (!type.IsOptional)
                             {
                                 w.WriteLine($"private readonly {this.GetParameterTypeString(element.Type)} _{GenerateFieldName(element.Name)};");
@@ -998,7 +998,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
                     {
                         switch (element.Type)
                         {
-                            case MemoryType type when (type.IsUseMemoryPool):
+                            case BytesType type when (type.IsUseMemoryPool):
                                 w.WriteLine($"_{GenerateFieldName(element.Name)}?.Dispose();");
                                 break;
                         }
@@ -1177,7 +1177,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
                             w.WriteLine($"w.Write({name}.Value);");
                         }
                         break;
-                    case MemoryType memoryType when (memoryType.IsUseMemoryPool):
+                    case BytesType memoryType when (memoryType.IsUseMemoryPool):
                         if (!type.IsOptional)
                         {
                             w.WriteLine($"w.Write({name}.Span);");
@@ -1187,7 +1187,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
                             w.WriteLine($"w.Write({name}.Value.Span);");
                         }
                         break;
-                    case MemoryType memoryType when (!memoryType.IsUseMemoryPool):
+                    case BytesType memoryType when (!memoryType.IsUseMemoryPool):
                         if (!type.IsOptional)
                         {
                             w.WriteLine($"w.Write({name}.Span);");
@@ -1197,7 +1197,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
                             w.WriteLine($"w.Write({name}.Value.Span);");
                         }
                         break;
-                    case ListType listType:
+                    case VectorType listType:
                         {
                             w.WriteLine($"w.Write((uint){name}.Count);");
                             w.WriteLine($"foreach (var n in {name})");
@@ -1299,13 +1299,13 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
                     case TimestampType timestampType:
                         w.WriteLine($"{name} = r.GetTimestamp();");
                         break;
-                    case MemoryType memoryType when (memoryType.IsUseMemoryPool):
+                    case BytesType memoryType when (memoryType.IsUseMemoryPool):
                         w.WriteLine($"{name} = r.GetRecyclableMemory({memoryType.MaxLength});");
                         break;
-                    case MemoryType memoryType when (!memoryType.IsUseMemoryPool):
+                    case BytesType memoryType when (!memoryType.IsUseMemoryPool):
                         w.WriteLine($"{name} = r.GetMemory({memoryType.MaxLength});");
                         break;
-                    case ListType listType:
+                    case VectorType listType:
                         {
                             w.WriteLine("var length = r.GetUInt32();");
                             w.WriteLine($"{name} = new {this.GetParameterTypeString(listType.ElementType)}[length];");
@@ -1476,7 +1476,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
                             w.WriteLine($"w.Write({name}.Value);");
                         }
                         break;
-                    case MemoryType memoryType when (memoryType.IsUseMemoryPool):
+                    case BytesType memoryType when (memoryType.IsUseMemoryPool):
                         if (!type.IsOptional)
                         {
                             w.WriteLine($"w.Write({name}.Span);");
@@ -1486,7 +1486,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
                             w.WriteLine($"w.Write({name}.Value.Span);");
                         }
                         break;
-                    case MemoryType memoryType when (!memoryType.IsUseMemoryPool):
+                    case BytesType memoryType when (!memoryType.IsUseMemoryPool):
                         if (!type.IsOptional)
                         {
                             w.WriteLine($"w.Write({name}.Span);");
@@ -1496,7 +1496,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
                             w.WriteLine($"w.Write({name}.Value.Span);");
                         }
                         break;
-                    case ListType listType:
+                    case VectorType listType:
                         {
                             w.WriteLine($"w.Write((uint){name}.Count);");
                             w.WriteLine($"foreach (var n in {name})");
@@ -1598,13 +1598,13 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
                     case TimestampType timestampType:
                         w.WriteLine($"{name} = r.GetTimestamp();");
                         break;
-                    case MemoryType memoryType when (memoryType.IsUseMemoryPool):
+                    case BytesType memoryType when (memoryType.IsUseMemoryPool):
                         w.WriteLine($"{name} = r.GetRecyclableMemory({memoryType.MaxLength});");
                         break;
-                    case MemoryType memoryType when (!memoryType.IsUseMemoryPool):
+                    case BytesType memoryType when (!memoryType.IsUseMemoryPool):
                         w.WriteLine($"{name} = r.GetMemory({memoryType.MaxLength});");
                         break;
-                    case ListType listType:
+                    case VectorType listType:
                         {
                             w.WriteLine("var length = r.GetUInt32();");
                             w.WriteLine($"{name} = new {this.GetParameterTypeString(listType.ElementType)}[length];");
@@ -1732,7 +1732,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
                             sb.Append($"value.{messageElement.Name} != null)");
                         }
                         break;
-                    case MemoryType type:
+                    case BytesType type:
                         if (!type.IsOptional)
                         {
                             sb.Append($"!value.{messageElement.Name}.IsEmpty)");
@@ -1742,7 +1742,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
                             sb.Append($"value.{messageElement.Name} != null)");
                         }
                         break;
-                    case ListType type:
+                    case VectorType type:
                         if (!type.IsOptional)
                         {
                             sb.Append($"value.{messageElement.Name}.Count != 0)");

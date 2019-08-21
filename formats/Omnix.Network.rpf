@@ -1,6 +1,6 @@
 ﻿syntax = v1.0;
 
-option csharp_namespace = "Omnix.Network";
+namespace "Omnix.Network";
 
 message OmniAddress {
     Value: string(8192) = 0,

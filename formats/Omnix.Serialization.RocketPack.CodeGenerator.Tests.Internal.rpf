@@ -1,6 +1,6 @@
 syntax = v1.0;
 
-option csharp_namespace = "Omnix.Serialization.RocketPack.CodeGenerator.Internal";
+namespace "Omnix.Serialization.RocketPack.CodeGenerator.Internal";
 option csharp_access_level = "internal";
 
 enum Enum1 : int8 {
@@ -44,7 +44,7 @@ enum Enum8: uint64 {
 }
 
 [csharp_struct]
-small message SmallMessageStructElement {
+message SmallMessageStructElement : small {
     X0: bool,
 } 
 
@@ -54,7 +54,7 @@ message MessageStructElement {
 } 
 
 [csharp_struct]
-small message SmallStructMessage {
+message SmallStructMessage : small {
     X0: bool,
     X1: int8,
     X2: int16,
@@ -149,7 +149,7 @@ message NullableMessageStruct {
     X26: MessageStructElement? = 26,
 }
 
-small message SmallMessageClassElement {
+message SmallMessageClassElement : small {
     X0: bool,
 } 
 
@@ -157,7 +157,7 @@ message MessageClassElement {
     X0: bool = 0,
 } 
 
-small message SmallClassMessage {
+message SmallClassMessage : small {
     X0: bool,
     X1: int8,
     X2: int16,

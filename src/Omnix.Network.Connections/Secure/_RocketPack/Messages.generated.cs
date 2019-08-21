@@ -6,8 +6,8 @@ namespace Omnix.Network.Connections.Secure
 {
     public enum OmniSecureConnectionType : byte
     {
-        Connected = 0,
-        Accepted = 1,
+        Connect = 0,
+        Accept = 1,
     }
 
     public enum OmniSecureConnectionVersion : byte

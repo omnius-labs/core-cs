@@ -1,6 +1,6 @@
 ﻿syntax = v1.0;
 
-option csharp_namespace = "Omnix.Algorithms.Cryptography";
+namespace "Omnix.Algorithms.Cryptography";
 
 enum OmniHashAlgorithmType : uint8 {
     Sha2_256 = 0,
@@ -20,7 +20,7 @@ enum OmniHashcashAlgorithmType : uint8
 }
 
 [csharp_struct]
-small message OmniHash {
+message OmniHash : small {
     AlgorithmType: OmniHashAlgorithmType,
     Value: memory(256),
 }

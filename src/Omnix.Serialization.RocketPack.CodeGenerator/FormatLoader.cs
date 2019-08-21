@@ -6,43 +6,38 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
 {
     public static class FormatLoader
     {
-        public static (RocketPackDefinition definition, IEnumerable<RocketPackDefinition> externalDefinitions) Load(string definitionFilePath)
+        private static RocketPackDefinition LoadFile(string definitionFilePath)
         {
-            var usingPathList = new List<string>();
-            var loadedPathSet = new HashSet<string>();
-            usingPathList.Add(definitionFilePath);
-            loadedPathSet.Add(definitionFilePath);
+            using var reader = new StreamReader(definitionFilePath);
+            return FormatParser.ParseV1_0(reader.ReadToEnd());
+        }
 
-            var results = new List<RocketPackDefinition>();
+        public static (RocketPackDefinition definition, IEnumerable<RocketPackDefinition> includedDefinitions) Load(string sourcePath, IEnumerable<string>? includeDirectoryPathList = null)
+        {
+            var definition = LoadFile(sourcePath);
 
-            for (int i = 0; i < usingPathList.Count; i++)
+            var includedDefinitions = new List<RocketPackDefinition>();
+
+            if (includeDirectoryPathList != null)
             {
-                var filePath = usingPathList[i];
-                var basePath = Path.GetDirectoryName(filePath);
-                if (basePath is null) continue;
-
-                RocketPackDefinition tempDefinition;
-
-                using (var reader = new StreamReader(filePath))
+                foreach (var directoryPath in includeDirectoryPathList)
                 {
-                    tempDefinition = FormatParser.ParseV1_0(reader.ReadToEnd());
-                    results.Add(tempDefinition);
-                }
-
-                foreach (var usingInfo in tempDefinition.Usings)
-                {
-                    var targetPath = Path.Combine(basePath, usingInfo.Path);
-
-                    if (!loadedPathSet.Add(targetPath))
+                    foreach (var path in Directory.GetFiles(directoryPath))
                     {
-                        continue;
-                    }
+                        var externalDefinition = LoadFile(path);
 
-                    usingPathList.Add(targetPath);
+                        // SourceでUsingされていない名前空間の定義は読み込まない。
+                        if (!definition.Usings.Any(n => n.Name == externalDefinition.Namespace.Name))
+                        {
+                            continue;
+                        }
+
+                        includedDefinitions.Add(externalDefinition);
+                    }
                 }
             }
 
-            return (results[0], results.Skip(1));
+            return (definition, includedDefinitions);
         }
     }
 }

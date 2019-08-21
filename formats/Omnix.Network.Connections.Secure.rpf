@@ -1,8 +1,7 @@
 syntax = v1.0;
 
-using "Omnix.Algorithms.Cryptography.rpf";
-
-option csharp_namespace = "Omnix.Network.Connections.Secure";
+using "Omnix.Algorithms.Cryptography";
+namespace "Omnix.Network.Connections.Secure";
 
 enum OmniSecureConnectionType : uint8 {
     Connect = 0,

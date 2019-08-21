@@ -1,6 +1,6 @@
 syntax = v1.0;
 
-option csharp_namespace = "FormatterBenchmarks";
+namespace "FormatterBenchmarks";
 option csharp_access_level = "internal";
 
 message RocketPack_BytesElementsList {

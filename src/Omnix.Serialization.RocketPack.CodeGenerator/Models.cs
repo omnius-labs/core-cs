@@ -1,20 +1,23 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 
 namespace Omnix.Serialization.RocketPack.CodeGenerator
 {
     public sealed class RocketPackDefinition
     {
-        public RocketPackDefinition(IEnumerable<UsingDefinition> usings, IEnumerable<OptionDefinition> options, IEnumerable<EnumDefinition> enums, IEnumerable<MessageDefinition> messages)
+        public RocketPackDefinition(IEnumerable<UsingDefinition> usings, NamespaceDefinition @namespace, IEnumerable<OptionDefinition> options, IEnumerable<EnumDefinition> enums, IEnumerable<MessageDefinition> messages)
         {
             this.Usings = usings?.ToList() ?? throw new ArgumentNullException(nameof(usings));
+            this.Namespace = @namespace ?? throw new ArgumentNullException(nameof(@namespace));
             this.Options = options?.ToList() ?? throw new ArgumentNullException(nameof(options));
             this.Enums = enums?.ToList() ?? throw new ArgumentNullException(nameof(enums));
             this.Messages = messages?.ToList() ?? throw new ArgumentNullException(nameof(messages));
         }
 
         public IList<UsingDefinition> Usings { get; }
+        public NamespaceDefinition Namespace { get; }
         public IList<OptionDefinition> Options { get; }
         public IList<EnumDefinition> Enums { get; }
         public IList<MessageDefinition> Messages { get; }
@@ -22,12 +25,22 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
 
     public sealed class UsingDefinition
     {
-        public UsingDefinition(string path)
+        public UsingDefinition(string name)
         {
-            this.Path = path ?? throw new ArgumentNullException(nameof(path));
+            this.Name = name ?? throw new ArgumentNullException(nameof(name));
         }
 
-        public string Path { get; }
+        public string Name { get; }
+    }
+
+    public sealed class NamespaceDefinition
+    {
+        public NamespaceDefinition(string name)
+        {
+            this.Name = name ?? throw new ArgumentNullException(nameof(name));
+        }
+
+        public string Name { get; }
     }
 
     public sealed class OptionDefinition
@@ -80,21 +93,21 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
 
     public sealed class MessageDefinition
     {
-        public MessageDefinition(IEnumerable<string> attributes, MessageFormatType formatType, string name, IEnumerable<MessageElement> elements)
+        public MessageDefinition(IEnumerable<string> attributes, string name, MessageFormatType formatType, IEnumerable<MessageElement> elements)
         {
             this.Attributes = attributes?.ToList() ?? throw new ArgumentNullException(nameof(attributes));
-            this.FormatType = formatType;
             this.Name = name ?? throw new ArgumentNullException(nameof(name));
+            this.FormatType = formatType;
             this.Elements = elements?.ToList() ?? throw new ArgumentNullException(nameof(elements));
         }
 
         public IList<string> Attributes { get; }
-        public MessageFormatType FormatType { get; }
         public string Name { get; }
+        public MessageFormatType FormatType { get; }
         public IList<MessageElement> Elements { get; }
 
-        public bool IsClass { get; set; }
-        public bool IsStruct { get; set; }
+        public bool IsClass => this.Attributes.Contains("csharp_class");
+        public bool IsStruct => this.Attributes.Contains("csharp_struct");
     }
 
     public sealed class MessageElement
@@ -115,24 +128,27 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
 
     public abstract class TypeBase
     {
-        public TypeBase(bool isOptional)
+        public TypeBase(bool isOptional, IDictionary<string, string> parameters)
         {
             this.IsOptional = isOptional;
+            if (parameters is null) throw new ArgumentNullException(nameof(parameters));
+            this.Parameters = new ReadOnlyDictionary<string, string>(parameters);
         }
 
         public bool IsOptional { get; }
+        public IReadOnlyDictionary<string, string> Parameters { get; }
     }
 
     public sealed class BoolType : TypeBase
     {
-        public BoolType(bool isOptional) : base(isOptional)
+        public BoolType(bool isOptional, IDictionary<string, string> parameters) : base(isOptional, parameters)
         {
         }
     }
 
     public sealed class IntType : TypeBase
     {
-        public IntType(bool isSigned, int size, bool isOptional) : base(isOptional)
+        public IntType(bool isSigned, int size, bool isOptional, IDictionary<string, string> parameters) : base(isOptional, parameters)
         {
             this.IsSigned = isSigned;
             this.Size = size;
@@ -144,7 +160,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
 
     public sealed class FloatType : TypeBase
     {
-        public FloatType(int size, bool isOptional) : base(isOptional)
+        public FloatType(int size, bool isOptional, IDictionary<string, string> parameters) : base(isOptional, parameters)
         {
             this.Size = size;
         }
@@ -154,62 +170,57 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
 
     public sealed class StringType : TypeBase
     {
-        public StringType(int maxLength, bool isOptional) : base(isOptional)
+        public StringType(bool isOptional, IDictionary<string, string> parameters) : base(isOptional, parameters)
         {
-            this.MaxLength = maxLength;
         }
 
-        public int MaxLength { get; }
+        public int MaxLength => int.Parse(this.Parameters["capacity"]);
     }
 
     public sealed class TimestampType : TypeBase
     {
-        public TimestampType(bool isOptional) : base(isOptional)
+        public TimestampType(bool isOptional, IDictionary<string, string> parameters) : base(isOptional, parameters)
         {
         }
     }
 
-    public sealed class MemoryType : TypeBase
+    public sealed class BytesType : TypeBase
     {
-        public MemoryType(int maxLength, bool isOptional) : base(isOptional)
+        public BytesType(bool isOptional, IDictionary<string, string> parameters) : base(isOptional, parameters)
         {
-            this.MaxLength = maxLength;
         }
 
-        public int MaxLength { get; }
-
-        public bool IsUseMemoryPool { get; set; }
+        public int MaxLength => int.Parse(this.Parameters["capacity"]);
+        public bool IsUseMemoryPool => bool.Parse(this.Parameters["recyclable"]);
     }
 
-    public sealed class ListType : TypeBase
+    public sealed class VectorType : TypeBase
     {
-        public ListType(TypeBase elementType, int maxLength, bool isOptional) : base(isOptional)
+        public VectorType(TypeBase elementType,  bool isOptional, IDictionary<string, string> parameters) : base(isOptional, parameters)
         {
             this.ElementType = elementType ?? throw new ArgumentNullException(nameof(elementType));
-            this.MaxLength = maxLength;
         }
 
         public TypeBase ElementType { get; }
-        public int MaxLength { get; }
+        public int MaxLength => int.Parse(this.Parameters["capacity"]);
     }
 
     public sealed class MapType : TypeBase
     {
-        public MapType(TypeBase keyType, TypeBase valueType, int maxLength, bool isOptional) : base(isOptional)
+        public MapType(TypeBase keyType, TypeBase valueType, bool isOptional, IDictionary<string, string> parameters) : base(isOptional, parameters)
         {
             this.KeyType = keyType ?? throw new ArgumentNullException(nameof(keyType));
             this.ValueType = valueType ?? throw new ArgumentNullException(nameof(valueType));
-            this.MaxLength = maxLength;
         }
 
         public TypeBase KeyType { get; }
         public TypeBase ValueType { get; }
-        public int MaxLength { get; }
+        public int MaxLength => int.Parse(this.Parameters["capacity"]);
     }
 
     public sealed class CustomType : TypeBase
     {
-        public CustomType(string typeName, bool isOptional) : base(isOptional)
+        public CustomType(string typeName, bool isOptional, IDictionary<string, string> parameters) : base(isOptional, parameters)
         {
             this.TypeName = typeName ?? throw new ArgumentNullException(nameof(typeName));
         }

@@ -1,6 +1,6 @@
 ﻿syntax = v1.0;
 
-option csharp_namespace = "Omnix.Remoting";
+namespace "Omnix.Remoting";
 
 message OmniRpcErrorMessage {
     Type: string(8192) = 0,
