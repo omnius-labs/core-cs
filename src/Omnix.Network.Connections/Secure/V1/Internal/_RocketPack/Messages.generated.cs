@@ -137,7 +137,7 @@ namespace Omnix.Network.Connections.Secure.V1.Internal
 
             return true;
         }
-        public override int GetHashCode() => ___hashCode.Value!;
+        public override int GetHashCode() => ___hashCode.Value;
 
         private sealed class ___CustomFormatter : global::Omnix.Serialization.RocketPack.IRocketPackFormatter<ProfileMessage>
         {
@@ -364,7 +364,7 @@ namespace Omnix.Network.Connections.Secure.V1.Internal
 
             return true;
         }
-        public override int GetHashCode() => ___hashCode.Value!;
+        public override int GetHashCode() => ___hashCode.Value;
 
         private sealed class ___CustomFormatter : global::Omnix.Serialization.RocketPack.IRocketPackFormatter<VerificationMessage>
         {
@@ -500,7 +500,7 @@ namespace Omnix.Network.Connections.Secure.V1.Internal
 
             return true;
         }
-        public override int GetHashCode() => ___hashCode.Value!;
+        public override int GetHashCode() => ___hashCode.Value;
 
         private sealed class ___CustomFormatter : global::Omnix.Serialization.RocketPack.IRocketPackFormatter<AuthenticationMessage>
         {

@@ -1,40 +1,30 @@
 syntax = v1.0;
 
-option csharp_namespace = "FormatterBenchmarks";
+namespace "FormatterBenchmarks.Internal";
 option csharp_access_level = "internal";
 
-message RocketPack_BytesElementsList {
-    List: vector<RocketPack_BytesElements>(1048576) = 0,
+table RocketPack_BytesElementsList {
+    List: vector<RocketPack_BytesElements>(capacity: 1048576) = 0,
 }
 
-small message RocketPack_BytesElements {
-    [csharp_recyclable]
-    X0: memory(1048576),
-    [csharp_recyclable]
-    X1: memory(1048576),
-    [csharp_recyclable]
-    X2: memory(1048576),
-    [csharp_recyclable]
-    X3: memory(1048576),
-    [csharp_recyclable]
-    X4: memory(1048576),
-    [csharp_recyclable]
-    X5: memory(1048576),
-    [csharp_recyclable]
-    X6: memory(1048576),
-    [csharp_recyclable]
-    X7: memory(1048576),
-    [csharp_recyclable]
-    X8: memory(1048576),
-    [csharp_recyclable]
-    X9: memory(1048576),
+struct RocketPack_BytesElements {
+    X0: bytes(capacity: 1048576, recyclable: true),
+    X1: bytes(capacity: 1048576, recyclable: true),
+    X2: bytes(capacity: 1048576, recyclable: true),
+    X3: bytes(capacity: 1048576, recyclable: true),
+    X4: bytes(capacity: 1048576, recyclable: true),
+    X5: bytes(capacity: 1048576, recyclable: true),
+    X6: bytes(capacity: 1048576, recyclable: true),
+    X7: bytes(capacity: 1048576, recyclable: true),
+    X8: bytes(capacity: 1048576, recyclable: true),
+    X9: bytes(capacity: 1048576, recyclable: true),
 }
 
-message RocketPack_IntElementsList {
-    List: vector<RocketPack_IntElements>(1048576) = 0,
+table RocketPack_IntElementsList {
+    List: vector<RocketPack_IntElements>(capacity: 1048576) = 0,
 }
 
-small message RocketPack_IntElements {
+struct RocketPack_IntElements {
     X0: uint32,
     X1: uint32,
     X2: uint32,
@@ -47,19 +37,19 @@ small message RocketPack_IntElements {
     X9: uint32,
 }
 
-message RocketPack_StringElementsList {
-    List: vector<RocketPack_StringElements>(1048576) = 0,
+table RocketPack_StringElementsList {
+    List: vector<RocketPack_StringElements>(capacity: 1048576) = 0,
 }
 
-small message RocketPack_StringElements {
-    X0: string(8192),
-    X1: string(8192),
-    X2: string(8192),
-    X3: string(8192),
-    X4: string(8192),
-    X5: string(8192),
-    X6: string(8192),
-    X7: string(8192),
-    X8: string(8192),
-    X9: string(8192),
+struct RocketPack_StringElements {
+    X0: string(capacity: 8192),
+    X1: string(capacity: 8192),
+    X2: string(capacity: 8192),
+    X3: string(capacity: 8192),
+    X4: string(capacity: 8192),
+    X5: string(capacity: 8192),
+    X6: string(capacity: 8192),
+    X7: string(capacity: 8192),
+    X8: string(capacity: 8192),
+    X9: string(capacity: 8192),
 }

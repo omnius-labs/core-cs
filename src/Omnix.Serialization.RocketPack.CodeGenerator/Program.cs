@@ -1,49 +1,58 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
+using CommandLine;
 
 namespace Omnix.Serialization.RocketPack.CodeGenerator
 {
-    internal class Program
+    class Options
     {
-        private static void Main(string[] args)
+        [Option('i', "include", Required = false, HelpText = "include directory path.")]
+        public IEnumerable<string>? Include { get; set; }
+
+        [Option('o', "output", HelpText = "output file path.")]
+        public string? Output { get; set; }
+
+        [Value(0)]
+        public string? Source { get; set; }
+    }
+
+    public class Program
+    {
+        static void Main(string[] args)
         {
-            try
+            var result = Parser.Default.ParseArguments<Options>(args);
+
+            if (result.Tag == ParserResultType.Parsed)
             {
-                if (args.Length < 2)
+                // パース成功時
+                var parsed = (Parsed<Options>)result;
+
+                // 読み込み
+                var (rootDefinition, includedDefinitions) = FormatLoader.Load(parsed.Value.Source, parsed.Value.Include);
+
+                // 出力先フォルダが存在しない場合は作成する
                 {
-                    Console.WriteLine(@"Usage: Omnix.Serialization.RocketPack.CodeGenerator.exe [DefinitionFilePath] [DestinationFilePath]");
-                    return;
+                    var destinationParentDirectoryPath = Path.GetDirectoryName(parsed.Value.Output);
+
+                    if (!Directory.Exists(destinationParentDirectoryPath))
+                    {
+                        Directory.CreateDirectory(destinationParentDirectoryPath);
+                    }
                 }
 
-                string definitionFilePath = args[0];
-                string destinationFilePath = args[1];
-
-                Run(definitionFilePath, destinationFilePath);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.ToString());
-            }
-        }
-
-        private static void Run(string definitionFilePath, string destinationFilePath)
-        {
-            var (definition, externalDefinitions) = FormatLoader.Load(definitionFilePath);
-
-            // 出力先フォルダが存在しない場合は作成する
-            {
-                var destinationParentDirectoryPath = Path.GetDirectoryName(destinationFilePath);
-
-                if (!Directory.Exists(destinationParentDirectoryPath))
+                using (var writer = new StreamWriter(parsed.Value.Output, false, new UTF8Encoding(false)))
                 {
-                    Directory.CreateDirectory(destinationParentDirectoryPath);
+                    writer.Write(CodeGenerator.Generate(rootDefinition, includedDefinitions));
                 }
             }
-
-            using (var writer = new StreamWriter(destinationFilePath, false, new UTF8Encoding(false)))
+            else
             {
-                writer.Write(CodeGenerator.Generate(definition, externalDefinitions));
+                // パース失敗時
+                return;
             }
         }
     }

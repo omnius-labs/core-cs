@@ -1,6 +1,6 @@
 ﻿syntax = v1.0;
 
-option csharp_namespace = "Omnix.Algorithms.Cryptography";
+namespace "Omnix.Algorithms.Cryptography";
 
 enum OmniHashAlgorithmType : uint8 {
     Sha2_256 = 0,
@@ -20,50 +20,50 @@ enum OmniHashcashAlgorithmType : uint8
 }
 
 [csharp_struct]
-small message OmniHash {
+struct OmniHash {
     AlgorithmType: OmniHashAlgorithmType,
-    Value: memory(256),
+    Value: bytes(capacity: 256),
 }
 
-message OmniAgreement {
+table OmniAgreement {
     CreationTime: timestamp = 0,
     AlgorithmType: OmniAgreementAlgorithmType = 1,
-    PublicKey: memory(8192) = 2,
-    PrivateKey: memory(8192) = 3,
+    PublicKey: bytes(capacity: 8192) = 2,
+    PrivateKey: bytes(capacity: 8192) = 3,
 }
 
-message OmniAgreementPublicKey {
+table OmniAgreementPublicKey {
     CreationTime: timestamp = 0,
     AlgorithmType: OmniAgreementAlgorithmType = 1,
-    PublicKey: memory(8192) = 2,
+    PublicKey: bytes(capacity: 8192) = 2,
 }
 
-message OmniAgreementPrivateKey {
+table OmniAgreementPrivateKey {
     CreationTime: timestamp = 0,
     AlgorithmType: OmniAgreementAlgorithmType = 1,
-    PrivateKey: memory(8192) = 2,
+    PrivateKey: bytes(capacity: 8192) = 2,
 }
 
-message OmniDigitalSignature {
-    Name: string(32) = 0,
+table OmniDigitalSignature {
+    Name: string(capacity: 32) = 0,
     AlgorithmType: OmniDigitalSignatureAlgorithmType = 1,
-    PublicKey: memory(8192) = 2,
-    PrivateKey: memory(8192) = 3,
+    PublicKey: bytes(capacity: 8192) = 2,
+    PrivateKey: bytes(capacity: 8192) = 3,
 }
 
-message OmniCertificate {
-    Name: string(32) = 0,
+table OmniCertificate {
+    Name: string(capacity: 32) = 0,
     AlgorithmType: OmniDigitalSignatureAlgorithmType = 1,
-    PublicKey: memory(8192) = 2,
-    Value: memory(8192) = 3,
+    PublicKey: bytes(capacity: 8192) = 2,
+    Value: bytes(capacity: 8192) = 3,
 }
 
-message OmniSignature {
-    Name: string(32) = 0,
+table OmniSignature {
+    Name: string(capacity: 32) = 0,
     Hash: OmniHash = 1,
 }
 
-message OmniHashcash {
+table OmniHashcash {
     AlgorithmType: OmniHashcashAlgorithmType = 0,
-    Key: memory(32) = 1,
+    Key: bytes(capacity: 32) = 1,
 }
