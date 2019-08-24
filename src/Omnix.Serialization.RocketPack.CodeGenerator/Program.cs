@@ -22,7 +22,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
 
     public class Program
     {
-        static async Task Main(string[] args)
+        static void Main(string[] args)
         {
             var result = Parser.Default.ParseArguments<Options>(args);
 
@@ -32,7 +32,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
                 var parsed = (Parsed<Options>)result;
 
                 // 読み込み
-                var (definition, includedDefinitions) = FormatLoader.Load(parsed.Value.Source);
+                var (rootDefinition, includedDefinitions) = FormatLoader.Load(parsed.Value.Source, parsed.Value.Include);
 
                 // 出力先フォルダが存在しない場合は作成する
                 {
@@ -46,7 +46,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
 
                 using (var writer = new StreamWriter(parsed.Value.Output, false, new UTF8Encoding(false)))
                 {
-                    writer.Write(CodeGenerator.Generate(definition, includedDefinitions));
+                    writer.Write(CodeGenerator.Generate(rootDefinition, includedDefinitions));
                 }
             }
             else

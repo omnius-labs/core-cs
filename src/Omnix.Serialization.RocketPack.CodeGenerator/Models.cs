@@ -7,40 +7,40 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
 {
     public sealed class RocketPackDefinition
     {
-        public RocketPackDefinition(IEnumerable<UsingDefinition> usings, NamespaceDefinition @namespace, IEnumerable<OptionDefinition> options, IEnumerable<EnumDefinition> enums, IEnumerable<MessageDefinition> messages)
+        public RocketPackDefinition(IEnumerable<UsingDefinition> usings, NamespaceDefinition @namespace, IEnumerable<OptionDefinition> options, IEnumerable<EnumDefinition> enums, IEnumerable<ObjectDefinition> objects)
         {
             this.Usings = usings?.ToList() ?? throw new ArgumentNullException(nameof(usings));
             this.Namespace = @namespace ?? throw new ArgumentNullException(nameof(@namespace));
             this.Options = options?.ToList() ?? throw new ArgumentNullException(nameof(options));
             this.Enums = enums?.ToList() ?? throw new ArgumentNullException(nameof(enums));
-            this.Messages = messages?.ToList() ?? throw new ArgumentNullException(nameof(messages));
+            this.Objects = objects?.ToList() ?? throw new ArgumentNullException(nameof(objects));
         }
 
         public IList<UsingDefinition> Usings { get; }
         public NamespaceDefinition Namespace { get; }
         public IList<OptionDefinition> Options { get; }
         public IList<EnumDefinition> Enums { get; }
-        public IList<MessageDefinition> Messages { get; }
+        public IList<ObjectDefinition> Objects { get; }
     }
 
     public sealed class UsingDefinition
     {
-        public UsingDefinition(string name)
+        public UsingDefinition(string targetNamespace)
         {
-            this.Name = name ?? throw new ArgumentNullException(nameof(name));
+            this.TargetNamespace = targetNamespace ?? throw new ArgumentNullException(nameof(targetNamespace));
         }
 
-        public string Name { get; }
+        public string TargetNamespace { get; }
     }
 
     public sealed class NamespaceDefinition
     {
-        public NamespaceDefinition(string name)
+        public NamespaceDefinition(string value)
         {
-            this.Name = name ?? throw new ArgumentNullException(nameof(name));
+            this.Value = value ?? throw new ArgumentNullException(nameof(value));
         }
 
-        public string Name { get; }
+        public string Value { get; }
     }
 
     public sealed class OptionDefinition
@@ -87,13 +87,13 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
 
     public enum MessageFormatType
     {
-        Small,
-        Medium,
+        Struct,
+        Table,
     }
 
-    public sealed class MessageDefinition
+    public sealed class ObjectDefinition
     {
-        public MessageDefinition(IEnumerable<string> attributes, string name, MessageFormatType formatType, IEnumerable<MessageElement> elements)
+        public ObjectDefinition(IEnumerable<string> attributes, string name, MessageFormatType formatType, IEnumerable<ObjectElement> elements)
         {
             this.Attributes = attributes?.ToList() ?? throw new ArgumentNullException(nameof(attributes));
             this.Name = name ?? throw new ArgumentNullException(nameof(name));
@@ -104,15 +104,15 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
         public IList<string> Attributes { get; }
         public string Name { get; }
         public MessageFormatType FormatType { get; }
-        public IList<MessageElement> Elements { get; }
+        public IList<ObjectElement> Elements { get; }
 
-        public bool IsClass => this.Attributes.Contains("csharp_class");
+        public bool IsClass => !this.IsStruct;
         public bool IsStruct => this.Attributes.Contains("csharp_struct");
     }
 
-    public sealed class MessageElement
+    public sealed class ObjectElement
     {
-        public MessageElement(IEnumerable<string> attributes, string name, TypeBase type, int? id)
+        public ObjectElement(IEnumerable<string> attributes, string name, TypeBase type, int? id)
         {
             this.Attributes = attributes?.ToList() ?? throw new ArgumentNullException(nameof(attributes));
             this.Name = name ?? throw new ArgumentNullException(nameof(name));
@@ -174,7 +174,15 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
         {
         }
 
-        public int MaxLength => int.Parse(this.Parameters["capacity"]);
+        public int MaxLength
+        {
+            get
+            {
+                var text = this.Parameters.GetValueOrDefault("capacity");
+                if (text is null) return int.MaxValue;
+                return int.Parse(text);
+            }
+        }
     }
 
     public sealed class TimestampType : TypeBase
@@ -190,8 +198,25 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
         {
         }
 
-        public int MaxLength => int.Parse(this.Parameters["capacity"]);
-        public bool IsUseMemoryPool => bool.Parse(this.Parameters["recyclable"]);
+        public int MaxLength
+        {
+            get
+            {
+                var text = this.Parameters.GetValueOrDefault("capacity");
+                if (text is null) return int.MaxValue;
+                return int.Parse(text);
+            }
+        }
+
+        public bool IsUseMemoryPool
+        {
+            get
+            {
+                var text = this.Parameters.GetValueOrDefault("recyclable");
+                if (text is null) return false;
+                return bool.Parse(text);
+            }
+        }
     }
 
     public sealed class VectorType : TypeBase
@@ -202,7 +227,16 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
         }
 
         public TypeBase ElementType { get; }
-        public int MaxLength => int.Parse(this.Parameters["capacity"]);
+
+        public int MaxLength
+        {
+            get
+            {
+                var text = this.Parameters.GetValueOrDefault("capacity");
+                if (text is null) return int.MaxValue;
+                return int.Parse(text);
+            }
+        }
     }
 
     public sealed class MapType : TypeBase
@@ -215,7 +249,16 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
 
         public TypeBase KeyType { get; }
         public TypeBase ValueType { get; }
-        public int MaxLength => int.Parse(this.Parameters["capacity"]);
+
+        public int MaxLength
+        {
+            get
+            {
+                var text = this.Parameters.GetValueOrDefault("capacity");
+                if (text is null) return int.MaxValue;
+                return int.Parse(text);
+            }
+        }
     }
 
     public sealed class CustomType : TypeBase

@@ -3,6 +3,6 @@
 namespace "Omnix.Configuration.Internal";
 
 [csharp_struct]
-message SettingsDatabaseVersion : small {
+struct SettingsDatabaseVersion {
     Value: uint32,
 }

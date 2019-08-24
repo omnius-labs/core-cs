@@ -12,32 +12,51 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
             return FormatParser.ParseV1_0(reader.ReadToEnd());
         }
 
-        public static (RocketPackDefinition definition, IEnumerable<RocketPackDefinition> includedDefinitions) Load(string sourcePath, IEnumerable<string>? includeDirectoryPathList = null)
+        public static (RocketPackDefinition rootDefinition, IEnumerable<RocketPackDefinition> includedDefinitions) Load(string sourcePath, IEnumerable<string>? includeDirectoryPathList = null)
         {
-            var definition = LoadFile(sourcePath);
+            RocketPackDefinition rootDefinition;
+            var definitionMap = new Dictionary<string, RocketPackDefinition>();
 
-            var includedDefinitions = new List<RocketPackDefinition>();
+            // 変換対象の定義ファイル
+            {
+                var definition = LoadFile(sourcePath);
+                definitionMap[definition.Namespace.Value] = definition;
+                rootDefinition = definition;
+            }
 
+            // 変換対象の定義ファイルがUsing可能な定義ファイル群
             if (includeDirectoryPathList != null)
             {
                 foreach (var directoryPath in includeDirectoryPathList)
                 {
-                    foreach (var path in Directory.GetFiles(directoryPath))
+                    foreach (var path in Directory.GetFiles(directoryPath, "*", SearchOption.AllDirectories))
                     {
-                        var externalDefinition = LoadFile(path);
-
-                        // SourceでUsingされていない名前空間の定義は読み込まない。
-                        if (!definition.Usings.Any(n => n.Name == externalDefinition.Namespace.Name))
-                        {
-                            continue;
-                        }
-
-                        includedDefinitions.Add(externalDefinition);
+                        var definition = LoadFile(path);
+                        definitionMap[definition.Namespace.Value] = definition;
                     }
                 }
             }
 
-            return (definition, includedDefinitions);
+            var includedDefinitions = new List<RocketPackDefinition>();
+            includedDefinitions.Add(rootDefinition);
+
+            var loadedNamespaceSet = new HashSet<string>();
+
+            for (int i = 0; i < includedDefinitions.Count; i++)
+            {
+                // 既に読み込み済みの場合は読み込まない
+                if (!loadedNamespaceSet.Add(includedDefinitions[i].Namespace.Value))
+                {
+                    continue;
+                }
+
+                foreach(var @using in includedDefinitions[i].Usings)
+                {
+                    includedDefinitions.Add(definitionMap[@using.TargetNamespace]);
+                }
+            }
+
+            return (rootDefinition, includedDefinitions.Skip(1));
         }
     }
 }
