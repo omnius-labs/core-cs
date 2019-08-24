@@ -6,43 +6,57 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
 {
     public static class FormatLoader
     {
-        public static (RocketPackDefinition definition, IEnumerable<RocketPackDefinition> externalDefinitions) Load(string definitionFilePath)
+        private static RocketPackDefinition LoadFile(string definitionFilePath)
         {
-            var usingPathList = new List<string>();
-            var loadedPathSet = new HashSet<string>();
-            usingPathList.Add(definitionFilePath);
-            loadedPathSet.Add(definitionFilePath);
+            using var reader = new StreamReader(definitionFilePath);
+            return FormatParser.ParseV1_0(reader.ReadToEnd());
+        }
 
-            var results = new List<RocketPackDefinition>();
+        public static (RocketPackDefinition rootDefinition, IEnumerable<RocketPackDefinition> includedDefinitions) Load(string sourcePath, IEnumerable<string>? includeDirectoryPathList = null)
+        {
+            RocketPackDefinition rootDefinition;
+            var definitionMap = new Dictionary<string, RocketPackDefinition>();
 
-            for (int i = 0; i < usingPathList.Count; i++)
+            // 変換対象の定義ファイル
             {
-                var filePath = usingPathList[i];
-                var basePath = Path.GetDirectoryName(filePath);
-                if (basePath is null) continue;
+                var definition = LoadFile(sourcePath);
+                definitionMap[definition.Namespace.Value] = definition;
+                rootDefinition = definition;
+            }
 
-                RocketPackDefinition tempDefinition;
-
-                using (var reader = new StreamReader(filePath))
+            // 変換対象の定義ファイルがUsing可能な定義ファイル群
+            if (includeDirectoryPathList != null)
+            {
+                foreach (var directoryPath in includeDirectoryPathList)
                 {
-                    tempDefinition = FormatParser.ParseV1_0(reader.ReadToEnd());
-                    results.Add(tempDefinition);
-                }
-
-                foreach (var usingInfo in tempDefinition.Usings)
-                {
-                    var targetPath = Path.Combine(basePath, usingInfo.Path);
-
-                    if (!loadedPathSet.Add(targetPath))
+                    foreach (var path in Directory.GetFiles(directoryPath, "*", SearchOption.AllDirectories))
                     {
-                        continue;
+                        var definition = LoadFile(path);
+                        definitionMap[definition.Namespace.Value] = definition;
                     }
-
-                    usingPathList.Add(targetPath);
                 }
             }
 
-            return (results[0], results.Skip(1));
+            var includedDefinitions = new List<RocketPackDefinition>();
+            includedDefinitions.Add(rootDefinition);
+
+            var loadedNamespaceSet = new HashSet<string>();
+
+            for (int i = 0; i < includedDefinitions.Count; i++)
+            {
+                // 既に読み込み済みの場合は読み込まない
+                if (!loadedNamespaceSet.Add(includedDefinitions[i].Namespace.Value))
+                {
+                    continue;
+                }
+
+                foreach(var @using in includedDefinitions[i].Usings)
+                {
+                    includedDefinitions.Add(definitionMap[@using.TargetNamespace]);
+                }
+            }
+
+            return (rootDefinition, includedDefinitions.Skip(1));
         }
     }
 }

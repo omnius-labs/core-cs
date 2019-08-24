@@ -67,7 +67,7 @@ namespace Omnix.Network
 
             return true;
         }
-        public override int GetHashCode() => ___hashCode.Value!;
+        public override int GetHashCode() => ___hashCode.Value;
 
         private sealed class ___CustomFormatter : global::Omnix.Serialization.RocketPack.IRocketPackFormatter<OmniAddress>
         {

@@ -1,8 +1,8 @@
 ﻿syntax = v1.0;
 
-option csharp_namespace = "Omnix.Configuration.Internal";
+namespace "Omnix.Configuration.Internal";
 
 [csharp_struct]
-small message SettingsDatabaseVersion {
+struct SettingsDatabaseVersion {
     Value: uint32,
 }

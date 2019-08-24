@@ -73,7 +73,7 @@ namespace Omnix.Network.Connections.Multiplexer.V1.Internal
 
             return true;
         }
-        public override int GetHashCode() => ___hashCode.Value!;
+        public override int GetHashCode() => ___hashCode.Value;
 
         private sealed class ___CustomFormatter : global::Omnix.Serialization.RocketPack.IRocketPackFormatter<ProfileMessage>
         {
@@ -197,7 +197,7 @@ namespace Omnix.Network.Connections.Multiplexer.V1.Internal
 
             return true;
         }
-        public override int GetHashCode() => ___hashCode.Value!;
+        public override int GetHashCode() => ___hashCode.Value;
 
         private sealed class ___CustomFormatter : global::Omnix.Serialization.RocketPack.IRocketPackFormatter<SessionConnectMessage>
         {
@@ -306,7 +306,7 @@ namespace Omnix.Network.Connections.Multiplexer.V1.Internal
 
             return true;
         }
-        public override int GetHashCode() => ___hashCode.Value!;
+        public override int GetHashCode() => ___hashCode.Value;
 
         private sealed class ___CustomFormatter : global::Omnix.Serialization.RocketPack.IRocketPackFormatter<SessionAcceptMessage>
         {
@@ -419,7 +419,7 @@ namespace Omnix.Network.Connections.Multiplexer.V1.Internal
 
             return true;
         }
-        public override int GetHashCode() => ___hashCode.Value!;
+        public override int GetHashCode() => ___hashCode.Value;
 
         private sealed class ___CustomFormatter : global::Omnix.Serialization.RocketPack.IRocketPackFormatter<SessionUpdateWindowSizeMessage>
         {
@@ -557,7 +557,7 @@ namespace Omnix.Network.Connections.Multiplexer.V1.Internal
 
             return true;
         }
-        public override int GetHashCode() => ___hashCode.Value!;
+        public override int GetHashCode() => ___hashCode.Value;
 
         public void Dispose()
         {
@@ -701,7 +701,7 @@ namespace Omnix.Network.Connections.Multiplexer.V1.Internal
 
             return true;
         }
-        public override int GetHashCode() => ___hashCode.Value!;
+        public override int GetHashCode() => ___hashCode.Value;
 
         private sealed class ___CustomFormatter : global::Omnix.Serialization.RocketPack.IRocketPackFormatter<SessionCloseMessage>
         {
@@ -814,7 +814,7 @@ namespace Omnix.Network.Connections.Multiplexer.V1.Internal
 
             return true;
         }
-        public override int GetHashCode() => ___hashCode.Value!;
+        public override int GetHashCode() => ___hashCode.Value;
 
         private sealed class ___CustomFormatter : global::Omnix.Serialization.RocketPack.IRocketPackFormatter<SessionErrorMessage>
         {

@@ -14,10 +14,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
             {
                 var hashSet = new HashSet<string>();
 
-                // ロードされた*.rpfファイルの名前空間をusingする
-                hashSet.UnionWith(externalDefinitions.SelectMany(n => n.Options.Where(m => m.Name == "csharp_namespace").Select(m => m.Value.Trim())));
-
-                var sortedList = hashSet.ToList();
+                var sortedList = definition.Usings.Select(n => n.TargetNamespace).ToList();
                 sortedList.Sort();
 
                 foreach (var name in sortedList)
@@ -31,13 +28,13 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
             w.WriteLine();
 
             // namespaceの宣言を行う。
-            w.WriteLine($"namespace {definition.Options.First(n => n.Name == "csharp_namespace").Value}");
+            w.WriteLine($"namespace {definition.Namespace.Value}");
             w.WriteLine("{");
 
             using (w.Indent())
             {
                 var enumWriter = new EnumWriter(definition);
-                var messageWriter = new MessageWriter(definition, externalDefinitions);
+                var objectWriter = new ObjectWriter(definition, externalDefinitions);
 
                 foreach (var enumInfo in definition.Enums)
                 {
@@ -45,9 +42,9 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
                     w.WriteLine();
                 }
 
-                foreach (var messageInfo in definition.Messages)
+                foreach (var messageInfo in definition.Objects)
                 {
-                    messageWriter.Write(w, messageInfo);
+                    objectWriter.Write(w, messageInfo);
                     w.WriteLine();
                 }
             }

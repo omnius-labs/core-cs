@@ -1,7 +1,7 @@
 
 #nullable enable
 
-namespace FormatterBenchmarks
+namespace FormatterBenchmarks.Internal
 {
     internal sealed partial class RocketPack_BytesElementsList : global::Omnix.Serialization.RocketPack.IRocketPackMessage<RocketPack_BytesElementsList>
     {
@@ -74,7 +74,7 @@ namespace FormatterBenchmarks
 
             return true;
         }
-        public override int GetHashCode() => ___hashCode.Value!;
+        public override int GetHashCode() => ___hashCode.Value;
 
         private sealed class ___CustomFormatter : global::Omnix.Serialization.RocketPack.IRocketPackFormatter<RocketPack_BytesElementsList>
         {
@@ -270,7 +270,7 @@ namespace FormatterBenchmarks
 
             return true;
         }
-        public override int GetHashCode() => ___hashCode.Value!;
+        public override int GetHashCode() => ___hashCode.Value;
 
         public void Dispose()
         {
@@ -425,7 +425,7 @@ namespace FormatterBenchmarks
 
             return true;
         }
-        public override int GetHashCode() => ___hashCode.Value!;
+        public override int GetHashCode() => ___hashCode.Value;
 
         private sealed class ___CustomFormatter : global::Omnix.Serialization.RocketPack.IRocketPackFormatter<RocketPack_IntElementsList>
         {
@@ -579,7 +579,7 @@ namespace FormatterBenchmarks
 
             return true;
         }
-        public override int GetHashCode() => ___hashCode.Value!;
+        public override int GetHashCode() => ___hashCode.Value;
 
         private sealed class ___CustomFormatter : global::Omnix.Serialization.RocketPack.IRocketPackFormatter<RocketPack_IntElements>
         {
@@ -720,7 +720,7 @@ namespace FormatterBenchmarks
 
             return true;
         }
-        public override int GetHashCode() => ___hashCode.Value!;
+        public override int GetHashCode() => ___hashCode.Value;
 
         private sealed class ___CustomFormatter : global::Omnix.Serialization.RocketPack.IRocketPackFormatter<RocketPack_StringElementsList>
         {
@@ -906,7 +906,7 @@ namespace FormatterBenchmarks
 
             return true;
         }
-        public override int GetHashCode() => ___hashCode.Value!;
+        public override int GetHashCode() => ___hashCode.Value;
 
         private sealed class ___CustomFormatter : global::Omnix.Serialization.RocketPack.IRocketPackFormatter<RocketPack_StringElements>
         {
