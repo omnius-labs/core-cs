@@ -36,6 +36,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
     {
         public static RocketPackDefinition ParseV1_0(string text)
         {
+            // 空白以外
             var notWhiteSpace = Sprache.Parse.Char(x => !char.IsWhiteSpace(x), "not whitespace");
 
             // 「"」で囲まれた文字列を抽出するパーサー
@@ -90,11 +91,12 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
                 from endTag in Parse.Char(']').TokenWithSkipComment()
                 select name;
 
-            // example: capacity: 1024
+            // example: capacity: 1024,
             var parametersElementParser =
                 from key in nameParser.TokenWithSkipComment().Text()
                 from colon in Parse.Char(':').TokenWithSkipComment()
                 from value in nameParser.TokenWithSkipComment().Text()
+                from comma in Parse.Char(',').Or(Parse.Return(',')).TokenWithSkipComment()
                 select (key, value);
 
             // example: (capacity: 1024, recyclable: true)
@@ -138,7 +140,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
                 select new TimestampType(isOptional, parameters);
 
             var memoryTypeParser =
-                from type in Parse.String("memory").TokenWithSkipComment()
+                from type in Parse.String("bytes").TokenWithSkipComment()
                 from isOptional in Parse.Char('?').Then(n => Parse.Return(true)).Or(Parse.Return(false)).TokenWithSkipComment()
                 from parameters in parametersParser.Or(Parse.Return(new Dictionary<string, string>())).TokenWithSkipComment()
                 select new BytesType(isOptional, parameters);
@@ -174,7 +176,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
                     .Or(timestampTypeParser)
                     .Or(memoryTypeParser)
                     .Or(customTypeParser).TokenWithSkipComment()
-                from comma_1 in Parse.Char(',').Or(Parse.Return(',')).TokenWithSkipComment()
+                from comma in Parse.Char(',').Or(Parse.Return(',')).TokenWithSkipComment()
                 from valueType in boolTypeParser
                     .Or<TypeBase>(intTypeParser)
                     .Or(floatTypeParser)
@@ -206,7 +208,7 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
                 from endTag in Parse.Char('}').TokenWithSkipComment()
                 select new EnumDefinition(attributes.ToList(), name, type, enumProperties.ToList());
 
-            var smallMessageElementParser =
+            var structMessageElementParser =
                 from attributes in attributeParser.Many().TokenWithSkipComment()
                 from name in nameParser.TokenWithSkipComment().Text()
                 from colon in Parse.Char(':').TokenWithSkipComment()
@@ -220,20 +222,18 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
                     .Or(mapTypeParser)
                     .Or(customTypeParser).TokenWithSkipComment()
                 from comma in Parse.Char(',').TokenWithSkipComment()
-                select new MessageElement(attributes.ToList(), name, type, null);
+                select new ObjectElement(attributes.ToList(), name, type, null);
 
-            var smallMessageParser =
+            var structMessageParser =
                 from attributes in attributeParser.Many().TokenWithSkipComment()
-                from keyword in Parse.String("message").TokenWithSkipComment()
+                from keyword in Parse.String("struct").TokenWithSkipComment()
                 from name in nameParser.TokenWithSkipComment().Text()
-                from colon in Parse.Char(':').TokenWithSkipComment()
-                from formatType in Parse.String("small").Then(n => Parse.Return(MessageFormatType.Small)).TokenWithSkipComment()
                 from beginTag in Parse.Char('{').TokenWithSkipComment()
-                from elements in smallMessageElementParser.Except(Parse.Char('}')).Many().TokenWithSkipComment()
+                from elements in structMessageElementParser.Except(Parse.Char('}')).Many().TokenWithSkipComment()
                 from endTag in Parse.Char('}').TokenWithSkipComment()
-                select new MessageDefinition(attributes.ToList(), name, formatType, elements.ToList());
+                select new ObjectDefinition(attributes.ToList(), name, MessageFormatType.Struct, elements.ToList());
 
-            var mediumMessageElementParser =
+            var tableMessageElementParser =
                 from attributes in attributeParser.Many().TokenWithSkipComment()
                 from name in nameParser.TokenWithSkipComment().Text()
                 from colon in Parse.Char(':').TokenWithSkipComment()
@@ -249,39 +249,37 @@ namespace Omnix.Serialization.RocketPack.CodeGenerator
                 from equal in Parse.Char('=').Or(Parse.Return('=')).TokenWithSkipComment()
                 from id in Parse.Decimal.TokenWithSkipComment()
                 from comma in Parse.Char(',').TokenWithSkipComment()
-                select new MessageElement(attributes.ToList(), name, type, int.Parse(id));
+                select new ObjectElement(attributes.ToList(), name, type, int.Parse(id));
 
-            var mediumMessageParser =
+            var tableMessageParser =
                 from attributes in attributeParser.Many().TokenWithSkipComment()
-                from keyword in Parse.String("message").TokenWithSkipComment()
+                from keyword in Parse.String("table").TokenWithSkipComment()
                 from name in nameParser.TokenWithSkipComment().Text()
-                from colon in Parse.Char(':').Or(Parse.Return(':')).TokenWithSkipComment()
-                from formatType in Parse.String("medium").Then(n => Parse.Return(MessageFormatType.Medium)).Or(Parse.Return(MessageFormatType.Medium))
                 from beginTag in Parse.Char('{').TokenWithSkipComment()
-                from elements in mediumMessageElementParser.Except(Parse.Char('}')).Many().TokenWithSkipComment()
+                from elements in tableMessageElementParser.Except(Parse.Char('}')).Many().TokenWithSkipComment()
                 from endTag in Parse.Char('}').TokenWithSkipComment()
-                select new MessageDefinition(attributes.ToList(), name, formatType, elements.ToList());
+                select new ObjectDefinition(attributes.ToList(), name, MessageFormatType.Table, elements.ToList());
 
             var formatParser =
                 from syntax in syntaxParser.Once().TokenWithSkipComment()
                 from usings in usingParser.Many().TokenWithSkipComment()
                 from @namespace in namespaceParser.Once().TokenWithSkipComment()
                 from options in optionParser.TokenWithSkipComment().Many()
-                from contents in enumParser.Or<object>(smallMessageParser).Or(mediumMessageParser).TokenWithSkipComment().Many()
+                from contents in enumParser.Or<object>(structMessageParser).Or(tableMessageParser).TokenWithSkipComment().Many()
                 select new RocketPackDefinition(
                     usings,
                     @namespace.First(),
                     options,
                     contents.OfType<EnumDefinition>().ToList(),
-                    contents.OfType<MessageDefinition>().ToList()
+                    contents.OfType<ObjectDefinition>().ToList()
                 );
 
             var result = formatParser.Parse(text);
 
-            // Small形式のメッセージはOptional型は認めない。
-            foreach (var messageInfo in result.Messages.Where(n => n.FormatType == MessageFormatType.Small))
+            // struct形式のメッセージはOptional型は認めない。
+            foreach (var objectDefinition in result.Objects.Where(n => n.FormatType == MessageFormatType.Struct))
             {
-                if (messageInfo.Elements.Any(n => n.Type.IsOptional))
+                if (objectDefinition.Elements.Any(n => n.Type.IsOptional))
                 {
                     throw new Exception();
                 }

@@ -2,6 +2,6 @@
 
 namespace "Omnix.Network";
 
-message OmniAddress {
-    Value: string(8192) = 0,
+table OmniAddress {
+    Value: string(capacity: 8192) = 0,
 }

@@ -2,8 +2,8 @@
 
 namespace "Omnix.Remoting";
 
-message OmniRpcErrorMessage {
-    Type: string(8192) = 0,
-    Message: string(8192) = 1,
-    StackTrace: string(8192) = 2,
+table OmniRpcErrorMessage {
+    Type: string(capacity: 8192) = 0,
+    Message: string(capacity: 8192) = 1,
+    StackTrace: string(capacity: 8192) = 2,
 }

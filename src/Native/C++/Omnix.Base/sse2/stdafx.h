@@ -14,5 +14,6 @@
 #endif
 
 #ifdef UNIX
+#include <string.h>
 typedef unsigned char byte;
 #endif

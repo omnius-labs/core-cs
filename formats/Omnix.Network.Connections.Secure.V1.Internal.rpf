@@ -25,20 +25,20 @@ enum AuthenticationType : uint8 {
     Password = 1,
 }
 
-message ProfileMessage {
-    SessionId: memory(32) = 0,
+table ProfileMessage {
+    SessionId: bytes(capacity: 32) = 0,
     AuthenticationType: AuthenticationType = 1,
-    KeyExchangeAlgorithms: vector<KeyExchangeAlgorithm>(32) = 2,
-    KeyDerivationAlgorithms: vector<KeyDerivationAlgorithm>(32) = 3,
-    CryptoAlgorithms: vector<CryptoAlgorithm>(32) = 4,
-    HashAlgorithms: vector<HashAlgorithm>(32) = 5,
+    KeyExchangeAlgorithms: vector<KeyExchangeAlgorithm>(capacity: 32) = 2,
+    KeyDerivationAlgorithms: vector<KeyDerivationAlgorithm>(capacity: 32) = 3,
+    CryptoAlgorithms: vector<CryptoAlgorithm>(capacity: 32) = 4,
+    HashAlgorithms: vector<HashAlgorithm>(capacity: 32) = 5,
 }
 
-message VerificationMessage {
+table VerificationMessage {
     ProfileMessage: ProfileMessage = 0,
     AgreementPublicKey: OmniAgreementPublicKey = 1,
 }
 
-message AuthenticationMessage {
-    Hashes: vector<memory(32)>(32) = 0,
+table AuthenticationMessage {
+    Hashes: vector<bytes(capacity: 32)>(capacity: 32) = 0,
 }

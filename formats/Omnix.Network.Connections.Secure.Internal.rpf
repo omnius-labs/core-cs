@@ -4,6 +4,6 @@ using "Omnix.Network.Connections.Secure";
 namespace "Omnix.Network.Connections.Secure.Internal";
 option csharp_access_level = "internal";
 
-message HelloMessage {
-    Versions: vector<OmniSecureConnectionVersion>(32) = 0,
+table HelloMessage {
+    Versions: vector<OmniSecureConnectionVersion>(capacity: 32) = 0,
 }

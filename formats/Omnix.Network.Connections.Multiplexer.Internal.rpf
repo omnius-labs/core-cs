@@ -7,6 +7,6 @@ enum CommunicatorVersion : uint8 {
     Version1 = 1,
 }
 
-message HelloMessage {
-    Versions: vector<CommunicatorVersion>(32) = 0,
+table HelloMessage {
+    Versions: vector<CommunicatorVersion>(capacity: 32) = 0,
 }
