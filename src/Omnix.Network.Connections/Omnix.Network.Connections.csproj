@@ -3,6 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.0</TargetFramework>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <IsPackable Condition=" '$(IsSubmodule)' != 'true' ">true</IsPackable>
   </PropertyGroup>
 
   <ItemGroup>

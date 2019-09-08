@@ -2,9 +2,11 @@ setlocal
 
 setx DOTNET_CLI_TELEMETRY_OPTOUT 1
 
-mkdir bin
+set NUGET_DIR=%cd%\bin\nuget
 
-del /Q bin\*.nupkg
-del /Q bin\*.snupkg
+mkdir %NUGET_DIR%
 
-dotnet pack --configuration Release --output bin
+del /Q %NUGET_DIR%\*.nupkg
+del /Q %NUGET_DIR%\*.snupkg
+
+dotnet pack --configuration Release --output %NUGET_DIR%

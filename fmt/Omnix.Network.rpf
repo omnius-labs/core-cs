@@ -5,3 +5,7 @@ namespace "Omnix.Network";
 table OmniAddress {
     Value: string(capacity: 8192) = 0,
 }
+
+table OmniPath {
+    Value: string(capacity: 8192) = 0,
+}

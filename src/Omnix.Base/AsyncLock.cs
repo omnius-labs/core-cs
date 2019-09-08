@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace Omnix.Base
 {
-    public sealed class AsyncLock
+    public sealed class AsyncLock : DisposableBase
     {
         private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1);
         private readonly IDisposable _releaser;
@@ -32,7 +32,17 @@ namespace Omnix.Base
             );
         }
 
-        private sealed class Releaser : IDisposable
+        protected override void OnDispose(bool disposing)
+        {
+            if (!disposing)
+            {
+                return;
+            }
+
+            _semaphore.Dispose();
+        }
+
+        private readonly struct Releaser : IDisposable
         {
             private readonly AsyncLock _asynkLock;
 
