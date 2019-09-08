@@ -76,5 +76,15 @@ namespace Omnix.Base
                 await this.OnStartAsync();
             }
         }
+
+        protected override void OnDispose(bool disposing)
+        {
+            if (!disposing)
+            {
+                return;
+            }
+
+            _asyncLock.Dispose();
+        }
     }
 }
