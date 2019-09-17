@@ -8,7 +8,7 @@ using Omnix.Algorithms.Cryptography;
 using Omnix.Base;
 using Omnix.Configuration.Internal;
 using Omnix.Io;
-using Omnix.Serialization.RocketPack;
+using Omnix.Serialization.OmniPack;
 
 namespace Omnix.Configuration
 {
@@ -57,7 +57,7 @@ namespace Omnix.Configuration
             return Path.Combine(this.DirectoryPath, "Objects", entityStatus.ToString());
         }
 
-        private static bool TryGet<T>(string basePath, string name, out T value, IRocketPackFormatter<T> formatter)
+        private static bool TryGet<T>(string basePath, string name, out T value, IOmniPackFormatter<T> formatter)
         {
             value = default!;
 
@@ -104,7 +104,7 @@ namespace Omnix.Configuration
                     }
                 }
 
-                var reader = new RocketPackReader(sequence, BufferPool.Shared);
+                var reader = new OmniPackReader(sequence, BufferPool.Shared);
                 value = formatter.Deserialize(ref reader, 0);
 
                 hub.Reader.Complete();
@@ -119,7 +119,7 @@ namespace Omnix.Configuration
             return false;
         }
 
-        private static void Set<T>(string basePath, string name, T value, IRocketPackFormatter<T> formatter)
+        private static void Set<T>(string basePath, string name, T value, IOmniPackFormatter<T> formatter)
         {
             try
             {
@@ -134,7 +134,7 @@ namespace Omnix.Configuration
 
                 using var hub = new Hub();
 
-                var writer = new RocketPackWriter(hub.Writer, BufferPool.Shared);
+                var writer = new OmniPackWriter(hub.Writer, BufferPool.Shared);
                 formatter.Serialize(ref writer, value, 0);
                 hub.Writer.Complete();
 
@@ -233,13 +233,13 @@ namespace Omnix.Configuration
             this.SetContent("#Version", new SettingsDatabaseVersion(version), SettingsDatabaseVersion.Formatter);
         }
 
-        public bool TryGetContent<T>(string name, out T value) where T : IRocketPackMessage<T>
+        public bool TryGetContent<T>(string name, out T value) where T : IOmniPackMessage<T>
         {
             value = default!;
 
             foreach (var entityStatus in new[] { EntityStatus.Committed, EntityStatus.Backup })
             {
-                if (TryGet(this.GeneratePath(entityStatus), name, out var result, IRocketPackMessage<T>.Formatter))
+                if (TryGet(this.GeneratePath(entityStatus), name, out var result, IOmniPackMessage<T>.Formatter))
                 {
                     value = result;
                     return true;
@@ -249,7 +249,7 @@ namespace Omnix.Configuration
             return false;
         }
 
-        public bool TryGetContent<T>(string name, out T value, IRocketPackFormatter<T> formatter)
+        public bool TryGetContent<T>(string name, out T value, IOmniPackFormatter<T> formatter)
         {
             value = default!;
 
@@ -265,14 +265,14 @@ namespace Omnix.Configuration
             return false;
         }
 
-        public void SetContent<T>(string name, T value) where T : IRocketPackMessage<T>
+        public void SetContent<T>(string name, T value) where T : IOmniPackMessage<T>
         {
-            Set(this.GeneratePath(EntityStatus.Temp), name, value, IRocketPackMessage<T>.Formatter);
+            Set(this.GeneratePath(EntityStatus.Temp), name, value, IOmniPackMessage<T>.Formatter);
 
             this.Commit(name);
         }
 
-        public void SetContent<T>(string name, T value, IRocketPackFormatter<T> formatter)
+        public void SetContent<T>(string name, T value, IOmniPackFormatter<T> formatter)
         {
             Set(this.GeneratePath(EntityStatus.Temp), name, value, formatter);
 

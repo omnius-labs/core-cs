@@ -3,7 +3,7 @@ using System.Buffers;
 using System.Threading.Tasks;
 using Omnix.Base;
 using Omnix.Network.Connections;
-using Omnix.Serialization.RocketPack;
+using Omnix.Serialization.OmniPack;
 
 namespace Omnix.Remoting
 {

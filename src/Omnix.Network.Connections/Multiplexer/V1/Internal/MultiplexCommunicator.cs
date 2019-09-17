@@ -3,7 +3,7 @@ using System.Buffers;
 using System.Threading;
 using System.Threading.Tasks;
 using Omnix.Base;
-using Omnix.Serialization.RocketPack;
+using Omnix.Serialization.OmniPack;
 
 namespace Omnix.Network.Connections.Multiplexer.V1.Internal
 {

@@ -1,0 +1,12 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <RootNamespace>Omnix.Serialization.OmniPack</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Omnix.Serialization.OmniPack\Omnix.Serialization.OmniPack.csproj" />
+  </ItemGroup>
+
+</Project>

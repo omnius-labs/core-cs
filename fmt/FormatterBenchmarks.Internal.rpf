@@ -3,11 +3,11 @@ syntax = v1.0;
 namespace "FormatterBenchmarks.Internal";
 option csharp_access_level = "internal";
 
-table RocketPack_BytesElementsList {
-    List: vector<RocketPack_BytesElements>(capacity: 1048576) = 0,
+table OmniPack_BytesElementsList {
+    List: vector<OmniPack_BytesElements>(capacity: 1048576) = 0,
 }
 
-struct RocketPack_BytesElements {
+struct OmniPack_BytesElements {
     X0: bytes(capacity: 1048576, recyclable: true),
     X1: bytes(capacity: 1048576, recyclable: true),
     X2: bytes(capacity: 1048576, recyclable: true),
@@ -20,11 +20,11 @@ struct RocketPack_BytesElements {
     X9: bytes(capacity: 1048576, recyclable: true),
 }
 
-table RocketPack_IntElementsList {
-    List: vector<RocketPack_IntElements>(capacity: 1048576) = 0,
+table OmniPack_IntElementsList {
+    List: vector<OmniPack_IntElements>(capacity: 1048576) = 0,
 }
 
-struct RocketPack_IntElements {
+struct OmniPack_IntElements {
     X0: uint32,
     X1: uint32,
     X2: uint32,
@@ -37,11 +37,11 @@ struct RocketPack_IntElements {
     X9: uint32,
 }
 
-table RocketPack_StringElementsList {
-    List: vector<RocketPack_StringElements>(capacity: 1048576) = 0,
+table OmniPack_StringElementsList {
+    List: vector<OmniPack_StringElements>(capacity: 1048576) = 0,
 }
 
-struct RocketPack_StringElements {
+struct OmniPack_StringElements {
     X0: string(capacity: 8192),
     X1: string(capacity: 8192),
     X2: string(capacity: 8192),

@@ -12,7 +12,7 @@ namespace FormatterBenchmarks.Cases
     public class StringSerializeBenchmark
     {
         private static readonly MessagePack_StringElementsList _messagePack_Message;
-        private static readonly RocketPack_StringElementsList _rocketPack_Message;
+        private static readonly OmniPack_StringElementsList _rocketPack_Message;
 
         static StringSerializeBenchmark()
         {
@@ -62,7 +62,7 @@ namespace FormatterBenchmarks.Cases
                 var random = new Random(0);
                 var bufferPool = BufferPool.Shared;
 
-                var elementsList = new List<RocketPack_StringElements>();
+                var elementsList = new List<OmniPack_StringElements>();
 
                 for (int i = 0; i < 32 * 1024; i++)
                 {
@@ -77,11 +77,11 @@ namespace FormatterBenchmarks.Cases
                     var X8 = GetRandomString(random);
                     var X9 = GetRandomString(random);
 
-                    var elements = new RocketPack_StringElements(X0, X1, X2, X3, X4, X5, X6, X7, X8, X9);
+                    var elements = new OmniPack_StringElements(X0, X1, X2, X3, X4, X5, X6, X7, X8, X9);
                     elementsList.Add(elements);
                 }
 
-                _rocketPack_Message = new RocketPack_StringElementsList(elementsList.ToArray());
+                _rocketPack_Message = new OmniPack_StringElementsList(elementsList.ToArray());
             }
         }
 
@@ -92,7 +92,7 @@ namespace FormatterBenchmarks.Cases
         }
 
         [Benchmark]
-        public object RocketPack_StringPropertiesMessage_SerializeTest()
+        public object OmniPack_StringPropertiesMessage_SerializeTest()
         {
             var writer = new ArrayBufferWriter<byte>();
             _rocketPack_Message.Export(writer, BufferPool.Shared);
