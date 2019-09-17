@@ -9,7 +9,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Omnix.Base\Omnix.Base.csproj" />
     <ProjectReference Include="..\Omnix.Network.Connections\Omnix.Network.Connections.csproj" />
-    <ProjectReference Include="..\Omnix.Serialization.RocketPack\Omnix.Serialization.RocketPack.csproj" />
+    <ProjectReference Include="..\Omnix.Serialization.OmniPack\Omnix.Serialization.OmniPack.csproj" />
     <ProjectReference Include="..\Omnix.Serialization\Omnix.Serialization.csproj" />
   </ItemGroup>
 

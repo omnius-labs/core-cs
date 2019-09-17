@@ -18,9 +18,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Omnix.Network", "src\Omnix.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Omnix.Network.Upnp", "src\Omnix.Network.Upnp\Omnix.Network.Upnp.csproj", "{4054BF1B-D7A2-4DE3-A9D2-E0C8E51B1621}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Omnix.Serialization.RocketPack", "src\Omnix.Serialization.RocketPack\Omnix.Serialization.RocketPack.csproj", "{EFC4155D-2A92-4B16-A40B-79CB09676A6D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Omnix.Serialization.OmniPack", "src\Omnix.Serialization.OmniPack\Omnix.Serialization.OmniPack.csproj", "{EFC4155D-2A92-4B16-A40B-79CB09676A6D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Omnix.Serialization.RocketPack.CodeGenerator", "src\Omnix.Serialization.RocketPack.CodeGenerator\Omnix.Serialization.RocketPack.CodeGenerator.csproj", "{A79362A9-1D82-4918-A6D1-093632D9B0D2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Omnix.Serialization.OmniPack.CodeGenerator", "src\Omnix.Serialization.OmniPack.CodeGenerator\Omnix.Serialization.OmniPack.CodeGenerator.csproj", "{A79362A9-1D82-4918-A6D1-093632D9B0D2}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{CDE3119A-739A-44B1-8141-448AF0896E6C}"
 EndProject
@@ -32,7 +32,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Omnix.Base.Tests", "test\Om
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Omnix.Serialization.Tests", "test\Omnix.Serialization.Tests\Omnix.Serialization.Tests.csproj", "{55BB80AC-659F-47BF-BB1C-E5180E8DF47B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Omnix.Serialization.RocketPack.CodeGenerator.Tests", "test\Omnix.Serialization.RocketPack.CodeGenerator.Tests\Omnix.Serialization.RocketPack.CodeGenerator.Tests.csproj", "{396D3A38-A580-4964-98C8-830C2E4EBF1E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Omnix.Serialization.OmniPack.CodeGenerator.Tests", "test\Omnix.Serialization.OmniPack.CodeGenerator.Tests\Omnix.Serialization.OmniPack.CodeGenerator.Tests.csproj", "{396D3A38-A580-4964-98C8-830C2E4EBF1E}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Omnix.Io.Tests", "test\Omnix.Io.Tests\Omnix.Io.Tests.csproj", "{95D06ED4-9182-48E1-8ED6-F185958893DC}"
 EndProject
@@ -46,7 +46,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Benchmarks", "Benchmarks", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Omnix.Remoting", "src\Omnix.Remoting\Omnix.Remoting.csproj", "{83F09E24-1544-4AE2-A09D-ED05D8935F97}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Omnix.Serialization.RocketPack.Tests", "test\Omnix.Serialization.RocketPack.Tests\Omnix.Serialization.RocketPack.Tests.csproj", "{F9A3206F-441F-4BB3-9639-29D9F5235FE6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Omnix.Serialization.OmniPack.Tests", "test\Omnix.Serialization.OmniPack.Tests\Omnix.Serialization.OmniPack.Tests.csproj", "{F9A3206F-441F-4BB3-9639-29D9F5235FE6}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Omnix.Configuration", "src\Omnix.Configuration\Omnix.Configuration.csproj", "{185AF2D6-D07F-4363-A1CA-602156B71088}"
 EndProject
