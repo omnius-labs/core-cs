@@ -64,7 +64,7 @@ namespace Omnix.Configuration
             try
             {
                 string directoryPath = Path.Combine(basePath, name);
-                string contentPath = Path.Combine(directoryPath, "rpb.gz");
+                string contentPath = Path.Combine(directoryPath, "opb.gz");
                 string crcPath = Path.Combine(directoryPath, "crc");
 
                 using var hub = new Hub();
@@ -124,7 +124,7 @@ namespace Omnix.Configuration
             try
             {
                 string directoryPath = Path.Combine(basePath, name);
-                string contentPath = Path.Combine(directoryPath, "rpb.gz");
+                string contentPath = Path.Combine(directoryPath, "opb.gz");
                 string crcPath = Path.Combine(directoryPath, "crc");
 
                 if (!Directory.Exists(directoryPath))
