@@ -6,7 +6,7 @@ namespace Omnix.Base
     /// <summary>
     /// <see cref="ArrayPool{T}"/>を利用した<see cref="MemoryPool{T}"/>の<see cref="byte"/>型の実装です。
     /// </summary>
-    public sealed class BufferPool : MemoryPool<byte>
+    public sealed class BufferPool : MemoryPool<byte>, IMemoryPool<byte>
     {
         private readonly ArrayPool<byte> _arrayPool;
 
