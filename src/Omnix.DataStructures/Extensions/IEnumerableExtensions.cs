@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Threading;
+using Omnix.DataStructures.Collections;
 using Omnix.DataStructures.Internal;
 
 namespace Omnix.DataStructures.Extensions

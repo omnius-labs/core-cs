@@ -3,15 +3,15 @@ using System.Buffers;
 using System.Threading.Tasks;
 using Omnix.Base;
 using Omnix.Network.Connections;
-using Omnix.Serialization.OmniPack;
+using Omnix.Serialization.RocketPack;
 
 namespace Omnix.Remoting
 {
     public sealed partial class OmniRpc
     {
-        private readonly BufferPool _bufferPool;
+        private readonly IBufferPool<byte> _bufferPool;
 
-        public OmniRpc(BufferPool bufferPool)
+        public OmniRpc(IBufferPool<byte> bufferPool)
         {
             _bufferPool = bufferPool;
         }
@@ -23,7 +23,7 @@ namespace Omnix.Remoting
         {
             var connection = this.GetConnectedConnection.Invoke();
 
-            await connection.EnqueueAsync((bufferWriter) =>
+            await connection.SendAsync((bufferWriter) =>
             {
                 Varint.SetUInt64(type, bufferWriter);
             });
@@ -37,7 +37,7 @@ namespace Omnix.Remoting
 
             ulong type = 0;
 
-            await connection.DequeueAsync((sequence) =>
+            await connection.ReceiveAsync((sequence) =>
             {
                 var reader = new SequenceReader<byte>(sequence);
 

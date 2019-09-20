@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Omnix.Base.Helpers;
+using Omnix.DataStructures.Collections;
 using Xunit;
 
 #pragma warning disable xUnit2017

@@ -1,6 +1,6 @@
 using System;
 using Omnix.Algorithms.Cryptography.Internal;
-using Omnix.Serialization.OmniPack;
+using Omnix.Serialization.RocketPack;
 
 namespace Omnix.Algorithms.Cryptography
 {

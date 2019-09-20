@@ -1,11 +1,11 @@
 using System.Diagnostics.CodeAnalysis;
 using Omnix.Remoting.Internal;
-using Omnix.Serialization.OmniPack;
+using Omnix.Serialization.RocketPack;
 
 namespace Omnix.Remoting
 {
     public readonly struct OmniRpcStreamReceiveResult<TMessage>
-        where TMessage : IOmniPackMessage<TMessage>
+        where TMessage : IRocketPackMessage<TMessage>
     {
         private readonly TMessage _message;
         private readonly OmniRpcErrorMessage? _errorMessage;
