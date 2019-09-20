@@ -2,7 +2,7 @@ using System;
 using System.Text;
 using System.Threading;
 using Omnix.Base;
-using Omnix.Serialization.OmniPack;
+using Omnix.Serialization.RocketPack;
 
 namespace Omnix.Algorithms.Cryptography.Internal
 {
@@ -20,7 +20,7 @@ namespace Omnix.Algorithms.Cryptography.Internal
             using (var hub = new Hub())
             {
                 {
-                    var writer = new OmniPackWriter(hub.Writer, BufferPool.Shared);
+                    var writer = new RocketPackWriter(hub.Writer, BufferPool<byte>.Shared);
 
                     writer.Write(name);
                     writer.Write(publicKey);

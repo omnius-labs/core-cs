@@ -16,10 +16,10 @@ namespace Omnix.Algorithms.Correction
         private readonly ReedSolomon8.Math _math;
         private readonly int _k;
         private readonly int _n;
-        private readonly BufferPool _bufferPool;
+        private readonly IBufferPool<byte> _bufferPool;
         private readonly byte[] _encMatrix;
 
-        public ReedSolomon8(int k, int n, BufferPool bufferPool)
+        public ReedSolomon8(int k, int n, IBufferPool<byte> bufferPool)
         {
             _math = new Math();
             _k = k;
@@ -101,7 +101,7 @@ namespace Omnix.Algorithms.Correction
 
                     if (index[row] >= _k)
                     {
-                        tempPackets[row] = _bufferPool.GetArrayPool().Rent(packetLength);
+                        tempPackets[row] = _bufferPool.RentArray(packetLength);
                         BytesOperations.Zero(tempPackets[row].AsSpan(0, packetLength));
 
                         for (int col = 0; col < _k; col++)
@@ -124,7 +124,7 @@ namespace Omnix.Algorithms.Correction
                     // only copy those actually decoded.
                     BytesOperations.Copy(tempPackets[row], packets[row].Span, packetLength);
                     index[row] = row;
-                    _bufferPool.GetArrayPool().Return(tempPackets[row]);
+                    _bufferPool.ReturnArray(tempPackets[row]);
                 }
             }
         }

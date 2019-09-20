@@ -11,7 +11,7 @@ namespace Omnix.Io
     public class UnbufferedFileStream : Stream
     {
         private readonly string _path;
-        private readonly BufferPool _bufferPool;
+        private readonly IBufferPool<byte> _bufferPool;
 
         private long _position;
         private long _length;
@@ -27,7 +27,7 @@ namespace Omnix.Io
 
         private const int SectorSize = 1024 * 256;
 
-        public UnbufferedFileStream(string path, FileMode mode, FileAccess access, FileShare share, FileOptions options, BufferPool bufferPool)
+        public UnbufferedFileStream(string path, FileMode mode, FileAccess access, FileShare share, FileOptions options, IBufferPool<byte> bufferPool)
         {
             _path = path;
             _bufferPool = bufferPool;
@@ -48,7 +48,7 @@ namespace Omnix.Io
             _blockPosition = -1;
             _blockOffset = 0;
             _blockCount = 0;
-            _blockBuffer = _bufferPool.GetArrayPool().Rent(SectorSize);
+            _blockBuffer = _bufferPool.RentArray(SectorSize);
 
             _position = _stream.Position;
             _length = _stream.Length;
@@ -322,7 +322,7 @@ namespace Omnix.Io
 
                 if (_blockOffset != 0 || _blockCount != SectorSize)
                 {
-                    using (var memoryOwner = _bufferPool.Rent(SectorSize))
+                    using (var memoryOwner = _bufferPool.RentMemory(SectorSize))
                     {
                         _stream.Seek(_blockPosition, SeekOrigin.Begin);
 
@@ -367,7 +367,7 @@ namespace Omnix.Io
                     this.Flush();
 
                     _stream.Dispose();
-                    _bufferPool.GetArrayPool().Return(_blockBuffer);
+                    _bufferPool.ReturnArray(_blockBuffer);
 
                     using (var stream = new FileStream(_path, FileMode.Open))
                     {

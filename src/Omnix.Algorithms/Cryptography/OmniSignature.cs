@@ -36,7 +36,7 @@ namespace Omnix.Algorithms.Cryptography
                     hub.Writer.Complete();
 
                     // hubからHash情報を読み取る。
-                    omniHash = OmniHash.Import(hub.Reader.GetSequence(), BufferPool.Shared);
+                    omniHash = OmniHash.Import(hub.Reader.GetSequence(), BufferPool<byte>.Shared);
                     hub.Reader.Complete();
                 }
 
@@ -60,7 +60,7 @@ namespace Omnix.Algorithms.Cryptography
                 using (var hub = new Hub())
                 {
                     // Hash情報をhubへ書き込む。
-                    this.Hash.Export(hub.Writer, BufferPool.Shared);
+                    this.Hash.Export(hub.Writer, BufferPool<byte>.Shared);
                     hub.Writer.Complete();
 
                     // hubからHash情報を読み込み、Base58Btcへ変換する。

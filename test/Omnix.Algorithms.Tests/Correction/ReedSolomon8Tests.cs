@@ -38,7 +38,7 @@ namespace Omnix.Algorithms.Correction
                 results[i] = new byte[blockLength];
             }
 
-            var r = new ReedSolomon8(sources.Length, sources.Length + repairs.Length, BufferPool.Shared);
+            var r = new ReedSolomon8(sources.Length, sources.Length + repairs.Length, BufferPool<byte>.Shared);
 
             // Encode
             {

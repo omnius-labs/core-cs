@@ -9,12 +9,12 @@ namespace Omnix.Base
         public void RentAndDisposeTest()
         {
             var random = new Random();
-            var bufferPool = BufferPool.Create();
+            var bufferPool = BufferPool<byte>.Create();
 
             for (int i = 0; i < 32; i++)
             {
                 int size = random.Next(1, 1024 * 1024 * 32);
-                var buffer = bufferPool.Rent(size);
+                var buffer = bufferPool.RentMemory(size);
 
                 Assert.True(buffer.Memory.Length >= size);
 

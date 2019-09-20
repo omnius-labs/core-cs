@@ -9,7 +9,7 @@ namespace Omnix.Configuration
         [Fact]
         public void VersionReadWriteTest()
         {
-            using var settings = new SettingsDatabase(UnitTestEnvironment.TempDirectoryPath);
+            using var settings = new OmniSettings(UnitTestEnvironment.TempDirectoryPath);
 
             var random = new Random();
 
