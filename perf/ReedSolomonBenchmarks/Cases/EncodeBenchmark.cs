@@ -39,7 +39,7 @@ namespace ReedSolomonBenchmarks.Cases
         {
             NativeMethods.ReedSolomon8.LoadPureUnsafeMethods();
 
-            var r = new ReedSolomon8(128, 256, BufferPool.Shared);
+            var r = new ReedSolomon8(128, 256, BufferPool<byte>.Shared);
             r.Encode(_sources.Select(n => (ReadOnlyMemory<byte>)n).ToArray(), _indexes, _repairs, PacketLength).Wait();
             return _repairs;
         }
@@ -49,7 +49,7 @@ namespace ReedSolomonBenchmarks.Cases
         {
             NativeMethods.ReedSolomon8.TryLoadNativeMethods();
 
-            var r = new ReedSolomon8(128, 256, BufferPool.Shared);
+            var r = new ReedSolomon8(128, 256, BufferPool<byte>.Shared);
             r.Encode(_sources.Select(n => (ReadOnlyMemory<byte>)n).ToArray(), _indexes, _repairs, PacketLength).Wait();
             return _repairs;
         }
@@ -59,7 +59,7 @@ namespace ReedSolomonBenchmarks.Cases
         {
             NativeMethods.ReedSolomon8.TryLoadNativeMethods();
 
-            var r = new ReedSolomon8(128, 256, BufferPool.Shared);
+            var r = new ReedSolomon8(128, 256, BufferPool<byte>.Shared);
             r.Encode(_sources.Select(n => (ReadOnlyMemory<byte>)n).ToArray(), _indexes, _repairs, PacketLength, concurrency: 2).Wait();
             return _repairs;
         }

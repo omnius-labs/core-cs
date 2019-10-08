@@ -1,8 +1,0 @@
-﻿syntax = v1.0;
-
-namespace "Omnix.Configuration.Internal";
-
-[csharp_struct]
-struct SettingsDatabaseVersion {
-    Value: uint32,
-}

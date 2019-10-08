@@ -2,7 +2,7 @@ using System;
 using System.Buffers;
 using System.Collections.Generic;
 using Omnix.Base;
-using Omnix.Serialization.OmniPack;
+using Omnix.Serialization.RocketPack;
 
 namespace Omnix.Algorithms.Internal
 {

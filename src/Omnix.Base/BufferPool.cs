@@ -4,62 +4,76 @@ using System.Buffers;
 namespace Omnix.Base
 {
     /// <summary>
-    /// <see cref="ArrayPool{T}"/>を利用した<see cref="MemoryPool{T}"/>の<see cref="byte"/>型の実装です。
+    /// <see cref="ArrayPool{T}"/>を利用した<see cref="IBufferPool{T}"/>の実装です。
     /// </summary>
-    public sealed class BufferPool : MemoryPool<byte>, IMemoryPool<byte>
+    public sealed class BufferPool<T> : IBufferPool<T>
     {
-        private readonly ArrayPool<byte> _arrayPool;
+        private readonly ArrayPool<T> _arrayPool;
 
-        private BufferPool(ArrayPool<byte> arrayPool)
+        private BufferPool(ArrayPool<T> arrayPool)
         {
             _arrayPool = arrayPool;
         }
 
-        public static new BufferPool Shared { get; } = new BufferPool(ArrayPool<byte>.Shared);
+        public static BufferPool<T> Shared { get; } = new BufferPool<T>(ArrayPool<T>.Shared);
 
-        public static BufferPool Create()
+        public static BufferPool<T> Create()
         {
-            return new BufferPool(ArrayPool<byte>.Create());
+            return new BufferPool<T>(ArrayPool<T>.Create());
         }
 
-        public ArrayPool<byte> GetArrayPool() => _arrayPool;
+        public int MaxBufferSize => int.MaxValue;
 
-        public override int MaxBufferSize => int.MaxValue;
-
-        public override IMemoryOwner<byte> Rent(int bufferSize)
+        public IMemoryOwner<T> RentMemory(int minimumLength)
         {
-            if (bufferSize <= 0)
+            if (minimumLength <= 0)
             {
-                return SimpleMemoryOwner<byte>.Empty;
+                return SimpleMemoryOwner<T>.Empty;
             }
 
-            return new BufferPoolMemoryOwner(_arrayPool, bufferSize);
+            return new BufferPoolMemoryOwner(_arrayPool, minimumLength);
         }
 
-        private sealed class BufferPoolMemoryOwner : IMemoryOwner<byte>
+        public T[] RentArray(int minimumLength)
         {
-            private readonly ArrayPool<byte> _arrayPool;
-            private byte[]? _bytes;
+            if (minimumLength <= 0)
+            {
+                return Array.Empty<T>();
+            }
+
+            return _arrayPool.Rent(minimumLength);
+        }
+
+        public void ReturnArray(T[] array)
+        {
+            _arrayPool.Return(array);
+        }
+
+        private sealed class BufferPoolMemoryOwner : IMemoryOwner<T>
+        {
+            private readonly ArrayPool<T> _arrayPool;
+            private T[]? _bytes;
             private readonly int _size;
 
-            public BufferPoolMemoryOwner(ArrayPool<byte> arrayPool, int size)
+            public BufferPoolMemoryOwner(ArrayPool<T> arrayPool, int size)
             {
                 _arrayPool = arrayPool;
                 _bytes = _arrayPool.Rent(size);
                 _size = size;
             }
 
-            public Memory<byte> Memory
+            public Memory<T> Memory
             {
                 get
                 {
                     var bytes = _bytes;
+
                     if (bytes == null)
                     {
                         throw new ObjectDisposedException(nameof(BufferPoolMemoryOwner));
                     }
 
-                    return new Memory<byte>(bytes, 0, _size);
+                    return new Memory<T>(bytes, 0, _size);
                 }
             }
 
@@ -73,11 +87,6 @@ namespace Omnix.Base
                     _arrayPool.Return(bytes);
                 }
             }
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-
         }
     }
 }

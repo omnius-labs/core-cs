@@ -7,11 +7,11 @@ using Omnix.Base;
 namespace Omnix.Io
 {
     /// <summary>
-    /// <see cref="BufferPool"/>を利用した<see cref="MemoryStream"/>の機能を提供します。
+    /// <see cref="ArrayPool<byte>"/>を利用した<see cref="MemoryStream"/>の機能を提供します。
     /// </summary>
     public class RecyclableMemoryStream : Stream
     {
-        private readonly BufferPool _bytesPool;
+        private readonly IBufferPool<byte> _bufferPool;
 
         private long _position;
         private long _length;
@@ -24,9 +24,9 @@ namespace Omnix.Io
 
         private bool _disposed;
 
-        public RecyclableMemoryStream(BufferPool bytesPool)
+        public RecyclableMemoryStream(IBufferPool<byte> bufferPool)
         {
-            _bytesPool = bytesPool;
+            _bufferPool = bufferPool;
         }
 
         public override bool CanRead
@@ -256,7 +256,7 @@ namespace Omnix.Io
             {
                 if (_currentBufferIndex >= _buffers.Count)
                 {
-                    var tempBuffer = _bytesPool.GetArrayPool().Rent(_bufferSize);
+                    var tempBuffer = _bufferPool.RentArray(_bufferSize);
                     if (_bufferSize < 1024 * 32)
                     {
                         _bufferSize *= 2;
@@ -333,7 +333,7 @@ namespace Omnix.Io
                 {
                     for (int i = 0; i < _buffers.Count; i++)
                     {
-                        _bytesPool.GetArrayPool().Return(_buffers[i]);
+                      _bufferPool.ReturnArray(_buffers[i]);
                     }
 
                     _buffers.Clear();
@@ -347,7 +347,7 @@ namespace Omnix.Io
 
         public IMemoryOwner<byte> ToMemoryOwner()
         {
-            var memoryOwner = _bytesPool.Rent((int)this.Length);
+            var memoryOwner = _bufferPool.RentMemory((int)this.Length);
 
             long position = this.Position;
 
