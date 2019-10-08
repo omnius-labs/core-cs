@@ -1,8 +1,8 @@
 namespace Omnix.Base.Helpers
 {
-    internal static class MathHelper
+    public static class MathHelper
     {
-        public static ulong Roundup(ulong value, ulong unit)
+        public static ulong RoundUp(ulong value, ulong unit)
         {
             if (value % unit == 0)
             {

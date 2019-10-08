@@ -45,9 +45,9 @@ namespace FormatterBenchmarks.Cases
             using (var hub = new Hub())
             {
                 var random = new Random(0);
-                var bufferPool = BufferPool.Shared;
+                var bufferPool = BufferPool<byte>.Shared;
 
-                var elementsList = new List<OmniPack_IntElements>();
+                var elementsList = new List<RocketPack_IntElements>();
 
                 for (int i = 0; i < 32 * 1024; i++)
                 {
@@ -62,13 +62,13 @@ namespace FormatterBenchmarks.Cases
                     var X8 = (uint)random.Next(0, 1024 * 256);
                     var X9 = (uint)random.Next(0, 1024 * 256);
 
-                    var elements = new OmniPack_IntElements(X0, X1, X2, X3, X4, X5, X6, X7, X8, X9);
+                    var elements = new RocketPack_IntElements(X0, X1, X2, X3, X4, X5, X6, X7, X8, X9);
                     elementsList.Add(elements);
                 }
 
-                var message = new OmniPack_IntElementsList(elementsList.ToArray());
+                var message = new RocketPack_IntElementsList(elementsList.ToArray());
 
-                message.Export(hub.Writer, BufferPool.Shared);
+                message.Export(hub.Writer, BufferPool<byte>.Shared);
                 hub.Writer.Complete();
 
                 _rocketPack_Bytes = new byte[hub.Writer.BytesWritten];
@@ -85,9 +85,9 @@ namespace FormatterBenchmarks.Cases
         }
 
         [Benchmark]
-        public object OmniPack_IntPropertiesMessage_DeserializeTest()
+        public object RocketPack_IntPropertiesMessage_DeserializeTest()
         {
-            return OmniPack_IntElementsList.Import(new ReadOnlySequence<byte>(_rocketPack_Bytes), BufferPool.Shared);
+            return RocketPack_IntElementsList.Import(new ReadOnlySequence<byte>(_rocketPack_Bytes), BufferPool<byte>.Shared);
         }
     }
 }

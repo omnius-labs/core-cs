@@ -11,7 +11,7 @@ namespace FormatterBenchmarks.Cases
     public class BytesSerializeBenchmark
     {
         private static readonly MessagePack_BytesElementsList _messagePack_Message;
-        private static readonly OmniPack_BytesElementsList _rocketPack_Message;
+        private static readonly RocketPack_BytesElementsList _rocketPack_Message;
 
         static BytesSerializeBenchmark()
         {
@@ -45,28 +45,28 @@ namespace FormatterBenchmarks.Cases
             using (var hub = new Hub())
             {
                 var random = new Random(0);
-                var bufferPool = BufferPool.Shared;
+                var bufferPool = BufferPool<byte>.Shared;
 
-                var elementsList = new List<OmniPack_BytesElements>();
+                var elementsList = new List<RocketPack_BytesElements>();
 
                 for (int i = 0; i < 10; i++)
                 {
-                    var X0 = bufferPool.Rent(random.Next(0, 1024 * 256));
-                    var X1 = bufferPool.Rent(random.Next(0, 1024 * 256));
-                    var X2 = bufferPool.Rent(random.Next(0, 1024 * 256));
-                    var X3 = bufferPool.Rent(random.Next(0, 1024 * 256));
-                    var X4 = bufferPool.Rent(random.Next(0, 1024 * 256));
-                    var X5 = bufferPool.Rent(random.Next(0, 1024 * 256));
-                    var X6 = bufferPool.Rent(random.Next(0, 1024 * 256));
-                    var X7 = bufferPool.Rent(random.Next(0, 1024 * 256));
-                    var X8 = bufferPool.Rent(random.Next(0, 1024 * 256));
-                    var X9 = bufferPool.Rent(random.Next(0, 1024 * 256));
+                    var X0 = bufferPool.RentMemory(random.Next(0, 1024 * 256));
+                    var X1 = bufferPool.RentMemory(random.Next(0, 1024 * 256));
+                    var X2 = bufferPool.RentMemory(random.Next(0, 1024 * 256));
+                    var X3 = bufferPool.RentMemory(random.Next(0, 1024 * 256));
+                    var X4 = bufferPool.RentMemory(random.Next(0, 1024 * 256));
+                    var X5 = bufferPool.RentMemory(random.Next(0, 1024 * 256));
+                    var X6 = bufferPool.RentMemory(random.Next(0, 1024 * 256));
+                    var X7 = bufferPool.RentMemory(random.Next(0, 1024 * 256));
+                    var X8 = bufferPool.RentMemory(random.Next(0, 1024 * 256));
+                    var X9 = bufferPool.RentMemory(random.Next(0, 1024 * 256));
 
-                    var elements = new OmniPack_BytesElements(X0, X1, X2, X3, X4, X5, X6, X7, X8, X9);
+                    var elements = new RocketPack_BytesElements(X0, X1, X2, X3, X4, X5, X6, X7, X8, X9);
                     elementsList.Add(elements);
                 }
 
-                _rocketPack_Message = new OmniPack_BytesElementsList(elementsList.ToArray());
+                _rocketPack_Message = new RocketPack_BytesElementsList(elementsList.ToArray());
             }
         }
 
@@ -77,10 +77,10 @@ namespace FormatterBenchmarks.Cases
         }
 
         [Benchmark]
-        public object OmniPack_BytesMessage_SerializeTest()
+        public object RocketPack_BytesMessage_SerializeTest()
         {
             var writer = new ArrayBufferWriter<byte>();
-            _rocketPack_Message.Export(writer, BufferPool.Shared);
+            _rocketPack_Message.Export(writer, BufferPool<byte>.Shared);
             return writer;
         }
     }

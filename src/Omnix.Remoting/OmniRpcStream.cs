@@ -4,16 +4,16 @@ using System.Threading;
 using System.Threading.Tasks;
 using Omnix.Base;
 using Omnix.Network.Connections;
-using Omnix.Serialization.OmniPack;
+using Omnix.Serialization.RocketPack;
 
 namespace Omnix.Remoting
 {
     public sealed partial class OmniRpcStream : DisposableBase
     {
         private readonly IConnection _connection;
-        private readonly BufferPool _bufferPool;
+        private readonly IBufferPool<byte> _bufferPool;
 
-        internal OmniRpcStream(IConnection connection, BufferPool bufferPool)
+        internal OmniRpcStream(IConnection connection, IBufferPool<byte> bufferPool)
         {
             _connection = connection;
             _bufferPool = bufferPool;
@@ -28,20 +28,20 @@ namespace Omnix.Remoting
         }
 
         public async ValueTask SendMessageAsync<TMessage>(TMessage message, CancellationToken token = default)
-            where TMessage : IOmniPackMessage<TMessage>
+            where TMessage : IRocketPackMessage<TMessage>
         {
-            await _connection.EnqueueAsync((bufferWriter) =>
+            await _connection.SendAsync((bufferWriter) =>
             {
                 bufferWriter.GetSpan(1)[0] = (byte)PacketType.Message;
                 bufferWriter.Advance(1);
-                var writer = new OmniPackWriter(bufferWriter, _bufferPool);
-                IOmniPackMessage<TMessage>.Formatter.Serialize(ref writer, message, 0);
+                var writer = new RocketPackWriter(bufferWriter, _bufferPool);
+                IRocketPackMessage<TMessage>.Formatter.Serialize(ref writer, message, 0);
             }, token);
         }
 
         public async ValueTask SendErrorMessageAsync(OmniRpcErrorMessage errorMessage, CancellationToken token = default)
         {
-            await _connection.EnqueueAsync((bufferWriter) =>
+            await _connection.SendAsync((bufferWriter) =>
             {
                 bufferWriter.GetSpan(1)[0] = (byte)PacketType.ErrorMessage;
                 bufferWriter.Advance(1);
@@ -51,7 +51,7 @@ namespace Omnix.Remoting
 
         public async ValueTask SendCanceledAsync(CancellationToken token = default)
         {
-            await _connection.EnqueueAsync((bufferWriter) =>
+            await _connection.SendAsync((bufferWriter) =>
             {
                 bufferWriter.GetSpan(1)[0] = (byte)PacketType.Canceled;
                 bufferWriter.Advance(1);
@@ -60,7 +60,7 @@ namespace Omnix.Remoting
 
         public async ValueTask SendCompletedAsync(CancellationToken token = default)
         {
-            await _connection.EnqueueAsync((bufferWriter) =>
+            await _connection.SendAsync((bufferWriter) =>
             {
                 bufferWriter.GetSpan(1)[0] = (byte)PacketType.Completed;
                 bufferWriter.Advance(1);
@@ -68,11 +68,11 @@ namespace Omnix.Remoting
         }
 
         public async ValueTask<OmniRpcStreamReceiveResult<TMessage>> ReceiveAsync<TMessage>(CancellationToken token = default)
-            where TMessage : IOmniPackMessage<TMessage>
+            where TMessage : IRocketPackMessage<TMessage>
         {
             OmniRpcStreamReceiveResult<TMessage> receiveResult = default;
 
-            await _connection.DequeueAsync((sequence) =>
+            await _connection.ReceiveAsync((sequence) =>
             {
                 Span<byte> type = stackalloc byte[1];
                 sequence.CopyTo(type);
@@ -80,8 +80,8 @@ namespace Omnix.Remoting
                 switch ((PacketType)type[0])
                 {
                     case PacketType.Message:
-                        var reader = new OmniPackReader(sequence, _bufferPool);
-                        var message = IOmniPackMessage<TMessage>.Formatter.Deserialize(ref reader, 0);
+                        var reader = new RocketPackReader(sequence, _bufferPool);
+                        var message = IRocketPackMessage<TMessage>.Formatter.Deserialize(ref reader, 0);
                         receiveResult = new OmniRpcStreamReceiveResult<TMessage>(message, null, false, false);
                         break;
                     case PacketType.ErrorMessage:

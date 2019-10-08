@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <RootNamespace>Omnix.Serialization.RocketPack.DefinitionCompiler</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Omnix.Algorithms\Omnix.Algorithms.csproj" />
+    <ProjectReference Include="..\..\src\Omnix.DataStructures\Omnix.DataStructures.csproj" />
+    <ProjectReference Include="..\..\src\Omnix.Serialization.RocketPack.DefinitionCompiler\Omnix.Serialization.RocketPack.DefinitionCompiler.csproj" />
+    <ProjectReference Include="..\..\src\Omnix.Serialization.RocketPack\Omnix.Serialization.RocketPack.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Internal\_RocketPack\" />
+  </ItemGroup>
+
+</Project>

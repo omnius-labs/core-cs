@@ -35,7 +35,7 @@ namespace Omnix.Serialization.Extensions
 
         public static bool TryDecode(this IBytesToUtf8StringConverter converter, string text, IBufferWriter<byte> bufferWriter)
         {
-            using (var recyclableMemory = BufferPool.Shared.Rent(_utf8Encoding.Value.GetMaxByteCount(text.Length)))
+            using (var recyclableMemory = BufferPool<byte>.Shared.RentMemory(_utf8Encoding.Value.GetMaxByteCount(text.Length)))
             {
                 var length = _utf8Encoding.Value.GetBytes(text, recyclableMemory.Memory.Span);
 
