@@ -214,10 +214,10 @@ void ReedSolomon8_Mul(byte* src, byte* dst, byte* table, int32_t len)
         ymm6 = _mm256_loadu_si256((__m256i*)(dst + (16 * 2)));
         ymm7 = _mm256_loadu_si256((__m256i*)(dst + (16 * 3)));
 
-        ymm0 = _mm256_xor_si256(ymm0, ymm1);
-        ymm1 = _mm256_xor_si256(ymm1, ymm4);
-        ymm2 = _mm256_xor_si256(ymm2, ymm5);
-        ymm3 = _mm256_xor_si256(ymm3, ymm6);
+        ymm0 = _mm256_xor_si256(ymm0, ymm4);
+        ymm1 = _mm256_xor_si256(ymm1, ymm5);
+        ymm2 = _mm256_xor_si256(ymm2, ymm6);
+        ymm3 = _mm256_xor_si256(ymm3, ymm7);
 
         _mm256_storeu_si256((__m256i*)(dst + (16 * 0)), ymm0);
         _mm256_storeu_si256((__m256i*)(dst + (16 * 1)), ymm1);
