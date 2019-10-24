@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Omnix.DataStructures.Collections;
+using Omnix.Collections;
 using Omnix.Network.Internal.Extensions;
 using Sprache;
 

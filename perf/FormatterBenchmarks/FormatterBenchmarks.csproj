@@ -15,7 +15,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Omnix.Base\Omnix.Base.csproj" />
-    <ProjectReference Include="..\..\src\Omnix.DataStructures\Omnix.DataStructures.csproj" />
+    <ProjectReference Include="..\..\src\Omnix.Collections\Omnix.Collections.csproj" />
     <ProjectReference Include="..\..\src\Omnix.Serialization.RocketPack\Omnix.Serialization.RocketPack.csproj" />
     <ProjectReference Include="..\..\src\Omnix.Serialization\Omnix.Serialization.csproj" />
   </ItemGroup>

@@ -28,7 +28,7 @@ namespace Omnix.Network.Connections.Multiplexer.Internal
             if (versions is null) throw new global::System.ArgumentNullException("versions");
             if (versions.Length > 32) throw new global::System.ArgumentOutOfRangeException("versions");
 
-            this.Versions = new global::Omnix.DataStructures.Collections.ReadOnlyListSlim<CommunicatorVersion>(versions);
+            this.Versions = new global::Omnix.Collections.ReadOnlyListSlim<CommunicatorVersion>(versions);
 
             ___hashCode = new global::System.Lazy<int>(() =>
             {
@@ -41,7 +41,7 @@ namespace Omnix.Network.Connections.Multiplexer.Internal
             });
         }
 
-        public global::Omnix.DataStructures.Collections.ReadOnlyListSlim<CommunicatorVersion> Versions { get; }
+        public global::Omnix.Collections.ReadOnlyListSlim<CommunicatorVersion> Versions { get; }
 
         public static HelloMessage Import(global::System.Buffers.ReadOnlySequence<byte> sequence, global::Omnix.Base.IBufferPool<byte> bufferPool)
         {
