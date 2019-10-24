@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Threading.Tasks;
-using Omnix.Algorithms.Cryptography;
+using Omnix.Cryptography;
 using Omnix.Base;
 using Omnix.Configuration.Internal;
 using Omnix.Io;

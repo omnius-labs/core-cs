@@ -8,9 +8,3 @@ export BUILD="bin/linux-x64"
 
 cd ${cwd}/Omnix_Base/Omnix_Base
 make
-
-cd ${cwd}/Omnix_Correction/Omnix_Correction
-make
-
-cd ${cwd}/Omnix_Cryptography/Omnix_Cryptography
-make

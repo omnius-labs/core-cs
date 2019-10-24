@@ -27,7 +27,7 @@ namespace FormatterBenchmarks.Internal
                 if (n is null) throw new global::System.ArgumentNullException("n");
             }
 
-            this.List = new global::Omnix.DataStructures.Collections.ReadOnlyListSlim<RocketPack_BytesElements>(list);
+            this.List = new global::Omnix.Collections.ReadOnlyListSlim<RocketPack_BytesElements>(list);
 
             ___hashCode = new global::System.Lazy<int>(() =>
             {
@@ -40,7 +40,7 @@ namespace FormatterBenchmarks.Internal
             });
         }
 
-        public global::Omnix.DataStructures.Collections.ReadOnlyListSlim<RocketPack_BytesElements> List { get; }
+        public global::Omnix.Collections.ReadOnlyListSlim<RocketPack_BytesElements> List { get; }
 
         public static RocketPack_BytesElementsList Import(global::System.Buffers.ReadOnlySequence<byte> sequence, global::Omnix.Base.IBufferPool<byte> bufferPool)
         {
@@ -378,7 +378,7 @@ namespace FormatterBenchmarks.Internal
                 if (n is null) throw new global::System.ArgumentNullException("n");
             }
 
-            this.List = new global::Omnix.DataStructures.Collections.ReadOnlyListSlim<RocketPack_IntElements>(list);
+            this.List = new global::Omnix.Collections.ReadOnlyListSlim<RocketPack_IntElements>(list);
 
             ___hashCode = new global::System.Lazy<int>(() =>
             {
@@ -391,7 +391,7 @@ namespace FormatterBenchmarks.Internal
             });
         }
 
-        public global::Omnix.DataStructures.Collections.ReadOnlyListSlim<RocketPack_IntElements> List { get; }
+        public global::Omnix.Collections.ReadOnlyListSlim<RocketPack_IntElements> List { get; }
 
         public static RocketPack_IntElementsList Import(global::System.Buffers.ReadOnlySequence<byte> sequence, global::Omnix.Base.IBufferPool<byte> bufferPool)
         {
@@ -673,7 +673,7 @@ namespace FormatterBenchmarks.Internal
                 if (n is null) throw new global::System.ArgumentNullException("n");
             }
 
-            this.List = new global::Omnix.DataStructures.Collections.ReadOnlyListSlim<RocketPack_StringElements>(list);
+            this.List = new global::Omnix.Collections.ReadOnlyListSlim<RocketPack_StringElements>(list);
 
             ___hashCode = new global::System.Lazy<int>(() =>
             {
@@ -686,7 +686,7 @@ namespace FormatterBenchmarks.Internal
             });
         }
 
-        public global::Omnix.DataStructures.Collections.ReadOnlyListSlim<RocketPack_StringElements> List { get; }
+        public global::Omnix.Collections.ReadOnlyListSlim<RocketPack_StringElements> List { get; }
 
         public static RocketPack_StringElementsList Import(global::System.Buffers.ReadOnlySequence<byte> sequence, global::Omnix.Base.IBufferPool<byte> bufferPool)
         {

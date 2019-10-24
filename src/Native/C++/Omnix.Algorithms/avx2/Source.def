@@ -1,5 +1,0 @@
-LIBRARY Omnix.Algorithms.dll
-
-EXPORTS
-	Crc32_Castagnoli_Compute
-    ReedSolomon8_Mul

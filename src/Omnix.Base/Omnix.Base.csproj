@@ -7,10 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="System.IO.Pipelines" Version="4.5.3" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Compile Include="$(ProjectDir)..\..\src\Omnix.Common\**\*">
       <Link>Common\%(RecursiveDir)%(FileName)%(Extension)</Link>
     </Compile>
@@ -32,6 +28,10 @@
       <Pack>true</Pack>
       <PackagePath>runtimes\linux\native\omnix-base.x64.so</PackagePath>
     </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.IO.Pipelines" Version="4.6.0" />
   </ItemGroup>
 
 </Project>

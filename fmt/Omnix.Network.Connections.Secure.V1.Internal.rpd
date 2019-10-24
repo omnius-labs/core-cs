@@ -1,6 +1,6 @@
 syntax = v1.0;
 
-using "Omnix.Algorithms.Cryptography";
+using "Omnix.Cryptography";
 namespace "Omnix.Network.Connections.Secure.V1.Internal";
 option csharp_access_level = "internal";
 
