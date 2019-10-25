@@ -1,4 +1,4 @@
-using Omnix.Algorithms.Cryptography;
+using Omnix.Cryptography;
 
 #nullable enable
 
@@ -63,10 +63,10 @@ namespace Omnix.Network.Connections.Secure.V1.Internal
 
             this.SessionId = sessionId;
             this.AuthenticationType = authenticationType;
-            this.KeyExchangeAlgorithms = new global::Omnix.DataStructures.Collections.ReadOnlyListSlim<KeyExchangeAlgorithm>(keyExchangeAlgorithms);
-            this.KeyDerivationAlgorithms = new global::Omnix.DataStructures.Collections.ReadOnlyListSlim<KeyDerivationAlgorithm>(keyDerivationAlgorithms);
-            this.CryptoAlgorithms = new global::Omnix.DataStructures.Collections.ReadOnlyListSlim<CryptoAlgorithm>(cryptoAlgorithms);
-            this.HashAlgorithms = new global::Omnix.DataStructures.Collections.ReadOnlyListSlim<HashAlgorithm>(hashAlgorithms);
+            this.KeyExchangeAlgorithms = new global::Omnix.Collections.ReadOnlyListSlim<KeyExchangeAlgorithm>(keyExchangeAlgorithms);
+            this.KeyDerivationAlgorithms = new global::Omnix.Collections.ReadOnlyListSlim<KeyDerivationAlgorithm>(keyDerivationAlgorithms);
+            this.CryptoAlgorithms = new global::Omnix.Collections.ReadOnlyListSlim<CryptoAlgorithm>(cryptoAlgorithms);
+            this.HashAlgorithms = new global::Omnix.Collections.ReadOnlyListSlim<HashAlgorithm>(hashAlgorithms);
 
             ___hashCode = new global::System.Lazy<int>(() =>
             {
@@ -95,10 +95,10 @@ namespace Omnix.Network.Connections.Secure.V1.Internal
 
         public global::System.ReadOnlyMemory<byte> SessionId { get; }
         public AuthenticationType AuthenticationType { get; }
-        public global::Omnix.DataStructures.Collections.ReadOnlyListSlim<KeyExchangeAlgorithm> KeyExchangeAlgorithms { get; }
-        public global::Omnix.DataStructures.Collections.ReadOnlyListSlim<KeyDerivationAlgorithm> KeyDerivationAlgorithms { get; }
-        public global::Omnix.DataStructures.Collections.ReadOnlyListSlim<CryptoAlgorithm> CryptoAlgorithms { get; }
-        public global::Omnix.DataStructures.Collections.ReadOnlyListSlim<HashAlgorithm> HashAlgorithms { get; }
+        public global::Omnix.Collections.ReadOnlyListSlim<KeyExchangeAlgorithm> KeyExchangeAlgorithms { get; }
+        public global::Omnix.Collections.ReadOnlyListSlim<KeyDerivationAlgorithm> KeyDerivationAlgorithms { get; }
+        public global::Omnix.Collections.ReadOnlyListSlim<CryptoAlgorithm> CryptoAlgorithms { get; }
+        public global::Omnix.Collections.ReadOnlyListSlim<HashAlgorithm> HashAlgorithms { get; }
 
         public static ProfileMessage Import(global::System.Buffers.ReadOnlySequence<byte> sequence, global::Omnix.Base.IBufferPool<byte> bufferPool)
         {
@@ -453,7 +453,7 @@ namespace Omnix.Network.Connections.Secure.V1.Internal
                 if (n.Length > 32) throw new global::System.ArgumentOutOfRangeException("n");
             }
 
-            this.Hashes = new global::Omnix.DataStructures.Collections.ReadOnlyListSlim<global::System.ReadOnlyMemory<byte>>(hashes);
+            this.Hashes = new global::Omnix.Collections.ReadOnlyListSlim<global::System.ReadOnlyMemory<byte>>(hashes);
 
             ___hashCode = new global::System.Lazy<int>(() =>
             {
@@ -466,7 +466,7 @@ namespace Omnix.Network.Connections.Secure.V1.Internal
             });
         }
 
-        public global::Omnix.DataStructures.Collections.ReadOnlyListSlim<global::System.ReadOnlyMemory<byte>> Hashes { get; }
+        public global::Omnix.Collections.ReadOnlyListSlim<global::System.ReadOnlyMemory<byte>> Hashes { get; }
 
         public static AuthenticationMessage Import(global::System.Buffers.ReadOnlySequence<byte> sequence, global::Omnix.Base.IBufferPool<byte> bufferPool)
         {
