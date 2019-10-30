@@ -12,6 +12,48 @@ namespace Omnix.Cryptography
     public static unsafe class Crc32_Castagnoli
     {
         private static readonly ThreadLocal<Encoding> _utf8Encoding = new ThreadLocal<Encoding>(() => new UTF8Encoding(false));
+        private static readonly uint[] _table;
+
+        static Crc32_Castagnoli()
+        {
+            //uint poly = 0xedb88320;
+            uint poly = 0x82F63B78;
+            _table = new uint[256];
+
+            for (uint i = 0; i < 256; i++)
+            {
+                uint x = i;
+
+                for (int j = 0; j < 8; j++)
+                {
+                    if ((x & 1) != 0)
+                    {
+                        x = (x >> 1) ^ poly;
+                    }
+                    else
+                    {
+                        x >>= 1;
+                    }
+                }
+
+                _table[i] = x;
+            }
+        }
+
+        private static uint InternalCompute(uint x, byte* src, int len)
+        {
+            fixed (uint* p_table = _table)
+            {
+                var t_src = src;
+
+                for (int i = 0; i < len; i++)
+                {
+                    x = (x >> 8) ^ p_table[(x & 0xff) ^ *t_src++];
+                }
+
+                return x;
+            }
+        }
 
         public static int ComputeHash(ReadOnlySpan<byte> memory)
         {
@@ -21,7 +63,7 @@ namespace Omnix.Cryptography
             {
                 var t_buffer = p_buffer;
 
-                x = NativeMethods.Crc32_Castagnoli.Compute(x, t_buffer, memory.Length);
+                x = InternalCompute(x, t_buffer, memory.Length);
             }
 
             return (int)(x ^ 0xFFFFFFFF);
@@ -50,7 +92,7 @@ namespace Omnix.Cryptography
             {
                 fixed (byte* p_segment = segment.Span)
                 {
-                    x = NativeMethods.Crc32_Castagnoli.Compute(x, p_segment, segment.Length);
+                    x = InternalCompute(x, p_segment, segment.Length);
                 }
             }
 
