@@ -6,8 +6,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Omnix.Algorithms\Omnix.Algorithms.csproj" />
-    <ProjectReference Include="..\..\src\Omnix.DataStructures\Omnix.DataStructures.csproj" />
     <ProjectReference Include="..\..\src\Omnix.Serialization.RocketPack.DefinitionCompiler\Omnix.Serialization.RocketPack.DefinitionCompiler.csproj" />
     <ProjectReference Include="..\..\src\Omnix.Serialization.RocketPack\Omnix.Serialization.RocketPack.csproj" />
   </ItemGroup>
