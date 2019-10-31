@@ -10,7 +10,7 @@ set INCLUDE=-i %cd%\fmt
 
 "%TOOL_PATH%" %cd%\fmt\Omnix.Configuration.Internal.rpd %INCLUDE% -o %cd%\src\Omnix.Configuration\Internal\_RocketPack\Messages.generated.cs
 
-"%TOOL_PATH%" %cd%\fmt\Omnix.Cryptography.rpd %INCLUDE% -o %cd%\src\Omnix\Cryptography\_RocketPack\Messages.generated.cs
+"%TOOL_PATH%" %cd%\fmt\Omnix.Cryptography.rpd %INCLUDE% -o %cd%\src\Omnix.Cryptography\_RocketPack\Messages.generated.cs
 
 "%TOOL_PATH%" %cd%\fmt\Omnix.Network.rpd %INCLUDE% -o %cd%\src\Omnix.Network\_RocketPack\Messages.generated.cs
 

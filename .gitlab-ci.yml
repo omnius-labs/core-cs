@@ -16,7 +16,7 @@ test_windows_job:
       - publish
 
 test_linux_job:
-  image: mcr.microsoft.com/dotnet/core/sdk:3.0-disco
+  image: mcr.microsoft.com/dotnet/core/sdk:3.0
   stage: test
   tags: 
     - linux
