@@ -1,5 +1,6 @@
 using System.Threading;
 using System.Threading.Tasks;
+using System;
 
 namespace Omnix.Base
 {
@@ -20,6 +21,14 @@ namespace Omnix.Base
         private readonly AsyncLock _asyncLock = new AsyncLock();
 
         public virtual ServiceStateType StateType { get; protected set; }
+
+        protected void ThrowIfNotRunning()
+        {
+            if (this.StateType != ServiceStateType.Running)
+            {
+                throw new ServiceNotRunningException(this.GetType().FullName);
+            }
+        }
 
         protected abstract ValueTask OnInitializeAsync();
         protected abstract ValueTask OnStartAsync();
@@ -86,5 +95,13 @@ namespace Omnix.Base
 
             _asyncLock.Dispose();
         }
+    }
+
+
+    public sealed class ServiceNotRunningException : Exception
+    {
+        public ServiceNotRunningException() { }
+        public ServiceNotRunningException(string message) : base(message) { }
+        public ServiceNotRunningException(string message, Exception innerException) : base(message, innerException) { }
     }
 }
