@@ -4,17 +4,15 @@
 
 ## Overview
 
-OmnixはXeus, Lxnaのための共通ライブラリです。
-基本的には以下の機能を提供します。
+Omnix is Libraries for Xeus, Lxna and others.
 
-+ TCPを利用した暗号通信機能
-+ UPnPを利用したルーターのポート開放機能
-+ ReedSolomon符号を利用したデータの冗長化機能
-+ ロック可能なスレッドセーフコレクション
-+ ロック可能な寿命付きコレクション
-+ ブルームフィルタ
-+ バイナリシリアライザ
-+ RPC機能
+## Goals
+
+## Features
+
+## Website
+
++ <https://omnius-labs.com/>
 
 ## Code Coverages
 
