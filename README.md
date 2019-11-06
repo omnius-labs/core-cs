@@ -16,8 +16,8 @@ Omnix is Libraries for Xeus, Lxna and others.
 
 ## Code Coverages
 
-+ [Windows](https://gitlab.com/omnius-labs/omnix/-/jobs/artifacts/master/file/publish/code-coverage/win/index.htm?job=test_windows_job)
-+ [Linux](https://gitlab.com/omnius-labs/omnix/-/jobs/artifacts/master/file/publish/code-coverage/linux/index.htm?job=test_linux_job)
++ [Windows](https://gitlab.com/omnius-labs/omnix/-/jobs/artifacts/develop/file/publish/code-coverage/win/index.htm?job=test_windows_job)
++ [Linux](https://gitlab.com/omnius-labs/omnix/-/jobs/artifacts/develop/file/publish/code-coverage/linux/index.htm?job=test_linux_job)
 
 ## Links
 
