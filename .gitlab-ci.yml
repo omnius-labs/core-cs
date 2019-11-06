@@ -7,6 +7,7 @@ test_windows_job:
     - windows
   only:
     - master
+    - develop
   script: 
     - chcp 65001
     - cd "%CI_PROJECT_DIR%"
@@ -22,6 +23,7 @@ test_linux_job:
     - linux
   only:
     - master
+    - develop
   script: 
     - cd "$CI_PROJECT_DIR"
     - sh run-test.sh
