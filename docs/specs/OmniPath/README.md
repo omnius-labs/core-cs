@@ -1,5 +1,0 @@
-# OmniPath
-
-## Format
-
-## References
