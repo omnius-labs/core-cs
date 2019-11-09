@@ -128,7 +128,7 @@ namespace Omnix.Network.Connections.Secure.V1.Internal
         {
             if (target is null) return false;
             if (object.ReferenceEquals(this, target)) return true;
-            if (!global::Omnix.Base.BytesOperations.SequenceEqual(this.SessionId.Span, target.SessionId.Span)) return false;
+            if (!global::Omnix.Base.BytesOperations.Equals(this.SessionId.Span, target.SessionId.Span)) return false;
             if (this.AuthenticationType != target.AuthenticationType) return false;
             if (!global::Omnix.Base.Helpers.CollectionHelper.Equals(this.KeyExchangeAlgorithms, target.KeyExchangeAlgorithms)) return false;
             if (!global::Omnix.Base.Helpers.CollectionHelper.Equals(this.KeyDerivationAlgorithms, target.KeyDerivationAlgorithms)) return false;

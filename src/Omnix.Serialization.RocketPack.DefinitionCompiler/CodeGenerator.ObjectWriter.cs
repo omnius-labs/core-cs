@@ -879,12 +879,12 @@ namespace Omnix.Serialization.RocketPack.DefinitionCompiler
                             case BytesType type:
                                 if (!type.IsOptional)
                                 {
-                                    b.WriteLine($"if (!{GenerateTypeFullName("BytesOperations")}.SequenceEqual(this.{element.Name}.Span, target.{element.Name}.Span)) return false;");
+                                    b.WriteLine($"if (!{GenerateTypeFullName("BytesOperations")}.Equals(this.{element.Name}.Span, target.{element.Name}.Span)) return false;");
                                 }
                                 else
                                 {
                                     b.WriteLine($"if ((this.{element.Name} is null) != (target.{element.Name} is null)) return false;");
-                                    b.WriteLine($"if (!(this.{element.Name} is null) && !(target.{element.Name} is null) && !{GenerateTypeFullName("BytesOperations")}.SequenceEqual(this.{element.Name}.Value.Span, target.{element.Name}.Value.Span)) return false;");
+                                    b.WriteLine($"if (!(this.{element.Name} is null) && !(target.{element.Name} is null) && !{GenerateTypeFullName("BytesOperations")}.Equals(this.{element.Name}.Value.Span, target.{element.Name}.Value.Span)) return false;");
                                 }
                                 break;
                             case VectorType type:
