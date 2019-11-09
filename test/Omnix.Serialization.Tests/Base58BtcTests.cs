@@ -47,7 +47,7 @@ namespace Omnix.Serialization
                         // base58Btcのテキストを取得する。
                         base58Btc.TryEncode(hub_base16.Reader.GetSequence(), out var text_base58);
 
-                        Assert.True(BytesOperations.SequenceEqual(text_base58, UTF8Encoding.Default.GetBytes(output)));
+                        Assert.True(BytesOperations.Equals(text_base58, (System.ReadOnlySpan<byte>)UTF8Encoding.Default.GetBytes(output)));
 
                         var hub_base58Btc = new Hub();
 
@@ -55,7 +55,7 @@ namespace Omnix.Serialization
                         base58Btc.TryDecode(UTF8Encoding.Default.GetString(text_base58), hub_base58Btc.Writer);
                         hub_base58Btc.Writer.Complete();
 
-                        Assert.True(BytesOperations.SequenceEqual(hub_base58Btc.Reader.GetSequence().ToArray(), hub_base16.Reader.GetSequence().ToArray()));
+                        Assert.True(BytesOperations.Equals(hub_base58Btc.Reader.GetSequence().ToArray(), (System.ReadOnlySpan<byte>)hub_base16.Reader.GetSequence().ToArray()));
 
                         // base16のデコード結果を解放する。
                         hub_base16.Reader.Complete();
