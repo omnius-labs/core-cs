@@ -89,7 +89,7 @@ namespace Omnix.Network.Connections
                         connection2.DoEvents();
                     }
 
-                    Assert.True(BytesOperations.SequenceEqual(buffer1, buffer2));
+                    Assert.True(BytesOperations.Equals(buffer1, (ReadOnlySpan<byte>)buffer2));
                 }
             }
         }

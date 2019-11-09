@@ -238,7 +238,7 @@ namespace Omnix.Base.Helpers
 
                 if (x != null && y != null)
                 {
-                    return BytesOperations.SequenceEqual(x.AsSpan(), y.AsSpan());
+                    return BytesOperations.Equals(x.AsSpan(), y.AsSpan());
                 }
             }
 
@@ -282,7 +282,7 @@ namespace Omnix.Base.Helpers
                         throw new ArgumentOutOfRangeException(nameof(length));
                     }
 
-                    return BytesOperations.SequenceEqual(x.AsSpan(sourceIndex, length), y.AsSpan(destinationIndex, length));
+                    return BytesOperations.Equals(x.AsSpan(sourceIndex, length), y.AsSpan(destinationIndex, length));
                 }
             }
 

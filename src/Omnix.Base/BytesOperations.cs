@@ -47,7 +47,6 @@ namespace Omnix.Base
             fixed (byte* p_y = destination)
             {
                 Buffer.MemoryCopy(p_x, p_y, destination.Length, length);
-                //_copy(p_x, p_y, length);
             }
         }
 
@@ -55,7 +54,7 @@ namespace Omnix.Base
         // Distributed under the MIT/X11 software license
         // Ref: http://www.opensource.org/licenses/mit-license.php.
         // http://stackoverflow.com/questions/43289/comparing-two-byte-arrays-in-net
-        public static bool SequenceEqual(ReadOnlySpan<byte> source1, ReadOnlySpan<byte> source2)
+        public static bool Equals(ReadOnlySpan<byte> source1, ReadOnlySpan<byte> source2)
         {
             if (source1.Length != source2.Length)
             {
@@ -68,7 +67,7 @@ namespace Omnix.Base
             }
         }
 
-        public static bool SequenceEqual(ReadOnlySpan<byte> source1, ReadOnlySpan<byte> source2, int length)
+        public static bool Equals(ReadOnlySpan<byte> source1, ReadOnlySpan<byte> source2, int length)
         {
             if (length > source1.Length)
             {
@@ -121,7 +120,7 @@ namespace Omnix.Base
 
         private static void BitwiseOperation(NativeMethods.BytesOperations.BitwiseOperationDelegate bitwiseOperation, ReadOnlySpan<byte> source1, ReadOnlySpan<byte> source2, Span<byte> destination)
         {
-            // Zero
+            // Zero Clear
             {
                 int targetRange = Math.Max(source1.Length, source2.Length);
 
@@ -129,16 +128,6 @@ namespace Omnix.Base
                 {
                     Zero(destination.Slice(targetRange, destination.Length - targetRange));
                 }
-            }
-
-            // Copy
-            if (source1.Length > source2.Length && destination.Length > source2.Length)
-            {
-                Copy(source1, destination, Math.Min(source1.Length, destination.Length) - source2.Length);
-            }
-            else if (source2.Length > source1.Length && destination.Length > source1.Length)
-            {
-                Copy(source2, destination, Math.Min(source2.Length, destination.Length) - source1.Length);
             }
 
             // BitwiseOperation

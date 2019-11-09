@@ -37,10 +37,10 @@ namespace Omnix.Base
         {
             var random = new Random();
 
-            Assert.True(BytesOperations.SequenceEqual(new byte[] { 0, 1, 2, 3, 4 }, new byte[] { 0, 1, 2, 3, 4 }));
-            Assert.False(BytesOperations.SequenceEqual(new byte[] { 0, 1, 2, 3, 4 }, new byte[] { 0, 1, 2, 3, 4, 5 }));
-            Assert.True(BytesOperations.SequenceEqual(new byte[] { 0, 1, 2, 3, 4 }.AsSpan().Slice(2), new byte[] { 0, 1, 2, 3, 4 }.AsSpan().Slice(2)));
-            Assert.False(BytesOperations.SequenceEqual(new byte[] { 0, 1, 2, 3, 4 }.AsSpan().Slice(1), new byte[] { 0, 1, 2, 3, 4 }.AsSpan().Slice(2)));
+            Assert.True(BytesOperations.Equals(new byte[] { 0, 1, 2, 3, 4 }, (ReadOnlySpan<byte>)(new byte[] { 0, 1, 2, 3, 4 })));
+            Assert.False(BytesOperations.Equals(new byte[] { 0, 1, 2, 3, 4 }, (ReadOnlySpan<byte>)(new byte[] { 0, 1, 2, 3, 4, 5 })));
+            Assert.True(BytesOperations.Equals(new byte[] { 0, 1, 2, 3, 4 }.AsSpan().Slice(2), new byte[] { 0, 1, 2, 3, 4 }.AsSpan().Slice(2)));
+            Assert.False(BytesOperations.Equals(new byte[] { 0, 1, 2, 3, 4 }.AsSpan().Slice(1), new byte[] { 0, 1, 2, 3, 4 }.AsSpan().Slice(2)));
         }
 
         [Fact]
