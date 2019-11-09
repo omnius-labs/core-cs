@@ -1,9 +1,6 @@
 # Custom
 tmp/
 
-# Visual Studio Code
-.vscode/
-
 # Tool Runtime Dir
 /[Tt]ools/
 
