@@ -553,7 +553,7 @@ namespace Omnix.Network.Connections.Multiplexer.V1.Internal
             if (object.ReferenceEquals(this, target)) return true;
             if (this.SessionId != target.SessionId) return false;
             if (this.IsCompleted != target.IsCompleted) return false;
-            if (!global::Omnix.Base.BytesOperations.SequenceEqual(this.Data.Span, target.Data.Span)) return false;
+            if (!global::Omnix.Base.BytesOperations.Equals(this.Data.Span, target.Data.Span)) return false;
 
             return true;
         }

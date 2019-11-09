@@ -46,7 +46,7 @@ namespace Omnix.Cryptography
                 using (var hmacSha256 = new HMACSHA256(key))
                 {
                     // .Net標準のHMACSHA256と同一の結果になるはず。
-                    Assert.True(BytesOperations.SequenceEqual(hmacSha256.ComputeHash(stream), Hmac_Sha2_256.ComputeHash(buffer, key)));
+                    Assert.True(BytesOperations.Equals(hmacSha256.ComputeHash(stream), (ReadOnlySpan<byte>)Hmac_Sha2_256.ComputeHash(buffer, key)));
                 }
             }
         }

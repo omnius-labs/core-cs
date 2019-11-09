@@ -83,7 +83,7 @@ namespace Omnix.Cryptography
         public bool Equals(OmniHash target)
         {
             if (this.AlgorithmType != target.AlgorithmType) return false;
-            if (!global::Omnix.Base.BytesOperations.SequenceEqual(this.Value.Span, target.Value.Span)) return false;
+            if (!global::Omnix.Base.BytesOperations.Equals(this.Value.Span, target.Value.Span)) return false;
 
             return true;
         }
@@ -189,8 +189,8 @@ namespace Omnix.Cryptography
             if (object.ReferenceEquals(this, target)) return true;
             if (this.CreationTime != target.CreationTime) return false;
             if (this.AlgorithmType != target.AlgorithmType) return false;
-            if (!global::Omnix.Base.BytesOperations.SequenceEqual(this.PublicKey.Span, target.PublicKey.Span)) return false;
-            if (!global::Omnix.Base.BytesOperations.SequenceEqual(this.PrivateKey.Span, target.PrivateKey.Span)) return false;
+            if (!global::Omnix.Base.BytesOperations.Equals(this.PublicKey.Span, target.PublicKey.Span)) return false;
+            if (!global::Omnix.Base.BytesOperations.Equals(this.PrivateKey.Span, target.PrivateKey.Span)) return false;
 
             return true;
         }
@@ -356,7 +356,7 @@ namespace Omnix.Cryptography
             if (object.ReferenceEquals(this, target)) return true;
             if (this.CreationTime != target.CreationTime) return false;
             if (this.AlgorithmType != target.AlgorithmType) return false;
-            if (!global::Omnix.Base.BytesOperations.SequenceEqual(this.PublicKey.Span, target.PublicKey.Span)) return false;
+            if (!global::Omnix.Base.BytesOperations.Equals(this.PublicKey.Span, target.PublicKey.Span)) return false;
 
             return true;
         }
@@ -507,7 +507,7 @@ namespace Omnix.Cryptography
             if (object.ReferenceEquals(this, target)) return true;
             if (this.CreationTime != target.CreationTime) return false;
             if (this.AlgorithmType != target.AlgorithmType) return false;
-            if (!global::Omnix.Base.BytesOperations.SequenceEqual(this.PrivateKey.Span, target.PrivateKey.Span)) return false;
+            if (!global::Omnix.Base.BytesOperations.Equals(this.PrivateKey.Span, target.PrivateKey.Span)) return false;
 
             return true;
         }
@@ -666,8 +666,8 @@ namespace Omnix.Cryptography
             if (object.ReferenceEquals(this, target)) return true;
             if (this.Name != target.Name) return false;
             if (this.AlgorithmType != target.AlgorithmType) return false;
-            if (!global::Omnix.Base.BytesOperations.SequenceEqual(this.PublicKey.Span, target.PublicKey.Span)) return false;
-            if (!global::Omnix.Base.BytesOperations.SequenceEqual(this.PrivateKey.Span, target.PrivateKey.Span)) return false;
+            if (!global::Omnix.Base.BytesOperations.Equals(this.PublicKey.Span, target.PublicKey.Span)) return false;
+            if (!global::Omnix.Base.BytesOperations.Equals(this.PrivateKey.Span, target.PrivateKey.Span)) return false;
 
             return true;
         }
@@ -841,8 +841,8 @@ namespace Omnix.Cryptography
             if (object.ReferenceEquals(this, target)) return true;
             if (this.Name != target.Name) return false;
             if (this.AlgorithmType != target.AlgorithmType) return false;
-            if (!global::Omnix.Base.BytesOperations.SequenceEqual(this.PublicKey.Span, target.PublicKey.Span)) return false;
-            if (!global::Omnix.Base.BytesOperations.SequenceEqual(this.Value.Span, target.Value.Span)) return false;
+            if (!global::Omnix.Base.BytesOperations.Equals(this.PublicKey.Span, target.PublicKey.Span)) return false;
+            if (!global::Omnix.Base.BytesOperations.Equals(this.Value.Span, target.Value.Span)) return false;
 
             return true;
         }
@@ -1136,7 +1136,7 @@ namespace Omnix.Cryptography
             if (target is null) return false;
             if (object.ReferenceEquals(this, target)) return true;
             if (this.AlgorithmType != target.AlgorithmType) return false;
-            if (!global::Omnix.Base.BytesOperations.SequenceEqual(this.Key.Span, target.Key.Span)) return false;
+            if (!global::Omnix.Base.BytesOperations.Equals(this.Key.Span, target.Key.Span)) return false;
 
             return true;
         }

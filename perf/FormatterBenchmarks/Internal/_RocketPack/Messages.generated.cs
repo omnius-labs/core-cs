@@ -257,16 +257,16 @@ namespace FormatterBenchmarks.Internal
         {
             if (target is null) return false;
             if (object.ReferenceEquals(this, target)) return true;
-            if (!global::Omnix.Base.BytesOperations.SequenceEqual(this.X0.Span, target.X0.Span)) return false;
-            if (!global::Omnix.Base.BytesOperations.SequenceEqual(this.X1.Span, target.X1.Span)) return false;
-            if (!global::Omnix.Base.BytesOperations.SequenceEqual(this.X2.Span, target.X2.Span)) return false;
-            if (!global::Omnix.Base.BytesOperations.SequenceEqual(this.X3.Span, target.X3.Span)) return false;
-            if (!global::Omnix.Base.BytesOperations.SequenceEqual(this.X4.Span, target.X4.Span)) return false;
-            if (!global::Omnix.Base.BytesOperations.SequenceEqual(this.X5.Span, target.X5.Span)) return false;
-            if (!global::Omnix.Base.BytesOperations.SequenceEqual(this.X6.Span, target.X6.Span)) return false;
-            if (!global::Omnix.Base.BytesOperations.SequenceEqual(this.X7.Span, target.X7.Span)) return false;
-            if (!global::Omnix.Base.BytesOperations.SequenceEqual(this.X8.Span, target.X8.Span)) return false;
-            if (!global::Omnix.Base.BytesOperations.SequenceEqual(this.X9.Span, target.X9.Span)) return false;
+            if (!global::Omnix.Base.BytesOperations.Equals(this.X0.Span, target.X0.Span)) return false;
+            if (!global::Omnix.Base.BytesOperations.Equals(this.X1.Span, target.X1.Span)) return false;
+            if (!global::Omnix.Base.BytesOperations.Equals(this.X2.Span, target.X2.Span)) return false;
+            if (!global::Omnix.Base.BytesOperations.Equals(this.X3.Span, target.X3.Span)) return false;
+            if (!global::Omnix.Base.BytesOperations.Equals(this.X4.Span, target.X4.Span)) return false;
+            if (!global::Omnix.Base.BytesOperations.Equals(this.X5.Span, target.X5.Span)) return false;
+            if (!global::Omnix.Base.BytesOperations.Equals(this.X6.Span, target.X6.Span)) return false;
+            if (!global::Omnix.Base.BytesOperations.Equals(this.X7.Span, target.X7.Span)) return false;
+            if (!global::Omnix.Base.BytesOperations.Equals(this.X8.Span, target.X8.Span)) return false;
+            if (!global::Omnix.Base.BytesOperations.Equals(this.X9.Span, target.X9.Span)) return false;
 
             return true;
         }
