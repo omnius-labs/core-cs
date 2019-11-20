@@ -14,10 +14,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Omnix.Base\Omnix.Base.csproj" />
-    <ProjectReference Include="..\..\src\Omnix.Collections\Omnix.Collections.csproj" />
-    <ProjectReference Include="..\..\src\Omnix.Serialization.RocketPack\Omnix.Serialization.RocketPack.csproj" />
-    <ProjectReference Include="..\..\src\Omnix.Serialization\Omnix.Serialization.csproj" />
+    <ProjectReference Include="..\..\src\Omnius.Core\Omnius.Core.csproj" />
+    <ProjectReference Include="..\..\src\Omnius.Core.Collections\Omnius.Core.Collections.csproj" />
+    <ProjectReference Include="..\..\src\Omnius.Core.Serialization.RocketPack\Omnius.Core.Serialization.RocketPack.csproj" />
+    <ProjectReference Include="..\..\src\Omnius.Core.Serialization\Omnius.Core.Serialization.csproj" />
   </ItemGroup>
 
 </Project>

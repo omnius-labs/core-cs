@@ -3,7 +3,7 @@ using System.Buffers;
 using System.Collections.Generic;
 using BenchmarkDotNet.Attributes;
 using FormatterBenchmarks.Internal;
-using Omnix.Base;
+using Omnius.Core;
 
 namespace FormatterBenchmarks.Cases
 {

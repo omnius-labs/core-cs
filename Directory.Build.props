@@ -29,7 +29,7 @@
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/omnius-labs/omnix</PackageProjectUrl>
     <RepositoryUrl>https://github.com/omnius-labs/omnix</RepositoryUrl>
-    <PackageTags>Omnix</PackageTags>
+    <PackageTags>Omnius.Core</PackageTags>
     <Copyright>Copyright (c) 2019 Lyrise</Copyright>
     <RepositoryType>git</RepositoryType>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>

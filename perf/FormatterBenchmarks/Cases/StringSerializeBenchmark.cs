@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using BenchmarkDotNet.Attributes;
 using FormatterBenchmarks.Internal;
-using Omnix.Base;
+using Omnius.Core;
 
 namespace FormatterBenchmarks.Cases
 {

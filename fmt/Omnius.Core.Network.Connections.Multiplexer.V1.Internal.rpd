@@ -1,0 +1,43 @@
+syntax = v1.0;
+
+namespace "Omnius.Core.Network.Connections.Multiplexer.V1.Internal";
+option csharp_access_level = "internal";
+
+table ProfileMessage {
+    InitialWindowSize: uint64 = 0,
+    MaxSessionAcceptQueueSize: uint32 = 1,
+}
+
+table SessionConnectMessage {
+    SessionId: uint64 = 0,
+}
+
+table SessionAcceptMessage {
+    SessionId: uint64 = 0,
+}
+
+table SessionUpdateWindowSizeMessage {
+    SessionId: uint64 = 0,
+    Size: uint64 = 1,
+}
+
+table SessionDataMessage {
+    SessionId: uint64 = 0,
+    IsCompleted: bool = 1,
+    Data: bytes(capacity: 262144, recyclable: true) = 2,
+}
+
+table SessionCloseMessage {
+    SessionId: uint64 = 0,
+}
+
+enum SessionErrorType : uint8 {
+    ConnectFailed = 0,
+    MemoryOverflow = 1,
+    NotFoundSessionId = 2,
+}
+
+table SessionErrorMessage {
+    SessionId: uint64 = 0,
+    ErrorType: SessionErrorType = 1, 
+}
