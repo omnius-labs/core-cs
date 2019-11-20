@@ -1,0 +1,13 @@
+syntax = v1.0;
+
+using "Omnius.Core.Cryptography";
+namespace "Omnius.Core.Network.Connections.Secure";
+
+enum OmniSecureConnectionType : uint8 {
+    Connected = 0,
+    Accepted = 1,
+}
+
+enum OmniSecureConnectionVersion : uint8 {
+    Version1 = 1,
+}

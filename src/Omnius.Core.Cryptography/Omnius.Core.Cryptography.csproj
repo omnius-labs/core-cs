@@ -1,0 +1,38 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <IsPackable Condition=" '$(IsSubmodule)' != 'true' ">true</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="Nuget\build\netcoreapp3.0\Omnius.Core.targets">
+      <PackagePath>build/netcoreapp3.0/</PackagePath>
+      <Pack>true</Pack>
+    </Content>
+    <Content Include="Assemblies\Win\hashcash.x64.exe">
+      <CopyToOutputDirectory Condition=" '$(NativeDepsPlatform)' == 'Windows' ">PreserveNewest</CopyToOutputDirectory>
+      <Link>hashcash.x64.exe</Link>
+      <Visible>false</Visible>
+      <Pack>true</Pack>
+      <PackagePath>runtimes\win\native\hashcash.x64.exe</PackagePath>
+    </Content>
+    <Content Include="Assemblies\Linux\hashcash.x64">
+      <CopyToOutputDirectory Condition=" '$(NativeDepsPlatform)' == 'Linux' ">PreserveNewest</CopyToOutputDirectory>
+      <Link>hashcash.x64</Link>
+      <Visible>false</Visible>
+      <Pack>true</Pack>
+      <PackagePath>runtimes\linux\native\hashcash.x64</PackagePath>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Omnius.Core\Omnius.Core.csproj" />
+    <ProjectReference Include="..\Omnius.Core.Collections\Omnius.Core.Collections.csproj" />
+    <ProjectReference Include="..\Omnius.Core.Io\Omnius.Core.Io.csproj" />
+    <ProjectReference Include="..\Omnius.Core.Serialization.RocketPack\Omnius.Core.Serialization.RocketPack.csproj" />
+    <ProjectReference Include="..\Omnius.Core.Serialization\Omnius.Core.Serialization.csproj" />
+  </ItemGroup>
+
+</Project>

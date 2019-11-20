@@ -1,0 +1,44 @@
+syntax = v1.0;
+
+using "Omnius.Core.Cryptography";
+namespace "Omnius.Core.Network.Connections.Secure.V1.Internal";
+option csharp_access_level = "internal";
+
+enum KeyExchangeAlgorithm : uint8 {
+    EcDh_P521_Sha2_256 = 0,
+}
+
+enum KeyDerivationAlgorithm : uint8 {
+    Pbkdf2 = 0,
+}
+
+enum HashAlgorithm : uint8 {
+    Sha2_256 = 0,
+}
+
+enum CryptoAlgorithm : uint8 {
+    Aes_256 = 0,
+}
+
+enum AuthenticationType : uint8 {
+    None = 0,
+    Password = 1,
+}
+
+table ProfileMessage {
+    SessionId: bytes(capacity: 32) = 0,
+    AuthenticationType: AuthenticationType = 1,
+    KeyExchangeAlgorithms: vector<KeyExchangeAlgorithm>(capacity: 32) = 2,
+    KeyDerivationAlgorithms: vector<KeyDerivationAlgorithm>(capacity: 32) = 3,
+    CryptoAlgorithms: vector<CryptoAlgorithm>(capacity: 32) = 4,
+    HashAlgorithms: vector<HashAlgorithm>(capacity: 32) = 5,
+}
+
+table VerificationMessage {
+    ProfileMessage: ProfileMessage = 0,
+    AgreementPublicKey: OmniAgreementPublicKey = 1,
+}
+
+table AuthenticationMessage {
+    Hashes: vector<bytes(capacity: 32)>(capacity: 32) = 0,
+}
