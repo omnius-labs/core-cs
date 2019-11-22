@@ -6,20 +6,24 @@ jobs:
   linux:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v1
-    - name: Setup .NET Core
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: 3.0
-    - name: Test with dotnet
-      run: dotnet test
+      - uses: actions/checkout@v1
+      - uses: actions/setup-dotnet@v1.0.2
+        with:
+          dotnet-version: 3.0.100
+      - run: dotnet test
+      - uses: actions/upload-artifact@v1
+        with:
+          name: artifact
+          path: ./publish
   windows:
     runs-on: windows-latest
     steps:
-    - uses: actions/checkout@v1
-    - name: Setup .NET Core
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: 3.0
-    - name: Test with dotnet
-      run: dotnet test
+      - uses: actions/checkout@v1
+      - uses: actions/setup-dotnet@v1.0.2
+        with:
+          dotnet-version: 3.0.100
+      - run: dotnet test
+      - uses: actions/upload-artifact@v1
+        with:
+          name: artifact
+          path: ./publish
