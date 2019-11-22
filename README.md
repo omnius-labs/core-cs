@@ -16,7 +16,7 @@ Core is Libraries for Xeus, Lxna and others.
 
 ## Links
 
-+ <https://github.com/omnius-labs/omnix>
++ <https://github.com/omnius-labs/core>
 
 ## License
 
