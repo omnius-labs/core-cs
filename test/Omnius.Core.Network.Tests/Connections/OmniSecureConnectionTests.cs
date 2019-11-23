@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using Omnius.Core;
 using Omnius.Core.Network.Caps;
 using Omnius.Core.Network.Connections.Secure;
@@ -14,7 +15,7 @@ namespace Omnius.Core.Network.Connections
     public class OmniSecureConnectionTests
     {
         [Fact]
-        public void RandomSendAndReceiveTest()
+        public async Task RandomSendAndReceiveTest()
         {
             var random = new Random();
 
@@ -83,7 +84,7 @@ namespace Omnius.Core.Network.Connections
                             throw new TimeoutException("SendAndReceive");
                         }
 
-                        Thread.Sleep(10);
+                        await Task.Delay(100);
 
                         connection1.DoEvents();
                         connection2.DoEvents();
