@@ -81,14 +81,12 @@ namespace Omnius.Core.Network.Connections
             }
             else
             {
-                lock (_bandwidthController.SendBytesLimiter.LockObject)
                 {
                     var availableSize = _bandwidthController.SendBytesLimiter.ComputeFreeBytes();
                     var sentSize = this.Send(availableSize);
                     _bandwidthController.SendBytesLimiter.AddConsumedBytes(sentSize);
                 }
 
-                lock (_bandwidthController.ReceiveBytesLimiter.LockObject)
                 {
                     var availableSize = _bandwidthController.ReceiveBytesLimiter.ComputeFreeBytes();
                     var receivedSize = this.Receive(availableSize);

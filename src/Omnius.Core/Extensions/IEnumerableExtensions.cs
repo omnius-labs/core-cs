@@ -70,46 +70,6 @@ namespace Omnius.Core.Extensions
             }
         }
 
-        public static IEnumerable<T> Randomize<T>(this IEnumerable<T> collection)
-        {
-            var random = RandomProvider.GetThreadRandom();
-            return Randomize(collection, random);
-        }
-
-        public static IEnumerable<T> Randomize<T>(this IEnumerable<T> collection, Random random)
-        {
-            object? lockObject = ExtensionHelper.GetLockObject(collection);
-            bool lockToken = false;
-
-            try
-            {
-                if (lockObject != null)
-                {
-                    Monitor.Enter(lockObject, ref lockToken);
-                }
-
-                var list = new List<T>(collection);
-                int n = list.Count;
-
-                while (n > 1)
-                {
-                    int k = random.Next(n--);
-                    var temp = list[n];
-                    list[n] = list[k];
-                    list[k] = temp;
-                }
-
-                return list;
-            }
-            finally
-            {
-                if (lockToken)
-                {
-                    Monitor.Exit(lockObject!);
-                }
-            }
-        }
-
         // http://neue.cc/2014/03/14_448.html
         public static async Task ForEachAsync<T>(this IEnumerable<T> source, Func<T, Task> action, int concurrency, CancellationToken cancellationToken = default, bool configureAwait = false)
         {
