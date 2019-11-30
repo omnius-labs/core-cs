@@ -28,7 +28,7 @@ namespace Omnius.Core.Network.Connections.Secure.V1.Internal
 
         private Status? _status;
 
-        private readonly RandomNumberGenerator _random = RandomNumberGenerator.Create();
+        private readonly Random _random = new Random();
 
         public SecureConnection(IConnection connection, OmniSecureConnectionOptions options)
         {
@@ -81,7 +81,10 @@ namespace Omnius.Core.Network.Connections.Secure.V1.Internal
             {
                 {
                     var sessionId = new byte[32];
-                    _random.GetBytes(sessionId);
+                    using (var randomNumberGenerator = RandomNumberGenerator.Create())
+                    {
+                        randomNumberGenerator.GetBytes(sessionId);
+                    }
 
                     myProfileMessage = new V1.Internal.ProfileMessage(
                         sessionId,
@@ -166,7 +169,7 @@ namespace Omnius.Core.Network.Connections.Secure.V1.Internal
                             {
                                 var myHashAndPasswordList = this.GetHashes(myProfileMessage, myAgreement.GetOmniAgreementPublicKey(), hashAlgorithm).ToList();
 
-                                RandomProvider.GetThreadRandom().Shuffle(myHashAndPasswordList);
+                                _random.Shuffle(myHashAndPasswordList);
                                 myAuthenticationMessage = new V1.Internal.AuthenticationMessage(myHashAndPasswordList.Select(n => n.Item1).ToArray());
                             }
 
@@ -354,7 +357,10 @@ namespace Omnius.Core.Network.Connections.Secure.V1.Internal
 
                         // IVを書き込む
                         var iv = new byte[blockSize];
-                        _random.GetBytes(iv);
+                        using (var randomNumberGenerator = RandomNumberGenerator.Create())
+                        {
+                            randomNumberGenerator.GetBytes(iv);
+                        }
                         bufferWriter.Write(iv);
                         hmac.TransformBlock(iv, 0, iv.Length, null, 0);
                         Interlocked.Add(ref _totalSentSize, iv.Length);
@@ -569,7 +575,7 @@ namespace Omnius.Core.Network.Connections.Secure.V1.Internal
         {
             if (disposing)
             {
-                _random.Dispose();
+
             }
         }
     }

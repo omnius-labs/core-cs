@@ -16,7 +16,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Omnius.Core.Network", "src\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Omnius.Core.Network.Upnp", "src\Omnius.Core.Network.Upnp\Omnius.Core.Network.Upnp.csproj", "{4054BF1B-D7A2-4DE3-A9D2-E0C8E51B1621}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{CDE3119A-739A-44B1-8141-448AF0896E6C}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{CDE3119A-739A-44B1-8141-448AF0896E6C}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sources", "Sources", "{28FCC997-2EE4-4D18-BAA0-96118DFA47BB}"
 EndProject

@@ -19,27 +19,9 @@ namespace Omnius.Core.Extensions
                 throw new ArgumentNullException(nameof(items));
             }
 
-            object? lockObject = ExtensionHelper.GetLockObject(list);
-            bool lockToken = false;
-
-            try
+            foreach (var item in items)
             {
-                if (lockObject != null)
-                {
-                    Monitor.Enter(lockObject, ref lockToken);
-                }
-
-                foreach (var item in items)
-                {
-                    list.Add(item);
-                }
-            }
-            finally
-            {
-                if (lockToken)
-                {
-                    Monitor.Exit(lockObject!);
-                }
+                list.Add(item);
             }
         }
     }

@@ -17,7 +17,7 @@ namespace Omnius.Core.Network
                 {
                     try
                     {
-                        var random = RandomProvider.GetThreadRandom();
+                        var random = new Random();
 
                         int port = random.Next(1024, 20000);
                         Socket socket1, socket2;
