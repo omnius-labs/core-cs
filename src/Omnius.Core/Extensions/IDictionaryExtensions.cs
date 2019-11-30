@@ -30,36 +30,18 @@ namespace Omnius.Core.Extensions
                 throw new ArgumentNullException(nameof(updateValueFactory));
             }
 
-            object? lockObject = ExtensionHelper.GetLockObject(dictionary);
-            bool lockToken = false;
-
-            try
+            if (!dictionary.TryGetValue(key, out var result))
             {
-                if (lockObject != null)
-                {
-                    Monitor.Enter(lockObject, ref lockToken);
-                }
-
-                if (!dictionary.TryGetValue(key, out var result))
-                {
-                    result = addValueFactory(key);
-                    dictionary.Add(key, result);
-                }
-                else
-                {
-                    result = updateValueFactory(key, result);
-                    dictionary[key] = result;
-                }
-
-                return result;
+                result = addValueFactory(key);
+                dictionary.Add(key, result);
             }
-            finally
+            else
             {
-                if (lockToken)
-                {
-                    Monitor.Exit(lockObject!);
-                }
+                result = updateValueFactory(key, result);
+                dictionary[key] = result;
             }
+
+            return result;
         }
 
         public static TValue AddOrUpdate<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key, TValue addValue, Func<TKey, TValue, TValue> updateValueFactory)
@@ -80,37 +62,18 @@ namespace Omnius.Core.Extensions
                 throw new ArgumentNullException(nameof(updateValueFactory));
             }
 
-            object? lockObject = ExtensionHelper.GetLockObject(dictionary);
-            bool lockToken = false;
-
-            try
+            if (!dictionary.TryGetValue(key, out var result))
             {
-                if (lockObject != null)
-                {
-                    Monitor.Enter(lockObject, ref lockToken);
-                }
-
-
-                if (!dictionary.TryGetValue(key, out var result))
-                {
-                    result = addValue;
-                    dictionary.Add(key, result);
-                }
-                else
-                {
-                    result = updateValueFactory(key, result);
-                    dictionary[key] = result;
-                }
-
-                return result;
+                result = addValue;
+                dictionary.Add(key, result);
             }
-            finally
+            else
             {
-                if (lockToken)
-                {
-                    Monitor.Exit(lockObject!);
-                }
+                result = updateValueFactory(key, result);
+                dictionary[key] = result;
             }
+
+            return result;
         }
 
         public static bool TryUpdate<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key, TValue newValue, Predicate<TValue> match)
@@ -131,32 +94,14 @@ namespace Omnius.Core.Extensions
                 throw new ArgumentNullException(nameof(match));
             }
 
-            object? lockObject = ExtensionHelper.GetLockObject(dictionary);
-            bool lockToken = false;
-
-            try
+            if (dictionary.TryGetValue(key, out var result) && match(result))
             {
-                if (lockObject != null)
-                {
-                    Monitor.Enter(lockObject, ref lockToken);
-                }
+                dictionary[key] = newValue;
 
-                if (dictionary.TryGetValue(key, out var result) && match(result))
-                {
-                    dictionary[key] = newValue;
-
-                    return true;
-                }
-
-                return false;
+                return true;
             }
-            finally
-            {
-                if (lockToken)
-                {
-                    Monitor.Exit(lockObject!);
-                }
-            }
+
+            return false;
         }
 
         public static bool TryRemove<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key, out TValue value)
@@ -172,27 +117,9 @@ namespace Omnius.Core.Extensions
                 throw new ArgumentNullException(nameof(key));
             }
 
-            object? lockObject = ExtensionHelper.GetLockObject(dictionary);
-            bool lockToken = false;
+            dictionary.TryGetValue(key, out value);
 
-            try
-            {
-                if (lockObject != null)
-                {
-                    Monitor.Enter(lockObject, ref lockToken);
-                }
-
-                dictionary.TryGetValue(key, out value);
-
-                return dictionary.Remove(key);
-            }
-            finally
-            {
-                if (lockToken)
-                {
-                    Monitor.Exit(lockObject!);
-                }
-            }
+            return dictionary.Remove(key);
         }
 
         public static bool TryAdd<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key, TValue value)
@@ -213,28 +140,10 @@ namespace Omnius.Core.Extensions
                 throw new ArgumentNullException(nameof(value));
             }
 
-            object? lockObject = ExtensionHelper.GetLockObject(dictionary);
-            bool lockToken = false;
+            int count = dictionary.Count;
+            dictionary[key] = value;
 
-            try
-            {
-                if (lockObject != null)
-                {
-                    Monitor.Enter(lockObject, ref lockToken);
-                }
-
-                int count = dictionary.Count;
-                dictionary[key] = value;
-
-                return (count != dictionary.Count);
-            }
-            finally
-            {
-                if (lockToken)
-                {
-                    Monitor.Exit(lockObject!);
-                }
-            }
+            return (count != dictionary.Count);
         }
 
         public static TValue GetOrAdd<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key, Func<TKey, TValue> valueFactory)
@@ -255,33 +164,15 @@ namespace Omnius.Core.Extensions
                 throw new ArgumentNullException(nameof(valueFactory));
             }
 
-            object? lockObject = ExtensionHelper.GetLockObject(dictionary);
-            bool lockToken = false;
-
-            try
+            if (dictionary.TryGetValue(key, out var result))
             {
-                if (lockObject != null)
-                {
-                    Monitor.Enter(lockObject, ref lockToken);
-                }
-
-                if (dictionary.TryGetValue(key, out var result))
-                {
-                    return result;
-                }
-
-                var value = valueFactory(key);
-                dictionary.Add(key, value);
-
-                return value;
+                return result;
             }
-            finally
-            {
-                if (lockToken)
-                {
-                    Monitor.Exit(lockObject!);
-                }
-            }
+
+            var value = valueFactory(key);
+            dictionary.Add(key, value);
+
+            return value;
         }
 
         public static TValue GetOrAdd<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key, TValue value)
@@ -302,32 +193,14 @@ namespace Omnius.Core.Extensions
                 throw new ArgumentNullException(nameof(value));
             }
 
-            object? lockObject = ExtensionHelper.GetLockObject(dictionary);
-            bool lockToken = false;
-
-            try
+            if (dictionary.TryGetValue(key, out var result))
             {
-                if (lockObject != null)
-                {
-                    Monitor.Enter(lockObject, ref lockToken);
-                }
-
-                if (dictionary.TryGetValue(key, out var result))
-                {
-                    return result;
-                }
-
-                dictionary.Add(key, value);
-
-                return value;
+                return result;
             }
-            finally
-            {
-                if (lockToken)
-                {
-                    Monitor.Exit(lockObject!);
-                }
-            }
+
+            dictionary.Add(key, value);
+
+            return value;
         }
     }
 }

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using Omnius.Core;
@@ -10,21 +11,21 @@ namespace Omnius.Core.Network.Connections
         public Limiter SendBytesLimiter { get; } = new Limiter();
         public Limiter ReceiveBytesLimiter { get; } = new Limiter();
 
-        public sealed class Limiter : ISynchronized
+        public sealed class Limiter
         {
             private readonly Queue<(DateTime time, int size)> _queue = new Queue<(DateTime time, int size)>();
+            private readonly object _lockObject = new object();
 
             public int MaxBytesPerSecond { get; set; }
-            public object LockObject { get; } = new object();
 
             public int ComputeFreeBytes()
             {
-                lock (this.LockObject)
+                lock (_lockObject)
                 {
                     var now = DateTime.UtcNow;
                     var lowerLimit = now.AddSeconds(-1);
 
-                    while (_queue.Peek().time < lowerLimit)
+                    while (_queue.Count > 0 && _queue.Peek().time < lowerLimit)
                     {
                         _queue.Dequeue();
                     }
@@ -37,13 +38,13 @@ namespace Omnius.Core.Network.Connections
 
             public void AddConsumedBytes(int size)
             {
-                if (size < 0)
+                lock (_lockObject)
                 {
-                    throw new ArgumentOutOfRangeException(nameof(size));
-                }
+                    if (size < 0)
+                    {
+                        throw new ArgumentOutOfRangeException(nameof(size));
+                    }
 
-                lock (this.LockObject)
-                {
                     var now = DateTime.UtcNow;
                     _queue.Enqueue((now, size));
                 }
