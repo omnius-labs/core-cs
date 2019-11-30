@@ -5,7 +5,7 @@ for path in `find "test" -maxdepth 2 -type f -name "*.csproj"`
 do
     name=$(basename ${path%.*})
     output="../../tmp/test/linux/${name}.opencover.xml"
-    dotnet test "$path" -p:CollectCoverage=true -p:CoverletOutputFormat=opencover -p:CoverletOutput="$output" -p:Exclude="[xunit*]*%2c[*.Tests]*" -v:n;
+    dotnet test "$path" -p:CollectCoverage=true -p:CoverletOutputFormat=opencover -p:CoverletOutput="$output" -p:Exclude="[xunit*]*%2c[*.Tests]*";
 
     ret=$?
 
@@ -15,4 +15,5 @@ do
 done
 
 dotnet tool install dotnet-reportgenerator-globaltool --tool-path tmp/tools/linux/
+dotnet tool update dotnet-reportgenerator-globaltool --tool-path tmp/tools/linux/
 ./tmp/tools/linux/reportgenerator "--reports:tmp/test/linux/*.opencover.xml" "--targetdir:publish/code-coverage/linux"
