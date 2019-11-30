@@ -1,5 +1,7 @@
 # Core - Libraries for Xeus, Lxna and others
 
+![](https://github.com/omnius-labs/core/workflows/Github%20Actions/badge.svg)
+
 ## Overview
 
 Core is Libraries for Xeus, Lxna and others.
