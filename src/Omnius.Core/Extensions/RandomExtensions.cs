@@ -9,32 +9,14 @@ namespace Omnius.Core.Extensions
     {
         public static void Shuffle<T>(this Random random, IList<T> collection)
         {
-            object? lockObject = ExtensionHelper.GetLockObject(collection);
-            bool lockToken = false;
+            int n = collection.Count;
 
-            try
+            while (n > 1)
             {
-                if (lockObject != null)
-                {
-                    Monitor.Enter(lockObject, ref lockToken);
-                }
-
-                int n = collection.Count;
-
-                while (n > 1)
-                {
-                    int k = random.Next(n--);
-                    var temp = collection[n];
-                    collection[n] = collection[k];
-                    collection[k] = temp;
-                }
-            }
-            finally
-            {
-                if (lockToken)
-                {
-                    Monitor.Exit(lockObject!);
-                }
+                int k = random.Next(n--);
+                var temp = collection[n];
+                collection[n] = collection[k];
+                collection[k] = temp;
             }
         }
 
