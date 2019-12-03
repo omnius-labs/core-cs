@@ -7,13 +7,13 @@ namespace Omnius.Core.Network.Proxies
 {
     public abstract class ProxyClientBase
     {
-        public abstract void Create(Socket socket, CancellationToken token = default);
+        public abstract void Create(Socket socket, CancellationToken cancellationToken = default);
 
-        public virtual Task CreateAsync(Socket socket, CancellationToken token = default)
+        public virtual Task CreateAsync(Socket socket, CancellationToken cancellationToken = default)
         {
             return Task.Run(() =>
             {
-                this.Create(socket, token);
+                this.Create(socket, cancellationToken);
             });
         }
     }

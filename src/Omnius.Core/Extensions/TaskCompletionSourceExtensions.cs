@@ -5,17 +5,17 @@ namespace Omnius.Core.Extensions
 {
     public static class TaskCompletionSourceExtensions
     {
-        public static async Task<TResult> WaitAsync<TResult>(this TaskCompletionSource<TResult> taskCompletionSource, CancellationToken token = default)
+        public static async Task<TResult> WaitAsync<TResult>(this TaskCompletionSource<TResult> taskCompletionSource, CancellationToken cancellationToken = default)
         {
-            using (token.Register(() => taskCompletionSource.TrySetCanceled()))
+            using (cancellationToken.Register(() => taskCompletionSource.TrySetCanceled()))
             {
                 return await taskCompletionSource.Task;
             }
         }
 
-        public static TResult Wait<TResult>(this TaskCompletionSource<TResult> taskCompletionSource, CancellationToken token = default)
+        public static TResult Wait<TResult>(this TaskCompletionSource<TResult> taskCompletionSource, CancellationToken cancellationToken = default)
         {
-            using (token.Register(() => taskCompletionSource.TrySetCanceled()))
+            using (cancellationToken.Register(() => taskCompletionSource.TrySetCanceled()))
             {
                 return taskCompletionSource.Task.Result;
             }

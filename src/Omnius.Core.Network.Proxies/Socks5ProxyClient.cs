@@ -68,7 +68,7 @@ namespace Omnius.Core.Network.Proxies
             _proxyPassword = proxyPassword;
         }
 
-        public override void Create(Socket socket, CancellationToken token = default)
+        public override void Create(Socket socket, CancellationToken cancellationToken = default)
         {
             try
             {
