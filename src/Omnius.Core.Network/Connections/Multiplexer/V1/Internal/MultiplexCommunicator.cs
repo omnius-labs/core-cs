@@ -33,61 +33,61 @@ namespace Omnius.Core.Network.Connections.Multiplexer.V1.Internal
             _connection.DoEvents();
         }
 
-        public async ValueTask SendConnectMessageAsync(SessionConnectMessage connectMessage, CancellationToken token = default)
+        public async ValueTask SendConnectMessageAsync(SessionConnectMessage connectMessage, CancellationToken cancellationToken = default)
         {
             await _connection.EnqueueAsync((bufferWriter) =>
             {
                 OmniVarint.SetUInt64((byte)PacketType.Connect, bufferWriter);
                 connectMessage.Export(bufferWriter, _bufferPool);
-            }, token);
+            }, cancellationToken);
         }
 
-        public async ValueTask SendAcceptMessageAsync(SessionAcceptMessage acceptMessage, CancellationToken token = default)
+        public async ValueTask SendAcceptMessageAsync(SessionAcceptMessage acceptMessage, CancellationToken cancellationToken = default)
         {
             await _connection.EnqueueAsync((bufferWriter) =>
             {
                 OmniVarint.SetUInt64((byte)PacketType.Connect, bufferWriter);
                 acceptMessage.Export(bufferWriter, _bufferPool);
-            }, token);
+            }, cancellationToken);
         }
 
-        public async ValueTask SendUpdateWindowSizeMessageAsync(SessionUpdateWindowSizeMessage updateWindowSizeMessage, CancellationToken token = default)
+        public async ValueTask SendUpdateWindowSizeMessageAsync(SessionUpdateWindowSizeMessage updateWindowSizeMessage, CancellationToken cancellationToken = default)
         {
             await _connection.EnqueueAsync((bufferWriter) =>
             {
                 OmniVarint.SetUInt64((byte)PacketType.Connect, bufferWriter);
                 updateWindowSizeMessage.Export(bufferWriter, _bufferPool);
-            }, token);
+            }, cancellationToken);
         }
 
-        public async ValueTask SendDataMessageAsync(SessionDataMessage dataMessage, CancellationToken token = default)
+        public async ValueTask SendDataMessageAsync(SessionDataMessage dataMessage, CancellationToken cancellationToken = default)
         {
             await _connection.EnqueueAsync((bufferWriter) =>
             {
                 OmniVarint.SetUInt64((byte)PacketType.Connect, bufferWriter);
                 dataMessage.Export(bufferWriter, _bufferPool);
-            }, token);
+            }, cancellationToken);
         }
 
-        public async ValueTask SendCloseMessageAsync(SessionCloseMessage closeMessage, CancellationToken token = default)
+        public async ValueTask SendCloseMessageAsync(SessionCloseMessage closeMessage, CancellationToken cancellationToken = default)
         {
             await _connection.EnqueueAsync((bufferWriter) =>
             {
                 OmniVarint.SetUInt64((byte)PacketType.Connect, bufferWriter);
                 closeMessage.Export(bufferWriter, _bufferPool);
-            }, token);
+            }, cancellationToken);
         }
 
-        public async ValueTask SendErrorMessageAsync(SessionErrorMessage errorMessage, CancellationToken token = default)
+        public async ValueTask SendErrorMessageAsync(SessionErrorMessage errorMessage, CancellationToken cancellationToken = default)
         {
             await _connection.EnqueueAsync((bufferWriter) =>
             {
                 OmniVarint.SetUInt64((byte)PacketType.Connect, bufferWriter);
                 errorMessage.Export(bufferWriter, _bufferPool);
-            }, token);
+            }, cancellationToken);
         }
 
-        public async ValueTask<MultiplexReceiveMessageResult?> ReceiveMessageAsync(CancellationToken token = default)
+        public async ValueTask<MultiplexReceiveMessageResult?> ReceiveMessageAsync(CancellationToken cancellationToken = default)
         {
             MultiplexReceiveMessageResult? result = default;
 
@@ -123,7 +123,7 @@ namespace Omnius.Core.Network.Connections.Multiplexer.V1.Internal
                         result = new MultiplexReceiveMessageResult(errorMessage: SessionErrorMessage.Import(sequence, _bufferPool));
                         break;
                 }
-            }, token);
+            }, cancellationToken);
 
             return result;
         }

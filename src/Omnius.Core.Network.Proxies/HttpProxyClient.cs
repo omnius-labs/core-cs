@@ -77,12 +77,12 @@ namespace Omnius.Core.Network.Proxies
             _destinationPort = destinationPort;
         }
 
-        public override void Create(Socket socket, CancellationToken token = default)
+        public override void Create(Socket socket, CancellationToken cancellationToken = default)
         {
             try
             {
                 // send connection command to proxy host for the specified destination host and port
-                this.SendConnectionCommand(socket, _destinationHost, _destinationPort, token);
+                this.SendConnectionCommand(socket, _destinationHost, _destinationPort, cancellationToken);
             }
             catch (SocketException ex)
             {
@@ -90,7 +90,7 @@ namespace Omnius.Core.Network.Proxies
             }
         }
 
-        private void SendConnectionCommand(Socket socket, string host, int port, CancellationToken token = default)
+        private void SendConnectionCommand(Socket socket, string host, int port, CancellationToken cancellationToken = default)
         {
             using (var stream = new NetworkStream(socket))
             using (var reader = new SocketLineReader(socket, Encoding.UTF8))
@@ -121,7 +121,7 @@ namespace Omnius.Core.Network.Proxies
                 {
                     string line;
 
-                    while (!string.IsNullOrEmpty(line = reader.ReadLineAsync(token)))
+                    while (!string.IsNullOrEmpty(line = reader.ReadLineAsync(cancellationToken)))
                     {
                         sb.Append(line);
                     }

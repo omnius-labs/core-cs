@@ -60,7 +60,7 @@ namespace Omnius.Core.Network.Connections.Multiplexer.V1
             //  public event Action<SessionErrorMessage> ReceiveSessionErrorMessageEvent;
         }
 
-        public async ValueTask<ulong> ConnectAsync(CancellationToken token = default)
+        public async ValueTask<ulong> ConnectAsync(CancellationToken cancellationToken = default)
         {
             // StreamのIDを発行する
             var id = _sessionIdManager.Create();
@@ -75,10 +75,10 @@ namespace Omnius.Core.Network.Connections.Multiplexer.V1
                 }
 
                 // SessionConnectメッセージを送信する
-                await _communicator.SendSessionConnectMessageAsync(new SessionConnectMessage(id), token);
+                await _communicator.SendSessionConnectMessageAsync(new SessionConnectMessage(id), cancellationToken);
 
                 // SessionAcceptメッセージを待機する
-                var result = await info.TaskCompletionSource.WaitAsync(token);
+                var result = await info.TaskCompletionSource.WaitAsync(cancellationToken);
 
                 // 接続失敗
                 if (!result)
@@ -96,19 +96,19 @@ namespace Omnius.Core.Network.Connections.Multiplexer.V1
                 }
 
                 // SessionCloseメッセージを送信する
-                await _communicator.SendSessionCloseMessageAsync(new SessionCloseMessage(id), token);
+                await _communicator.SendSessionCloseMessageAsync(new SessionCloseMessage(id), cancellationToken);
 
                 throw;
             }
         }
 
-        public async ValueTask<ulong> AcceptAsync(CancellationToken token = default)
+        public async ValueTask<ulong> AcceptAsync(CancellationToken cancellationToken = default)
         {
             for (; ; )
             {
-                token.ThrowIfCancellationRequested();
+                cancellationToken.ThrowIfCancellationRequested();
 
-                var info = await _receiveSessionCreateRequestInfoChannel.Reader.ReadAsync(token);
+                var info = await _receiveSessionCreateRequestInfoChannel.Reader.ReadAsync(cancellationToken);
                 await _communicator.SendSessionAcceptMessageAsync(new SessionAcceptMessage(info.SessionId));
 
                 return info.SessionId;

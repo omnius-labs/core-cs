@@ -27,7 +27,7 @@ namespace Omnius.Core.Remoting
             Completed = 3,
         }
 
-        public async ValueTask SendMessageAsync<TMessage>(TMessage message, CancellationToken token = default)
+        public async ValueTask SendMessageAsync<TMessage>(TMessage message, CancellationToken cancellationToken = default)
             where TMessage : IRocketPackMessage<TMessage>
         {
             await _connection.SendAsync((bufferWriter) =>
@@ -36,38 +36,38 @@ namespace Omnius.Core.Remoting
                 bufferWriter.Advance(1);
                 var writer = new RocketPackWriter(bufferWriter, _bufferPool);
                 IRocketPackMessage<TMessage>.Formatter.Serialize(ref writer, message, 0);
-            }, token);
+            }, cancellationToken);
         }
 
-        public async ValueTask SendErrorMessageAsync(OmniRpcErrorMessage errorMessage, CancellationToken token = default)
+        public async ValueTask SendErrorMessageAsync(OmniRpcErrorMessage errorMessage, CancellationToken cancellationToken = default)
         {
             await _connection.SendAsync((bufferWriter) =>
             {
                 bufferWriter.GetSpan(1)[0] = (byte)PacketType.ErrorMessage;
                 bufferWriter.Advance(1);
                 errorMessage.Export(bufferWriter, _bufferPool);
-            }, token);
+            }, cancellationToken);
         }
 
-        public async ValueTask SendCanceledAsync(CancellationToken token = default)
+        public async ValueTask SendCanceledAsync(CancellationToken cancellationToken = default)
         {
             await _connection.SendAsync((bufferWriter) =>
             {
                 bufferWriter.GetSpan(1)[0] = (byte)PacketType.Canceled;
                 bufferWriter.Advance(1);
-            }, token);
+            }, cancellationToken);
         }
 
-        public async ValueTask SendCompletedAsync(CancellationToken token = default)
+        public async ValueTask SendCompletedAsync(CancellationToken cancellationToken = default)
         {
             await _connection.SendAsync((bufferWriter) =>
             {
                 bufferWriter.GetSpan(1)[0] = (byte)PacketType.Completed;
                 bufferWriter.Advance(1);
-            }, token);
+            }, cancellationToken);
         }
 
-        public async ValueTask<OmniRpcStreamReceiveResult<TMessage>> ReceiveAsync<TMessage>(CancellationToken token = default)
+        public async ValueTask<OmniRpcStreamReceiveResult<TMessage>> ReceiveAsync<TMessage>(CancellationToken cancellationToken = default)
             where TMessage : IRocketPackMessage<TMessage>
         {
             OmniRpcStreamReceiveResult<TMessage> receiveResult = default;
@@ -95,7 +95,7 @@ namespace Omnius.Core.Remoting
                         receiveResult = new OmniRpcStreamReceiveResult<TMessage>(default, null, false, true);
                         break;
                 }
-            }, token);
+            }, cancellationToken);
 
             return receiveResult;
         }

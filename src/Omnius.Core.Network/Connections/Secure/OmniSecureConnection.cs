@@ -89,16 +89,16 @@ namespace Omnius.Core.Network.Connections.Secure
             _connection.DoEvents();
         }
 
-        public async ValueTask Handshake(CancellationToken token = default)
+        public async ValueTask Handshake(CancellationToken cancellationToken = default)
         {
             try
             {
-                await this.Hello(token);
+                await this.Hello(cancellationToken);
 
                 if (_version == OmniSecureConnectionVersion.Version1)
                 {
                     _secureConnection_v1 = new V1.Internal.SecureConnection(_connection, _options);
-                    await _secureConnection_v1.Handshake(token);
+                    await _secureConnection_v1.Handshake(cancellationToken);
                 }
                 else
                 {
@@ -115,15 +115,15 @@ namespace Omnius.Core.Network.Connections.Secure
             }
         }
 
-        private async ValueTask Hello(CancellationToken token)
+        private async ValueTask Hello(CancellationToken cancellationToken)
         {
             HelloMessage sendHelloMessage;
             HelloMessage? receiveHelloMessage = null;
             {
                 sendHelloMessage = new HelloMessage(new[] { _version });
 
-                var enqueueTask = _connection.SendAsync((bufferWriter) => sendHelloMessage.Export(bufferWriter, _bufferPool), token);
-                var dequeueTask = _connection.ReceiveAsync((sequence) => receiveHelloMessage = HelloMessage.Import(sequence, _bufferPool), token);
+                var enqueueTask = _connection.SendAsync((bufferWriter) => sendHelloMessage.Export(bufferWriter, _bufferPool), cancellationToken);
+                var dequeueTask = _connection.ReceiveAsync((sequence) => receiveHelloMessage = HelloMessage.Import(sequence, _bufferPool), cancellationToken);
 
                 await ValueTaskHelper.WhenAll(enqueueTask, dequeueTask);
 
@@ -136,11 +136,11 @@ namespace Omnius.Core.Network.Connections.Secure
             _version = GetOverlapMaxEnum(sendHelloMessage.Versions, receiveHelloMessage.Versions);
         }
 
-        public async ValueTask SendAsync(Action<IBufferWriter<byte>> action, CancellationToken token = default)
+        public async ValueTask SendAsync(Action<IBufferWriter<byte>> action, CancellationToken cancellationToken = default)
         {
             if (_secureConnection_v1 != null)
             {
-                await _secureConnection_v1.SendAsync(action, token);
+                await _secureConnection_v1.SendAsync(action, cancellationToken);
             }
             else
             {
@@ -148,11 +148,11 @@ namespace Omnius.Core.Network.Connections.Secure
             }
         }
 
-        public async ValueTask ReceiveAsync(Action<ReadOnlySequence<byte>> action, CancellationToken token = default)
+        public async ValueTask ReceiveAsync(Action<ReadOnlySequence<byte>> action, CancellationToken cancellationToken = default)
         {
             if (_secureConnection_v1 != null)
             {
-                await _secureConnection_v1.ReceiveAsync(action, token);
+                await _secureConnection_v1.ReceiveAsync(action, cancellationToken);
             }
             else
             {
