@@ -287,9 +287,9 @@ namespace Omnius.Core.Network.Connections
         }
 
 
-        public async ValueTask SendAsync(Action<IBufferWriter<byte>> action, CancellationToken token = default)
+        public async ValueTask SendAsync(Action<IBufferWriter<byte>> action, CancellationToken cancellationToken = default)
         {
-            await _sendSemaphoreSlim.WaitAsync(token);
+            await _sendSemaphoreSlim.WaitAsync(cancellationToken);
             this.InternalEnqueue(action);
         }
 
@@ -302,9 +302,9 @@ namespace Omnius.Core.Network.Connections
             _receiveContentHub.Reset();
         }
 
-        public async ValueTask ReceiveAsync(Action<ReadOnlySequence<byte>> action, CancellationToken token = default)
+        public async ValueTask ReceiveAsync(Action<ReadOnlySequence<byte>> action, CancellationToken cancellationToken = default)
         {
-            await _receiveSemaphoreSlim.WaitAsync(token);
+            await _receiveSemaphoreSlim.WaitAsync(cancellationToken);
             this.InternalDequeue(action);
         }
 

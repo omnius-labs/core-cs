@@ -7,9 +7,9 @@ namespace Omnius.Core.Extensions
     public static class WaitHandleExtensions
     {
         // http://www.thomaslevesque.com/2015/06/04/async-and-cancellation-support-for-wait-handles/
-        public static bool WaitOne(this WaitHandle handle, int millisecondsTimeout, CancellationToken token = default)
+        public static bool WaitOne(this WaitHandle handle, int millisecondsTimeout, CancellationToken cancellationToken = default)
         {
-            int n = WaitHandle.WaitAny(new[] { handle, token.WaitHandle }, millisecondsTimeout);
+            int n = WaitHandle.WaitAny(new[] { handle, cancellationToken.WaitHandle }, millisecondsTimeout);
 
             switch (n)
             {
@@ -18,23 +18,23 @@ namespace Omnius.Core.Extensions
                 case 0:
                     return true;
                 default:
-                    token.ThrowIfCancellationRequested();
+                    cancellationToken.ThrowIfCancellationRequested();
                     return false; // never reached
             }
         }
 
-        public static bool WaitOne(this WaitHandle handle, TimeSpan timeout, CancellationToken token = default)
+        public static bool WaitOne(this WaitHandle handle, TimeSpan timeout, CancellationToken cancellationToken = default)
         {
-            return handle.WaitOne((int)timeout.TotalMilliseconds, token);
+            return handle.WaitOne((int)timeout.TotalMilliseconds, cancellationToken);
         }
 
-        public static bool WaitOne(this WaitHandle handle, CancellationToken token = default)
+        public static bool WaitOne(this WaitHandle handle, CancellationToken cancellationToken = default)
         {
-            return handle.WaitOne(Timeout.Infinite, token);
+            return handle.WaitOne(Timeout.Infinite, cancellationToken);
         }
 
         // https://stackoverflow.com/questions/18756354/wrapping-manualresetevent-as-awaitable-task
-        public static async Task WaitAsync(this WaitHandle handle, CancellationToken token = default)
+        public static async Task WaitAsync(this WaitHandle handle, CancellationToken cancellationToken = default)
         {
             var tcs = new TaskCompletionSource<object?>();
 
@@ -52,7 +52,7 @@ namespace Omnius.Core.Extensions
                 }
             }, tcs, Timeout.InfiniteTimeSpan, executeOnlyOnce: true);
 
-            using (token.Register(() => tcs.TrySetCanceled()))
+            using (cancellationToken.Register(() => tcs.TrySetCanceled()))
             {
                 await tcs.Task;
             }

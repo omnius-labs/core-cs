@@ -14,7 +14,7 @@ namespace Omnius.Core.Network.Connections
 
         void DoEvents();
 
-        ValueTask SendAsync(Action<IBufferWriter<byte>> action, CancellationToken token = default);
-        ValueTask ReceiveAsync(Action<ReadOnlySequence<byte>> action, CancellationToken token = default);
+        ValueTask SendAsync(Action<IBufferWriter<byte>> action, CancellationToken cancellationToken = default);
+        ValueTask ReceiveAsync(Action<ReadOnlySequence<byte>> action, CancellationToken cancellationToken = default);
     }
 }

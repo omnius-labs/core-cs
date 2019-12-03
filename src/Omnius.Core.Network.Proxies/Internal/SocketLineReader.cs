@@ -18,7 +18,7 @@ namespace Omnius.Core.Network.Proxies.Internal
             _encoding = encoding;
         }
 
-        public string ReadLineAsync(CancellationToken token = default)
+        public string ReadLineAsync(CancellationToken cancellationToken = default)
         {
             using (var stream = new MemoryStream())
             {
@@ -26,7 +26,7 @@ namespace Omnius.Core.Network.Proxies.Internal
 
                 for (; ; )
                 {
-                    token.ThrowIfCancellationRequested();
+                    cancellationToken.ThrowIfCancellationRequested();
 
                     int receiveLength = _socket.Receive(buffer);
                     if (receiveLength < 1)

@@ -11,13 +11,13 @@ namespace Omnius.Core.Network.Upnp
         [Fact]
         public async Task GetExternalIpAddressTest()
         {
-            using (var tokenSource = new CancellationTokenSource(10 * 1000))
+            using (var cancellationTokenSource = new CancellationTokenSource(10 * 1000))
             {
                 var upnp = new UpnpClient();
 
                 try
                 {
-                    await upnp.ConnectAsync(tokenSource.Token);
+                    await upnp.ConnectAsync(cancellationTokenSource.Token);
                 }
                 catch (Exception)
                 {
@@ -25,7 +25,7 @@ namespace Omnius.Core.Network.Upnp
                     return;
                 }
 
-                var ip = await upnp.GetExternalIpAddressAsync(tokenSource.Token);
+                var ip = await upnp.GetExternalIpAddressAsync(cancellationTokenSource.Token);
                 Assert.True(ip != null);
             }
         }
