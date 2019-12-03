@@ -13,7 +13,7 @@ namespace Omnius.Core.Cryptography
 {
     public static class OmniMiner
     {
-        public static async ValueTask<OmniHashcash> Create(ReadOnlySequence<byte> sequence, ReadOnlyMemory<byte> key, OmniHashcashAlgorithmType hashcashAlgorithmType, int limit, TimeSpan timeout, CancellationToken token)
+        public static async ValueTask<OmniHashcash> Create(ReadOnlySequence<byte> sequence, ReadOnlyMemory<byte> key, OmniHashcashAlgorithmType hashcashAlgorithmType, int limit, TimeSpan timeout, CancellationToken cancellationToken)
         {
             if (!EnumHelper.IsValid(hashcashAlgorithmType))
             {
@@ -25,13 +25,13 @@ namespace Omnius.Core.Cryptography
                 if (hashcashAlgorithmType == OmniHashcashAlgorithmType.Simple_Sha2_256)
                 {
                     var target = Hmac_Sha2_256.ComputeHash(sequence, key.Span);
-                    var hashcashKey = MinerHelper.Compute_Simple_Sha2_256(target, limit, timeout, token);
+                    var hashcashKey = MinerHelper.Compute_Simple_Sha2_256(target, limit, timeout, cancellationToken);
 
                     return new OmniHashcash(OmniHashcashAlgorithmType.Simple_Sha2_256, hashcashKey);
                 }
 
                 throw new NotSupportedException(nameof(hashcashAlgorithmType));
-            }, token);
+            }, cancellationToken);
         }
 
         public static uint Verify(OmniHashcash hashcash, ReadOnlySequence<byte> sequence, ReadOnlyMemory<byte> key)
@@ -87,7 +87,7 @@ namespace Omnius.Core.Cryptography
                 }
             }
 
-            public static byte[] Compute_Simple_Sha2_256(ReadOnlySpan<byte> value, int limit, TimeSpan timeout, CancellationToken token)
+            public static byte[] Compute_Simple_Sha2_256(ReadOnlySpan<byte> value, int limit, TimeSpan timeout, CancellationToken cancellationToken)
             {
                 if (value == null)
                 {
@@ -150,7 +150,7 @@ namespace Omnius.Core.Cryptography
                             {
                                 w.NewLine = "\n";
 
-                                while (!process.HasExited && !token.WaitHandle.WaitOne(1000) && sw.Elapsed < timeout && difficulty < limit)
+                                while (!process.HasExited && !cancellationToken.WaitHandle.WaitOne(1000) && sw.Elapsed < timeout && difficulty < limit)
                                 {
                                     w.WriteLine("a");
                                     w.Flush();

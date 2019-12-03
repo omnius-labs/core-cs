@@ -33,7 +33,7 @@ namespace Omnius.Core.Net.Upnp
 
         public bool IsConnected => _contents != null;
 
-        public async ValueTask ConnectAsync(CancellationToken token = default)
+        public async ValueTask ConnectAsync(CancellationToken cancellationToken = default)
         {
             using (await _lock.LockAsync())
             {
@@ -48,7 +48,7 @@ namespace Omnius.Core.Net.Upnp
                             continue;
                         }
 
-                        (_contents, _location) = await GetContentsAndLocationFromDeviceAsync(IPAddress.Parse("239.255.255.250"), machineIp, token);
+                        (_contents, _location) = await GetContentsAndLocationFromDeviceAsync(IPAddress.Parse("239.255.255.250"), machineIp, cancellationToken);
                     }
                 }
                 catch (UpnpClientException)
@@ -62,7 +62,7 @@ namespace Omnius.Core.Net.Upnp
             }
         }
 
-        private static async ValueTask<(string contents, Uri location)> GetContentsAndLocationFromDeviceAsync(IPAddress targetIp, IPAddress localIp, CancellationToken token = default)
+        private static async ValueTask<(string contents, Uri location)> GetContentsAndLocationFromDeviceAsync(IPAddress targetIp, IPAddress localIp, CancellationToken cancellationToken = default)
         {
             var querys = new List<string>
             {
@@ -87,7 +87,7 @@ namespace Omnius.Core.Net.Upnp
             {
                 for (int i = 0; ; i++)
                 {
-                    token.ThrowIfCancellationRequested();
+                    cancellationToken.ThrowIfCancellationRequested();
 
                     try
                     {
@@ -110,7 +110,7 @@ namespace Omnius.Core.Net.Upnp
 
                 for (int i = 0; i < querys.Count; i++)
                 {
-                    token.ThrowIfCancellationRequested();
+                    cancellationToken.ThrowIfCancellationRequested();
 
                     try
                     {
@@ -127,7 +127,7 @@ namespace Omnius.Core.Net.Upnp
 
                 for (int i = 0; i < 32; i++)
                 {
-                    token.ThrowIfCancellationRequested();
+                    cancellationToken.ThrowIfCancellationRequested();
 
                     string queryResponse;
 
@@ -188,7 +188,7 @@ namespace Omnius.Core.Net.Upnp
             }
         }
 
-        private static async ValueTask<string?> GetExternalIpAddressFromContentsAsync(string contents, string serviceType, string gatewayIp, int gatewayPort, CancellationToken token = default)
+        private static async ValueTask<string?> GetExternalIpAddressFromContentsAsync(string contents, string serviceType, string gatewayIp, int gatewayPort, CancellationToken cancellationToken = default)
         {
             if (contents == null || !contents.Contains(serviceType))
             {
@@ -212,7 +212,7 @@ namespace Omnius.Core.Net.Upnp
                 {
                     client.DefaultRequestHeaders.Add("SOAPAction", "\"" + serviceType + "#GetExternalIPAddress\"");
 
-                    using (var response = await client.PostAsync(uri, new StringContent(soapBody, new UTF8Encoding(false), "text/xml"), token))
+                    using (var response = await client.PostAsync(uri, new StringContent(soapBody, new UTF8Encoding(false), "text/xml"), cancellationToken))
                     using (var reader = new StreamReader(await response.Content.ReadAsStreamAsync()))
                     {
                         var regex = new Regex(@"<(\s*)NewExternalIPAddress((\s*)|(\s+)(.*?))>(\s*)(?<address>.*?)(\s*)<\/(\s*)NewExternalIPAddress(\s*)>", RegexOptions.Singleline | RegexOptions.IgnoreCase);
@@ -226,7 +226,7 @@ namespace Omnius.Core.Net.Upnp
             }
         }
 
-        private static async ValueTask<bool> OpenPortFromContentsAsync(string contents, string serviceType, string gatewayIp, int gatewayPort, UpnpProtocolType protocol, string machineIp, int externalPort, int internalPort, string description, CancellationToken token = default)
+        private static async ValueTask<bool> OpenPortFromContentsAsync(string contents, string serviceType, string gatewayIp, int gatewayPort, UpnpProtocolType protocol, string machineIp, int externalPort, int internalPort, string description, CancellationToken cancellationToken = default)
         {
             if (contents == null || !contents.Contains(serviceType))
             {
@@ -270,7 +270,7 @@ namespace Omnius.Core.Net.Upnp
                 {
                     client.DefaultRequestHeaders.Add("SOAPAction", "\"" + serviceType + "#AddPortMapping\"");
 
-                    using (var response = await client.PostAsync(uri, new StringContent(soapBody, new UTF8Encoding(false), "text/xml"), token))
+                    using (var response = await client.PostAsync(uri, new StringContent(soapBody, new UTF8Encoding(false), "text/xml"), cancellationToken))
                     {
                         if (response.StatusCode == HttpStatusCode.OK)
                         {
@@ -287,7 +287,7 @@ namespace Omnius.Core.Net.Upnp
             }
         }
 
-        private static async ValueTask<bool> ClosePortFromContentsAsync(string services, string serviceType, string gatewayIp, int gatewayPort, UpnpProtocolType protocol, int externalPort, CancellationToken token = default)
+        private static async ValueTask<bool> ClosePortFromContentsAsync(string services, string serviceType, string gatewayIp, int gatewayPort, UpnpProtocolType protocol, int externalPort, CancellationToken cancellationToken = default)
         {
             if (services == null || !services.Contains(serviceType))
             {
@@ -326,7 +326,7 @@ namespace Omnius.Core.Net.Upnp
                 {
                     client.DefaultRequestHeaders.Add("SOAPAction", "\"" + serviceType + "#DeletePortMapping\"");
 
-                    using (var response = await client.PostAsync(uri, new StringContent(soapBody, new UTF8Encoding(false), "text/xml"), token))
+                    using (var response = await client.PostAsync(uri, new StringContent(soapBody, new UTF8Encoding(false), "text/xml"), cancellationToken))
                     {
                         if (response.StatusCode == HttpStatusCode.OK)
                         {
@@ -343,7 +343,7 @@ namespace Omnius.Core.Net.Upnp
             }
         }
 
-        private static async ValueTask<dynamic?> GetPortEntryFromContentsAsync(string services, string serviceType, string gatewayIp, int gatewayPort, int index, CancellationToken token = default)
+        private static async ValueTask<dynamic?> GetPortEntryFromContentsAsync(string services, string serviceType, string gatewayIp, int gatewayPort, int index, CancellationToken cancellationToken = default)
         {
             if (services == null || !services.Contains(serviceType))
             {
@@ -371,7 +371,7 @@ namespace Omnius.Core.Net.Upnp
                 {
                     client.DefaultRequestHeaders.Add("SOAPAction", "\"" + serviceType + "#GetGenericPortMappingEntry\"");
 
-                    using (var response = await client.PostAsync(uri, new StringContent(soapBody, new UTF8Encoding(false), "text/xml"), token))
+                    using (var response = await client.PostAsync(uri, new StringContent(soapBody, new UTF8Encoding(false), "text/xml"), cancellationToken))
                     using (var xml = XmlReader.Create(response.Content.ReadAsStreamAsync().Result))
                     {
                         while (xml.Read())
@@ -404,7 +404,7 @@ namespace Omnius.Core.Net.Upnp
             }
         }
 
-        public async ValueTask<string> GetExternalIpAddressAsync(CancellationToken token = default)
+        public async ValueTask<string> GetExternalIpAddressAsync(CancellationToken cancellationToken = default)
         {
             if (_contents == null || _location == null)
             {
@@ -413,13 +413,13 @@ namespace Omnius.Core.Net.Upnp
 
             string? result;
 
-            result = await GetExternalIpAddressFromContentsAsync(_contents, "urn:schemas-upnp-org:service:WANIPConnection:1", _location.Host, _location.Port, token);
+            result = await GetExternalIpAddressFromContentsAsync(_contents, "urn:schemas-upnp-org:service:WANIPConnection:1", _location.Host, _location.Port, cancellationToken);
             if (result != null)
             {
                 return result;
             }
 
-            result = await GetExternalIpAddressFromContentsAsync(_contents, "urn:schemas-upnp-org:service:WANPPPConnection:1", _location.Host, _location.Port, token);
+            result = await GetExternalIpAddressFromContentsAsync(_contents, "urn:schemas-upnp-org:service:WANPPPConnection:1", _location.Host, _location.Port, cancellationToken);
             if (result != null)
             {
                 return result;
@@ -428,7 +428,7 @@ namespace Omnius.Core.Net.Upnp
             throw new UpnpClientException("Failed to get external ip address.");
         }
 
-        public async ValueTask<bool> OpenPortAsync(UpnpProtocolType protocol, int externalPort, int internalPort, string description, CancellationToken token = default)
+        public async ValueTask<bool> OpenPortAsync(UpnpProtocolType protocol, int externalPort, int internalPort, string description, CancellationToken cancellationToken = default)
         {
             if (_contents == null || _location == null)
             {
@@ -442,7 +442,7 @@ namespace Omnius.Core.Net.Upnp
                     continue;
                 }
 
-                if (await this.OpenPortAsync(protocol, ipAddress.ToString(), externalPort, internalPort, description, token))
+                if (await this.OpenPortAsync(protocol, ipAddress.ToString(), externalPort, internalPort, description, cancellationToken))
                 {
                     return true;
                 }
@@ -451,19 +451,19 @@ namespace Omnius.Core.Net.Upnp
             return false;
         }
 
-        public async ValueTask<bool> OpenPortAsync(UpnpProtocolType protocol, string machineIp, int externalPort, int internalPort, string description, CancellationToken token = default)
+        public async ValueTask<bool> OpenPortAsync(UpnpProtocolType protocol, string machineIp, int externalPort, int internalPort, string description, CancellationToken cancellationToken = default)
         {
             if (_contents == null || _location == null)
             {
                 throw new UpnpClientException(nameof(UpnpClient) + " is not connected");
             }
 
-            if (await OpenPortFromContentsAsync(_contents, "urn:schemas-upnp-org:service:WANIPConnection:1", _location.Host, _location.Port, protocol, machineIp, externalPort, internalPort, description, token))
+            if (await OpenPortFromContentsAsync(_contents, "urn:schemas-upnp-org:service:WANIPConnection:1", _location.Host, _location.Port, protocol, machineIp, externalPort, internalPort, description, cancellationToken))
             {
                 return true;
             }
 
-            if (await OpenPortFromContentsAsync(_contents, "urn:schemas-upnp-org:service:WANPPPConnection:1", _location.Host, _location.Port, protocol, machineIp, externalPort, internalPort, description, token))
+            if (await OpenPortFromContentsAsync(_contents, "urn:schemas-upnp-org:service:WANPPPConnection:1", _location.Host, _location.Port, protocol, machineIp, externalPort, internalPort, description, cancellationToken))
             {
                 return true;
             }
@@ -471,19 +471,19 @@ namespace Omnius.Core.Net.Upnp
             return false;
         }
 
-        public async ValueTask<bool> ClosePortAsync(UpnpProtocolType protocol, int externalPort, CancellationToken token = default)
+        public async ValueTask<bool> ClosePortAsync(UpnpProtocolType protocol, int externalPort, CancellationToken cancellationToken = default)
         {
             if (_contents == null || _location == null)
             {
                 throw new UpnpClientException(nameof(UpnpClient) + " is not connected");
             }
 
-            if (await ClosePortFromContentsAsync(_contents, "urn:schemas-upnp-org:service:WANIPConnection:1", _location.Host, _location.Port, protocol, externalPort, token))
+            if (await ClosePortFromContentsAsync(_contents, "urn:schemas-upnp-org:service:WANIPConnection:1", _location.Host, _location.Port, protocol, externalPort, cancellationToken))
             {
                 return true;
             }
 
-            if (await ClosePortFromContentsAsync(_contents, "urn:schemas-upnp-org:service:WANPPPConnection:1", _location.Host, _location.Port, protocol, externalPort, token))
+            if (await ClosePortFromContentsAsync(_contents, "urn:schemas-upnp-org:service:WANPPPConnection:1", _location.Host, _location.Port, protocol, externalPort, cancellationToken))
             {
                 return true;
             }
@@ -491,7 +491,7 @@ namespace Omnius.Core.Net.Upnp
             return false;
         }
 
-        public async ValueTask<dynamic> GetPortEntryAsync(int index, CancellationToken token = default)
+        public async ValueTask<dynamic> GetPortEntryAsync(int index, CancellationToken cancellationToken = default)
         {
             if (_contents == null || _location == null)
             {
@@ -500,13 +500,13 @@ namespace Omnius.Core.Net.Upnp
 
             dynamic? result;
 
-            result = await GetPortEntryFromContentsAsync(_contents, "urn:schemas-upnp-org:service:WANIPConnection:1", _location.Host, _location.Port, index, token);
+            result = await GetPortEntryFromContentsAsync(_contents, "urn:schemas-upnp-org:service:WANIPConnection:1", _location.Host, _location.Port, index, cancellationToken);
             if (!(result is null))
             {
                 return result;
             }
 
-            result = await GetPortEntryFromContentsAsync(_contents, "urn:schemas-upnp-org:service:WANPPPConnection:1", _location.Host, _location.Port, index, token);
+            result = await GetPortEntryFromContentsAsync(_contents, "urn:schemas-upnp-org:service:WANPPPConnection:1", _location.Host, _location.Port, index, cancellationToken);
             if (!(result is null))
             {
                 return result;

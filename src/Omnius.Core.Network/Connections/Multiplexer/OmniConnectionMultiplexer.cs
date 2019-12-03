@@ -117,7 +117,7 @@ namespace Omnius.Core.Network.Connections.Multiplexer
             return true;
         }
 
-        internal async ValueTask EnqueueAsync(ulong id, Action<IBufferWriter<byte>> action, CancellationToken token = default)
+        internal async ValueTask EnqueueAsync(ulong id, Action<IBufferWriter<byte>> action, CancellationToken cancellationToken = default)
         {
             if (!_sessionInfos.TryGetValue(id, out var sessionInfo))
             {
@@ -125,7 +125,7 @@ namespace Omnius.Core.Network.Connections.Multiplexer
                 throw new Exception();
             }
 
-            await sessionInfo.SendSemaphoreSlim.WaitAsync(token);
+            await sessionInfo.SendSemaphoreSlim.WaitAsync(cancellationToken);
 
             var hub = new Hub();
             action.Invoke(hub.Writer);
@@ -138,13 +138,13 @@ namespace Omnius.Core.Network.Connections.Multiplexer
         {
         }
 
-        internal async ValueTask DequeueAsync(ulong id, Action<ReadOnlySequence<byte>> action, CancellationToken token = default)
+        internal async ValueTask DequeueAsync(ulong id, Action<ReadOnlySequence<byte>> action, CancellationToken cancellationToken = default)
         {
         }
 
-        private void SendThread(CancellationToken token)
+        private void SendThread(CancellationToken cancellationToken)
         {
-            while (!token.IsCancellationRequested)
+            while (!cancellationToken.IsCancellationRequested)
             {
                 var sessionInfo = _sessionInfos.Values.OrderByDescending(n => n.Priority).FirstOrDefault();
 
