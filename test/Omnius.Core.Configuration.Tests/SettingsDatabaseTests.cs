@@ -4,7 +4,7 @@ using Xunit;
 
 namespace Omnius.Core.Configuration
 {
-    public class SettingsDatabaseTests : TestsBase
+    public class OmniSettingsTests : TestsBase
     {
         [Fact]
         public void VersionReadWriteTest()
