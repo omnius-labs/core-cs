@@ -1180,11 +1180,11 @@ namespace Omnius.Core.Serialization.RocketPack.DefinitionCompiler
                     case BytesType memoryType when (memoryType.IsUseMemoryPool):
                         if (!type.IsOptional)
                         {
-                            b.WriteLine($"w.Write({name}.Memory.Span);");
+                            b.WriteLine($"w.Write({name}.Span);");
                         }
                         else
                         {
-                            b.WriteLine($"w.Write({name}.Value.Memory.Span);");
+                            b.WriteLine($"w.Write({name}.Value.Span);");
                         }
                         break;
                     case BytesType memoryType when (!memoryType.IsUseMemoryPool):
