@@ -1,4 +1,4 @@
-name: Actions
+name: Builds
 
 on: [push]
 
@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
-      - uses: actions/setup-dotnet@v1.0.2
+      - uses: actions/setup-dotnet@v1
         with:
           dotnet-version: 3.1.100
       - run: sh run-test.sh
@@ -19,7 +19,7 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v1
-      - uses: actions/setup-dotnet@v1.0.2
+      - uses: actions/setup-dotnet@v1
         with:
           dotnet-version: 3.1.100
       - run: ./run-test.cmd
