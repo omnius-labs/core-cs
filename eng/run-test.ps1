@@ -1,5 +1,4 @@
-dotnet tool install --global coverlet.console
-dotnet tool update --global coverlet.console
+dotnet tool restore
 
 ForEach ($folder in (Get-ChildItem -Path "test" -Directory)) 
 {
@@ -14,6 +13,4 @@ ForEach ($folder in (Get-ChildItem -Path "test" -Directory))
     }
 }
 
-dotnet tool install dotnet-reportgenerator-globaltool --tool-path tmp/tools/win/
-dotnet tool update dotnet-reportgenerator-globaltool --tool-path tmp/tools/win/
-.\tmp\tools\win\reportgenerator.exe "--reports:tmp/test/win/*.opencover.xml" "--targetdir:publish/code-coverage/win"
+dotnet tool run reportgenerator "--reports:tmp/test/win/*.opencover.xml" "--targetdir:publish/code-coverage/win"
