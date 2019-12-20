@@ -7,7 +7,7 @@ using Omnius.Core;
 namespace Omnius.Core.Io
 {
     /// <summary>
-    /// <see cref="Omnius.Core.IBufferPool{System.Byte}"/>を利用した<see cref="MemoryStream"/>の機能を提供します。
+    /// <see cref="Omnius.Core.IBufferPool{T}"/>を利用した<see cref="MemoryStream"/>の機能を提供します。
     /// </summary>
     public class RecyclableMemoryStream : Stream
     {
