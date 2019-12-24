@@ -12,7 +12,7 @@ Core is Libraries for Xeus, Lxna and others.
 
 ## Website
 
-+ <https://omnius-labs.com/>
++ <https://docs.omnius-labs.com/>
 
 ## Code Coverages
 
