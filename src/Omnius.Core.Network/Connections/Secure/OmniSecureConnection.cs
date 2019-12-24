@@ -167,13 +167,5 @@ namespace Omnius.Core.Network.Connections.Secure
                 _secureConnection_v1?.Dispose();
             }
         }
-
-        protected override async ValueTask OnDisposeAsync()
-        {
-            if (_secureConnection_v1 != null)
-            {
-                await _secureConnection_v1.DisposeAsync();
-            }
-        }
     }
 }
