@@ -286,7 +286,6 @@ namespace Omnius.Core.Network.Connections
             _sendHeaderBufferPosition = 0;
         }
 
-
         public async ValueTask SendAsync(Action<IBufferWriter<byte>> action, CancellationToken cancellationToken = default)
         {
             await _sendSemaphoreSlim.WaitAsync(cancellationToken);
