@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 namespace Omnius.Core
 {
     /// <summary>
-    /// <see cref="IDisposable"/>を実装します。
+    /// <see cref="IAsyncDisposable"/>を実装します。
     /// </summary>
-    public abstract class DisposableBase : IDisposable
+    public abstract class AsyncDisposableBase : IAsyncDisposable
     {
         private int _called = 0;
 
@@ -21,25 +21,14 @@ namespace Omnius.Core
             }
         }
 
-        public void Dispose()
-        {
-            this.InternalDispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        ~DisposableBase()
-        {
-            this.InternalDispose(false);
-        }
-
-        private void InternalDispose(bool disposing)
+        public async ValueTask DisposeAsync()
         {
             if (Interlocked.CompareExchange(ref _called, 1, 0) == 0)
             {
-                this.OnDispose(disposing);
+                await this.OnDisposeAsync();
             }
         }
 
-        protected abstract void OnDispose(bool disposing);
+        protected abstract ValueTask OnDisposeAsync();
     }
 }

@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Omnius.Core.Network.Connections
 {
-    public interface IConnection : IDisposable, IAsyncDisposable
+    public interface IConnection : IDisposable
     {
         bool IsConnected { get; }
 
