@@ -79,12 +79,12 @@ namespace Omnius.Core.Network.Connections
 
                     while (!valueTask1.IsCompleted || !valueTask2.IsCompleted)
                     {
-                        if (stopwatch.Elapsed.TotalSeconds > 60)
+                        if (stopwatch.Elapsed.TotalSeconds > 60 * 3)
                         {
                             throw new TimeoutException("SendAndReceive");
                         }
 
-                        await Task.Delay(100);
+                        await Task.Delay(10);
 
                         connection1.DoEvents();
                         connection2.DoEvents();
