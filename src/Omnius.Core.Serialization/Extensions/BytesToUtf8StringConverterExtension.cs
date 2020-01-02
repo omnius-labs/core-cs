@@ -74,14 +74,12 @@ namespace Omnius.Core.Serialization.Extensions
 
         public static byte[] StringToBytes(this IBytesToUtf8StringConverter converter, string text)
         {
-            using (var hub = new Hub())
+            using (var hub = new Hub(BufferPool<byte>.Shared))
             {
                 converter.TryDecode(text, hub.Writer);
-                hub.Writer.Complete();
 
-                var result = new byte[hub.Writer.BytesWritten];
+                var result = new byte[hub.Writer.WrittenCount];
                 hub.Reader.GetSequence().CopyTo(result);
-                hub.Reader.Complete();
 
                 return result;
             }
@@ -89,14 +87,12 @@ namespace Omnius.Core.Serialization.Extensions
 
         public static byte[] Utf8StringToBytes(this IBytesToUtf8StringConverter converter, ReadOnlySpan<byte> text)
         {
-            using (var hub = new Hub())
+            using (var hub = new Hub(BufferPool<byte>.Shared))
             {
                 converter.TryDecode(text, hub.Writer);
-                hub.Writer.Complete();
 
-                var result = new byte[hub.Writer.BytesWritten];
+                var result = new byte[hub.Writer.WrittenCount];
                 hub.Reader.GetSequence().CopyTo(result);
-                hub.Reader.Complete();
 
                 return result;
             }

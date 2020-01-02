@@ -289,7 +289,7 @@ namespace Omnius.Core.Network.Connections.Secure.V1.Internal
 
                 if (hashAlgorithm == V1.Internal.HashAlgorithm.Sha2_256)
                 {
-                    using var hub = new Hub();
+                    using var hub = new Hub(BufferPool<byte>.Shared);
 
                     verificationMessage.Export(hub.Writer, _bufferPool);
                     verificationMessageHash = Sha2_256.ComputeHash(hub.Reader.GetSequence());
@@ -318,10 +318,9 @@ namespace Omnius.Core.Network.Connections.Secure.V1.Internal
                 throw new OmniSecureConnectionException("Not handshaked");
             }
 
-            using var hub = new Hub();
+            using var hub = new Hub(BufferPool<byte>.Shared);
 
             action.Invoke(hub.Writer);
-            hub.Writer.Complete();
 
             var sequence = hub.Reader.GetSequence();
 
@@ -407,8 +406,6 @@ namespace Omnius.Core.Network.Connections.Secure.V1.Internal
                         bufferWriter.Write(hmac.Hash);
                     }
 
-                    hub.Reader.Complete();
-
                     return;
                 }
             }
@@ -436,7 +433,7 @@ namespace Omnius.Core.Network.Connections.Secure.V1.Internal
                 throw new OmniSecureConnectionException("Not handshaked");
             }
 
-            using var hub = new Hub();
+            using var hub = new Hub(BufferPool<byte>.Shared);
 
             try
             {
@@ -513,7 +510,6 @@ namespace Omnius.Core.Network.Connections.Secure.V1.Internal
 
                                     var remainBuffer = decryptor.TransformFinalBlock(inBuffer, 0, remain);
                                     hub.Writer.Write(remainBuffer);
-                                    hub.Writer.Complete();
                                 }
                             }
                             finally
@@ -525,8 +521,6 @@ namespace Omnius.Core.Network.Connections.Secure.V1.Internal
                     }
 
                     action.Invoke(hub.Reader.GetSequence());
-
-                    hub.Reader.Complete();
 
                     return;
                 }

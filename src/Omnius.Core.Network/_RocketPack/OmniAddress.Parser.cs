@@ -16,10 +16,10 @@ namespace Omnius.Core.Network
                 select name;
 
             private static readonly Parser<string> _quotedStringLiteralParser =
-                from openQuote in Sprache.Parse.Char('\'')
-                from fragments in Sprache.Parse.Char('\\').Then(_ => Sprache.Parse.AnyChar.Select(c => $"\\{c}")).Or(Sprache.Parse.CharExcept("\\\'").Many().Text()).Many()
-                from closeQuote in Sprache.Parse.Char('\'')
-                select string.Join(string.Empty, fragments).Replace("\\\'", "\'");
+                from openQuote in Sprache.Parse.Char('\"')
+                from fragments in Sprache.Parse.Char('\\').Then(_ => Sprache.Parse.AnyChar.Select(c => $"\\{c}")).Or(Sprache.Parse.CharExcept("\\\"").Many().Text()).Many()
+                from closeQuote in Sprache.Parse.Char('\"')
+                select string.Join(string.Empty, fragments).Replace("\\\"", "\"");
 
             private static readonly Parser<ConstantElement> _constantElementParser =
                 from element in _stringLiteralParser.Or(_quotedStringLiteralParser).TokenWithSkipSpace()
