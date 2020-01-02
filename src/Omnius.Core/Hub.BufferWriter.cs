@@ -60,7 +60,7 @@ namespace Omnius.Core
 
                 _memories.Add(_currentMemory.Slice(0, _currentMemoryWrittenCount));
 
-                var byteArray = _bufferPool.RentArray(sizeHint);
+                var byteArray = _bufferPool.RentArray(Math.Max(sizeHint, 1024 * 32));
                 _arrays.Add(byteArray);
 
                 _currentMemory = byteArray;
