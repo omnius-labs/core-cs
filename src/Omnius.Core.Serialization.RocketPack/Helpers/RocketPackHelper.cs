@@ -8,7 +8,7 @@ namespace Omnius.Core.Serialization.RocketPack.Helpers
         public static T StreamToMessage<T>(Stream inStream)
             where T : IRocketPackMessage<T>
         {
-            using var hub = new Hub();
+            using var hub = new Hub(BufferPool<byte>.Shared);
 
             const int bufferSize = 4096;
 
@@ -23,18 +23,15 @@ namespace Omnius.Core.Serialization.RocketPack.Helpers
                 hub.Writer.Advance(readLength);
             }
 
-            hub.Writer.Complete();
-
             return IRocketPackMessage<T>.Import(hub.Reader.GetSequence(), BufferPool<byte>.Shared);
         }
 
         public static void MessageToStream<T>(T message, Stream stream)
             where T : IRocketPackMessage<T>
         {
-            using var hub = new Hub();
+            using var hub = new Hub(BufferPool<byte>.Shared);
 
             message.Export(hub.Writer, BufferPool<byte>.Shared);
-            hub.Writer.Complete();
 
             var sequence = hub.Reader.GetSequence();
             var position = sequence.Start;
@@ -43,8 +40,6 @@ namespace Omnius.Core.Serialization.RocketPack.Helpers
             {
                 stream.Write(memory.Span);
             }
-
-            hub.Reader.Complete();
         }
     }
 }

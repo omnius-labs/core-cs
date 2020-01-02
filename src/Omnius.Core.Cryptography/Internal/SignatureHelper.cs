@@ -17,21 +17,18 @@ namespace Omnius.Core.Cryptography.Internal
                 throw new ArgumentNullException(nameof(name));
             }
 
-            using (var hub = new Hub())
+            using (var hub = new Hub(BufferPool<byte>.Shared))
             {
                 {
                     var writer = new RocketPackWriter(hub.Writer, BufferPool<byte>.Shared);
 
                     writer.Write(name);
                     writer.Write(publicKey);
-
-                    hub.Writer.Complete();
                 }
 
                 if (hashAlgorithmType == OmniHashAlgorithmType.Sha2_256)
                 {
                     var result = new OmniHash(hashAlgorithmType, Sha2_256.ComputeHash(hub.Reader.GetSequence()));
-                    hub.Reader.Complete();
 
                     return result;
                 }
