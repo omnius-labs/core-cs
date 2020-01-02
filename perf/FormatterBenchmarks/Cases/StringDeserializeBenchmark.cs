@@ -93,13 +93,13 @@ namespace FormatterBenchmarks.Cases
         }
 
         [Benchmark(Baseline = true)]
-        public object MessagePack_StringPropertiesMessage_DeserializeTest()
+        public object MessagePack_StringElementsList_DeserializeTest()
         {
             return MessagePack.MessagePackSerializer.Deserialize<MessagePack_StringElementsList>(_messagePack_Bytes);
         }
 
         [Benchmark]
-        public object RocketPack_StringPropertiesMessage_DeserializeTest()
+        public object RocketPack_StringElementsList_DeserializeTest()
         {
             return RocketPack_StringElementsList.Import(new ReadOnlySequence<byte>(_rocketPack_Bytes), BufferPool<byte>.Shared);
         }

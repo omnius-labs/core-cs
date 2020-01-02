@@ -73,13 +73,13 @@ namespace FormatterBenchmarks.Cases
         }
 
         [Benchmark(Baseline = true)]
-        public object MessagePack_BytesMessage_SerializeTest()
+        public object MessagePack_BytesElementsList_SerializeTest()
         {
             return MessagePack.MessagePackSerializer.Serialize(_messagePack_Message);
         }
 
         [Benchmark]
-        public object RocketPack_BytesMessage_SerializeTest()
+        public object RocketPack_BytesElementsList_SerializeTest()
         {
             var writer = new ArrayBufferWriter<byte>();
             _rocketPack_Message.Export(writer, BufferPool<byte>.Shared);
