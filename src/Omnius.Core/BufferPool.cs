@@ -24,14 +24,14 @@ namespace Omnius.Core
 
         public int MaxBufferSize => int.MaxValue;
 
-        public IMemoryOwner<T> RentMemory(int minimumLength)
+        public IMemoryOwner<T> RentMemory(int size)
         {
-            if (minimumLength <= 0)
+            if (size <= 0)
             {
                 return SimpleMemoryOwner<T>.Empty;
             }
 
-            return new BufferPoolMemoryOwner(_arrayPool, minimumLength);
+            return new BufferPoolMemoryOwner(_arrayPool, size);
         }
 
         public T[] RentArray(int minimumLength)

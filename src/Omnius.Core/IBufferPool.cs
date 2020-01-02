@@ -6,7 +6,7 @@ namespace Omnius.Core
     {
         int MaxBufferSize { get; }
 
-        IMemoryOwner<T> RentMemory(int minimumLength);
+        IMemoryOwner<T> RentMemory(int size);
 
         T[] RentArray(int minimumLength);
         void ReturnArray(T[] array);

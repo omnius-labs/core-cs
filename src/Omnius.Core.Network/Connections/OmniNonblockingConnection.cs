@@ -19,11 +19,13 @@ namespace Omnius.Core.Network.Connections
         private readonly byte[] _sendHeaderBuffer = new byte[4];
         private int _sendHeaderBufferPosition = -1;
         private readonly Hub _sendContentHub;
+        private bool _sendContentHubWriterIsCompleted = false;
 
         private readonly byte[] _receiveHeaderBuffer = new byte[4];
         private int _receiveHeaderBufferPosition = 0;
         private int _receiveContentRemain = -1;
         private readonly Hub _receiveContentHub;
+        private bool _receiveContentHubWriterIsCompleted = false;
 
         private readonly SemaphoreSlim _sendSemaphoreSlim;
         private readonly SemaphoreSlim _receiveSemaphoreSlim;
@@ -57,8 +59,8 @@ namespace Omnius.Core.Network.Connections
             _bandwidthController = option.BandwidthController;
             _bufferPool = option.BufferPool ?? BufferPool<byte>.Shared;
 
-            _sendContentHub = new Hub();
-            _receiveContentHub = new Hub();
+            _sendContentHub = new Hub(_bufferPool);
+            _receiveContentHub = new Hub(_bufferPool);
 
             _receiveSemaphoreSlim = new SemaphoreSlim(0, 1);
             _sendSemaphoreSlim = new SemaphoreSlim(1, 1);
@@ -81,12 +83,14 @@ namespace Omnius.Core.Network.Connections
             }
             else
             {
+                lock (_bandwidthController.SendBytesLimiter.LockObject)
                 {
                     var availableSize = _bandwidthController.SendBytesLimiter.ComputeFreeBytes();
                     var sentSize = this.Send(availableSize);
                     _bandwidthController.SendBytesLimiter.AddConsumedBytes(sentSize);
                 }
 
+                lock (_bandwidthController.ReceiveBytesLimiter.LockObject)
                 {
                     var availableSize = _bandwidthController.ReceiveBytesLimiter.ComputeFreeBytes();
                     var receivedSize = this.Receive(availableSize);
@@ -111,7 +115,7 @@ namespace Omnius.Core.Network.Connections
 
                 while (total < limit)
                 {
-                    if (_sendHeaderBufferPosition == -1 && !_sendContentHub.Writer.IsCompleted)
+                    if (_sendHeaderBufferPosition == -1 && !_sendContentHubWriterIsCompleted)
                     {
                         break;
                     }
@@ -136,7 +140,7 @@ namespace Omnius.Core.Network.Connections
 
                         _sendHeaderBufferPosition += sendLength;
                     }
-                    else if (!_sendContentHub.Reader.IsCompleted)
+                    else if (_sendContentHub.Reader.RemainCount > 0)
                     {
                         var sequence = _sendContentHub.Reader.GetSequence();
                         var position = sequence.Start;
@@ -145,7 +149,6 @@ namespace Omnius.Core.Network.Connections
                         {
                             if (memory.Length == 0)
                             {
-                                _sendContentHub.Reader.Complete();
                                 break;
                             }
 
@@ -170,10 +173,11 @@ namespace Omnius.Core.Network.Connections
                             _sendContentHub.Reader.Advance(sendLength);
                         }
 
-                        if (_sendContentHub.Reader.IsCompleted)
+                        if (_sendContentHub.Reader.RemainCount == 0)
                         {
                             _sendHeaderBufferPosition = -1;
                             _sendContentHub.Reset();
+                            _sendContentHubWriterIsCompleted = false;
 
                             _sendSemaphoreSlim.Release();
 
@@ -202,7 +206,7 @@ namespace Omnius.Core.Network.Connections
 
                 while (total < limit)
                 {
-                    if (_receiveContentHub.Writer.IsCompleted)
+                    if (_receiveContentHubWriterIsCompleted)
                     {
                         break;
                     }
@@ -265,7 +269,7 @@ namespace Omnius.Core.Network.Connections
                     {
                         _receiveHeaderBufferPosition = 0;
                         _receiveContentRemain = -1;
-                        _receiveContentHub.Writer.Complete();
+                        _receiveContentHubWriterIsCompleted = true;
 
                         _receiveSemaphoreSlim.Release();
 
@@ -277,34 +281,26 @@ namespace Omnius.Core.Network.Connections
             }
         }
 
-        private void InternalEnqueue(Action<IBufferWriter<byte>> action)
-        {
-            action.Invoke(_sendContentHub.Writer);
-            _sendContentHub.Writer.Complete();
-
-            BinaryPrimitives.WriteInt32BigEndian(_sendHeaderBuffer, (int)_sendContentHub.Writer.BytesWritten);
-            _sendHeaderBufferPosition = 0;
-        }
-
         public async ValueTask SendAsync(Action<IBufferWriter<byte>> action, CancellationToken cancellationToken = default)
         {
             await _sendSemaphoreSlim.WaitAsync(cancellationToken);
-            this.InternalEnqueue(action);
-        }
 
-        public void InternalDequeue(Action<ReadOnlySequence<byte>> action)
-        {
-            var sequence = _receiveContentHub.Reader.GetSequence();
-            action.Invoke(sequence);
+            action.Invoke(_sendContentHub.Writer);
+            _sendContentHubWriterIsCompleted = true;
 
-            _receiveContentHub.Reader.Complete();
-            _receiveContentHub.Reset();
+            BinaryPrimitives.WriteInt32BigEndian(_sendHeaderBuffer, (int)_sendContentHub.Writer.WrittenCount);
+            _sendHeaderBufferPosition = 0;
         }
 
         public async ValueTask ReceiveAsync(Action<ReadOnlySequence<byte>> action, CancellationToken cancellationToken = default)
         {
             await _receiveSemaphoreSlim.WaitAsync(cancellationToken);
-            this.InternalDequeue(action);
+
+            var sequence = _receiveContentHub.Reader.GetSequence();
+            action.Invoke(sequence);
+
+            _receiveContentHub.Reset();
+            _receiveContentHubWriterIsCompleted = false;
         }
 
         protected override void OnDispose(bool disposing)

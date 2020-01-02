@@ -8,44 +8,33 @@ namespace Omnius.Core
     {
         public sealed class HubWriter : IBufferWriter<byte>
         {
-            private readonly PipeWriter _pipeWriter;
-            private long _bytesWritten = 0;
-            private bool _isCompleted = false;
+            private readonly BufferWriter _bufferWriter;
 
-            internal HubWriter(Pipe pipe)
+            internal HubWriter(BufferWriter bufferWriter)
             {
-                _pipeWriter = pipe.Writer;
+                _bufferWriter = bufferWriter;
             }
 
-            public long BytesWritten => _bytesWritten;
-            public bool IsCompleted => _isCompleted;
+            public void Reset()
+            {
+
+            }
+
+            public long WrittenCount => _bufferWriter.WrittenCount;
 
             public void Advance(int count)
             {
-                _pipeWriter.Advance(count);
-                _bytesWritten += count;
+                _bufferWriter.Advance(count);
             }
 
             public Memory<byte> GetMemory(int sizeHint = 0)
             {
-                return _pipeWriter.GetMemory(sizeHint);
+                return _bufferWriter.GetMemory(sizeHint);
             }
 
             public Span<byte> GetSpan(int sizeHint = 0)
             {
-                return _pipeWriter.GetSpan(sizeHint);
-            }
-
-            public void Complete()
-            {
-                _pipeWriter.Complete();
-                _isCompleted = true;
-            }
-
-            internal void Reset()
-            {
-                _bytesWritten = 0;
-                _isCompleted = false;
+                return _bufferWriter.GetSpan(sizeHint);
             }
         }
     }

@@ -57,39 +57,38 @@ namespace FormatterBenchmarks.Cases
                 _messagePack_Bytes = MessagePack.MessagePackSerializer.Serialize(new MessagePack_StringElementsList() { List = elementsList.ToArray() });
             }
 
-            using (var hub = new Hub())
             {
                 var random = new Random(0);
                 var bufferPool = BufferPool<byte>.Shared;
 
-                var elementsList = new List<RocketPack_StringElements>();
-
-                for (int i = 0; i < 32 * 1024; i++)
+                using (var hub = new Hub(bufferPool))
                 {
-                    var X0 = GetRandomString(random);
-                    var X1 = GetRandomString(random);
-                    var X2 = GetRandomString(random);
-                    var X3 = GetRandomString(random);
-                    var X4 = GetRandomString(random);
-                    var X5 = GetRandomString(random);
-                    var X6 = GetRandomString(random);
-                    var X7 = GetRandomString(random);
-                    var X8 = GetRandomString(random);
-                    var X9 = GetRandomString(random);
+                    var elementsList = new List<RocketPack_StringElements>();
 
-                    var elements = new RocketPack_StringElements(X0, X1, X2, X3, X4, X5, X6, X7, X8, X9);
-                    elementsList.Add(elements);
+                    for (int i = 0; i < 32 * 1024; i++)
+                    {
+                        var X0 = GetRandomString(random);
+                        var X1 = GetRandomString(random);
+                        var X2 = GetRandomString(random);
+                        var X3 = GetRandomString(random);
+                        var X4 = GetRandomString(random);
+                        var X5 = GetRandomString(random);
+                        var X6 = GetRandomString(random);
+                        var X7 = GetRandomString(random);
+                        var X8 = GetRandomString(random);
+                        var X9 = GetRandomString(random);
+
+                        var elements = new RocketPack_StringElements(X0, X1, X2, X3, X4, X5, X6, X7, X8, X9);
+                        elementsList.Add(elements);
+                    }
+
+                    var message = new RocketPack_StringElementsList(elementsList.ToArray());
+
+                    message.Export(hub.Writer, BufferPool<byte>.Shared);
+
+                    _rocketPack_Bytes = new byte[hub.Writer.WrittenCount];
+                    hub.Reader.GetSequence().CopyTo(_rocketPack_Bytes);
                 }
-
-                var message = new RocketPack_StringElementsList(elementsList.ToArray());
-
-                message.Export(hub.Writer, BufferPool<byte>.Shared);
-                hub.Writer.Complete();
-
-                _rocketPack_Bytes = new byte[hub.Writer.BytesWritten];
-                hub.Reader.GetSequence().CopyTo(_rocketPack_Bytes);
-
-                hub.Reader.Complete();
             }
         }
 
