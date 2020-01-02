@@ -8,20 +8,20 @@ namespace Omnius.Core
     {
         public sealed class HubReader
         {
-            private readonly Pipe _pipe;
-            private readonly PipeReader _pipeReader;
-            private ReadOnlySequence<byte>? _sequence;
+            private BufferWriter _bufferWriter;
             private long _position = 0;
-            private bool _isCompleted = false;
 
-            internal HubReader(Pipe pipe)
+            internal HubReader(BufferWriter bufferWriter)
             {
-                _pipe = pipe;
-                _pipeReader = pipe.Reader;
+                _bufferWriter = bufferWriter;
             }
 
-            public long BytesConsumed => _position;
-            public bool IsCompleted => _isCompleted;
+            public void Reset()
+            {
+                _position = 0;
+            }
+
+            public long RemainCount => _bufferWriter.WrittenCount - _position;
 
             public void Advance(int count)
             {
@@ -30,38 +30,8 @@ namespace Omnius.Core
 
             public ReadOnlySequence<byte> GetSequence()
             {
-                if (_sequence == null)
-                {
-                    if (!_pipeReader.TryRead(out var readResult))
-                    {
-                        throw new HubReaderException("Read failed.");
-                    }
-
-                    _sequence = readResult.Buffer;
-                }
-
-                return _sequence.Value.Slice(_position);
-            }
-
-            public void Complete()
-            {
-                _pipeReader.Complete();
-                _isCompleted = true;
-            }
-
-            internal void Reset()
-            {
-                _sequence = null;
-                _position = 0;
-                _isCompleted = false;
+                return _bufferWriter.GetSequence().Slice(_position);
             }
         }
-    }
-
-    public sealed class HubReaderException : Exception
-    {
-        public HubReaderException() { }
-        public HubReaderException(string message) : base(message) { }
-        public HubReaderException(string message, Exception innerException) : base(message, innerException) { }
     }
 }

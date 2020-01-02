@@ -11,16 +11,17 @@ namespace Omnius.Core.Network.Connections
         public Limiter SendBytesLimiter { get; } = new Limiter();
         public Limiter ReceiveBytesLimiter { get; } = new Limiter();
 
-        public sealed class Limiter
+        public sealed class Limiter : ISynchronized
         {
             private readonly Queue<(DateTime time, int size)> _queue = new Queue<(DateTime time, int size)>();
-            private readonly object _lockObject = new object();
 
             public int MaxBytesPerSecond { get; set; }
 
+            public object LockObject { get; } = new object();
+
             public int ComputeFreeBytes()
             {
-                lock (_lockObject)
+                lock (this.LockObject)
                 {
                     var now = DateTime.UtcNow;
                     var lowerLimit = now.AddSeconds(-1);
@@ -38,7 +39,7 @@ namespace Omnius.Core.Network.Connections
 
             public void AddConsumedBytes(int size)
             {
-                lock (_lockObject)
+                lock (this.LockObject)
                 {
                     if (size < 0)
                     {

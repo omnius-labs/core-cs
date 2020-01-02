@@ -67,7 +67,7 @@ namespace Omnius.Core.Configuration
                 string contentPath = Path.Combine(directoryPath, "opb.gz");
                 string crcPath = Path.Combine(directoryPath, "crc");
 
-                using var hub = new Hub();
+                using var hub = new Hub(BufferPool<byte>.Shared);
 
                 if (!File.Exists(contentPath) || !File.Exists(crcPath))
                 {
@@ -89,8 +89,6 @@ namespace Omnius.Core.Configuration
                     }
                 }
 
-                hub.Writer.Complete();
-
                 var sequence = hub.Reader.GetSequence();
 
                 using (var fileStream = new UnbufferedFileStream(crcPath, FileMode.Open, FileAccess.Read, FileShare.Read, FileOptions.None, BufferPool<byte>.Shared))
@@ -106,8 +104,6 @@ namespace Omnius.Core.Configuration
 
                 var reader = new RocketPackReader(sequence, BufferPool<byte>.Shared);
                 value = formatter.Deserialize(ref reader, 0);
-
-                hub.Reader.Complete();
 
                 return true;
             }
@@ -132,11 +128,10 @@ namespace Omnius.Core.Configuration
                     Directory.CreateDirectory(directoryPath);
                 }
 
-                using var hub = new Hub();
+                using var hub = new Hub(BufferPool<byte>.Shared);
 
                 var writer = new RocketPackWriter(hub.Writer, BufferPool<byte>.Shared);
                 formatter.Serialize(ref writer, value, 0);
-                hub.Writer.Complete();
 
                 var sequence = hub.Reader.GetSequence();
 
