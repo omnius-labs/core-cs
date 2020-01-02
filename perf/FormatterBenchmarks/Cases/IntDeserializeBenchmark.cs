@@ -78,13 +78,13 @@ namespace FormatterBenchmarks.Cases
         }
 
         [Benchmark(Baseline = true)]
-        public object MessagePack_IntPropertiesMessage_DeserializeTest()
+        public object MessagePack_IntElementsList_DeserializeTest()
         {
             return MessagePack.MessagePackSerializer.Deserialize<MessagePack_IntElementsList>(_messagePack_Bytes);
         }
 
         [Benchmark]
-        public object RocketPack_IntPropertiesMessage_DeserializeTest()
+        public object RocketPack_IntElementsList_DeserializeTest()
         {
             return RocketPack_IntElementsList.Import(new ReadOnlySequence<byte>(_rocketPack_Bytes), BufferPool<byte>.Shared);
         }
