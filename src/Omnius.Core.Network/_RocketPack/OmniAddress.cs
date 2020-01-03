@@ -24,7 +24,7 @@ namespace Omnius.Core.Network
             return this.Value;
         }
 
-        public FunctionElement? Parse()
+        public FunctionElement Parse()
         {
             return Parser.Parse(this.Value);
         }

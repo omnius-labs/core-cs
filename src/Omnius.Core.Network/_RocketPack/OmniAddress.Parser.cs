@@ -34,7 +34,7 @@ namespace Omnius.Core.Network
                 from comma in Sprache.Parse.Char(',').Optional().TokenWithSkipSpace()
                 select new FunctionElement(name, arguments.ToArray());
 
-            public static FunctionElement? Parse(string text)
+            public static FunctionElement Parse(string text)
             {
                 try
                 {
@@ -43,9 +43,9 @@ namespace Omnius.Core.Network
                 catch (Exception e)
                 {
                     _logger.Error(e);
-                }
 
-                return null;
+                    throw new FormatException("Failed parse.", e);
+                }
             }
         }
 
