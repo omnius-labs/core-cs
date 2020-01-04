@@ -3,11 +3,12 @@ using System.Globalization;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using Omnius.Core.Network.Proxies.Internal;
 
 namespace Omnius.Core.Network.Proxies
 {
-    public class HttpProxyClient : ProxyClientBase
+    public class HttpProxyClient : IProxyClient
     {
         private const int HTTP_PROXY_DEFAULT_PORT = 8080;
         private const string HTTP_PROXY_CONNECT_CMD = "CONNECT {0}:{1} HTTP/1.0 \r\nHOST {0}:{1}\r\n\r\n";
@@ -77,17 +78,20 @@ namespace Omnius.Core.Network.Proxies
             _destinationPort = destinationPort;
         }
 
-        public override void Create(Socket socket, CancellationToken cancellationToken = default)
+        public async ValueTask ConnectAsync(Socket socket, CancellationToken cancellationToken = default)
         {
-            try
+            await Task.Run(() =>
             {
-                // send connection command to proxy host for the specified destination host and port
-                this.SendConnectionCommand(socket, _destinationHost, _destinationPort, cancellationToken);
-            }
-            catch (SocketException ex)
-            {
-                throw new ProxyClientException(string.Format(CultureInfo.InvariantCulture, "Connection to proxy host {0} on port {1} failed.", ((System.Net.IPEndPoint)socket.RemoteEndPoint).Address.ToString(), ((System.Net.IPEndPoint)socket.RemoteEndPoint).Port.ToString()), ex);
-            }
+                try
+                {
+                    // send connection command to proxy host for the specified destination host and port
+                    this.SendConnectionCommand(socket, _destinationHost, _destinationPort, cancellationToken);
+                }
+                catch (SocketException ex)
+                {
+                    throw new ProxyClientException(string.Format(CultureInfo.InvariantCulture, "Connection to proxy host {0} on port {1} failed.", ((System.Net.IPEndPoint)socket.RemoteEndPoint).Address.ToString(), ((System.Net.IPEndPoint)socket.RemoteEndPoint).Port.ToString()), ex);
+                }
+            });
         }
 
         private void SendConnectionCommand(Socket socket, string host, int port, CancellationToken cancellationToken = default)

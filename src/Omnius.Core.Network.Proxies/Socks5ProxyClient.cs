@@ -5,10 +5,11 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace Omnius.Core.Network.Proxies
 {
-    public class Socks5ProxyClient : ProxyClientBase
+    public class Socks5ProxyClient : IProxyClient
     {
         private const int SOCKS5_DEFAULT_PORT = 1080;
 
@@ -68,20 +69,23 @@ namespace Omnius.Core.Network.Proxies
             _proxyPassword = proxyPassword;
         }
 
-        public override void Create(Socket socket, CancellationToken cancellationToken = default)
+        public async ValueTask ConnectAsync(Socket socket, CancellationToken cancellationToken = default)
         {
-            try
+            await Task.Run(() =>
             {
-                // negotiate which authentication methods are supported / accepted by the server
-                this.NegotiateServerAuthMethod(socket);
+                try
+                {
+                    // negotiate which authentication methods are supported / accepted by the server
+                    this.NegotiateServerAuthMethod(socket);
 
-                // send a connect command to the proxy server for destination host and port
-                this.SendCommand(socket, SOCKS5_CMD_CONNECT, _destinationHost, _destinationPort);
-            }
-            catch (Exception ex)
-            {
-                throw new ProxyClientException(string.Format(CultureInfo.InvariantCulture, "Connection to proxy host {0} on port {1} failed.", ((System.Net.IPEndPoint)socket.RemoteEndPoint).Address.ToString(), ((System.Net.IPEndPoint)socket.RemoteEndPoint).Port.ToString()), ex);
-            }
+                    // send a connect command to the proxy server for destination host and port
+                    this.SendCommand(socket, SOCKS5_CMD_CONNECT, _destinationHost, _destinationPort);
+                }
+                catch (Exception ex)
+                {
+                    throw new ProxyClientException(string.Format(CultureInfo.InvariantCulture, "Connection to proxy host {0} on port {1} failed.", ((System.Net.IPEndPoint)socket.RemoteEndPoint).Address.ToString(), ((System.Net.IPEndPoint)socket.RemoteEndPoint).Port.ToString()), ex);
+                }
+            });
         }
 
         private void NegotiateServerAuthMethod(Socket socket)
