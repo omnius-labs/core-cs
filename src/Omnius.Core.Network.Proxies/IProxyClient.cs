@@ -5,17 +5,9 @@ using System.Threading.Tasks;
 
 namespace Omnius.Core.Network.Proxies
 {
-    public abstract class ProxyClientBase
+    public interface IProxyClient
     {
-        public abstract void Create(Socket socket, CancellationToken cancellationToken = default);
-
-        public virtual Task CreateAsync(Socket socket, CancellationToken cancellationToken = default)
-        {
-            return Task.Run(() =>
-            {
-                this.Create(socket, cancellationToken);
-            });
-        }
+        ValueTask ConnectAsync(Socket socket, CancellationToken cancellationToken = default);
     }
 
     public class ProxyClientException : Exception
