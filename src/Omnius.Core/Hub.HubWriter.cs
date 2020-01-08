@@ -20,7 +20,7 @@ namespace Omnius.Core
 
             }
 
-            public long WrittenCount => _bufferWriter.WrittenCount;
+            public long WrittenBytes => _bufferWriter.WrittenCount;
 
             public void Advance(int count)
             {

@@ -140,7 +140,7 @@ namespace Omnius.Core.Network.Connections
 
                         _sendHeaderBufferPosition += sendLength;
                     }
-                    else if (_sendContentHub.Reader.RemainCount > 0)
+                    else if (_sendContentHub.Reader.RemainBytes > 0)
                     {
                         var sequence = _sendContentHub.Reader.GetSequence();
                         var position = sequence.Start;
@@ -173,7 +173,7 @@ namespace Omnius.Core.Network.Connections
                             _sendContentHub.Reader.Advance(sendLength);
                         }
 
-                        if (_sendContentHub.Reader.RemainCount == 0)
+                        if (_sendContentHub.Reader.RemainBytes == 0)
                         {
                             _sendHeaderBufferPosition = -1;
                             _sendContentHub.Reset();
@@ -288,7 +288,7 @@ namespace Omnius.Core.Network.Connections
             action.Invoke(_sendContentHub.Writer);
             _sendContentHubWriterIsCompleted = true;
 
-            BinaryPrimitives.WriteInt32BigEndian(_sendHeaderBuffer, (int)_sendContentHub.Writer.WrittenCount);
+            BinaryPrimitives.WriteInt32BigEndian(_sendHeaderBuffer, (int)_sendContentHub.Writer.WrittenBytes);
             _sendHeaderBufferPosition = 0;
         }
 
