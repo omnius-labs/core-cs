@@ -78,7 +78,7 @@ namespace Omnius.Core.Serialization.Extensions
             {
                 converter.TryDecode(text, hub.Writer);
 
-                var result = new byte[hub.Writer.WrittenCount];
+                var result = new byte[hub.Writer.WrittenBytes];
                 hub.Reader.GetSequence().CopyTo(result);
 
                 return result;
@@ -91,7 +91,7 @@ namespace Omnius.Core.Serialization.Extensions
             {
                 converter.TryDecode(text, hub.Writer);
 
-                var result = new byte[hub.Writer.WrittenCount];
+                var result = new byte[hub.Writer.WrittenBytes];
                 hub.Reader.GetSequence().CopyTo(result);
 
                 return result;

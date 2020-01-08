@@ -21,7 +21,7 @@ namespace Omnius.Core
                 _position = 0;
             }
 
-            public long RemainCount => _bufferWriter.WrittenCount - _position;
+            public long RemainBytes => _bufferWriter.WrittenCount - _position;
 
             public void Advance(int count)
             {
