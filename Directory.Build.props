@@ -4,6 +4,7 @@
 
   <PropertyGroup>
     <LangVersion>8.0</LangVersion>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
     <Nullable>enable</Nullable>
     <IsPackable>false</IsPackable>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -29,7 +30,7 @@
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/omnius-labs/omnix</PackageProjectUrl>
     <RepositoryUrl>https://github.com/omnius-labs/omnix</RepositoryUrl>
-    <PackageTags>Omnix</PackageTags>
+    <PackageTags>Omnius.Core</PackageTags>
     <Copyright>Copyright (c) 2019 Lyrise</Copyright>
     <RepositoryType>git</RepositoryType>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>

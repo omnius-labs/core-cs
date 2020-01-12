@@ -2,22 +2,21 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp3.0</TargetFramework>
     <DebugType>pdbonly</DebugType>
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
 
 
   <ItemGroup>
-    <PackageReference Include="BenchmarkDotNet" Version="0.11.5" />
-    <PackageReference Include="MessagePack" Version="1.7.3.7" />
+    <PackageReference Include="BenchmarkDotNet" Version="0.12.0" />
+    <PackageReference Include="MessagePack" Version="2.0.323" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Omnix.Base\Omnix.Base.csproj" />
-    <ProjectReference Include="..\..\src\Omnix.Collections\Omnix.Collections.csproj" />
-    <ProjectReference Include="..\..\src\Omnix.Serialization.RocketPack\Omnix.Serialization.RocketPack.csproj" />
-    <ProjectReference Include="..\..\src\Omnix.Serialization\Omnix.Serialization.csproj" />
+    <ProjectReference Include="..\..\src\Omnius.Core\Omnius.Core.csproj" />
+    <ProjectReference Include="..\..\src\Omnius.Core.Collections\Omnius.Core.Collections.csproj" />
+    <ProjectReference Include="..\..\src\Omnius.Core.Serialization.RocketPack\Omnius.Core.Serialization.RocketPack.csproj" />
+    <ProjectReference Include="..\..\src\Omnius.Core.Serialization\Omnius.Core.Serialization.csproj" />
   </ItemGroup>
 
 </Project>
