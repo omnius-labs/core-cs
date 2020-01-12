@@ -1,0 +1,14 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <IsPackable Condition=" '$(IsSubmodule)' != 'true' ">true</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Omnius.Core\Omnius.Core.csproj" />
+    <ProjectReference Include="..\Omnius.Core.Io\Omnius.Core.Io.csproj" />
+    <ProjectReference Include="..\Omnius.Core.Serialization\Omnius.Core.Serialization.csproj" />
+  </ItemGroup>
+
+</Project>

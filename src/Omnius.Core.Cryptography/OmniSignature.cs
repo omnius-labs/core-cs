@@ -1,0 +1,74 @@
+using System;
+using Omnius.Core;
+using Omnius.Core.Helpers;
+using Omnius.Core.Serialization;
+
+namespace Omnius.Core.Cryptography
+{
+    public sealed partial class OmniSignature
+    {
+        public static bool TryParse(string item, out OmniSignature? signature)
+        {
+            if (item == null)
+            {
+                throw new ArgumentNullException(nameof(item));
+            }
+
+            signature = null;
+
+            try
+            {
+                int index = item.IndexOf('@');
+                if (index == -1)
+                {
+                    return false;
+                }
+
+                // @より前の文字列を取得
+                string name = item.Substring(0, index);
+
+                OmniHash omniHash;
+
+                using (var hub = new Hub(BufferPool<byte>.Shared))
+                {
+                    // @以降の文字列をデコードし、hubへ書き込む。
+                    OmniBase.TryDecode(item.Substring(index + 1), hub.Writer);
+
+                    // hubからHash情報を読み取る。
+                    omniHash = OmniHash.Import(hub.Reader.GetSequence(), BufferPool<byte>.Shared);
+                }
+
+                signature = new OmniSignature(name, omniHash);
+
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        private string? _toString;
+
+        public override string ToString()
+        {
+            if (_toString == null)
+            {
+                string hashString;
+
+                using (var hub = new Hub(BufferPool<byte>.Shared))
+                {
+                    // Hash情報をhubへ書き込む。
+                    this.Hash.Export(hub.Writer, BufferPool<byte>.Shared);
+
+                    // hubからHash情報を読み込み、Base58Btcへ変換する。
+                    hashString = OmniBase.ToBase58BtcString(hub.Reader.GetSequence());
+                }
+
+                _toString = StringHelper.Normalize(this.Name) + "@" + hashString;
+            }
+
+            return _toString;
+        }
+    }
+}
