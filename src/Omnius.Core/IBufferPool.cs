@@ -4,11 +4,7 @@ namespace Omnius.Core
 {
     public interface IBufferPool<T>
     {
-        int MaxBufferSize { get; }
-
-        IMemoryOwner<T> RentMemory(int size);
-
-        T[] RentArray(int minimumLength);
-        void ReturnArray(T[] array);
+        ArrayPool<T> Array { get; }
+        MemoryPool<T> Memory { get; }
     }
 }
