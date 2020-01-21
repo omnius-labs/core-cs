@@ -26,7 +26,7 @@ namespace Omnius.Core
             {
                 foreach (var array in _arrays)
                 {
-                    _bufferPool.ReturnArray(array);
+                    _bufferPool.Array.Return(array);
                 }
 
                 _arrays.Clear();
@@ -60,7 +60,7 @@ namespace Omnius.Core
 
                 _memories.Add(_currentMemory.Slice(0, _currentMemoryWrittenCount));
 
-                var byteArray = _bufferPool.RentArray(Math.Max(sizeHint, 1024 * 32));
+                var byteArray = _bufferPool.Array.Rent(Math.Max(sizeHint, 1024 * 32));
                 _arrays.Add(byteArray);
 
                 _currentMemory = byteArray;

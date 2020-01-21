@@ -48,7 +48,7 @@ namespace Omnius.Core.Io
             _blockPosition = -1;
             _blockOffset = 0;
             _blockCount = 0;
-            _blockBuffer = _bufferPool.RentArray(SectorSize);
+            _blockBuffer = _bufferPool.Array.Rent(SectorSize);
 
             _position = _stream.Position;
             _length = _stream.Length;
@@ -322,7 +322,7 @@ namespace Omnius.Core.Io
 
                 if (_blockOffset != 0 || _blockCount != SectorSize)
                 {
-                    using (var memoryOwner = _bufferPool.RentMemory(SectorSize))
+                    using (var memoryOwner = _bufferPool.Memory.Rent(SectorSize))
                     {
                         _stream.Seek(_blockPosition, SeekOrigin.Begin);
 
@@ -367,7 +367,7 @@ namespace Omnius.Core.Io
                     this.Flush();
 
                     _stream.Dispose();
-                    _bufferPool.ReturnArray(_blockBuffer);
+                    _bufferPool.Array.Return(_blockBuffer);
 
                     using (var stream = new FileStream(_path, FileMode.Open))
                     {

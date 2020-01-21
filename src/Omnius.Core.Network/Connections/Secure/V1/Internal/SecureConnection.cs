@@ -367,8 +367,8 @@ namespace Omnius.Core.Network.Connections.Secure.V1.Internal
                         // 暗号化データを書き込む
                         using (var encryptor = aes.CreateEncryptor(_status.MyCryptoKey, iv))
                         {
-                            var inBuffer = _bufferPool.RentArray(blockSize);
-                            var outBuffer = _bufferPool.RentArray(blockSize);
+                            var inBuffer = _bufferPool.Array.Rent(blockSize);
+                            var outBuffer = _bufferPool.Array.Rent(blockSize);
 
                             try
                             {
@@ -396,8 +396,8 @@ namespace Omnius.Core.Network.Connections.Secure.V1.Internal
                             }
                             finally
                             {
-                                _bufferPool.ReturnArray(inBuffer);
-                                _bufferPool.ReturnArray(outBuffer);
+                                _bufferPool.Array.Return(inBuffer);
+                                _bufferPool.Array.Return(outBuffer);
                             }
                         }
 
@@ -489,8 +489,8 @@ namespace Omnius.Core.Network.Connections.Secure.V1.Internal
                         // 暗号化されたデータを復号化する
                         using (var decryptor = aes.CreateDecryptor(_status.OtherCryptoKey, iv))
                         {
-                            var inBuffer = _bufferPool.RentArray(blockSize);
-                            var outBuffer = _bufferPool.RentArray(blockSize);
+                            var inBuffer = _bufferPool.Array.Rent(blockSize);
+                            var outBuffer = _bufferPool.Array.Rent(blockSize);
 
                             try
                             {
@@ -514,8 +514,8 @@ namespace Omnius.Core.Network.Connections.Secure.V1.Internal
                             }
                             finally
                             {
-                                _bufferPool.ReturnArray(inBuffer);
-                                _bufferPool.ReturnArray(outBuffer);
+                                _bufferPool.Array.Return(inBuffer);
+                                _bufferPool.Array.Return(outBuffer);
                             }
                         }
                     }

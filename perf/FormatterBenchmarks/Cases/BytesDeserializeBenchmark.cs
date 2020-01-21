@@ -52,16 +52,16 @@ namespace FormatterBenchmarks.Cases
 
                     for (int i = 0; i < 10; i++)
                     {
-                        var X0 = bufferPool.RentMemory(random.Next(0, 1024 * 256));
-                        var X1 = bufferPool.RentMemory(random.Next(0, 1024 * 256));
-                        var X2 = bufferPool.RentMemory(random.Next(0, 1024 * 256));
-                        var X3 = bufferPool.RentMemory(random.Next(0, 1024 * 256));
-                        var X4 = bufferPool.RentMemory(random.Next(0, 1024 * 256));
-                        var X5 = bufferPool.RentMemory(random.Next(0, 1024 * 256));
-                        var X6 = bufferPool.RentMemory(random.Next(0, 1024 * 256));
-                        var X7 = bufferPool.RentMemory(random.Next(0, 1024 * 256));
-                        var X8 = bufferPool.RentMemory(random.Next(0, 1024 * 256));
-                        var X9 = bufferPool.RentMemory(random.Next(0, 1024 * 256));
+                        var X0 = bufferPool.Memory.Rent(random.Next(0, 1024 * 256));
+                        var X1 = bufferPool.Memory.Rent(random.Next(0, 1024 * 256));
+                        var X2 = bufferPool.Memory.Rent(random.Next(0, 1024 * 256));
+                        var X3 = bufferPool.Memory.Rent(random.Next(0, 1024 * 256));
+                        var X4 = bufferPool.Memory.Rent(random.Next(0, 1024 * 256));
+                        var X5 = bufferPool.Memory.Rent(random.Next(0, 1024 * 256));
+                        var X6 = bufferPool.Memory.Rent(random.Next(0, 1024 * 256));
+                        var X7 = bufferPool.Memory.Rent(random.Next(0, 1024 * 256));
+                        var X8 = bufferPool.Memory.Rent(random.Next(0, 1024 * 256));
+                        var X9 = bufferPool.Memory.Rent(random.Next(0, 1024 * 256));
 
                         var elements = new RocketPack_BytesElements(X0, X1, X2, X3, X4, X5, X6, X7, X8, X9);
                         elementsList.Add(elements);
@@ -71,7 +71,7 @@ namespace FormatterBenchmarks.Cases
 
                     message.Export(hub.Writer, BufferPool<byte>.Shared);
 
-                    _rocketPack_Bytes = new byte[hub.Writer.WrittenCount];
+                    _rocketPack_Bytes = new byte[hub.Writer.WrittenBytes];
                     hub.Reader.GetSequence().CopyTo(_rocketPack_Bytes);
                 }
             }

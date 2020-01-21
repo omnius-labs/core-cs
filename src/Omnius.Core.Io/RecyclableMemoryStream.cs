@@ -256,7 +256,7 @@ namespace Omnius.Core.Io
             {
                 if (_currentBufferIndex >= _buffers.Count)
                 {
-                    var tempBuffer = _bufferPool.RentArray(_bufferSize);
+                    var tempBuffer = _bufferPool.Array.Rent(_bufferSize);
                     if (_bufferSize < 1024 * 32)
                     {
                         _bufferSize *= 2;
@@ -333,7 +333,7 @@ namespace Omnius.Core.Io
                 {
                     for (int i = 0; i < _buffers.Count; i++)
                     {
-                        _bufferPool.ReturnArray(_buffers[i]);
+                        _bufferPool.Array.Return(_buffers[i]);
                     }
 
                     _buffers.Clear();
@@ -347,7 +347,7 @@ namespace Omnius.Core.Io
 
         public IMemoryOwner<byte> ToMemoryOwner()
         {
-            var memoryOwner = _bufferPool.RentMemory((int)this.Length);
+            var memoryOwner = _bufferPool.Memory.Rent((int)this.Length);
 
             long position = this.Position;
 
