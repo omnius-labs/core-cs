@@ -26,7 +26,7 @@ namespace Omnius.Core.Serialization.RocketPack
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Write(in string value)
         {
-            using (var memoryOwner = _bufferPool.RentMemory(_encoding.Value.GetMaxByteCount(value.Length)))
+            using (var memoryOwner = _bufferPool.Memory.Rent(_encoding.Value.GetMaxByteCount(value.Length)))
             {
                 int length = _encoding.Value.GetBytes(value.AsSpan(), memoryOwner.Memory.Span);
                 Varint.SetUInt32((uint)length, _bufferWriter);

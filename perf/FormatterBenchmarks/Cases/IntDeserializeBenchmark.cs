@@ -71,7 +71,7 @@ namespace FormatterBenchmarks.Cases
 
                     message.Export(hub.Writer, BufferPool<byte>.Shared);
 
-                    _rocketPack_Bytes = new byte[hub.Writer.WrittenCount];
+                    _rocketPack_Bytes = new byte[hub.Writer.WrittenBytes];
                     hub.Reader.GetSequence().CopyTo(_rocketPack_Bytes);
                 }
             }

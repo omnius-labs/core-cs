@@ -36,7 +36,12 @@ namespace Omnius.Core.Serialization.RocketPack
                 throw new FormatException();
             }
 
-            var memoryOwner = _bufferPool.RentMemory((int)length);
+            if (length == 0)
+            {
+                return SimpleMemoryOwner<byte>.Empty;
+            }
+
+            var memoryOwner = _bufferPool.Memory.Rent((int)length);
 
             _reader.TryCopyTo(memoryOwner.Memory.Span);
             _reader.Advance(length);
@@ -55,6 +60,11 @@ namespace Omnius.Core.Serialization.RocketPack
             if (length > limit)
             {
                 throw new FormatException();
+            }
+
+            if (length == 0)
+            {
+                return ReadOnlyMemory<byte>.Empty;
             }
 
             var result = new byte[(int)length];
@@ -78,7 +88,7 @@ namespace Omnius.Core.Serialization.RocketPack
                 throw new FormatException();
             }
 
-            using (var memoryOwner = _bufferPool.RentMemory((int)length))
+            using (var memoryOwner = _bufferPool.Memory.Rent((int)length))
             {
                 _reader.TryCopyTo(memoryOwner.Memory.Span);
                 _reader.Advance(length);
