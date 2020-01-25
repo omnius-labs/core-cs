@@ -1,0 +1,66 @@
+{
+  "version": 1,
+  "dependencies": {
+    ".NETCoreApp,Version=v3.1": {
+      "NLog": {
+        "type": "Direct",
+        "requested": "[4.6.7, )",
+        "resolved": "4.6.7",
+        "contentHash": "xSIzXrIF89Ww6yoJPvyBcu4JLgNiDiEaTT4GyVltZEeVIvkgSm9J/srUy1Yz0EXwbTv502l8knoCFrgNc/MUMA=="
+      },
+      "System.IO.Pipelines": {
+        "type": "Transitive",
+        "resolved": "4.6.0",
+        "contentHash": "xOqFH7Uiemd/QzUl2Di23cZCrc2CmgijeTDyFKDT8+jjpH+ynf7WoLUExY2AYGyGBjGL5Kn6DZScnqeg91zQOQ=="
+      },
+      "omnius.core": {
+        "type": "Project",
+        "dependencies": {
+          "NLog": "4.6.7",
+          "System.IO.Pipelines": "4.6.0"
+        }
+      },
+      "omnius.core.collections": {
+        "type": "Project",
+        "dependencies": {
+          "NLog": "4.6.7",
+          "Omnius.Core": "0.0.2-alpha.1"
+        }
+      },
+      "omnius.core.cryptography": {
+        "type": "Project",
+        "dependencies": {
+          "NLog": "4.6.7",
+          "Omnius.Core": "0.0.2-alpha.1",
+          "Omnius.Core.Collections": "0.0.2-alpha.1",
+          "Omnius.Core.Io": "0.0.2-alpha.1",
+          "Omnius.Core.Serialization": "0.0.2-alpha.1",
+          "Omnius.Core.Serialization.RocketPack": "0.0.2-alpha.1"
+        }
+      },
+      "omnius.core.io": {
+        "type": "Project",
+        "dependencies": {
+          "NLog": "4.6.7",
+          "Omnius.Core": "0.0.2-alpha.1"
+        }
+      },
+      "omnius.core.serialization": {
+        "type": "Project",
+        "dependencies": {
+          "NLog": "4.6.7",
+          "Omnius.Core": "0.0.2-alpha.1"
+        }
+      },
+      "omnius.core.serialization.rocketpack": {
+        "type": "Project",
+        "dependencies": {
+          "NLog": "4.6.7",
+          "Omnius.Core": "0.0.2-alpha.1",
+          "Omnius.Core.Io": "0.0.2-alpha.1",
+          "Omnius.Core.Serialization": "0.0.2-alpha.1"
+        }
+      }
+    }
+  }
+}
