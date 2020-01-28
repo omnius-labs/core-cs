@@ -1,6 +1,5 @@
-use clap::{App, Arg, SubCommand};
-use sha2::{Digest, Sha256};
-use std::io::{Read, Write};
+use clap::{App, Arg};
+use ring::digest::*;
 use std::process;
 use std::sync::{Arc, Mutex};
 use std::thread;
@@ -23,13 +22,11 @@ fn simple_sha2_256(value: &[u8]) {
         buffer[16..24].copy_from_slice(&rng.next_u64().to_ne_bytes());
         buffer[24..32].copy_from_slice(&rng.next_u64().to_ne_bytes());
 
-        let mut hasher = Sha256::new();
-        hasher.input(&buffer);
-        let result = hasher.result();
+        let result = digest(&SHA256, &buffer);
 
         let mut current_difficulty: u32 = 0;
 
-        for element in result {
+        for element in result.as_ref() {
             let zeros = element.leading_zeros();
             current_difficulty += zeros;
 
