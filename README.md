@@ -4,4 +4,4 @@
 
 ## Website
 
-+ <https://docs.omnius-labs.com/projects/core/>
++ <https://docs.omnius-labs.com/>
