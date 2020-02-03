@@ -15,7 +15,7 @@ namespace Omnius.Core.Network.Connections.Secure
     {
         private readonly IConnection _connection;
         private readonly OmniSecureConnectionOptions _options;
-        private readonly IBufferPool<byte> _bufferPool;
+        private readonly IBytesPool _bytesPool;
 
         private OmniSecureConnectionVersion _version = OmniSecureConnectionVersion.Version1;
         private V1.Internal.SecureConnection? _secureConnection_v1;
@@ -39,7 +39,7 @@ namespace Omnius.Core.Network.Connections.Secure
 
             _connection = connection;
             _options = options;
-            _bufferPool = options.BufferPool ?? BufferPool<byte>.Shared;
+            _bytesPool = options.BufferPool ?? BytesPool.Shared;
         }
 
         public IConnection BaseConnection => _connection;
@@ -122,8 +122,8 @@ namespace Omnius.Core.Network.Connections.Secure
             {
                 sendHelloMessage = new HelloMessage(new[] { _version });
 
-                var enqueueTask = _connection.SendAsync((bufferWriter) => sendHelloMessage.Export(bufferWriter, _bufferPool), cancellationToken);
-                var dequeueTask = _connection.ReceiveAsync((sequence) => receiveHelloMessage = HelloMessage.Import(sequence, _bufferPool), cancellationToken);
+                var enqueueTask = _connection.SendAsync((bufferWriter) => sendHelloMessage.Export(bufferWriter, _bytesPool), cancellationToken);
+                var dequeueTask = _connection.ReceiveAsync((sequence) => receiveHelloMessage = HelloMessage.Import(sequence, _bytesPool), cancellationToken);
 
                 await ValueTaskHelper.WhenAll(enqueueTask, dequeueTask);
 

@@ -28,7 +28,7 @@ namespace Omnius.Core.Network.Connections
             {
                 MaxReceiveByteCount = 1024 * 1024 * 256,
                 MaxSendByteCount = 1024 * 1024 * 256,
-                BufferPool = BufferPool<byte>.Shared,
+                BufferPool = BytesPool.Shared,
             };
 
             using (var connection1 = new OmniNonblockingConnection(new SocketCap(socket1, false), options))
