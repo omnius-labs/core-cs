@@ -9,7 +9,7 @@ namespace Omnius.Core
     {
         internal class BufferWriter : DisposableBase, IBufferWriter<byte>
         {
-            private readonly IBufferPool<byte> _bufferPool;
+            private readonly IBytesPool _bytesPool;
 
             private readonly List<byte[]> _arrays = new List<byte[]>();
             private readonly List<Memory<byte>> _memories = new List<Memory<byte>>();
@@ -17,16 +17,16 @@ namespace Omnius.Core
             private Memory<byte> _currentMemory = Memory<byte>.Empty;
             private int _currentMemoryWrittenCount = 0;
 
-            public BufferWriter(IBufferPool<byte> bufferPool)
+            public BufferWriter(IBytesPool bytesPool)
             {
-                _bufferPool = bufferPool;
+                _bytesPool = bytesPool;
             }
 
             public void Reset()
             {
                 foreach (var array in _arrays)
                 {
-                    _bufferPool.Array.Return(array);
+                    _bytesPool.Array.Return(array);
                 }
 
                 _arrays.Clear();
@@ -60,7 +60,7 @@ namespace Omnius.Core
 
                 _memories.Add(_currentMemory.Slice(0, _currentMemoryWrittenCount));
 
-                var byteArray = _bufferPool.Array.Rent(Math.Max(sizeHint, 1024 * 32));
+                var byteArray = _bytesPool.Array.Rent(Math.Max(sizeHint, 1024 * 32));
                 _arrays.Add(byteArray);
 
                 _currentMemory = byteArray;

@@ -11,7 +11,7 @@ namespace Omnius.Core.Io
     public class UnbufferedFileStream : Stream
     {
         private readonly string _path;
-        private readonly IBufferPool<byte> _bufferPool;
+        private readonly IBytesPool _bytesPool;
 
         private long _position;
         private long _length;
@@ -27,10 +27,10 @@ namespace Omnius.Core.Io
 
         private const int SectorSize = 1024 * 256;
 
-        public UnbufferedFileStream(string path, FileMode mode, FileAccess access, FileShare share, FileOptions options, IBufferPool<byte> bufferPool)
+        public UnbufferedFileStream(string path, FileMode mode, FileAccess access, FileShare share, FileOptions options, IBytesPool bytesPool)
         {
             _path = path;
-            _bufferPool = bufferPool;
+            _bytesPool = bytesPool;
 
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
@@ -48,7 +48,7 @@ namespace Omnius.Core.Io
             _blockPosition = -1;
             _blockOffset = 0;
             _blockCount = 0;
-            _blockBuffer = _bufferPool.Array.Rent(SectorSize);
+            _blockBuffer = _bytesPool.Array.Rent(SectorSize);
 
             _position = _stream.Position;
             _length = _stream.Length;
@@ -322,7 +322,7 @@ namespace Omnius.Core.Io
 
                 if (_blockOffset != 0 || _blockCount != SectorSize)
                 {
-                    using (var memoryOwner = _bufferPool.Memory.Rent(SectorSize))
+                    using (var memoryOwner = _bytesPool.Memory.Rent(SectorSize))
                     {
                         _stream.Seek(_blockPosition, SeekOrigin.Begin);
 
@@ -367,7 +367,7 @@ namespace Omnius.Core.Io
                     this.Flush();
 
                     _stream.Dispose();
-                    _bufferPool.Array.Return(_blockBuffer);
+                    _bytesPool.Array.Return(_blockBuffer);
 
                     using (var stream = new FileStream(_path, FileMode.Open))
                     {

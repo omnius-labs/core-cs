@@ -35,7 +35,7 @@ namespace Omnius.Core.Serialization.Extensions
 
         public static bool TryDecode(this IBytesToUtf8StringConverter converter, string text, IBufferWriter<byte> bufferWriter)
         {
-            using (var recyclableMemory = BufferPool<byte>.Shared.Memory.Rent(_utf8Encoding.Value.GetMaxByteCount(text.Length)))
+            using (var recyclableMemory = BytesPool.Shared.Memory.Rent(_utf8Encoding.Value.GetMaxByteCount(text.Length)))
             {
                 var length = _utf8Encoding.Value.GetBytes(text, recyclableMemory.Memory.Span);
 
@@ -74,7 +74,7 @@ namespace Omnius.Core.Serialization.Extensions
 
         public static byte[] StringToBytes(this IBytesToUtf8StringConverter converter, string text)
         {
-            using (var hub = new Hub(BufferPool<byte>.Shared))
+            using (var hub = new Hub(BytesPool.Shared))
             {
                 converter.TryDecode(text, hub.Writer);
 
@@ -87,7 +87,7 @@ namespace Omnius.Core.Serialization.Extensions
 
         public static byte[] Utf8StringToBytes(this IBytesToUtf8StringConverter converter, ReadOnlySpan<byte> text)
         {
-            using (var hub = new Hub(BufferPool<byte>.Shared))
+            using (var hub = new Hub(BytesPool.Shared))
             {
                 converter.TryDecode(text, hub.Writer);
 
