@@ -59,9 +59,9 @@ namespace FormatterBenchmarks.Cases
 
             {
                 var random = new Random(0);
-                var bufferPool = BufferPool<byte>.Shared;
+                var bytesPool = BytesPool.Shared;
 
-                using (var hub = new Hub(bufferPool))
+                using (var hub = new Hub(bytesPool))
                 {
                     var elementsList = new List<RocketPack_StringElements>();
 
@@ -84,7 +84,7 @@ namespace FormatterBenchmarks.Cases
 
                     var message = new RocketPack_StringElementsList(elementsList.ToArray());
 
-                    message.Export(hub.Writer, BufferPool<byte>.Shared);
+                    message.Export(hub.Writer, BytesPool.Shared);
 
                     _rocketPack_Bytes = new byte[hub.Writer.WrittenBytes];
                     hub.Reader.GetSequence().CopyTo(_rocketPack_Bytes);
@@ -101,7 +101,7 @@ namespace FormatterBenchmarks.Cases
         [Benchmark]
         public object RocketPack_StringElementsList_DeserializeTest()
         {
-            return RocketPack_StringElementsList.Import(new ReadOnlySequence<byte>(_rocketPack_Bytes), BufferPool<byte>.Shared);
+            return RocketPack_StringElementsList.Import(new ReadOnlySequence<byte>(_rocketPack_Bytes), BytesPool.Shared);
         }
     }
 }

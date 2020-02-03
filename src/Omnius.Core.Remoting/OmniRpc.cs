@@ -9,11 +9,11 @@ namespace Omnius.Core.Remoting
 {
     public sealed partial class OmniRpc
     {
-        private readonly IBufferPool<byte> _bufferPool;
+        private readonly IBytesPool _bytesPool;
 
-        public OmniRpc(IBufferPool<byte> bufferPool)
+        public OmniRpc(IBytesPool bytesPool)
         {
-            _bufferPool = bufferPool;
+            _bytesPool = bytesPool;
         }
 
         public Func<IConnection> GetConnectedConnection { private get; set; } = () => throw new OmniRpcException("callback is not registed");
@@ -28,7 +28,7 @@ namespace Omnius.Core.Remoting
                 Varint.SetUInt64(type, bufferWriter);
             });
 
-            return new OmniRpcStream(connection, _bufferPool);
+            return new OmniRpcStream(connection, _bytesPool);
         }
 
         public async ValueTask<OmniRpcAcceptResult> Accept()
@@ -47,7 +47,7 @@ namespace Omnius.Core.Remoting
                 }
             });
 
-            return new OmniRpcAcceptResult(type, new OmniRpcStream(connection, _bufferPool));
+            return new OmniRpcAcceptResult(type, new OmniRpcStream(connection, _bytesPool));
         }
     }
 

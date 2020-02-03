@@ -15,12 +15,12 @@ namespace Omnius.Core.Serialization.RocketPack
         private static readonly Lazy<Encoding> _encoding = new Lazy<Encoding>(() => new UTF8Encoding(false));
 
         private SequenceReader<byte> _reader;
-        private IBufferPool<byte> _bufferPool;
+        private IBytesPool _bytesPool;
 
-        public RocketPackReader(ReadOnlySequence<byte> sequence, in IBufferPool<byte> bufferPool)
+        public RocketPackReader(ReadOnlySequence<byte> sequence, in IBytesPool bytesPool)
         {
             _reader = new SequenceReader<byte>(sequence);
-            _bufferPool = bufferPool;
+            _bytesPool = bytesPool;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -41,7 +41,7 @@ namespace Omnius.Core.Serialization.RocketPack
                 return SimpleMemoryOwner<byte>.Empty;
             }
 
-            var memoryOwner = _bufferPool.Memory.Rent((int)length);
+            var memoryOwner = _bytesPool.Memory.Rent((int)length);
 
             _reader.TryCopyTo(memoryOwner.Memory.Span);
             _reader.Advance(length);
@@ -88,7 +88,7 @@ namespace Omnius.Core.Serialization.RocketPack
                 throw new FormatException();
             }
 
-            using (var memoryOwner = _bufferPool.Memory.Rent((int)length))
+            using (var memoryOwner = _bytesPool.Memory.Rent((int)length))
             {
                 _reader.TryCopyTo(memoryOwner.Memory.Span);
                 _reader.Advance(length);

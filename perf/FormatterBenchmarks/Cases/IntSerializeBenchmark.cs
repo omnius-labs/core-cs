@@ -44,9 +44,9 @@ namespace FormatterBenchmarks.Cases
 
             {
                 var random = new Random(0);
-                var bufferPool = BufferPool<byte>.Shared;
+                var bytesPool = BytesPool.Shared;
 
-                using (var hub = new Hub(bufferPool))
+                using (var hub = new Hub(bytesPool))
                 {
                     var elementsList = new List<RocketPack_IntElements>();
 
@@ -82,7 +82,7 @@ namespace FormatterBenchmarks.Cases
         public object RocketPack_IntElementsList_SerializeTest()
         {
             var writer = new ArrayBufferWriter<byte>();
-            _rocketPack_Message.Export(writer, BufferPool<byte>.Shared);
+            _rocketPack_Message.Export(writer, BytesPool.Shared);
             return writer;
         }
     }

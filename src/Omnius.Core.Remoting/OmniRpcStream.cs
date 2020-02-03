@@ -11,12 +11,12 @@ namespace Omnius.Core.Remoting
     public sealed partial class OmniRpcStream : DisposableBase
     {
         private readonly IConnection _connection;
-        private readonly IBufferPool<byte> _bufferPool;
+        private readonly IBytesPool _bytesPool;
 
-        internal OmniRpcStream(IConnection connection, IBufferPool<byte> bufferPool)
+        internal OmniRpcStream(IConnection connection, IBytesPool bytesPool)
         {
             _connection = connection;
-            _bufferPool = bufferPool;
+            _bytesPool = bytesPool;
         }
 
         private enum PacketType : byte
@@ -34,7 +34,7 @@ namespace Omnius.Core.Remoting
             {
                 bufferWriter.GetSpan(1)[0] = (byte)PacketType.Message;
                 bufferWriter.Advance(1);
-                var writer = new RocketPackWriter(bufferWriter, _bufferPool);
+                var writer = new RocketPackWriter(bufferWriter, _bytesPool);
                 IRocketPackMessage<TMessage>.Formatter.Serialize(ref writer, message, 0);
             }, cancellationToken);
         }
@@ -45,7 +45,7 @@ namespace Omnius.Core.Remoting
             {
                 bufferWriter.GetSpan(1)[0] = (byte)PacketType.ErrorMessage;
                 bufferWriter.Advance(1);
-                errorMessage.Export(bufferWriter, _bufferPool);
+                errorMessage.Export(bufferWriter, _bytesPool);
             }, cancellationToken);
         }
 
@@ -80,12 +80,12 @@ namespace Omnius.Core.Remoting
                 switch ((PacketType)type[0])
                 {
                     case PacketType.Message:
-                        var reader = new RocketPackReader(sequence, _bufferPool);
+                        var reader = new RocketPackReader(sequence, _bytesPool);
                         var message = IRocketPackMessage<TMessage>.Formatter.Deserialize(ref reader, 0);
                         receiveResult = new OmniRpcStreamReceiveResult<TMessage>(message, null, false, false);
                         break;
                     case PacketType.ErrorMessage:
-                        var errorMessage = OmniRpcErrorMessage.Import(sequence, _bufferPool);
+                        var errorMessage = OmniRpcErrorMessage.Import(sequence, _bytesPool);
                         receiveResult = new OmniRpcStreamReceiveResult<TMessage>(default, errorMessage, false, false);
                         break;
                     case PacketType.Canceled:

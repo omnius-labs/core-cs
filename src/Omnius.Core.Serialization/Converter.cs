@@ -12,7 +12,7 @@ namespace Omnius.Core.Serialization
             Deflate = 1,
         }
 
-        private static readonly BufferPool _bufferPool = BufferPool.Instance;
+        private static readonly BufferPool _bytesPool = BufferPool.Instance;
 
         private static Stream ToStream<T>(int version, MessageBase<T> item)
                 where T : MessageBase<T>
@@ -21,7 +21,7 @@ namespace Omnius.Core.Serialization
 
             try
             {
-                stream = new RangeStream(item.Export(_bufferPool));
+                stream = new RangeStream(item.Export(_bytesPool));
 
                 var dic = new Dictionary<byte, Stream>();
 
@@ -33,10 +33,10 @@ namespace Omnius.Core.Serialization
 
                     try
                     {
-                        deflateBufferStream = new RecyclableMemoryStream(_bufferPool);
+                        deflateBufferStream = new RecyclableMemoryStream(_bytesPool);
 
                         using (var deflateStream = new DeflateStream(deflateBufferStream, CompressionMode.Compress, true))
-                        using (var safeBuffer = _bufferPool.CreateSafeBuffer(1024 * 4))
+                        using (var safeBuffer = _bytesPool.CreateSafeBuffer(1024 * 4))
                         {
                             int length;
 
@@ -80,7 +80,7 @@ namespace Omnius.Core.Serialization
                     list[i].Value.Dispose();
                 }
 
-                var headerStream = new RecyclableMemoryStream(_bufferPool);
+                var headerStream = new RecyclableMemoryStream(_bytesPool);
                 Varint.SetUInt64((uint)version, headerStream);
                 Varint.SetUInt64(list[0].Key, headerStream);
 
@@ -132,14 +132,14 @@ namespace Omnius.Core.Serialization
                 {
                     if (type == (int)ConvertCompressionAlgorithm.None)
                     {
-                        return MessageBase<T>.Import(dataStream, _bufferPool);
+                        return MessageBase<T>.Import(dataStream, _bytesPool);
                     }
                     else if (type == (int)ConvertCompressionAlgorithm.Deflate)
                     {
-                        using (var deflateBufferStream = new RecyclableMemoryStream(_bufferPool))
+                        using (var deflateBufferStream = new RecyclableMemoryStream(_bytesPool))
                         {
                             using (var deflateStream = new DeflateStream(dataStream, CompressionMode.Decompress, true))
-                            using (var safeBuffer = _bufferPool.CreateSafeBuffer(1024 * 4))
+                            using (var safeBuffer = _bytesPool.CreateSafeBuffer(1024 * 4))
                             {
                                 int length;
 
@@ -153,7 +153,7 @@ namespace Omnius.Core.Serialization
 
                             deflateBufferStream.Seek(0, SeekOrigin.Begin);
 
-                            return MessageBase<T>.Import(deflateBufferStream, _bufferPool);
+                            return MessageBase<T>.Import(deflateBufferStream, _bytesPool);
                         }
                     }
                     else

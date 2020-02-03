@@ -43,25 +43,25 @@ namespace FormatterBenchmarks.Cases
             }
 
             {
-                var bufferPool = BufferPool<byte>.Shared;
+                var bytesPool = BytesPool.Shared;
                 var random = new Random(0);
-                using (var hub = new Hub(bufferPool))
+                using (var hub = new Hub(bytesPool))
                 {
 
                     var elementsList = new List<RocketPack_BytesElements>();
 
                     for (int i = 0; i < 10; i++)
                     {
-                        var X0 = bufferPool.Memory.Rent(random.Next(0, 1024 * 256));
-                        var X1 = bufferPool.Memory.Rent(random.Next(0, 1024 * 256));
-                        var X2 = bufferPool.Memory.Rent(random.Next(0, 1024 * 256));
-                        var X3 = bufferPool.Memory.Rent(random.Next(0, 1024 * 256));
-                        var X4 = bufferPool.Memory.Rent(random.Next(0, 1024 * 256));
-                        var X5 = bufferPool.Memory.Rent(random.Next(0, 1024 * 256));
-                        var X6 = bufferPool.Memory.Rent(random.Next(0, 1024 * 256));
-                        var X7 = bufferPool.Memory.Rent(random.Next(0, 1024 * 256));
-                        var X8 = bufferPool.Memory.Rent(random.Next(0, 1024 * 256));
-                        var X9 = bufferPool.Memory.Rent(random.Next(0, 1024 * 256));
+                        var X0 = bytesPool.Memory.Rent(random.Next(0, 1024 * 256));
+                        var X1 = bytesPool.Memory.Rent(random.Next(0, 1024 * 256));
+                        var X2 = bytesPool.Memory.Rent(random.Next(0, 1024 * 256));
+                        var X3 = bytesPool.Memory.Rent(random.Next(0, 1024 * 256));
+                        var X4 = bytesPool.Memory.Rent(random.Next(0, 1024 * 256));
+                        var X5 = bytesPool.Memory.Rent(random.Next(0, 1024 * 256));
+                        var X6 = bytesPool.Memory.Rent(random.Next(0, 1024 * 256));
+                        var X7 = bytesPool.Memory.Rent(random.Next(0, 1024 * 256));
+                        var X8 = bytesPool.Memory.Rent(random.Next(0, 1024 * 256));
+                        var X9 = bytesPool.Memory.Rent(random.Next(0, 1024 * 256));
 
                         var elements = new RocketPack_BytesElements(X0, X1, X2, X3, X4, X5, X6, X7, X8, X9);
                         elementsList.Add(elements);
@@ -69,7 +69,7 @@ namespace FormatterBenchmarks.Cases
 
                     var message = new RocketPack_BytesElementsList(elementsList.ToArray());
 
-                    message.Export(hub.Writer, BufferPool<byte>.Shared);
+                    message.Export(hub.Writer, BytesPool.Shared);
 
                     _rocketPack_Bytes = new byte[hub.Writer.WrittenBytes];
                     hub.Reader.GetSequence().CopyTo(_rocketPack_Bytes);
@@ -86,7 +86,7 @@ namespace FormatterBenchmarks.Cases
         [Benchmark]
         public object RocketPack_BytesElementsList_DeserializeTest()
         {
-            return RocketPack_BytesElementsList.Import(new ReadOnlySequence<byte>(_rocketPack_Bytes), BufferPool<byte>.Shared);
+            return RocketPack_BytesElementsList.Import(new ReadOnlySequence<byte>(_rocketPack_Bytes), BytesPool.Shared);
         }
     }
 }

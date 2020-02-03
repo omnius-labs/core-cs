@@ -15,18 +15,18 @@ namespace Omnius.Core.Serialization.RocketPack
         private static readonly Lazy<Encoding> _encoding = new Lazy<Encoding>(() => new UTF8Encoding(false));
 
         private IBufferWriter<byte> _bufferWriter;
-        private IBufferPool<byte> _bufferPool;
+        private IBytesPool _bytesPool;
 
-        public RocketPackWriter(IBufferWriter<byte> bufferWriter, IBufferPool<byte> bufferPool)
+        public RocketPackWriter(IBufferWriter<byte> bufferWriter, IBytesPool bytesPool)
         {
             _bufferWriter = bufferWriter;
-            _bufferPool = bufferPool;
+            _bytesPool = bytesPool;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Write(in string value)
         {
-            using (var memoryOwner = _bufferPool.Memory.Rent(_encoding.Value.GetMaxByteCount(value.Length)))
+            using (var memoryOwner = _bytesPool.Memory.Rent(_encoding.Value.GetMaxByteCount(value.Length)))
             {
                 int length = _encoding.Value.GetBytes(value.AsSpan(), memoryOwner.Memory.Span);
                 Varint.SetUInt32((uint)length, _bufferWriter);
