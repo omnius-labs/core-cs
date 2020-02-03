@@ -9,9 +9,9 @@ namespace Omnius.Core
         private readonly HubReader _hubReader;
         private readonly HubWriter _hubWriter;
 
-        public Hub(IBufferPool<byte> bufferPool)
+        public Hub(IBytesPool bytesPool)
         {
-            _bufferWriter = new BufferWriter(bufferPool);
+            _bufferWriter = new BufferWriter(bytesPool);
             _hubReader = new HubReader(_bufferWriter);
             _hubWriter = new HubWriter(_bufferWriter);
         }

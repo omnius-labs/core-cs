@@ -40,7 +40,7 @@ namespace Omnius.Core.Serialization
 
                 foreach (var (input, output) in pattern)
                 {
-                    using var hub_base16 = new Hub(BufferPool<byte>.Shared);
+                    using var hub_base16 = new Hub(BytesPool.Shared);
 
                     // base16をデコードし、pipeに書き込む。
                     base16.TryDecode(input, hub_base16.Writer);
@@ -51,7 +51,7 @@ namespace Omnius.Core.Serialization
                     // エンコード結果の検証
                     Assert.True(BytesOperations.Equals(text_base58.AsSpan(), UTF8Encoding.Default.GetBytes(output).AsSpan()));
 
-                    using var hub_base58Btc = new Hub(BufferPool<byte>.Shared);
+                    using var hub_base58Btc = new Hub(BytesPool.Shared);
 
                     // base58Btcをデコードし、pipeに書き込む。
                     base58Btc.TryDecode(output, hub_base58Btc.Writer);
