@@ -10,7 +10,7 @@ namespace Omnius.Core.Network.Connections.Multiplexer.V1.Internal
     internal sealed class MultiplexCommunicator
     {
         private readonly IConnection _connection;
-        private readonly IBufferPool<byte> _bufferPool;
+        private readonly IBytesPool _bytesPool;
 
         private enum PacketType : byte
         {
@@ -22,10 +22,10 @@ namespace Omnius.Core.Network.Connections.Multiplexer.V1.Internal
             Error,
         }
 
-        public MultiplexCommunicator(IConnection connection, IBufferPool<byte> bufferPool)
+        public MultiplexCommunicator(IConnection connection, IBytesPool bytesPool)
         {
             _connection = connection;
-            _bufferPool = bufferPool;
+            _bytesPool = bytesPool;
         }
 
         public void DoEvents()
@@ -38,7 +38,7 @@ namespace Omnius.Core.Network.Connections.Multiplexer.V1.Internal
             await _connection.EnqueueAsync((bufferWriter) =>
             {
                 OmniVarint.SetUInt64((byte)PacketType.Connect, bufferWriter);
-                connectMessage.Export(bufferWriter, _bufferPool);
+                connectMessage.Export(bufferWriter, _bytesPool);
             }, cancellationToken);
         }
 
@@ -47,7 +47,7 @@ namespace Omnius.Core.Network.Connections.Multiplexer.V1.Internal
             await _connection.EnqueueAsync((bufferWriter) =>
             {
                 OmniVarint.SetUInt64((byte)PacketType.Connect, bufferWriter);
-                acceptMessage.Export(bufferWriter, _bufferPool);
+                acceptMessage.Export(bufferWriter, _bytesPool);
             }, cancellationToken);
         }
 
@@ -56,7 +56,7 @@ namespace Omnius.Core.Network.Connections.Multiplexer.V1.Internal
             await _connection.EnqueueAsync((bufferWriter) =>
             {
                 OmniVarint.SetUInt64((byte)PacketType.Connect, bufferWriter);
-                updateWindowSizeMessage.Export(bufferWriter, _bufferPool);
+                updateWindowSizeMessage.Export(bufferWriter, _bytesPool);
             }, cancellationToken);
         }
 
@@ -65,7 +65,7 @@ namespace Omnius.Core.Network.Connections.Multiplexer.V1.Internal
             await _connection.EnqueueAsync((bufferWriter) =>
             {
                 OmniVarint.SetUInt64((byte)PacketType.Connect, bufferWriter);
-                dataMessage.Export(bufferWriter, _bufferPool);
+                dataMessage.Export(bufferWriter, _bytesPool);
             }, cancellationToken);
         }
 
@@ -74,7 +74,7 @@ namespace Omnius.Core.Network.Connections.Multiplexer.V1.Internal
             await _connection.EnqueueAsync((bufferWriter) =>
             {
                 OmniVarint.SetUInt64((byte)PacketType.Connect, bufferWriter);
-                closeMessage.Export(bufferWriter, _bufferPool);
+                closeMessage.Export(bufferWriter, _bytesPool);
             }, cancellationToken);
         }
 
@@ -83,7 +83,7 @@ namespace Omnius.Core.Network.Connections.Multiplexer.V1.Internal
             await _connection.EnqueueAsync((bufferWriter) =>
             {
                 OmniVarint.SetUInt64((byte)PacketType.Connect, bufferWriter);
-                errorMessage.Export(bufferWriter, _bufferPool);
+                errorMessage.Export(bufferWriter, _bytesPool);
             }, cancellationToken);
         }
 
@@ -105,22 +105,22 @@ namespace Omnius.Core.Network.Connections.Multiplexer.V1.Internal
                 switch ((PacketType)type)
                 {
                     case PacketType.Connect:
-                        result = new MultiplexReceiveMessageResult(connectMessage: SessionConnectMessage.Import(sequence, _bufferPool));
+                        result = new MultiplexReceiveMessageResult(connectMessage: SessionConnectMessage.Import(sequence, _bytesPool));
                         break;
                     case PacketType.Accept:
-                        result = new MultiplexReceiveMessageResult(acceptMessage: SessionAcceptMessage.Import(sequence, _bufferPool));
+                        result = new MultiplexReceiveMessageResult(acceptMessage: SessionAcceptMessage.Import(sequence, _bytesPool));
                         break;
                     case PacketType.UpdateWindowSize:
-                        result = new MultiplexReceiveMessageResult(updateWindowSizeMessage: SessionUpdateWindowSizeMessage.Import(sequence, _bufferPool));
+                        result = new MultiplexReceiveMessageResult(updateWindowSizeMessage: SessionUpdateWindowSizeMessage.Import(sequence, _bytesPool));
                         break;
                     case PacketType.Data:
-                        result = new MultiplexReceiveMessageResult(dataMessage: SessionDataMessage.Import(sequence, _bufferPool));
+                        result = new MultiplexReceiveMessageResult(dataMessage: SessionDataMessage.Import(sequence, _bytesPool));
                         break;
                     case PacketType.Close:
-                        result = new MultiplexReceiveMessageResult(closeMessage: SessionCloseMessage.Import(sequence, _bufferPool));
+                        result = new MultiplexReceiveMessageResult(closeMessage: SessionCloseMessage.Import(sequence, _bytesPool));
                         break;
                     case PacketType.Error:
-                        result = new MultiplexReceiveMessageResult(errorMessage: SessionErrorMessage.Import(sequence, _bufferPool));
+                        result = new MultiplexReceiveMessageResult(errorMessage: SessionErrorMessage.Import(sequence, _bytesPool));
                         break;
                 }
             }, cancellationToken);

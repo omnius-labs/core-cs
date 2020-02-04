@@ -81,7 +81,7 @@ namespace Omnius.Core.Serialization.RocketPack.DefinitionCompiler
                     "Dictionary<,>" => $"System.Collections.Generic.Dictionary<{types[0]}, {types[1]}>",
                     "RocketPackMessageBase<>" => $"Omnius.Core.Serialization.RocketPack.RocketPackMessageBase<{types[0]}>",
                     "IDisposable" => "System.IDisposable",
-                    "IBufferPool<byte>" => "Omnius.Core.IBufferPool<byte>",
+                    "IBytesPool" => "Omnius.Core.IBytesPool",
                     "SimpleMemoryOwner<>" => $"Omnius.Core.SimpleMemoryOwner<{types[0]}>",
                     "ArgumentNullException" => "System.ArgumentNullException",
                     "ArgumentOutOfRangeException" => "System.ArgumentOutOfRangeException",
@@ -772,20 +772,20 @@ namespace Omnius.Core.Serialization.RocketPack.DefinitionCompiler
 
             private void Write_ImportAndExport(CodeBuilder b, ObjectDefinition objectDefinition)
             {
-                b.WriteLine($"public static {objectDefinition.Name} Import({GenerateTypeFullName("ReadOnlySequence<>", "byte")} sequence, {GenerateTypeFullName("IBufferPool<byte>")} bufferPool)");
+                b.WriteLine($"public static {objectDefinition.Name} Import({GenerateTypeFullName("ReadOnlySequence<>", "byte")} sequence, {GenerateTypeFullName("IBytesPool")} bytesPool)");
                 b.WriteLine("{");
                 using (b.Indent())
                 {
-                    b.WriteLine($"var reader = new {GenerateTypeFullName("RocketPackReader")}(sequence, bufferPool);");
+                    b.WriteLine($"var reader = new {GenerateTypeFullName("RocketPackReader")}(sequence, bytesPool);");
                     b.WriteLine($"return Formatter.Deserialize(ref reader, 0);");
                 }
                 b.WriteLine("}");
 
-                b.WriteLine($"public void Export({GenerateTypeFullName("IBufferWriter<>", "byte")} bufferWriter, {GenerateTypeFullName("IBufferPool<byte>")} bufferPool)");
+                b.WriteLine($"public void Export({GenerateTypeFullName("IBufferWriter<>", "byte")} bufferWriter, {GenerateTypeFullName("IBytesPool")} bytesPool)");
                 b.WriteLine("{");
                 using (b.Indent())
                 {
-                    b.WriteLine($"var writer = new {GenerateTypeFullName("RocketPackWriter")}(bufferWriter, bufferPool);");
+                    b.WriteLine($"var writer = new {GenerateTypeFullName("RocketPackWriter")}(bufferWriter, bytesPool);");
                     b.WriteLine($"Formatter.Serialize(ref writer, this, 0);");
                 }
                 b.WriteLine("}");

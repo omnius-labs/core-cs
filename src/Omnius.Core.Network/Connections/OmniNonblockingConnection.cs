@@ -14,7 +14,7 @@ namespace Omnius.Core.Network.Connections
         private readonly int _maxSendByteCount;
         private readonly int _maxReceiveByteCount;
         private readonly BandwidthController? _bandwidthController;
-        private readonly IBufferPool<byte> _bufferPool;
+        private readonly IBytesPool _bytesPool;
 
         private readonly byte[] _sendHeaderBuffer = new byte[4];
         private int _sendHeaderBufferPosition = -1;
@@ -57,10 +57,10 @@ namespace Omnius.Core.Network.Connections
             _maxSendByteCount = Math.Max(256, option.MaxSendByteCount);
             _maxReceiveByteCount = Math.Max(256, option.MaxReceiveByteCount);
             _bandwidthController = option.BandwidthController;
-            _bufferPool = option.BufferPool ?? BufferPool<byte>.Shared;
+            _bytesPool = option.BufferPool ?? BytesPool.Shared;
 
-            _sendContentHub = new Hub(_bufferPool);
-            _receiveContentHub = new Hub(_bufferPool);
+            _sendContentHub = new Hub(_bytesPool);
+            _receiveContentHub = new Hub(_bytesPool);
 
             _receiveSemaphoreSlim = new SemaphoreSlim(0, 1);
             _sendSemaphoreSlim = new SemaphoreSlim(1, 1);

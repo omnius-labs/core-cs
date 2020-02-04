@@ -7,6 +7,6 @@ namespace Omnius.Core.Network.Connections
         public int MaxSendByteCount { get; set; }
         public int MaxReceiveByteCount { get; set; }
         public BandwidthController? BandwidthController { get; set; }
-        public BufferPool<byte>? BufferPool { get; set; }
+        public BytesPool? BufferPool { get; set; }
     }
 }
