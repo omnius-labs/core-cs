@@ -6,8 +6,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Avalonia" Version="0.8.1" />
-    <PackageReference Include="ReactiveProperty" Version="5.6.0" />
+    <PackageReference Include="Avalonia" Version="0.9.2" />
+    <PackageReference Include="ReactiveProperty" Version="6.2.0" />
   </ItemGroup>
 
   <ItemGroup>
