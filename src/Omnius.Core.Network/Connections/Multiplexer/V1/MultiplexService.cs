@@ -5,7 +5,7 @@ namespace Omnius.Core.Network.Connections.Multiplexer.V1
     {
         private readonly Communicator _communicator;
         private readonly SessionIdGenerateType _sessionIdGenerateType;
-        private readonly BufferPool _bufferPool;
+        private readonly BufferPool _bytesPool;
 
         private readonly Dictionary<ulong, SendSessionCreateRequestInfo> _sendSessionCreateRequestInfoMap;
         private readonly object _sendSessionCreateRequestLockObject = new object();
@@ -17,11 +17,11 @@ namespace Omnius.Core.Network.Connections.Multiplexer.V1
         private readonly Random _random = new Random();
         private readonly AsyncLock _connectLock = new AsyncLock();
 
-        public MultiplexService(IConnection connection, SessionIdGenerateType sessionIdGenerateType, BufferPool bufferPool)
+        public MultiplexService(IConnection connection, SessionIdGenerateType sessionIdGenerateType, BufferPool bytesPool)
         {
             _communicator = new Communicator(connection);
             _sessionIdGenerateType = sessionIdGenerateType;
-            _bufferPool = bufferPool;
+            _bytesPool = bytesPool;
 
             _sendSessionCreateRequestInfoMap = new Dictionary<ulong, SendSessionCreateRequestInfo>();
             _receiveSessionCreateRequestInfoChannel = Channel.CreateBounded<ReceiveSessionCreateRequestInfo>(new BoundedChannelOptions(30) { FullMode = BoundedChannelFullMode.DropOldest, });

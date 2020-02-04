@@ -20,7 +20,7 @@ namespace Omnius.Core.Network.Connections.Secure.V1.Internal
         private readonly IConnection _connection;
         private readonly OmniSecureConnectionType _type;
         private readonly IReadOnlyList<string> _passwords;
-        private readonly IBufferPool<byte> _bufferPool;
+        private readonly IBytesPool _bytesPool;
 
         private long _totalSentSize;
         private long _totalReceivedSize;
@@ -50,7 +50,7 @@ namespace Omnius.Core.Network.Connections.Secure.V1.Internal
             _connection = connection;
             _type = options.Type;
             _passwords = options.Passwords ?? Array.Empty<string>();
-            _bufferPool = options.BufferPool ?? BufferPool<byte>.Shared;
+            _bytesPool = options.BufferPool ?? BytesPool.Shared;
         }
 
         public IEnumerable<string> MatchedPasswords => _matchedPasswords ?? Enumerable.Empty<string>();
@@ -95,8 +95,8 @@ namespace Omnius.Core.Network.Connections.Secure.V1.Internal
                         new[] { V1.Internal.HashAlgorithm.Sha2_256 });
                 }
 
-                var enqueueTask = _connection.SendAsync((bufferWriter) => myProfileMessage.Export(bufferWriter, _bufferPool), cancellationToken);
-                var dequeueTask = _connection.ReceiveAsync((sequence) => otherProfileMessage = V1.Internal.ProfileMessage.Import(sequence, _bufferPool), cancellationToken);
+                var enqueueTask = _connection.SendAsync((bufferWriter) => myProfileMessage.Export(bufferWriter, _bytesPool), cancellationToken);
+                var dequeueTask = _connection.ReceiveAsync((sequence) => otherProfileMessage = V1.Internal.ProfileMessage.Import(sequence, _bytesPool), cancellationToken);
 
                 await ValueTaskHelper.WhenAll(enqueueTask, dequeueTask);
 
@@ -145,8 +145,8 @@ namespace Omnius.Core.Network.Connections.Secure.V1.Internal
                     {
                         myAgreementPrivateKey = myAgreement.GetOmniAgreementPrivateKey();
 
-                        var enqueueTask = _connection.SendAsync((bufferWriter) => myAgreement.GetOmniAgreementPublicKey().Export(bufferWriter, _bufferPool), cancellationToken);
-                        var dequeueTask = _connection.ReceiveAsync((sequence) => otherAgreementPublicKey = OmniAgreementPublicKey.Import(sequence, _bufferPool), cancellationToken);
+                        var enqueueTask = _connection.SendAsync((bufferWriter) => myAgreement.GetOmniAgreementPublicKey().Export(bufferWriter, _bytesPool), cancellationToken);
+                        var dequeueTask = _connection.ReceiveAsync((sequence) => otherAgreementPublicKey = OmniAgreementPublicKey.Import(sequence, _bytesPool), cancellationToken);
 
                         await ValueTaskHelper.WhenAll(enqueueTask, dequeueTask);
 
@@ -173,8 +173,8 @@ namespace Omnius.Core.Network.Connections.Secure.V1.Internal
                                 myAuthenticationMessage = new V1.Internal.AuthenticationMessage(myHashAndPasswordList.Select(n => n.Item1).ToArray());
                             }
 
-                            var enqueueTask = _connection.SendAsync((bufferWriter) => myAuthenticationMessage.Export(bufferWriter, _bufferPool), cancellationToken);
-                            var dequeueTask = _connection.ReceiveAsync((sequence) => otherAuthenticationMessage = V1.Internal.AuthenticationMessage.Import(sequence, _bufferPool), cancellationToken);
+                            var enqueueTask = _connection.SendAsync((bufferWriter) => myAuthenticationMessage.Export(bufferWriter, _bytesPool), cancellationToken);
+                            var dequeueTask = _connection.ReceiveAsync((sequence) => otherAuthenticationMessage = V1.Internal.AuthenticationMessage.Import(sequence, _bytesPool), cancellationToken);
 
                             await ValueTaskHelper.WhenAll(enqueueTask, dequeueTask);
 
@@ -289,9 +289,9 @@ namespace Omnius.Core.Network.Connections.Secure.V1.Internal
 
                 if (hashAlgorithm == V1.Internal.HashAlgorithm.Sha2_256)
                 {
-                    using var hub = new Hub(BufferPool<byte>.Shared);
+                    using var hub = new Hub(BytesPool.Shared);
 
-                    verificationMessage.Export(hub.Writer, _bufferPool);
+                    verificationMessage.Export(hub.Writer, _bytesPool);
                     verificationMessageHash = Sha2_256.ComputeHash(hub.Reader.GetSequence());
                 }
                 else
@@ -318,7 +318,7 @@ namespace Omnius.Core.Network.Connections.Secure.V1.Internal
                 throw new OmniSecureConnectionException("Not handshaked");
             }
 
-            using var hub = new Hub(BufferPool<byte>.Shared);
+            using var hub = new Hub(BytesPool.Shared);
 
             action.Invoke(hub.Writer);
 
@@ -367,8 +367,8 @@ namespace Omnius.Core.Network.Connections.Secure.V1.Internal
                         // 暗号化データを書き込む
                         using (var encryptor = aes.CreateEncryptor(_status.MyCryptoKey, iv))
                         {
-                            var inBuffer = _bufferPool.Array.Rent(blockSize);
-                            var outBuffer = _bufferPool.Array.Rent(blockSize);
+                            var inBuffer = _bytesPool.Array.Rent(blockSize);
+                            var outBuffer = _bytesPool.Array.Rent(blockSize);
 
                             try
                             {
@@ -396,8 +396,8 @@ namespace Omnius.Core.Network.Connections.Secure.V1.Internal
                             }
                             finally
                             {
-                                _bufferPool.Array.Return(inBuffer);
-                                _bufferPool.Array.Return(outBuffer);
+                                _bytesPool.Array.Return(inBuffer);
+                                _bytesPool.Array.Return(outBuffer);
                             }
                         }
 
@@ -433,7 +433,7 @@ namespace Omnius.Core.Network.Connections.Secure.V1.Internal
                 throw new OmniSecureConnectionException("Not handshaked");
             }
 
-            using var hub = new Hub(BufferPool<byte>.Shared);
+            using var hub = new Hub(BytesPool.Shared);
 
             try
             {
@@ -489,8 +489,8 @@ namespace Omnius.Core.Network.Connections.Secure.V1.Internal
                         // 暗号化されたデータを復号化する
                         using (var decryptor = aes.CreateDecryptor(_status.OtherCryptoKey, iv))
                         {
-                            var inBuffer = _bufferPool.Array.Rent(blockSize);
-                            var outBuffer = _bufferPool.Array.Rent(blockSize);
+                            var inBuffer = _bytesPool.Array.Rent(blockSize);
+                            var outBuffer = _bytesPool.Array.Rent(blockSize);
 
                             try
                             {
@@ -514,8 +514,8 @@ namespace Omnius.Core.Network.Connections.Secure.V1.Internal
                             }
                             finally
                             {
-                                _bufferPool.Array.Return(inBuffer);
-                                _bufferPool.Array.Return(outBuffer);
+                                _bytesPool.Array.Return(inBuffer);
+                                _bytesPool.Array.Return(outBuffer);
                             }
                         }
                     }

@@ -67,14 +67,14 @@ namespace Omnius.Core.Configuration
                 string contentPath = Path.Combine(directoryPath, "opb.gz");
                 string crcPath = Path.Combine(directoryPath, "crc");
 
-                using var hub = new Hub(BufferPool<byte>.Shared);
+                using var hub = new Hub(BytesPool.Shared);
 
                 if (!File.Exists(contentPath) || !File.Exists(crcPath))
                 {
                     return false;
                 }
 
-                using (var fileStream = new UnbufferedFileStream(contentPath, FileMode.Open, FileAccess.Read, FileShare.Read, FileOptions.None, BufferPool<byte>.Shared))
+                using (var fileStream = new UnbufferedFileStream(contentPath, FileMode.Open, FileAccess.Read, FileShare.Read, FileOptions.None, BytesPool.Shared))
                 using (var gzipStream = new GZipStream(fileStream, CompressionMode.Decompress))
                 {
                     for (; ; )
@@ -91,7 +91,7 @@ namespace Omnius.Core.Configuration
 
                 var sequence = hub.Reader.GetSequence();
 
-                using (var fileStream = new UnbufferedFileStream(crcPath, FileMode.Open, FileAccess.Read, FileShare.Read, FileOptions.None, BufferPool<byte>.Shared))
+                using (var fileStream = new UnbufferedFileStream(crcPath, FileMode.Open, FileAccess.Read, FileShare.Read, FileOptions.None, BytesPool.Shared))
                 {
                     Span<byte> buffer = stackalloc byte[4];
                     fileStream.Read(buffer);
@@ -102,7 +102,7 @@ namespace Omnius.Core.Configuration
                     }
                 }
 
-                var reader = new RocketPackReader(sequence, BufferPool<byte>.Shared);
+                var reader = new RocketPackReader(sequence, BytesPool.Shared);
                 value = formatter.Deserialize(ref reader, 0);
 
                 return true;
@@ -128,14 +128,14 @@ namespace Omnius.Core.Configuration
                     Directory.CreateDirectory(directoryPath);
                 }
 
-                using var hub = new Hub(BufferPool<byte>.Shared);
+                using var hub = new Hub(BytesPool.Shared);
 
-                var writer = new RocketPackWriter(hub.Writer, BufferPool<byte>.Shared);
+                var writer = new RocketPackWriter(hub.Writer, BytesPool.Shared);
                 formatter.Serialize(ref writer, value, 0);
 
                 var sequence = hub.Reader.GetSequence();
 
-                using (var fileStream = new UnbufferedFileStream(contentPath, FileMode.Create, FileAccess.ReadWrite, FileShare.None, FileOptions.None, BufferPool<byte>.Shared))
+                using (var fileStream = new UnbufferedFileStream(contentPath, FileMode.Create, FileAccess.ReadWrite, FileShare.None, FileOptions.None, BytesPool.Shared))
                 using (var gzipStream = new GZipStream(fileStream, CompressionLevel.Fastest))
                 {
                     var position = sequence.Start;
@@ -146,7 +146,7 @@ namespace Omnius.Core.Configuration
                     }
                 }
 
-                using (var fileStream = new UnbufferedFileStream(crcPath, FileMode.Create, FileAccess.ReadWrite, FileShare.None, FileOptions.None, BufferPool<byte>.Shared))
+                using (var fileStream = new UnbufferedFileStream(crcPath, FileMode.Create, FileAccess.ReadWrite, FileShare.None, FileOptions.None, BytesPool.Shared))
                 {
                     Span<byte> buffer = stackalloc byte[4];
                     BinaryPrimitives.WriteInt32LittleEndian(buffer, Crc32_Castagnoli.ComputeHash(sequence));

@@ -7,6 +7,6 @@ namespace Omnius.Core.Network.Connections.Secure
     {
         public OmniSecureConnectionType Type { get; set; }
         public IReadOnlyList<string>? Passwords { get; set; }
-        public IBufferPool<byte>? BufferPool { get; set; }
+        public IBytesPool? BufferPool { get; set; }
     }
 }

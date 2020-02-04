@@ -5,7 +5,7 @@ namespace Omnius.Core.Network.Connections.Multiplexer
          where TPriority : IComparable<TPriority>
     {
         private readonly IConnection _connection;
-        private readonly BufferPool _bufferPool;
+        private readonly BufferPool _bytesPool;
 
         private Random _random = new Random();
 
@@ -16,13 +16,13 @@ namespace Omnius.Core.Network.Connections.Multiplexer
 
         private AsyncLock _asyncLock = new AsyncLock();
 
-        public OmniConnectionMultiplexer(IConnection connection, BufferPool bufferPool)
+        public OmniConnectionMultiplexer(IConnection connection, BufferPool bytesPool)
         {
             if (connection == null) throw new ArgumentNullException(nameof(connection));
-            if (bufferPool == null) throw new ArgumentNullException(nameof(bufferPool));
+            if (bytesPool == null) throw new ArgumentNullException(nameof(bytesPool));
 
             _connection = connection;
-            _bufferPool = bufferPool;
+            _bytesPool = bytesPool;
         }
 
         private ulong CreateId()
