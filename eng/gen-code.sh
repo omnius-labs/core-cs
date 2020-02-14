@@ -8,7 +8,7 @@ INCLUDE="-i $PWD/fmt"
 
 "$TOOL_PATH" $PWD/fmt/FormatterBenchmarks/FormatterBenchmarks.Internal.rpd $INCLUDE -o $PWD/perf/FormatterBenchmarks/Internal/_RocketPack/Messages.generated.cs
 
-"$TOOL_PATH" $PWD/fmt/Omnius.Core.Configuration/Omnius.Core.Configuration.Internal.rpd $INCLUDE -o $PWD/src/Omnius.Core.Configuration/Internal/_RocketPack/Messages.generated.cs
+"$TOOL_PATH" $PWD/fmt/Omnius.Core.Data/Omnius.Core.Data.Internal.rpd $INCLUDE -o $PWD/src/Omnius.Core.Data/Internal/_RocketPack/Messages.generated.cs
 
 "$TOOL_PATH" $PWD/fmt/Omnius.Core.Cryptography/Omnius.Core.Cryptography.rpd $INCLUDE -o $PWD/src/Omnius.Core.Cryptography/_RocketPack/Messages.generated.cs
 
@@ -22,3 +22,5 @@ INCLUDE="-i $PWD/fmt"
 "$TOOL_PATH" $PWD/fmt/Omnius.Core.Remoting/Omnius.Core.Remoting.rpd $INCLUDE -o $PWD/src/Omnius.Core.Remoting/_RocketPack/Messages.generated.cs
 
 "$TOOL_PATH" $PWD/fmt/Omnius.Core.Serialization.RocketPack.DefinitionCompiler.Tests/Omnius.Core.Serialization.RocketPack.DefinitionCompiler.Tests.Internal.rpd $INCLUDE -o $PWD/test/Omnius.Core.Serialization.RocketPack.DefinitionCompiler.Tests/Internal/_RocketPack/Messages.generated.cs
+
+"$TOOL_PATH" $PWD/fmt/Omnius.Core.Data.Tests/Omnius.Core.Data.Tests.Internal.rpd $INCLUDE -o $PWD/test/Omnius.Core.Data.Tests/Internal/_RocketPack/Messages.generated.cs

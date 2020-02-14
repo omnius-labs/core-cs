@@ -17,7 +17,7 @@ namespace Omnius.Core.Serialization.RocketPack
         private IBufferWriter<byte> _bufferWriter;
         private IBytesPool _bytesPool;
 
-        public RocketPackWriter(IBufferWriter<byte> bufferWriter, IBytesPool bytesPool)
+        public RocketPackWriter(in IBufferWriter<byte> bufferWriter, in IBytesPool bytesPool)
         {
             _bufferWriter = bufferWriter;
             _bytesPool = bytesPool;

@@ -23,7 +23,7 @@ namespace Omnius.Core.Cryptography
         Simple_Sha2_256 = 0,
     }
 
-    public readonly struct OmniHash : global::Omnius.Core.Serialization.RocketPack.IRocketPackMessage<OmniHash>
+    public readonly struct OmniHash : global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<OmniHash>
     {
         public static global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<OmniHash> Formatter { get; }
         public static OmniHash Empty { get; }
@@ -117,7 +117,7 @@ namespace Omnius.Core.Cryptography
         }
     }
 
-    public sealed partial class OmniAgreement : global::Omnius.Core.Serialization.RocketPack.IRocketPackMessage<OmniAgreement>
+    public sealed partial class OmniAgreement : global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<OmniAgreement>
     {
         public static global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<OmniAgreement> Formatter { get; }
         public static OmniAgreement Empty { get; }
@@ -289,7 +289,7 @@ namespace Omnius.Core.Cryptography
         }
     }
 
-    public sealed partial class OmniAgreementPublicKey : global::Omnius.Core.Serialization.RocketPack.IRocketPackMessage<OmniAgreementPublicKey>
+    public sealed partial class OmniAgreementPublicKey : global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<OmniAgreementPublicKey>
     {
         public static global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<OmniAgreementPublicKey> Formatter { get; }
         public static OmniAgreementPublicKey Empty { get; }
@@ -440,7 +440,7 @@ namespace Omnius.Core.Cryptography
         }
     }
 
-    public sealed partial class OmniAgreementPrivateKey : global::Omnius.Core.Serialization.RocketPack.IRocketPackMessage<OmniAgreementPrivateKey>
+    public sealed partial class OmniAgreementPrivateKey : global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<OmniAgreementPrivateKey>
     {
         public static global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<OmniAgreementPrivateKey> Formatter { get; }
         public static OmniAgreementPrivateKey Empty { get; }
@@ -591,7 +591,7 @@ namespace Omnius.Core.Cryptography
         }
     }
 
-    public sealed partial class OmniDigitalSignature : global::Omnius.Core.Serialization.RocketPack.IRocketPackMessage<OmniDigitalSignature>
+    public sealed partial class OmniDigitalSignature : global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<OmniDigitalSignature>
     {
         public static global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<OmniDigitalSignature> Formatter { get; }
         public static OmniDigitalSignature Empty { get; }
@@ -766,7 +766,7 @@ namespace Omnius.Core.Cryptography
         }
     }
 
-    public sealed partial class OmniCertificate : global::Omnius.Core.Serialization.RocketPack.IRocketPackMessage<OmniCertificate>
+    public sealed partial class OmniCertificate : global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<OmniCertificate>
     {
         public static global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<OmniCertificate> Formatter { get; }
         public static OmniCertificate Empty { get; }
@@ -941,7 +941,7 @@ namespace Omnius.Core.Cryptography
         }
     }
 
-    public sealed partial class OmniSignature : global::Omnius.Core.Serialization.RocketPack.IRocketPackMessage<OmniSignature>
+    public sealed partial class OmniSignature : global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<OmniSignature>
     {
         public static global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<OmniSignature> Formatter { get; }
         public static OmniSignature Empty { get; }
@@ -1073,7 +1073,7 @@ namespace Omnius.Core.Cryptography
         }
     }
 
-    public sealed partial class OmniHashcash : global::Omnius.Core.Serialization.RocketPack.IRocketPackMessage<OmniHashcash>
+    public sealed partial class OmniHashcash : global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<OmniHashcash>
     {
         public static global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<OmniHashcash> Formatter { get; }
         public static OmniHashcash Empty { get; }
