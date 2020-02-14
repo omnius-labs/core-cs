@@ -5,7 +5,7 @@ using Omnius.Core.Serialization.RocketPack;
 namespace Omnius.Core.Remoting
 {
     public readonly struct OmniRpcStreamReceiveResult<TMessage>
-        where TMessage : IRocketPackMessage<TMessage>
+        where TMessage : IRocketPackObject<TMessage>
     {
         private readonly TMessage _message;
         private readonly OmniRpcErrorMessage? _errorMessage;

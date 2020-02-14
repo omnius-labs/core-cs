@@ -30,7 +30,7 @@ namespace Omnius.Core.Network.Connections.Secure.V1.Internal
         Password = 1,
     }
 
-    internal sealed partial class ProfileMessage : global::Omnius.Core.Serialization.RocketPack.IRocketPackMessage<ProfileMessage>
+    internal sealed partial class ProfileMessage : global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<ProfileMessage>
     {
         public static global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<ProfileMessage> Formatter { get; }
         public static ProfileMessage Empty { get; }
@@ -298,7 +298,7 @@ namespace Omnius.Core.Network.Connections.Secure.V1.Internal
         }
     }
 
-    internal sealed partial class VerificationMessage : global::Omnius.Core.Serialization.RocketPack.IRocketPackMessage<VerificationMessage>
+    internal sealed partial class VerificationMessage : global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<VerificationMessage>
     {
         public static global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<VerificationMessage> Formatter { get; }
         public static VerificationMessage Empty { get; }
@@ -429,7 +429,7 @@ namespace Omnius.Core.Network.Connections.Secure.V1.Internal
         }
     }
 
-    internal sealed partial class AuthenticationMessage : global::Omnius.Core.Serialization.RocketPack.IRocketPackMessage<AuthenticationMessage>
+    internal sealed partial class AuthenticationMessage : global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<AuthenticationMessage>
     {
         public static global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<AuthenticationMessage> Formatter { get; }
         public static AuthenticationMessage Empty { get; }

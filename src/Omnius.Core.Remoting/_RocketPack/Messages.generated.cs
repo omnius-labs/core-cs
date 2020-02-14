@@ -3,7 +3,7 @@
 
 namespace Omnius.Core.Remoting
 {
-    public sealed partial class OmniRpcErrorMessage : global::Omnius.Core.Serialization.RocketPack.IRocketPackMessage<OmniRpcErrorMessage>
+    public sealed partial class OmniRpcErrorMessage : global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<OmniRpcErrorMessage>
     {
         public static global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<OmniRpcErrorMessage> Formatter { get; }
         public static OmniRpcErrorMessage Empty { get; }

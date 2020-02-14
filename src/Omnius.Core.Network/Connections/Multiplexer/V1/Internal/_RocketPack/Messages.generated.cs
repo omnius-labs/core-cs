@@ -10,7 +10,7 @@ namespace Omnius.Core.Network.Connections.Multiplexer.V1.Internal
         NotFoundSessionId = 2,
     }
 
-    internal sealed partial class ProfileMessage : global::Omnius.Core.Serialization.RocketPack.IRocketPackMessage<ProfileMessage>
+    internal sealed partial class ProfileMessage : global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<ProfileMessage>
     {
         public static global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<ProfileMessage> Formatter { get; }
         public static ProfileMessage Empty { get; }
@@ -138,7 +138,7 @@ namespace Omnius.Core.Network.Connections.Multiplexer.V1.Internal
         }
     }
 
-    internal sealed partial class SessionConnectMessage : global::Omnius.Core.Serialization.RocketPack.IRocketPackMessage<SessionConnectMessage>
+    internal sealed partial class SessionConnectMessage : global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<SessionConnectMessage>
     {
         public static global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<SessionConnectMessage> Formatter { get; }
         public static SessionConnectMessage Empty { get; }
@@ -247,7 +247,7 @@ namespace Omnius.Core.Network.Connections.Multiplexer.V1.Internal
         }
     }
 
-    internal sealed partial class SessionAcceptMessage : global::Omnius.Core.Serialization.RocketPack.IRocketPackMessage<SessionAcceptMessage>
+    internal sealed partial class SessionAcceptMessage : global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<SessionAcceptMessage>
     {
         public static global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<SessionAcceptMessage> Formatter { get; }
         public static SessionAcceptMessage Empty { get; }
@@ -356,7 +356,7 @@ namespace Omnius.Core.Network.Connections.Multiplexer.V1.Internal
         }
     }
 
-    internal sealed partial class SessionUpdateWindowSizeMessage : global::Omnius.Core.Serialization.RocketPack.IRocketPackMessage<SessionUpdateWindowSizeMessage>
+    internal sealed partial class SessionUpdateWindowSizeMessage : global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<SessionUpdateWindowSizeMessage>
     {
         public static global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<SessionUpdateWindowSizeMessage> Formatter { get; }
         public static SessionUpdateWindowSizeMessage Empty { get; }
@@ -484,7 +484,7 @@ namespace Omnius.Core.Network.Connections.Multiplexer.V1.Internal
         }
     }
 
-    internal sealed partial class SessionDataMessage : global::Omnius.Core.Serialization.RocketPack.IRocketPackMessage<SessionDataMessage>, global::System.IDisposable
+    internal sealed partial class SessionDataMessage : global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<SessionDataMessage>, global::System.IDisposable
     {
         public static global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<SessionDataMessage> Formatter { get; }
         public static SessionDataMessage Empty { get; }
@@ -642,7 +642,7 @@ namespace Omnius.Core.Network.Connections.Multiplexer.V1.Internal
         }
     }
 
-    internal sealed partial class SessionCloseMessage : global::Omnius.Core.Serialization.RocketPack.IRocketPackMessage<SessionCloseMessage>
+    internal sealed partial class SessionCloseMessage : global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<SessionCloseMessage>
     {
         public static global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<SessionCloseMessage> Formatter { get; }
         public static SessionCloseMessage Empty { get; }
@@ -751,7 +751,7 @@ namespace Omnius.Core.Network.Connections.Multiplexer.V1.Internal
         }
     }
 
-    internal sealed partial class SessionErrorMessage : global::Omnius.Core.Serialization.RocketPack.IRocketPackMessage<SessionErrorMessage>
+    internal sealed partial class SessionErrorMessage : global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<SessionErrorMessage>
     {
         public static global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<SessionErrorMessage> Formatter { get; }
         public static SessionErrorMessage Empty { get; }

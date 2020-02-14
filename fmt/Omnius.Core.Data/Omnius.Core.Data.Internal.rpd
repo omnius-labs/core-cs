@@ -1,0 +1,8 @@
+﻿syntax = v1.0;
+
+namespace "Omnius.Core.Data.Internal";
+
+[csharp_struct]
+struct OmniDatabaseConfig {
+    Value: uint32,
+}

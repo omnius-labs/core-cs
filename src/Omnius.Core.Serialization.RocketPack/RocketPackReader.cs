@@ -17,7 +17,7 @@ namespace Omnius.Core.Serialization.RocketPack
         private SequenceReader<byte> _reader;
         private IBytesPool _bytesPool;
 
-        public RocketPackReader(ReadOnlySequence<byte> sequence, in IBytesPool bytesPool)
+        public RocketPackReader(in ReadOnlySequence<byte> sequence, in IBytesPool bytesPool)
         {
             _reader = new SequenceReader<byte>(sequence);
             _bytesPool = bytesPool;

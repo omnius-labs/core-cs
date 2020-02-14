@@ -1,7 +1,7 @@
 using System;
 using System.Buffers;
 
-namespace Omnius.Core.Collections
+namespace Omnius.Core.Data
 {
     internal partial class GolombCodedSet
     {

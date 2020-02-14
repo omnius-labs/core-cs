@@ -3,7 +3,7 @@
 
 namespace FormatterBenchmarks.Internal
 {
-    internal sealed partial class RocketPack_BytesElementsList : global::Omnius.Core.Serialization.RocketPack.IRocketPackMessage<RocketPack_BytesElementsList>
+    internal sealed partial class RocketPack_BytesElementsList : global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<RocketPack_BytesElementsList>
     {
         public static global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<RocketPack_BytesElementsList> Formatter { get; }
         public static RocketPack_BytesElementsList Empty { get; }
@@ -133,7 +133,7 @@ namespace FormatterBenchmarks.Internal
         }
     }
 
-    internal sealed partial class RocketPack_BytesElements : global::Omnius.Core.Serialization.RocketPack.IRocketPackMessage<RocketPack_BytesElements>, global::System.IDisposable
+    internal sealed partial class RocketPack_BytesElements : global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<RocketPack_BytesElements>, global::System.IDisposable
     {
         public static global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<RocketPack_BytesElements> Formatter { get; }
         public static RocketPack_BytesElements Empty { get; }
@@ -354,7 +354,7 @@ namespace FormatterBenchmarks.Internal
         }
     }
 
-    internal sealed partial class RocketPack_IntElementsList : global::Omnius.Core.Serialization.RocketPack.IRocketPackMessage<RocketPack_IntElementsList>
+    internal sealed partial class RocketPack_IntElementsList : global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<RocketPack_IntElementsList>
     {
         public static global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<RocketPack_IntElementsList> Formatter { get; }
         public static RocketPack_IntElementsList Empty { get; }
@@ -484,7 +484,7 @@ namespace FormatterBenchmarks.Internal
         }
     }
 
-    internal sealed partial class RocketPack_IntElements : global::Omnius.Core.Serialization.RocketPack.IRocketPackMessage<RocketPack_IntElements>
+    internal sealed partial class RocketPack_IntElements : global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<RocketPack_IntElements>
     {
         public static global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<RocketPack_IntElements> Formatter { get; }
         public static RocketPack_IntElements Empty { get; }
@@ -649,7 +649,7 @@ namespace FormatterBenchmarks.Internal
         }
     }
 
-    internal sealed partial class RocketPack_StringElementsList : global::Omnius.Core.Serialization.RocketPack.IRocketPackMessage<RocketPack_StringElementsList>
+    internal sealed partial class RocketPack_StringElementsList : global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<RocketPack_StringElementsList>
     {
         public static global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<RocketPack_StringElementsList> Formatter { get; }
         public static RocketPack_StringElementsList Empty { get; }
@@ -779,7 +779,7 @@ namespace FormatterBenchmarks.Internal
         }
     }
 
-    internal sealed partial class RocketPack_StringElements : global::Omnius.Core.Serialization.RocketPack.IRocketPackMessage<RocketPack_StringElements>
+    internal sealed partial class RocketPack_StringElements : global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<RocketPack_StringElements>
     {
         public static global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<RocketPack_StringElements> Formatter { get; }
         public static RocketPack_StringElements Empty { get; }

@@ -5,20 +5,25 @@ using System.IO;
 using System.IO.Compression;
 using System.Threading.Tasks;
 using Omnius.Core.Cryptography;
-using Omnius.Core;
-using Omnius.Core.Configuration.Internal;
 using Omnius.Core.Io;
 using Omnius.Core.Serialization.RocketPack;
 
-namespace Omnius.Core.Configuration
+namespace Omnius.Core.Data
 {
-    public class OmniSettings : DisposableBase
+    public class OmniFileDatabase : AsyncDisposableBase, IOmniDatabase
     {
+        private enum EntityStatus
+        {
+            Temp,
+            Committed,
+            Backup,
+        }
+
         private static readonly NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
 
         private readonly FileStream _lockFileStream;
 
-        public OmniSettings(string directoryPath)
+        public OmniFileDatabase(string directoryPath)
         {
             this.DirectoryPath = directoryPath;
 
@@ -43,28 +48,26 @@ namespace Omnius.Core.Configuration
             _lockFileStream = new FileStream(Path.Combine(this.DirectoryPath, "lock"), FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
         }
 
-        public string DirectoryPath { get; }
-
-        private enum EntityStatus
+        protected override async ValueTask OnDisposeAsync()
         {
-            Temp,
-            Committed,
-            Backup,
+            await _lockFileStream.DisposeAsync();
         }
+
+        public string DirectoryPath { get; }
 
         private string GeneratePath(EntityStatus entityStatus)
         {
-            return Path.Combine(this.DirectoryPath, "Objects", entityStatus.ToString());
+            return Path.Combine(this.DirectoryPath, "objects", entityStatus.ToString().ToLower());
         }
 
-        private static bool TryGet<T>(string basePath, string name, out T value, IRocketPackFormatter<T> formatter)
+        private static bool InternalLoad<T>(string basePath, string name, out T value, IRocketPackFormatter<T> formatter)
         {
-            value = default!;
+            value = IRocketPackObject<T>.Empty;
 
             try
             {
                 string directoryPath = Path.Combine(basePath, name);
-                string contentPath = Path.Combine(directoryPath, "opb.gz");
+                string contentPath = Path.Combine(directoryPath, "rpb.gz");
                 string crcPath = Path.Combine(directoryPath, "crc");
 
                 using var hub = new Hub(BytesPool.Shared);
@@ -93,7 +96,7 @@ namespace Omnius.Core.Configuration
 
                 using (var fileStream = new UnbufferedFileStream(crcPath, FileMode.Open, FileAccess.Read, FileShare.Read, FileOptions.None, BytesPool.Shared))
                 {
-                    Span<byte> buffer = stackalloc byte[4];
+                    var buffer = new byte[4];
                     fileStream.Read(buffer);
 
                     if (BinaryPrimitives.ReadInt32LittleEndian(buffer) != Crc32_Castagnoli.ComputeHash(sequence))
@@ -104,18 +107,16 @@ namespace Omnius.Core.Configuration
 
                 var reader = new RocketPackReader(sequence, BytesPool.Shared);
                 value = formatter.Deserialize(ref reader, 0);
-
                 return true;
             }
             catch (Exception e)
             {
                 _logger.Error(e);
+                throw e;
             }
-
-            return false;
         }
 
-        private static void Set<T>(string basePath, string name, T value, IRocketPackFormatter<T> formatter)
+        private static void InternalSave<T>(string basePath, string name, T value, IRocketPackFormatter<T> formatter)
         {
             try
             {
@@ -156,7 +157,6 @@ namespace Omnius.Core.Configuration
             catch (Exception e)
             {
                 _logger.Error(e);
-
                 throw e;
             }
         }
@@ -177,7 +177,6 @@ namespace Omnius.Core.Configuration
             catch (Exception e)
             {
                 _logger.Error(e);
-
                 throw e;
             }
 
@@ -191,7 +190,6 @@ namespace Omnius.Core.Configuration
             catch (Exception e)
             {
                 _logger.Error(e);
-
                 throw e;
             }
 
@@ -205,81 +203,33 @@ namespace Omnius.Core.Configuration
             catch (Exception e)
             {
                 _logger.Error(e);
-
                 throw e;
             }
         }
 
-        public bool TryGetVersion(out uint version)
+        public async ValueTask<T> LoadAsync<T>(string key) where T : IRocketPackObject<T>
         {
-            version = 0;
-
-            if (this.TryGetContent("#Version", out var databaseVersion, OmniSettingsVersion.Formatter))
+            return await Task.Run(() =>
             {
-                version = databaseVersion.Value;
-                return true;
-            }
-
-            return false;
-        }
-
-        public void SetVersion(uint version)
-        {
-            this.SetContent("#Version", new OmniSettingsVersion(version), OmniSettingsVersion.Formatter);
-        }
-
-        public bool TryGetContent<T>(string name, out T value) where T : IRocketPackMessage<T>
-        {
-            value = default!;
-
-            foreach (var entityStatus in new[] { EntityStatus.Committed, EntityStatus.Backup })
-            {
-                if (TryGet(this.GeneratePath(entityStatus), name, out var result, IRocketPackMessage<T>.Formatter))
+                foreach (var entityStatus in new[] { EntityStatus.Committed, EntityStatus.Backup })
                 {
-                    value = result;
-                    return true;
+                    if(InternalLoad(this.GeneratePath(entityStatus), key, out var result, IRocketPackObject<T>.Formatter))
+                    {
+                        return result;
+                    }
                 }
-            }
 
-            return false;
+                return IRocketPackObject<T>.Empty;
+            });
         }
 
-        public bool TryGetContent<T>(string name, out T value, IRocketPackFormatter<T> formatter)
+        public async ValueTask SaveAsync<T>(string key, T value) where T : IRocketPackObject<T>
         {
-            value = default!;
-
-            foreach (var entityStatus in new[] { EntityStatus.Committed, EntityStatus.Backup })
+            await Task.Run(() =>
             {
-                if (TryGet(this.GeneratePath(entityStatus), name, out var result, formatter))
-                {
-                    value = result;
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
-        public void SetContent<T>(string name, T value) where T : IRocketPackMessage<T>
-        {
-            Set(this.GeneratePath(EntityStatus.Temp), name, value, IRocketPackMessage<T>.Formatter);
-
-            this.Commit(name);
-        }
-
-        public void SetContent<T>(string name, T value, IRocketPackFormatter<T> formatter)
-        {
-            Set(this.GeneratePath(EntityStatus.Temp), name, value, formatter);
-
-            this.Commit(name);
-        }
-
-        protected override void OnDispose(bool disposing)
-        {
-            if (disposing)
-            {
-                _lockFileStream.Dispose();
-            }
+                InternalSave(this.GeneratePath(EntityStatus.Temp), key, value, IRocketPackObject<T>.Formatter);
+                this.Commit(key);
+            });
         }
     }
 

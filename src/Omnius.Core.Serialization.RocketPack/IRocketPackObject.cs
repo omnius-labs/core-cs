@@ -4,7 +4,7 @@ using Omnius.Core;
 
 namespace Omnius.Core.Serialization.RocketPack
 {
-    public interface IRocketPackMessage<T> : IEquatable<T>
+    public interface IRocketPackObject<T> : IEquatable<T>
     {
         public static IRocketPackFormatter<T> Formatter { get; }
 

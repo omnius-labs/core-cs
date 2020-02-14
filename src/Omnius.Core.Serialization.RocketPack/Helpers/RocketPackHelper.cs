@@ -6,7 +6,7 @@ namespace Omnius.Core.Serialization.RocketPack.Helpers
     public static class RocketPackHelper
     {
         public static T StreamToMessage<T>(Stream inStream)
-            where T : IRocketPackMessage<T>
+            where T : IRocketPackObject<T>
         {
             using var hub = new Hub(BytesPool.Shared);
 
@@ -23,11 +23,11 @@ namespace Omnius.Core.Serialization.RocketPack.Helpers
                 hub.Writer.Advance(readLength);
             }
 
-            return IRocketPackMessage<T>.Import(hub.Reader.GetSequence(), BytesPool.Shared);
+            return IRocketPackObject<T>.Import(hub.Reader.GetSequence(), BytesPool.Shared);
         }
 
         public static void MessageToStream<T>(T message, Stream stream)
-            where T : IRocketPackMessage<T>
+            where T : IRocketPackObject<T>
         {
             using var hub = new Hub(BytesPool.Shared);
 
