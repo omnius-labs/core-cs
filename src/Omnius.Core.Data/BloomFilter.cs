@@ -2,7 +2,7 @@ using System;
 using System.Collections;
 using Omnius.Core.Extensions;
 
-namespace Omnius.Core.Collections
+namespace Omnius.Core.Data
 {
     /// <summary>
     /// Bloom filter.

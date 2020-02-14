@@ -51,7 +51,7 @@ namespace Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal
         No = 1,
     }
 
-    internal readonly struct StructMessageElement_Struct : global::Omnius.Core.Serialization.RocketPack.IRocketPackMessage<StructMessageElement_Struct>
+    internal readonly struct StructMessageElement_Struct : global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<StructMessageElement_Struct>
     {
         public static global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<StructMessageElement_Struct> Formatter { get; }
         public static StructMessageElement_Struct Empty { get; }
@@ -132,7 +132,7 @@ namespace Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal
         }
     }
 
-    internal readonly struct TableMessageElement_Struct : global::Omnius.Core.Serialization.RocketPack.IRocketPackMessage<TableMessageElement_Struct>
+    internal readonly struct TableMessageElement_Struct : global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<TableMessageElement_Struct>
     {
         public static global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<TableMessageElement_Struct> Formatter { get; }
         public static TableMessageElement_Struct Empty { get; }
@@ -238,7 +238,7 @@ namespace Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal
         }
     }
 
-    internal sealed partial class StructMessageElement_Class : global::Omnius.Core.Serialization.RocketPack.IRocketPackMessage<StructMessageElement_Class>
+    internal sealed partial class StructMessageElement_Class : global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<StructMessageElement_Class>
     {
         public static global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<StructMessageElement_Class> Formatter { get; }
         public static StructMessageElement_Class Empty { get; }
@@ -322,7 +322,7 @@ namespace Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal
         }
     }
 
-    internal sealed partial class TableMessageElement_Class : global::Omnius.Core.Serialization.RocketPack.IRocketPackMessage<TableMessageElement_Class>
+    internal sealed partial class TableMessageElement_Class : global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<TableMessageElement_Class>
     {
         public static global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<TableMessageElement_Class> Formatter { get; }
         public static TableMessageElement_Class Empty { get; }

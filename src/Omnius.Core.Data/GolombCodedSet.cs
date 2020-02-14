@@ -6,7 +6,7 @@ using System.IO.Pipelines;
 using System.Linq;
 using System.Text;
 
-namespace Omnius.Core.Collections
+namespace Omnius.Core.Data
 {
     // TODO 実装中
     internal partial class GolombCodedSet

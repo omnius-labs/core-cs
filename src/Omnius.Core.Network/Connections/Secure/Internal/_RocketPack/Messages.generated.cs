@@ -4,7 +4,7 @@ using Omnius.Core.Network.Connections.Secure;
 
 namespace Omnius.Core.Network.Connections.Secure.Internal
 {
-    internal sealed partial class HelloMessage : global::Omnius.Core.Serialization.RocketPack.IRocketPackMessage<HelloMessage>
+    internal sealed partial class HelloMessage : global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<HelloMessage>
     {
         public static global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<HelloMessage> Formatter { get; }
         public static HelloMessage Empty { get; }

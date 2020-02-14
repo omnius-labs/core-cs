@@ -28,14 +28,14 @@ namespace Omnius.Core.Remoting
         }
 
         public async ValueTask SendMessageAsync<TMessage>(TMessage message, CancellationToken cancellationToken = default)
-            where TMessage : IRocketPackMessage<TMessage>
+            where TMessage : IRocketPackObject<TMessage>
         {
             await _connection.SendAsync((bufferWriter) =>
             {
                 bufferWriter.GetSpan(1)[0] = (byte)PacketType.Message;
                 bufferWriter.Advance(1);
                 var writer = new RocketPackWriter(bufferWriter, _bytesPool);
-                IRocketPackMessage<TMessage>.Formatter.Serialize(ref writer, message, 0);
+                IRocketPackObject<TMessage>.Formatter.Serialize(ref writer, message, 0);
             }, cancellationToken);
         }
 
@@ -68,7 +68,7 @@ namespace Omnius.Core.Remoting
         }
 
         public async ValueTask<OmniRpcStreamReceiveResult<TMessage>> ReceiveAsync<TMessage>(CancellationToken cancellationToken = default)
-            where TMessage : IRocketPackMessage<TMessage>
+            where TMessage : IRocketPackObject<TMessage>
         {
             OmniRpcStreamReceiveResult<TMessage> receiveResult = default;
 
@@ -81,7 +81,7 @@ namespace Omnius.Core.Remoting
                 {
                     case PacketType.Message:
                         var reader = new RocketPackReader(sequence, _bytesPool);
-                        var message = IRocketPackMessage<TMessage>.Formatter.Deserialize(ref reader, 0);
+                        var message = IRocketPackObject<TMessage>.Formatter.Deserialize(ref reader, 0);
                         receiveResult = new OmniRpcStreamReceiveResult<TMessage>(message, null, false, false);
                         break;
                     case PacketType.ErrorMessage:
