@@ -60,7 +60,7 @@ namespace Omnius.Core.Serialization.RocketPack.DefinitionCompiler
                     "Lazy<>" => $"System.Lazy<{types[0]}>",
                     "ReadOnlySequence<>" => $"System.Buffers.ReadOnlySequence<{types[0]}>",
                     "IBufferWriter<>" => $"System.Buffers.IBufferWriter<{types[0]}>",
-                    "IRocketPackMessage<>" => $"Omnius.Core.Serialization.RocketPack.IRocketPackMessage<{types[0]}>",
+                    "IRocketPackObject<>" => $"Omnius.Core.Serialization.RocketPack.IRocketPackObject<{types[0]}>",
                     "RocketPackReader" => "Omnius.Core.Serialization.RocketPack.RocketPackReader",
                     "RocketPackWriter" => "Omnius.Core.Serialization.RocketPack.RocketPackWriter",
                     "IRocketPackFormatter<>" => $"Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<{types[0]}>",
@@ -187,22 +187,22 @@ namespace Omnius.Core.Serialization.RocketPack.DefinitionCompiler
                 {
                     if (objectDefinition.Elements.Select(n => n.Type).OfType<BytesType>().Any(n => n.IsUseMemoryPool))
                     {
-                        b.WriteLine($"{_accessLevel} readonly struct {objectDefinition.Name} : {GenerateTypeFullName("IRocketPackMessage<>", objectDefinition.Name)}, {GenerateTypeFullName("IDisposable")}");
+                        b.WriteLine($"{_accessLevel} readonly struct {objectDefinition.Name} : {GenerateTypeFullName("IRocketPackObject<>", objectDefinition.Name)}, {GenerateTypeFullName("IDisposable")}");
                     }
                     else
                     {
-                        b.WriteLine($"{_accessLevel} readonly struct {objectDefinition.Name} : {GenerateTypeFullName("IRocketPackMessage<>", objectDefinition.Name)}");
+                        b.WriteLine($"{_accessLevel} readonly struct {objectDefinition.Name} : {GenerateTypeFullName("IRocketPackObject<>", objectDefinition.Name)}");
                     }
                 }
                 else if (objectDefinition.IsClass)
                 {
                     if (objectDefinition.Elements.Select(n => n.Type).OfType<BytesType>().Any(n => n.IsUseMemoryPool))
                     {
-                        b.WriteLine($"{_accessLevel} sealed partial class {objectDefinition.Name} : {GenerateTypeFullName("IRocketPackMessage<>", objectDefinition.Name)}, {GenerateTypeFullName("IDisposable")}");
+                        b.WriteLine($"{_accessLevel} sealed partial class {objectDefinition.Name} : {GenerateTypeFullName("IRocketPackObject<>", objectDefinition.Name)}, {GenerateTypeFullName("IDisposable")}");
                     }
                     else
                     {
-                        b.WriteLine($"{_accessLevel} sealed partial class {objectDefinition.Name} : {GenerateTypeFullName("IRocketPackMessage<>", objectDefinition.Name)}");
+                        b.WriteLine($"{_accessLevel} sealed partial class {objectDefinition.Name} : {GenerateTypeFullName("IRocketPackObject<>", objectDefinition.Name)}");
                     }
                 }
 

@@ -18,7 +18,7 @@ namespace Omnius.Core.Serialization.RocketPack
         private const byte Int64Code = 0x83;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void SetUInt8(in byte value, IBufferWriter<byte> writer)
+        public static void SetUInt8(in byte value, in IBufferWriter<byte> writer)
         {
             unchecked
             {
@@ -41,7 +41,7 @@ namespace Omnius.Core.Serialization.RocketPack
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void SetUInt16(in ushort value, IBufferWriter<byte> writer)
+        public static void SetUInt16(in ushort value, in IBufferWriter<byte> writer)
         {
             unchecked
             {
@@ -78,7 +78,7 @@ namespace Omnius.Core.Serialization.RocketPack
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void SetUInt32(in uint value, IBufferWriter<byte> writer)
+        public static void SetUInt32(in uint value, in IBufferWriter<byte> writer)
         {
             unchecked
             {
@@ -129,7 +129,7 @@ namespace Omnius.Core.Serialization.RocketPack
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void SetUInt64(in ulong value, IBufferWriter<byte> writer)
+        public static void SetUInt64(in ulong value, in IBufferWriter<byte> writer)
         {
             unchecked
             {
@@ -194,7 +194,7 @@ namespace Omnius.Core.Serialization.RocketPack
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void SetInt8(in sbyte value, IBufferWriter<byte> writer)
+        public static void SetInt8(in sbyte value, in IBufferWriter<byte> writer)
         {
             unchecked
             {
@@ -203,7 +203,7 @@ namespace Omnius.Core.Serialization.RocketPack
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void SetInt16(in short value, IBufferWriter<byte> writer)
+        public static void SetInt16(in short value, in IBufferWriter<byte> writer)
         {
             unchecked
             {
@@ -212,7 +212,7 @@ namespace Omnius.Core.Serialization.RocketPack
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void SetInt32(in int value, IBufferWriter<byte> writer)
+        public static void SetInt32(in int value, in IBufferWriter<byte> writer)
         {
             unchecked
             {
@@ -221,7 +221,7 @@ namespace Omnius.Core.Serialization.RocketPack
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void SetInt64(in long value, IBufferWriter<byte> writer)
+        public static void SetInt64(in long value, in IBufferWriter<byte> writer)
         {
             unchecked
             {

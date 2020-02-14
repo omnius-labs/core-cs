@@ -1,22 +1,22 @@
 
 #nullable enable
 
-namespace Omnius.Core.Configuration.Internal
+namespace Omnius.Core.Data.Internal
 {
-    public readonly struct OmniSettingsVersion : global::Omnius.Core.Serialization.RocketPack.IRocketPackMessage<OmniSettingsVersion>
+    public readonly struct OmniDatabaseConfig : global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<OmniDatabaseConfig>
     {
-        public static global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<OmniSettingsVersion> Formatter { get; }
-        public static OmniSettingsVersion Empty { get; }
+        public static global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<OmniDatabaseConfig> Formatter { get; }
+        public static OmniDatabaseConfig Empty { get; }
 
-        static OmniSettingsVersion()
+        static OmniDatabaseConfig()
         {
-            OmniSettingsVersion.Formatter = new ___CustomFormatter();
-            OmniSettingsVersion.Empty = new OmniSettingsVersion(0);
+            OmniDatabaseConfig.Formatter = new ___CustomFormatter();
+            OmniDatabaseConfig.Empty = new OmniDatabaseConfig(0);
         }
 
         private readonly int ___hashCode;
 
-        public OmniSettingsVersion(uint value)
+        public OmniDatabaseConfig(uint value)
         {
             this.Value = value;
 
@@ -29,7 +29,7 @@ namespace Omnius.Core.Configuration.Internal
 
         public uint Value { get; }
 
-        public static OmniSettingsVersion Import(global::System.Buffers.ReadOnlySequence<byte> sequence, global::Omnius.Core.IBytesPool bytesPool)
+        public static OmniDatabaseConfig Import(global::System.Buffers.ReadOnlySequence<byte> sequence, global::Omnius.Core.IBytesPool bytesPool)
         {
             var reader = new global::Omnius.Core.Serialization.RocketPack.RocketPackReader(sequence, bytesPool);
             return Formatter.Deserialize(ref reader, 0);
@@ -40,20 +40,20 @@ namespace Omnius.Core.Configuration.Internal
             Formatter.Serialize(ref writer, this, 0);
         }
 
-        public static bool operator ==(OmniSettingsVersion left, OmniSettingsVersion right)
+        public static bool operator ==(OmniDatabaseConfig left, OmniDatabaseConfig right)
         {
             return right.Equals(left);
         }
-        public static bool operator !=(OmniSettingsVersion left, OmniSettingsVersion right)
+        public static bool operator !=(OmniDatabaseConfig left, OmniDatabaseConfig right)
         {
             return !(left == right);
         }
         public override bool Equals(object? other)
         {
-            if (!(other is OmniSettingsVersion)) return false;
-            return this.Equals((OmniSettingsVersion)other);
+            if (!(other is OmniDatabaseConfig)) return false;
+            return this.Equals((OmniDatabaseConfig)other);
         }
-        public bool Equals(OmniSettingsVersion target)
+        public bool Equals(OmniDatabaseConfig target)
         {
             if (this.Value != target.Value) return false;
 
@@ -61,16 +61,16 @@ namespace Omnius.Core.Configuration.Internal
         }
         public override int GetHashCode() => ___hashCode;
 
-        private sealed class ___CustomFormatter : global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<OmniSettingsVersion>
+        private sealed class ___CustomFormatter : global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<OmniDatabaseConfig>
         {
-            public void Serialize(ref global::Omnius.Core.Serialization.RocketPack.RocketPackWriter w, in OmniSettingsVersion value, in int rank)
+            public void Serialize(ref global::Omnius.Core.Serialization.RocketPack.RocketPackWriter w, in OmniDatabaseConfig value, in int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
                 w.Write(value.Value);
             }
 
-            public OmniSettingsVersion Deserialize(ref global::Omnius.Core.Serialization.RocketPack.RocketPackReader r, in int rank)
+            public OmniDatabaseConfig Deserialize(ref global::Omnius.Core.Serialization.RocketPack.RocketPackReader r, in int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
@@ -79,7 +79,7 @@ namespace Omnius.Core.Configuration.Internal
                 {
                     p_value = r.GetUInt32();
                 }
-                return new OmniSettingsVersion(p_value);
+                return new OmniDatabaseConfig(p_value);
             }
         }
     }

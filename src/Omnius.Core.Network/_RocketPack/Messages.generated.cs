@@ -3,7 +3,7 @@
 
 namespace Omnius.Core.Network
 {
-    public sealed partial class OmniAddress : global::Omnius.Core.Serialization.RocketPack.IRocketPackMessage<OmniAddress>
+    public sealed partial class OmniAddress : global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<OmniAddress>
     {
         public static global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<OmniAddress> Formatter { get; }
         public static OmniAddress Empty { get; }
@@ -117,7 +117,7 @@ namespace Omnius.Core.Network
         }
     }
 
-    public sealed partial class OmniPath : global::Omnius.Core.Serialization.RocketPack.IRocketPackMessage<OmniPath>
+    public sealed partial class OmniPath : global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<OmniPath>
     {
         public static global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<OmniPath> Formatter { get; }
         public static OmniPath Empty { get; }

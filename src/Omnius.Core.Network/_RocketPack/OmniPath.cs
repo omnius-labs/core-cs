@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
@@ -39,7 +40,7 @@ namespace Omnius.Core.Network
 
         public static class Windows
         {
-            public static bool TryEncoding(string path, out OmniPath? omniPath)
+            public static bool TryEncoding(string path, [NotNullWhen(true)]out OmniPath? omniPath)
             {
                 omniPath = null;
 
@@ -66,7 +67,7 @@ namespace Omnius.Core.Network
                 return true;
             }
 
-            public static bool TryDecoding(OmniPath omniPath, out string? path)
+            public static bool TryDecoding(OmniPath omniPath, [NotNullWhen(true)] out string? path)
             {
                 path = null;
 
