@@ -7,7 +7,7 @@ using Xunit;
 
 namespace Omnius.Core.Data
 {
-    public class OmniFileDatabaseTests : TestsBase
+    public class OmniFileDatabaseTests
     {
         [Fact]
         public async ValueTask VersionReadWriteTest()

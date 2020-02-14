@@ -14,17 +14,20 @@ namespace Omnius.Core.Internal
             public delegate int CompareDelegate(byte* source1, byte* source2, int length);
             public delegate void BitwiseOperationDelegate(byte* source1, byte* source2, byte* result, int length);
 
-            public static ZeroDelegate Zero { get; private set; } = PureUnsafe.Zero;
-            public static CopyDelegate Copy { get; private set; } = PureUnsafe.Copy;
-            public static new EqualsDelegate Equals { get; private set; } = PureUnsafe.Equals;
-            public static CompareDelegate Compare { get; private set; } = PureUnsafe.Compare;
-            public static BitwiseOperationDelegate And { get; private set; } = PureUnsafe.And;
-            public static BitwiseOperationDelegate Or { get; private set; } = PureUnsafe.Or;
-            public static BitwiseOperationDelegate Xor { get; private set; } = PureUnsafe.Xor;
+            public static ZeroDelegate Zero { get; private set; }
+            public static CopyDelegate Copy { get; private set; }
+            public static new EqualsDelegate Equals { get; private set; }
+            public static CompareDelegate Compare { get; private set; }
+            public static BitwiseOperationDelegate And { get; private set; } 
+            public static BitwiseOperationDelegate Or { get; private set; } 
+            public static BitwiseOperationDelegate Xor { get; private set; }
 
             static BytesOperations()
             {
-                TryLoadNativeMethods();
+                if (!TryLoadNativeMethods())
+                {
+                    LoadPureUnsafeMethods();
+                }
             }
 
             public static bool TryLoadNativeMethods()
