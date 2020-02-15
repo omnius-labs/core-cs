@@ -1,12 +1,11 @@
-#!/bin/bash
+#!/bin/sh
 
 dotnet tool restore
 
-for path in `find "test" -maxdepth 2 -type f -name "*.csproj"`
-do
+for path in $(find "test" -maxdepth 2 -type f -name "*.csproj"); do
     name=$(basename ${path%.*})
     output="../../tmp/test/linux/${name}.opencover.xml"
-    dotnet test "$path" -p:CollectCoverage=true -p:CoverletOutputFormat=opencover -p:CoverletOutput="$output" -p:Exclude="[xunit*]*%2c[*.Tests]*";
+    dotnet test "$path" -p:CollectCoverage=true -p:CoverletOutputFormat=opencover -p:CoverletOutput="$output" -p:Exclude="[xunit*]*%2c[*.Tests]*"
 
     ret=$?
 

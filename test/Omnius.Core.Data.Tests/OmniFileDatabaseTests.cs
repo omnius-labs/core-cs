@@ -12,7 +12,7 @@ namespace Omnius.Core.Data
         [Fact]
         public async ValueTask VersionReadWriteTest()
         {
-            await using var settings = new OmniFileDatabase(UnitTestEnvironment.TempDirectoryPath);
+            await using var settings = await OmniFileDatabase.Factory.CreateAsync(UnitTestEnvironment.TempDirectoryPath, BytesPool.Shared);
 
             var random = new Random();
 
@@ -20,8 +20,8 @@ namespace Omnius.Core.Data
             {
                 var value = new TestObject(random.Next());
 
-                await settings.SaveAsync("version", value);
-                Assert.Equal(value, await settings.LoadAsync<TestObject>("version"));
+                await settings.WriteAsync("version", value);
+                Assert.Equal(value, await settings.ReadAsync<TestObject>("version"));
             }
         }
     }
