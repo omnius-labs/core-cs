@@ -3,9 +3,13 @@ using System.Buffers.Binary;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
+using System.Runtime.CompilerServices;
+using System.Threading;
 using System.Threading.Tasks;
 using Omnius.Core.Cryptography;
+using Omnius.Core.Data.Internal;
 using Omnius.Core.Io;
+using Omnius.Core.Serialization;
 using Omnius.Core.Serialization.RocketPack;
 
 namespace Omnius.Core.Data
@@ -21,19 +25,37 @@ namespace Omnius.Core.Data
 
         private static readonly NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
 
+        private readonly string _configPath;
+
+        private readonly Dictionary<string, string> _map = new Dictionary<string, string>();
         private readonly FileStream _lockFileStream;
 
-        public OmniFileDatabase(string directoryPath)
+        private readonly AsyncLock _asyncLock = new AsyncLock();
+
+        internal sealed class OmniFileDatabaseFactory : IOmniDatabaseFactory
         {
-            this.DirectoryPath = directoryPath;
+            public async ValueTask<IOmniDatabase> CreateAsync(string configPath, IBytesPool bytesPool)
+            {
+                var result = new OmniFileDatabase(configPath, bytesPool);
+                await result.InitAsync();
+
+                return result;
+            }
+        }
+
+        public static IOmniDatabaseFactory Factory { get; } = new OmniFileDatabaseFactory();
+
+        internal OmniFileDatabase(string configPath, IBytesPool bytesPool)
+        {
+            _configPath = configPath;
 
             // フォルダを作成する
             var directoryPathList = new List<string>
             {
-                this.DirectoryPath,
-                this.GeneratePath(EntityStatus.Temp),
-                this.GeneratePath(EntityStatus.Committed),
-                this.GeneratePath(EntityStatus.Backup)
+                _configPath,
+                this.GetObjectsPath(EntityStatus.Temp),
+                this.GetObjectsPath(EntityStatus.Committed),
+                this.GetObjectsPath(EntityStatus.Backup)
             };
 
             foreach (var path in directoryPathList)
@@ -45,22 +67,50 @@ namespace Omnius.Core.Data
             }
 
             // 排他ロック
-            _lockFileStream = new FileStream(Path.Combine(this.DirectoryPath, "lock"), FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
+            _lockFileStream = new FileStream(Path.Combine(_configPath, "lock"), FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
+        }
+
+        internal async ValueTask InitAsync()
+        {
+            await this.LoadAsync();
         }
 
         protected override async ValueTask OnDisposeAsync()
         {
+            await this.SaveAsync();
             await _lockFileStream.DisposeAsync();
         }
 
-        public string DirectoryPath { get; }
-
-        private string GeneratePath(EntityStatus entityStatus)
+        private async ValueTask LoadAsync()
         {
-            return Path.Combine(this.DirectoryPath, "objects", entityStatus.ToString().ToLower());
+            if (InternalRead<OmniFileDatabaseConfig>(_configPath, "config", out var config, OmniFileDatabaseConfig.Formatter))
+            {
+                foreach (var (key, value) in config.Map)
+                {
+                    _map.Add(key, value);
+                }
+            }
         }
 
-        private static bool InternalLoad<T>(string basePath, string name, out T value, IRocketPackFormatter<T> formatter)
+        private async ValueTask SaveAsync()
+        {
+            var config = new OmniFileDatabaseConfig(0, _map);
+            InternalSet(_configPath, "config", config, OmniFileDatabaseConfig.Formatter);
+        }
+
+        private string GetObjectsPath(EntityStatus entityStatus)
+        {
+            return Path.Combine(_configPath, "objects", entityStatus.ToString().ToLower());
+        }
+
+        private string GeneratePath(string key)
+        {
+            Span<byte> buffer = stackalloc byte[32];
+            Sha2_256.TryComputeHash(key, buffer);
+            return OmniBase.ToBase16String(buffer);
+        }
+
+        private static bool InternalRead<T>(string basePath, string name, out T value, IRocketPackFormatter<T> formatter)
         {
             value = IRocketPackObject<T>.Empty;
 
@@ -116,7 +166,7 @@ namespace Omnius.Core.Data
             }
         }
 
-        private static void InternalSave<T>(string basePath, string name, T value, IRocketPackFormatter<T> formatter)
+        private static void InternalSet<T>(string basePath, string name, T value, IRocketPackFormatter<T> formatter)
         {
             try
             {
@@ -163,9 +213,9 @@ namespace Omnius.Core.Data
 
         private void Commit(string name)
         {
-            var temp = Path.Combine(this.GeneratePath(EntityStatus.Temp), name);
-            var committed = Path.Combine(this.GeneratePath(EntityStatus.Committed), name);
-            var backup = Path.Combine(this.GeneratePath(EntityStatus.Backup), name);
+            var temp = Path.Combine(this.GetObjectsPath(EntityStatus.Temp), name);
+            var committed = Path.Combine(this.GetObjectsPath(EntityStatus.Committed), name);
+            var backup = Path.Combine(this.GetObjectsPath(EntityStatus.Backup), name);
 
             try
             {
@@ -207,35 +257,64 @@ namespace Omnius.Core.Data
             }
         }
 
-        public async ValueTask<T> LoadAsync<T>(string key) where T : IRocketPackObject<T>
+        public async IAsyncEnumerable<string> GetKeysAsync([EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
-            return await Task.Run(() =>
+            using (await _asyncLock.LockAsync())
             {
-                foreach (var entityStatus in new[] { EntityStatus.Committed, EntityStatus.Backup })
+                foreach (var key in _map.Keys)
                 {
-                    if(InternalLoad(this.GeneratePath(entityStatus), key, out var result, IRocketPackObject<T>.Formatter))
-                    {
-                        return result;
-                    }
+                    yield return key;
                 }
-
-                return IRocketPackObject<T>.Empty;
-            });
+            }
         }
 
-        public async ValueTask SaveAsync<T>(string key, T value) where T : IRocketPackObject<T>
+        public async ValueTask DeleteKeyAsync(string key, CancellationToken cancellationToken = default)
         {
-            await Task.Run(() =>
+            using (await _asyncLock.LockAsync())
             {
-                InternalSave(this.GeneratePath(EntityStatus.Temp), key, value, IRocketPackObject<T>.Formatter);
-                this.Commit(key);
-            });
+                if (_map.TryGetValue(key, out var path))
+                {
+                    File.Delete(path);
+                    _map.Remove(key);
+                }
+            }
         }
-    }
 
-    public class SettingsDatabaseException : Exception
-    {
-        public SettingsDatabaseException() { }
-        public SettingsDatabaseException(string message) : base(message) { }
+        public async ValueTask<T> ReadAsync<T>(string key, CancellationToken cancellationToken = default) where T : IRocketPackObject<T>
+        {
+            using (await _asyncLock.LockAsync())
+            {
+                return await Task.Run(() =>
+                {
+                    var path = this.GeneratePath(key);
+
+                    foreach (var entityStatus in new[] { EntityStatus.Committed, EntityStatus.Backup })
+                    {
+                        if (InternalRead(this.GetObjectsPath(entityStatus), path, out var result, IRocketPackObject<T>.Formatter))
+                        {
+                            return result;
+                        }
+                    }
+
+                    return IRocketPackObject<T>.Empty;
+                });
+            }
+        }
+
+        public async ValueTask WriteAsync<T>(string key, T value, CancellationToken cancellationToken = default) where T : IRocketPackObject<T>
+        {
+            using (await _asyncLock.LockAsync())
+            {
+                await Task.Run(() =>
+                {
+                    var path = this.GeneratePath(key);
+
+                    InternalSet(this.GetObjectsPath(EntityStatus.Temp), path, value, IRocketPackObject<T>.Formatter);
+                    this.Commit(path);
+
+                    _map[key] = path;
+                });
+            }
+        }
     }
 }

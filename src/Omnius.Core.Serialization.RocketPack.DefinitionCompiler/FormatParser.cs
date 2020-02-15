@@ -137,7 +137,7 @@ namespace Omnius.Core.Serialization.RocketPack.DefinitionCompiler
 
         private static readonly Parser<MapType> _mapTypeParser =
             from type in Parse.String("map").TokenWithSkipComment()
-            from beginType in Parse.String("<").TokenWithSkipComment()
+            from beginType in Parse.Char('<').TokenWithSkipComment()
             from keyType in _boolTypeParser
                 .Or<TypeBase>(_intTypeParser)
                 .Or(_floatTypeParser)
@@ -145,7 +145,7 @@ namespace Omnius.Core.Serialization.RocketPack.DefinitionCompiler
                 .Or(_timestampTypeParser)
                 .Or(_memoryTypeParser)
                 .Or(_customTypeParser).TokenWithSkipComment()
-            from comma in Parse.Char(',').Or(Parse.Return(',')).TokenWithSkipComment()
+            from comma in Parse.Char(',').TokenWithSkipComment()
             from valueType in _boolTypeParser
                 .Or<TypeBase>(_intTypeParser)
                 .Or(_floatTypeParser)
@@ -153,7 +153,7 @@ namespace Omnius.Core.Serialization.RocketPack.DefinitionCompiler
                 .Or(_timestampTypeParser)
                 .Or(_memoryTypeParser)
                 .Or(_customTypeParser).TokenWithSkipComment()
-            from endType in Parse.String(">").TokenWithSkipComment()
+            from endType in Parse.Char('>').TokenWithSkipComment()
             from isOptional in Parse.Char('?').Then(n => Parse.Return(true)).Or(Parse.Return(false)).TokenWithSkipComment()
             from parameters in _parametersParser.Or(Parse.Return(new Dictionary<string, string>())).TokenWithSkipComment()
             select new MapType(keyType, valueType, isOptional, parameters);
