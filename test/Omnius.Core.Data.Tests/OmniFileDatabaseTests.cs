@@ -20,8 +20,8 @@ namespace Omnius.Core.Data
             {
                 var value = new TestObject(random.Next());
 
-                await settings.SetAsync("version", value);
-                Assert.Equal(value, await settings.GetAsync<TestObject>("version"));
+                await settings.WriteAsync("version", value);
+                Assert.Equal(value, await settings.ReadAsync<TestObject>("version"));
             }
         }
     }

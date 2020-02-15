@@ -265,7 +265,7 @@ namespace Omnius.Core.Data
                 {
                     yield return key;
                 }
-            } 
+            }
         }
 
         public async ValueTask DeleteKeyAsync(string key, CancellationToken cancellationToken = default)
@@ -280,7 +280,7 @@ namespace Omnius.Core.Data
             }
         }
 
-        public async ValueTask<T> GetAsync<T>(string key, CancellationToken cancellationToken = default) where T : IRocketPackObject<T>
+        public async ValueTask<T> ReadAsync<T>(string key, CancellationToken cancellationToken = default) where T : IRocketPackObject<T>
         {
             using (await _asyncLock.LockAsync())
             {
@@ -301,7 +301,7 @@ namespace Omnius.Core.Data
             }
         }
 
-        public async ValueTask SetAsync<T>(string key, T value, CancellationToken cancellationToken = default) where T : IRocketPackObject<T>
+        public async ValueTask WriteAsync<T>(string key, T value, CancellationToken cancellationToken = default) where T : IRocketPackObject<T>
         {
             using (await _asyncLock.LockAsync())
             {
