@@ -20,7 +20,7 @@ namespace Omnius.Core.Data
         IAsyncEnumerable<string> GetKeysAsync(CancellationToken cancellationToken = default);
         ValueTask DeleteKeyAsync(string key, CancellationToken cancellationToken = default);
 
-        ValueTask<T> GetAsync<T>(string key, CancellationToken cancellationToken = default) where T : IRocketPackObject<T>;
-        ValueTask SetAsync<T>(string key, T value, CancellationToken cancellationToken = default) where T : IRocketPackObject<T>;
+        ValueTask<T> ReadAsync<T>(string key, CancellationToken cancellationToken = default) where T : IRocketPackObject<T>;
+        ValueTask WriteAsync<T>(string key, T value, CancellationToken cancellationToken = default) where T : IRocketPackObject<T>;
     }
 }
