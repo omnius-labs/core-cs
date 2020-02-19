@@ -6,8 +6,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="Nuget\build\netcoreapp3.0\Omnius.Core.targets">
-      <PackagePath>build/netcoreapp3.0/</PackagePath>
+    <Content Include="Nuget\build\netcoreapp3.1\Omnius.Core.Cryptography.targets">
+      <PackagePath>build/netcoreapp3.1/</PackagePath>
       <Pack>true</Pack>
     </Content>
     <Content Include="Assemblies\Win\hashcash.x64.exe">

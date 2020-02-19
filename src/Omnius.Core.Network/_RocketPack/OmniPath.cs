@@ -9,6 +9,11 @@ namespace Omnius.Core.Network
 {
     public partial class OmniPath
     {
+        public override string ToString()
+        {
+            return this.Value;
+        }
+
         public string[] Decompose()
         {
             return this.Value.Split('/', StringSplitOptions.RemoveEmptyEntries);
@@ -74,12 +79,12 @@ namespace Omnius.Core.Network
                 var sections = omniPath.Decompose();
 
                 // フォーマットのチェック
-                if (sections.Length < 1 || !(sections[1].Length == 1))
+                if (sections.Length < 1 || !(sections[0].Length == 1))
                 {
                     return false;
                 }
 
-                var driveName = sections[1][0];
+                var driveName = sections[0][0];
 
                 if (!(('a' <= driveName && driveName <= 'z') || ('A' <= driveName && driveName <= 'Z')))
                 {

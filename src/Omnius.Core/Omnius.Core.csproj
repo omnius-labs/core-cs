@@ -6,6 +6,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Include="Nuget\build\netcoreapp3.1\Omnius.Core.targets">
+      <PackagePath>build/netcoreapp3.1/</PackagePath>
+      <Pack>true</Pack>
+    </Content>
     <Compile Include="$(ProjectDir)..\..\src\Omnius.Core.Common\**\*">
       <Link>Common\%(RecursiveDir)%(FileName)%(Extension)</Link>
     </Compile>
