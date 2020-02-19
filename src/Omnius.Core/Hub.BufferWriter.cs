@@ -96,12 +96,10 @@ namespace Omnius.Core
 
             protected override void OnDispose(bool disposing)
             {
-                if (!disposing)
+                if (disposing)
                 {
-                    return;
+                    this.Reset();
                 }
-
-                this.Reset();
             }
 
             class MyReadOnlySequenceSegment : ReadOnlySequenceSegment<byte>
