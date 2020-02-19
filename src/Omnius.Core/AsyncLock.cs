@@ -34,12 +34,10 @@ namespace Omnius.Core
 
         protected override void OnDispose(bool disposing)
         {
-            if (!disposing)
+            if (disposing)
             {
-                return;
+                _semaphore.Dispose();
             }
-
-            _semaphore.Dispose();
         }
 
         private readonly struct Releaser : IDisposable

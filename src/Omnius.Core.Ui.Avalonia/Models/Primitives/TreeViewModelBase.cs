@@ -5,11 +5,7 @@ using Reactive.Bindings;
 namespace Omnius.Core.Avalonia.Models.Primitives
 {
     public abstract class TreeViewModelBase : DisposableBase, IDropable
-    {
-        public ReactiveProperty<string> Name { get; protected set; }
-        public ReactiveProperty<bool> IsSelected { get; protected set; }
-        public ReactiveProperty<bool> IsExpanded { get; protected set; }
-
+    { 
         public TreeViewModelBase(TreeViewModelBase? parent)
         {
             this.Parent = parent;
@@ -24,7 +20,7 @@ namespace Omnius.Core.Avalonia.Models.Primitives
 
             for (; ; )
             {
-                var parent = list.First.Value.Parent;
+                var parent = list.First!.Value.Parent;
                 if (parent == null)
                 {
                     break;
