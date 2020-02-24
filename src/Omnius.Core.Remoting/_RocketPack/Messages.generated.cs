@@ -5,13 +5,13 @@ namespace Omnius.Core.Remoting
 {
     public sealed partial class OmniRpcErrorMessage : global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<OmniRpcErrorMessage>
     {
-        public static global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<OmniRpcErrorMessage> Formatter { get; }
-        public static OmniRpcErrorMessage Empty { get; }
+        public static global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<OmniRpcErrorMessage> Formatter => global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<OmniRpcErrorMessage>.Formatter;
+        public static OmniRpcErrorMessage Empty => global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<OmniRpcErrorMessage>.Empty;
 
         static OmniRpcErrorMessage()
         {
-            OmniRpcErrorMessage.Formatter = new ___CustomFormatter();
-            OmniRpcErrorMessage.Empty = new OmniRpcErrorMessage(string.Empty, string.Empty, string.Empty);
+            global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<OmniRpcErrorMessage>.Formatter = new ___CustomFormatter();
+            global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<OmniRpcErrorMessage>.Empty = new OmniRpcErrorMessage(string.Empty, string.Empty, string.Empty);
         }
 
         private readonly global::System.Lazy<int> ___hashCode;

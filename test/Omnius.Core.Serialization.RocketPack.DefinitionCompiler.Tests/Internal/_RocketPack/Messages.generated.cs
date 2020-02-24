@@ -53,13 +53,13 @@ namespace Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal
 
     internal readonly struct StructMessageElement_Struct : global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<StructMessageElement_Struct>
     {
-        public static global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<StructMessageElement_Struct> Formatter { get; }
-        public static StructMessageElement_Struct Empty { get; }
+        public static global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<StructMessageElement_Struct> Formatter => global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<StructMessageElement_Struct>.Formatter;
+        public static StructMessageElement_Struct Empty => global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<StructMessageElement_Struct>.Empty;
 
         static StructMessageElement_Struct()
         {
-            StructMessageElement_Struct.Formatter = new ___CustomFormatter();
-            StructMessageElement_Struct.Empty = new StructMessageElement_Struct(false);
+            global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<StructMessageElement_Struct>.Formatter = new ___CustomFormatter();
+            global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<StructMessageElement_Struct>.Empty = new StructMessageElement_Struct(false);
         }
 
         private readonly int ___hashCode;
@@ -134,13 +134,13 @@ namespace Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal
 
     internal readonly struct TableMessageElement_Struct : global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<TableMessageElement_Struct>
     {
-        public static global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<TableMessageElement_Struct> Formatter { get; }
-        public static TableMessageElement_Struct Empty { get; }
+        public static global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<TableMessageElement_Struct> Formatter => global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<TableMessageElement_Struct>.Formatter;
+        public static TableMessageElement_Struct Empty => global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<TableMessageElement_Struct>.Empty;
 
         static TableMessageElement_Struct()
         {
-            TableMessageElement_Struct.Formatter = new ___CustomFormatter();
-            TableMessageElement_Struct.Empty = new TableMessageElement_Struct(false);
+            global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<TableMessageElement_Struct>.Formatter = new ___CustomFormatter();
+            global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<TableMessageElement_Struct>.Empty = new TableMessageElement_Struct(false);
         }
 
         private readonly int ___hashCode;
@@ -240,13 +240,13 @@ namespace Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal
 
     internal sealed partial class StructMessageElement_Class : global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<StructMessageElement_Class>
     {
-        public static global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<StructMessageElement_Class> Formatter { get; }
-        public static StructMessageElement_Class Empty { get; }
+        public static global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<StructMessageElement_Class> Formatter => global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<StructMessageElement_Class>.Formatter;
+        public static StructMessageElement_Class Empty => global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<StructMessageElement_Class>.Empty;
 
         static StructMessageElement_Class()
         {
-            StructMessageElement_Class.Formatter = new ___CustomFormatter();
-            StructMessageElement_Class.Empty = new StructMessageElement_Class(false);
+            global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<StructMessageElement_Class>.Formatter = new ___CustomFormatter();
+            global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<StructMessageElement_Class>.Empty = new StructMessageElement_Class(false);
         }
 
         private readonly global::System.Lazy<int> ___hashCode;
@@ -324,13 +324,13 @@ namespace Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal
 
     internal sealed partial class TableMessageElement_Class : global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<TableMessageElement_Class>
     {
-        public static global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<TableMessageElement_Class> Formatter { get; }
-        public static TableMessageElement_Class Empty { get; }
+        public static global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<TableMessageElement_Class> Formatter => global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<TableMessageElement_Class>.Formatter;
+        public static TableMessageElement_Class Empty => global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<TableMessageElement_Class>.Empty;
 
         static TableMessageElement_Class()
         {
-            TableMessageElement_Class.Formatter = new ___CustomFormatter();
-            TableMessageElement_Class.Empty = new TableMessageElement_Class(false);
+            global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<TableMessageElement_Class>.Formatter = new ___CustomFormatter();
+            global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<TableMessageElement_Class>.Empty = new TableMessageElement_Class(false);
         }
 
         private readonly global::System.Lazy<int> ___hashCode;

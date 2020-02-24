@@ -5,13 +5,13 @@ namespace FormatterBenchmarks.Internal
 {
     internal sealed partial class RocketPack_BytesElementsList : global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<RocketPack_BytesElementsList>
     {
-        public static global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<RocketPack_BytesElementsList> Formatter { get; }
-        public static RocketPack_BytesElementsList Empty { get; }
+        public static global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<RocketPack_BytesElementsList> Formatter => global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<RocketPack_BytesElementsList>.Formatter;
+        public static RocketPack_BytesElementsList Empty => global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<RocketPack_BytesElementsList>.Empty;
 
         static RocketPack_BytesElementsList()
         {
-            RocketPack_BytesElementsList.Formatter = new ___CustomFormatter();
-            RocketPack_BytesElementsList.Empty = new RocketPack_BytesElementsList(global::System.Array.Empty<RocketPack_BytesElements>());
+            global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<RocketPack_BytesElementsList>.Formatter = new ___CustomFormatter();
+            global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<RocketPack_BytesElementsList>.Empty = new RocketPack_BytesElementsList(global::System.Array.Empty<RocketPack_BytesElements>());
         }
 
         private readonly global::System.Lazy<int> ___hashCode;
@@ -135,13 +135,13 @@ namespace FormatterBenchmarks.Internal
 
     internal sealed partial class RocketPack_BytesElements : global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<RocketPack_BytesElements>, global::System.IDisposable
     {
-        public static global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<RocketPack_BytesElements> Formatter { get; }
-        public static RocketPack_BytesElements Empty { get; }
+        public static global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<RocketPack_BytesElements> Formatter => global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<RocketPack_BytesElements>.Formatter;
+        public static RocketPack_BytesElements Empty => global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<RocketPack_BytesElements>.Empty;
 
         static RocketPack_BytesElements()
         {
-            RocketPack_BytesElements.Formatter = new ___CustomFormatter();
-            RocketPack_BytesElements.Empty = new RocketPack_BytesElements(global::Omnius.Core.SimpleMemoryOwner<byte>.Empty, global::Omnius.Core.SimpleMemoryOwner<byte>.Empty, global::Omnius.Core.SimpleMemoryOwner<byte>.Empty, global::Omnius.Core.SimpleMemoryOwner<byte>.Empty, global::Omnius.Core.SimpleMemoryOwner<byte>.Empty, global::Omnius.Core.SimpleMemoryOwner<byte>.Empty, global::Omnius.Core.SimpleMemoryOwner<byte>.Empty, global::Omnius.Core.SimpleMemoryOwner<byte>.Empty, global::Omnius.Core.SimpleMemoryOwner<byte>.Empty, global::Omnius.Core.SimpleMemoryOwner<byte>.Empty);
+            global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<RocketPack_BytesElements>.Formatter = new ___CustomFormatter();
+            global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<RocketPack_BytesElements>.Empty = new RocketPack_BytesElements(global::Omnius.Core.SimpleMemoryOwner<byte>.Empty, global::Omnius.Core.SimpleMemoryOwner<byte>.Empty, global::Omnius.Core.SimpleMemoryOwner<byte>.Empty, global::Omnius.Core.SimpleMemoryOwner<byte>.Empty, global::Omnius.Core.SimpleMemoryOwner<byte>.Empty, global::Omnius.Core.SimpleMemoryOwner<byte>.Empty, global::Omnius.Core.SimpleMemoryOwner<byte>.Empty, global::Omnius.Core.SimpleMemoryOwner<byte>.Empty, global::Omnius.Core.SimpleMemoryOwner<byte>.Empty, global::Omnius.Core.SimpleMemoryOwner<byte>.Empty);
         }
 
         private readonly global::System.Lazy<int> ___hashCode;
@@ -356,13 +356,13 @@ namespace FormatterBenchmarks.Internal
 
     internal sealed partial class RocketPack_IntElementsList : global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<RocketPack_IntElementsList>
     {
-        public static global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<RocketPack_IntElementsList> Formatter { get; }
-        public static RocketPack_IntElementsList Empty { get; }
+        public static global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<RocketPack_IntElementsList> Formatter => global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<RocketPack_IntElementsList>.Formatter;
+        public static RocketPack_IntElementsList Empty => global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<RocketPack_IntElementsList>.Empty;
 
         static RocketPack_IntElementsList()
         {
-            RocketPack_IntElementsList.Formatter = new ___CustomFormatter();
-            RocketPack_IntElementsList.Empty = new RocketPack_IntElementsList(global::System.Array.Empty<RocketPack_IntElements>());
+            global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<RocketPack_IntElementsList>.Formatter = new ___CustomFormatter();
+            global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<RocketPack_IntElementsList>.Empty = new RocketPack_IntElementsList(global::System.Array.Empty<RocketPack_IntElements>());
         }
 
         private readonly global::System.Lazy<int> ___hashCode;
@@ -486,13 +486,13 @@ namespace FormatterBenchmarks.Internal
 
     internal sealed partial class RocketPack_IntElements : global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<RocketPack_IntElements>
     {
-        public static global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<RocketPack_IntElements> Formatter { get; }
-        public static RocketPack_IntElements Empty { get; }
+        public static global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<RocketPack_IntElements> Formatter => global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<RocketPack_IntElements>.Formatter;
+        public static RocketPack_IntElements Empty => global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<RocketPack_IntElements>.Empty;
 
         static RocketPack_IntElements()
         {
-            RocketPack_IntElements.Formatter = new ___CustomFormatter();
-            RocketPack_IntElements.Empty = new RocketPack_IntElements(0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+            global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<RocketPack_IntElements>.Formatter = new ___CustomFormatter();
+            global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<RocketPack_IntElements>.Empty = new RocketPack_IntElements(0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
         }
 
         private readonly global::System.Lazy<int> ___hashCode;
@@ -651,13 +651,13 @@ namespace FormatterBenchmarks.Internal
 
     internal sealed partial class RocketPack_StringElementsList : global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<RocketPack_StringElementsList>
     {
-        public static global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<RocketPack_StringElementsList> Formatter { get; }
-        public static RocketPack_StringElementsList Empty { get; }
+        public static global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<RocketPack_StringElementsList> Formatter => global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<RocketPack_StringElementsList>.Formatter;
+        public static RocketPack_StringElementsList Empty => global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<RocketPack_StringElementsList>.Empty;
 
         static RocketPack_StringElementsList()
         {
-            RocketPack_StringElementsList.Formatter = new ___CustomFormatter();
-            RocketPack_StringElementsList.Empty = new RocketPack_StringElementsList(global::System.Array.Empty<RocketPack_StringElements>());
+            global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<RocketPack_StringElementsList>.Formatter = new ___CustomFormatter();
+            global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<RocketPack_StringElementsList>.Empty = new RocketPack_StringElementsList(global::System.Array.Empty<RocketPack_StringElements>());
         }
 
         private readonly global::System.Lazy<int> ___hashCode;
@@ -781,13 +781,13 @@ namespace FormatterBenchmarks.Internal
 
     internal sealed partial class RocketPack_StringElements : global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<RocketPack_StringElements>
     {
-        public static global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<RocketPack_StringElements> Formatter { get; }
-        public static RocketPack_StringElements Empty { get; }
+        public static global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<RocketPack_StringElements> Formatter => global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<RocketPack_StringElements>.Formatter;
+        public static RocketPack_StringElements Empty => global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<RocketPack_StringElements>.Empty;
 
         static RocketPack_StringElements()
         {
-            RocketPack_StringElements.Formatter = new ___CustomFormatter();
-            RocketPack_StringElements.Empty = new RocketPack_StringElements(string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty);
+            global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<RocketPack_StringElements>.Formatter = new ___CustomFormatter();
+            global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<RocketPack_StringElements>.Empty = new RocketPack_StringElements(string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty);
         }
 
         private readonly global::System.Lazy<int> ___hashCode;
