@@ -33,7 +33,7 @@ namespace Omnius.Core.Serialization.RocketPack.DefinitionCompiler
         // example: option csharp_namespace = "RocketPack.Messages";
         private static readonly Parser<OptionDefinition> _optionParser =
             from keyword in Parse.String("option").TokenWithSkipComment()
-            from name in _nameParser.TokenWithSkipComment().Text()
+            from name in _nameParser.TokenWithSkipComment()
             from equal in Parse.Char('=').TokenWithSkipComment()
             from value in _stringLiteralParser.TokenWithSkipComment()
             from semicolon in Parse.Char(';').Or(Parse.Return(';')).TokenWithSkipComment()
@@ -62,9 +62,9 @@ namespace Omnius.Core.Serialization.RocketPack.DefinitionCompiler
 
         // example: capacity: 1024,
         private static readonly Parser<(string key, string value)> _parametersElementParser =
-            from key in _nameParser.TokenWithSkipComment().Text()
+            from key in _nameParser.TokenWithSkipComment()
             from colon in Parse.Char(':').TokenWithSkipComment()
-            from value in _nameParser.TokenWithSkipComment().Text()
+            from value in _nameParser.TokenWithSkipComment()
             from comma in Parse.Char(',').Or(Parse.Return(',')).TokenWithSkipComment()
             select (key, value);
 
@@ -160,7 +160,7 @@ namespace Omnius.Core.Serialization.RocketPack.DefinitionCompiler
 
         private static readonly Parser<EnumElement> _enumElementParser =
             from attributes in _attributeParser.Many().TokenWithSkipComment()
-            from name in _nameParser.TokenWithSkipComment().Text()
+            from name in _nameParser.TokenWithSkipComment()
             from equal in Parse.Char('=').TokenWithSkipComment()
             from id in Parse.Decimal.TokenWithSkipComment()
             from comma in Parse.Char(',').TokenWithSkipComment()
@@ -169,7 +169,7 @@ namespace Omnius.Core.Serialization.RocketPack.DefinitionCompiler
         private static readonly Parser<EnumDefinition> _enumDefinitionParser =
             from attributes in _attributeParser.Many().TokenWithSkipComment()
             from keyword in Parse.String("enum").TokenWithSkipComment()
-            from name in _nameParser.TokenWithSkipComment().Text()
+            from name in _nameParser.TokenWithSkipComment()
             from colon in Parse.Char(':').TokenWithSkipComment()
             from type in _intTypeParser
             from beginTag in Parse.Char('{').TokenWithSkipComment()
@@ -179,7 +179,7 @@ namespace Omnius.Core.Serialization.RocketPack.DefinitionCompiler
 
         private static readonly Parser<ObjectElement> _structElementParser =
             from attributes in _attributeParser.Many().TokenWithSkipComment()
-            from name in _nameParser.TokenWithSkipComment().Text()
+            from name in _nameParser.TokenWithSkipComment()
             from colon in Parse.Char(':').TokenWithSkipComment()
             from type in _boolTypeParser
                 .Or<TypeBase>(_intTypeParser)
@@ -196,7 +196,7 @@ namespace Omnius.Core.Serialization.RocketPack.DefinitionCompiler
         private static readonly Parser<ObjectDefinition> _structDefinitionParser =
             from attributes in _attributeParser.Many().TokenWithSkipComment()
             from keyword in Parse.String("struct").TokenWithSkipComment()
-            from name in _nameParser.TokenWithSkipComment().Text()
+            from name in _nameParser.TokenWithSkipComment()
             from beginTag in Parse.Char('{').TokenWithSkipComment()
             from elements in _structElementParser.Except(Parse.Char('}')).Many().TokenWithSkipComment()
             from endTag in Parse.Char('}').TokenWithSkipComment()
@@ -204,7 +204,7 @@ namespace Omnius.Core.Serialization.RocketPack.DefinitionCompiler
 
         private static readonly Parser<ObjectElement> _tableElementParser =
             from attributes in _attributeParser.Many().TokenWithSkipComment()
-            from name in _nameParser.TokenWithSkipComment().Text()
+            from name in _nameParser.TokenWithSkipComment()
             from colon in Parse.Char(':').TokenWithSkipComment()
             from type in _boolTypeParser
                 .Or<TypeBase>(_intTypeParser)
@@ -223,7 +223,7 @@ namespace Omnius.Core.Serialization.RocketPack.DefinitionCompiler
         private static readonly Parser<ObjectDefinition> _tableDefinitionParser =
             from attributes in _attributeParser.Many().TokenWithSkipComment()
             from keyword in Parse.String("table").TokenWithSkipComment()
-            from name in _nameParser.TokenWithSkipComment().Text()
+            from name in _nameParser.TokenWithSkipComment()
             from beginTag in Parse.Char('{').TokenWithSkipComment()
             from elements in _tableElementParser.Except(Parse.Char('}')).Many().TokenWithSkipComment()
             from endTag in Parse.Char('}').TokenWithSkipComment()
@@ -233,8 +233,8 @@ namespace Omnius.Core.Serialization.RocketPack.DefinitionCompiler
             from syntax in _syntaxParser.Once().TokenWithSkipComment()
             from usings in _usingParser.Many().TokenWithSkipComment()
             from @namespace in _namespaceParser.Once().TokenWithSkipComment()
-            from options in _optionParser.TokenWithSkipComment().Many()
-            from contents in _enumDefinitionParser.Or<object>(_structDefinitionParser).Or(_tableDefinitionParser).TokenWithSkipComment().Many()
+            from options in _optionParser.Many().TokenWithSkipComment()
+            from contents in _enumDefinitionParser.Or<object>(_structDefinitionParser).Or(_tableDefinitionParser).Many().TokenWithSkipComment()
             select new RocketPackDefinition(
                 usings,
                 @namespace.First(),
