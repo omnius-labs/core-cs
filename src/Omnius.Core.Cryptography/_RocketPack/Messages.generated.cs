@@ -25,13 +25,13 @@ namespace Omnius.Core.Cryptography
 
     public readonly struct OmniHash : global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<OmniHash>
     {
-        public static global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<OmniHash> Formatter { get; }
-        public static OmniHash Empty { get; }
+        public static global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<OmniHash> Formatter => global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<OmniHash>.Formatter;
+        public static OmniHash Empty => global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<OmniHash>.Empty;
 
         static OmniHash()
         {
-            OmniHash.Formatter = new ___CustomFormatter();
-            OmniHash.Empty = new OmniHash((OmniHashAlgorithmType)0, global::System.ReadOnlyMemory<byte>.Empty);
+            global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<OmniHash>.Formatter = new ___CustomFormatter();
+            global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<OmniHash>.Empty = new OmniHash((OmniHashAlgorithmType)0, global::System.ReadOnlyMemory<byte>.Empty);
         }
 
         private readonly int ___hashCode;
@@ -119,13 +119,13 @@ namespace Omnius.Core.Cryptography
 
     public sealed partial class OmniAgreement : global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<OmniAgreement>
     {
-        public static global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<OmniAgreement> Formatter { get; }
-        public static OmniAgreement Empty { get; }
+        public static global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<OmniAgreement> Formatter => global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<OmniAgreement>.Formatter;
+        public static OmniAgreement Empty => global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<OmniAgreement>.Empty;
 
         static OmniAgreement()
         {
-            OmniAgreement.Formatter = new ___CustomFormatter();
-            OmniAgreement.Empty = new OmniAgreement(global::Omnius.Core.Serialization.RocketPack.Timestamp.Zero, (OmniAgreementAlgorithmType)0, global::System.ReadOnlyMemory<byte>.Empty, global::System.ReadOnlyMemory<byte>.Empty);
+            global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<OmniAgreement>.Formatter = new ___CustomFormatter();
+            global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<OmniAgreement>.Empty = new OmniAgreement(global::Omnius.Core.Serialization.RocketPack.Timestamp.Zero, (OmniAgreementAlgorithmType)0, global::System.ReadOnlyMemory<byte>.Empty, global::System.ReadOnlyMemory<byte>.Empty);
         }
 
         private readonly global::System.Lazy<int> ___hashCode;
@@ -291,13 +291,13 @@ namespace Omnius.Core.Cryptography
 
     public sealed partial class OmniAgreementPublicKey : global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<OmniAgreementPublicKey>
     {
-        public static global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<OmniAgreementPublicKey> Formatter { get; }
-        public static OmniAgreementPublicKey Empty { get; }
+        public static global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<OmniAgreementPublicKey> Formatter => global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<OmniAgreementPublicKey>.Formatter;
+        public static OmniAgreementPublicKey Empty => global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<OmniAgreementPublicKey>.Empty;
 
         static OmniAgreementPublicKey()
         {
-            OmniAgreementPublicKey.Formatter = new ___CustomFormatter();
-            OmniAgreementPublicKey.Empty = new OmniAgreementPublicKey(global::Omnius.Core.Serialization.RocketPack.Timestamp.Zero, (OmniAgreementAlgorithmType)0, global::System.ReadOnlyMemory<byte>.Empty);
+            global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<OmniAgreementPublicKey>.Formatter = new ___CustomFormatter();
+            global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<OmniAgreementPublicKey>.Empty = new OmniAgreementPublicKey(global::Omnius.Core.Serialization.RocketPack.Timestamp.Zero, (OmniAgreementAlgorithmType)0, global::System.ReadOnlyMemory<byte>.Empty);
         }
 
         private readonly global::System.Lazy<int> ___hashCode;
@@ -442,13 +442,13 @@ namespace Omnius.Core.Cryptography
 
     public sealed partial class OmniAgreementPrivateKey : global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<OmniAgreementPrivateKey>
     {
-        public static global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<OmniAgreementPrivateKey> Formatter { get; }
-        public static OmniAgreementPrivateKey Empty { get; }
+        public static global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<OmniAgreementPrivateKey> Formatter => global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<OmniAgreementPrivateKey>.Formatter;
+        public static OmniAgreementPrivateKey Empty => global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<OmniAgreementPrivateKey>.Empty;
 
         static OmniAgreementPrivateKey()
         {
-            OmniAgreementPrivateKey.Formatter = new ___CustomFormatter();
-            OmniAgreementPrivateKey.Empty = new OmniAgreementPrivateKey(global::Omnius.Core.Serialization.RocketPack.Timestamp.Zero, (OmniAgreementAlgorithmType)0, global::System.ReadOnlyMemory<byte>.Empty);
+            global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<OmniAgreementPrivateKey>.Formatter = new ___CustomFormatter();
+            global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<OmniAgreementPrivateKey>.Empty = new OmniAgreementPrivateKey(global::Omnius.Core.Serialization.RocketPack.Timestamp.Zero, (OmniAgreementAlgorithmType)0, global::System.ReadOnlyMemory<byte>.Empty);
         }
 
         private readonly global::System.Lazy<int> ___hashCode;
@@ -593,13 +593,13 @@ namespace Omnius.Core.Cryptography
 
     public sealed partial class OmniDigitalSignature : global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<OmniDigitalSignature>
     {
-        public static global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<OmniDigitalSignature> Formatter { get; }
-        public static OmniDigitalSignature Empty { get; }
+        public static global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<OmniDigitalSignature> Formatter => global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<OmniDigitalSignature>.Formatter;
+        public static OmniDigitalSignature Empty => global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<OmniDigitalSignature>.Empty;
 
         static OmniDigitalSignature()
         {
-            OmniDigitalSignature.Formatter = new ___CustomFormatter();
-            OmniDigitalSignature.Empty = new OmniDigitalSignature(string.Empty, (OmniDigitalSignatureAlgorithmType)0, global::System.ReadOnlyMemory<byte>.Empty, global::System.ReadOnlyMemory<byte>.Empty);
+            global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<OmniDigitalSignature>.Formatter = new ___CustomFormatter();
+            global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<OmniDigitalSignature>.Empty = new OmniDigitalSignature(string.Empty, (OmniDigitalSignatureAlgorithmType)0, global::System.ReadOnlyMemory<byte>.Empty, global::System.ReadOnlyMemory<byte>.Empty);
         }
 
         private readonly global::System.Lazy<int> ___hashCode;
@@ -768,13 +768,13 @@ namespace Omnius.Core.Cryptography
 
     public sealed partial class OmniCertificate : global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<OmniCertificate>
     {
-        public static global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<OmniCertificate> Formatter { get; }
-        public static OmniCertificate Empty { get; }
+        public static global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<OmniCertificate> Formatter => global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<OmniCertificate>.Formatter;
+        public static OmniCertificate Empty => global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<OmniCertificate>.Empty;
 
         static OmniCertificate()
         {
-            OmniCertificate.Formatter = new ___CustomFormatter();
-            OmniCertificate.Empty = new OmniCertificate(string.Empty, (OmniDigitalSignatureAlgorithmType)0, global::System.ReadOnlyMemory<byte>.Empty, global::System.ReadOnlyMemory<byte>.Empty);
+            global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<OmniCertificate>.Formatter = new ___CustomFormatter();
+            global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<OmniCertificate>.Empty = new OmniCertificate(string.Empty, (OmniDigitalSignatureAlgorithmType)0, global::System.ReadOnlyMemory<byte>.Empty, global::System.ReadOnlyMemory<byte>.Empty);
         }
 
         private readonly global::System.Lazy<int> ___hashCode;
@@ -943,13 +943,13 @@ namespace Omnius.Core.Cryptography
 
     public sealed partial class OmniSignature : global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<OmniSignature>
     {
-        public static global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<OmniSignature> Formatter { get; }
-        public static OmniSignature Empty { get; }
+        public static global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<OmniSignature> Formatter => global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<OmniSignature>.Formatter;
+        public static OmniSignature Empty => global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<OmniSignature>.Empty;
 
         static OmniSignature()
         {
-            OmniSignature.Formatter = new ___CustomFormatter();
-            OmniSignature.Empty = new OmniSignature(string.Empty, OmniHash.Empty);
+            global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<OmniSignature>.Formatter = new ___CustomFormatter();
+            global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<OmniSignature>.Empty = new OmniSignature(string.Empty, OmniHash.Empty);
         }
 
         private readonly global::System.Lazy<int> ___hashCode;
@@ -1075,13 +1075,13 @@ namespace Omnius.Core.Cryptography
 
     public sealed partial class OmniHashcash : global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<OmniHashcash>
     {
-        public static global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<OmniHashcash> Formatter { get; }
-        public static OmniHashcash Empty { get; }
+        public static global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<OmniHashcash> Formatter => global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<OmniHashcash>.Formatter;
+        public static OmniHashcash Empty => global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<OmniHashcash>.Empty;
 
         static OmniHashcash()
         {
-            OmniHashcash.Formatter = new ___CustomFormatter();
-            OmniHashcash.Empty = new OmniHashcash((OmniHashcashAlgorithmType)0, global::System.ReadOnlyMemory<byte>.Empty);
+            global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<OmniHashcash>.Formatter = new ___CustomFormatter();
+            global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<OmniHashcash>.Empty = new OmniHashcash((OmniHashcashAlgorithmType)0, global::System.ReadOnlyMemory<byte>.Empty);
         }
 
         private readonly global::System.Lazy<int> ___hashCode;

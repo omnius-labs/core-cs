@@ -10,13 +10,13 @@ namespace Omnius.Core.Network.Connections.Multiplexer.Internal
 
     internal sealed partial class HelloMessage : global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<HelloMessage>
     {
-        public static global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<HelloMessage> Formatter { get; }
-        public static HelloMessage Empty { get; }
+        public static global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<HelloMessage> Formatter => global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<HelloMessage>.Formatter;
+        public static HelloMessage Empty => global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<HelloMessage>.Empty;
 
         static HelloMessage()
         {
-            HelloMessage.Formatter = new ___CustomFormatter();
-            HelloMessage.Empty = new HelloMessage(global::System.Array.Empty<CommunicatorVersion>());
+            global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<HelloMessage>.Formatter = new ___CustomFormatter();
+            global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<HelloMessage>.Empty = new HelloMessage(global::System.Array.Empty<CommunicatorVersion>());
         }
 
         private readonly global::System.Lazy<int> ___hashCode;

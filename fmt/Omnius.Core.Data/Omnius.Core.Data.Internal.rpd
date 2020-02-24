@@ -1,8 +1,0 @@
-﻿syntax = v1.0;
-
-namespace "Omnius.Core.Data.Internal";
-
-table OmniFileDatabaseConfig {
-    Version: uint32 = 0,
-    Map: map<string(capacity: 8192), string(capacity: 256)>(capacity: 1048576) = 1,
-}

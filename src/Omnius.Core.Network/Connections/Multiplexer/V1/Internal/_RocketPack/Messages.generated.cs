@@ -12,13 +12,13 @@ namespace Omnius.Core.Network.Connections.Multiplexer.V1.Internal
 
     internal sealed partial class ProfileMessage : global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<ProfileMessage>
     {
-        public static global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<ProfileMessage> Formatter { get; }
-        public static ProfileMessage Empty { get; }
+        public static global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<ProfileMessage> Formatter => global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<ProfileMessage>.Formatter;
+        public static ProfileMessage Empty => global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<ProfileMessage>.Empty;
 
         static ProfileMessage()
         {
-            ProfileMessage.Formatter = new ___CustomFormatter();
-            ProfileMessage.Empty = new ProfileMessage(0, 0);
+            global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<ProfileMessage>.Formatter = new ___CustomFormatter();
+            global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<ProfileMessage>.Empty = new ProfileMessage(0, 0);
         }
 
         private readonly global::System.Lazy<int> ___hashCode;
@@ -140,13 +140,13 @@ namespace Omnius.Core.Network.Connections.Multiplexer.V1.Internal
 
     internal sealed partial class SessionConnectMessage : global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<SessionConnectMessage>
     {
-        public static global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<SessionConnectMessage> Formatter { get; }
-        public static SessionConnectMessage Empty { get; }
+        public static global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<SessionConnectMessage> Formatter => global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<SessionConnectMessage>.Formatter;
+        public static SessionConnectMessage Empty => global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<SessionConnectMessage>.Empty;
 
         static SessionConnectMessage()
         {
-            SessionConnectMessage.Formatter = new ___CustomFormatter();
-            SessionConnectMessage.Empty = new SessionConnectMessage(0);
+            global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<SessionConnectMessage>.Formatter = new ___CustomFormatter();
+            global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<SessionConnectMessage>.Empty = new SessionConnectMessage(0);
         }
 
         private readonly global::System.Lazy<int> ___hashCode;
@@ -249,13 +249,13 @@ namespace Omnius.Core.Network.Connections.Multiplexer.V1.Internal
 
     internal sealed partial class SessionAcceptMessage : global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<SessionAcceptMessage>
     {
-        public static global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<SessionAcceptMessage> Formatter { get; }
-        public static SessionAcceptMessage Empty { get; }
+        public static global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<SessionAcceptMessage> Formatter => global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<SessionAcceptMessage>.Formatter;
+        public static SessionAcceptMessage Empty => global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<SessionAcceptMessage>.Empty;
 
         static SessionAcceptMessage()
         {
-            SessionAcceptMessage.Formatter = new ___CustomFormatter();
-            SessionAcceptMessage.Empty = new SessionAcceptMessage(0);
+            global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<SessionAcceptMessage>.Formatter = new ___CustomFormatter();
+            global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<SessionAcceptMessage>.Empty = new SessionAcceptMessage(0);
         }
 
         private readonly global::System.Lazy<int> ___hashCode;
@@ -358,13 +358,13 @@ namespace Omnius.Core.Network.Connections.Multiplexer.V1.Internal
 
     internal sealed partial class SessionUpdateWindowSizeMessage : global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<SessionUpdateWindowSizeMessage>
     {
-        public static global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<SessionUpdateWindowSizeMessage> Formatter { get; }
-        public static SessionUpdateWindowSizeMessage Empty { get; }
+        public static global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<SessionUpdateWindowSizeMessage> Formatter => global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<SessionUpdateWindowSizeMessage>.Formatter;
+        public static SessionUpdateWindowSizeMessage Empty => global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<SessionUpdateWindowSizeMessage>.Empty;
 
         static SessionUpdateWindowSizeMessage()
         {
-            SessionUpdateWindowSizeMessage.Formatter = new ___CustomFormatter();
-            SessionUpdateWindowSizeMessage.Empty = new SessionUpdateWindowSizeMessage(0, 0);
+            global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<SessionUpdateWindowSizeMessage>.Formatter = new ___CustomFormatter();
+            global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<SessionUpdateWindowSizeMessage>.Empty = new SessionUpdateWindowSizeMessage(0, 0);
         }
 
         private readonly global::System.Lazy<int> ___hashCode;
@@ -486,13 +486,13 @@ namespace Omnius.Core.Network.Connections.Multiplexer.V1.Internal
 
     internal sealed partial class SessionDataMessage : global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<SessionDataMessage>, global::System.IDisposable
     {
-        public static global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<SessionDataMessage> Formatter { get; }
-        public static SessionDataMessage Empty { get; }
+        public static global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<SessionDataMessage> Formatter => global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<SessionDataMessage>.Formatter;
+        public static SessionDataMessage Empty => global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<SessionDataMessage>.Empty;
 
         static SessionDataMessage()
         {
-            SessionDataMessage.Formatter = new ___CustomFormatter();
-            SessionDataMessage.Empty = new SessionDataMessage(0, false, global::Omnius.Core.SimpleMemoryOwner<byte>.Empty);
+            global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<SessionDataMessage>.Formatter = new ___CustomFormatter();
+            global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<SessionDataMessage>.Empty = new SessionDataMessage(0, false, global::Omnius.Core.SimpleMemoryOwner<byte>.Empty);
         }
 
         private readonly global::System.Lazy<int> ___hashCode;
@@ -644,13 +644,13 @@ namespace Omnius.Core.Network.Connections.Multiplexer.V1.Internal
 
     internal sealed partial class SessionCloseMessage : global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<SessionCloseMessage>
     {
-        public static global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<SessionCloseMessage> Formatter { get; }
-        public static SessionCloseMessage Empty { get; }
+        public static global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<SessionCloseMessage> Formatter => global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<SessionCloseMessage>.Formatter;
+        public static SessionCloseMessage Empty => global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<SessionCloseMessage>.Empty;
 
         static SessionCloseMessage()
         {
-            SessionCloseMessage.Formatter = new ___CustomFormatter();
-            SessionCloseMessage.Empty = new SessionCloseMessage(0);
+            global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<SessionCloseMessage>.Formatter = new ___CustomFormatter();
+            global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<SessionCloseMessage>.Empty = new SessionCloseMessage(0);
         }
 
         private readonly global::System.Lazy<int> ___hashCode;
@@ -753,13 +753,13 @@ namespace Omnius.Core.Network.Connections.Multiplexer.V1.Internal
 
     internal sealed partial class SessionErrorMessage : global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<SessionErrorMessage>
     {
-        public static global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<SessionErrorMessage> Formatter { get; }
-        public static SessionErrorMessage Empty { get; }
+        public static global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<SessionErrorMessage> Formatter => global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<SessionErrorMessage>.Formatter;
+        public static SessionErrorMessage Empty => global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<SessionErrorMessage>.Empty;
 
         static SessionErrorMessage()
         {
-            SessionErrorMessage.Formatter = new ___CustomFormatter();
-            SessionErrorMessage.Empty = new SessionErrorMessage(0, (SessionErrorType)0);
+            global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<SessionErrorMessage>.Formatter = new ___CustomFormatter();
+            global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<SessionErrorMessage>.Empty = new SessionErrorMessage(0, (SessionErrorType)0);
         }
 
         private readonly global::System.Lazy<int> ___hashCode;
