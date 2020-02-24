@@ -21,6 +21,14 @@ namespace Omnius.Core.Serialization.RocketPack.DefinitionCompiler
         public IList<OptionDefinition> Options { get; }
         public IList<EnumDefinition> Enums { get; }
         public IList<ObjectDefinition> Objects { get; }
+
+        public string GetCSharpNamespace()
+        {
+            var value = this.Options.FirstOrDefault(n => n.Name == "csharp_namespace")?.Value;
+            if (value != null) return value;
+
+            return this.Namespace.Value;
+        }
     }
 
     internal sealed class UsingDefinition

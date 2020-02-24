@@ -5,13 +5,13 @@ namespace Omnius.Core.Network
 {
     public sealed partial class OmniAddress : global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<OmniAddress>
     {
-        public static global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<OmniAddress> Formatter { get; }
-        public static OmniAddress Empty { get; }
+        public static global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<OmniAddress> Formatter => global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<OmniAddress>.Formatter;
+        public static OmniAddress Empty => global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<OmniAddress>.Empty;
 
         static OmniAddress()
         {
-            OmniAddress.Formatter = new ___CustomFormatter();
-            OmniAddress.Empty = new OmniAddress(string.Empty);
+            global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<OmniAddress>.Formatter = new ___CustomFormatter();
+            global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<OmniAddress>.Empty = new OmniAddress(string.Empty);
         }
 
         private readonly global::System.Lazy<int> ___hashCode;
@@ -119,13 +119,13 @@ namespace Omnius.Core.Network
 
     public sealed partial class OmniPath : global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<OmniPath>
     {
-        public static global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<OmniPath> Formatter { get; }
-        public static OmniPath Empty { get; }
+        public static global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<OmniPath> Formatter => global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<OmniPath>.Formatter;
+        public static OmniPath Empty => global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<OmniPath>.Empty;
 
         static OmniPath()
         {
-            OmniPath.Formatter = new ___CustomFormatter();
-            OmniPath.Empty = new OmniPath(string.Empty);
+            global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<OmniPath>.Formatter = new ___CustomFormatter();
+            global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<OmniPath>.Empty = new OmniPath(string.Empty);
         }
 
         private readonly global::System.Lazy<int> ___hashCode;

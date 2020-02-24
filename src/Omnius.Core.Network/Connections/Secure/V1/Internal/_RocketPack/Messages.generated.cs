@@ -32,13 +32,13 @@ namespace Omnius.Core.Network.Connections.Secure.V1.Internal
 
     internal sealed partial class ProfileMessage : global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<ProfileMessage>
     {
-        public static global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<ProfileMessage> Formatter { get; }
-        public static ProfileMessage Empty { get; }
+        public static global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<ProfileMessage> Formatter => global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<ProfileMessage>.Formatter;
+        public static ProfileMessage Empty => global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<ProfileMessage>.Empty;
 
         static ProfileMessage()
         {
-            ProfileMessage.Formatter = new ___CustomFormatter();
-            ProfileMessage.Empty = new ProfileMessage(global::System.ReadOnlyMemory<byte>.Empty, (AuthenticationType)0, global::System.Array.Empty<KeyExchangeAlgorithm>(), global::System.Array.Empty<KeyDerivationAlgorithm>(), global::System.Array.Empty<CryptoAlgorithm>(), global::System.Array.Empty<HashAlgorithm>());
+            global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<ProfileMessage>.Formatter = new ___CustomFormatter();
+            global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<ProfileMessage>.Empty = new ProfileMessage(global::System.ReadOnlyMemory<byte>.Empty, (AuthenticationType)0, global::System.Array.Empty<KeyExchangeAlgorithm>(), global::System.Array.Empty<KeyDerivationAlgorithm>(), global::System.Array.Empty<CryptoAlgorithm>(), global::System.Array.Empty<HashAlgorithm>());
         }
 
         private readonly global::System.Lazy<int> ___hashCode;
@@ -300,13 +300,13 @@ namespace Omnius.Core.Network.Connections.Secure.V1.Internal
 
     internal sealed partial class VerificationMessage : global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<VerificationMessage>
     {
-        public static global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<VerificationMessage> Formatter { get; }
-        public static VerificationMessage Empty { get; }
+        public static global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<VerificationMessage> Formatter => global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<VerificationMessage>.Formatter;
+        public static VerificationMessage Empty => global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<VerificationMessage>.Empty;
 
         static VerificationMessage()
         {
-            VerificationMessage.Formatter = new ___CustomFormatter();
-            VerificationMessage.Empty = new VerificationMessage(ProfileMessage.Empty, OmniAgreementPublicKey.Empty);
+            global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<VerificationMessage>.Formatter = new ___CustomFormatter();
+            global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<VerificationMessage>.Empty = new VerificationMessage(ProfileMessage.Empty, OmniAgreementPublicKey.Empty);
         }
 
         private readonly global::System.Lazy<int> ___hashCode;
@@ -431,13 +431,13 @@ namespace Omnius.Core.Network.Connections.Secure.V1.Internal
 
     internal sealed partial class AuthenticationMessage : global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<AuthenticationMessage>
     {
-        public static global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<AuthenticationMessage> Formatter { get; }
-        public static AuthenticationMessage Empty { get; }
+        public static global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<AuthenticationMessage> Formatter => global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<AuthenticationMessage>.Formatter;
+        public static AuthenticationMessage Empty => global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<AuthenticationMessage>.Empty;
 
         static AuthenticationMessage()
         {
-            AuthenticationMessage.Formatter = new ___CustomFormatter();
-            AuthenticationMessage.Empty = new AuthenticationMessage(global::System.Array.Empty<global::System.ReadOnlyMemory<byte>>());
+            global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<AuthenticationMessage>.Formatter = new ___CustomFormatter();
+            global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<AuthenticationMessage>.Empty = new AuthenticationMessage(global::System.Array.Empty<global::System.ReadOnlyMemory<byte>>());
         }
 
         private readonly global::System.Lazy<int> ___hashCode;

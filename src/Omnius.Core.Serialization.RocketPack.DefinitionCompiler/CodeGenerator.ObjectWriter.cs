@@ -249,8 +249,8 @@ namespace Omnius.Core.Serialization.RocketPack.DefinitionCompiler
             /// </summary>
             private void Write_StaticConstructor(CodeBuilder b, ObjectDefinition objectDefinition)
             {
-                b.WriteLine($"public static {GenerateTypeFullName("IRocketPackFormatter<>", objectDefinition.Name)} Formatter" + " { get; }");
-                b.WriteLine($"public static {objectDefinition.Name} Empty" + " { get; }");
+                b.WriteLine($"public static {GenerateTypeFullName("IRocketPackFormatter<>", objectDefinition.Name)} Formatter => {GenerateTypeFullName("IRocketPackObject<>", objectDefinition.Name)}.Formatter;");
+                b.WriteLine($"public static {objectDefinition.Name} Empty => {GenerateTypeFullName("IRocketPackObject<>", objectDefinition.Name)}.Empty;");
                 b.WriteLine();
 
                 b.WriteLine($"static {objectDefinition.Name}()");
@@ -270,7 +270,7 @@ namespace Omnius.Core.Serialization.RocketPack.DefinitionCompiler
 
             private void Write_StaticConstructor_CustomFormatterProperty(CodeBuilder b, ObjectDefinition objectDefinition)
             {
-                b.WriteLine($"{objectDefinition.Name}.Formatter = new {CustomFormatterName}();");
+                b.WriteLine($"{GenerateTypeFullName("IRocketPackObject<>", objectDefinition.Name)}.Formatter = new {CustomFormatterName}();");
             }
 
             private void Write_StaticConstructor_EmptyProperty(CodeBuilder b, ObjectDefinition objectDefinition)
@@ -282,7 +282,7 @@ namespace Omnius.Core.Serialization.RocketPack.DefinitionCompiler
                     parameters.Add(this.GetDefaultValueString(element.Type));
                 }
 
-                b.WriteLine($"{objectDefinition.Name}.Empty = new {objectDefinition.Name}({string.Join(", ", parameters)});");
+                b.WriteLine($"{GenerateTypeFullName("IRocketPackObject<>", objectDefinition.Name)}.Empty = new {objectDefinition.Name}({string.Join(", ", parameters)});");
             }
 
             /// <summary>
