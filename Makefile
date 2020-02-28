@@ -1,11 +1,11 @@
 init-tools:
-	docker-compose run --rm devenv sh ./eng/init-tools.sh
+	sh ./eng/init-tools.sh
 
 gen-code:
-	docker-compose run --rm devenv sh ./eng/gen-code.sh
+	sh ./eng/gen-code.sh
 
 test:
-	docker-compose run --rm devenv sh ./eng/run-test.sh
+	sh ./eng/run-test.sh
 
 clean:
 	rm -rf ./bin
