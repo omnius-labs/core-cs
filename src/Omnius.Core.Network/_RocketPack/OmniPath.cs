@@ -33,14 +33,24 @@ namespace Omnius.Core.Network
             return new OmniPath(sb.ToString());
         }
 
-        public static implicit operator string(OmniPath omniPath)
+        public string ToWindowsPath()
         {
-            return omniPath.Value;
+            if(!Windows.TryDecoding(this, out var path))
+            {
+                throw new FormatException();
+            }
+
+            return path;
         }
 
-        public static implicit operator OmniPath(string text)
+        public static OmniPath FromWindowsPath(string path)
         {
-            return new OmniPath(text);
+            if (!Windows.TryEncoding(path, out var omniPath))
+            {
+                throw new FormatException();
+            }
+
+            return omniPath;
         }
 
         public static class Windows
