@@ -105,7 +105,14 @@ namespace Omnius.Core.Extensions
                     await semaphore.WaitAsync(cancellationToken).ConfigureAwait(configureAwait);
                     var task = action(item).ContinueWith(t =>
                     {
-                        semaphore.Release();
+                        try
+                        {
+                            semaphore.Release();
+                        }
+                        catch (ObjectDisposedException)
+                        {
+                            // taskがキャンセルされていた場合、semaphoreがDisposedの可能性がある。
+                        }
 
                         if (t.IsFaulted)
                         {
