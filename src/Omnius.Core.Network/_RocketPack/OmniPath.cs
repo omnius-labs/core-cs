@@ -3,6 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
+using System.Runtime.InteropServices;
 using System.Text;
 
 namespace Omnius.Core.Network
@@ -33,24 +34,38 @@ namespace Omnius.Core.Network
             return new OmniPath(sb.ToString());
         }
 
-        public string ToWindowsPath()
+        public string ToCurrentPlatformPath()
         {
-            if(!Windows.TryDecoding(this, out var path))
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
-                throw new FormatException();
-            }
+                if (!Windows.TryDecoding(this, out var path))
+                {
+                    throw new FormatException();
+                }
 
-            return path;
+                return path;
+            }
+            else
+            {
+                return this.Value;
+            }
         }
 
-        public static OmniPath FromWindowsPath(string path)
+        public static OmniPath FromCurrentPlatformPath(string path)
         {
-            if (!Windows.TryEncoding(path, out var omniPath))
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
-                throw new FormatException();
-            }
+                if (!Windows.TryEncoding(path, out var omniPath))
+                {
+                    throw new FormatException();
+                }
 
-            return omniPath;
+                return omniPath;
+            }
+            else
+            {
+                return new OmniPath(path);
+            }
         }
 
         public static class Windows
