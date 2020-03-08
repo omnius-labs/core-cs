@@ -117,7 +117,7 @@ namespace Omnius.Core.Extensions
                         if (t.IsFaulted)
                         {
                             Interlocked.Increment(ref exceptionCount);
-                            throw t.Exception!;
+                            throw t.Exception?.InnerException!;
                         }
                     });
                     tasks.Add(task);
