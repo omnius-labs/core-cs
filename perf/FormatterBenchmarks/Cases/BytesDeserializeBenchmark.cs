@@ -45,7 +45,7 @@ namespace FormatterBenchmarks.Cases
             {
                 var bytesPool = BytesPool.Shared;
                 var random = new Random(0);
-                using (var hub = new Hub(bytesPool))
+                using (var hub = new BytesHub(bytesPool))
                 {
 
                     var elementsList = new List<RocketPack_BytesElements>();

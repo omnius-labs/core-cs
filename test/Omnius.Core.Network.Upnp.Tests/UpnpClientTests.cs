@@ -26,7 +26,7 @@ namespace Omnius.Core.Network.Upnp
                 }
 
                 var ip = await upnp.GetExternalIpAddressAsync(cancellationTokenSource.Token);
-                Assert.True(ip != null);
+                Assert.NotNull(ip);
             }
         }
     }

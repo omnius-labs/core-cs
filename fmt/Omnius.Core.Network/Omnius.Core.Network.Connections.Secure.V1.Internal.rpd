@@ -17,7 +17,7 @@ enum HashAlgorithm : uint8 {
 }
 
 enum CryptoAlgorithm : uint8 {
-    Aes_256 = 0,
+     Aes_Gcm_256 = 0,
 }
 
 enum AuthenticationType : uint8 {

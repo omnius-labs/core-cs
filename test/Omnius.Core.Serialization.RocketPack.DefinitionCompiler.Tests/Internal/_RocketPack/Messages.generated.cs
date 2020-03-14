@@ -51,7 +51,7 @@ namespace Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal
         No = 1,
     }
 
-    internal readonly struct StructMessageElement_Struct : global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<StructMessageElement_Struct>
+    internal readonly partial struct StructMessageElement_Struct : global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<StructMessageElement_Struct>
     {
         public static global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<StructMessageElement_Struct> Formatter => global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<StructMessageElement_Struct>.Formatter;
         public static StructMessageElement_Struct Empty => global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<StructMessageElement_Struct>.Empty;
@@ -132,7 +132,7 @@ namespace Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal
         }
     }
 
-    internal readonly struct TableMessageElement_Struct : global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<TableMessageElement_Struct>
+    internal readonly partial struct TableMessageElement_Struct : global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<TableMessageElement_Struct>
     {
         public static global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<TableMessageElement_Struct> Formatter => global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<TableMessageElement_Struct>.Formatter;
         public static TableMessageElement_Struct Empty => global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<TableMessageElement_Struct>.Empty;

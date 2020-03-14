@@ -42,6 +42,14 @@ namespace Omnius.Core.Network.Connections.Secure
             _bytesPool = options.BufferPool ?? BytesPool.Shared;
         }
 
+        protected override void OnDispose(bool disposing)
+        {
+            if (disposing)
+            {
+                _secureConnection_v1?.Dispose();
+            }
+        }
+
         public IConnection BaseConnection => _connection;
 
         public bool IsConnected => _connection.IsConnected;
@@ -84,9 +92,9 @@ namespace Omnius.Core.Network.Connections.Secure
             throw new OmniSecureConnectionException($"Overlap enum of {nameof(T)} could not be found.");
         }
 
-        public void DoEvents()
+        public void RunJobs()
         {
-            _connection.DoEvents();
+            _connection.RunJobs();
         }
 
         public async ValueTask Handshake(CancellationToken cancellationToken = default)
@@ -136,11 +144,35 @@ namespace Omnius.Core.Network.Connections.Secure
             _version = GetOverlapMaxEnum(sendHelloMessage.Versions, receiveHelloMessage.Versions);
         }
 
+        public bool TrySend(Action<IBufferWriter<byte>> action)
+        {
+            if (_secureConnection_v1 != null)
+            {
+                return _secureConnection_v1.TrySend(action);
+            }
+            else
+            {
+                throw new NotSupportedException("Not supported OmniSecureConnectionVersion.");
+            }
+        }
+
         public async ValueTask SendAsync(Action<IBufferWriter<byte>> action, CancellationToken cancellationToken = default)
         {
             if (_secureConnection_v1 != null)
             {
                 await _secureConnection_v1.SendAsync(action, cancellationToken);
+            }
+            else
+            {
+                throw new NotSupportedException("Not supported OmniSecureConnectionVersion.");
+            }
+        }
+
+        public bool TryReceive(Action<ReadOnlySequence<byte>> action)
+        {
+            if (_secureConnection_v1 != null)
+            {
+                return _secureConnection_v1.TryReceive(action);
             }
             else
             {
@@ -157,14 +189,6 @@ namespace Omnius.Core.Network.Connections.Secure
             else
             {
                 throw new NotSupportedException("Not supported OmniSecureConnectionVersion.");
-            }
-        }
-
-        protected override void OnDispose(bool disposing)
-        {
-            if (disposing)
-            {
-                _secureConnection_v1?.Dispose();
             }
         }
     }

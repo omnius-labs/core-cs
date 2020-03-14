@@ -53,8 +53,8 @@ namespace Omnius.Core.Network.Connections
 
                         Thread.Sleep(10);
 
-                        connection1.DoEvents();
-                        connection2.DoEvents();
+                        connection1.RunJobs();
+                        connection2.RunJobs();
                     }
                 }
 
@@ -86,11 +86,11 @@ namespace Omnius.Core.Network.Connections
 
                         await Task.Delay(10);
 
-                        connection1.DoEvents();
-                        connection2.DoEvents();
+                        connection1.RunJobs();
+                        connection2.RunJobs();
                     }
 
-                    Assert.True(BytesOperations.Equals(buffer1, (ReadOnlySpan<byte>)buffer2));
+                    Assert.Equal(buffer1, buffer2);
                 }
             }
         }

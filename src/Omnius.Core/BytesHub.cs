@@ -3,13 +3,13 @@ using System.IO.Pipelines;
 
 namespace Omnius.Core
 {
-    public sealed partial class Hub : DisposableBase
+    public sealed partial class BytesHub : DisposableBase
     {
         private readonly BufferWriter _bufferWriter;
         private readonly HubReader _hubReader;
         private readonly HubWriter _hubWriter;
 
-        public Hub(IBytesPool bytesPool)
+        public BytesHub(IBytesPool bytesPool)
         {
             _bufferWriter = new BufferWriter(bytesPool);
             _hubReader = new HubReader(_bufferWriter);

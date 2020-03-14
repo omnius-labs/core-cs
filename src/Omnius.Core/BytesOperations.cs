@@ -43,8 +43,7 @@ namespace Omnius.Core
                 return;
             }
 
-            fixed (byte* p_x = source)
-            fixed (byte* p_y = destination)
+            fixed (byte* p_x = source, p_y = destination)
             {
                 Buffer.MemoryCopy(p_x, p_y, destination.Length, length);
             }
@@ -134,12 +133,9 @@ namespace Omnius.Core
             {
                 int length = Math.Min(Math.Min(source1.Length, source2.Length), destination.Length);
 
-                fixed (byte* p_x = source1, p_y = source2)
+                fixed (byte* p_x = source1, p_y = source2, p_z = destination)
                 {
-                    fixed (byte* p_buffer = destination)
-                    {
-                        bitwiseOperation(p_x, p_y, p_buffer, length);
-                    }
+                    bitwiseOperation(p_x, p_y, p_z, length);
                 }
             }
         }

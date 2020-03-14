@@ -23,7 +23,7 @@ namespace Omnius.Core.Cryptography
             var cost = OmniMiner.Verify(hashcash, new ReadOnlySequence<byte>(value), key);
 
             // コストは最低でも1以上になっているはず。
-            Assert.True(cost >= 1);
+            Assert.NotInRange((int)cost, 0, 1);
         }
 
         [Fact]
@@ -42,7 +42,7 @@ namespace Omnius.Core.Cryptography
             var cost = OmniMiner.Verify(hashcash, new ReadOnlySequence<byte>(value), key);
 
             // 計算時間は10秒以上のはず。
-            Assert.True(sw.Elapsed.TotalSeconds > 10);
+            Assert.NotInRange((int)sw.Elapsed.TotalSeconds, 0, 9);
         }
     }
 }

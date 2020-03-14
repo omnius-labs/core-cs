@@ -21,7 +21,7 @@ namespace Omnius.Core.Network.Connections.Secure.V1.Internal
 
     internal enum CryptoAlgorithm : byte
     {
-        Aes_256 = 0,
+        Aes_Gcm_256 = 0,
     }
 
     internal enum AuthenticationType : byte

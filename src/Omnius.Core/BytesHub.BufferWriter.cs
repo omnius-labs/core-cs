@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Omnius.Core
 {
-    partial class Hub
+    partial class BytesHub
     {
         internal class BufferWriter : DisposableBase, IBufferWriter<byte>
         {
