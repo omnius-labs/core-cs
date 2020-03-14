@@ -187,11 +187,11 @@ namespace Omnius.Core.Serialization.RocketPack.DefinitionCompiler
                 {
                     if (objectDefinition.Elements.Select(n => n.Type).OfType<BytesType>().Any(n => n.IsUseMemoryPool))
                     {
-                        b.WriteLine($"{_accessLevel} readonly struct {objectDefinition.Name} : {GenerateTypeFullName("IRocketPackObject<>", objectDefinition.Name)}, {GenerateTypeFullName("IDisposable")}");
+                        b.WriteLine($"{_accessLevel} readonly partial struct {objectDefinition.Name} : {GenerateTypeFullName("IRocketPackObject<>", objectDefinition.Name)}, {GenerateTypeFullName("IDisposable")}");
                     }
                     else
                     {
-                        b.WriteLine($"{_accessLevel} readonly struct {objectDefinition.Name} : {GenerateTypeFullName("IRocketPackObject<>", objectDefinition.Name)}");
+                        b.WriteLine($"{_accessLevel} readonly partial struct {objectDefinition.Name} : {GenerateTypeFullName("IRocketPackObject<>", objectDefinition.Name)}");
                     }
                 }
                 else if (objectDefinition.IsClass)

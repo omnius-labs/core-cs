@@ -60,8 +60,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Omnius.Core.Ui.Avalonia", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Omnius.Core.Data", "src\Omnius.Core.Data\Omnius.Core.Data.csproj", "{BCFF3B51-70D8-49F5-A441-7BB698033185}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Omnius.Core.Data.Tests", "test\Omnius.Core.Data.Tests\Omnius.Core.Data.Tests.csproj", "{0291D5F7-B623-4499-BD99-32154841B038}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -160,10 +158,6 @@ Global
 		{BCFF3B51-70D8-49F5-A441-7BB698033185}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BCFF3B51-70D8-49F5-A441-7BB698033185}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BCFF3B51-70D8-49F5-A441-7BB698033185}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0291D5F7-B623-4499-BD99-32154841B038}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0291D5F7-B623-4499-BD99-32154841B038}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0291D5F7-B623-4499-BD99-32154841B038}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0291D5F7-B623-4499-BD99-32154841B038}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -192,7 +186,6 @@ Global
 		{71621699-048B-4077-ADC3-62064A6F4FA8} = {CDE3119A-739A-44B1-8141-448AF0896E6C}
 		{7795C308-BAF2-4EA6-B59D-33E3C2C8FF9E} = {28FCC997-2EE4-4D18-BAA0-96118DFA47BB}
 		{BCFF3B51-70D8-49F5-A441-7BB698033185} = {28FCC997-2EE4-4D18-BAA0-96118DFA47BB}
-		{0291D5F7-B623-4499-BD99-32154841B038} = {CDE3119A-739A-44B1-8141-448AF0896E6C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {2CD56E0F-71CF-44BB-848D-F2A9EA663E45}

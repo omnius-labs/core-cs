@@ -21,7 +21,7 @@ namespace Omnius.Core.Serialization
 
             // Load
             {
-                string basePath = Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly()!.Location)!;
+                string basePath = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly()!.Location)!;
 
                 //https://github.com/bitcoin/bitcoin/blob/master/src/test/data/base58_encode_decode.json
                 using (var fs = File.OpenRead(Path.Combine(basePath, "Data/base58_encode_decode.json")))
@@ -40,7 +40,7 @@ namespace Omnius.Core.Serialization
 
                 foreach (var (input, output) in pattern)
                 {
-                    using var hub_base16 = new Hub(BytesPool.Shared);
+                    using var hub_base16 = new BytesHub(BytesPool.Shared);
 
                     // base16をデコードし、pipeに書き込む。
                     base16.TryDecode(input, hub_base16.Writer);
@@ -49,15 +49,15 @@ namespace Omnius.Core.Serialization
                     base58Btc.TryEncode(hub_base16.Reader.GetSequence(), out var text_base58);
 
                     // エンコード結果の検証
-                    Assert.True(BytesOperations.Equals(text_base58.AsSpan(), UTF8Encoding.Default.GetBytes(output).AsSpan()));
+                    Assert.Equal(UTF8Encoding.Default.GetBytes(output), text_base58);
 
-                    using var hub_base58Btc = new Hub(BytesPool.Shared);
+                    using var hub_base58Btc = new BytesHub(BytesPool.Shared);
 
                     // base58Btcをデコードし、pipeに書き込む。
                     base58Btc.TryDecode(output, hub_base58Btc.Writer);
 
                     // デコード結果の検証
-                    Assert.True(BytesOperations.Equals(hub_base58Btc.Reader.GetSequence().ToArray().AsSpan(), hub_base16.Reader.GetSequence().ToArray().AsSpan()));
+                    Assert.Equal(hub_base16.Reader.GetSequence().ToArray(), hub_base58Btc.Reader.GetSequence().ToArray());
                 }
             }
         }
