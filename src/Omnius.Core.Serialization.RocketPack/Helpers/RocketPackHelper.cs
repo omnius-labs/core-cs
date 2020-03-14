@@ -8,7 +8,7 @@ namespace Omnius.Core.Serialization.RocketPack.Helpers
         public static T StreamToMessage<T>(Stream inStream)
             where T : IRocketPackObject<T>
         {
-            using var hub = new Hub(BytesPool.Shared);
+            using var hub = new BytesHub(BytesPool.Shared);
 
             const int bufferSize = 4096;
 
@@ -29,7 +29,7 @@ namespace Omnius.Core.Serialization.RocketPack.Helpers
         public static void MessageToStream<T>(T message, Stream stream)
             where T : IRocketPackObject<T>
         {
-            using var hub = new Hub(BytesPool.Shared);
+            using var hub = new BytesHub(BytesPool.Shared);
 
             message.Export(hub.Writer, BytesPool.Shared);
 

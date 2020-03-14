@@ -22,7 +22,7 @@ namespace Omnius.Core.Cryptography
             var value = base16.StringToBytes("4869205468657265");
             var result = base16.BytesToString(Hmac_Sha2_256.ComputeHash(value, key));
 
-            Assert.True(result == "b0344c61d8db38535ca8afceaf0bf12b881dc200c9833da726e9376c2e32cff7");
+            Assert.Equal("b0344c61d8db38535ca8afceaf0bf12b881dc200c9833da726e9376c2e32cff7", result);
         }
 
         [Fact]
@@ -46,7 +46,7 @@ namespace Omnius.Core.Cryptography
                 using (var hmacSha256 = new HMACSHA256(key))
                 {
                     // .Net標準のHMACSHA256と同一の結果になるはず。
-                    Assert.True(BytesOperations.Equals(hmacSha256.ComputeHash(stream), (ReadOnlySpan<byte>)Hmac_Sha2_256.ComputeHash(buffer, key)));
+                    Assert.Equal(hmacSha256.ComputeHash(stream), Hmac_Sha2_256.ComputeHash(buffer, key));
                 }
             }
         }

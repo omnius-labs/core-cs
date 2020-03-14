@@ -30,6 +30,8 @@ namespace Omnius.Core.Network.Connections.Secure.V1.Internal
 
         private readonly Random _random = new Random();
 
+        private const int FrameSize = 16 * 1024;
+
         public SecureConnection(IConnection connection, OmniSecureConnectionOptions options)
         {
             if (connection == null)
@@ -53,6 +55,14 @@ namespace Omnius.Core.Network.Connections.Secure.V1.Internal
             _bytesPool = options.BufferPool ?? BytesPool.Shared;
         }
 
+        protected override void OnDispose(bool disposing)
+        {
+            if (disposing)
+            {
+
+            }
+        }
+
         public IEnumerable<string> MatchedPasswords => _matchedPasswords ?? Enumerable.Empty<string>();
 
         private static T GetOverlapMaxEnum<T>(IEnumerable<T> s1, IEnumerable<T> s2)
@@ -74,10 +84,26 @@ namespace Omnius.Core.Network.Connections.Secure.V1.Internal
             throw new OmniSecureConnectionException($"Overlap enum of {nameof(T)} could not be found.");
         }
 
+        internal static void Increment(ref byte[] bytes)
+        {
+            for (int i = 0; i < bytes.Length; i++)
+            {
+                if (bytes[i] == 0xff)
+                {
+                    bytes[i] = 0x00;
+                }
+                else
+                {
+                    bytes[i]++;
+                    break;
+                }
+            }
+        }
+
         public async ValueTask Handshake(CancellationToken cancellationToken = default)
         {
-            V1.Internal.ProfileMessage myProfileMessage;
-            V1.Internal.ProfileMessage? otherProfileMessage = null;
+            ProfileMessage myProfileMessage;
+            ProfileMessage? otherProfileMessage = null;
             {
                 {
                     var sessionId = new byte[32];
@@ -86,17 +112,17 @@ namespace Omnius.Core.Network.Connections.Secure.V1.Internal
                         randomNumberGenerator.GetBytes(sessionId);
                     }
 
-                    myProfileMessage = new V1.Internal.ProfileMessage(
+                    myProfileMessage = new ProfileMessage(
                         sessionId,
-                        (_passwords.Count == 0) ? V1.Internal.AuthenticationType.None : V1.Internal.AuthenticationType.Password,
-                        new[] { V1.Internal.KeyExchangeAlgorithm.EcDh_P521_Sha2_256 },
-                        new[] { V1.Internal.KeyDerivationAlgorithm.Pbkdf2 },
-                        new[] { V1.Internal.CryptoAlgorithm.Aes_256 },
-                        new[] { V1.Internal.HashAlgorithm.Sha2_256 });
+                        (_passwords.Count == 0) ? AuthenticationType.None : AuthenticationType.Password,
+                        new[] { KeyExchangeAlgorithm.EcDh_P521_Sha2_256 },
+                        new[] { KeyDerivationAlgorithm.Pbkdf2 },
+                        new[] { CryptoAlgorithm.Aes_Gcm_256 },
+                        new[] { HashAlgorithm.Sha2_256 });
                 }
 
                 var enqueueTask = _connection.SendAsync((bufferWriter) => myProfileMessage.Export(bufferWriter, _bytesPool), cancellationToken);
-                var dequeueTask = _connection.ReceiveAsync((sequence) => otherProfileMessage = V1.Internal.ProfileMessage.Import(sequence, _bytesPool), cancellationToken);
+                var dequeueTask = _connection.ReceiveAsync((sequence) => otherProfileMessage = ProfileMessage.Import(sequence, _bytesPool), cancellationToken);
 
                 await ValueTaskHelper.WhenAll(enqueueTask, dequeueTask);
 
@@ -135,7 +161,7 @@ namespace Omnius.Core.Network.Connections.Secure.V1.Internal
 
             ReadOnlyMemory<byte> secret = null;
 
-            if (keyExchangeAlgorithm.HasFlag(V1.Internal.KeyExchangeAlgorithm.EcDh_P521_Sha2_256))
+            if (keyExchangeAlgorithm.HasFlag(KeyExchangeAlgorithm.EcDh_P521_Sha2_256))
             {
                 var myAgreement = OmniAgreement.Create(OmniAgreementAlgorithmType.EcDh_P521_Sha2_256);
 
@@ -163,18 +189,18 @@ namespace Omnius.Core.Network.Connections.Secure.V1.Internal
 
                     if (_passwords.Count > 0)
                     {
-                        V1.Internal.AuthenticationMessage myAuthenticationMessage;
-                        V1.Internal.AuthenticationMessage? otherAuthenticationMessage = null;
+                        AuthenticationMessage myAuthenticationMessage;
+                        AuthenticationMessage? otherAuthenticationMessage = null;
                         {
                             {
                                 var myHashAndPasswordList = this.GetHashes(myProfileMessage, myAgreement.GetOmniAgreementPublicKey(), hashAlgorithm).ToList();
 
                                 _random.Shuffle(myHashAndPasswordList);
-                                myAuthenticationMessage = new V1.Internal.AuthenticationMessage(myHashAndPasswordList.Select(n => n.Item1).ToArray());
+                                myAuthenticationMessage = new AuthenticationMessage(myHashAndPasswordList.Select(n => n.Item1).ToArray());
                             }
 
                             var enqueueTask = _connection.SendAsync((bufferWriter) => myAuthenticationMessage.Export(bufferWriter, _bytesPool), cancellationToken);
-                            var dequeueTask = _connection.ReceiveAsync((sequence) => otherAuthenticationMessage = V1.Internal.AuthenticationMessage.Import(sequence, _bytesPool), cancellationToken);
+                            var dequeueTask = _connection.ReceiveAsync((sequence) => otherAuthenticationMessage = AuthenticationMessage.Import(sequence, _bytesPool), cancellationToken);
 
                             await ValueTaskHelper.WhenAll(enqueueTask, dequeueTask);
 
@@ -208,7 +234,7 @@ namespace Omnius.Core.Network.Connections.Secure.V1.Internal
                     }
                 }
 
-                if (hashAlgorithm.HasFlag(V1.Internal.HashAlgorithm.Sha2_256))
+                if (hashAlgorithm.HasFlag(HashAlgorithm.Sha2_256))
                 {
                     secret = OmniAgreement.GetSecret(otherAgreementPublicKey, myAgreementPrivateKey);
                 }
@@ -216,41 +242,33 @@ namespace Omnius.Core.Network.Connections.Secure.V1.Internal
 
             byte[] myCryptoKey;
             byte[] otherCryptoKey;
-            byte[] myHmacKey;
-            byte[] otherHmacKey;
+            byte[] myNonce;
+            byte[] otherNonce;
 
-            if (keyDerivationAlgorithm.HasFlag(V1.Internal.KeyDerivationAlgorithm.Pbkdf2))
+            if (keyDerivationAlgorithm.HasFlag(KeyDerivationAlgorithm.Pbkdf2))
             {
                 byte[] xorSessionId = new byte[Math.Max(myProfileMessage.SessionId.Length, otherProfileMessage.SessionId.Length)];
                 BytesOperations.Xor(myProfileMessage.SessionId.Span, otherProfileMessage.SessionId.Span, xorSessionId);
 
                 int cryptoKeyLength = 0;
-                int hmacKeyLength = 0;
+                int nonceLength = 0;
 
-                if (cryptoAlgorithm.HasFlag(V1.Internal.CryptoAlgorithm.Aes_256))
+                if (cryptoAlgorithm.HasFlag(CryptoAlgorithm.Aes_Gcm_256))
                 {
                     cryptoKeyLength = 32;
-                }
-
-                if (hashAlgorithm.HasFlag(V1.Internal.HashAlgorithm.Sha2_256))
-                {
-                    hmacKeyLength = 32;
+                    nonceLength = 12;
                 }
 
                 myCryptoKey = new byte[cryptoKeyLength];
                 otherCryptoKey = new byte[cryptoKeyLength];
-                myHmacKey = new byte[hmacKeyLength];
-                otherHmacKey = new byte[hmacKeyLength];
+                myNonce = new byte[nonceLength];
+                otherNonce = new byte[nonceLength];
 
-                var kdfResult = new byte[(cryptoKeyLength + hmacKeyLength) * 2];
+                var kdfResult = new byte[(cryptoKeyLength + nonceLength) * 2];
 
-                if (hashAlgorithm.HasFlag(V1.Internal.HashAlgorithm.Sha2_256))
+                if (hashAlgorithm.HasFlag(HashAlgorithm.Sha2_256))
                 {
                     Pbkdf2_Sha2_256.TryComputeHash(secret.Span, xorSessionId, 1024, kdfResult);
-                }
-                else
-                {
-                    throw new NotSupportedException(nameof(keyDerivationAlgorithm));
                 }
 
                 using (var stream = new MemoryStream(kdfResult))
@@ -259,15 +277,15 @@ namespace Omnius.Core.Network.Connections.Secure.V1.Internal
                     {
                         stream.Read(myCryptoKey, 0, myCryptoKey.Length);
                         stream.Read(otherCryptoKey, 0, otherCryptoKey.Length);
-                        stream.Read(myHmacKey, 0, myHmacKey.Length);
-                        stream.Read(otherHmacKey, 0, otherHmacKey.Length);
+                        stream.Read(myNonce, 0, myNonce.Length);
+                        stream.Read(otherNonce, 0, otherNonce.Length);
                     }
                     else if (_type == OmniSecureConnectionType.Accepted)
                     {
                         stream.Read(otherCryptoKey, 0, otherCryptoKey.Length);
                         stream.Read(myCryptoKey, 0, myCryptoKey.Length);
-                        stream.Read(otherHmacKey, 0, otherHmacKey.Length);
-                        stream.Read(myHmacKey, 0, myHmacKey.Length);
+                        stream.Read(otherNonce, 0, otherNonce.Length);
+                        stream.Read(myNonce, 0, myNonce.Length);
                     }
                 }
             }
@@ -276,20 +294,26 @@ namespace Omnius.Core.Network.Connections.Secure.V1.Internal
                 throw new NotSupportedException(nameof(keyDerivationAlgorithm));
             }
 
-            _status = new Status(cryptoAlgorithm, hashAlgorithm, myCryptoKey, otherCryptoKey, myHmacKey, otherHmacKey);
+            _status = new Status();
+            _status.CryptoAlgorithm = cryptoAlgorithm;
+            _status.HashAlgorithm = hashAlgorithm;
+            _status.MyCryptoKey = myCryptoKey;
+            _status.OtherCryptoKey = otherCryptoKey;
+            _status.MyNonce = myNonce;
+            _status.OtherNonce = otherNonce;
         }
 
-        private (ReadOnlyMemory<byte>, string)[] GetHashes(V1.Internal.ProfileMessage profileMessage, OmniAgreementPublicKey agreementPublicKey, V1.Internal.HashAlgorithm hashAlgorithm)
+        private (ReadOnlyMemory<byte>, string)[] GetHashes(ProfileMessage profileMessage, OmniAgreementPublicKey agreementPublicKey, HashAlgorithm hashAlgorithm)
         {
             var results = new Dictionary<ReadOnlyMemory<byte>, string>();
 
             byte[] verificationMessageHash;
             {
-                var verificationMessage = new V1.Internal.VerificationMessage(profileMessage, agreementPublicKey);
+                var verificationMessage = new VerificationMessage(profileMessage, agreementPublicKey);
 
-                if (hashAlgorithm == V1.Internal.HashAlgorithm.Sha2_256)
+                if (hashAlgorithm == HashAlgorithm.Sha2_256)
                 {
-                    using var hub = new Hub(BytesPool.Shared);
+                    using var hub = new BytesHub(BytesPool.Shared);
 
                     verificationMessage.Export(hub.Writer, _bytesPool);
                     verificationMessageHash = Sha2_256.ComputeHash(hub.Reader.GetSequence());
@@ -302,7 +326,7 @@ namespace Omnius.Core.Network.Connections.Secure.V1.Internal
 
             foreach (var password in _passwords)
             {
-                if (hashAlgorithm.HasFlag(V1.Internal.HashAlgorithm.Sha2_256))
+                if (hashAlgorithm.HasFlag(HashAlgorithm.Sha2_256))
                 {
                     results.Add(Hmac_Sha2_256.ComputeHash(verificationMessageHash, Sha2_256.ComputeHash(password)), password);
                 }
@@ -318,92 +342,45 @@ namespace Omnius.Core.Network.Connections.Secure.V1.Internal
                 throw new OmniSecureConnectionException("Not handshaked");
             }
 
-            using var hub = new Hub(BytesPool.Shared);
-
+            using var hub = new BytesHub(BytesPool.Shared);
             action.Invoke(hub.Writer);
 
             var sequence = hub.Reader.GetSequence();
 
             try
             {
-                if (_status.CryptoAlgorithm.HasFlag(V1.Internal.CryptoAlgorithm.Aes_256)
-                    && _status.HashAlgorithm.HasFlag(V1.Internal.HashAlgorithm.Sha2_256))
+                if (_status.CryptoAlgorithm.HasFlag(CryptoAlgorithm.Aes_Gcm_256))
                 {
-                    const int headerSize = 8;
-                    const int blockSize = 16;
-
-                    // 送信済みデータ + 送信するデータのサイズを書き込む
+                    using (var aes = new AesGcm(_status.MyCryptoKey))
                     {
-                        var paddingSize = blockSize;
+                        Span<byte> tag = stackalloc byte[16];
+                        var inBuffer = _bytesPool.Array.Rent(FrameSize - tag.Length);
+                        var outBuffer = _bytesPool.Array.Rent(FrameSize - tag.Length);
 
-                        if (sequence.Length % blockSize != 0)
+                        try
                         {
-                            paddingSize = blockSize - (int)(sequence.Length % blockSize);
-                        }
-
-                        var encryptedContentLength = blockSize + (sequence.Length + paddingSize);
-
-                        BinaryPrimitives.TryWriteUInt64BigEndian(bufferWriter.GetSpan(headerSize), (ulong)(_totalSentSize + encryptedContentLength));
-                        bufferWriter.Advance(headerSize);
-                    }
-
-                    using (var hmac = new HMACSHA256(_status.MyHmacKey))
-                    using (var aes = Aes.Create())
-                    {
-                        aes.KeySize = 256;
-                        aes.Mode = CipherMode.CBC;
-                        aes.Padding = PaddingMode.PKCS7;
-
-                        // IVを書き込む
-                        var iv = new byte[blockSize];
-                        using (var randomNumberGenerator = RandomNumberGenerator.Create())
-                        {
-                            randomNumberGenerator.GetBytes(iv);
-                        }
-                        bufferWriter.Write(iv);
-                        hmac.TransformBlock(iv, 0, iv.Length, null, 0);
-                        Interlocked.Add(ref _totalSentSize, iv.Length);
-
-                        // 暗号化データを書き込む
-                        using (var encryptor = aes.CreateEncryptor(_status.MyCryptoKey, iv))
-                        {
-                            var inBuffer = _bytesPool.Array.Rent(blockSize);
-                            var outBuffer = _bytesPool.Array.Rent(blockSize);
-
-                            try
+                            while (sequence.Length > 0)
                             {
-                                while (sequence.Length > blockSize)
-                                {
-                                    sequence.Slice(0, blockSize).CopyTo(inBuffer.AsSpan(0, blockSize));
+                                int contentLength = (int)Math.Min(sequence.Length, FrameSize - tag.Length);
 
-                                    var transed = encryptor.TransformBlock(inBuffer, 0, blockSize, outBuffer, 0);
-                                    bufferWriter.Write(outBuffer.AsSpan(0, transed));
-                                    hmac.TransformBlock(outBuffer, 0, transed, null, 0);
-                                    Interlocked.Add(ref _totalSentSize, transed);
+                                var plaintext = inBuffer.AsSpan(0, contentLength);
+                                var ciphertext = outBuffer.AsSpan(0, contentLength);
 
-                                    sequence = sequence.Slice(blockSize);
-                                }
+                                sequence.Slice(0, contentLength).CopyTo(plaintext);
+                                sequence = sequence.Slice(contentLength);
 
-                                {
-                                    int remain = (int)sequence.Length;
-                                    sequence.CopyTo(inBuffer.AsSpan(0, remain));
+                                aes.Encrypt(_status.MyNonce, plaintext, ciphertext, tag);
+                                Increment(ref _status.MyNonce);
 
-                                    var remainBuffer = encryptor.TransformFinalBlock(inBuffer, 0, remain);
-                                    bufferWriter.Write(remainBuffer);
-                                    hmac.TransformBlock(remainBuffer, 0, remainBuffer.Length, null, 0);
-                                    Interlocked.Add(ref _totalSentSize, remainBuffer.Length);
-                                }
-                            }
-                            finally
-                            {
-                                _bytesPool.Array.Return(inBuffer);
-                                _bytesPool.Array.Return(outBuffer);
+                                bufferWriter.Write(ciphertext);
+                                bufferWriter.Write(tag);
                             }
                         }
-
-                        // HMACを書き込む
-                        hmac.TransformFinalBlock(Array.Empty<byte>(), 0, 0);
-                        bufferWriter.Write(hmac.Hash);
+                        finally
+                        {
+                            _bytesPool.Array.Return(inBuffer);
+                            _bytesPool.Array.Return(outBuffer);
+                        }
                     }
 
                     return;
@@ -419,6 +396,11 @@ namespace Omnius.Core.Network.Connections.Secure.V1.Internal
             }
 
             throw new OmniSecureConnectionException("Conversion failed.");
+        }
+
+        public bool TrySend(Action<IBufferWriter<byte>> action)
+        {
+            return _connection.TrySend((bufferWriter) => this.Encoding(bufferWriter, action));
         }
 
         public async ValueTask SendAsync(Action<IBufferWriter<byte>> action, CancellationToken cancellationToken = default)
@@ -433,95 +415,49 @@ namespace Omnius.Core.Network.Connections.Secure.V1.Internal
                 throw new OmniSecureConnectionException("Not handshaked");
             }
 
-            using var hub = new Hub(BytesPool.Shared);
+            using var hub = new BytesHub(BytesPool.Shared);
 
             try
             {
-                if (_status.CryptoAlgorithm.HasFlag(V1.Internal.CryptoAlgorithm.Aes_256)
-                    && _status.HashAlgorithm.HasFlag(V1.Internal.HashAlgorithm.Sha2_256))
+                if (_status.CryptoAlgorithm.HasFlag(CryptoAlgorithm.Aes_Gcm_256))
                 {
-                    const int headerSize = 8;
-                    const int hashLength = 32;
-                    const int blockSize = 16;
-
-                    Interlocked.Add(ref _totalReceivedSize, sequence.Length - (headerSize + hashLength));
-
-                    // 送信済みデータ + 送信するデータのサイズが正しいか検証する
+                    using (var aes = new AesGcm(_status.OtherCryptoKey))
                     {
-                        long totalReceivedSize;
+                        Span<byte> tag = stackalloc byte[16];
+                        var inBuffer = _bytesPool.Array.Rent(FrameSize - tag.Length);
+                        var outBuffer = _bytesPool.Array.Rent(FrameSize - tag.Length);
+
+                        try
                         {
-                            Span<byte> totalReceiveSizeBuffer = stackalloc byte[headerSize];
-                            sequence.Slice(0, headerSize).CopyTo(totalReceiveSizeBuffer);
-                            totalReceivedSize = (long)BinaryPrimitives.ReadUInt64BigEndian(totalReceiveSizeBuffer);
-                        }
-
-                        if (totalReceivedSize != _totalReceivedSize)
-                        {
-                            throw new OmniSecureConnectionException();
-                        }
-                    }
-
-                    // HMACが正しいか検証する
-                    {
-                        Span<byte> receivedHash = stackalloc byte[hashLength];
-                        sequence.Slice(sequence.Length - hashLength).CopyTo(receivedHash);
-
-                        var computedhash = Hmac_Sha2_256.ComputeHash(sequence.Slice(headerSize, sequence.Length - (headerSize + hashLength)), _status.OtherHmacKey);
-                        if (!BytesOperations.Equals(receivedHash, computedhash))
-                        {
-                            throw new OmniSecureConnectionException();
-                        }
-                    }
-
-                    sequence = sequence.Slice(headerSize, sequence.Length - (headerSize + hashLength));
-
-                    using (var aes = Aes.Create())
-                    {
-                        aes.KeySize = 256;
-                        aes.Mode = CipherMode.CBC;
-                        aes.Padding = PaddingMode.PKCS7;
-
-                        // IVを読み込む
-                        var iv = new byte[16];
-                        sequence.Slice(0, iv.Length).CopyTo(iv);
-                        sequence = sequence.Slice(iv.Length);
-
-                        // 暗号化されたデータを復号化する
-                        using (var decryptor = aes.CreateDecryptor(_status.OtherCryptoKey, iv))
-                        {
-                            var inBuffer = _bytesPool.Array.Rent(blockSize);
-                            var outBuffer = _bytesPool.Array.Rent(blockSize);
-
-                            try
+                            while (sequence.Length > 0)
                             {
-                                while (sequence.Length > blockSize)
-                                {
-                                    sequence.Slice(0, blockSize).CopyTo(inBuffer.AsSpan(0, blockSize));
+                                if (sequence.Length <= tag.Length) throw new FormatException();
 
-                                    var transed = decryptor.TransformBlock(inBuffer, 0, blockSize, outBuffer, 0);
-                                    hub.Writer.Write(outBuffer.AsSpan(0, transed));
+                                int contentLength = (int)Math.Min(sequence.Length, FrameSize) - tag.Length;
 
-                                    sequence = sequence.Slice(blockSize);
-                                }
+                                var ciphertext = inBuffer.AsSpan(0, contentLength);
+                                var plaintext = outBuffer.AsSpan(0, contentLength);
 
-                                {
-                                    int remain = (int)sequence.Length;
-                                    sequence.CopyTo(inBuffer.AsSpan(0, remain));
+                                sequence.Slice(0, contentLength).CopyTo(ciphertext);
+                                sequence = sequence.Slice(contentLength);
 
-                                    var remainBuffer = decryptor.TransformFinalBlock(inBuffer, 0, remain);
-                                    hub.Writer.Write(remainBuffer);
-                                }
+                                sequence.Slice(0, tag.Length).CopyTo(tag);
+                                sequence = sequence.Slice(tag.Length);
+
+                                aes.Decrypt(_status.OtherNonce, ciphertext, tag, plaintext);
+                                Increment(ref _status.OtherNonce);
+
+                                hub.Writer.Write(plaintext);
                             }
-                            finally
-                            {
-                                _bytesPool.Array.Return(inBuffer);
-                                _bytesPool.Array.Return(outBuffer);
-                            }
+                        }
+                        finally
+                        {
+                            _bytesPool.Array.Return(inBuffer);
+                            _bytesPool.Array.Return(outBuffer);
                         }
                     }
 
                     action.Invoke(hub.Reader.GetSequence());
-
                     return;
                 }
             }
@@ -537,6 +473,11 @@ namespace Omnius.Core.Network.Connections.Secure.V1.Internal
             throw new OmniSecureConnectionException("Conversion failed.");
         }
 
+        public bool TryReceive(Action<ReadOnlySequence<byte>> action)
+        {
+            return _connection.TryReceive((sequence) => this.Decoding(sequence, action));
+        }
+
         public async ValueTask ReceiveAsync(Action<ReadOnlySequence<byte>> action, CancellationToken cancellationToken = default)
         {
             await _connection.ReceiveAsync((sequence) => this.Decoding(sequence, action), cancellationToken);
@@ -544,33 +485,14 @@ namespace Omnius.Core.Network.Connections.Secure.V1.Internal
 
         private sealed class Status
         {
-            public Status(V1.Internal.CryptoAlgorithm cryptoAlgorithm, V1.Internal.HashAlgorithm hashAlgorithm,
-                byte[] myCryptoKey, byte[] otherCryptoKey, byte[] myHmacKey, byte[] otherHmacKey)
-            {
-                this.CryptoAlgorithm = cryptoAlgorithm;
-                this.HashAlgorithm = hashAlgorithm;
-                this.MyCryptoKey = myCryptoKey;
-                this.OtherCryptoKey = otherCryptoKey;
-                this.MyHmacKey = myHmacKey;
-                this.OtherHmacKey = otherHmacKey;
-            }
+            public CryptoAlgorithm CryptoAlgorithm;
+            public HashAlgorithm HashAlgorithm;
 
-            public V1.Internal.CryptoAlgorithm CryptoAlgorithm { get; set; }
-            public V1.Internal.HashAlgorithm HashAlgorithm { get; set; }
+            public byte[] MyCryptoKey;
+            public byte[] OtherCryptoKey;
 
-            public byte[] MyCryptoKey { get; set; }
-            public byte[] OtherCryptoKey { get; set; }
-
-            public byte[] MyHmacKey { get; set; }
-            public byte[] OtherHmacKey { get; set; }
-        }
-
-        protected override void OnDispose(bool disposing)
-        {
-            if (disposing)
-            {
-
-            }
+            public byte[] MyNonce;
+            public byte[] OtherNonce;
         }
     }
 }

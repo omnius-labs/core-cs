@@ -23,7 +23,7 @@ namespace Omnius.Core.Cryptography
         Simple_Sha2_256 = 0,
     }
 
-    public readonly struct OmniHash : global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<OmniHash>
+    public readonly partial struct OmniHash : global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<OmniHash>
     {
         public static global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<OmniHash> Formatter => global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<OmniHash>.Formatter;
         public static OmniHash Empty => global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<OmniHash>.Empty;

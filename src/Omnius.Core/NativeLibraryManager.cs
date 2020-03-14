@@ -11,7 +11,7 @@ namespace Omnius.Core
         public NativeLibraryManager(string path)
         {
             //string fullPath = Path.Combine(Directory.GetCurrentDirectory(), path);
-            string fullPath = Path.Combine(Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly()!.Location)!, path);
+            string fullPath = Path.Combine(Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly()!.Location)!, path);
             NativeLibrary.TryLoad(fullPath, out _moduleHandle);
         }
 
@@ -19,6 +19,12 @@ namespace Omnius.Core
             where T : Delegate
         {
             var methodHandle = NativeLibrary.GetExport(_moduleHandle, method);
+
+            if(methodHandle == IntPtr.Zero)
+            {
+                throw new NotSupportedException();
+            }
+
             return Marshal.GetDelegateForFunctionPointer<T>(methodHandle);
         }
 

@@ -10,54 +10,66 @@ namespace Omnius.Core.Serialization
         private static readonly Lazy<Base16> _base16_Upper = new Lazy<Base16>(() => new Base16(ConvertStringCase.Upper));
         private static readonly Lazy<Base58Btc> _base58Btc = new Lazy<Base58Btc>(() => new Base58Btc());
 
-        public static string ToBase16String(ReadOnlySpan<byte> span, ConvertStringCase convertStringCase = ConvertStringCase.Lower)
+        public static string Encode(ReadOnlySpan<byte> span, ConvertStringType convertStringType, ConvertStringCase convertStringCase = ConvertStringCase.Lower)
         {
-            switch (convertStringCase)
+            if (convertStringType == ConvertStringType.Base16)
             {
-                case ConvertStringCase.Lower:
-                    {
-                        _base16_Lower.Value.TryEncode(span, out string text, true);
-                        return text;
-                    }
-                case ConvertStringCase.Upper:
-                    {
-                        _base16_Upper.Value.TryEncode(span, out string text, true);
-                        return text;
-                    }
-                default:
-                    throw new NotSupportedException(nameof(convertStringCase));
+                switch (convertStringCase)
+                {
+                    case ConvertStringCase.Lower:
+                        {
+                            _base16_Lower.Value.TryEncode(span, out string text, true);
+                            return text;
+                        }
+                    case ConvertStringCase.Upper:
+                        {
+                            _base16_Upper.Value.TryEncode(span, out string text, true);
+                            return text;
+                        }
+                    default:
+                        throw new NotSupportedException(nameof(convertStringCase));
+                }
+            }
+            else if (convertStringType == ConvertStringType.Base58)
+            {
+                _base58Btc.Value.TryEncode(span, out string text, true);
+                return text;
+            }
+            else
+            {
+                throw new NotSupportedException(nameof(convertStringType));
             }
         }
 
-        public static string ToBase16String(ReadOnlySequence<byte> sequence, ConvertStringCase convertStringCase = ConvertStringCase.Lower)
+        public static string Encode(ReadOnlySequence<byte> sequence, ConvertStringType convertStringType, ConvertStringCase convertStringCase = ConvertStringCase.Lower)
         {
-            switch (convertStringCase)
+            if (convertStringType == ConvertStringType.Base16)
             {
-                case ConvertStringCase.Lower:
-                    {
-                        _base16_Lower.Value.TryEncode(sequence, out string text, true);
-                        return text;
-                    }
-                case ConvertStringCase.Upper:
-                    {
-                        _base16_Upper.Value.TryEncode(sequence, out string text, true);
-                        return text;
-                    }
-                default:
-                    throw new NotSupportedException(nameof(convertStringCase));
+                switch (convertStringCase)
+                {
+                    case ConvertStringCase.Lower:
+                        {
+                            _base16_Lower.Value.TryEncode(sequence, out string text, true);
+                            return text;
+                        }
+                    case ConvertStringCase.Upper:
+                        {
+                            _base16_Upper.Value.TryEncode(sequence, out string text, true);
+                            return text;
+                        }
+                    default:
+                        throw new NotSupportedException(nameof(convertStringCase));
+                }
             }
-        }
-
-        public static string ToBase58BtcString(ReadOnlySpan<byte> span)
-        {
-            _base58Btc.Value.TryEncode(span, out string text, true);
-            return text;
-        }
-
-        public static string ToBase58BtcString(ReadOnlySequence<byte> sequence)
-        {
-            _base58Btc.Value.TryEncode(sequence, out string text, true);
-            return text;
+            else if (convertStringType == ConvertStringType.Base58)
+            {
+                _base58Btc.Value.TryEncode(sequence, out string text, true);
+                return text;
+            }
+            else
+            {
+                throw new NotSupportedException(nameof(convertStringType));
+            }
         }
 
         // TODO Utf8String版を実装したい

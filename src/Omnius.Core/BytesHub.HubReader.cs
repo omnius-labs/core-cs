@@ -4,7 +4,7 @@ using System.IO.Pipelines;
 
 namespace Omnius.Core
 {
-    public partial class Hub
+    public partial class BytesHub
     {
         public sealed class HubReader
         {
