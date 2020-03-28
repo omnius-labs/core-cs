@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 using System.Xml;
 using Omnius.Core;
 
-namespace Omnius.Core.Net.Upnp
+namespace Omnius.Core.Network.Upnp
 {
     public class UpnpClient : DisposableBase
     {

@@ -19,6 +19,7 @@ namespace Omnius.Core.Serialization.RocketPack.DefinitionCompiler
 
                 foreach (var name in sortedList)
                 {
+                    if (!hashSet.Add(name)) continue;
                     b.WriteLine($"using {name};");
                 }
                 b.WriteLine();

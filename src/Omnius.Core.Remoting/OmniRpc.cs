@@ -23,7 +23,7 @@ namespace Omnius.Core.Remoting
         {
             var connection = this.GetConnectedConnection.Invoke();
 
-            await connection.SendAsync((bufferWriter) =>
+            await connection.EnqueueAsync((bufferWriter) =>
             {
                 Varint.SetUInt64(type, bufferWriter);
             });
@@ -37,7 +37,7 @@ namespace Omnius.Core.Remoting
 
             ulong type = 0;
 
-            await connection.ReceiveAsync((sequence) =>
+            await connection.DequeueAsync((sequence) =>
             {
                 var reader = new SequenceReader<byte>(sequence);
 

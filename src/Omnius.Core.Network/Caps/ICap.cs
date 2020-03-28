@@ -4,7 +4,6 @@ namespace Omnius.Core.Network.Caps
 {
     public interface ICap : IDisposable
     {
-        bool IsBlocking { get; }
         bool IsConnected { get; }
 
         bool CanSend();

@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Threading;
-using Omnius.Core.Collections;
 using Omnius.Core.Internal;
 
 namespace Omnius.Core.Extensions

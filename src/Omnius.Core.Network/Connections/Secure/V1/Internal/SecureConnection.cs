@@ -121,8 +121,8 @@ namespace Omnius.Core.Network.Connections.Secure.V1.Internal
                         new[] { HashAlgorithm.Sha2_256 });
                 }
 
-                var enqueueTask = _connection.SendAsync((bufferWriter) => myProfileMessage.Export(bufferWriter, _bytesPool), cancellationToken);
-                var dequeueTask = _connection.ReceiveAsync((sequence) => otherProfileMessage = ProfileMessage.Import(sequence, _bytesPool), cancellationToken);
+                var enqueueTask = _connection.EnqueueAsync((bufferWriter) => myProfileMessage.Export(bufferWriter, _bytesPool), cancellationToken);
+                var dequeueTask = _connection.DequeueAsync((sequence) => otherProfileMessage = ProfileMessage.Import(sequence, _bytesPool), cancellationToken);
 
                 await ValueTaskHelper.WhenAll(enqueueTask, dequeueTask);
 
@@ -171,8 +171,8 @@ namespace Omnius.Core.Network.Connections.Secure.V1.Internal
                     {
                         myAgreementPrivateKey = myAgreement.GetOmniAgreementPrivateKey();
 
-                        var enqueueTask = _connection.SendAsync((bufferWriter) => myAgreement.GetOmniAgreementPublicKey().Export(bufferWriter, _bytesPool), cancellationToken);
-                        var dequeueTask = _connection.ReceiveAsync((sequence) => otherAgreementPublicKey = OmniAgreementPublicKey.Import(sequence, _bytesPool), cancellationToken);
+                        var enqueueTask = _connection.EnqueueAsync((bufferWriter) => myAgreement.GetOmniAgreementPublicKey().Export(bufferWriter, _bytesPool), cancellationToken);
+                        var dequeueTask = _connection.DequeueAsync((sequence) => otherAgreementPublicKey = OmniAgreementPublicKey.Import(sequence, _bytesPool), cancellationToken);
 
                         await ValueTaskHelper.WhenAll(enqueueTask, dequeueTask);
 
@@ -199,8 +199,8 @@ namespace Omnius.Core.Network.Connections.Secure.V1.Internal
                                 myAuthenticationMessage = new AuthenticationMessage(myHashAndPasswordList.Select(n => n.Item1).ToArray());
                             }
 
-                            var enqueueTask = _connection.SendAsync((bufferWriter) => myAuthenticationMessage.Export(bufferWriter, _bytesPool), cancellationToken);
-                            var dequeueTask = _connection.ReceiveAsync((sequence) => otherAuthenticationMessage = AuthenticationMessage.Import(sequence, _bytesPool), cancellationToken);
+                            var enqueueTask = _connection.EnqueueAsync((bufferWriter) => myAuthenticationMessage.Export(bufferWriter, _bytesPool), cancellationToken);
+                            var dequeueTask = _connection.DequeueAsync((sequence) => otherAuthenticationMessage = AuthenticationMessage.Import(sequence, _bytesPool), cancellationToken);
 
                             await ValueTaskHelper.WhenAll(enqueueTask, dequeueTask);
 
@@ -335,7 +335,7 @@ namespace Omnius.Core.Network.Connections.Secure.V1.Internal
             return results.Select(item => (item.Key, item.Value)).ToArray();
         }
 
-        private void Encoding(IBufferWriter<byte> bufferWriter, Action<IBufferWriter<byte>> action)
+        private void Encode(IBufferWriter<byte> bufferWriter, Action<IBufferWriter<byte>> action)
         {
             if (_status == null)
             {
@@ -398,17 +398,17 @@ namespace Omnius.Core.Network.Connections.Secure.V1.Internal
             throw new OmniSecureConnectionException("Conversion failed.");
         }
 
-        public bool TrySend(Action<IBufferWriter<byte>> action)
+        public bool TryEnqueue(Action<IBufferWriter<byte>> action)
         {
-            return _connection.TrySend((bufferWriter) => this.Encoding(bufferWriter, action));
+            return _connection.TryEnqueue((bufferWriter) => this.Encode(bufferWriter, action));
         }
 
-        public async ValueTask SendAsync(Action<IBufferWriter<byte>> action, CancellationToken cancellationToken = default)
+        public async ValueTask EnqueueAsync(Action<IBufferWriter<byte>> action, CancellationToken cancellationToken = default)
         {
-            await _connection.SendAsync((bufferWriter) => this.Encoding(bufferWriter, action), cancellationToken);
+            await _connection.EnqueueAsync((bufferWriter) => this.Encode(bufferWriter, action), cancellationToken);
         }
 
-        private void Decoding(ReadOnlySequence<byte> sequence, Action<ReadOnlySequence<byte>> action)
+        private void Decode(ReadOnlySequence<byte> sequence, Action<ReadOnlySequence<byte>> action)
         {
             if (_status == null)
             {
@@ -473,14 +473,14 @@ namespace Omnius.Core.Network.Connections.Secure.V1.Internal
             throw new OmniSecureConnectionException("Conversion failed.");
         }
 
-        public bool TryReceive(Action<ReadOnlySequence<byte>> action)
+        public bool TryDequeue(Action<ReadOnlySequence<byte>> action)
         {
-            return _connection.TryReceive((sequence) => this.Decoding(sequence, action));
+            return _connection.TryDequeue((sequence) => this.Decode(sequence, action));
         }
 
-        public async ValueTask ReceiveAsync(Action<ReadOnlySequence<byte>> action, CancellationToken cancellationToken = default)
+        public async ValueTask DequeueAsync(Action<ReadOnlySequence<byte>> action, CancellationToken cancellationToken = default)
         {
-            await _connection.ReceiveAsync((sequence) => this.Decoding(sequence, action), cancellationToken);
+            await _connection.DequeueAsync((sequence) => this.Decode(sequence, action), cancellationToken);
         }
 
         private sealed class Status

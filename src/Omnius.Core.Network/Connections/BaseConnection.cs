@@ -8,12 +8,12 @@ using Omnius.Core.Network.Caps;
 
 namespace Omnius.Core.Network.Connections
 {
-    public sealed class OmniNonblockingConnection : DisposableBase, IConnection
+    public sealed partial class BaseConnection : DisposableBase, IConnection
     {
         private readonly ICap _cap;
+        private readonly BaseConnectionDispatcher _dispatcher;
         private readonly int _maxSendByteCount;
         private readonly int _maxReceiveByteCount;
-        private readonly BandwidthController? _bandwidthController;
         private readonly IBytesPool _bytesPool;
 
         private readonly byte[] _sendHeaderBuffer = new byte[4];
@@ -36,34 +36,37 @@ namespace Omnius.Core.Network.Connections
         private readonly object _sendLockObject = new object();
         private readonly object _receiveLockObject = new object();
 
-        public OmniNonblockingConnection(ICap cap, OmniNonblockingConnectionOptions option)
+        public BaseConnection(ICap cap, BaseConnectionDispatcher dispatcher, BaseConnectionOptions option)
         {
-            if (cap == null)
-            {
-                throw new ArgumentNullException(nameof(cap));
-            }
-
-            if (cap.IsBlocking == true)
-            {
-                throw new ArgumentException($"{nameof(cap)} is not nonblocking", nameof(cap));
-            }
-
-            if (option == null)
-            {
-                throw new ArgumentNullException(nameof(option));
-            }
+            if (cap == null) throw new ArgumentNullException(nameof(cap));
+            if (dispatcher == null) throw new ArgumentNullException(nameof(dispatcher));
+            if (option == null) throw new ArgumentNullException(nameof(option));
 
             _cap = cap;
+            _dispatcher = dispatcher;
             _maxSendByteCount = Math.Max(256, option.MaxSendByteCount);
             _maxReceiveByteCount = Math.Max(256, option.MaxReceiveByteCount);
-            _bandwidthController = option.BandwidthController;
-            _bytesPool = option.BufferPool ?? BytesPool.Shared;
+            _bytesPool = option.BytesPool ?? BytesPool.Shared;
 
             _sendContentHub = new BytesHub(_bytesPool);
             _receiveContentHub = new BytesHub(_bytesPool);
 
             _receiveSemaphoreSlim = new SemaphoreSlim(0, 1);
             _sendSemaphoreSlim = new SemaphoreSlim(1, 1);
+
+            _dispatcher.Add(this);
+        }
+
+        protected override void OnDispose(bool disposing)
+        {
+            if (disposing)
+            {
+                _cap?.Dispose();
+                _sendContentHub?.Dispose();
+                _receiveContentHub?.Dispose();
+                _sendSemaphoreSlim?.Dispose();
+                _receiveSemaphoreSlim?.Dispose();
+            }
         }
 
         public ICap Cap => _cap;
@@ -74,32 +77,7 @@ namespace Omnius.Core.Network.Connections
         public long TotalBytesSent { get; }
         public long TotalBytesReceived { get; }
 
-        public void RunJobs()
-        {
-            if (_bandwidthController == null)
-            {
-                this.Send(_maxSendByteCount);
-                this.Receive(_maxReceiveByteCount);
-            }
-            else
-            {
-                lock (_bandwidthController.SendBytesLimiter.LockObject)
-                {
-                    var availableSize = _bandwidthController.SendBytesLimiter.ComputeFreeBytes();
-                    var sentSize = this.Send(availableSize);
-                    _bandwidthController.SendBytesLimiter.AddConsumedBytes(sentSize);
-                }
-
-                lock (_bandwidthController.ReceiveBytesLimiter.LockObject)
-                {
-                    var availableSize = _bandwidthController.ReceiveBytesLimiter.ComputeFreeBytes();
-                    var receivedSize = this.Receive(availableSize);
-                    _bandwidthController.ReceiveBytesLimiter.AddConsumedBytes(receivedSize);
-                }
-            }
-        }
-
-        private int Send(int limit)
+        internal int Send(int maxSize)
         {
             this.ThrowIfDisposingRequested();
             if (!this.IsConnected) throw new ConnectionException("Not connected");
@@ -109,7 +87,7 @@ namespace Omnius.Core.Network.Connections
                 int total = 0;
                 int loopCount = 0;
 
-                while (total < limit)
+                while (total < maxSize)
                 {
                     if (_sendHeaderBufferPosition == -1 && !_sendContentHubWriterIsCompleted) break;
                     if (++loopCount > 5) break;
@@ -128,11 +106,11 @@ namespace Omnius.Core.Network.Connections
                         var sequence = _sendContentHub.Reader.GetSequence();
                         var position = sequence.Start;
 
-                        while (total < limit && sequence.Length > 0 && sequence.TryGet(ref position, out var memory, false))
+                        while (total < maxSize && sequence.Length > 0 && sequence.TryGet(ref position, out var memory, false))
                         {
                             if (!_cap.CanSend())                                break;
 
-                            int readLength = Math.Min(limit - total, memory.Length);
+                            int readLength = Math.Min(maxSize - total, memory.Length);
                             int sendLength = _cap.Send(memory.Span.Slice(0, readLength));
                             if (sendLength <= 0) break;
 
@@ -161,7 +139,7 @@ namespace Omnius.Core.Network.Connections
             }
         }
 
-        private int Receive(int limit)
+        internal int Receive(int maxSize)
         {
             this.ThrowIfDisposingRequested();
 
@@ -172,7 +150,7 @@ namespace Omnius.Core.Network.Connections
                 int total = 0;
                 int loopCount = 0;
 
-                while (total < limit)
+                while (total < maxSize)
                 {
                     if (_receiveContentHubWriterIsCompleted) break;
                     if (++loopCount > 5) break;
@@ -227,7 +205,7 @@ namespace Omnius.Core.Network.Connections
             }
         }
 
-        private void InternalSend(Action<IBufferWriter<byte>> action)
+        private void InternalEnqueue(Action<IBufferWriter<byte>> action)
         {
             action.Invoke(_sendContentHub.Writer);
             _sendContentHubWriterIsCompleted = true;
@@ -236,21 +214,21 @@ namespace Omnius.Core.Network.Connections
             _sendHeaderBufferPosition = 0;
         }
 
-        public bool TrySend(Action<IBufferWriter<byte>> action)
+        public bool TryEnqueue(Action<IBufferWriter<byte>> action)
         {
             if (!_sendSemaphoreSlim.Wait(0)) return false;
 
-            this.InternalSend(action);
+            this.InternalEnqueue(action);
             return true;
         }
 
-        public async ValueTask SendAsync(Action<IBufferWriter<byte>> action, CancellationToken cancellationToken = default)
+        public async ValueTask EnqueueAsync(Action<IBufferWriter<byte>> action, CancellationToken cancellationToken = default)
         {
             await _sendSemaphoreSlim.WaitAsync(cancellationToken);
-            this.InternalSend(action);
+            this.InternalEnqueue(action);
         }
 
-        private void InternalReceive(Action<ReadOnlySequence<byte>> action)
+        private void InternalDequeue(Action<ReadOnlySequence<byte>> action)
         {
             var sequence = _receiveContentHub.Reader.GetSequence();
             action.Invoke(sequence);
@@ -259,30 +237,18 @@ namespace Omnius.Core.Network.Connections
             _receiveContentHubWriterIsCompleted = false;
         }
 
-        public bool TryReceive(Action<ReadOnlySequence<byte>> action)
+        public bool TryDequeue(Action<ReadOnlySequence<byte>> action)
         {
             if (!_receiveSemaphoreSlim.Wait(0)) return false;
 
-            this.InternalReceive(action);
+            this.InternalDequeue(action);
             return true;
         }
 
-        public async ValueTask ReceiveAsync(Action<ReadOnlySequence<byte>> action, CancellationToken cancellationToken = default)
+        public async ValueTask DequeueAsync(Action<ReadOnlySequence<byte>> action, CancellationToken cancellationToken = default)
         {
             await _receiveSemaphoreSlim.WaitAsync(cancellationToken);
-            this.InternalReceive(action);
-        }
-
-        protected override void OnDispose(bool disposing)
-        {
-            if (disposing)
-            {
-                _cap?.Dispose();
-                _sendContentHub?.Dispose();
-                _receiveContentHub?.Dispose();
-                _sendSemaphoreSlim?.Dispose();
-                _receiveSemaphoreSlim?.Dispose();
-            }
+            this.InternalDequeue(action);
         }
     }
 }
