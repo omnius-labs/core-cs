@@ -3,16 +3,15 @@ using System.Collections.Generic;
 
 namespace Omnius.Core.Collections
 {
-    public sealed partial class LockedDictionary<TDictionary, TKey, TValue> : IDictionary<TKey, TValue>, ICollection<KeyValuePair<TKey, TValue>>, IEnumerable<KeyValuePair<TKey, TValue>>, ISynchronized
-        where TDictionary : IDictionary<TKey, TValue>
+    public sealed partial class LockedDictionary<TKey, TValue> : IDictionary<TKey, TValue>, ICollection<KeyValuePair<TKey, TValue>>, IEnumerable<KeyValuePair<TKey, TValue>>, ISynchronized
         where TKey : notnull
     {
-        private readonly TDictionary _dic;
+        private readonly IDictionary<TKey, TValue> _dic;
 
         private LockedCollection<TKey>? _keys;
         private LockedCollection<TValue>? _values;
 
-        public LockedDictionary(TDictionary dictionary)
+        public LockedDictionary(IDictionary<TKey, TValue> dictionary)
         {
             _dic = dictionary;
         }

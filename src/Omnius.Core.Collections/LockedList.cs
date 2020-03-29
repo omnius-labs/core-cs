@@ -3,13 +3,11 @@ using System.Collections.Generic;
 
 namespace Omnius.Core.Collections
 {
-    public class LockedList<TList, TItem> : IList<TItem>, ICollection<TItem>, IEnumerable<TItem>, ISynchronized
-        where TList : IList<TItem>
-        where TItem : notnull
+    public class LockedList<TItem> : IList<TItem>, ICollection<TItem>, IEnumerable<TItem>, ISynchronized
     {
-        private readonly TList _list;
+        private readonly IList<TItem> _list;
 
-        public LockedList(TList list)
+        public LockedList(IList<TItem> list)
         {
             _list = list;
         }

@@ -10,8 +10,8 @@ namespace Omnius.Core.Collections
         private readonly Dictionary<TKey, Info<TValue>> _dic;
         private readonly TimeSpan _survivalTime;
 
-        private readonly VolatileKeyCollection? _keys;
-        private readonly VolatileValueCollection? _values;
+        private VolatileKeyCollection? _keys;
+        private VolatileValueCollection? _values;
 
         public VolatileDictionary(TimeSpan survivalTime)
         {
@@ -92,7 +92,7 @@ namespace Omnius.Core.Collections
         {
             get
             {
-                return _keys ?? _keys = new VolatileKeyCollection(_dic.Keys);
+                return _keys ?? (_keys = new VolatileKeyCollection(_dic.Keys));
             }
         }
 
@@ -100,7 +100,7 @@ namespace Omnius.Core.Collections
         {
             get
             {
-                return _values ?? _values = new VolatileValueCollection(_dic.Values);
+                return _values ?? (_values = new VolatileValueCollection(_dic.Values));
             }
         }
 

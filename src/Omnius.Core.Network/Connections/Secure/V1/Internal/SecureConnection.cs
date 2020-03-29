@@ -22,8 +22,6 @@ namespace Omnius.Core.Network.Connections.Secure.V1.Internal
         private readonly IReadOnlyList<string> _passwords;
         private readonly IBytesPool _bytesPool;
 
-        private long _totalSentSize;
-        private long _totalReceivedSize;
         private string[]? _matchedPasswords;
 
         private Status? _status;

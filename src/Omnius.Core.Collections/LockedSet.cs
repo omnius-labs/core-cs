@@ -3,12 +3,11 @@ using System.Collections.Generic;
 
 namespace Omnius.Core.Collections
 {
-    public class LockedSet<TSet, TItem> : ISet<TItem>, ICollection<TItem>, IEnumerable<TItem>, ISynchronized
-        where TSet : ISet<TItem>
+    public class LockedSet<TItem> : ISet<TItem>, ICollection<TItem>, IEnumerable<TItem>, ISynchronized
     {
-        private readonly TSet _set;
+        private readonly ISet<TItem> _set;
 
-        public LockedSet(TSet set)
+        public LockedSet(ISet<TItem> set)
         {
             _set = set;
         }

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Omnius.Core.Collections
 {
-    public partial class LockedDictionary<TDictionary, TKey, TValue>
+    public partial class LockedDictionary<TKey, TValue>
     {
         public sealed class LockedCollection<T> : ICollection<T>, IEnumerable<T>, ISynchronized
         {
