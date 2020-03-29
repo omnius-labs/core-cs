@@ -47,7 +47,7 @@ namespace Omnius.Core.Network.Connections
 
                     while (!cancellationToken.IsCancellationRequested)
                     {
-                        cancellationToken.WaitHandle.WaitOne(1000, cancellationToken);
+                        cancellationToken.WaitHandle.WaitOne(200, cancellationToken);
 
                         List<BaseConnection>? tempList = null;
 
