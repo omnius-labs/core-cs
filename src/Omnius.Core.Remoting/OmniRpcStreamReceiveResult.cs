@@ -13,6 +13,7 @@ namespace Omnius.Core.Remoting
 
         public OmniRpcStreamReceiveResult([AllowNull] TMessage message, OmniRpcErrorMessage? errorMessage, bool isCanceled, bool isCompleted)
         {
+            // messageがnullになる可能性あり。
             _message = message;
             _errorMessage = errorMessage;
 

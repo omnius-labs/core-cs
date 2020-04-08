@@ -43,6 +43,7 @@ namespace Omnius.Core
             return this.Equals((AtomicCounter)obj);
         }
 
+        // nullが入る可能性あり。
         public bool Equals(AtomicCounter other)
         {
             if ((object)other == null)

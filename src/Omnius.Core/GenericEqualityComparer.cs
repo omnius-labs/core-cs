@@ -20,6 +20,7 @@ namespace Omnius.Core
             _getHashCode = getHashCode;
         }
 
+        // nullが入る可能性あり。
         public bool Equals(T x, T y)
         {
             return _predicate(x, y);

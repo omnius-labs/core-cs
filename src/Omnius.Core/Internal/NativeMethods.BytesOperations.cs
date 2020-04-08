@@ -24,6 +24,7 @@ namespace Omnius.Core.Internal
             public static BitwiseOperationDelegate Or { get; private set; }
             public static BitwiseOperationDelegate Xor { get; private set; }
 
+            // 初期化コードが入っていない。
             static BytesOperations()
             {
                 if (!TryLoadNativeMethods())
