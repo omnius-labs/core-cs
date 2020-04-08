@@ -369,6 +369,7 @@ namespace Omnius.Core.Network.Connections.Secure.V1.Internal
 
                                 aes.Encrypt(_status.MyNonce, plaintext, ciphertext, tag);
                                 Increment(ref _status.MyNonce);
+
                                 bufferWriter.Write(ciphertext);
                                 bufferWriter.Write(tag);
                             }
@@ -442,10 +443,8 @@ namespace Omnius.Core.Network.Connections.Secure.V1.Internal
                                 sequence = sequence.Slice(tag.Length);
 
                                 aes.Decrypt(_status.OtherNonce, ciphertext, tag, plaintext);
-                                if (Array.IndexOf(_status.OtherNonce, null) > -1){
-                                    Increment(ref _status.MyNonce);
-                                }
-                                
+                                Increment(ref _status.OtherNonce);
+
                                 hub.Writer.Write(plaintext);
                             }
                         }
@@ -487,11 +486,11 @@ namespace Omnius.Core.Network.Connections.Secure.V1.Internal
             public CryptoAlgorithm CryptoAlgorithm;
             public HashAlgorithm HashAlgorithm;
 
-            public byte[] MyCryptoKey = {};
-            public byte[] OtherCryptoKey = {};
+            public byte[] MyCryptoKey;
+            public byte[] OtherCryptoKey;
 
-            public byte[] MyNonce = {};
-            public byte[] OtherNonce = {};
+            public byte[] MyNonce;
+            public byte[] OtherNonce;
         }
     }
 }
