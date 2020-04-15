@@ -1,4 +1,4 @@
-namespace Omnius.Core.Net.Upnp
+namespace Omnius.Core.Network.Upnp
 {
     public enum UpnpProtocolType
     {

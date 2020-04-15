@@ -30,7 +30,7 @@ namespace Omnius.Core.Remoting
         public async ValueTask SendMessageAsync<TMessage>(TMessage message, CancellationToken cancellationToken = default)
             where TMessage : IRocketPackObject<TMessage>
         {
-            await _connection.SendAsync((bufferWriter) =>
+            await _connection.EnqueueAsync((bufferWriter) =>
             {
                 bufferWriter.GetSpan(1)[0] = (byte)PacketType.Message;
                 bufferWriter.Advance(1);
@@ -41,7 +41,7 @@ namespace Omnius.Core.Remoting
 
         public async ValueTask SendErrorMessageAsync(OmniRpcErrorMessage errorMessage, CancellationToken cancellationToken = default)
         {
-            await _connection.SendAsync((bufferWriter) =>
+            await _connection.EnqueueAsync((bufferWriter) =>
             {
                 bufferWriter.GetSpan(1)[0] = (byte)PacketType.ErrorMessage;
                 bufferWriter.Advance(1);
@@ -51,7 +51,7 @@ namespace Omnius.Core.Remoting
 
         public async ValueTask SendCanceledAsync(CancellationToken cancellationToken = default)
         {
-            await _connection.SendAsync((bufferWriter) =>
+            await _connection.EnqueueAsync((bufferWriter) =>
             {
                 bufferWriter.GetSpan(1)[0] = (byte)PacketType.Canceled;
                 bufferWriter.Advance(1);
@@ -60,7 +60,7 @@ namespace Omnius.Core.Remoting
 
         public async ValueTask SendCompletedAsync(CancellationToken cancellationToken = default)
         {
-            await _connection.SendAsync((bufferWriter) =>
+            await _connection.EnqueueAsync((bufferWriter) =>
             {
                 bufferWriter.GetSpan(1)[0] = (byte)PacketType.Completed;
                 bufferWriter.Advance(1);
@@ -72,7 +72,7 @@ namespace Omnius.Core.Remoting
         {
             OmniRpcStreamReceiveResult<TMessage> receiveResult = default;
 
-            await _connection.ReceiveAsync((sequence) =>
+            await _connection.DequeueAsync((sequence) =>
             {
                 Span<byte> type = stackalloc byte[1];
                 sequence.CopyTo(type);

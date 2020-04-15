@@ -1,8 +1,8 @@
-﻿using System;
+using System;
 
 namespace Omnius.Core.Network.Connections.Secure
 {
-    public class OmniSecureConnectionException : Exception
+    public sealed class OmniSecureConnectionException : Exception
     {
         public OmniSecureConnectionException() : base() { }
         public OmniSecureConnectionException(string message) : base(message) { }

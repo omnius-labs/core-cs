@@ -10,20 +10,13 @@ namespace Omnius.Core.Network.Caps
 
         private volatile bool _isConnected;
 
-        public SocketCap(Socket socket, bool blocking)
+        public SocketCap(Socket socket)
         {
-            if (socket == null)
-            {
-                throw new ArgumentNullException(nameof(socket));
-            }
-
-            if (!socket.Connected)
-            {
-                throw new ArgumentException("Socket is not connected.");
-            }
+            if (socket == null) throw new ArgumentNullException(nameof(socket));
+            if (!socket.Connected) throw new ArgumentException("Socket is not connected.");
 
             _socket = socket;
-            _socket.Blocking = blocking;
+            _socket.Blocking = false;
             _socket.ReceiveBufferSize = 1024 * 32;
             _socket.SendBufferSize = 1024 * 32;
             _socket.NoDelay = true;

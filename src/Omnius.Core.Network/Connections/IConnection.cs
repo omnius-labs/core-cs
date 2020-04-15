@@ -12,12 +12,10 @@ namespace Omnius.Core.Network.Connections
         long TotalBytesSent { get; }
         long TotalBytesReceived { get; }
 
-        void RunJobs();
+        bool TryEnqueue(Action<IBufferWriter<byte>> action);
+        ValueTask EnqueueAsync(Action<IBufferWriter<byte>> action, CancellationToken cancellationToken = default);
 
-        bool TrySend(Action<IBufferWriter<byte>> action);
-        ValueTask SendAsync(Action<IBufferWriter<byte>> action, CancellationToken cancellationToken = default);
-
-        bool TryReceive(Action<ReadOnlySequence<byte>> action);
-        ValueTask ReceiveAsync(Action<ReadOnlySequence<byte>> action, CancellationToken cancellationToken = default);
+        bool TryDequeue(Action<ReadOnlySequence<byte>> action);
+        ValueTask DequeueAsync(Action<ReadOnlySequence<byte>> action, CancellationToken cancellationToken = default);
     }
 }

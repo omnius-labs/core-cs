@@ -2,7 +2,7 @@ using System;
 
 namespace Omnius.Core.Collections
 {
-    public interface IVolatileCollection<T>
+    public interface IVolatile<T>
     {
         /// <summary>
         /// 古いアイテムを削除します。

@@ -1,5 +1,4 @@
-using System.Collections.Generic;
-using Omnius.Core;
+﻿using System.Collections.Generic;
 
 namespace Omnius.Core.Network.Connections.Secure
 {

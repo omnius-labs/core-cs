@@ -1,7 +1,6 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Omnius.Core.Net.Upnp;
 using Xunit;
 
 namespace Omnius.Core.Network.Upnp

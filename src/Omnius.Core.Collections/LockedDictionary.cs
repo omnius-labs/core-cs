@@ -1,60 +1,19 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using Omnius.Core.Base;
 
 namespace Omnius.Core.Collections
 {
-    public partial class LockedSortedDictionary<TKey, TValue> : IDictionary<TKey, TValue>, ICollection<KeyValuePair<TKey, TValue>>, IDictionary, ICollection, IEnumerable<KeyValuePair<TKey, TValue>>, IEnumerable, ISynchronized
+    public sealed partial class LockedDictionary<TKey, TValue> : IDictionary<TKey, TValue>, ICollection<KeyValuePair<TKey, TValue>>, IEnumerable<KeyValuePair<TKey, TValue>>, ISynchronized
         where TKey : notnull
     {
-        private readonly SortedDictionary<TKey, TValue> _dic;
-        private int? _capacity;
+        private readonly IDictionary<TKey, TValue> _dic;
 
         private LockedCollection<TKey>? _keys;
         private LockedCollection<TValue>? _values;
 
-        public LockedSortedDictionary()
+        public LockedDictionary(IDictionary<TKey, TValue> dictionary)
         {
-            _dic = new SortedDictionary<TKey, TValue>();
-        }
-
-        public LockedSortedDictionary(int capacity)
-        {
-            _dic = new SortedDictionary<TKey, TValue>();
-            _capacity = capacity;
-        }
-
-        public LockedSortedDictionary(IDictionary<TKey, TValue> dictionary)
-        {
-            _dic = new SortedDictionary<TKey, TValue>();
-
-            foreach (var item in dictionary)
-            {
-                this.Add(item.Key, item.Value);
-            }
-        }
-
-        public LockedSortedDictionary(IComparer<TKey> comparer)
-        {
-            _dic = new SortedDictionary<TKey, TValue>(comparer);
-        }
-
-        public LockedSortedDictionary(int capacity, IComparer<TKey> comparer)
-        {
-            _dic = new SortedDictionary<TKey, TValue>(comparer);
-            _capacity = capacity;
-        }
-
-        public LockedSortedDictionary(IDictionary<TKey, TValue> dictionary, IComparer<TKey> comparer)
-        {
-            _dic = new SortedDictionary<TKey, TValue>(comparer);
-
-            foreach (var item in dictionary)
-            {
-                this.Add(item.Key, item.Value);
-            }
+            _dic = dictionary;
         }
 
         public object LockObject { get; } = new object();
@@ -92,35 +51,6 @@ namespace Omnius.Core.Collections
             }
         }
 
-        public int? Capacity
-        {
-            get
-            {
-                lock (this.LockObject)
-                {
-                    return _capacity;
-                }
-            }
-            set
-            {
-                lock (this.LockObject)
-                {
-                    _capacity = value;
-                }
-            }
-        }
-
-        public IComparer<TKey> Comparer
-        {
-            get
-            {
-                lock (this.LockObject)
-                {
-                    return _dic.Comparer;
-                }
-            }
-        }
-
         public int Count
         {
             get
@@ -154,11 +84,6 @@ namespace Omnius.Core.Collections
         {
             lock (this.LockObject)
             {
-                if (_capacity != null && _dic.Count + 1 > _capacity.Value)
-                {
-                    throw new OverflowException();
-                }
-
                 int count = _dic.Count;
                 _dic[key] = value;
 
@@ -179,14 +104,6 @@ namespace Omnius.Core.Collections
             lock (this.LockObject)
             {
                 return _dic.ContainsKey(key);
-            }
-        }
-
-        public bool ContainsValue(TValue value)
-        {
-            lock (this.LockObject)
-            {
-                return _dic.ContainsValue(value);
             }
         }
 
@@ -236,87 +153,6 @@ namespace Omnius.Core.Collections
             }
         }
 
-        bool IDictionary.IsFixedSize => false;
-
-        bool IDictionary.IsReadOnly => false;
-
-        ICollection IDictionary.Keys
-        {
-            get
-            {
-                lock (this.LockObject)
-                {
-                    return this.Keys;
-                }
-            }
-        }
-
-        ICollection IDictionary.Values
-        {
-            get
-            {
-                lock (this.LockObject)
-                {
-                    return this.Values;
-                }
-            }
-        }
-
-        object IDictionary.this[object key]
-        {
-            get
-            {
-                lock (this.LockObject)
-                {
-                    return this[(TKey)key]!;
-                }
-            }
-            set
-            {
-                lock (this.LockObject)
-                {
-                    this[(TKey)key] = (TValue)value;
-                }
-            }
-        }
-
-        void IDictionary.Add(object key, object? value)
-        {
-            if (value is null)
-            {
-                throw new NullReferenceException(nameof(value));
-            }
-
-            lock (this.LockObject)
-            {
-                this.Add((TKey)key, (TValue)value);
-            }
-        }
-
-        bool IDictionary.Contains(object key)
-        {
-            lock (this.LockObject)
-            {
-                return this.ContainsKey((TKey)key);
-            }
-        }
-
-        IDictionaryEnumerator IDictionary.GetEnumerator()
-        {
-            lock (this.LockObject)
-            {
-                return _dic.GetEnumerator();
-            }
-        }
-
-        void IDictionary.Remove(object key)
-        {
-            lock (this.LockObject)
-            {
-                this.Remove((TKey)key);
-            }
-        }
-
         bool ICollection<KeyValuePair<TKey, TValue>>.IsReadOnly => false;
 
         void ICollection<KeyValuePair<TKey, TValue>>.Add(KeyValuePair<TKey, TValue> item)
@@ -347,19 +183,7 @@ namespace Omnius.Core.Collections
         {
             lock (this.LockObject)
             {
-                return ((IDictionary<TKey, TValue>)_dic).Remove(keyValuePair);
-            }
-        }
-
-        bool ICollection.IsSynchronized => true;
-
-        object ICollection.SyncRoot => this.LockObject;
-
-        void ICollection.CopyTo(Array array, int index)
-        {
-            lock (this.LockObject)
-            {
-                ((ICollection)_dic).CopyTo(array, index);
+                return _dic.Remove(keyValuePair);
             }
         }
 

@@ -1,72 +1,18 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
-using Omnius.Core.Base;
 
 namespace Omnius.Core.Collections
 {
-    public class LockedList<T> : IList<T>, ICollection<T>, IEnumerable<T>, IList, ICollection, IEnumerable, ISynchronized
-        where T : notnull
+    public class LockedList<TItem> : IList<TItem>, ICollection<TItem>, IEnumerable<TItem>, ISynchronized
     {
-        private readonly List<T> _list;
-        private int? _capacity;
+        private readonly IList<TItem> _list;
 
-        public LockedList()
+        public LockedList(IList<TItem> list)
         {
-            _list = new List<T>();
-        }
-
-        public LockedList(int capacity)
-        {
-            _list = new List<T>();
-            _capacity = capacity;
-        }
-
-        public LockedList(IEnumerable<T> collection)
-        {
-            _list = new List<T>();
-
-            foreach (var item in collection)
-            {
-                this.Add(item);
-            }
+            _list = list;
         }
 
         public object LockObject { get; } = new object();
-
-        protected virtual bool Filter(T item)
-        {
-            return false;
-        }
-
-        public T[] ToArray()
-        {
-            lock (this.LockObject)
-            {
-                var array = new T[_list.Count];
-                _list.CopyTo(array, 0);
-
-                return array;
-            }
-        }
-
-        public int? Capacity
-        {
-            get
-            {
-                lock (this.LockObject)
-                {
-                    return _capacity;
-                }
-            }
-            set
-            {
-                lock (this.LockObject)
-                {
-                    _capacity = value;
-                }
-            }
-        }
 
         public int Count
         {
@@ -79,7 +25,29 @@ namespace Omnius.Core.Collections
             }
         }
 
-        public T this[int index]
+        public bool IsReadOnly
+        {
+            get
+            {
+                lock (this.LockObject)
+                {
+                    return _list.IsReadOnly;
+                }
+            }
+        }
+
+        public TItem[] ToArray()
+        {
+            lock (this.LockObject)
+            {
+                var array = new TItem[_list.Count];
+                _list.CopyTo(array, 0);
+
+                return array;
+            }
+        }
+
+        public TItem this[int index]
         {
             get
             {
@@ -97,31 +65,15 @@ namespace Omnius.Core.Collections
             }
         }
 
-        public void Add(T item)
+        public void Add(TItem item)
         {
             lock (this.LockObject)
             {
-                if (_capacity != null && _list.Count + 1 > _capacity.Value)
-                {
-                    throw new OverflowException();
-                }
-
-                if (this.Filter(item))
-                {
-                    return;
-                }
-
-                // 姑息な、メモリ消費量を減少させる策。
-                if (_list.Count < 16)
-                {
-                    _list.Capacity = _list.Count + 1;
-                }
-
                 _list.Add(item);
             }
         }
 
-        public void AddRange(IEnumerable<T> collection)
+        public void AddRange(IEnumerable<TItem> collection)
         {
             lock (this.LockObject)
             {
@@ -140,7 +92,7 @@ namespace Omnius.Core.Collections
             }
         }
 
-        public bool Contains(T item)
+        public bool Contains(TItem item)
         {
             lock (this.LockObject)
             {
@@ -148,7 +100,7 @@ namespace Omnius.Core.Collections
             }
         }
 
-        public void CopyTo(T[] array, int arrayIndex)
+        public void CopyTo(TItem[] array, int arrayIndex)
         {
             lock (this.LockObject)
             {
@@ -156,63 +108,7 @@ namespace Omnius.Core.Collections
             }
         }
 
-        public LockedList<T> GetRange(int index, int count)
-        {
-            lock (this.LockObject)
-            {
-                return new LockedList<T>(_list.GetRange(index, count));
-            }
-        }
-
-        public void Sort(IComparer<T> comparer)
-        {
-            lock (this.LockObject)
-            {
-                _list.Sort(comparer);
-            }
-        }
-
-        public void Sort(int index, int count, IComparer<T> comparer)
-        {
-            lock (this.LockObject)
-            {
-                _list.Sort(index, count, comparer);
-            }
-        }
-
-        public void Sort(Comparison<T> comparerison)
-        {
-            lock (this.LockObject)
-            {
-                _list.Sort(comparerison);
-            }
-        }
-
-        public void Sort()
-        {
-            lock (this.LockObject)
-            {
-                _list.Sort();
-            }
-        }
-
-        public void Reverse()
-        {
-            lock (this.LockObject)
-            {
-                _list.Reverse();
-            }
-        }
-
-        public void Reverse(int index, int count)
-        {
-            lock (this.LockObject)
-            {
-                _list.Reverse(index, count);
-            }
-        }
-
-        public int IndexOf(T item)
+        public int IndexOf(TItem item)
         {
             lock (this.LockObject)
             {
@@ -220,7 +116,7 @@ namespace Omnius.Core.Collections
             }
         }
 
-        public void Insert(int index, T item)
+        public void Insert(int index, TItem item)
         {
             lock (this.LockObject)
             {
@@ -228,15 +124,7 @@ namespace Omnius.Core.Collections
             }
         }
 
-        public void InsertRange(int index, IEnumerable<T> collection)
-        {
-            lock (this.LockObject)
-            {
-                _list.InsertRange(index, collection);
-            }
-        }
-
-        public bool Remove(T item)
+        public bool Remove(TItem item)
         {
             lock (this.LockObject)
             {
@@ -252,108 +140,7 @@ namespace Omnius.Core.Collections
             }
         }
 
-        public void RemoveRange(int index, int count)
-        {
-            lock (this.LockObject)
-            {
-                _list.RemoveRange(index, count);
-            }
-        }
-
-        public int RemoveAll(Predicate<T> match)
-        {
-            lock (this.LockObject)
-            {
-                return _list.RemoveAll(match);
-            }
-        }
-
-        public void TrimExcess()
-        {
-            lock (this.LockObject)
-            {
-                _list.TrimExcess();
-            }
-        }
-
-        bool IList.IsFixedSize => false;
-
-        bool IList.IsReadOnly => false;
-
-        object IList.this[int index]
-        {
-            get
-            {
-                lock (this.LockObject)
-                {
-                    return this[index]!;
-                }
-            }
-            set
-            {
-                lock (this.LockObject)
-                {
-                    this[index] = (T)value;
-                }
-            }
-        }
-
-        int IList.Add(object item)
-        {
-            lock (this.LockObject)
-            {
-                this.Add((T)item);
-                return _list.Count - 1;
-            }
-        }
-
-        bool IList.Contains(object item)
-        {
-            lock (this.LockObject)
-            {
-                return this.Contains((T)item);
-            }
-        }
-
-        int IList.IndexOf(object item)
-        {
-            lock (this.LockObject)
-            {
-                return this.IndexOf((T)item);
-            }
-        }
-
-        void IList.Insert(int index, object item)
-        {
-            lock (this.LockObject)
-            {
-                this.Insert(index, (T)item);
-            }
-        }
-
-        void IList.Remove(object item)
-        {
-            lock (this.LockObject)
-            {
-                this.Remove((T)item);
-            }
-        }
-
-        bool ICollection<T>.IsReadOnly => false;
-
-        bool ICollection.IsSynchronized => true;
-
-        object ICollection.SyncRoot => this.LockObject;
-
-        void ICollection.CopyTo(Array array, int index)
-        {
-            lock (this.LockObject)
-            {
-                ((ICollection)_list).CopyTo(array, index);
-            }
-        }
-
-        public IEnumerator<T> GetEnumerator()
+        public IEnumerator<TItem> GetEnumerator()
         {
             lock (this.LockObject)
             {

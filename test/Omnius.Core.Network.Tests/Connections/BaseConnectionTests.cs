@@ -7,12 +7,11 @@ using System.Threading;
 using System.Threading.Tasks;
 using Omnius.Core;
 using Omnius.Core.Network.Caps;
-using Omnius.Core.Network.Connections.Secure;
 using Xunit;
 
 namespace Omnius.Core.Network.Connections
 {
-    public class OmniSecureConnectionTests
+    public class BaseConnectionTests
     {
         [Fact]
         public async Task RandomSendAndReceiveTest()
@@ -27,8 +26,8 @@ namespace Omnius.Core.Network.Connections
 
             var dispatcherOptions = new BaseConnectionDispatcherOptions()
             {
-                MaxSendBytesPerSeconds = 1024 * 1024 * 1,
-                MaxReceiveBytesPerSeconds = 1024 * 1024 * 1,
+                MaxSendBytesPerSeconds = 1024 * 1024 * 32,
+                MaxReceiveBytesPerSeconds = 1024 * 1024 * 32,
             };
 
             var options = new BaseConnectionOptions()
@@ -39,28 +38,8 @@ namespace Omnius.Core.Network.Connections
             };
 
             await using var dispatcher = new BaseConnectionDispatcher(dispatcherOptions);
-            using var baseConnection1 = new BaseConnection(new SocketCap(socket1), dispatcher, options);
-            using var baseConnection2 = new BaseConnection(new SocketCap(socket2), dispatcher, options);
-            using var connection1 = new OmniSecureConnection(baseConnection1, new OmniSecureConnectionOptions() { Type = OmniSecureConnectionType.Connected });
-            using var connection2 = new OmniSecureConnection(baseConnection2, new OmniSecureConnectionOptions() { Type = OmniSecureConnectionType.Accepted });
-
-            // ハンドシェイクを行う
-            {
-                var valueTask1 = connection1.HandshakeAsync();
-                var valueTask2 = connection2.HandshakeAsync();
-
-                var stopwatch = Stopwatch.StartNew();
-
-                while (!valueTask1.IsCompleted || !valueTask2.IsCompleted)
-                {
-                    if (stopwatch.Elapsed.TotalSeconds > 60)
-                    {
-                        throw new TimeoutException("Handshake");
-                    }
-
-                    await Task.Delay(100).ConfigureAwait(false);
-                }
-            }
+            using var connection1 = new BaseConnection(new SocketCap(socket1), dispatcher, options);
+            using var connection2 = new BaseConnection(new SocketCap(socket2), dispatcher, options);
 
             foreach (var bufferSize in caseList)
             {
@@ -92,6 +71,7 @@ namespace Omnius.Core.Network.Connections
                 }
 
                 Assert.Equal(buffer1, buffer2);
+                Debug.WriteLine($"BaseConnectionTests RandomSendAndReceiveTest ({bufferSize})");
             }
         }
     }

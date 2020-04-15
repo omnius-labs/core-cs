@@ -92,16 +92,11 @@ namespace Omnius.Core.Network.Connections.Secure
             throw new OmniSecureConnectionException($"Overlap enum of {nameof(T)} could not be found.");
         }
 
-        public void RunJobs()
-        {
-            _connection.RunJobs();
-        }
-
-        public async ValueTask Handshake(CancellationToken cancellationToken = default)
+        public async ValueTask HandshakeAsync(CancellationToken cancellationToken = default)
         {
             try
             {
-                await this.Hello(cancellationToken);
+                await this.HelloAsync(cancellationToken);
 
                 if (_version == OmniSecureConnectionVersion.Version1)
                 {
@@ -123,15 +118,15 @@ namespace Omnius.Core.Network.Connections.Secure
             }
         }
 
-        private async ValueTask Hello(CancellationToken cancellationToken)
+        private async ValueTask HelloAsync(CancellationToken cancellationToken)
         {
             HelloMessage sendHelloMessage;
             HelloMessage? receiveHelloMessage = null;
             {
                 sendHelloMessage = new HelloMessage(new[] { _version });
 
-                var enqueueTask = _connection.SendAsync((bufferWriter) => sendHelloMessage.Export(bufferWriter, _bytesPool), cancellationToken);
-                var dequeueTask = _connection.ReceiveAsync((sequence) => receiveHelloMessage = HelloMessage.Import(sequence, _bytesPool), cancellationToken);
+                var enqueueTask = _connection.EnqueueAsync((bufferWriter) => sendHelloMessage.Export(bufferWriter, _bytesPool), cancellationToken);
+                var dequeueTask = _connection.DequeueAsync((sequence) => receiveHelloMessage = HelloMessage.Import(sequence, _bytesPool), cancellationToken);
 
                 await ValueTaskHelper.WhenAll(enqueueTask, dequeueTask);
 
@@ -144,11 +139,11 @@ namespace Omnius.Core.Network.Connections.Secure
             _version = GetOverlapMaxEnum(sendHelloMessage.Versions, receiveHelloMessage.Versions);
         }
 
-        public bool TrySend(Action<IBufferWriter<byte>> action)
+        public bool TryEnqueue(Action<IBufferWriter<byte>> action)
         {
             if (_secureConnection_v1 != null)
             {
-                return _secureConnection_v1.TrySend(action);
+                return _secureConnection_v1.TryEnqueue(action);
             }
             else
             {
@@ -156,11 +151,11 @@ namespace Omnius.Core.Network.Connections.Secure
             }
         }
 
-        public async ValueTask SendAsync(Action<IBufferWriter<byte>> action, CancellationToken cancellationToken = default)
+        public async ValueTask EnqueueAsync(Action<IBufferWriter<byte>> action, CancellationToken cancellationToken = default)
         {
             if (_secureConnection_v1 != null)
             {
-                await _secureConnection_v1.SendAsync(action, cancellationToken);
+                await _secureConnection_v1.EnqueueAsync(action, cancellationToken);
             }
             else
             {
@@ -168,11 +163,11 @@ namespace Omnius.Core.Network.Connections.Secure
             }
         }
 
-        public bool TryReceive(Action<ReadOnlySequence<byte>> action)
+        public bool TryDequeue(Action<ReadOnlySequence<byte>> action)
         {
             if (_secureConnection_v1 != null)
             {
-                return _secureConnection_v1.TryReceive(action);
+                return _secureConnection_v1.TryDequeue(action);
             }
             else
             {
@@ -180,11 +175,11 @@ namespace Omnius.Core.Network.Connections.Secure
             }
         }
 
-        public async ValueTask ReceiveAsync(Action<ReadOnlySequence<byte>> action, CancellationToken cancellationToken = default)
+        public async ValueTask DequeueAsync(Action<ReadOnlySequence<byte>> action, CancellationToken cancellationToken = default)
         {
             if (_secureConnection_v1 != null)
             {
-                await _secureConnection_v1.ReceiveAsync(action, cancellationToken);
+                await _secureConnection_v1.DequeueAsync(action, cancellationToken);
             }
             else
             {

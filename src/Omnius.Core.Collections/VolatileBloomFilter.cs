@@ -3,12 +3,11 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using Omnius.Core.Base;
-using Omnius.Core.Base.Extensions;
+using Omnius.Core.Extensions;
 
 namespace Omnius.Core.Collections
 {
-    public sealed class VolatileBloomFilter<T> : IVolatileCollection<T>, ISynchronized
+    public sealed class VolatileBloomFilter<T> : IVolatile<T>
     {
         private readonly Dictionary<DateTime, BitArray> _map;
         private readonly int _capacity;
@@ -74,92 +73,75 @@ namespace Omnius.Core.Collections
             }
         }
 
-        public object LockObject { get; } = new object();
-
         public TimeSpan SurvivalTime => _survivalTime;
 
         public TimeSpan GetElapsedTime(T item)
         {
-            lock (this.LockObject)
+            var now = DateTime.UtcNow;
+            ComputeHashes(_hashFunction(item), _hashes, _bitCount);
+
+            foreach (var (updateTime, bits) in _map)
             {
-                var now = DateTime.UtcNow;
-                ComputeHashes(_hashFunction(item), _hashes, _bitCount);
-
-                foreach (var (updateTime, bits) in _map)
+                if (Contains(bits, _hashes))
                 {
-                    if (Contains(bits, _hashes))
-                    {
-                        return (now - updateTime);
-                    }
+                    return (now - updateTime);
                 }
-
-                return _survivalTime;
             }
+
+            return _survivalTime;
         }
 
         public void Refresh()
         {
-            lock (this.LockObject)
-            {
-                var now = DateTime.UtcNow;
+            var now = DateTime.UtcNow;
 
-                foreach (var updateTime in _map.Keys.ToArray())
+            foreach (var updateTime in _map.Keys.ToArray())
+            {
+                if ((now - updateTime) > _survivalTime)
                 {
-                    if ((now - updateTime) > _survivalTime)
-                    {
-                        _map.Remove(updateTime);
-                    }
+                    _map.Remove(updateTime);
                 }
             }
         }
 
         public void Add(T item)
         {
-            lock (this.LockObject)
+            var now = DateTime.UtcNow;
+            now = now.AddTicks(-(now.Ticks % _unitTime.Ticks));
+
+            var bits = _map.GetOrAdd(now, (_) => new BitArray(_bitCount));
+
+            ComputeHashes(_hashFunction(item), _hashes, _bitCount);
+            SetFlags(bits, _hashes);
+        }
+
+        public void AddRange(IEnumerable<T> collection)
+        {
+            var now = DateTime.UtcNow;
+            now = now.AddTicks(-(now.Ticks % _unitTime.Ticks));
+
+            var bits = _map.GetOrAdd(now, (_) => new BitArray(_bitCount));
+
+            foreach (var item in collection)
             {
-                var now = DateTime.UtcNow;
-                now = now.AddTicks(-(now.Ticks % _unitTime.Ticks));
-
-                var bits = _map.GetOrAdd(now, (_) => new BitArray(_bitCount));
-
                 ComputeHashes(_hashFunction(item), _hashes, _bitCount);
                 SetFlags(bits, _hashes);
             }
         }
 
-        public void AddRange(IEnumerable<T> collection)
-        {
-            lock (this.LockObject)
-            {
-                var now = DateTime.UtcNow;
-                now = now.AddTicks(-(now.Ticks % _unitTime.Ticks));
-
-                var bits = _map.GetOrAdd(now, (_) => new BitArray(_bitCount));
-
-                foreach (var item in collection)
-                {
-                    ComputeHashes(_hashFunction(item), _hashes, _bitCount);
-                    SetFlags(bits, _hashes);
-                }
-            }
-        }
-
         public bool Contains(T item)
         {
-            lock (this.LockObject)
+            ComputeHashes(_hashFunction(item), _hashes, _bitCount);
+
+            foreach (var bits in _map.Values)
             {
-                ComputeHashes(_hashFunction(item), _hashes, _bitCount);
-
-                foreach (var bits in _map.Values)
+                if (Contains(bits, _hashes))
                 {
-                    if (Contains(bits, _hashes))
-                    {
-                        return true;
-                    }
+                    return true;
                 }
-
-                return false;
             }
+
+            return false;
         }
     }
 }

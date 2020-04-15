@@ -1,13 +1,12 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Omnius.Core.Base;
 
 namespace Omnius.Core.Collections
 {
-    public partial class LockedSortedDictionary<TKey, TValue>
+    public partial class LockedDictionary<TKey, TValue>
     {
-        public sealed class LockedCollection<T> : ICollection<T>, IEnumerable<T>, ICollection, IEnumerable, ISynchronized
+        public sealed class LockedCollection<T> : ICollection<T>, IEnumerable<T>, ISynchronized
         {
             private readonly ICollection<T> _collection;
 
@@ -62,18 +61,6 @@ namespace Omnius.Core.Collections
                 lock (this.LockObject)
                 {
                     return _collection.Contains(item);
-                }
-            }
-
-            bool ICollection.IsSynchronized => true;
-
-            object ICollection.SyncRoot => this.LockObject;
-
-            void ICollection.CopyTo(Array array, int index)
-            {
-                lock (this.LockObject)
-                {
-                    ((ICollection)_collection).CopyTo(array, index);
                 }
             }
 
