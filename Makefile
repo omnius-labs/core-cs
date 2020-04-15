@@ -10,6 +10,6 @@ test:
 clean:
 	rm -rf ./bin
 	rm -rf ./tmp
-	rm -rf ./publish
+	rm -rf ./pub
 
 .PHONY: all test clean

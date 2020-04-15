@@ -14,4 +14,4 @@ for path in $(find "test" -maxdepth 2 -type f -name "*.csproj"); do
     fi
 done
 
-dotnet tool run reportgenerator "--reports:tmp/test/linux/*.opencover.xml" "--targetdir:publish/code-coverage/linux"
+dotnet tool run reportgenerator "--reports:tmp/test/linux/*.opencover.xml" "--targetdir:pub/code-coverage/linux"
