@@ -2,29 +2,29 @@ name: update
 
 on:
   schedule:
-    - cron: "* 12 * * 0"
+    - cron: "0 12 * * 0"
 
 jobs:
   update:
     runs-on: ubuntu-latest
     steps:
-      - name: checkout develop branch
+      - name: Checkout develop branch
         uses: actions/checkout@v2
         with:
           ref: develop
-      - name: install dotnet
+      - name: Install dotnet
         uses: actions/setup-dotnet@v1
         with:
           dotnet-version: 3.1.201
-      - name: security update
+      - name: Security Update
         run: make update
-      - name: create pull request
+      - name: Create Pull-Request
         uses: peter-evans/create-pull-request@v2
         with:
           title: Security Update into develop.
           branch: security-fix
           token: ${{ secrets.GITHUB_TOKEN }}
-      - name: slack notification
+      - name: Slack Notification
         uses: rtCamp/action-slack-notify@v2.0.0
         env:
           SLACK_CHANNEL: general
