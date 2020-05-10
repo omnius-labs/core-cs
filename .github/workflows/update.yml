@@ -25,7 +25,7 @@ jobs:
           branch: security-fix
           token: ${{ secrets.GITHUB }}
       - name: slack notification
-        uses: rtCamp/action-slack-notify@v2
+        uses: rtCamp/action-slack-notify@v2.0.0
         env:
           SLACK_CHANNEL: general
           SLACK_COLOR: "#3278BD"
