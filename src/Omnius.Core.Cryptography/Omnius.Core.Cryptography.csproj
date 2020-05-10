@@ -27,6 +27,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="NLog" Version="4.7.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Omnius.Core\Omnius.Core.csproj" />
     <ProjectReference Include="..\Omnius.Core.Collections\Omnius.Core.Collections.csproj" />
     <ProjectReference Include="..\Omnius.Core.Io\Omnius.Core.Io.csproj" />

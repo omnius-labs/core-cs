@@ -6,6 +6,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="NLog" Version="4.7.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Omnius.Core\Omnius.Core.csproj" />
     <ProjectReference Include="..\Omnius.Core.Network\Omnius.Core.Network.csproj" />
     <ProjectReference Include="..\Omnius.Core.Serialization.RocketPack\Omnius.Core.Serialization.RocketPack.csproj" />

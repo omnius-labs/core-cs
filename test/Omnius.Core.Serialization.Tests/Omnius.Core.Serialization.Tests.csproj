@@ -3,6 +3,10 @@
   <PropertyGroup>
     <RootNamespace>Omnius.Core.Serialization</RootNamespace>
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="NLog" Version="4.7.0" />
+  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\src\Omnius.Core.Serialization\Omnius.Core.Serialization.csproj" />
   </ItemGroup>
@@ -11,6 +15,14 @@
     <None Update="Data\base58_encode_decode.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+  
+  <ItemGroup>
+    <PackageReference Update="coverlet.msbuild" Version="2.8.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Update="Microsoft.NET.Test.Sdk" Version="16.6.1" />
   </ItemGroup>
 
 </Project>

@@ -4,6 +4,10 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <IsPackable Condition=" '$(IsSubmodule)' != 'true' ">true</IsPackable>
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="NLog" Version="4.7.0" />
+  </ItemGroup>
   
   <ItemGroup>
     <ProjectReference Include="..\Omnius.Core\Omnius.Core.csproj" />
