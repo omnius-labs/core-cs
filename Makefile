@@ -5,7 +5,10 @@ gen-code:
 	sh ./eng/gen-code.sh
 
 test:
-	sh ./eng/run-test.sh
+	sh ./eng/test.sh
+
+update:
+	sh ./eng/update-tool.sh
 
 clean:
 	rm -rf ./bin

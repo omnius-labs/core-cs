@@ -6,5 +6,4 @@ BIN_DIR=$PWD/bin/tools/linux
 BUILD_ARCHITECTURE=linux-x64
 
 mkdir $BIN_DIR/Omnius.Core.Serialization.RocketPack.DefinitionCompiler
-
 dotnet publish $PWD/src/Omnius.Core.Serialization.RocketPack.DefinitionCompiler/Omnius.Core.Serialization.RocketPack.DefinitionCompiler.csproj --configuration Release --output "$BIN_DIR/Omnius.Core.Serialization.RocketPack.DefinitionCompiler" --runtime $BUILD_ARCHITECTURE
