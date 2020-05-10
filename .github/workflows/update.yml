@@ -23,7 +23,7 @@ jobs:
         with:
           title: Security Update into develop.
           branch: security-fix
-          token: ${{ secrets.GITHUB }}
+          token: ${{ secrets.GITHUB_TOKEN }}
       - name: slack notification
         uses: rtCamp/action-slack-notify@v2.0.0
         env:
