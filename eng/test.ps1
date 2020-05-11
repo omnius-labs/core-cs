@@ -1,7 +1,6 @@
 dotnet tool restore
 
-ForEach ($folder in (Get-ChildItem -Path "test" -Directory))
-{
+ForEach ($folder in (Get-ChildItem -Path "test" -Directory)) {
     $path = $folder.FullName;
     $name = $folder.Name;
     $output = "../../tmp/test/win/${name}.opencover.xml";
