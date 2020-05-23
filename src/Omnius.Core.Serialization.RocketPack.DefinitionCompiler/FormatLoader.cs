@@ -50,7 +50,7 @@ namespace Omnius.Core.Serialization.RocketPack.DefinitionCompiler
                     continue;
                 }
 
-                foreach(var @using in includedDefinitions[i].Usings)
+                foreach (var @using in includedDefinitions[i].Usings)
                 {
                     includedDefinitions.Add(definitionMap[@using.TargetNamespace]);
                 }

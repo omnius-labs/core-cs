@@ -5,7 +5,7 @@ using Reactive.Bindings;
 namespace Omnius.Core.Avalonia.Models.Primitives
 {
     public abstract class TreeViewModelBase : DisposableBase, IDropable
-    { 
+    {
         public TreeViewModelBase(TreeViewModelBase? parent)
         {
             this.Parent = parent;

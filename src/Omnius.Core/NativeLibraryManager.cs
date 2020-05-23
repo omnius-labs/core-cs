@@ -20,7 +20,7 @@ namespace Omnius.Core
         {
             var methodHandle = NativeLibrary.GetExport(_moduleHandle, method);
 
-            if(methodHandle == IntPtr.Zero)
+            if (methodHandle == IntPtr.Zero)
             {
                 throw new NotSupportedException();
             }

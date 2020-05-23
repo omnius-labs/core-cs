@@ -108,7 +108,7 @@ namespace Omnius.Core.Network.Connections
 
                         while (total < maxSize && sequence.Length > 0 && sequence.TryGet(ref position, out var memory, false))
                         {
-                            if (!_cap.CanSend())                                break;
+                            if (!_cap.CanSend()) break;
 
                             int readLength = Math.Min(maxSize - total, memory.Length);
                             int sendLength = _cap.Send(memory.Span.Slice(0, readLength));
