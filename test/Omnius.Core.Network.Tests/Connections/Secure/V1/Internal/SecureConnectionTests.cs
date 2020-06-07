@@ -19,7 +19,7 @@ namespace Omnius.Core.Network.Connections.Secure.V1.Internal
             foreach (var (value, actual) in caseList)
             {
                 var result = value;
-                SecureConnection.Increment(ref result);
+                SecureConnection.Increment(result);
 
                 Assert.Equal(result, actual);
             }
