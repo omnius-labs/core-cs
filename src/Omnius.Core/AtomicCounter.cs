@@ -43,9 +43,9 @@ namespace Omnius.Core
             return this.Equals((AtomicCounter)obj);
         }
 
-        public bool Equals(AtomicCounter other)
+        public bool Equals(AtomicCounter? other)
         {
-            if ((object)other == null)
+            if (other is null)
             {
                 return false;
             }

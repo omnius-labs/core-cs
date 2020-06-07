@@ -82,7 +82,7 @@ namespace Omnius.Core.Network.Connections.Secure.V1.Internal
             throw new OmniSecureConnectionException($"Overlap enum of {nameof(T)} could not be found.");
         }
 
-        internal static void Increment(ref byte[] bytes)
+        internal static void Increment(byte[] bytes)
         {
             for (int i = 0; i < bytes.Length; i++)
             {
@@ -292,13 +292,7 @@ namespace Omnius.Core.Network.Connections.Secure.V1.Internal
                 throw new NotSupportedException(nameof(keyDerivationAlgorithm));
             }
 
-            _status = new Status();
-            _status.CryptoAlgorithm = cryptoAlgorithm;
-            _status.HashAlgorithm = hashAlgorithm;
-            _status.MyCryptoKey = myCryptoKey;
-            _status.OtherCryptoKey = otherCryptoKey;
-            _status.MyNonce = myNonce;
-            _status.OtherNonce = otherNonce;
+            _status = new Status(cryptoAlgorithm, hashAlgorithm, myCryptoKey, otherCryptoKey, myNonce, otherNonce);
         }
 
         private (ReadOnlyMemory<byte>, string)[] GetHashes(ProfileMessage profileMessage, OmniAgreementPublicKey agreementPublicKey, HashAlgorithm hashAlgorithm)
@@ -368,7 +362,7 @@ namespace Omnius.Core.Network.Connections.Secure.V1.Internal
                                 sequence = sequence.Slice(contentLength);
 
                                 aes.Encrypt(_status.MyNonce, plaintext, ciphertext, tag);
-                                Increment(ref _status.MyNonce);
+                                Increment(_status.MyNonce);
 
                                 bufferWriter.Write(ciphertext);
                                 bufferWriter.Write(tag);
@@ -443,7 +437,7 @@ namespace Omnius.Core.Network.Connections.Secure.V1.Internal
                                 sequence = sequence.Slice(tag.Length);
 
                                 aes.Decrypt(_status.OtherNonce, ciphertext, tag, plaintext);
-                                Increment(ref _status.OtherNonce);
+                                Increment(_status.OtherNonce);
 
                                 hub.Writer.Write(plaintext);
                             }
@@ -483,14 +477,24 @@ namespace Omnius.Core.Network.Connections.Secure.V1.Internal
 
         private sealed class Status
         {
-            public CryptoAlgorithm CryptoAlgorithm;
-            public HashAlgorithm HashAlgorithm;
+            public Status(CryptoAlgorithm cryptoAlgorithm, HashAlgorithm hashAlgorithm, byte[] myCryptoKey, byte[] otherCryptoKey, byte[] myNonce, byte[] otherNonce)
+            {
+                this.CryptoAlgorithm = cryptoAlgorithm;
+                this.HashAlgorithm = hashAlgorithm;
+                this.MyCryptoKey = myCryptoKey;
+                this.OtherCryptoKey = otherCryptoKey;
+                this.MyNonce = myNonce;
+                this.OtherNonce = otherNonce;
+            }
 
-            public byte[] MyCryptoKey;
-            public byte[] OtherCryptoKey;
+            public CryptoAlgorithm CryptoAlgorithm { get; }
+            public HashAlgorithm HashAlgorithm { get; }
 
-            public byte[] MyNonce;
-            public byte[] OtherNonce;
+            public byte[] MyCryptoKey { get; }
+            public byte[] OtherCryptoKey { get; }
+
+            public byte[] MyNonce { get; }
+            public byte[] OtherNonce { get; }
         }
     }
 }

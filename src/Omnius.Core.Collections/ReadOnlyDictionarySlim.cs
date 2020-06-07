@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Omnius.Core.Collections
 {
@@ -36,7 +37,7 @@ namespace Omnius.Core.Collections
             return _map.GetEnumerator();
         }
 
-        public bool TryGetValue(TKey key, out TValue value)
+        public bool TryGetValue(TKey key, [MaybeNullWhen(false)] out TValue value)
         {
             return _map.TryGetValue(key, out value);
         }

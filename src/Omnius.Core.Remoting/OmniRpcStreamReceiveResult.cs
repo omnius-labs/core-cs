@@ -7,6 +7,7 @@ namespace Omnius.Core.Remoting
     public readonly struct OmniRpcStreamReceiveResult<TMessage>
         where TMessage : IRocketPackObject<TMessage>
     {
+        [AllowNull]
         private readonly TMessage _message;
         private readonly OmniRpcErrorMessage? _errorMessage;
         private readonly OmniRpcStreamReceiveResultFlags _resultFlags;
