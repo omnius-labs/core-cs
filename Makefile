@@ -8,7 +8,7 @@ test:
 	sh ./eng/test.sh
 
 update:
-	sh ./eng/update-tool.sh
+	sh ./eng/update-tools.sh
 
 clean:
 	rm -rf ./bin
