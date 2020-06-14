@@ -32,9 +32,10 @@ table SessionCloseMessage {
 }
 
 enum SessionErrorType : uint8 {
-    ConnectFailed = 0,
-    MemoryOverflow = 1,
-    NotFoundSessionId = 2,
+    Unknown = 0,
+    ConnectFailed = 1,
+    MemoryOverflow = 2,
+    NotFoundSessionId = 3,
 }
 
 table SessionErrorMessage {

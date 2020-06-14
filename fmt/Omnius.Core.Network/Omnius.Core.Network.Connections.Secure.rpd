@@ -4,10 +4,12 @@ using "Omnius.Core.Cryptography";
 namespace "Omnius.Core.Network.Connections.Secure";
 
 enum OmniSecureConnectionType : uint8 {
-    Connected = 0,
-    Accepted = 1,
+    Unknown = 0,
+    Connected = 1,
+    Accepted = 2,
 }
 
 enum OmniSecureConnectionVersion : uint8 {
+    Unknown = 0,
     Version1 = 1,
 }

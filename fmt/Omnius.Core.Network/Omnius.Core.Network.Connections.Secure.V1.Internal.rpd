@@ -5,19 +5,23 @@ namespace "Omnius.Core.Network.Connections.Secure.V1.Internal";
 option csharp_access_level = "internal";
 
 enum KeyExchangeAlgorithm : uint8 {
-    EcDh_P521_Sha2_256 = 0,
+    Unknown = 0,
+    EcDh_P521_Sha2_256 = 1,
 }
 
 enum KeyDerivationAlgorithm : uint8 {
-    Pbkdf2 = 0,
+    Unknown = 0,
+    Pbkdf2 = 1,
 }
 
 enum HashAlgorithm : uint8 {
-    Sha2_256 = 0,
+    Unknown = 0,
+    Sha2_256 = 1,
 }
 
 enum CryptoAlgorithm : uint8 {
-     Aes_Gcm_256 = 0,
+    Unknown = 0,
+    Aes_Gcm_256 = 1,
 }
 
 enum AuthenticationType : uint8 {

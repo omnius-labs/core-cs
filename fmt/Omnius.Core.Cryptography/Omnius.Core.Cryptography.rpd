@@ -3,20 +3,24 @@
 namespace "Omnius.Core.Cryptography";
 
 enum OmniHashAlgorithmType : uint8 {
-    Sha2_256 = 0,
+    Unknown = 0,
+    Sha2_256 = 1,
 }
 
 enum OmniAgreementAlgorithmType : uint8 {
-    EcDh_P521_Sha2_256 = 0,
+    Unknown = 0,
+    EcDh_P521_Sha2_256 = 1,
 }
 
 enum OmniDigitalSignatureAlgorithmType : uint8 {
-    EcDsa_P521_Sha2_256 = 0,
+    Unknown = 0,
+    EcDsa_P521_Sha2_256 = 1,
 }
 
 enum OmniHashcashAlgorithmType : uint8
 {
-    Simple_Sha2_256 = 0,
+    Unknown = 0,
+    Sha2_256 = 1,
 }
 
 [csharp_struct]
