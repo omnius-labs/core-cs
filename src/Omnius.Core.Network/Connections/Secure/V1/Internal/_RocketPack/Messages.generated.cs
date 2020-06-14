@@ -6,22 +6,26 @@ namespace Omnius.Core.Network.Connections.Secure.V1.Internal
 {
     internal enum KeyExchangeAlgorithm : byte
     {
-        EcDh_P521_Sha2_256 = 0,
+        Unknown = 0,
+        EcDh_P521_Sha2_256 = 1,
     }
 
     internal enum KeyDerivationAlgorithm : byte
     {
-        Pbkdf2 = 0,
+        Unknown = 0,
+        Pbkdf2 = 1,
     }
 
     internal enum HashAlgorithm : byte
     {
-        Sha2_256 = 0,
+        Unknown = 0,
+        Sha2_256 = 1,
     }
 
     internal enum CryptoAlgorithm : byte
     {
-        Aes_Gcm_256 = 0,
+        Unknown = 0,
+        Aes_Gcm_256 = 1,
     }
 
     internal enum AuthenticationType : byte

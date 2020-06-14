@@ -5,22 +5,26 @@ namespace Omnius.Core.Cryptography
 {
     public enum OmniHashAlgorithmType : byte
     {
-        Sha2_256 = 0,
+        Unknown = 0,
+        Sha2_256 = 1,
     }
 
     public enum OmniAgreementAlgorithmType : byte
     {
-        EcDh_P521_Sha2_256 = 0,
+        Unknown = 0,
+        EcDh_P521_Sha2_256 = 1,
     }
 
     public enum OmniDigitalSignatureAlgorithmType : byte
     {
-        EcDsa_P521_Sha2_256 = 0,
+        Unknown = 0,
+        EcDsa_P521_Sha2_256 = 1,
     }
 
     public enum OmniHashcashAlgorithmType : byte
     {
-        Simple_Sha2_256 = 0,
+        Unknown = 0,
+        Sha2_256 = 1,
     }
 
     public readonly partial struct OmniHash : global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<OmniHash>

@@ -14,8 +14,6 @@ INCLUDE="-i $PWD/fmt"
 "$TOOL_PATH" $PWD/fmt/Omnius.Core.Network/Omnius.Core.Network.Connections.Secure.rpd $INCLUDE -o $PWD/src/Omnius.Core.Network/Connections/Secure/_RocketPack/Messages.generated.cs
 "$TOOL_PATH" $PWD/fmt/Omnius.Core.Network/Omnius.Core.Network.Connections.Secure.Internal.rpd $INCLUDE -o $PWD/src/Omnius.Core.Network/Connections/Secure/Internal/_RocketPack/Messages.generated.cs
 "$TOOL_PATH" $PWD/fmt/Omnius.Core.Network/Omnius.Core.Network.Connections.Secure.V1.Internal.rpd $INCLUDE -o $PWD/src/Omnius.Core.Network/Connections/Secure/V1/Internal/_RocketPack/Messages.generated.cs
-"$TOOL_PATH" $PWD/fmt/Omnius.Core.Network/Omnius.Core.Network.Connections.Multiplexer.Internal.rpd $INCLUDE -o $PWD/src/Omnius.Core.Network/Connections/Multiplexer/Internal/_RocketPack/Messages.generated.cs
-"$TOOL_PATH" $PWD/fmt/Omnius.Core.Network/Omnius.Core.Network.Connections.Multiplexer.V1.Internal.rpd $INCLUDE -o $PWD/src/Omnius.Core.Network/Connections/Multiplexer/V1/Internal/_RocketPack/Messages.generated.cs
 
 "$TOOL_PATH" $PWD/fmt/Omnius.Core.Remoting/Omnius.Core.Remoting.rpd $INCLUDE -o $PWD/src/Omnius.Core.Remoting/_RocketPack/Messages.generated.cs
 

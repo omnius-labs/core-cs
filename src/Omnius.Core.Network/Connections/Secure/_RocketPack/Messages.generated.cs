@@ -6,12 +6,14 @@ namespace Omnius.Core.Network.Connections.Secure
 {
     public enum OmniSecureConnectionType : byte
     {
-        Connected = 0,
-        Accepted = 1,
+        Unknown = 0,
+        Connected = 1,
+        Accepted = 2,
     }
 
     public enum OmniSecureConnectionVersion : byte
     {
+        Unknown = 0,
         Version1 = 1,
     }
 
