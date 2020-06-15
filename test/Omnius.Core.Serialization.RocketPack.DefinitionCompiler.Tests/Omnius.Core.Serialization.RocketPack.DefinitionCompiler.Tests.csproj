@@ -5,6 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\Omnius.Core.Collections\Omnius.Core.Collections.csproj" />
     <ProjectReference Include="..\..\src\Omnius.Core.Serialization.RocketPack.DefinitionCompiler\Omnius.Core.Serialization.RocketPack.DefinitionCompiler.csproj" />
     <ProjectReference Include="..\..\src\Omnius.Core.Serialization.RocketPack\Omnius.Core.Serialization.RocketPack.csproj" />
   </ItemGroup>

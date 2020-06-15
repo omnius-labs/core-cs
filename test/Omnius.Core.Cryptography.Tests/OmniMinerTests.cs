@@ -19,7 +19,7 @@ namespace Omnius.Core.Cryptography
             random.NextBytes(value);
             random.NextBytes(key);
 
-            var hashcash = await OmniMiner.Create(new ReadOnlySequence<byte>(value), key, OmniHashcashAlgorithmType.Simple_Sha2_256, 1, TimeSpan.FromSeconds(10), CancellationToken.None);
+            var hashcash = await OmniMiner.Create(new ReadOnlySequence<byte>(value), key, OmniHashcashAlgorithmType.Sha2_256, 1, TimeSpan.FromSeconds(10), CancellationToken.None);
             var cost = OmniMiner.Verify(hashcash, new ReadOnlySequence<byte>(value), key);
 
             // コストは最低でも1以上になっているはず。
@@ -38,7 +38,7 @@ namespace Omnius.Core.Cryptography
 
             var sw = Stopwatch.StartNew();
 
-            var hashcash = await OmniMiner.Create(new ReadOnlySequence<byte>(value), key, OmniHashcashAlgorithmType.Simple_Sha2_256, 256, TimeSpan.FromSeconds(10), CancellationToken.None);
+            var hashcash = await OmniMiner.Create(new ReadOnlySequence<byte>(value), key, OmniHashcashAlgorithmType.Sha2_256, 256, TimeSpan.FromSeconds(10), CancellationToken.None);
             var cost = OmniMiner.Verify(hashcash, new ReadOnlySequence<byte>(value), key);
 
             // 計算時間は10秒以上のはず。

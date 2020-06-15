@@ -85,7 +85,7 @@ struct StructMessage_Struct {
     X19: string(capacity: 128), // maximum bytes size is 128
     X20: timestamp,
     X21: bytes(capacity: 256), // maximum bytes size is 256
-    X22: bytes(capacity: 256, recyclable), // use csharp_recyclable memory
+    X22: bytes(capacity: 256, recyclable: true), // use csharp_recyclable memory
     X23: vector<string(capacity: 128)>(capacity: 16),
     X24: map<uint8, string(capacity: 128)>(capacity: 32),
     X25: StructMessageElement_Struct,
@@ -148,12 +148,12 @@ table NullableTableMessage_Struct {
     X16: Enum8? = 16,
     X17: float32? = 17,
     X18: float64? = 18,
-    X19: string(capacity: 128)? = 19, // maximum bytes size is 128
+    X19: string?(capacity: 128) = 19, // maximum bytes size is 128
     X20: timestamp? = 20,
-    X21: bytes(capacity: 256)? = 21, // maximum bytes size is 256
-    X22: bytes(capacity: 256, recyclable: true)? = 22, // use csharp_recyclable memory
-    X23: vector<string(capacity: 128)>(capacity: 16)? = 23,
-    X24: map<uint8, string(capacity: 128)>(capacity: 32)? = 24,
+    X21: bytes?(capacity: 256) = 21, // maximum bytes size is 256
+    X22: bytes?(capacity: 256, recyclable: true) = 22, // use csharp_recyclable memory
+    X23: vector<string(capacity: 128)>?(capacity: 16) = 23,
+    X24: map<uint8, string(capacity: 128)>?(capacity: 32) = 24,
     X25: StructMessageElement_Struct? = 25,
     X26: TableMessageElement_Struct? = 26,
     X27: StructMessageElement_Class? = 27,
@@ -244,12 +244,12 @@ table NullableTableMessage_Class {
     X16: Enum8? = 16,
     X17: float32? = 17,
     X18: float64? = 18,
-    X19: string(capacity: 128)? = 19, // maximum bytes size is 128
+    X19: string?(capacity: 128) = 19, // maximum bytes size is 128
     X20: timestamp? = 20,
-    X21: bytes(capacity: 256)? = 21, // maximum bytes size is 256
-    X22: bytes(capacity: 256, recyclable: true)? = 22, // use csharp_recyclable memory
-    X23: vector<string(capacity: 128)>(capacity: 16)? = 23,
-    X24: map<uint8, string(capacity: 128)>(capacity: 32)? = 24,
+    X21: bytes?(capacity: 256) = 21, // maximum bytes size is 256
+    X22: bytes?(capacity: 256, recyclable: true) = 22, // use csharp_recyclable memory
+    X23: vector<string(capacity: 128)>?(capacity: 16) = 23,
+    X24: map<uint8, string(capacity: 128)>?(capacity: 32) = 24,
     X25: StructMessageElement_Struct? = 25,
     X26: TableMessageElement_Struct? = 26,
     X27: StructMessageElement_Class? = 27,

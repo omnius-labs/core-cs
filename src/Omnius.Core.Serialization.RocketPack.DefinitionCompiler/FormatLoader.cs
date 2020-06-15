@@ -6,12 +6,6 @@ namespace Omnius.Core.Serialization.RocketPack.DefinitionCompiler
 {
     internal static class FormatLoader
     {
-        private static RocketPackDefinition LoadFile(string definitionFilePath)
-        {
-            using var reader = new StreamReader(definitionFilePath);
-            return FormatParser.ParseV1_0(reader.ReadToEnd());
-        }
-
         public static (RocketPackDefinition rootDefinition, IEnumerable<RocketPackDefinition> includedDefinitions) Load(string sourcePath, IEnumerable<string>? includeDirectoryPathList = null)
         {
             RocketPackDefinition rootDefinition;
@@ -19,7 +13,7 @@ namespace Omnius.Core.Serialization.RocketPack.DefinitionCompiler
 
             // 変換対象の定義ファイル
             {
-                var definition = LoadFile(sourcePath);
+                var definition = FormatParser.Load(sourcePath);
                 definitionMap[definition.Namespace.Value] = definition;
                 rootDefinition = definition;
             }
@@ -31,7 +25,7 @@ namespace Omnius.Core.Serialization.RocketPack.DefinitionCompiler
                 {
                     foreach (var path in Directory.GetFiles(directoryPath, "*", SearchOption.AllDirectories))
                     {
-                        var definition = LoadFile(path);
+                        var definition = FormatParser.Load(path);
                         definitionMap[definition.Namespace.Value] = definition;
                     }
                 }

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Omnius.Core.Serialization.RocketPack.DefinitionCompiler.Extensions;
 using Sprache;
@@ -10,11 +11,11 @@ namespace Omnius.Core.Serialization.RocketPack.DefinitionCompiler
     {
         // 「"」で囲まれた文字列を抽出するパーサー
         private static readonly Parser<string> _stringLiteralParser =
-            from leading in Parse.WhiteSpace.Many()
+            from leading in Parse.WhiteSpace.XMany()
             from openQuote in Parse.Char('\"')
-            from fragments in Parse.Char('\\').Then(_ => Parse.AnyChar.Select(c => $"\\{c}")).Or(Parse.CharExcept("\\\"").Many().Text()).Many()
+            from fragments in Parse.Char('\\').Then(_ => Parse.AnyChar.Select(c => $"\\{c}")).Or(Parse.CharExcept("\\\"").XMany().Text()).XMany()
             from closeQuote in Parse.Char('\"')
-            from trailing in Parse.WhiteSpace.Many()
+            from trailing in Parse.WhiteSpace.XMany()
             select string.Join(string.Empty, fragments).Replace("\\\"", "\"");
 
         // 英数字と'_'の文字列を抽出するパーサー
@@ -71,7 +72,7 @@ namespace Omnius.Core.Serialization.RocketPack.DefinitionCompiler
         // example: (capacity: 1024, recyclable: true)
         private static readonly Parser<Dictionary<string, string>> _parametersParser =
             from beginTag in Parse.Char('(').TokenWithSkipComment()
-            from elements in _parametersElementParser.Many().TokenWithSkipComment()
+            from elements in _parametersElementParser.XMany().TokenWithSkipComment()
             from endTag in Parse.Char(')').TokenWithSkipComment()
             select new Dictionary<string, string>(elements.Select(n => new KeyValuePair<string, string>(n.key, n.value)));
 
@@ -159,7 +160,7 @@ namespace Omnius.Core.Serialization.RocketPack.DefinitionCompiler
             select new MapType(keyType, valueType, isOptional, parameters);
 
         private static readonly Parser<EnumElement> _enumElementParser =
-            from attributes in _attributeParser.Many().TokenWithSkipComment()
+            from attributes in _attributeParser.XMany().TokenWithSkipComment()
             from name in _nameParser.TokenWithSkipComment()
             from equal in Parse.Char('=').TokenWithSkipComment()
             from id in Parse.Decimal.TokenWithSkipComment()
@@ -167,18 +168,18 @@ namespace Omnius.Core.Serialization.RocketPack.DefinitionCompiler
             select new EnumElement(attributes.ToList(), name, int.Parse(id));
 
         private static readonly Parser<EnumDefinition> _enumDefinitionParser =
-            from attributes in _attributeParser.Many().TokenWithSkipComment()
+            from attributes in _attributeParser.XMany().TokenWithSkipComment()
             from keyword in Parse.String("enum").TokenWithSkipComment()
             from name in _nameParser.TokenWithSkipComment()
             from colon in Parse.Char(':').TokenWithSkipComment()
             from type in _intTypeParser
             from beginTag in Parse.Char('{').TokenWithSkipComment()
-            from enumProperties in _enumElementParser.Except(Parse.Char('}')).Many().TokenWithSkipComment()
+            from enumProperties in _enumElementParser.Except(Parse.Char('}')).XMany().TokenWithSkipComment()
             from endTag in Parse.Char('}').TokenWithSkipComment()
             select new EnumDefinition(attributes.ToList(), name, type, enumProperties.ToList());
 
         private static readonly Parser<ObjectElement> _structElementParser =
-            from attributes in _attributeParser.Many().TokenWithSkipComment()
+            from attributes in _attributeParser.XMany().TokenWithSkipComment()
             from name in _nameParser.TokenWithSkipComment()
             from colon in Parse.Char(':').TokenWithSkipComment()
             from type in _boolTypeParser
@@ -194,16 +195,16 @@ namespace Omnius.Core.Serialization.RocketPack.DefinitionCompiler
             select new ObjectElement(attributes.ToList(), name, type, null);
 
         private static readonly Parser<ObjectDefinition> _structDefinitionParser =
-            from attributes in _attributeParser.Many().TokenWithSkipComment()
+            from attributes in _attributeParser.XMany().TokenWithSkipComment()
             from keyword in Parse.String("struct").TokenWithSkipComment()
             from name in _nameParser.TokenWithSkipComment()
             from beginTag in Parse.Char('{').TokenWithSkipComment()
-            from elements in _structElementParser.Except(Parse.Char('}')).Many().TokenWithSkipComment()
+            from elements in _structElementParser.Except(Parse.Char('}')).XMany().TokenWithSkipComment()
             from endTag in Parse.Char('}').TokenWithSkipComment()
             select new ObjectDefinition(attributes.ToList(), name, MessageFormatType.Struct, elements.ToList());
 
         private static readonly Parser<ObjectElement> _tableElementParser =
-            from attributes in _attributeParser.Many().TokenWithSkipComment()
+            from attributes in _attributeParser.XMany().TokenWithSkipComment()
             from name in _nameParser.TokenWithSkipComment()
             from colon in Parse.Char(':').TokenWithSkipComment()
             from type in _boolTypeParser
@@ -221,20 +222,20 @@ namespace Omnius.Core.Serialization.RocketPack.DefinitionCompiler
             select new ObjectElement(attributes.ToList(), name, type, int.Parse(id));
 
         private static readonly Parser<ObjectDefinition> _tableDefinitionParser =
-            from attributes in _attributeParser.Many().TokenWithSkipComment()
+            from attributes in _attributeParser.XMany().TokenWithSkipComment()
             from keyword in Parse.String("table").TokenWithSkipComment()
             from name in _nameParser.TokenWithSkipComment()
             from beginTag in Parse.Char('{').TokenWithSkipComment()
-            from elements in _tableElementParser.Except(Parse.Char('}')).Many().TokenWithSkipComment()
+            from elements in _tableElementParser.Except(Parse.Char('}')).XMany().TokenWithSkipComment()
             from endTag in Parse.Char('}').TokenWithSkipComment()
             select new ObjectDefinition(attributes.ToList(), name, MessageFormatType.Table, elements.ToList());
 
-        private static readonly Parser<RocketPackDefinition> _omniPackDefinitionParser =
+        private static readonly Parser<RocketPackDefinition> _rocketPackDefinitionParser =
             from syntax in _syntaxParser.Once().TokenWithSkipComment()
-            from usings in _usingParser.Many().TokenWithSkipComment()
+            from usings in _usingParser.XMany().TokenWithSkipComment()
             from @namespace in _namespaceParser.Once().TokenWithSkipComment()
-            from options in _optionParser.Many().TokenWithSkipComment()
-            from contents in _enumDefinitionParser.Or<object>(_structDefinitionParser).Or(_tableDefinitionParser).Many().TokenWithSkipComment()
+            from options in _optionParser.XMany().TokenWithSkipComment()
+            from contents in _enumDefinitionParser.Or<object>(_structDefinitionParser).Or(_tableDefinitionParser).XMany().TokenWithSkipComment().End()
             select new RocketPackDefinition(
                 usings,
                 @namespace.First(),
@@ -243,10 +244,8 @@ namespace Omnius.Core.Serialization.RocketPack.DefinitionCompiler
                 contents.OfType<ObjectDefinition>().ToList()
             );
 
-        public static RocketPackDefinition ParseV1_0(string text)
+        private static void Validate(RocketPackDefinition result)
         {
-            var result = _omniPackDefinitionParser.Parse(text);
-
             // struct形式のメッセージはOptional型は認めない。
             foreach (var objectDefinition in result.Objects.Where(n => n.FormatType == MessageFormatType.Struct))
             {
@@ -255,8 +254,33 @@ namespace Omnius.Core.Serialization.RocketPack.DefinitionCompiler
                     throw new Exception();
                 }
             }
+        }
 
-            return result;
+        public static RocketPackDefinition Load(string definitionFilePath)
+        {
+            try
+            {
+                // Load
+                using var reader = new StreamReader(definitionFilePath);
+                var text = reader.ReadToEnd();
+
+                // Parse
+                var result = _rocketPackDefinitionParser.Parse(text);
+
+                // Validate
+                Validate(result);
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"target: \n{definitionFilePath}");
+                Console.WriteLine($"--- Message ---\n{ex.Message.Trim()}");
+                Console.WriteLine($"--- Source ---\n{ex.Source?.Trim()}");
+                Console.WriteLine($"--- StackTrace ---\n{ex.StackTrace?.Trim()}");
+
+                throw ex;
+            }
         }
     }
 }

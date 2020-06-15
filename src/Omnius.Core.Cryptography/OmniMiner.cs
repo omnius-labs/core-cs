@@ -22,12 +22,12 @@ namespace Omnius.Core.Cryptography
 
             return await Task.Run(() =>
             {
-                if (hashcashAlgorithmType == OmniHashcashAlgorithmType.Simple_Sha2_256)
+                if (hashcashAlgorithmType == OmniHashcashAlgorithmType.Sha2_256)
                 {
                     var target = Hmac_Sha2_256.ComputeHash(sequence, key.Span);
                     var hashcashKey = MinerHelper.Compute_Simple_Sha2_256(target, limit, timeout, cancellationToken);
 
-                    return new OmniHashcash(OmniHashcashAlgorithmType.Simple_Sha2_256, hashcashKey);
+                    return new OmniHashcash(OmniHashcashAlgorithmType.Sha2_256, hashcashKey);
                 }
 
                 throw new NotSupportedException(nameof(hashcashAlgorithmType));
@@ -41,7 +41,7 @@ namespace Omnius.Core.Cryptography
                 throw new ArgumentNullException(nameof(hashcash));
             }
 
-            if (hashcash.AlgorithmType == OmniHashcashAlgorithmType.Simple_Sha2_256)
+            if (hashcash.AlgorithmType == OmniHashcashAlgorithmType.Sha2_256)
             {
                 var target = Hmac_Sha2_256.ComputeHash(sequence, key.Span);
 
