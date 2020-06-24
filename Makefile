@@ -7,12 +7,16 @@ gen-code:
 test:
 	sh ./eng/test.sh
 
-update:
+update: format
 	sh ./eng/update-tools.sh
+
+format:
+	dotnet tool restore
+	dotnet tool run dotnet-format
 
 clean:
 	rm -rf ./bin
 	rm -rf ./tmp
 	rm -rf ./pub
 
-.PHONY: all test clean
+.PHONY: init-tools gen-code test update format clean
