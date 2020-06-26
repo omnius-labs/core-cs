@@ -3,15 +3,15 @@
 
 namespace Omnius.Core.Remoting
 {
-    public sealed partial class OmniRpcErrorMessage : global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<OmniRpcErrorMessage>
+    public sealed partial class OmniRpcErrorMessage : global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<global::Omnius.Core.Remoting.OmniRpcErrorMessage>
     {
-        public static global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<OmniRpcErrorMessage> Formatter => global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<OmniRpcErrorMessage>.Formatter;
-        public static OmniRpcErrorMessage Empty => global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<OmniRpcErrorMessage>.Empty;
+        public static global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<global::Omnius.Core.Remoting.OmniRpcErrorMessage> Formatter => global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<global::Omnius.Core.Remoting.OmniRpcErrorMessage>.Formatter;
+        public static global::Omnius.Core.Remoting.OmniRpcErrorMessage Empty => global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<global::Omnius.Core.Remoting.OmniRpcErrorMessage>.Empty;
 
         static OmniRpcErrorMessage()
         {
-            global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<OmniRpcErrorMessage>.Formatter = new ___CustomFormatter();
-            global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<OmniRpcErrorMessage>.Empty = new OmniRpcErrorMessage(string.Empty, string.Empty, string.Empty);
+            global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<global::Omnius.Core.Remoting.OmniRpcErrorMessage>.Formatter = new ___CustomFormatter();
+            global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<global::Omnius.Core.Remoting.OmniRpcErrorMessage>.Empty = new global::Omnius.Core.Remoting.OmniRpcErrorMessage(string.Empty, string.Empty, string.Empty);
         }
 
         private readonly global::System.Lazy<int> ___hashCode;
@@ -47,7 +47,7 @@ namespace Omnius.Core.Remoting
         public string Message { get; }
         public string StackTrace { get; }
 
-        public static OmniRpcErrorMessage Import(global::System.Buffers.ReadOnlySequence<byte> sequence, global::Omnius.Core.IBytesPool bytesPool)
+        public static global::Omnius.Core.Remoting.OmniRpcErrorMessage Import(global::System.Buffers.ReadOnlySequence<byte> sequence, global::Omnius.Core.IBytesPool bytesPool)
         {
             var reader = new global::Omnius.Core.Serialization.RocketPack.RocketPackReader(sequence, bytesPool);
             return Formatter.Deserialize(ref reader, 0);
@@ -58,20 +58,20 @@ namespace Omnius.Core.Remoting
             Formatter.Serialize(ref writer, this, 0);
         }
 
-        public static bool operator ==(OmniRpcErrorMessage? left, OmniRpcErrorMessage? right)
+        public static bool operator ==(global::Omnius.Core.Remoting.OmniRpcErrorMessage? left, global::Omnius.Core.Remoting.OmniRpcErrorMessage? right)
         {
             return (right is null) ? (left is null) : right.Equals(left);
         }
-        public static bool operator !=(OmniRpcErrorMessage? left, OmniRpcErrorMessage? right)
+        public static bool operator !=(global::Omnius.Core.Remoting.OmniRpcErrorMessage? left, global::Omnius.Core.Remoting.OmniRpcErrorMessage? right)
         {
             return !(left == right);
         }
         public override bool Equals(object? other)
         {
-            if (!(other is OmniRpcErrorMessage)) return false;
-            return this.Equals((OmniRpcErrorMessage)other);
+            if (!(other is global::Omnius.Core.Remoting.OmniRpcErrorMessage)) return false;
+            return this.Equals((global::Omnius.Core.Remoting.OmniRpcErrorMessage)other);
         }
-        public bool Equals(OmniRpcErrorMessage? target)
+        public bool Equals(global::Omnius.Core.Remoting.OmniRpcErrorMessage? target)
         {
             if (target is null) return false;
             if (object.ReferenceEquals(this, target)) return true;
@@ -83,9 +83,9 @@ namespace Omnius.Core.Remoting
         }
         public override int GetHashCode() => ___hashCode.Value;
 
-        private sealed class ___CustomFormatter : global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<OmniRpcErrorMessage>
+        private sealed class ___CustomFormatter : global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<global::Omnius.Core.Remoting.OmniRpcErrorMessage>
         {
-            public void Serialize(ref global::Omnius.Core.Serialization.RocketPack.RocketPackWriter w, in OmniRpcErrorMessage value, in int rank)
+            public void Serialize(ref global::Omnius.Core.Serialization.RocketPack.RocketPackWriter w, in global::Omnius.Core.Remoting.OmniRpcErrorMessage value, in int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
@@ -123,7 +123,7 @@ namespace Omnius.Core.Remoting
                 }
             }
 
-            public OmniRpcErrorMessage Deserialize(ref global::Omnius.Core.Serialization.RocketPack.RocketPackReader r, in int rank)
+            public global::Omnius.Core.Remoting.OmniRpcErrorMessage Deserialize(ref global::Omnius.Core.Serialization.RocketPack.RocketPackReader r, in int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
@@ -156,7 +156,7 @@ namespace Omnius.Core.Remoting
                     }
                 }
 
-                return new OmniRpcErrorMessage(p_type, p_message, p_stackTrace);
+                return new global::Omnius.Core.Remoting.OmniRpcErrorMessage(p_type, p_message, p_stackTrace);
             }
         }
     }

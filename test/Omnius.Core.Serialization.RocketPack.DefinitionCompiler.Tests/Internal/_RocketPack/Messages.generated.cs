@@ -51,15 +51,15 @@ namespace Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal
         No = 1,
     }
 
-    internal readonly partial struct StructMessageElement_Struct : global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<StructMessageElement_Struct>
+    internal readonly partial struct StructMessageElement_Struct : global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.StructMessageElement_Struct>
     {
-        public static global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<StructMessageElement_Struct> Formatter => global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<StructMessageElement_Struct>.Formatter;
-        public static StructMessageElement_Struct Empty => global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<StructMessageElement_Struct>.Empty;
+        public static global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.StructMessageElement_Struct> Formatter => global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.StructMessageElement_Struct>.Formatter;
+        public static global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.StructMessageElement_Struct Empty => global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.StructMessageElement_Struct>.Empty;
 
         static StructMessageElement_Struct()
         {
-            global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<StructMessageElement_Struct>.Formatter = new ___CustomFormatter();
-            global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<StructMessageElement_Struct>.Empty = new StructMessageElement_Struct(false);
+            global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.StructMessageElement_Struct>.Formatter = new ___CustomFormatter();
+            global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.StructMessageElement_Struct>.Empty = new global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.StructMessageElement_Struct(false);
         }
 
         private readonly int ___hashCode;
@@ -77,7 +77,7 @@ namespace Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal
 
         public bool X0 { get; }
 
-        public static StructMessageElement_Struct Import(global::System.Buffers.ReadOnlySequence<byte> sequence, global::Omnius.Core.IBytesPool bytesPool)
+        public static global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.StructMessageElement_Struct Import(global::System.Buffers.ReadOnlySequence<byte> sequence, global::Omnius.Core.IBytesPool bytesPool)
         {
             var reader = new global::Omnius.Core.Serialization.RocketPack.RocketPackReader(sequence, bytesPool);
             return Formatter.Deserialize(ref reader, 0);
@@ -88,20 +88,20 @@ namespace Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal
             Formatter.Serialize(ref writer, this, 0);
         }
 
-        public static bool operator ==(StructMessageElement_Struct left, StructMessageElement_Struct right)
+        public static bool operator ==(global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.StructMessageElement_Struct left, global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.StructMessageElement_Struct right)
         {
             return right.Equals(left);
         }
-        public static bool operator !=(StructMessageElement_Struct left, StructMessageElement_Struct right)
+        public static bool operator !=(global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.StructMessageElement_Struct left, global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.StructMessageElement_Struct right)
         {
             return !(left == right);
         }
         public override bool Equals(object? other)
         {
-            if (!(other is StructMessageElement_Struct)) return false;
-            return this.Equals((StructMessageElement_Struct)other);
+            if (!(other is global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.StructMessageElement_Struct)) return false;
+            return this.Equals((global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.StructMessageElement_Struct)other);
         }
-        public bool Equals(StructMessageElement_Struct target)
+        public bool Equals(global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.StructMessageElement_Struct target)
         {
             if (this.X0 != target.X0) return false;
 
@@ -109,16 +109,16 @@ namespace Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal
         }
         public override int GetHashCode() => ___hashCode;
 
-        private sealed class ___CustomFormatter : global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<StructMessageElement_Struct>
+        private sealed class ___CustomFormatter : global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.StructMessageElement_Struct>
         {
-            public void Serialize(ref global::Omnius.Core.Serialization.RocketPack.RocketPackWriter w, in StructMessageElement_Struct value, in int rank)
+            public void Serialize(ref global::Omnius.Core.Serialization.RocketPack.RocketPackWriter w, in global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.StructMessageElement_Struct value, in int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
                 w.Write(value.X0);
             }
 
-            public StructMessageElement_Struct Deserialize(ref global::Omnius.Core.Serialization.RocketPack.RocketPackReader r, in int rank)
+            public global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.StructMessageElement_Struct Deserialize(ref global::Omnius.Core.Serialization.RocketPack.RocketPackReader r, in int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
@@ -127,20 +127,20 @@ namespace Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal
                 {
                     p_x0 = r.GetBoolean();
                 }
-                return new StructMessageElement_Struct(p_x0);
+                return new global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.StructMessageElement_Struct(p_x0);
             }
         }
     }
 
-    internal readonly partial struct TableMessageElement_Struct : global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<TableMessageElement_Struct>
+    internal readonly partial struct TableMessageElement_Struct : global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.TableMessageElement_Struct>
     {
-        public static global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<TableMessageElement_Struct> Formatter => global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<TableMessageElement_Struct>.Formatter;
-        public static TableMessageElement_Struct Empty => global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<TableMessageElement_Struct>.Empty;
+        public static global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.TableMessageElement_Struct> Formatter => global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.TableMessageElement_Struct>.Formatter;
+        public static global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.TableMessageElement_Struct Empty => global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.TableMessageElement_Struct>.Empty;
 
         static TableMessageElement_Struct()
         {
-            global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<TableMessageElement_Struct>.Formatter = new ___CustomFormatter();
-            global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<TableMessageElement_Struct>.Empty = new TableMessageElement_Struct(false);
+            global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.TableMessageElement_Struct>.Formatter = new ___CustomFormatter();
+            global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.TableMessageElement_Struct>.Empty = new global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.TableMessageElement_Struct(false);
         }
 
         private readonly int ___hashCode;
@@ -158,7 +158,7 @@ namespace Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal
 
         public bool X0 { get; }
 
-        public static TableMessageElement_Struct Import(global::System.Buffers.ReadOnlySequence<byte> sequence, global::Omnius.Core.IBytesPool bytesPool)
+        public static global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.TableMessageElement_Struct Import(global::System.Buffers.ReadOnlySequence<byte> sequence, global::Omnius.Core.IBytesPool bytesPool)
         {
             var reader = new global::Omnius.Core.Serialization.RocketPack.RocketPackReader(sequence, bytesPool);
             return Formatter.Deserialize(ref reader, 0);
@@ -169,20 +169,20 @@ namespace Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal
             Formatter.Serialize(ref writer, this, 0);
         }
 
-        public static bool operator ==(TableMessageElement_Struct left, TableMessageElement_Struct right)
+        public static bool operator ==(global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.TableMessageElement_Struct left, global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.TableMessageElement_Struct right)
         {
             return right.Equals(left);
         }
-        public static bool operator !=(TableMessageElement_Struct left, TableMessageElement_Struct right)
+        public static bool operator !=(global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.TableMessageElement_Struct left, global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.TableMessageElement_Struct right)
         {
             return !(left == right);
         }
         public override bool Equals(object? other)
         {
-            if (!(other is TableMessageElement_Struct)) return false;
-            return this.Equals((TableMessageElement_Struct)other);
+            if (!(other is global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.TableMessageElement_Struct)) return false;
+            return this.Equals((global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.TableMessageElement_Struct)other);
         }
-        public bool Equals(TableMessageElement_Struct target)
+        public bool Equals(global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.TableMessageElement_Struct target)
         {
             if (this.X0 != target.X0) return false;
 
@@ -190,9 +190,9 @@ namespace Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal
         }
         public override int GetHashCode() => ___hashCode;
 
-        private sealed class ___CustomFormatter : global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<TableMessageElement_Struct>
+        private sealed class ___CustomFormatter : global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.TableMessageElement_Struct>
         {
-            public void Serialize(ref global::Omnius.Core.Serialization.RocketPack.RocketPackWriter w, in TableMessageElement_Struct value, in int rank)
+            public void Serialize(ref global::Omnius.Core.Serialization.RocketPack.RocketPackWriter w, in global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.TableMessageElement_Struct value, in int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
@@ -212,7 +212,7 @@ namespace Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal
                 }
             }
 
-            public TableMessageElement_Struct Deserialize(ref global::Omnius.Core.Serialization.RocketPack.RocketPackReader r, in int rank)
+            public global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.TableMessageElement_Struct Deserialize(ref global::Omnius.Core.Serialization.RocketPack.RocketPackReader r, in int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
@@ -233,20 +233,20 @@ namespace Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal
                     }
                 }
 
-                return new TableMessageElement_Struct(p_x0);
+                return new global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.TableMessageElement_Struct(p_x0);
             }
         }
     }
 
-    internal sealed partial class StructMessageElement_Class : global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<StructMessageElement_Class>
+    internal sealed partial class StructMessageElement_Class : global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.StructMessageElement_Class>
     {
-        public static global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<StructMessageElement_Class> Formatter => global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<StructMessageElement_Class>.Formatter;
-        public static StructMessageElement_Class Empty => global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<StructMessageElement_Class>.Empty;
+        public static global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.StructMessageElement_Class> Formatter => global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.StructMessageElement_Class>.Formatter;
+        public static global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.StructMessageElement_Class Empty => global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.StructMessageElement_Class>.Empty;
 
         static StructMessageElement_Class()
         {
-            global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<StructMessageElement_Class>.Formatter = new ___CustomFormatter();
-            global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<StructMessageElement_Class>.Empty = new StructMessageElement_Class(false);
+            global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.StructMessageElement_Class>.Formatter = new ___CustomFormatter();
+            global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.StructMessageElement_Class>.Empty = new global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.StructMessageElement_Class(false);
         }
 
         private readonly global::System.Lazy<int> ___hashCode;
@@ -265,7 +265,7 @@ namespace Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal
 
         public bool X0 { get; }
 
-        public static StructMessageElement_Class Import(global::System.Buffers.ReadOnlySequence<byte> sequence, global::Omnius.Core.IBytesPool bytesPool)
+        public static global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.StructMessageElement_Class Import(global::System.Buffers.ReadOnlySequence<byte> sequence, global::Omnius.Core.IBytesPool bytesPool)
         {
             var reader = new global::Omnius.Core.Serialization.RocketPack.RocketPackReader(sequence, bytesPool);
             return Formatter.Deserialize(ref reader, 0);
@@ -276,20 +276,20 @@ namespace Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal
             Formatter.Serialize(ref writer, this, 0);
         }
 
-        public static bool operator ==(StructMessageElement_Class? left, StructMessageElement_Class? right)
+        public static bool operator ==(global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.StructMessageElement_Class? left, global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.StructMessageElement_Class? right)
         {
             return (right is null) ? (left is null) : right.Equals(left);
         }
-        public static bool operator !=(StructMessageElement_Class? left, StructMessageElement_Class? right)
+        public static bool operator !=(global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.StructMessageElement_Class? left, global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.StructMessageElement_Class? right)
         {
             return !(left == right);
         }
         public override bool Equals(object? other)
         {
-            if (!(other is StructMessageElement_Class)) return false;
-            return this.Equals((StructMessageElement_Class)other);
+            if (!(other is global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.StructMessageElement_Class)) return false;
+            return this.Equals((global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.StructMessageElement_Class)other);
         }
-        public bool Equals(StructMessageElement_Class? target)
+        public bool Equals(global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.StructMessageElement_Class? target)
         {
             if (target is null) return false;
             if (object.ReferenceEquals(this, target)) return true;
@@ -299,16 +299,16 @@ namespace Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal
         }
         public override int GetHashCode() => ___hashCode.Value;
 
-        private sealed class ___CustomFormatter : global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<StructMessageElement_Class>
+        private sealed class ___CustomFormatter : global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.StructMessageElement_Class>
         {
-            public void Serialize(ref global::Omnius.Core.Serialization.RocketPack.RocketPackWriter w, in StructMessageElement_Class value, in int rank)
+            public void Serialize(ref global::Omnius.Core.Serialization.RocketPack.RocketPackWriter w, in global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.StructMessageElement_Class value, in int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
                 w.Write(value.X0);
             }
 
-            public StructMessageElement_Class Deserialize(ref global::Omnius.Core.Serialization.RocketPack.RocketPackReader r, in int rank)
+            public global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.StructMessageElement_Class Deserialize(ref global::Omnius.Core.Serialization.RocketPack.RocketPackReader r, in int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
@@ -317,20 +317,20 @@ namespace Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal
                 {
                     p_x0 = r.GetBoolean();
                 }
-                return new StructMessageElement_Class(p_x0);
+                return new global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.StructMessageElement_Class(p_x0);
             }
         }
     }
 
-    internal sealed partial class TableMessageElement_Class : global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<TableMessageElement_Class>
+    internal sealed partial class TableMessageElement_Class : global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.TableMessageElement_Class>
     {
-        public static global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<TableMessageElement_Class> Formatter => global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<TableMessageElement_Class>.Formatter;
-        public static TableMessageElement_Class Empty => global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<TableMessageElement_Class>.Empty;
+        public static global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.TableMessageElement_Class> Formatter => global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.TableMessageElement_Class>.Formatter;
+        public static global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.TableMessageElement_Class Empty => global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.TableMessageElement_Class>.Empty;
 
         static TableMessageElement_Class()
         {
-            global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<TableMessageElement_Class>.Formatter = new ___CustomFormatter();
-            global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<TableMessageElement_Class>.Empty = new TableMessageElement_Class(false);
+            global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.TableMessageElement_Class>.Formatter = new ___CustomFormatter();
+            global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.TableMessageElement_Class>.Empty = new global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.TableMessageElement_Class(false);
         }
 
         private readonly global::System.Lazy<int> ___hashCode;
@@ -349,7 +349,7 @@ namespace Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal
 
         public bool X0 { get; }
 
-        public static TableMessageElement_Class Import(global::System.Buffers.ReadOnlySequence<byte> sequence, global::Omnius.Core.IBytesPool bytesPool)
+        public static global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.TableMessageElement_Class Import(global::System.Buffers.ReadOnlySequence<byte> sequence, global::Omnius.Core.IBytesPool bytesPool)
         {
             var reader = new global::Omnius.Core.Serialization.RocketPack.RocketPackReader(sequence, bytesPool);
             return Formatter.Deserialize(ref reader, 0);
@@ -360,20 +360,20 @@ namespace Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal
             Formatter.Serialize(ref writer, this, 0);
         }
 
-        public static bool operator ==(TableMessageElement_Class? left, TableMessageElement_Class? right)
+        public static bool operator ==(global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.TableMessageElement_Class? left, global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.TableMessageElement_Class? right)
         {
             return (right is null) ? (left is null) : right.Equals(left);
         }
-        public static bool operator !=(TableMessageElement_Class? left, TableMessageElement_Class? right)
+        public static bool operator !=(global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.TableMessageElement_Class? left, global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.TableMessageElement_Class? right)
         {
             return !(left == right);
         }
         public override bool Equals(object? other)
         {
-            if (!(other is TableMessageElement_Class)) return false;
-            return this.Equals((TableMessageElement_Class)other);
+            if (!(other is global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.TableMessageElement_Class)) return false;
+            return this.Equals((global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.TableMessageElement_Class)other);
         }
-        public bool Equals(TableMessageElement_Class? target)
+        public bool Equals(global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.TableMessageElement_Class? target)
         {
             if (target is null) return false;
             if (object.ReferenceEquals(this, target)) return true;
@@ -383,9 +383,9 @@ namespace Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal
         }
         public override int GetHashCode() => ___hashCode.Value;
 
-        private sealed class ___CustomFormatter : global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<TableMessageElement_Class>
+        private sealed class ___CustomFormatter : global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.TableMessageElement_Class>
         {
-            public void Serialize(ref global::Omnius.Core.Serialization.RocketPack.RocketPackWriter w, in TableMessageElement_Class value, in int rank)
+            public void Serialize(ref global::Omnius.Core.Serialization.RocketPack.RocketPackWriter w, in global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.TableMessageElement_Class value, in int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
@@ -405,7 +405,7 @@ namespace Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal
                 }
             }
 
-            public TableMessageElement_Class Deserialize(ref global::Omnius.Core.Serialization.RocketPack.RocketPackReader r, in int rank)
+            public global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.TableMessageElement_Class Deserialize(ref global::Omnius.Core.Serialization.RocketPack.RocketPackReader r, in int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
@@ -426,31 +426,34 @@ namespace Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal
                     }
                 }
 
-                return new TableMessageElement_Class(p_x0);
+                return new global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.TableMessageElement_Class(p_x0);
             }
         }
     }
 
-    internal readonly partial struct StructMessage_Struct : global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<StructMessage_Struct>, global::System.IDisposable
+    internal readonly partial struct StructMessage_Struct : global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.StructMessage_Struct>, global::System.IDisposable
     {
-        public static global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<StructMessage_Struct> Formatter => global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<StructMessage_Struct>.Formatter;
-        public static StructMessage_Struct Empty => global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<StructMessage_Struct>.Empty;
+        public static global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.StructMessage_Struct> Formatter => global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.StructMessage_Struct>.Formatter;
+        public static global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.StructMessage_Struct Empty => global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.StructMessage_Struct>.Empty;
 
         static StructMessage_Struct()
         {
-            global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<StructMessage_Struct>.Formatter = new ___CustomFormatter();
-            global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<StructMessage_Struct>.Empty = new StructMessage_Struct(false, 0, 0, 0, 0, 0, 0, 0, 0, (Enum1)0, (Enum2)0, (Enum3)0, (Enum4)0, (Enum5)0, (Enum6)0, (Enum7)0, (Enum8)0, 0.0F, 0.0D, global::Omnius.Core.Serialization.RocketPack.Timestamp.Zero, global::System.ReadOnlyMemory<byte>.Empty, global::Omnius.Core.SimpleMemoryOwner<byte>.Empty, global::System.Array.Empty<string>(), new global::System.Collections.Generic.Dictionary<byte, string>(), StructMessageElement_Struct.Empty, TableMessageElement_Struct.Empty, StructMessageElement_Class.Empty, TableMessageElement_Class.Empty);
+            global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.StructMessage_Struct>.Formatter = new ___CustomFormatter();
+            global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.StructMessage_Struct>.Empty = new global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.StructMessage_Struct(false, 0, 0, 0, 0, 0, 0, 0, 0, (Enum1)0, (Enum2)0, (Enum3)0, (Enum4)0, (Enum5)0, (Enum6)0, (Enum7)0, (Enum8)0, 0.0F, 0.0D, string.Empty, global::Omnius.Core.Serialization.RocketPack.Timestamp.Zero, global::System.ReadOnlyMemory<byte>.Empty, global::Omnius.Core.SimpleMemoryOwner<byte>.Empty, global::System.Array.Empty<string>(), new global::System.Collections.Generic.Dictionary<byte, string>(), StructMessageElement_Struct.Empty, TableMessageElement_Struct.Empty, StructMessageElement_Class.Empty, TableMessageElement_Class.Empty);
         }
 
         private readonly int ___hashCode;
 
+        public static readonly int MaxX19Length = 128;
         public static readonly int MaxX21Length = 256;
         public static readonly int MaxX22Length = 256;
         public static readonly int MaxX23Count = 16;
         public static readonly int MaxX24Count = 32;
 
-        public StructMessage_Struct(bool x0, sbyte x1, short x2, int x3, long x4, byte x5, ushort x6, uint x7, ulong x8, Enum1 x9, Enum2 x10, Enum3 x11, Enum4 x12, Enum5 x13, Enum6 x14, Enum7 x15, Enum8 x16, float x17, double x18, global::Omnius.Core.Serialization.RocketPack.Timestamp x20, global::System.ReadOnlyMemory<byte> x21, global::System.Buffers.IMemoryOwner<byte> x22, string[] x23, global::System.Collections.Generic.Dictionary<byte, string> x24, StructMessageElement_Struct x25, TableMessageElement_Struct x26, StructMessageElement_Class x27, TableMessageElement_Class x28)
+        public StructMessage_Struct(bool x0, sbyte x1, short x2, int x3, long x4, byte x5, ushort x6, uint x7, ulong x8, Enum1 x9, Enum2 x10, Enum3 x11, Enum4 x12, Enum5 x13, Enum6 x14, Enum7 x15, Enum8 x16, float x17, double x18, string x19, global::Omnius.Core.Serialization.RocketPack.Timestamp x20, global::System.ReadOnlyMemory<byte> x21, global::System.Buffers.IMemoryOwner<byte> x22, string[] x23, global::System.Collections.Generic.Dictionary<byte, string> x24, StructMessageElement_Struct x25, TableMessageElement_Struct x26, StructMessageElement_Class x27, TableMessageElement_Class x28)
         {
+            if (x19 is null) throw new global::System.ArgumentNullException("x19");
+            if (x19.Length > 128) throw new global::System.ArgumentOutOfRangeException("x19");
             if (x21.Length > 256) throw new global::System.ArgumentOutOfRangeException("x21");
             if (x22 is null) throw new global::System.ArgumentNullException("x22");
             if (x22.Memory.Length > 256) throw new global::System.ArgumentOutOfRangeException("x22");
@@ -490,6 +493,7 @@ namespace Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal
             this.X16 = x16;
             this.X17 = x17;
             this.X18 = x18;
+            this.X19 = x19;
             this.X20 = x20;
             this.X21 = x21;
             _x22 = x22;
@@ -521,6 +525,7 @@ namespace Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal
                 if (x16 != default) ___h.Add(x16.GetHashCode());
                 if (x17 != default) ___h.Add(x17.GetHashCode());
                 if (x18 != default) ___h.Add(x18.GetHashCode());
+                if (x19 != default) ___h.Add(x19.GetHashCode());
                 if (x20 != default) ___h.Add(x20.GetHashCode());
                 if (!x21.IsEmpty) ___h.Add(global::Omnius.Core.Helpers.ObjectHelper.GetHashCode(x21.Span));
                 if (!x22.Memory.IsEmpty) ___h.Add(global::Omnius.Core.Helpers.ObjectHelper.GetHashCode(x22.Memory.Span));
@@ -560,6 +565,7 @@ namespace Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal
         public Enum8 X16 { get; }
         public float X17 { get; }
         public double X18 { get; }
+        public string X19 { get; }
         public global::Omnius.Core.Serialization.RocketPack.Timestamp X20 { get; }
         public global::System.ReadOnlyMemory<byte> X21 { get; }
         private readonly global::System.Buffers.IMemoryOwner<byte> _x22;
@@ -571,7 +577,7 @@ namespace Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal
         public StructMessageElement_Class X27 { get; }
         public TableMessageElement_Class X28 { get; }
 
-        public static StructMessage_Struct Import(global::System.Buffers.ReadOnlySequence<byte> sequence, global::Omnius.Core.IBytesPool bytesPool)
+        public static global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.StructMessage_Struct Import(global::System.Buffers.ReadOnlySequence<byte> sequence, global::Omnius.Core.IBytesPool bytesPool)
         {
             var reader = new global::Omnius.Core.Serialization.RocketPack.RocketPackReader(sequence, bytesPool);
             return Formatter.Deserialize(ref reader, 0);
@@ -582,20 +588,20 @@ namespace Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal
             Formatter.Serialize(ref writer, this, 0);
         }
 
-        public static bool operator ==(StructMessage_Struct left, StructMessage_Struct right)
+        public static bool operator ==(global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.StructMessage_Struct left, global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.StructMessage_Struct right)
         {
             return right.Equals(left);
         }
-        public static bool operator !=(StructMessage_Struct left, StructMessage_Struct right)
+        public static bool operator !=(global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.StructMessage_Struct left, global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.StructMessage_Struct right)
         {
             return !(left == right);
         }
         public override bool Equals(object? other)
         {
-            if (!(other is StructMessage_Struct)) return false;
-            return this.Equals((StructMessage_Struct)other);
+            if (!(other is global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.StructMessage_Struct)) return false;
+            return this.Equals((global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.StructMessage_Struct)other);
         }
-        public bool Equals(StructMessage_Struct target)
+        public bool Equals(global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.StructMessage_Struct target)
         {
             if (this.X0 != target.X0) return false;
             if (this.X1 != target.X1) return false;
@@ -615,6 +621,7 @@ namespace Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal
             if (this.X15 != target.X15) return false;
             if (this.X16 != target.X16) return false;
             if (this.X17 != target.X17) return false;
+            if (this.X19 != target.X19) return false;
             if (this.X20 != target.X20) return false;
             if (!global::Omnius.Core.BytesOperations.Equals(this.X21.Span, target.X21.Span)) return false;
             if (!global::Omnius.Core.BytesOperations.Equals(this.X22.Span, target.X22.Span)) return false;
@@ -634,9 +641,9 @@ namespace Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal
             _x22?.Dispose();
         }
 
-        private sealed class ___CustomFormatter : global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<StructMessage_Struct>
+        private sealed class ___CustomFormatter : global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.StructMessage_Struct>
         {
-            public void Serialize(ref global::Omnius.Core.Serialization.RocketPack.RocketPackWriter w, in StructMessage_Struct value, in int rank)
+            public void Serialize(ref global::Omnius.Core.Serialization.RocketPack.RocketPackWriter w, in global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.StructMessage_Struct value, in int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
@@ -659,6 +666,7 @@ namespace Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal
                 w.Write((ulong)value.X16);
                 w.Write(value.X17);
                 w.Write(value.X18);
+                w.Write(value.X19);
                 w.Write(value.X20);
                 w.Write(value.X21.Span);
                 w.Write(value.X22.Span);
@@ -673,13 +681,13 @@ namespace Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal
                     w.Write(n.Key);
                     w.Write(n.Value);
                 }
-                StructMessageElement_Struct.Formatter.Serialize(ref w, value.X25, rank + 1);
-                TableMessageElement_Struct.Formatter.Serialize(ref w, value.X26, rank + 1);
-                StructMessageElement_Class.Formatter.Serialize(ref w, value.X27, rank + 1);
-                TableMessageElement_Class.Formatter.Serialize(ref w, value.X28, rank + 1);
+                global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.StructMessageElement_Struct.Formatter.Serialize(ref w, value.X25, rank + 1);
+                global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.TableMessageElement_Struct.Formatter.Serialize(ref w, value.X26, rank + 1);
+                global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.StructMessageElement_Class.Formatter.Serialize(ref w, value.X27, rank + 1);
+                global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.TableMessageElement_Class.Formatter.Serialize(ref w, value.X28, rank + 1);
             }
 
-            public StructMessage_Struct Deserialize(ref global::Omnius.Core.Serialization.RocketPack.RocketPackReader r, in int rank)
+            public global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.StructMessage_Struct Deserialize(ref global::Omnius.Core.Serialization.RocketPack.RocketPackReader r, in int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
@@ -702,6 +710,7 @@ namespace Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal
                 Enum8 p_x16 = (Enum8)0;
                 float p_x17 = 0.0F;
                 double p_x18 = 0.0D;
+                string p_x19 = string.Empty;
                 global::Omnius.Core.Serialization.RocketPack.Timestamp p_x20 = global::Omnius.Core.Serialization.RocketPack.Timestamp.Zero;
                 global::System.ReadOnlyMemory<byte> p_x21 = global::System.ReadOnlyMemory<byte>.Empty;
                 global::System.Buffers.IMemoryOwner<byte> p_x22 = global::Omnius.Core.SimpleMemoryOwner<byte>.Empty;
@@ -770,6 +779,9 @@ namespace Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal
                     p_x18 = r.GetFloat64();
                 }
                 {
+                    p_x19 = r.GetString(128);
+                }
+                {
                     p_x20 = r.GetTimestamp();
                 }
                 {
@@ -810,20 +822,20 @@ namespace Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal
                 {
                     p_x28 = TableMessageElement_Class.Formatter.Deserialize(ref r, rank + 1);
                 }
-                return new StructMessage_Struct(p_x0, p_x1, p_x2, p_x3, p_x4, p_x5, p_x6, p_x7, p_x8, p_x9, p_x10, p_x11, p_x12, p_x13, p_x14, p_x15, p_x16, p_x17, p_x18, p_x20, p_x21, p_x22, p_x23, p_x24, p_x25, p_x26, p_x27, p_x28);
+                return new global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.StructMessage_Struct(p_x0, p_x1, p_x2, p_x3, p_x4, p_x5, p_x6, p_x7, p_x8, p_x9, p_x10, p_x11, p_x12, p_x13, p_x14, p_x15, p_x16, p_x17, p_x18, p_x19, p_x20, p_x21, p_x22, p_x23, p_x24, p_x25, p_x26, p_x27, p_x28);
             }
         }
     }
 
-    internal readonly partial struct TableMessage_Struct : global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<TableMessage_Struct>, global::System.IDisposable
+    internal readonly partial struct TableMessage_Struct : global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.TableMessage_Struct>, global::System.IDisposable
     {
-        public static global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<TableMessage_Struct> Formatter => global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<TableMessage_Struct>.Formatter;
-        public static TableMessage_Struct Empty => global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<TableMessage_Struct>.Empty;
+        public static global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.TableMessage_Struct> Formatter => global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.TableMessage_Struct>.Formatter;
+        public static global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.TableMessage_Struct Empty => global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.TableMessage_Struct>.Empty;
 
         static TableMessage_Struct()
         {
-            global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<TableMessage_Struct>.Formatter = new ___CustomFormatter();
-            global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<TableMessage_Struct>.Empty = new TableMessage_Struct(false, 0, 0, 0, 0, 0, 0, 0, 0, (Enum1)0, (Enum2)0, (Enum3)0, (Enum4)0, (Enum5)0, (Enum6)0, (Enum7)0, (Enum8)0, 0.0F, 0.0D, string.Empty, global::Omnius.Core.Serialization.RocketPack.Timestamp.Zero, global::System.ReadOnlyMemory<byte>.Empty, global::Omnius.Core.SimpleMemoryOwner<byte>.Empty, global::System.Array.Empty<string>(), new global::System.Collections.Generic.Dictionary<byte, string>(), StructMessageElement_Struct.Empty, TableMessageElement_Struct.Empty, StructMessageElement_Class.Empty, TableMessageElement_Class.Empty);
+            global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.TableMessage_Struct>.Formatter = new ___CustomFormatter();
+            global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.TableMessage_Struct>.Empty = new global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.TableMessage_Struct(false, 0, 0, 0, 0, 0, 0, 0, 0, (Enum1)0, (Enum2)0, (Enum3)0, (Enum4)0, (Enum5)0, (Enum6)0, (Enum7)0, (Enum8)0, 0.0F, 0.0D, string.Empty, global::Omnius.Core.Serialization.RocketPack.Timestamp.Zero, global::System.ReadOnlyMemory<byte>.Empty, global::Omnius.Core.SimpleMemoryOwner<byte>.Empty, global::System.Array.Empty<string>(), new global::System.Collections.Generic.Dictionary<byte, string>(), StructMessageElement_Struct.Empty, TableMessageElement_Struct.Empty, StructMessageElement_Class.Empty, TableMessageElement_Class.Empty);
         }
 
         private readonly int ___hashCode;
@@ -961,7 +973,7 @@ namespace Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal
         public StructMessageElement_Class X27 { get; }
         public TableMessageElement_Class X28 { get; }
 
-        public static TableMessage_Struct Import(global::System.Buffers.ReadOnlySequence<byte> sequence, global::Omnius.Core.IBytesPool bytesPool)
+        public static global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.TableMessage_Struct Import(global::System.Buffers.ReadOnlySequence<byte> sequence, global::Omnius.Core.IBytesPool bytesPool)
         {
             var reader = new global::Omnius.Core.Serialization.RocketPack.RocketPackReader(sequence, bytesPool);
             return Formatter.Deserialize(ref reader, 0);
@@ -972,20 +984,20 @@ namespace Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal
             Formatter.Serialize(ref writer, this, 0);
         }
 
-        public static bool operator ==(TableMessage_Struct left, TableMessage_Struct right)
+        public static bool operator ==(global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.TableMessage_Struct left, global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.TableMessage_Struct right)
         {
             return right.Equals(left);
         }
-        public static bool operator !=(TableMessage_Struct left, TableMessage_Struct right)
+        public static bool operator !=(global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.TableMessage_Struct left, global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.TableMessage_Struct right)
         {
             return !(left == right);
         }
         public override bool Equals(object? other)
         {
-            if (!(other is TableMessage_Struct)) return false;
-            return this.Equals((TableMessage_Struct)other);
+            if (!(other is global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.TableMessage_Struct)) return false;
+            return this.Equals((global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.TableMessage_Struct)other);
         }
-        public bool Equals(TableMessage_Struct target)
+        public bool Equals(global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.TableMessage_Struct target)
         {
             if (this.X0 != target.X0) return false;
             if (this.X1 != target.X1) return false;
@@ -1025,9 +1037,9 @@ namespace Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal
             _x22?.Dispose();
         }
 
-        private sealed class ___CustomFormatter : global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<TableMessage_Struct>
+        private sealed class ___CustomFormatter : global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.TableMessage_Struct>
         {
-            public void Serialize(ref global::Omnius.Core.Serialization.RocketPack.RocketPackWriter w, in TableMessage_Struct value, in int rank)
+            public void Serialize(ref global::Omnius.Core.Serialization.RocketPack.RocketPackWriter w, in global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.TableMessage_Struct value, in int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
@@ -1289,26 +1301,26 @@ namespace Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal
                 if (value.X25 != StructMessageElement_Struct.Empty)
                 {
                     w.Write((uint)25);
-                    StructMessageElement_Struct.Formatter.Serialize(ref w, value.X25, rank + 1);
+                    global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.StructMessageElement_Struct.Formatter.Serialize(ref w, value.X25, rank + 1);
                 }
                 if (value.X26 != TableMessageElement_Struct.Empty)
                 {
                     w.Write((uint)26);
-                    TableMessageElement_Struct.Formatter.Serialize(ref w, value.X26, rank + 1);
+                    global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.TableMessageElement_Struct.Formatter.Serialize(ref w, value.X26, rank + 1);
                 }
                 if (value.X27 != StructMessageElement_Class.Empty)
                 {
                     w.Write((uint)27);
-                    StructMessageElement_Class.Formatter.Serialize(ref w, value.X27, rank + 1);
+                    global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.StructMessageElement_Class.Formatter.Serialize(ref w, value.X27, rank + 1);
                 }
                 if (value.X28 != TableMessageElement_Class.Empty)
                 {
                     w.Write((uint)28);
-                    TableMessageElement_Class.Formatter.Serialize(ref w, value.X28, rank + 1);
+                    global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.TableMessageElement_Class.Formatter.Serialize(ref w, value.X28, rank + 1);
                 }
             }
 
-            public TableMessage_Struct Deserialize(ref global::Omnius.Core.Serialization.RocketPack.RocketPackReader r, in int rank)
+            public global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.TableMessage_Struct Deserialize(ref global::Omnius.Core.Serialization.RocketPack.RocketPackReader r, in int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
@@ -1511,20 +1523,20 @@ namespace Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal
                     }
                 }
 
-                return new TableMessage_Struct(p_x0, p_x1, p_x2, p_x3, p_x4, p_x5, p_x6, p_x7, p_x8, p_x9, p_x10, p_x11, p_x12, p_x13, p_x14, p_x15, p_x16, p_x17, p_x18, p_x19, p_x20, p_x21, p_x22, p_x23, p_x24, p_x25, p_x26, p_x27, p_x28);
+                return new global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.TableMessage_Struct(p_x0, p_x1, p_x2, p_x3, p_x4, p_x5, p_x6, p_x7, p_x8, p_x9, p_x10, p_x11, p_x12, p_x13, p_x14, p_x15, p_x16, p_x17, p_x18, p_x19, p_x20, p_x21, p_x22, p_x23, p_x24, p_x25, p_x26, p_x27, p_x28);
             }
         }
     }
 
-    internal readonly partial struct NullableTableMessage_Struct : global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<NullableTableMessage_Struct>, global::System.IDisposable
+    internal readonly partial struct NullableTableMessage_Struct : global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.NullableTableMessage_Struct>, global::System.IDisposable
     {
-        public static global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<NullableTableMessage_Struct> Formatter => global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<NullableTableMessage_Struct>.Formatter;
-        public static NullableTableMessage_Struct Empty => global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<NullableTableMessage_Struct>.Empty;
+        public static global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.NullableTableMessage_Struct> Formatter => global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.NullableTableMessage_Struct>.Formatter;
+        public static global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.NullableTableMessage_Struct Empty => global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.NullableTableMessage_Struct>.Empty;
 
         static NullableTableMessage_Struct()
         {
-            global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<NullableTableMessage_Struct>.Formatter = new ___CustomFormatter();
-            global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<NullableTableMessage_Struct>.Empty = new NullableTableMessage_Struct(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+            global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.NullableTableMessage_Struct>.Formatter = new ___CustomFormatter();
+            global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.NullableTableMessage_Struct>.Empty = new global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.NullableTableMessage_Struct(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
         }
 
         private readonly int ___hashCode;
@@ -1681,7 +1693,7 @@ namespace Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal
         public StructMessageElement_Class? X27 { get; }
         public TableMessageElement_Class? X28 { get; }
 
-        public static NullableTableMessage_Struct Import(global::System.Buffers.ReadOnlySequence<byte> sequence, global::Omnius.Core.IBytesPool bytesPool)
+        public static global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.NullableTableMessage_Struct Import(global::System.Buffers.ReadOnlySequence<byte> sequence, global::Omnius.Core.IBytesPool bytesPool)
         {
             var reader = new global::Omnius.Core.Serialization.RocketPack.RocketPackReader(sequence, bytesPool);
             return Formatter.Deserialize(ref reader, 0);
@@ -1692,20 +1704,20 @@ namespace Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal
             Formatter.Serialize(ref writer, this, 0);
         }
 
-        public static bool operator ==(NullableTableMessage_Struct left, NullableTableMessage_Struct right)
+        public static bool operator ==(global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.NullableTableMessage_Struct left, global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.NullableTableMessage_Struct right)
         {
             return right.Equals(left);
         }
-        public static bool operator !=(NullableTableMessage_Struct left, NullableTableMessage_Struct right)
+        public static bool operator !=(global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.NullableTableMessage_Struct left, global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.NullableTableMessage_Struct right)
         {
             return !(left == right);
         }
         public override bool Equals(object? other)
         {
-            if (!(other is NullableTableMessage_Struct)) return false;
-            return this.Equals((NullableTableMessage_Struct)other);
+            if (!(other is global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.NullableTableMessage_Struct)) return false;
+            return this.Equals((global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.NullableTableMessage_Struct)other);
         }
-        public bool Equals(NullableTableMessage_Struct target)
+        public bool Equals(global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.NullableTableMessage_Struct target)
         {
             if (this.X0 != target.X0) return false;
             if (this.X1 != target.X1) return false;
@@ -1753,9 +1765,9 @@ namespace Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal
             _x22?.Dispose();
         }
 
-        private sealed class ___CustomFormatter : global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<NullableTableMessage_Struct>
+        private sealed class ___CustomFormatter : global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.NullableTableMessage_Struct>
         {
-            public void Serialize(ref global::Omnius.Core.Serialization.RocketPack.RocketPackWriter w, in NullableTableMessage_Struct value, in int rank)
+            public void Serialize(ref global::Omnius.Core.Serialization.RocketPack.RocketPackWriter w, in global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.NullableTableMessage_Struct value, in int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
@@ -2017,26 +2029,26 @@ namespace Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal
                 if (value.X25 != null)
                 {
                     w.Write((uint)25);
-                    StructMessageElement_Struct.Formatter.Serialize(ref w, value.X25.Value, rank + 1);
+                    global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.StructMessageElement_Struct.Formatter.Serialize(ref w, value.X25.Value, rank + 1);
                 }
                 if (value.X26 != null)
                 {
                     w.Write((uint)26);
-                    TableMessageElement_Struct.Formatter.Serialize(ref w, value.X26.Value, rank + 1);
+                    global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.TableMessageElement_Struct.Formatter.Serialize(ref w, value.X26.Value, rank + 1);
                 }
                 if (value.X27 != null)
                 {
                     w.Write((uint)27);
-                    StructMessageElement_Class.Formatter.Serialize(ref w, value.X27, rank + 1);
+                    global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.StructMessageElement_Class.Formatter.Serialize(ref w, value.X27, rank + 1);
                 }
                 if (value.X28 != null)
                 {
                     w.Write((uint)28);
-                    TableMessageElement_Class.Formatter.Serialize(ref w, value.X28, rank + 1);
+                    global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.TableMessageElement_Class.Formatter.Serialize(ref w, value.X28, rank + 1);
                 }
             }
 
-            public NullableTableMessage_Struct Deserialize(ref global::Omnius.Core.Serialization.RocketPack.RocketPackReader r, in int rank)
+            public global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.NullableTableMessage_Struct Deserialize(ref global::Omnius.Core.Serialization.RocketPack.RocketPackReader r, in int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
@@ -2239,20 +2251,20 @@ namespace Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal
                     }
                 }
 
-                return new NullableTableMessage_Struct(p_x0, p_x1, p_x2, p_x3, p_x4, p_x5, p_x6, p_x7, p_x8, p_x9, p_x10, p_x11, p_x12, p_x13, p_x14, p_x15, p_x16, p_x17, p_x18, p_x19, p_x20, p_x21, p_x22, p_x23, p_x24, p_x25, p_x26, p_x27, p_x28);
+                return new global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.NullableTableMessage_Struct(p_x0, p_x1, p_x2, p_x3, p_x4, p_x5, p_x6, p_x7, p_x8, p_x9, p_x10, p_x11, p_x12, p_x13, p_x14, p_x15, p_x16, p_x17, p_x18, p_x19, p_x20, p_x21, p_x22, p_x23, p_x24, p_x25, p_x26, p_x27, p_x28);
             }
         }
     }
 
-    internal sealed partial class StructMessage_Class : global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<StructMessage_Class>, global::System.IDisposable
+    internal sealed partial class StructMessage_Class : global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.StructMessage_Class>, global::System.IDisposable
     {
-        public static global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<StructMessage_Class> Formatter => global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<StructMessage_Class>.Formatter;
-        public static StructMessage_Class Empty => global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<StructMessage_Class>.Empty;
+        public static global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.StructMessage_Class> Formatter => global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.StructMessage_Class>.Formatter;
+        public static global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.StructMessage_Class Empty => global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.StructMessage_Class>.Empty;
 
         static StructMessage_Class()
         {
-            global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<StructMessage_Class>.Formatter = new ___CustomFormatter();
-            global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<StructMessage_Class>.Empty = new StructMessage_Class(false, 0, 0, 0, 0, 0, 0, 0, 0, (Enum1)0, (Enum2)0, (Enum3)0, (Enum4)0, (Enum5)0, (Enum6)0, (Enum7)0, (Enum8)0, 0.0F, 0.0D, string.Empty, global::Omnius.Core.Serialization.RocketPack.Timestamp.Zero, global::System.ReadOnlyMemory<byte>.Empty, global::Omnius.Core.SimpleMemoryOwner<byte>.Empty, global::System.Array.Empty<string>(), new global::System.Collections.Generic.Dictionary<byte, string>(), StructMessageElement_Struct.Empty, TableMessageElement_Struct.Empty, StructMessageElement_Class.Empty, TableMessageElement_Class.Empty);
+            global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.StructMessage_Class>.Formatter = new ___CustomFormatter();
+            global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.StructMessage_Class>.Empty = new global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.StructMessage_Class(false, 0, 0, 0, 0, 0, 0, 0, 0, (Enum1)0, (Enum2)0, (Enum3)0, (Enum4)0, (Enum5)0, (Enum6)0, (Enum7)0, (Enum8)0, 0.0F, 0.0D, string.Empty, global::Omnius.Core.Serialization.RocketPack.Timestamp.Zero, global::System.ReadOnlyMemory<byte>.Empty, global::Omnius.Core.SimpleMemoryOwner<byte>.Empty, global::System.Array.Empty<string>(), new global::System.Collections.Generic.Dictionary<byte, string>(), StructMessageElement_Struct.Empty, TableMessageElement_Struct.Empty, StructMessageElement_Class.Empty, TableMessageElement_Class.Empty);
         }
 
         private readonly global::System.Lazy<int> ___hashCode;
@@ -2391,7 +2403,7 @@ namespace Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal
         public StructMessageElement_Class X27 { get; }
         public TableMessageElement_Class X28 { get; }
 
-        public static StructMessage_Class Import(global::System.Buffers.ReadOnlySequence<byte> sequence, global::Omnius.Core.IBytesPool bytesPool)
+        public static global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.StructMessage_Class Import(global::System.Buffers.ReadOnlySequence<byte> sequence, global::Omnius.Core.IBytesPool bytesPool)
         {
             var reader = new global::Omnius.Core.Serialization.RocketPack.RocketPackReader(sequence, bytesPool);
             return Formatter.Deserialize(ref reader, 0);
@@ -2402,20 +2414,20 @@ namespace Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal
             Formatter.Serialize(ref writer, this, 0);
         }
 
-        public static bool operator ==(StructMessage_Class? left, StructMessage_Class? right)
+        public static bool operator ==(global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.StructMessage_Class? left, global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.StructMessage_Class? right)
         {
             return (right is null) ? (left is null) : right.Equals(left);
         }
-        public static bool operator !=(StructMessage_Class? left, StructMessage_Class? right)
+        public static bool operator !=(global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.StructMessage_Class? left, global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.StructMessage_Class? right)
         {
             return !(left == right);
         }
         public override bool Equals(object? other)
         {
-            if (!(other is StructMessage_Class)) return false;
-            return this.Equals((StructMessage_Class)other);
+            if (!(other is global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.StructMessage_Class)) return false;
+            return this.Equals((global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.StructMessage_Class)other);
         }
-        public bool Equals(StructMessage_Class? target)
+        public bool Equals(global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.StructMessage_Class? target)
         {
             if (target is null) return false;
             if (object.ReferenceEquals(this, target)) return true;
@@ -2457,9 +2469,9 @@ namespace Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal
             _x22?.Dispose();
         }
 
-        private sealed class ___CustomFormatter : global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<StructMessage_Class>
+        private sealed class ___CustomFormatter : global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.StructMessage_Class>
         {
-            public void Serialize(ref global::Omnius.Core.Serialization.RocketPack.RocketPackWriter w, in StructMessage_Class value, in int rank)
+            public void Serialize(ref global::Omnius.Core.Serialization.RocketPack.RocketPackWriter w, in global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.StructMessage_Class value, in int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
@@ -2497,13 +2509,13 @@ namespace Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal
                     w.Write(n.Key);
                     w.Write(n.Value);
                 }
-                StructMessageElement_Struct.Formatter.Serialize(ref w, value.X25, rank + 1);
-                TableMessageElement_Struct.Formatter.Serialize(ref w, value.X26, rank + 1);
-                StructMessageElement_Class.Formatter.Serialize(ref w, value.X27, rank + 1);
-                TableMessageElement_Class.Formatter.Serialize(ref w, value.X28, rank + 1);
+                global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.StructMessageElement_Struct.Formatter.Serialize(ref w, value.X25, rank + 1);
+                global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.TableMessageElement_Struct.Formatter.Serialize(ref w, value.X26, rank + 1);
+                global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.StructMessageElement_Class.Formatter.Serialize(ref w, value.X27, rank + 1);
+                global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.TableMessageElement_Class.Formatter.Serialize(ref w, value.X28, rank + 1);
             }
 
-            public StructMessage_Class Deserialize(ref global::Omnius.Core.Serialization.RocketPack.RocketPackReader r, in int rank)
+            public global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.StructMessage_Class Deserialize(ref global::Omnius.Core.Serialization.RocketPack.RocketPackReader r, in int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
@@ -2638,20 +2650,20 @@ namespace Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal
                 {
                     p_x28 = TableMessageElement_Class.Formatter.Deserialize(ref r, rank + 1);
                 }
-                return new StructMessage_Class(p_x0, p_x1, p_x2, p_x3, p_x4, p_x5, p_x6, p_x7, p_x8, p_x9, p_x10, p_x11, p_x12, p_x13, p_x14, p_x15, p_x16, p_x17, p_x18, p_x19, p_x20, p_x21, p_x22, p_x23, p_x24, p_x25, p_x26, p_x27, p_x28);
+                return new global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.StructMessage_Class(p_x0, p_x1, p_x2, p_x3, p_x4, p_x5, p_x6, p_x7, p_x8, p_x9, p_x10, p_x11, p_x12, p_x13, p_x14, p_x15, p_x16, p_x17, p_x18, p_x19, p_x20, p_x21, p_x22, p_x23, p_x24, p_x25, p_x26, p_x27, p_x28);
             }
         }
     }
 
-    internal sealed partial class TableMessage_Class : global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<TableMessage_Class>, global::System.IDisposable
+    internal sealed partial class TableMessage_Class : global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.TableMessage_Class>, global::System.IDisposable
     {
-        public static global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<TableMessage_Class> Formatter => global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<TableMessage_Class>.Formatter;
-        public static TableMessage_Class Empty => global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<TableMessage_Class>.Empty;
+        public static global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.TableMessage_Class> Formatter => global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.TableMessage_Class>.Formatter;
+        public static global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.TableMessage_Class Empty => global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.TableMessage_Class>.Empty;
 
         static TableMessage_Class()
         {
-            global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<TableMessage_Class>.Formatter = new ___CustomFormatter();
-            global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<TableMessage_Class>.Empty = new TableMessage_Class(false, 0, 0, 0, 0, 0, 0, 0, 0, (Enum1)0, (Enum2)0, (Enum3)0, (Enum4)0, (Enum5)0, (Enum6)0, (Enum7)0, (Enum8)0, 0.0F, 0.0D, string.Empty, global::Omnius.Core.Serialization.RocketPack.Timestamp.Zero, global::System.ReadOnlyMemory<byte>.Empty, global::Omnius.Core.SimpleMemoryOwner<byte>.Empty, global::System.Array.Empty<string>(), new global::System.Collections.Generic.Dictionary<byte, string>(), StructMessageElement_Struct.Empty, TableMessageElement_Struct.Empty, StructMessageElement_Class.Empty, TableMessageElement_Class.Empty);
+            global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.TableMessage_Class>.Formatter = new ___CustomFormatter();
+            global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.TableMessage_Class>.Empty = new global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.TableMessage_Class(false, 0, 0, 0, 0, 0, 0, 0, 0, (Enum1)0, (Enum2)0, (Enum3)0, (Enum4)0, (Enum5)0, (Enum6)0, (Enum7)0, (Enum8)0, 0.0F, 0.0D, string.Empty, global::Omnius.Core.Serialization.RocketPack.Timestamp.Zero, global::System.ReadOnlyMemory<byte>.Empty, global::Omnius.Core.SimpleMemoryOwner<byte>.Empty, global::System.Array.Empty<string>(), new global::System.Collections.Generic.Dictionary<byte, string>(), StructMessageElement_Struct.Empty, TableMessageElement_Struct.Empty, StructMessageElement_Class.Empty, TableMessageElement_Class.Empty);
         }
 
         private readonly global::System.Lazy<int> ___hashCode;
@@ -2790,7 +2802,7 @@ namespace Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal
         public StructMessageElement_Class X27 { get; }
         public TableMessageElement_Class X28 { get; }
 
-        public static TableMessage_Class Import(global::System.Buffers.ReadOnlySequence<byte> sequence, global::Omnius.Core.IBytesPool bytesPool)
+        public static global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.TableMessage_Class Import(global::System.Buffers.ReadOnlySequence<byte> sequence, global::Omnius.Core.IBytesPool bytesPool)
         {
             var reader = new global::Omnius.Core.Serialization.RocketPack.RocketPackReader(sequence, bytesPool);
             return Formatter.Deserialize(ref reader, 0);
@@ -2801,20 +2813,20 @@ namespace Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal
             Formatter.Serialize(ref writer, this, 0);
         }
 
-        public static bool operator ==(TableMessage_Class? left, TableMessage_Class? right)
+        public static bool operator ==(global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.TableMessage_Class? left, global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.TableMessage_Class? right)
         {
             return (right is null) ? (left is null) : right.Equals(left);
         }
-        public static bool operator !=(TableMessage_Class? left, TableMessage_Class? right)
+        public static bool operator !=(global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.TableMessage_Class? left, global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.TableMessage_Class? right)
         {
             return !(left == right);
         }
         public override bool Equals(object? other)
         {
-            if (!(other is TableMessage_Class)) return false;
-            return this.Equals((TableMessage_Class)other);
+            if (!(other is global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.TableMessage_Class)) return false;
+            return this.Equals((global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.TableMessage_Class)other);
         }
-        public bool Equals(TableMessage_Class? target)
+        public bool Equals(global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.TableMessage_Class? target)
         {
             if (target is null) return false;
             if (object.ReferenceEquals(this, target)) return true;
@@ -2856,9 +2868,9 @@ namespace Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal
             _x22?.Dispose();
         }
 
-        private sealed class ___CustomFormatter : global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<TableMessage_Class>
+        private sealed class ___CustomFormatter : global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.TableMessage_Class>
         {
-            public void Serialize(ref global::Omnius.Core.Serialization.RocketPack.RocketPackWriter w, in TableMessage_Class value, in int rank)
+            public void Serialize(ref global::Omnius.Core.Serialization.RocketPack.RocketPackWriter w, in global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.TableMessage_Class value, in int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
@@ -3120,26 +3132,26 @@ namespace Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal
                 if (value.X25 != StructMessageElement_Struct.Empty)
                 {
                     w.Write((uint)25);
-                    StructMessageElement_Struct.Formatter.Serialize(ref w, value.X25, rank + 1);
+                    global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.StructMessageElement_Struct.Formatter.Serialize(ref w, value.X25, rank + 1);
                 }
                 if (value.X26 != TableMessageElement_Struct.Empty)
                 {
                     w.Write((uint)26);
-                    TableMessageElement_Struct.Formatter.Serialize(ref w, value.X26, rank + 1);
+                    global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.TableMessageElement_Struct.Formatter.Serialize(ref w, value.X26, rank + 1);
                 }
                 if (value.X27 != StructMessageElement_Class.Empty)
                 {
                     w.Write((uint)27);
-                    StructMessageElement_Class.Formatter.Serialize(ref w, value.X27, rank + 1);
+                    global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.StructMessageElement_Class.Formatter.Serialize(ref w, value.X27, rank + 1);
                 }
                 if (value.X28 != TableMessageElement_Class.Empty)
                 {
                     w.Write((uint)28);
-                    TableMessageElement_Class.Formatter.Serialize(ref w, value.X28, rank + 1);
+                    global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.TableMessageElement_Class.Formatter.Serialize(ref w, value.X28, rank + 1);
                 }
             }
 
-            public TableMessage_Class Deserialize(ref global::Omnius.Core.Serialization.RocketPack.RocketPackReader r, in int rank)
+            public global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.TableMessage_Class Deserialize(ref global::Omnius.Core.Serialization.RocketPack.RocketPackReader r, in int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
@@ -3342,20 +3354,20 @@ namespace Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal
                     }
                 }
 
-                return new TableMessage_Class(p_x0, p_x1, p_x2, p_x3, p_x4, p_x5, p_x6, p_x7, p_x8, p_x9, p_x10, p_x11, p_x12, p_x13, p_x14, p_x15, p_x16, p_x17, p_x18, p_x19, p_x20, p_x21, p_x22, p_x23, p_x24, p_x25, p_x26, p_x27, p_x28);
+                return new global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.TableMessage_Class(p_x0, p_x1, p_x2, p_x3, p_x4, p_x5, p_x6, p_x7, p_x8, p_x9, p_x10, p_x11, p_x12, p_x13, p_x14, p_x15, p_x16, p_x17, p_x18, p_x19, p_x20, p_x21, p_x22, p_x23, p_x24, p_x25, p_x26, p_x27, p_x28);
             }
         }
     }
 
-    internal sealed partial class NullableTableMessage_Class : global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<NullableTableMessage_Class>, global::System.IDisposable
+    internal sealed partial class NullableTableMessage_Class : global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.NullableTableMessage_Class>, global::System.IDisposable
     {
-        public static global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<NullableTableMessage_Class> Formatter => global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<NullableTableMessage_Class>.Formatter;
-        public static NullableTableMessage_Class Empty => global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<NullableTableMessage_Class>.Empty;
+        public static global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.NullableTableMessage_Class> Formatter => global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.NullableTableMessage_Class>.Formatter;
+        public static global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.NullableTableMessage_Class Empty => global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.NullableTableMessage_Class>.Empty;
 
         static NullableTableMessage_Class()
         {
-            global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<NullableTableMessage_Class>.Formatter = new ___CustomFormatter();
-            global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<NullableTableMessage_Class>.Empty = new NullableTableMessage_Class(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+            global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.NullableTableMessage_Class>.Formatter = new ___CustomFormatter();
+            global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.NullableTableMessage_Class>.Empty = new global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.NullableTableMessage_Class(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
         }
 
         private readonly global::System.Lazy<int> ___hashCode;
@@ -3513,7 +3525,7 @@ namespace Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal
         public StructMessageElement_Class? X27 { get; }
         public TableMessageElement_Class? X28 { get; }
 
-        public static NullableTableMessage_Class Import(global::System.Buffers.ReadOnlySequence<byte> sequence, global::Omnius.Core.IBytesPool bytesPool)
+        public static global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.NullableTableMessage_Class Import(global::System.Buffers.ReadOnlySequence<byte> sequence, global::Omnius.Core.IBytesPool bytesPool)
         {
             var reader = new global::Omnius.Core.Serialization.RocketPack.RocketPackReader(sequence, bytesPool);
             return Formatter.Deserialize(ref reader, 0);
@@ -3524,20 +3536,20 @@ namespace Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal
             Formatter.Serialize(ref writer, this, 0);
         }
 
-        public static bool operator ==(NullableTableMessage_Class? left, NullableTableMessage_Class? right)
+        public static bool operator ==(global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.NullableTableMessage_Class? left, global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.NullableTableMessage_Class? right)
         {
             return (right is null) ? (left is null) : right.Equals(left);
         }
-        public static bool operator !=(NullableTableMessage_Class? left, NullableTableMessage_Class? right)
+        public static bool operator !=(global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.NullableTableMessage_Class? left, global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.NullableTableMessage_Class? right)
         {
             return !(left == right);
         }
         public override bool Equals(object? other)
         {
-            if (!(other is NullableTableMessage_Class)) return false;
-            return this.Equals((NullableTableMessage_Class)other);
+            if (!(other is global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.NullableTableMessage_Class)) return false;
+            return this.Equals((global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.NullableTableMessage_Class)other);
         }
-        public bool Equals(NullableTableMessage_Class? target)
+        public bool Equals(global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.NullableTableMessage_Class? target)
         {
             if (target is null) return false;
             if (object.ReferenceEquals(this, target)) return true;
@@ -3587,9 +3599,9 @@ namespace Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal
             _x22?.Dispose();
         }
 
-        private sealed class ___CustomFormatter : global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<NullableTableMessage_Class>
+        private sealed class ___CustomFormatter : global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.NullableTableMessage_Class>
         {
-            public void Serialize(ref global::Omnius.Core.Serialization.RocketPack.RocketPackWriter w, in NullableTableMessage_Class value, in int rank)
+            public void Serialize(ref global::Omnius.Core.Serialization.RocketPack.RocketPackWriter w, in global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.NullableTableMessage_Class value, in int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
@@ -3851,26 +3863,26 @@ namespace Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal
                 if (value.X25 != null)
                 {
                     w.Write((uint)25);
-                    StructMessageElement_Struct.Formatter.Serialize(ref w, value.X25.Value, rank + 1);
+                    global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.StructMessageElement_Struct.Formatter.Serialize(ref w, value.X25.Value, rank + 1);
                 }
                 if (value.X26 != null)
                 {
                     w.Write((uint)26);
-                    TableMessageElement_Struct.Formatter.Serialize(ref w, value.X26.Value, rank + 1);
+                    global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.TableMessageElement_Struct.Formatter.Serialize(ref w, value.X26.Value, rank + 1);
                 }
                 if (value.X27 != null)
                 {
                     w.Write((uint)27);
-                    StructMessageElement_Class.Formatter.Serialize(ref w, value.X27, rank + 1);
+                    global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.StructMessageElement_Class.Formatter.Serialize(ref w, value.X27, rank + 1);
                 }
                 if (value.X28 != null)
                 {
                     w.Write((uint)28);
-                    TableMessageElement_Class.Formatter.Serialize(ref w, value.X28, rank + 1);
+                    global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.TableMessageElement_Class.Formatter.Serialize(ref w, value.X28, rank + 1);
                 }
             }
 
-            public NullableTableMessage_Class Deserialize(ref global::Omnius.Core.Serialization.RocketPack.RocketPackReader r, in int rank)
+            public global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.NullableTableMessage_Class Deserialize(ref global::Omnius.Core.Serialization.RocketPack.RocketPackReader r, in int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
@@ -4073,7 +4085,7 @@ namespace Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal
                     }
                 }
 
-                return new NullableTableMessage_Class(p_x0, p_x1, p_x2, p_x3, p_x4, p_x5, p_x6, p_x7, p_x8, p_x9, p_x10, p_x11, p_x12, p_x13, p_x14, p_x15, p_x16, p_x17, p_x18, p_x19, p_x20, p_x21, p_x22, p_x23, p_x24, p_x25, p_x26, p_x27, p_x28);
+                return new global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.NullableTableMessage_Class(p_x0, p_x1, p_x2, p_x3, p_x4, p_x5, p_x6, p_x7, p_x8, p_x9, p_x10, p_x11, p_x12, p_x13, p_x14, p_x15, p_x16, p_x17, p_x18, p_x19, p_x20, p_x21, p_x22, p_x23, p_x24, p_x25, p_x26, p_x27, p_x28);
             }
         }
     }
