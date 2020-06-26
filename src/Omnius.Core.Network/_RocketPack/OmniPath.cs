@@ -70,7 +70,7 @@ namespace Omnius.Core.Network
 
         public static class Windows
         {
-            public static bool TryEncoding(string path, [NotNullWhen(true)]out OmniPath? omniPath)
+            public static bool TryEncoding(string path, [NotNullWhen(true)] out OmniPath? omniPath)
             {
                 omniPath = null;
 

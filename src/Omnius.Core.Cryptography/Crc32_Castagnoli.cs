@@ -3,9 +3,9 @@ using System.Buffers;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
+using Omnius.Core;
 using Omnius.Core.Cryptography.Internal;
 using Omnius.Core.Internal;
-using Omnius.Core;
 
 namespace Omnius.Core.Cryptography
 {

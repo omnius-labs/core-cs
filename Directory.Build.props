@@ -1,7 +1,5 @@
 <Project>
 
-  <Import Project="..\Directory.Build.props" Condition="Exists('..\Directory.Build.props')" />
-
   <PropertyGroup>
     <LangVersion>8.0</LangVersion>
     <TargetFramework>netcoreapp3.1</TargetFramework>
