@@ -244,7 +244,31 @@ namespace Omnius.Core.Serialization.RocketPack.DefinitionCompiler
                 contents.OfType<ObjectDefinition>().ToList()
             );
 
-        private static void Validate(RocketPackDefinition result)
+        private static string LoadDefinition(string path)
+        {
+            using var reader = new StreamReader(path);
+            var text = reader.ReadToEnd();
+            return text;
+        }
+
+        private static RocketPackDefinition ParseDefinition(string text)
+        {
+            var result = _rocketPackDefinitionParser.Parse(text);
+
+            foreach (var item in result.Objects)
+            {
+                item.Namespace = result.Namespace.Value;
+            }
+
+            foreach (var item in result.Enums)
+            {
+                item.Namespace = result.Namespace.Value;
+            }
+
+            return result;
+        }
+
+        private static void ValidateDefinition(RocketPackDefinition result)
         {
             // struct形式のメッセージはOptional型は認めない。
             foreach (var objectDefinition in result.Objects.Where(n => n.FormatType == MessageFormatType.Struct))
@@ -261,14 +285,13 @@ namespace Omnius.Core.Serialization.RocketPack.DefinitionCompiler
             try
             {
                 // Load
-                using var reader = new StreamReader(definitionFilePath);
-                var text = reader.ReadToEnd();
+                var text = LoadDefinition(definitionFilePath);
 
                 // Parse
-                var result = _rocketPackDefinitionParser.Parse(text);
+                var result = ParseDefinition(text);
 
                 // Validate
-                Validate(result);
+                ValidateDefinition(result);
 
                 return result;
             }

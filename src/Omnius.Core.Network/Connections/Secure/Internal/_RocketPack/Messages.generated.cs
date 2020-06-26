@@ -5,15 +5,15 @@ using Omnius.Core.Network.Connections.Secure;
 
 namespace Omnius.Core.Network.Connections.Secure.Internal
 {
-    internal sealed partial class HelloMessage : global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<HelloMessage>
+    internal sealed partial class HelloMessage : global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<global::Omnius.Core.Network.Connections.Secure.Internal.HelloMessage>
     {
-        public static global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<HelloMessage> Formatter => global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<HelloMessage>.Formatter;
-        public static HelloMessage Empty => global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<HelloMessage>.Empty;
+        public static global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<global::Omnius.Core.Network.Connections.Secure.Internal.HelloMessage> Formatter => global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<global::Omnius.Core.Network.Connections.Secure.Internal.HelloMessage>.Formatter;
+        public static global::Omnius.Core.Network.Connections.Secure.Internal.HelloMessage Empty => global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<global::Omnius.Core.Network.Connections.Secure.Internal.HelloMessage>.Empty;
 
         static HelloMessage()
         {
-            global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<HelloMessage>.Formatter = new ___CustomFormatter();
-            global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<HelloMessage>.Empty = new HelloMessage(global::System.Array.Empty<OmniSecureConnectionVersion>());
+            global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<global::Omnius.Core.Network.Connections.Secure.Internal.HelloMessage>.Formatter = new ___CustomFormatter();
+            global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<global::Omnius.Core.Network.Connections.Secure.Internal.HelloMessage>.Empty = new global::Omnius.Core.Network.Connections.Secure.Internal.HelloMessage(global::System.Array.Empty<OmniSecureConnectionVersion>());
         }
 
         private readonly global::System.Lazy<int> ___hashCode;
@@ -40,7 +40,7 @@ namespace Omnius.Core.Network.Connections.Secure.Internal
 
         public global::Omnius.Core.Collections.ReadOnlyListSlim<OmniSecureConnectionVersion> Versions { get; }
 
-        public static HelloMessage Import(global::System.Buffers.ReadOnlySequence<byte> sequence, global::Omnius.Core.IBytesPool bytesPool)
+        public static global::Omnius.Core.Network.Connections.Secure.Internal.HelloMessage Import(global::System.Buffers.ReadOnlySequence<byte> sequence, global::Omnius.Core.IBytesPool bytesPool)
         {
             var reader = new global::Omnius.Core.Serialization.RocketPack.RocketPackReader(sequence, bytesPool);
             return Formatter.Deserialize(ref reader, 0);
@@ -51,20 +51,20 @@ namespace Omnius.Core.Network.Connections.Secure.Internal
             Formatter.Serialize(ref writer, this, 0);
         }
 
-        public static bool operator ==(HelloMessage? left, HelloMessage? right)
+        public static bool operator ==(global::Omnius.Core.Network.Connections.Secure.Internal.HelloMessage? left, global::Omnius.Core.Network.Connections.Secure.Internal.HelloMessage? right)
         {
             return (right is null) ? (left is null) : right.Equals(left);
         }
-        public static bool operator !=(HelloMessage? left, HelloMessage? right)
+        public static bool operator !=(global::Omnius.Core.Network.Connections.Secure.Internal.HelloMessage? left, global::Omnius.Core.Network.Connections.Secure.Internal.HelloMessage? right)
         {
             return !(left == right);
         }
         public override bool Equals(object? other)
         {
-            if (!(other is HelloMessage)) return false;
-            return this.Equals((HelloMessage)other);
+            if (!(other is global::Omnius.Core.Network.Connections.Secure.Internal.HelloMessage)) return false;
+            return this.Equals((global::Omnius.Core.Network.Connections.Secure.Internal.HelloMessage)other);
         }
-        public bool Equals(HelloMessage? target)
+        public bool Equals(global::Omnius.Core.Network.Connections.Secure.Internal.HelloMessage? target)
         {
             if (target is null) return false;
             if (object.ReferenceEquals(this, target)) return true;
@@ -74,9 +74,9 @@ namespace Omnius.Core.Network.Connections.Secure.Internal
         }
         public override int GetHashCode() => ___hashCode.Value;
 
-        private sealed class ___CustomFormatter : global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<HelloMessage>
+        private sealed class ___CustomFormatter : global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<global::Omnius.Core.Network.Connections.Secure.Internal.HelloMessage>
         {
-            public void Serialize(ref global::Omnius.Core.Serialization.RocketPack.RocketPackWriter w, in HelloMessage value, in int rank)
+            public void Serialize(ref global::Omnius.Core.Serialization.RocketPack.RocketPackWriter w, in global::Omnius.Core.Network.Connections.Secure.Internal.HelloMessage value, in int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
@@ -100,7 +100,7 @@ namespace Omnius.Core.Network.Connections.Secure.Internal
                 }
             }
 
-            public HelloMessage Deserialize(ref global::Omnius.Core.Serialization.RocketPack.RocketPackReader r, in int rank)
+            public global::Omnius.Core.Network.Connections.Secure.Internal.HelloMessage Deserialize(ref global::Omnius.Core.Serialization.RocketPack.RocketPackReader r, in int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
@@ -126,7 +126,7 @@ namespace Omnius.Core.Network.Connections.Secure.Internal
                     }
                 }
 
-                return new HelloMessage(p_versions);
+                return new global::Omnius.Core.Network.Connections.Secure.Internal.HelloMessage(p_versions);
             }
         }
     }

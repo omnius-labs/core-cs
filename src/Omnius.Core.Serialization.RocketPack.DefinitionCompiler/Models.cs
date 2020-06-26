@@ -73,6 +73,7 @@ namespace Omnius.Core.Serialization.RocketPack.DefinitionCompiler
             this.Elements = elements?.ToList() ?? throw new ArgumentNullException(nameof(elements));
         }
 
+        public string Namespace { get; set; }
         public IList<string> Attributes { get; }
         public string Name { get; }
         public TypeBase Type { get; }
@@ -109,10 +110,13 @@ namespace Omnius.Core.Serialization.RocketPack.DefinitionCompiler
             this.Elements = elements?.ToList() ?? throw new ArgumentNullException(nameof(elements));
         }
 
+        public string Namespace { get; set; }
         public IList<string> Attributes { get; }
         public string Name { get; }
         public MessageFormatType FormatType { get; }
         public IList<ObjectElement> Elements { get; }
+
+        public string FullName => "global::" + this.Namespace + "." + this.Name;
 
         public bool IsClass => !this.IsStruct;
         public bool IsStruct => this.Attributes.Contains("csharp_struct");

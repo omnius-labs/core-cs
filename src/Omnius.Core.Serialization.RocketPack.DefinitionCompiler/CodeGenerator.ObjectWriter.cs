@@ -187,22 +187,22 @@ namespace Omnius.Core.Serialization.RocketPack.DefinitionCompiler
                 {
                     if (objectDefinition.Elements.Select(n => n.Type).OfType<BytesType>().Any(n => n.IsUseMemoryPool))
                     {
-                        b.WriteLine($"{_accessLevel} readonly partial struct {objectDefinition.Name} : {GenerateTypeFullName("IRocketPackObject<>", objectDefinition.Name)}, {GenerateTypeFullName("IDisposable")}");
+                        b.WriteLine($"{_accessLevel} readonly partial struct {objectDefinition.Name} : {GenerateTypeFullName("IRocketPackObject<>", objectDefinition.FullName)}, {GenerateTypeFullName("IDisposable")}");
                     }
                     else
                     {
-                        b.WriteLine($"{_accessLevel} readonly partial struct {objectDefinition.Name} : {GenerateTypeFullName("IRocketPackObject<>", objectDefinition.Name)}");
+                        b.WriteLine($"{_accessLevel} readonly partial struct {objectDefinition.Name} : {GenerateTypeFullName("IRocketPackObject<>", objectDefinition.FullName)}");
                     }
                 }
                 else if (objectDefinition.IsClass)
                 {
                     if (objectDefinition.Elements.Select(n => n.Type).OfType<BytesType>().Any(n => n.IsUseMemoryPool))
                     {
-                        b.WriteLine($"{_accessLevel} sealed partial class {objectDefinition.Name} : {GenerateTypeFullName("IRocketPackObject<>", objectDefinition.Name)}, {GenerateTypeFullName("IDisposable")}");
+                        b.WriteLine($"{_accessLevel} sealed partial class {objectDefinition.Name} : {GenerateTypeFullName("IRocketPackObject<>", objectDefinition.FullName)}, {GenerateTypeFullName("IDisposable")}");
                     }
                     else
                     {
-                        b.WriteLine($"{_accessLevel} sealed partial class {objectDefinition.Name} : {GenerateTypeFullName("IRocketPackObject<>", objectDefinition.Name)}");
+                        b.WriteLine($"{_accessLevel} sealed partial class { objectDefinition.Name} : {GenerateTypeFullName("IRocketPackObject<>", objectDefinition.FullName)}");
                     }
                 }
 
@@ -249,8 +249,8 @@ namespace Omnius.Core.Serialization.RocketPack.DefinitionCompiler
             /// </summary>
             private void Write_StaticConstructor(CodeBuilder b, ObjectDefinition objectDefinition)
             {
-                b.WriteLine($"public static {GenerateTypeFullName("IRocketPackFormatter<>", objectDefinition.Name)} Formatter => {GenerateTypeFullName("IRocketPackObject<>", objectDefinition.Name)}.Formatter;");
-                b.WriteLine($"public static {objectDefinition.Name} Empty => {GenerateTypeFullName("IRocketPackObject<>", objectDefinition.Name)}.Empty;");
+                b.WriteLine($"public static {GenerateTypeFullName("IRocketPackFormatter<>", objectDefinition.FullName)} Formatter => {GenerateTypeFullName("IRocketPackObject<>", objectDefinition.FullName)}.Formatter;");
+                b.WriteLine($"public static {objectDefinition.FullName} Empty => {GenerateTypeFullName("IRocketPackObject<>", objectDefinition.FullName)}.Empty;");
                 b.WriteLine();
 
                 b.WriteLine($"static {objectDefinition.Name}()");
@@ -270,7 +270,7 @@ namespace Omnius.Core.Serialization.RocketPack.DefinitionCompiler
 
             private void Write_StaticConstructor_CustomFormatterProperty(CodeBuilder b, ObjectDefinition objectDefinition)
             {
-                b.WriteLine($"{GenerateTypeFullName("IRocketPackObject<>", objectDefinition.Name)}.Formatter = new {CustomFormatterName}();");
+                b.WriteLine($"{GenerateTypeFullName("IRocketPackObject<>", objectDefinition.FullName)}.Formatter = new {CustomFormatterName}();");
             }
 
             private void Write_StaticConstructor_EmptyProperty(CodeBuilder b, ObjectDefinition objectDefinition)
@@ -282,7 +282,7 @@ namespace Omnius.Core.Serialization.RocketPack.DefinitionCompiler
                     parameters.Add(this.GetDefaultValueString(element.Type));
                 }
 
-                b.WriteLine($"{GenerateTypeFullName("IRocketPackObject<>", objectDefinition.Name)}.Empty = new {objectDefinition.Name}({string.Join(", ", parameters)});");
+                b.WriteLine($"{GenerateTypeFullName("IRocketPackObject<>", objectDefinition.FullName)}.Empty = new {objectDefinition.FullName}({string.Join(", ", parameters)});");
             }
 
             /// <summary>
@@ -772,7 +772,7 @@ namespace Omnius.Core.Serialization.RocketPack.DefinitionCompiler
 
             private void Write_ImportAndExport(CodeBuilder b, ObjectDefinition objectDefinition)
             {
-                b.WriteLine($"public static {objectDefinition.Name} Import({GenerateTypeFullName("ReadOnlySequence<>", "byte")} sequence, {GenerateTypeFullName("IBytesPool")} bytesPool)");
+                b.WriteLine($"public static {objectDefinition.FullName} Import({GenerateTypeFullName("ReadOnlySequence<>", "byte")} sequence, {GenerateTypeFullName("IBytesPool")} bytesPool)");
                 b.WriteLine("{");
                 using (b.Indent())
                 {
@@ -795,7 +795,7 @@ namespace Omnius.Core.Serialization.RocketPack.DefinitionCompiler
             {
                 if (objectDefinition.IsStruct)
                 {
-                    b.WriteLine($"public static bool operator ==({objectDefinition.Name} left, {objectDefinition.Name} right)");
+                    b.WriteLine($"public static bool operator ==({objectDefinition.FullName} left, {objectDefinition.FullName} right)");
                     b.WriteLine("{");
                     using (b.Indent())
                     {
@@ -803,7 +803,7 @@ namespace Omnius.Core.Serialization.RocketPack.DefinitionCompiler
                     }
                     b.WriteLine("}");
 
-                    b.WriteLine($"public static bool operator !=({objectDefinition.Name} left, {objectDefinition.Name} right)");
+                    b.WriteLine($"public static bool operator !=({objectDefinition.FullName} left, {objectDefinition.FullName} right)");
                     b.WriteLine("{");
                     using (b.Indent())
                     {
@@ -813,7 +813,7 @@ namespace Omnius.Core.Serialization.RocketPack.DefinitionCompiler
                 }
                 else if (objectDefinition.IsClass)
                 {
-                    b.WriteLine($"public static bool operator ==({objectDefinition.Name}? left, {objectDefinition.Name}? right)");
+                    b.WriteLine($"public static bool operator ==({objectDefinition.FullName}? left, {objectDefinition.FullName}? right)");
                     b.WriteLine("{");
                     using (b.Indent())
                     {
@@ -821,7 +821,7 @@ namespace Omnius.Core.Serialization.RocketPack.DefinitionCompiler
                     }
                     b.WriteLine("}");
 
-                    b.WriteLine($"public static bool operator !=({objectDefinition.Name}? left, {objectDefinition.Name}? right)");
+                    b.WriteLine($"public static bool operator !=({objectDefinition.FullName}? left, {objectDefinition.FullName}? right)");
                     b.WriteLine("{");
                     using (b.Indent())
                     {
@@ -834,18 +834,18 @@ namespace Omnius.Core.Serialization.RocketPack.DefinitionCompiler
                 b.WriteLine("{");
                 using (b.Indent())
                 {
-                    b.WriteLine($"if (!(other is {objectDefinition.Name})) return false;");
-                    b.WriteLine($"return this.Equals(({objectDefinition.Name})other);");
+                    b.WriteLine($"if (!(other is {objectDefinition.FullName})) return false;");
+                    b.WriteLine($"return this.Equals(({objectDefinition.FullName})other);");
                 }
                 b.WriteLine("}");
 
                 if (objectDefinition.IsStruct)
                 {
-                    b.WriteLine($"public bool Equals({objectDefinition.Name} target)");
+                    b.WriteLine($"public bool Equals({objectDefinition.FullName} target)");
                 }
                 else if (objectDefinition.IsClass)
                 {
-                    b.WriteLine($"public bool Equals({objectDefinition.Name}? target)");
+                    b.WriteLine($"public bool Equals({objectDefinition.FullName}? target)");
                 }
                 b.WriteLine("{");
 
@@ -1010,13 +1010,13 @@ namespace Omnius.Core.Serialization.RocketPack.DefinitionCompiler
 
             private void Write_Medium_Formatter(CodeBuilder b, ObjectDefinition objectDefinition)
             {
-                b.WriteLine($"private sealed class ___CustomFormatter : {GenerateTypeFullName("IRocketPackFormatter<>", objectDefinition.Name)}");
+                b.WriteLine($"private sealed class ___CustomFormatter : {GenerateTypeFullName("IRocketPackFormatter<>", objectDefinition.FullName)}");
                 b.WriteLine("{");
 
                 using (b.Indent())
                 {
                     {
-                        b.WriteLine($"public void Serialize(ref {GenerateTypeFullName("RocketPackWriter")} w, in {objectDefinition.Name} value, in int rank)");
+                        b.WriteLine($"public void Serialize(ref {GenerateTypeFullName("RocketPackWriter")} w, in {objectDefinition.FullName} value, in int rank)");
                         b.WriteLine("{");
 
                         using (b.Indent())
@@ -1065,7 +1065,7 @@ namespace Omnius.Core.Serialization.RocketPack.DefinitionCompiler
                     b.WriteLine();
 
                     {
-                        b.WriteLine($"public {objectDefinition.Name} Deserialize(ref {GenerateTypeFullName("RocketPackReader")} r, in int rank)");
+                        b.WriteLine($"public {objectDefinition.FullName} Deserialize(ref {GenerateTypeFullName("RocketPackReader")} r, in int rank)");
                         b.WriteLine("{");
 
                         using (b.Indent())
@@ -1120,7 +1120,7 @@ namespace Omnius.Core.Serialization.RocketPack.DefinitionCompiler
                             b.WriteLine("}");
                             b.WriteLine();
 
-                            b.WriteLine($"return new {objectDefinition.Name}({ string.Join(", ", objectDefinition.Elements.Select(n => "p_" + GenerateFieldVariableName(n.Name)))});");
+                            b.WriteLine($"return new {objectDefinition.FullName}({ string.Join(", ", objectDefinition.Elements.Select(n => "p_" + GenerateFieldVariableName(n.Name)))});");
                         }
 
                         b.WriteLine("}");
@@ -1259,15 +1259,15 @@ namespace Omnius.Core.Serialization.RocketPack.DefinitionCompiler
                             case ObjectDefinition objectDefinition when (objectDefinition.IsStruct):
                                 if (!type.IsOptional)
                                 {
-                                    b.WriteLine($"{objectDefinition.Name}.Formatter.Serialize(ref w, {name}, rank + 1);");
+                                    b.WriteLine($"{objectDefinition.FullName}.Formatter.Serialize(ref w, {name}, rank + 1);");
                                 }
                                 else
                                 {
-                                    b.WriteLine($"{objectDefinition.Name}.Formatter.Serialize(ref w, {name}.Value, rank + 1);");
+                                    b.WriteLine($"{objectDefinition.FullName}.Formatter.Serialize(ref w, {name}.Value, rank + 1);");
                                 }
                                 break;
                             case ObjectDefinition objectDefinition when (objectDefinition.IsClass):
-                                b.WriteLine($"{objectDefinition.Name}.Formatter.Serialize(ref w, {name}, rank + 1);");
+                                b.WriteLine($"{objectDefinition.FullName}.Formatter.Serialize(ref w, {name}, rank + 1);");
                                 break;
                         }
                         break;
@@ -1368,13 +1368,13 @@ namespace Omnius.Core.Serialization.RocketPack.DefinitionCompiler
 
             private void Write_Small_Formatter(CodeBuilder b, ObjectDefinition objectDefinition)
             {
-                b.WriteLine($"private sealed class ___CustomFormatter : {GenerateTypeFullName("IRocketPackFormatter<>", objectDefinition.Name)}");
+                b.WriteLine($"private sealed class ___CustomFormatter : {GenerateTypeFullName("IRocketPackFormatter<>", objectDefinition.FullName)}");
                 b.WriteLine("{");
 
                 using (b.Indent())
                 {
                     {
-                        b.WriteLine($"public void Serialize(ref {GenerateTypeFullName("RocketPackWriter")} w, in {objectDefinition.Name} value, in int rank)");
+                        b.WriteLine($"public void Serialize(ref {GenerateTypeFullName("RocketPackWriter")} w, in {objectDefinition.FullName} value, in int rank)");
                         b.WriteLine("{");
 
                         using (b.Indent())
@@ -1394,7 +1394,7 @@ namespace Omnius.Core.Serialization.RocketPack.DefinitionCompiler
                     b.WriteLine();
 
                     {
-                        b.WriteLine($"public {objectDefinition.Name} Deserialize(ref {GenerateTypeFullName("RocketPackReader")} r, in int rank)");
+                        b.WriteLine($"public {objectDefinition.FullName} Deserialize(ref {GenerateTypeFullName("RocketPackReader")} r, in int rank)");
                         b.WriteLine("{");
 
                         using (b.Indent())
@@ -1418,7 +1418,7 @@ namespace Omnius.Core.Serialization.RocketPack.DefinitionCompiler
                                 b.WriteLine("}");
                             }
 
-                            b.WriteLine($"return new {objectDefinition.Name}({ string.Join(", ", objectDefinition.Elements.Select(n => "p_" + GenerateFieldVariableName(n.Name)))});");
+                            b.WriteLine($"return new {objectDefinition.FullName}({ string.Join(", ", objectDefinition.Elements.Select(n => "p_" + GenerateFieldVariableName(n.Name)))});");
 
                         }
 
@@ -1558,15 +1558,15 @@ namespace Omnius.Core.Serialization.RocketPack.DefinitionCompiler
                             case ObjectDefinition objectDefinition when (objectDefinition.IsStruct):
                                 if (!customType.IsOptional)
                                 {
-                                    b.WriteLine($"{objectDefinition.Name}.Formatter.Serialize(ref w, {name}, rank + 1);");
+                                    b.WriteLine($"{objectDefinition.FullName}.Formatter.Serialize(ref w, {name}, rank + 1);");
                                 }
                                 else
                                 {
-                                    b.WriteLine($"{objectDefinition.Name}.Formatter.Serialize(ref w, {name}.Value, rank + 1);");
+                                    b.WriteLine($"{objectDefinition.FullName}.Formatter.Serialize(ref w, {name}.Value, rank + 1);");
                                 }
                                 break;
                             case ObjectDefinition objectDefinition when (objectDefinition.IsClass):
-                                b.WriteLine($"{objectDefinition.Name}.Formatter.Serialize(ref w, {name}, rank + 1);");
+                                b.WriteLine($"{objectDefinition.FullName}.Formatter.Serialize(ref w, {name}, rank + 1);");
                                 break;
                         }
                         break;
