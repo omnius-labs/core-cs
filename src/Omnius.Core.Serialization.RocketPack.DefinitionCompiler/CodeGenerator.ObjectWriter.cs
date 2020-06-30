@@ -115,8 +115,8 @@ namespace Omnius.Core.Serialization.RocketPack.DefinitionCompiler
                     CustomType type => this.FindDefinition(type) switch
                     {
                         EnumDefinition _ => type.TypeName + (type.IsOptional ? "?" : ""),
-                        ObjectDefinition messageInfo when (messageInfo.FormatType == MessageFormatType.Table) => type.TypeName + (type.IsOptional ? "?" : ""),
-                        ObjectDefinition messageInfo when (messageInfo.FormatType == MessageFormatType.Struct) => type.TypeName + (type.IsOptional ? "?" : ""),
+                        ObjectDefinition objectDefinition when (objectDefinition.FormatType == MessageFormatType.Table) => type.TypeName + (type.IsOptional ? "?" : ""),
+                        ObjectDefinition objectDefinition when (objectDefinition.FormatType == MessageFormatType.Struct) => type.TypeName + (type.IsOptional ? "?" : ""),
                         _ => throw new ArgumentException($"Type \"{type.TypeName}\" was not found", nameof(type)),
                     },
                     _ => throw new ArgumentException($"Type \"{typeBase.GetType().Name}\" was not found", nameof(typeBase)),
@@ -147,8 +147,8 @@ namespace Omnius.Core.Serialization.RocketPack.DefinitionCompiler
                     CustomType type => this.FindDefinition(type) switch
                     {
                         EnumDefinition _ => type.TypeName + (type.IsOptional ? "?" : ""),
-                        ObjectDefinition messageInfo when (messageInfo.FormatType == MessageFormatType.Table) => type.TypeName + (type.IsOptional ? "?" : ""),
-                        ObjectDefinition messageInfo when (messageInfo.FormatType == MessageFormatType.Struct) => type.TypeName + (type.IsOptional ? "?" : ""),
+                        ObjectDefinition objectDefinition when (objectDefinition.FormatType == MessageFormatType.Table) => type.TypeName + (type.IsOptional ? "?" : ""),
+                        ObjectDefinition objectDefinition when (objectDefinition.FormatType == MessageFormatType.Struct) => type.TypeName + (type.IsOptional ? "?" : ""),
                         _ => throw new ArgumentException($"Type \"{type.TypeName}\" was not found", nameof(type)),
                     },
                     _ => throw new ArgumentException($"Type \"{typeBase.GetType().Name}\" was not found", nameof(typeBase)),
@@ -551,7 +551,7 @@ namespace Omnius.Core.Serialization.RocketPack.DefinitionCompiler
                     case CustomType customType when (!type.IsOptional):
                         switch (this.FindDefinition(customType))
                         {
-                            case ObjectDefinition messageInfo when (messageInfo.IsClass):
+                            case ObjectDefinition objectDefinition when (objectDefinition.IsClass):
                                 b.WriteLine($"if ({name} is null) throw new {GenerateTypeFullName("ArgumentNullException")}(\"{name}\");");
                                 return true;
                             default:
@@ -751,7 +751,7 @@ namespace Omnius.Core.Serialization.RocketPack.DefinitionCompiler
                                 case EnumDefinition enumInfo:
                                     b.WriteLine($"if ({parameterName} != default) {hashCodeName}.Add({parameterName}.GetHashCode());");
                                     break;
-                                case ObjectDefinition messageInfo when (messageInfo.IsStruct):
+                                case ObjectDefinition objectDefinition when (objectDefinition.IsStruct):
                                     if (!customType.IsOptional)
                                     {
                                         b.WriteLine($"if ({parameterName} != default) {hashCodeName}.Add({parameterName}.GetHashCode());");
@@ -761,7 +761,7 @@ namespace Omnius.Core.Serialization.RocketPack.DefinitionCompiler
                                         b.WriteLine($"if ({parameterName} != default) {hashCodeName}.Add({parameterName}.Value.GetHashCode());");
                                     }
                                     break;
-                                case ObjectDefinition messageInfo when (messageInfo.IsClass):
+                                case ObjectDefinition objectDefinition when (objectDefinition.IsClass):
                                     b.WriteLine($"if ({parameterName} != default) {hashCodeName}.Add({parameterName}.GetHashCode());");
                                     break;
                             }
@@ -916,7 +916,7 @@ namespace Omnius.Core.Serialization.RocketPack.DefinitionCompiler
                                         case EnumDefinition enumInfo:
                                             b.WriteLine($"if (this.{element.Name} != target.{element.Name}) return false;");
                                             break;
-                                        case ObjectDefinition messageInfo when (messageInfo.IsStruct):
+                                        case ObjectDefinition objectDefinition2 when (objectDefinition2.IsStruct):
                                             if (!type.IsOptional)
                                             {
                                                 b.WriteLine($"if (this.{element.Name} != target.{element.Name}) return false;");
@@ -927,7 +927,7 @@ namespace Omnius.Core.Serialization.RocketPack.DefinitionCompiler
                                                 b.WriteLine($"if (!(this.{element.Name} is null) && !(target.{element.Name} is null) && this.{element.Name} != target.{element.Name}) return false;");
                                             }
                                             break;
-                                        case ObjectDefinition messageInfo when (messageInfo.IsClass):
+                                        case ObjectDefinition objectDefinition2 when (objectDefinition2.IsClass):
                                             if (!type.IsOptional)
                                             {
                                                 b.WriteLine($"if (this.{element.Name} != target.{element.Name}) return false;");
@@ -1355,11 +1355,11 @@ namespace Omnius.Core.Serialization.RocketPack.DefinitionCompiler
                                         break;
                                 }
                                 break;
-                            case ObjectDefinition messageInfo when (messageInfo.IsStruct):
-                                b.WriteLine($"{name} = {messageInfo.Name}.Formatter.Deserialize(ref r, rank + 1);");
+                            case ObjectDefinition objectDefinition when (objectDefinition.IsStruct):
+                                b.WriteLine($"{name} = {objectDefinition.FullName}.Formatter.Deserialize(ref r, rank + 1);");
                                 break;
-                            case ObjectDefinition messageInfo when (messageInfo.IsClass):
-                                b.WriteLine($"{name} = {messageInfo.Name}.Formatter.Deserialize(ref r, rank + 1);");
+                            case ObjectDefinition objectDefinition when (objectDefinition.IsClass):
+                                b.WriteLine($"{name} = {objectDefinition.FullName}.Formatter.Deserialize(ref r, rank + 1);");
                                 break;
                         }
                         break;
@@ -1654,11 +1654,11 @@ namespace Omnius.Core.Serialization.RocketPack.DefinitionCompiler
                                         break;
                                 }
                                 break;
-                            case ObjectDefinition messageInfo when (messageInfo.IsStruct):
-                                b.WriteLine($"{name} = {messageInfo.Name}.Formatter.Deserialize(ref r, rank + 1);");
+                            case ObjectDefinition objectDefinition when (objectDefinition.IsStruct):
+                                b.WriteLine($"{name} = {objectDefinition.FullName}.Formatter.Deserialize(ref r, rank + 1);");
                                 break;
-                            case ObjectDefinition messageInfo when (messageInfo.IsClass):
-                                b.WriteLine($"{name} = {messageInfo.Name}.Formatter.Deserialize(ref r, rank + 1);");
+                            case ObjectDefinition objectDefinition when (objectDefinition.IsClass):
+                                b.WriteLine($"{name} = {objectDefinition.FullName}.Formatter.Deserialize(ref r, rank + 1);");
                                 break;
                         }
                         break;
