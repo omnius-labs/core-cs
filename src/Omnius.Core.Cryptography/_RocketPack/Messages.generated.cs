@@ -1066,7 +1066,7 @@ namespace Omnius.Core.Cryptography
                             }
                         case 1:
                             {
-                                p_hash = OmniHash.Formatter.Deserialize(ref r, rank + 1);
+                                p_hash = global::Omnius.Core.Cryptography.OmniHash.Formatter.Deserialize(ref r, rank + 1);
                                 break;
                             }
                     }

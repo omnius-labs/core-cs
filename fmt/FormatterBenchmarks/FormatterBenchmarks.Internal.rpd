@@ -1,7 +1,7 @@
-syntax = v1.0;
+syntax v1.0
 
-namespace "FormatterBenchmarks.Internal";
-option csharp_access_level = "internal";
+namespace "FormatterBenchmarks.Internal"
+option csharp_access_level = "internal"
 
 table RocketPack_BytesElementsList {
     List: vector<RocketPack_BytesElements>(capacity: 1048576) = 0,

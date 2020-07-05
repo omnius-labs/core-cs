@@ -121,7 +121,7 @@ namespace FormatterBenchmarks.Internal
                                 p_list = new RocketPack_BytesElements[length];
                                 for (int i = 0; i < p_list.Length; i++)
                                 {
-                                    p_list[i] = RocketPack_BytesElements.Formatter.Deserialize(ref r, rank + 1);
+                                    p_list[i] = global::FormatterBenchmarks.Internal.RocketPack_BytesElements.Formatter.Deserialize(ref r, rank + 1);
                                 }
                                 break;
                             }
@@ -472,7 +472,7 @@ namespace FormatterBenchmarks.Internal
                                 p_list = new RocketPack_IntElements[length];
                                 for (int i = 0; i < p_list.Length; i++)
                                 {
-                                    p_list[i] = RocketPack_IntElements.Formatter.Deserialize(ref r, rank + 1);
+                                    p_list[i] = global::FormatterBenchmarks.Internal.RocketPack_IntElements.Formatter.Deserialize(ref r, rank + 1);
                                 }
                                 break;
                             }
@@ -767,7 +767,7 @@ namespace FormatterBenchmarks.Internal
                                 p_list = new RocketPack_StringElements[length];
                                 for (int i = 0; i < p_list.Length; i++)
                                 {
-                                    p_list[i] = RocketPack_StringElements.Formatter.Deserialize(ref r, rank + 1);
+                                    p_list[i] = global::FormatterBenchmarks.Internal.RocketPack_StringElements.Formatter.Deserialize(ref r, rank + 1);
                                 }
                                 break;
                             }

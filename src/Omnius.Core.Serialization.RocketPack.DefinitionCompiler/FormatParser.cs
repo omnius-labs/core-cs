@@ -26,9 +26,7 @@ namespace Omnius.Core.Serialization.RocketPack.DefinitionCompiler
         // example: syntax = v1.0
         private static readonly Parser<string> _syntaxParser =
             from keyword in Parse.String("syntax").TokenWithSkipComment()
-            from equal in Parse.Char('=').TokenWithSkipComment()
             from type in Parse.String("v1.0").TokenWithSkipComment().Text()
-            from semicolon in Parse.Char(';').Or(Parse.Return(';')).TokenWithSkipComment()
             select type;
 
         // example: option csharp_namespace = "RocketPack.Messages";
@@ -37,21 +35,18 @@ namespace Omnius.Core.Serialization.RocketPack.DefinitionCompiler
             from name in _nameParser.TokenWithSkipComment()
             from equal in Parse.Char('=').TokenWithSkipComment()
             from value in _stringLiteralParser.TokenWithSkipComment()
-            from semicolon in Parse.Char(';').Or(Parse.Return(';')).TokenWithSkipComment()
             select new OptionDefinition(name, value);
 
         // example: using "RocketPack.Messages";
         private static readonly Parser<UsingDefinition> _usingParser =
             from keyword in Parse.String("using").TokenWithSkipComment()
             from value in _stringLiteralParser.TokenWithSkipComment()
-            from semicolon in Parse.Char(';').Or(Parse.Return(';')).TokenWithSkipComment()
             select new UsingDefinition(value);
 
         // example: namespace "RocketPack.Messages";
         private static readonly Parser<NamespaceDefinition> _namespaceParser =
             from keyword in Parse.String("namespace").TokenWithSkipComment()
             from value in _stringLiteralParser.TokenWithSkipComment()
-            from semicolon in Parse.Char(';').Or(Parse.Return(';')).TokenWithSkipComment()
             select new NamespaceDefinition(value);
 
         // example: [csharp_recyclable]

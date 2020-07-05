@@ -1,8 +1,8 @@
-syntax = v1.0;
+syntax v1.0
 
-using "Omnius.Core.Cryptography";
-namespace "Omnius.Core.Network.Connections.Secure.V1.Internal";
-option csharp_access_level = "internal";
+using "Omnius.Core.Cryptography"
+namespace "Omnius.Core.Network.Connections.Secure.V1.Internal"
+option csharp_access_level = "internal"
 
 enum KeyExchangeAlgorithm : uint8 {
     Unknown = 0,

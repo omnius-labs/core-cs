@@ -1,7 +1,7 @@
 ﻿syntax v1.0
 
-namespace "Omnius.Core.Network"
+namespace "Omnius.Core.Io"
 
-table OmniAddress {
+table OmniPath {
     Value: string(capacity: 8192) = 0,
 }

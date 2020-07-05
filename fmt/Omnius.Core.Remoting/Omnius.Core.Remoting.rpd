@@ -1,6 +1,6 @@
-﻿syntax = v1.0;
+﻿syntax v1.0
 
-namespace "Omnius.Core.Remoting";
+namespace "Omnius.Core.Remoting"
 
 table OmniRpcErrorMessage {
     Type: string(capacity: 8192) = 0,

@@ -417,12 +417,12 @@ namespace Omnius.Core.Network.Connections.Secure.V1.Internal
                     {
                         case 0:
                             {
-                                p_profileMessage = ProfileMessage.Formatter.Deserialize(ref r, rank + 1);
+                                p_profileMessage = global::Omnius.Core.Network.Connections.Secure.V1.Internal.ProfileMessage.Formatter.Deserialize(ref r, rank + 1);
                                 break;
                             }
                         case 1:
                             {
-                                p_agreementPublicKey = OmniAgreementPublicKey.Formatter.Deserialize(ref r, rank + 1);
+                                p_agreementPublicKey = global::Omnius.Core.Cryptography.OmniAgreementPublicKey.Formatter.Deserialize(ref r, rank + 1);
                                 break;
                             }
                     }

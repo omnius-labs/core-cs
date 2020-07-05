@@ -811,16 +811,16 @@ namespace Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal
                     }
                 }
                 {
-                    p_x25 = StructMessageElement_Struct.Formatter.Deserialize(ref r, rank + 1);
+                    p_x25 = global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.StructMessageElement_Struct.Formatter.Deserialize(ref r, rank + 1);
                 }
                 {
-                    p_x26 = TableMessageElement_Struct.Formatter.Deserialize(ref r, rank + 1);
+                    p_x26 = global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.TableMessageElement_Struct.Formatter.Deserialize(ref r, rank + 1);
                 }
                 {
-                    p_x27 = StructMessageElement_Class.Formatter.Deserialize(ref r, rank + 1);
+                    p_x27 = global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.StructMessageElement_Class.Formatter.Deserialize(ref r, rank + 1);
                 }
                 {
-                    p_x28 = TableMessageElement_Class.Formatter.Deserialize(ref r, rank + 1);
+                    p_x28 = global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.TableMessageElement_Class.Formatter.Deserialize(ref r, rank + 1);
                 }
                 return new global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.StructMessage_Struct(p_x0, p_x1, p_x2, p_x3, p_x4, p_x5, p_x6, p_x7, p_x8, p_x9, p_x10, p_x11, p_x12, p_x13, p_x14, p_x15, p_x16, p_x17, p_x18, p_x19, p_x20, p_x21, p_x22, p_x23, p_x24, p_x25, p_x26, p_x27, p_x28);
             }
@@ -1502,22 +1502,22 @@ namespace Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal
                             }
                         case 25:
                             {
-                                p_x25 = StructMessageElement_Struct.Formatter.Deserialize(ref r, rank + 1);
+                                p_x25 = global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.StructMessageElement_Struct.Formatter.Deserialize(ref r, rank + 1);
                                 break;
                             }
                         case 26:
                             {
-                                p_x26 = TableMessageElement_Struct.Formatter.Deserialize(ref r, rank + 1);
+                                p_x26 = global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.TableMessageElement_Struct.Formatter.Deserialize(ref r, rank + 1);
                                 break;
                             }
                         case 27:
                             {
-                                p_x27 = StructMessageElement_Class.Formatter.Deserialize(ref r, rank + 1);
+                                p_x27 = global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.StructMessageElement_Class.Formatter.Deserialize(ref r, rank + 1);
                                 break;
                             }
                         case 28:
                             {
-                                p_x28 = TableMessageElement_Class.Formatter.Deserialize(ref r, rank + 1);
+                                p_x28 = global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.TableMessageElement_Class.Formatter.Deserialize(ref r, rank + 1);
                                 break;
                             }
                     }
@@ -2230,22 +2230,22 @@ namespace Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal
                             }
                         case 25:
                             {
-                                p_x25 = StructMessageElement_Struct.Formatter.Deserialize(ref r, rank + 1);
+                                p_x25 = global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.StructMessageElement_Struct.Formatter.Deserialize(ref r, rank + 1);
                                 break;
                             }
                         case 26:
                             {
-                                p_x26 = TableMessageElement_Struct.Formatter.Deserialize(ref r, rank + 1);
+                                p_x26 = global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.TableMessageElement_Struct.Formatter.Deserialize(ref r, rank + 1);
                                 break;
                             }
                         case 27:
                             {
-                                p_x27 = StructMessageElement_Class.Formatter.Deserialize(ref r, rank + 1);
+                                p_x27 = global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.StructMessageElement_Class.Formatter.Deserialize(ref r, rank + 1);
                                 break;
                             }
                         case 28:
                             {
-                                p_x28 = TableMessageElement_Class.Formatter.Deserialize(ref r, rank + 1);
+                                p_x28 = global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.TableMessageElement_Class.Formatter.Deserialize(ref r, rank + 1);
                                 break;
                             }
                     }
@@ -2639,16 +2639,16 @@ namespace Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal
                     }
                 }
                 {
-                    p_x25 = StructMessageElement_Struct.Formatter.Deserialize(ref r, rank + 1);
+                    p_x25 = global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.StructMessageElement_Struct.Formatter.Deserialize(ref r, rank + 1);
                 }
                 {
-                    p_x26 = TableMessageElement_Struct.Formatter.Deserialize(ref r, rank + 1);
+                    p_x26 = global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.TableMessageElement_Struct.Formatter.Deserialize(ref r, rank + 1);
                 }
                 {
-                    p_x27 = StructMessageElement_Class.Formatter.Deserialize(ref r, rank + 1);
+                    p_x27 = global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.StructMessageElement_Class.Formatter.Deserialize(ref r, rank + 1);
                 }
                 {
-                    p_x28 = TableMessageElement_Class.Formatter.Deserialize(ref r, rank + 1);
+                    p_x28 = global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.TableMessageElement_Class.Formatter.Deserialize(ref r, rank + 1);
                 }
                 return new global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.StructMessage_Class(p_x0, p_x1, p_x2, p_x3, p_x4, p_x5, p_x6, p_x7, p_x8, p_x9, p_x10, p_x11, p_x12, p_x13, p_x14, p_x15, p_x16, p_x17, p_x18, p_x19, p_x20, p_x21, p_x22, p_x23, p_x24, p_x25, p_x26, p_x27, p_x28);
             }
@@ -3333,22 +3333,22 @@ namespace Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal
                             }
                         case 25:
                             {
-                                p_x25 = StructMessageElement_Struct.Formatter.Deserialize(ref r, rank + 1);
+                                p_x25 = global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.StructMessageElement_Struct.Formatter.Deserialize(ref r, rank + 1);
                                 break;
                             }
                         case 26:
                             {
-                                p_x26 = TableMessageElement_Struct.Formatter.Deserialize(ref r, rank + 1);
+                                p_x26 = global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.TableMessageElement_Struct.Formatter.Deserialize(ref r, rank + 1);
                                 break;
                             }
                         case 27:
                             {
-                                p_x27 = StructMessageElement_Class.Formatter.Deserialize(ref r, rank + 1);
+                                p_x27 = global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.StructMessageElement_Class.Formatter.Deserialize(ref r, rank + 1);
                                 break;
                             }
                         case 28:
                             {
-                                p_x28 = TableMessageElement_Class.Formatter.Deserialize(ref r, rank + 1);
+                                p_x28 = global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.TableMessageElement_Class.Formatter.Deserialize(ref r, rank + 1);
                                 break;
                             }
                     }
@@ -4064,22 +4064,22 @@ namespace Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal
                             }
                         case 25:
                             {
-                                p_x25 = StructMessageElement_Struct.Formatter.Deserialize(ref r, rank + 1);
+                                p_x25 = global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.StructMessageElement_Struct.Formatter.Deserialize(ref r, rank + 1);
                                 break;
                             }
                         case 26:
                             {
-                                p_x26 = TableMessageElement_Struct.Formatter.Deserialize(ref r, rank + 1);
+                                p_x26 = global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.TableMessageElement_Struct.Formatter.Deserialize(ref r, rank + 1);
                                 break;
                             }
                         case 27:
                             {
-                                p_x27 = StructMessageElement_Class.Formatter.Deserialize(ref r, rank + 1);
+                                p_x27 = global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.StructMessageElement_Class.Formatter.Deserialize(ref r, rank + 1);
                                 break;
                             }
                         case 28:
                             {
-                                p_x28 = TableMessageElement_Class.Formatter.Deserialize(ref r, rank + 1);
+                                p_x28 = global::Omnius.Core.Serialization.OmniPack.CodeGenerator.Internal.TableMessageElement_Class.Formatter.Deserialize(ref r, rank + 1);
                                 break;
                             }
                     }
