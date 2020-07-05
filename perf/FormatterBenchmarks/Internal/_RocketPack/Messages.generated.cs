@@ -141,7 +141,7 @@ namespace FormatterBenchmarks.Internal
         static RocketPack_BytesElements()
         {
             global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<global::FormatterBenchmarks.Internal.RocketPack_BytesElements>.Formatter = new ___CustomFormatter();
-            global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<global::FormatterBenchmarks.Internal.RocketPack_BytesElements>.Empty = new global::FormatterBenchmarks.Internal.RocketPack_BytesElements(global::Omnius.Core.SimpleMemoryOwner<byte>.Empty, global::Omnius.Core.SimpleMemoryOwner<byte>.Empty, global::Omnius.Core.SimpleMemoryOwner<byte>.Empty, global::Omnius.Core.SimpleMemoryOwner<byte>.Empty, global::Omnius.Core.SimpleMemoryOwner<byte>.Empty, global::Omnius.Core.SimpleMemoryOwner<byte>.Empty, global::Omnius.Core.SimpleMemoryOwner<byte>.Empty, global::Omnius.Core.SimpleMemoryOwner<byte>.Empty, global::Omnius.Core.SimpleMemoryOwner<byte>.Empty, global::Omnius.Core.SimpleMemoryOwner<byte>.Empty);
+            global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<global::FormatterBenchmarks.Internal.RocketPack_BytesElements>.Empty = new global::FormatterBenchmarks.Internal.RocketPack_BytesElements(global::Omnius.Core.EmptyMemoryOwner<byte>.Empty, global::Omnius.Core.EmptyMemoryOwner<byte>.Empty, global::Omnius.Core.EmptyMemoryOwner<byte>.Empty, global::Omnius.Core.EmptyMemoryOwner<byte>.Empty, global::Omnius.Core.EmptyMemoryOwner<byte>.Empty, global::Omnius.Core.EmptyMemoryOwner<byte>.Empty, global::Omnius.Core.EmptyMemoryOwner<byte>.Empty, global::Omnius.Core.EmptyMemoryOwner<byte>.Empty, global::Omnius.Core.EmptyMemoryOwner<byte>.Empty, global::Omnius.Core.EmptyMemoryOwner<byte>.Empty);
         }
 
         private readonly global::System.Lazy<int> ___hashCode;
@@ -308,16 +308,16 @@ namespace FormatterBenchmarks.Internal
             {
                 if (rank > 256) throw new global::System.FormatException();
 
-                global::System.Buffers.IMemoryOwner<byte> p_x0 = global::Omnius.Core.SimpleMemoryOwner<byte>.Empty;
-                global::System.Buffers.IMemoryOwner<byte> p_x1 = global::Omnius.Core.SimpleMemoryOwner<byte>.Empty;
-                global::System.Buffers.IMemoryOwner<byte> p_x2 = global::Omnius.Core.SimpleMemoryOwner<byte>.Empty;
-                global::System.Buffers.IMemoryOwner<byte> p_x3 = global::Omnius.Core.SimpleMemoryOwner<byte>.Empty;
-                global::System.Buffers.IMemoryOwner<byte> p_x4 = global::Omnius.Core.SimpleMemoryOwner<byte>.Empty;
-                global::System.Buffers.IMemoryOwner<byte> p_x5 = global::Omnius.Core.SimpleMemoryOwner<byte>.Empty;
-                global::System.Buffers.IMemoryOwner<byte> p_x6 = global::Omnius.Core.SimpleMemoryOwner<byte>.Empty;
-                global::System.Buffers.IMemoryOwner<byte> p_x7 = global::Omnius.Core.SimpleMemoryOwner<byte>.Empty;
-                global::System.Buffers.IMemoryOwner<byte> p_x8 = global::Omnius.Core.SimpleMemoryOwner<byte>.Empty;
-                global::System.Buffers.IMemoryOwner<byte> p_x9 = global::Omnius.Core.SimpleMemoryOwner<byte>.Empty;
+                global::System.Buffers.IMemoryOwner<byte> p_x0 = global::Omnius.Core.EmptyMemoryOwner<byte>.Empty;
+                global::System.Buffers.IMemoryOwner<byte> p_x1 = global::Omnius.Core.EmptyMemoryOwner<byte>.Empty;
+                global::System.Buffers.IMemoryOwner<byte> p_x2 = global::Omnius.Core.EmptyMemoryOwner<byte>.Empty;
+                global::System.Buffers.IMemoryOwner<byte> p_x3 = global::Omnius.Core.EmptyMemoryOwner<byte>.Empty;
+                global::System.Buffers.IMemoryOwner<byte> p_x4 = global::Omnius.Core.EmptyMemoryOwner<byte>.Empty;
+                global::System.Buffers.IMemoryOwner<byte> p_x5 = global::Omnius.Core.EmptyMemoryOwner<byte>.Empty;
+                global::System.Buffers.IMemoryOwner<byte> p_x6 = global::Omnius.Core.EmptyMemoryOwner<byte>.Empty;
+                global::System.Buffers.IMemoryOwner<byte> p_x7 = global::Omnius.Core.EmptyMemoryOwner<byte>.Empty;
+                global::System.Buffers.IMemoryOwner<byte> p_x8 = global::Omnius.Core.EmptyMemoryOwner<byte>.Empty;
+                global::System.Buffers.IMemoryOwner<byte> p_x9 = global::Omnius.Core.EmptyMemoryOwner<byte>.Empty;
 
                 {
                     p_x0 = r.GetRecyclableMemory(1048576);

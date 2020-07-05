@@ -82,7 +82,7 @@ namespace Omnius.Core.Serialization.RocketPack.DefinitionCompiler
                     "RocketPackMessageBase<>" => $"Omnius.Core.Serialization.RocketPack.RocketPackMessageBase<{types[0]}>",
                     "IDisposable" => "System.IDisposable",
                     "IBytesPool" => "Omnius.Core.IBytesPool",
-                    "SimpleMemoryOwner<>" => $"Omnius.Core.SimpleMemoryOwner<{types[0]}>",
+                    "EmptyMemoryOwner<>" => $"Omnius.Core.EmptyMemoryOwner<{types[0]}>",
                     "ArgumentNullException" => "System.ArgumentNullException",
                     "ArgumentOutOfRangeException" => "System.ArgumentOutOfRangeException",
                     _ => throw new InvalidOperationException(name)
@@ -166,7 +166,7 @@ namespace Omnius.Core.Serialization.RocketPack.DefinitionCompiler
                     StringType type => type.IsOptional ? "null" : "string.Empty",
                     TimestampType type => type.IsOptional ? "null" : GenerateTypeFullName("Timestamp") + ".Zero",
                     BytesType type when (!type.IsUseMemoryPool) => type.IsOptional ? "null" : GenerateTypeFullName("ReadOnlyMemory<>", "byte") + ".Empty",
-                    BytesType type when (type.IsUseMemoryPool) => type.IsOptional ? "null" : GenerateTypeFullName("SimpleMemoryOwner<>", "byte") + ".Empty",
+                    BytesType type when (type.IsUseMemoryPool) => type.IsOptional ? "null" : GenerateTypeFullName("EmptyMemoryOwner<>", "byte") + ".Empty",
                     VectorType type => type.IsOptional ? "null" : GenerateTypeFullName("Array") + ".Empty<" + this.GenerateParameterTypeFullName(type.ElementType) + ">()",
                     MapType type => type.IsOptional
                             ? "null"

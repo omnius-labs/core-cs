@@ -8,9 +8,9 @@ using System.Net.Sockets;
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace Omnius.Core.Network
+namespace Omnius.Core.Io
 {
-    public partial class OmniPath
+    public partial class FileService : IFileService
     {
         public IEnumerable<string> Glob(string glob)
         {
