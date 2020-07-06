@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Omnius.Core.Network.Proxies
 {
-    public class Socks5ProxyClient : IProxyClient
+    public class Socks5ProxyClient : ISocks5ProxyClient
     {
         private const int SOCKS5_DEFAULT_PORT = 1080;
 
@@ -47,7 +47,22 @@ namespace Omnius.Core.Network.Proxies
 
         private readonly object _lockObject = new object();
 
-        public Socks5ProxyClient(string destinationHost, int destinationPort)
+        internal sealed class Socks5ProxyClientFactory : ISocks5ProxyClientFactory
+        {
+            public ISocks5ProxyClient Create(string destinationHost, int destinationPort)
+            {
+                return new Socks5ProxyClient(destinationHost, destinationPort);
+            }
+
+            public ISocks5ProxyClient Create(string proxyUsername, string proxyPassword, string destinationHost, int destinationPort)
+            {
+                return new Socks5ProxyClient(proxyUsername, proxyPassword, destinationHost, destinationPort);
+            }
+        }
+
+        public static ISocks5ProxyClientFactory Factory { get; } = new Socks5ProxyClientFactory();
+
+        internal Socks5ProxyClient(string destinationHost, int destinationPort)
         {
             if (string.IsNullOrEmpty(destinationHost))
             {

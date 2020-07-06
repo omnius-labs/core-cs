@@ -38,7 +38,7 @@ namespace Omnius.Core.Network
             {
                 try
                 {
-                    return _functionElementParser.Parse(text);
+                    return _functionElementParser.End().Parse(text);
                 }
                 catch (Exception e)
                 {

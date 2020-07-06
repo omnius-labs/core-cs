@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace Omnius.Core.Io
 {
-    public interface IFileService
+    public interface IFile
     {
         IEnumerable<string> Glob(string glob);
     }

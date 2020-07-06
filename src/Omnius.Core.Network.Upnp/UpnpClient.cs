@@ -14,7 +14,7 @@ using Omnius.Core;
 
 namespace Omnius.Core.Network.Upnp
 {
-    public class UpnpClient : DisposableBase
+    public class UpnpClient : DisposableBase, IUpnpClient
     {
         private static readonly NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
 
@@ -26,7 +26,17 @@ namespace Omnius.Core.Network.Upnp
         private static readonly Regex _deviceTypeRegex = new Regex(@"<(\s*)deviceType((\s*)|(\s+)(.*?))>(\s*)urn:schemas-upnp-org:device:InternetGatewayDevice:1(\s*)</(\s*)deviceType(\s*)>", RegexOptions.Singleline | RegexOptions.IgnoreCase);
         private static readonly Regex _controlUrlRegex = new Regex(@"<(\s*)controlURL((\s*)|(\s+)(.*?))>(\s*)(?<url>.*?)(\s*)</(\s*)controlURL(\s*)>", RegexOptions.Singleline | RegexOptions.IgnoreCase);
 
-        public UpnpClient()
+        internal sealed class UpnpClientFactory : IUpnpClientFactory
+        {
+            public IUpnpClient Create()
+            {
+                return new UpnpClient();
+            }
+        }
+
+        public static IUpnpClientFactory Factory { get; } = new UpnpClientFactory();
+
+        internal UpnpClient()
         {
 
         }

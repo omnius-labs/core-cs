@@ -10,11 +10,8 @@ using System.Text;
 
 namespace Omnius.Core.Io
 {
-    public partial class FileService : IFileService
+    public partial class FileSystem : IFileSystem
     {
-        public IEnumerable<string> Glob(string glob)
-        {
-            throw new NotImplementedException();
-        }
+        public IPath Path { get; } = new Path();
     }
 }

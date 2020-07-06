@@ -1,7 +1,0 @@
-﻿syntax v1.0
-
-namespace "Omnius.Core.Io"
-
-table OmniPath {
-    Value: string(capacity: 8192) = 0,
-}

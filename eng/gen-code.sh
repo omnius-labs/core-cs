@@ -10,8 +10,6 @@ INCLUDE="$PWD/fmt"
 
 "$TOOL_PATH" -f "$PWD/fmt/Omnius.Core.Cryptography/Omnius.Core.Cryptography.rpd" -i "$INCLUDE" -o "$PWD/src/Omnius.Core.Cryptography/_RocketPack/Messages.generated.cs"
 
-"$TOOL_PATH" -f "$PWD/fmt/Omnius.Core.Io/Omnius.Core.Io.rpd" -i "$INCLUDE" -o "$PWD/src/Omnius.Core.Io/_RocketPack/Messages.generated.cs"
-
 "$TOOL_PATH" -f "$PWD/fmt/Omnius.Core.Network/Omnius.Core.Network.rpd" -i "$INCLUDE" -o "$PWD/src/Omnius.Core.Network/_RocketPack/Messages.generated.cs"
 "$TOOL_PATH" -f "$PWD/fmt/Omnius.Core.Network/Omnius.Core.Network.Connections.Secure.rpd" -i "$INCLUDE" -o "$PWD/src/Omnius.Core.Network/Connections/Secure/_RocketPack/Messages.generated.cs"
 "$TOOL_PATH" -f "$PWD/fmt/Omnius.Core.Network/Omnius.Core.Network.Connections.Secure.Internal.rpd" -i "$INCLUDE" -o "$PWD/src/Omnius.Core.Network/Connections/Secure/Internal/_RocketPack/Messages.generated.cs"

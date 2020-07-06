@@ -8,7 +8,7 @@ using Omnius.Core.Network.Proxies.Internal;
 
 namespace Omnius.Core.Network.Proxies
 {
-    public class HttpProxyClient : IProxyClient
+    public class HttpProxyClient : IHttpProxyClient
     {
         private const int HTTP_PROXY_DEFAULT_PORT = 8080;
         private const string HTTP_PROXY_CONNECT_CMD = "CONNECT {0}:{1} HTTP/1.0 \r\nHOST {0}:{1}\r\n\r\n";
@@ -62,6 +62,16 @@ namespace Omnius.Core.Network.Proxies
             GatewayTimeout = 504,
             HTTPVersionNotSupported = 505
         }
+
+        internal sealed class HttpProxyClientFactory : IHttpProxyClientFactory
+        {
+            public IHttpProxyClient Create(string destinationHost, int destinationPort)
+            {
+                return new HttpProxyClient(destinationHost, destinationPort);
+            }
+        }
+
+        public static IHttpProxyClientFactory Factory { get; } = new HttpProxyClientFactory();
 
         public HttpProxyClient(string destinationHost, int destinationPort)
         {
