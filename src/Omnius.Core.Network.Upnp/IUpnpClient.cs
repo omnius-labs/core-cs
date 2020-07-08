@@ -1,3 +1,4 @@
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -8,7 +9,7 @@ namespace Omnius.Core.Network.Upnp
         IUpnpClient Create();
     }
 
-    public interface IUpnpClient
+    public interface IUpnpClient : IDisposable
     {
         bool IsConnected { get; }
 

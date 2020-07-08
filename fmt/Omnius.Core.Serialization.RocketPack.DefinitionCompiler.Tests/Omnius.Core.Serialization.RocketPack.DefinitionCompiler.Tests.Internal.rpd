@@ -46,20 +46,20 @@ enum Enum8: uint64 {
 [csharp_struct]
 struct StructMessageElement_Struct {
     X0: bool,
-} 
+}
 
 [csharp_struct]
 table TableMessageElement_Struct {
     X0: bool = 0,
-} 
+}
 
 struct StructMessageElement_Class {
     X0: bool,
-} 
+}
 
 table TableMessageElement_Class {
     X0: bool = 0,
-} 
+}
 
 [csharp_struct]
 struct StructMessage_Struct {

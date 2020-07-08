@@ -73,7 +73,7 @@ namespace Omnius.Core.Network.Proxies
 
         public static IHttpProxyClientFactory Factory { get; } = new HttpProxyClientFactory();
 
-        public HttpProxyClient(string destinationHost, int destinationPort)
+        internal HttpProxyClient(string destinationHost, int destinationPort)
         {
             if (string.IsNullOrEmpty(destinationHost))
             {
