@@ -300,7 +300,7 @@ namespace Omnius.Core.Serialization.RocketPack.DefinitionCompiler
                 Console.WriteLine($"--- Source ---\n{ex.Source?.Trim()}");
                 Console.WriteLine($"--- StackTrace ---\n{ex.StackTrace?.Trim()}");
 
-                throw ex;
+                ExceptionDispatchInfo.Throw(ex);
             }
         }
     }

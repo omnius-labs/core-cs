@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Omnius.Core.Internal;
+using System.Runtime.ExceptionServices;
 
 namespace Omnius.Core.Extensions
 {
@@ -117,7 +118,7 @@ namespace Omnius.Core.Extensions
                         if (t.IsFaulted)
                         {
                             Interlocked.Increment(ref exceptionCount);
-                            throw t.Exception?.InnerException!;
+                            ExceptionDispatchInfo.Throw(t.Exception?.InnerException!);
                         }
                     });
                     tasks.Add(task);

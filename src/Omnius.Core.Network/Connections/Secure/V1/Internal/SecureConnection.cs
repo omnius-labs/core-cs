@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Runtime.ExceptionServices;
 using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
@@ -380,11 +381,7 @@ namespace Omnius.Core.Network.Connections.Secure.V1.Internal
             }
             catch (OmniSecureConnectionException e)
             {
-                throw e;
-            }
-            catch (Exception e)
-            {
-                throw new OmniSecureConnectionException(e.Message, e);
+                ExceptionDispatchInfo.Throw(e);
             }
 
             throw new OmniSecureConnectionException("Conversion failed.");
@@ -455,11 +452,7 @@ namespace Omnius.Core.Network.Connections.Secure.V1.Internal
             }
             catch (OmniSecureConnectionException e)
             {
-                throw e;
-            }
-            catch (Exception e)
-            {
-                throw new OmniSecureConnectionException(e.Message, e);
+                ExceptionDispatchInfo.Throw(e);
             }
 
             throw new OmniSecureConnectionException("Conversion failed.");
