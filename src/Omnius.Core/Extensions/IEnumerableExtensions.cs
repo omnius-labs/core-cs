@@ -2,10 +2,10 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.ExceptionServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Omnius.Core.Internal;
-using System.Runtime.ExceptionServices;
 
 namespace Omnius.Core.Extensions
 {
