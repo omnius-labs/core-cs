@@ -1,6 +1,6 @@
-﻿syntax v1.0
+﻿syntax v1.0;
 
-namespace "Omnius.Core.Cryptography"
+namespace "Omnius.Core.Cryptography";
 
 enum OmniHashAlgorithmType : uint8 {
     Unknown = 0,

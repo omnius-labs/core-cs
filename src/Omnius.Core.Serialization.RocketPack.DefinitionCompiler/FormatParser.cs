@@ -23,30 +23,33 @@ namespace Omnius.Core.Serialization.RocketPack.DefinitionCompiler
             from name in Parse.Char(x => ('0' <= x && x <= '9') || ('A' <= x && x <= 'Z') || ('a' <= x && x <= 'z') || x == '_', "Name").AtLeastOnce().Text()
             select name;
 
-        // example: syntax = v1.0
+        // example: syntax v1.0;
         private static readonly Parser<string> _syntaxParser =
             from keyword in Parse.String("syntax").TokenWithSkipComment()
             from type in Parse.String("v1.0").TokenWithSkipComment().Text()
+            from semicolon in Parse.Char(';').TokenWithSkipComment()
             select type;
 
-        // example: option csharp_namespace = "RocketPack.Messages";
+        // example: option csharp_namespace "RocketPack.Messages";
         private static readonly Parser<OptionDefinition> _optionParser =
             from keyword in Parse.String("option").TokenWithSkipComment()
             from name in _nameParser.TokenWithSkipComment()
-            from equal in Parse.Char('=').TokenWithSkipComment()
             from value in _stringLiteralParser.TokenWithSkipComment()
+            from semicolon in Parse.Char(';').TokenWithSkipComment()
             select new OptionDefinition(name, value);
 
         // example: using "RocketPack.Messages";
         private static readonly Parser<UsingDefinition> _usingParser =
             from keyword in Parse.String("using").TokenWithSkipComment()
             from value in _stringLiteralParser.TokenWithSkipComment()
+            from semicolon in Parse.Char(';').TokenWithSkipComment()
             select new UsingDefinition(value);
 
         // example: namespace "RocketPack.Messages";
         private static readonly Parser<NamespaceDefinition> _namespaceParser =
             from keyword in Parse.String("namespace").TokenWithSkipComment()
             from value in _stringLiteralParser.TokenWithSkipComment()
+            from semicolon in Parse.Char(';').TokenWithSkipComment()
             select new NamespaceDefinition(value);
 
         // example: [csharp_recyclable]

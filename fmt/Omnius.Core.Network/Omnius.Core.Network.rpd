@@ -1,6 +1,6 @@
-﻿syntax v1.0
+﻿syntax v1.0;
 
-namespace "Omnius.Core.Network"
+namespace "Omnius.Core.Network";
 
 table OmniAddress {
     Value: string(capacity: 8192) = 0,

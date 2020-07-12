@@ -1,7 +1,7 @@
-syntax v1.0
+syntax v1.0;
 
-using "Omnius.Core.Cryptography"
-namespace "Omnius.Core.Network.Connections.Secure"
+using "Omnius.Core.Cryptography";
+namespace "Omnius.Core.Network.Connections.Secure";
 
 enum OmniSecureConnectionType : uint8 {
     Unknown = 0,
