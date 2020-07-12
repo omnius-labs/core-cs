@@ -2,7 +2,7 @@
 
 DOTNET_CLI_TELEMETRY_OPTOUT=1
 
-BIN_DIR=$PWD/bin/tools/linux
+BIN_DIR="$PWD/bin/tools/linux"
 BUILD_ARCHITECTURE=linux-x64
 
 mkdir "$BIN_DIR/Omnius.Core.Serialization.RocketPack.DefinitionCompiler"
