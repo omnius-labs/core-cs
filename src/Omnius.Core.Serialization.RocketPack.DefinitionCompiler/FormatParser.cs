@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.ExceptionServices;
 using Omnius.Core.Serialization.RocketPack.DefinitionCompiler.Extensions;
 using Sprache;
 
@@ -280,18 +281,18 @@ namespace Omnius.Core.Serialization.RocketPack.DefinitionCompiler
 
         public static RocketPackDefinition Load(string definitionFilePath)
         {
+            RocketPackDefinition? result = null;
+
             try
             {
                 // Load
                 var text = LoadDefinition(definitionFilePath);
 
                 // Parse
-                var result = ParseDefinition(text);
+                result = ParseDefinition(text);
 
                 // Validate
                 ValidateDefinition(result);
-
-                return result;
             }
             catch (Exception ex)
             {
@@ -302,6 +303,8 @@ namespace Omnius.Core.Serialization.RocketPack.DefinitionCompiler
 
                 ExceptionDispatchInfo.Throw(ex);
             }
+
+            return result;
         }
     }
 }
