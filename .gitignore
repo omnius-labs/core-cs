@@ -1,6 +1,7 @@
 # Custom
 tmp/
 pub/
+patch.txt
 
 # Tool Runtime Dir
 /[Tt]ools/
