@@ -2,7 +2,6 @@ using System.Xml.Schema;
 using System.Threading.Tasks;
 using Omnius.Core;
 using Omnius.Core.Serialization.RocketPack;
-using Omnius.Xeus.Service.Drivers;
 using System.Threading;
 using System.Diagnostics.CodeAnalysis;
 
