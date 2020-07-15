@@ -74,7 +74,7 @@ namespace Omnius.Core.Serialization.Extensions
 
         public static byte[] StringToBytes(this IBytesToUtf8StringConverter converter, string text)
         {
-            using (var hub = new BytesHub(BytesPool.Shared))
+            using (var hub = new BytesHub())
             {
                 converter.TryDecode(text, hub.Writer);
 
@@ -87,7 +87,7 @@ namespace Omnius.Core.Serialization.Extensions
 
         public static byte[] Utf8StringToBytes(this IBytesToUtf8StringConverter converter, ReadOnlySpan<byte> text)
         {
-            using (var hub = new BytesHub(BytesPool.Shared))
+            using (var hub = new BytesHub())
             {
                 converter.TryDecode(text, hub.Writer);
 

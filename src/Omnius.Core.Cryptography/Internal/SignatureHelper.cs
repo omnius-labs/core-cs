@@ -17,7 +17,7 @@ namespace Omnius.Core.Cryptography.Internal
                 throw new ArgumentNullException(nameof(name));
             }
 
-            using (var hub = new BytesHub(BytesPool.Shared))
+            using (var hub = new BytesHub())
             {
                 {
                     var writer = new RocketPackWriter(hub.Writer, BytesPool.Shared);

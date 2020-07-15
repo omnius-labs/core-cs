@@ -306,7 +306,7 @@ namespace Omnius.Core.Network.Connections.Secure.V1.Internal
 
                 if (hashAlgorithm == HashAlgorithm.Sha2_256)
                 {
-                    using var hub = new BytesHub(BytesPool.Shared);
+                    using var hub = new BytesHub();
 
                     verificationMessage.Export(hub.Writer, _bytesPool);
                     verificationMessageHash = Sha2_256.ComputeHash(hub.Reader.GetSequence());
@@ -335,7 +335,7 @@ namespace Omnius.Core.Network.Connections.Secure.V1.Internal
                 throw new OmniSecureConnectionException("Not handshaked");
             }
 
-            using var hub = new BytesHub(BytesPool.Shared);
+            using var hub = new BytesHub();
             action.Invoke(hub.Writer);
 
             var sequence = hub.Reader.GetSequence();
@@ -404,7 +404,7 @@ namespace Omnius.Core.Network.Connections.Secure.V1.Internal
                 throw new OmniSecureConnectionException("Not handshaked");
             }
 
-            using var hub = new BytesHub(BytesPool.Shared);
+            using var hub = new BytesHub();
 
             try
             {

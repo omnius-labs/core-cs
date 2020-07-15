@@ -29,7 +29,7 @@ namespace Omnius.Core.Cryptography
 
                 OmniHash omniHash;
 
-                using (var hub = new BytesHub(BytesPool.Shared))
+                using (var hub = new BytesHub())
                 {
                     // @以降の文字列をデコードし、hubへ書き込む。
                     OmniBase.TryDecode(item.Substring(index + 1), hub.Writer);
@@ -56,7 +56,7 @@ namespace Omnius.Core.Cryptography
             {
                 string hashString;
 
-                using (var hub = new BytesHub(BytesPool.Shared))
+                using (var hub = new BytesHub())
                 {
                     // Hash情報をhubへ書き込む。
                     this.Hash.Export(hub.Writer, BytesPool.Shared);

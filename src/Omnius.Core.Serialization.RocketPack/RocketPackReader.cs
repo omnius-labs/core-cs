@@ -38,7 +38,7 @@ namespace Omnius.Core.Serialization.RocketPack
 
             if (length == 0)
             {
-                return EmptyMemoryOwner<byte>.Empty;
+                return MemoryOwner<byte>.Empty;
             }
 
             var memoryOwner = _bytesPool.Memory.Rent((int)length);

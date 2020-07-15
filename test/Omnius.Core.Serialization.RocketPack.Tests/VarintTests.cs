@@ -12,7 +12,7 @@ namespace Omnius.Core.Serialization.RocketPack
         {
             var random = new Random();
 
-            using (var hub = new BytesHub(BytesPool.Shared))
+            using (var hub = new BytesHub())
             {
                 for (int i = 0; i < 1024; i++)
                 {
@@ -28,7 +28,7 @@ namespace Omnius.Core.Serialization.RocketPack
                 }
             }
 
-            using (var hub = new BytesHub(BytesPool.Shared))
+            using (var hub = new BytesHub())
             {
                 for (int i = 0; i < 1024; i++)
                 {
@@ -44,7 +44,7 @@ namespace Omnius.Core.Serialization.RocketPack
                 }
             }
 
-            using (var hub = new BytesHub(BytesPool.Shared))
+            using (var hub = new BytesHub())
             {
                 for (int i = 0; i < 1024; i++)
                 {
@@ -60,7 +60,7 @@ namespace Omnius.Core.Serialization.RocketPack
                 }
             }
 
-            using (var hub = new BytesHub(BytesPool.Shared))
+            using (var hub = new BytesHub())
             {
                 for (int i = 0; i < 1024; i++)
                 {
@@ -76,7 +76,7 @@ namespace Omnius.Core.Serialization.RocketPack
                 }
             }
 
-            using (var hub = new BytesHub(BytesPool.Shared))
+            using (var hub = new BytesHub())
             {
                 for (int i = 0; i < 1024; i++)
                 {
@@ -92,7 +92,7 @@ namespace Omnius.Core.Serialization.RocketPack
                 }
             }
 
-            using (var hub = new BytesHub(BytesPool.Shared))
+            using (var hub = new BytesHub())
             {
                 for (int i = 0; i < 1024; i++)
                 {
@@ -108,7 +108,7 @@ namespace Omnius.Core.Serialization.RocketPack
                 }
             }
 
-            using (var hub = new BytesHub(BytesPool.Shared))
+            using (var hub = new BytesHub())
             {
                 for (int i = 0; i < 1024; i++)
                 {
@@ -125,7 +125,7 @@ namespace Omnius.Core.Serialization.RocketPack
                 }
             }
 
-            using (var hub = new BytesHub(BytesPool.Shared))
+            using (var hub = new BytesHub())
             {
                 for (int i = 0; i < 1024; i++)
                 {

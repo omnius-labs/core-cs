@@ -10,7 +10,7 @@ namespace Omnius.Core.Internal
     {
         public static byte[] Encode(IEnumerable<ReadOnlyMemory<byte>> collection)
         {
-            var hub = new BytesHub(BytesPool.Shared);
+            var hub = new BytesHub();
 
             {
                 foreach (var value in collection)

@@ -1,3 +1,4 @@
+using System.IO;
 using System.Buffers;
 
 namespace Omnius.Core.Extensions
@@ -16,6 +17,17 @@ namespace Omnius.Core.Extensions
                 }
 
                 bufferWriter.Write(memory.Span);
+            }
+        }
+
+        public static void Write(this IBufferWriter<byte> bufferWriter, Stream stream)
+        {
+            long remain = stream.Length - stream.Position;
+            while (remain > 0)
+            {
+                var span = bufferWriter.GetSpan();
+                int readLength = stream.Read(span);
+                bufferWriter.Advance(readLength);
             }
         }
     }
