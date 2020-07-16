@@ -9,7 +9,7 @@ namespace Omnius.Core.Network
     {
         private static readonly object _lockObject = new object();
 
-        public static (Socket, Socket) GetSockets()
+        public static (Socket, Socket) GetSocketPair()
         {
             lock (_lockObject)
             {
@@ -48,4 +48,3 @@ namespace Omnius.Core.Network
         }
     }
 }
-
