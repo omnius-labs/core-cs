@@ -19,5 +19,16 @@ namespace Omnius.Core.Cryptography
 
             return algorithmType + ":" + value;
         }
+
+        public static bool TryParse(string text, out OmniHash value)
+        {
+            value = default;
+
+            var hub = new BytesHub();
+            if (!OmniBase.TryDecode(text, hub.Writer)) return false;
+
+            value = OmniHash.Import(hub.Reader.GetSequence(), BytesPool.Shared);
+            return true;
+        }
     }
 }
