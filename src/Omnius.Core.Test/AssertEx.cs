@@ -4,16 +4,37 @@ using System.Collections.Generic;
 using System.Text;
 using System;
 using System.Text.Json;
+using DiffPlex.DiffBuilder;
+using DiffPlex.DiffBuilder.Model;
+using System.Text.Json.Serialization;
 
 namespace Omnius.Core.Test
 {
+    public class BytesReadOnlyMemoryConverter : JsonConverter<ReadOnlyMemory<byte>>
+    {
+        public static BytesReadOnlyMemoryConverter Default { get; } = new BytesReadOnlyMemoryConverter();
+
+        public override ReadOnlyMemory<byte> Read(
+            ref Utf8JsonReader reader,
+            Type typeToConvert,
+            JsonSerializerOptions options) => new ReadOnlyMemory<byte>(reader.GetBytesFromBase64());
+
+        public override void Write(
+            Utf8JsonWriter writer,
+            ReadOnlyMemory<byte> value,
+            JsonSerializerOptions options) =>
+                writer.WriteBase64StringValue(value.Span);
+    }
+
     public static class AssertEx
     {
-        public static void EqualJson<T>(T expected, T actual)
+        public static void EqualJson<T>(T expected, T actual, string? description = null)
         {
-            var option = new JsonSerializerOptions() { WriteIndented = true };
-            var expectedJsonString = JsonSerializer.Serialize(expected, option);
-            var actualJsonString = JsonSerializer.Serialize(actual, option);
+            var options = new JsonSerializerOptions() { WriteIndented = true };
+            options.Converters.Add(BytesReadOnlyMemoryConverter.Default);
+
+            var expectedJsonString = JsonSerializer.Serialize(expected, options);
+            var actualJsonString = JsonSerializer.Serialize(actual, options);
             if (expectedJsonString == actualJsonString) return;
 
             var diff = InlineDiffBuilder.Diff(expectedJsonString, actualJsonString);
@@ -48,7 +69,7 @@ namespace Omnius.Core.Test
                 Console.ForegroundColor = savedColor;
             }
 
-            throw new AssertException();
+            throw new AssertException($"EqualJson Error: {description}");
         }
     }
 }
