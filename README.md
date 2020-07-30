@@ -1,6 +1,6 @@
 # Core - Libraries for Xeus, Lxna and others
 
-[![](https://github.com/omnius-labs/core/workflows/Builds/badge.svg)](https://github.com/omnius-labs/core/actions)
+![test](https://github.com/omnius-labs/core/workflows/test/badge.svg)
 
 ## Website
 
