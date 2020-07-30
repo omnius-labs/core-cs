@@ -1,5 +1,4 @@
-using Internal.Runtime.Augments;
-using System;
+﻿using System;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
@@ -7,15 +6,6 @@ using System.Text;
 
 namespace Omnius.Core.Test
 {
-    public class TestEnvironment
-    {
-        public static string GetBasePath()
-        {
-            var basePath = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly()!.Location)!;
-            return basePath;
-        }
-    }
-
     public class FixtureFactory
     {
         private static readonly Random _random = new Random();

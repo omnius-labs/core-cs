@@ -7,6 +7,7 @@ using System.Text.Json;
 using DiffPlex.DiffBuilder;
 using DiffPlex.DiffBuilder.Model;
 using System.Text.Json.Serialization;
+using System.Text.Encodings.Web;
 
 namespace Omnius.Core.Test
 {
@@ -30,7 +31,11 @@ namespace Omnius.Core.Test
     {
         public static void EqualJson<T>(T expected, T actual, string? description = null)
         {
-            var options = new JsonSerializerOptions() { WriteIndented = true };
+            var options = new JsonSerializerOptions()
+            {
+                Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
+                WriteIndented = true
+            };
             options.Converters.Add(BytesReadOnlyMemoryConverter.Default);
 
             var expectedJsonString = JsonSerializer.Serialize(expected, options);
