@@ -334,7 +334,7 @@ namespace Omnius.Core.Serialization.RocketPack.DefinitionCompiler
                         case VectorType type:
                             if (type.IsOptional)
                             {
-                                b.WriteLine($"if({GenerateFieldVariableName(element.Name)} != null)");
+                                b.WriteLine($"if ({GenerateFieldVariableName(element.Name)} != null)");
                                 b.WriteLine("{");
                                 b.PushIndent();
                             }
