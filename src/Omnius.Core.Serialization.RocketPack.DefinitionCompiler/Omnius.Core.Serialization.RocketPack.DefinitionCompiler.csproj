@@ -9,7 +9,7 @@
 
   <ItemGroup>
     <PackageReference Include="Cocona.Lite" Version="1.5.0" />
-    <PackageReference Include="NLog" Version="4.7.2" />
+    <PackageReference Include="NLog" Version="4.7.3" />
     <PackageReference Include="Sprache" Version="2.3.0" />
   </ItemGroup>
 
