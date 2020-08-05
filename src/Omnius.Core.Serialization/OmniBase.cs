@@ -1,15 +1,26 @@
 using System;
 using System.Buffers;
+using System.Text.Unicode;
 using Omnius.Core.Serialization.Extensions;
 
 namespace Omnius.Core.Serialization
 {
+    /// <summary>
+    /// OmniBase文字列
+    /// </summary>
     public static class OmniBase
     {
         private static readonly Lazy<Base16> _base16_Lower = new Lazy<Base16>(() => new Base16(ConvertStringCase.Lower));
         private static readonly Lazy<Base16> _base16_Upper = new Lazy<Base16>(() => new Base16(ConvertStringCase.Upper));
         private static readonly Lazy<Base58Btc> _base58Btc = new Lazy<Base58Btc>(() => new Base58Btc());
 
+        /// <summary>
+        /// OmniBase文字列をエンコードします。
+        /// </summary>
+        /// <param name="span"></param>
+        /// <param name="convertStringType"></param>
+        /// <param name="convertStringCase"></param>
+        /// <returns></returns>
         public static string Encode(ReadOnlySpan<byte> span, ConvertStringType convertStringType, ConvertStringCase convertStringCase = ConvertStringCase.Lower)
         {
             if (convertStringType == ConvertStringType.Base16)
@@ -41,6 +52,13 @@ namespace Omnius.Core.Serialization
             }
         }
 
+        /// <summary>
+        /// OmniBase文字列をエンコードします。
+        /// </summary>
+        /// <param name="sequence"></param>
+        /// <param name="convertStringType"></param>
+        /// <param name="convertStringCase"></param>
+        /// <returns></returns>
         public static string Encode(ReadOnlySequence<byte> sequence, ConvertStringType convertStringType, ConvertStringCase convertStringCase = ConvertStringCase.Lower)
         {
             if (convertStringType == ConvertStringType.Base16)
@@ -72,6 +90,12 @@ namespace Omnius.Core.Serialization
             }
         }
 
+        /// <summary>
+        /// OmniBase文字列をデコードします。
+        /// </summary>
+        /// <param name="text"></param>
+        /// <param name="bufferWriter"></param>
+        /// <returns></returns>
         // TODO Utf8String版を実装したい
         public static bool TryDecode(string text, IBufferWriter<byte> bufferWriter)
         {

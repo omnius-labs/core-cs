@@ -11,6 +11,10 @@ using Omnius.Core.Helpers;
 
 namespace Omnius.Core.Cryptography
 {
+    /// <summary>
+    /// Omniusのマイナー機能
+    /// 現在はSHA-2を計算するのみ
+    /// </summary>
     public static class OmniMiner
     {
         public static async ValueTask<OmniHashcash> Create(ReadOnlySequence<byte> sequence, ReadOnlyMemory<byte> key, OmniHashcashAlgorithmType hashcashAlgorithmType, int limit, TimeSpan timeout, CancellationToken cancellationToken)

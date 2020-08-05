@@ -4,6 +4,11 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Omnius.Core.Collections
 {
+    /// <summary>
+    /// 読み込みしか出来ないDictionary
+    /// </summary>
+    /// <typeparam name="TKey"></typeparam>
+    /// <typeparam name="TValue"></typeparam>
     public sealed partial class LockedDictionary<TKey, TValue> : IDictionary<TKey, TValue>, ICollection<KeyValuePair<TKey, TValue>>, IEnumerable<KeyValuePair<TKey, TValue>>, ISynchronized
         where TKey : notnull
     {
