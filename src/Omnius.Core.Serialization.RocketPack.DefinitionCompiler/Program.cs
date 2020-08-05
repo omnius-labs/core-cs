@@ -1,37 +1,27 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Linq;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.IO;
 using System.Text;
-using CommandLine;
+using Cocona;
 
 namespace Omnius.Core.Serialization.RocketPack.DefinitionCompiler
 {
-    public class Program
+    class Program
     {
         static void Main(string[] args)
         {
-            var commandLineParser = new CommandLine.Parser(x =>
-            {
-                x.HelpWriter = Console.Error;
-            });
+            CoconaLiteApp.Run<Program>(args);
+        }
 
-            Options? options = null;
-
-            commandLineParser.ParseArguments<Options>(args)
-                .WithParsed(x => options = x);
-
-            if (options == null)
-            {
-                return;
-            }
-
+        public void Compile([Option('s')][FilePathExists] string source, [Option('o')] string output, [Option('i')] string[] include)
+        {
             // 読み込み
-            var (rootDefinition, includedDefinitions) = FormatLoader.Load(options.Source, options.Include);
+            var (rootDefinition, includedDefinitions) = FormatLoader.Load(source, include);
 
             // 出力先フォルダが存在しない場合は作成する
             {
-                var destinationParentDirectoryPath = Path.GetDirectoryName(options.Output);
+                var destinationParentDirectoryPath = Path.GetDirectoryName(output);
 
                 if (!Directory.Exists(destinationParentDirectoryPath))
                 {
@@ -39,9 +29,21 @@ namespace Omnius.Core.Serialization.RocketPack.DefinitionCompiler
                 }
             }
 
-            using (var writer = new StreamWriter(options.Output, false, new UTF8Encoding(false)))
+            using (var writer = new StreamWriter(output, false, new UTF8Encoding(false)))
             {
                 writer.Write(CodeGenerator.Generate(rootDefinition, includedDefinitions));
+            }
+        }
+
+        private class FilePathExistsAttribute : ValidationAttribute
+        {
+            protected override ValidationResult IsValid(object value, ValidationContext validationContext)
+            {
+                if (value is string path && (File.Exists(path) || File.Exists(path)))
+                {
+                    return ValidationResult.Success;
+                }
+                return new ValidationResult($"The path '{value}' is not found.");
             }
         }
     }
