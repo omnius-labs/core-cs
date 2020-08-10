@@ -12,8 +12,8 @@ using Omnius.Core.Helpers;
 namespace Omnius.Core.Cryptography
 {
     /// <summary>
-    /// Omniusのマイナー機能
-    /// 現在はSHA-2を計算するのみ
+    /// Omniusのネイティブマイナーライブラリ（Rust製）
+    /// 現在はシンプルにSHA-2を計算するのみ
     /// </summary>
     public static class OmniMiner
     {
@@ -55,11 +55,17 @@ namespace Omnius.Core.Cryptography
             return 0;
         }
 
+        /// <summary>
+        /// OmniHashのマイナーを表すクラス
+        /// </summary>
         private static class MinerHelper
         {
             private static readonly NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
             private static readonly string _path;
 
+            /// <summary>
+            /// OmniHashのマイナーを起動する
+            /// </summary>
             static MinerHelper()
             {
                 if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
@@ -70,6 +76,7 @@ namespace Omnius.Core.Cryptography
                     }
                     else
                     {
+                        // システムがOmniHashのマイナーに対応していない
                         throw new NotSupportedException();
                     }
                 }
@@ -82,34 +89,49 @@ namespace Omnius.Core.Cryptography
                     }
                     else
                     {
+                        // システムがOmniHashのマイナーに対応していない
                         throw new NotSupportedException();
                     }
                 }
                 else
                 {
+                    // システムがOmniHashのマイナーに対応していない
                     throw new NotSupportedException();
                 }
             }
 
+            /// <summary>
+            /// シンプルにSha2-256を計算する
+            /// </summary>
+            /// <param name="value">値（byte配列）</param>
+            /// <param name="limit">制限bit</param>
+            /// <param name="timeout">タイムアウトになる時間</param>
+            /// <param name="cancellationToken">キャンセルトークン</param>
+            /// <returns></returns>
             public static byte[] Compute_Simple_Sha2_256(ReadOnlySpan<byte> value, int limit, TimeSpan timeout, CancellationToken cancellationToken)
             {
+                // valueがnullならArgumentNullExceptionを投げる
                 if (value == null)
                 {
                     throw new ArgumentNullException(nameof(value));
                 }
 
+                // valueが最大値を超えていたらArgumentOutOfRangeExceptionを投げる
                 if (value.Length != 32)
                 {
                     throw new ArgumentOutOfRangeException(nameof(value));
                 }
 
+                // limitが0の場合、256bitである。
                 if (limit < 0)
                 {
                     limit = 256;
                 }
 
+                // タイマーを起動する
                 var sw = Stopwatch.StartNew();
 
+                // プロセスを起動する
                 var info = new ProcessStartInfo(_path)
                 {
                     CreateNoWindow = true,
@@ -176,6 +198,12 @@ namespace Omnius.Core.Cryptography
                 return key;
             }
 
+            /// <summary>
+            /// シンプルにSHA2-256を承認する
+            /// </summary>
+            /// <param name="key">キー</param>
+            /// <param name="value">値</param>
+            /// <returns></returns>
             public static uint Verify_Simple_Sha2_256(ReadOnlySpan<byte> key, ReadOnlySpan<byte> value)
             {
                 if (key == null)

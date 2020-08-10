@@ -4,6 +4,9 @@ using Omnius.Core.Internal;
 
 namespace Omnius.Core
 {
+    /// <summary>
+    /// Byteの演算子
+    /// </summary>
     public static unsafe class BytesOperations
     {
         [Obsolete("", true)]

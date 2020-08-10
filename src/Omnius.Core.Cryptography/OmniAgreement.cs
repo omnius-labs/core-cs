@@ -4,6 +4,9 @@ using Omnius.Core.Serialization.RocketPack;
 
 namespace Omnius.Core.Cryptography
 {
+    /// <summary>
+    /// Arggmentクラス
+    /// </summary>
     public sealed partial class OmniAgreement
     {
         public static OmniAgreement Create(OmniAgreementAlgorithmType algorithmType)
@@ -21,12 +24,19 @@ namespace Omnius.Core.Cryptography
                 throw new NotSupportedException(nameof(algorithmType));
             }
         }
-
+        /// <summary>
+        /// 公開鍵
+        /// </summary>
+        /// <returns></returns>
         public OmniAgreementPublicKey GetOmniAgreementPublicKey()
         {
             return new OmniAgreementPublicKey(this.CreationTime, this.AlgorithmType, this.PublicKey);
         }
 
+        /// <summary>
+        /// 秘密鍵
+        /// </summary>
+        /// <returns></returns>
         public OmniAgreementPrivateKey GetOmniAgreementPrivateKey()
         {
             return new OmniAgreementPrivateKey(this.CreationTime, this.AlgorithmType, this.PrivateKey);

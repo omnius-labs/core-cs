@@ -1,4 +1,4 @@
-use clap::{App, Arg};
+﻿use clap::{App, Arg};
 use ring::digest::*;
 use std::process;
 use std::sync::{Arc, Mutex};
@@ -7,6 +7,9 @@ use std::time::{Duration, Instant};
 use time;
 use xorshift::{Rand, Rng, SeedableRng, SplitMix64, Xorshift1024};
 
+//! 
+
+/// シンプルにSHA-256を計算する。
 fn simple_sha2_256(value: &[u8]) {
     let mut sm: SplitMix64 = SeedableRng::from_seed(time::precise_time_ns());
     let mut rng: Xorshift1024 = Rand::rand(&mut sm);

@@ -4,6 +4,9 @@ using System.IO.Pipelines;
 
 namespace Omnius.Core
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public partial class BytesHub
     {
         public sealed class HubWriter : IBufferWriter<byte>

@@ -1,5 +1,8 @@
-namespace Omnius.Core
+﻿namespace Omnius.Core
 {
+    /// <summary>
+    /// ByteHubの実装
+    /// </summary>
     public sealed partial class BytesHub : DisposableBase
     {
         private readonly BufferWriter _bufferWriter;

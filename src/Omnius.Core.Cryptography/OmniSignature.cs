@@ -5,6 +5,9 @@ using Omnius.Core.Serialization;
 
 namespace Omnius.Core.Cryptography
 {
+    /// <summary>
+    /// ByteHubのシグネチャを送信する
+    /// </summary>
     public sealed partial class OmniSignature
     {
         public static bool TryParse(string item, out OmniSignature? signature)

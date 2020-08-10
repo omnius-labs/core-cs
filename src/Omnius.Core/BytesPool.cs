@@ -3,6 +3,9 @@ using System.Buffers;
 
 namespace Omnius.Core
 {
+    /// <summary>
+    /// データベース管理システム
+    /// </summary>
     public sealed class BytesPool : IBytesPool
     {
         private readonly ArrayPool<byte> _arrayPool;

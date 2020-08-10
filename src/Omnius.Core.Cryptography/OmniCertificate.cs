@@ -4,6 +4,9 @@ using Omnius.Core.Cryptography.Internal;
 
 namespace Omnius.Core.Cryptography
 {
+    /// <summary>
+    /// Certificateクラス
+    /// </summary>
     public sealed partial class OmniCertificate
     {
         public static OmniCertificate Create(OmniDigitalSignature digitalSignature, ReadOnlySequence<byte> sequence)

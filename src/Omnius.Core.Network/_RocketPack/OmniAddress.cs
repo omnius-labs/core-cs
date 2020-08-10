@@ -5,6 +5,9 @@ using System.Net.Sockets;
 
 namespace Omnius.Core.Network
 {
+    /// <summary>
+    /// Omniusのアドレス
+    /// </summary>
     public partial class OmniAddress
     {
         private static readonly NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
