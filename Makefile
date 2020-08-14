@@ -14,6 +14,12 @@ format:
 	dotnet tool restore
 	dotnet tool run dotnet-format
 
+gen-docfx:
+	docfx ./docs/docfx.json
+
+serve-docfx:
+	docfx ./docs/docfx.json --serve
+
 clean:
 	rm -rf ./bin
 	rm -rf ./tmp
