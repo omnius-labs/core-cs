@@ -222,7 +222,7 @@ namespace Omnius.Core.Serialization.RocketPack.DefinitionCompiler
 
         private static readonly Parser<ObjectDefinition> _tableDefinitionParser =
             from attributes in _attributeParser.XMany().TokenWithSkipComment()
-            from keyword in Parse.String("table").TokenWithSkipComment()
+            from keyword in Parse.String("message").TokenWithSkipComment()
             from name in _nameParser.TokenWithSkipComment()
             from beginTag in Parse.Char('{').TokenWithSkipComment()
             from elements in _tableElementParser.Except(Parse.Char('}')).XMany().TokenWithSkipComment()

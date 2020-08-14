@@ -49,7 +49,7 @@ struct StructMessageElement_Struct {
 }
 
 [csharp_struct]
-table TableMessageElement_Struct {
+message TableMessageElement_Struct {
     X0: bool = 0,
 }
 
@@ -57,7 +57,7 @@ struct StructMessageElement_Class {
     X0: bool,
 }
 
-table TableMessageElement_Class {
+message TableMessageElement_Class {
     X0: bool = 0,
 }
 
@@ -95,7 +95,7 @@ struct StructMessage_Struct {
 }
 
 [csharp_struct]
-table TableMessage_Struct {
+message TableMessage_Struct {
     X0: bool = 0,
     X1: int8 = 1,
     X2: int16 = 2,
@@ -128,7 +128,7 @@ table TableMessage_Struct {
 }
 
 [csharp_struct]
-table NullableTableMessage_Struct {
+message NullableTableMessage_Struct {
     X0: bool? = 0,
     X1: int8? = 1,
     X2: int16? = 2,
@@ -192,7 +192,7 @@ struct StructMessage_Class {
     X28: TableMessageElement_Class,
 }
 
-table TableMessage_Class {
+message TableMessage_Class {
     X0: bool = 0,
     X1: int8 = 1,
     X2: int16 = 2,
@@ -224,7 +224,7 @@ table TableMessage_Class {
     X28: TableMessageElement_Class = 28,
 }
 
-table NullableTableMessage_Class {
+message NullableTableMessage_Class {
     X0: bool? = 0,
     X1: int8? = 1,
     X2: int16? = 2,
