@@ -3,7 +3,7 @@ syntax v1.0;
 namespace "FormatterBenchmarks.Internal";
 option csharp_access_level "internal";
 
-table RocketPack_BytesElementsList {
+message RocketPack_BytesElementsList {
     List: vector<RocketPack_BytesElements>(capacity: 1048576) = 0,
 }
 
@@ -20,7 +20,7 @@ struct RocketPack_BytesElements {
     X9: bytes(capacity: 1048576, recyclable: true),
 }
 
-table RocketPack_IntElementsList {
+message RocketPack_IntElementsList {
     List: vector<RocketPack_IntElements>(capacity: 1048576) = 0,
 }
 
@@ -37,7 +37,7 @@ struct RocketPack_IntElements {
     X9: uint32,
 }
 
-table RocketPack_StringElementsList {
+message RocketPack_StringElementsList {
     List: vector<RocketPack_StringElements>(capacity: 1048576) = 0,
 }
 

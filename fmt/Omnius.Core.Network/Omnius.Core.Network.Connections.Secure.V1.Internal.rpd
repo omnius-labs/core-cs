@@ -29,7 +29,7 @@ enum AuthenticationType : uint8 {
     Password = 1,
 }
 
-table ProfileMessage {
+message ProfileMessage {
     SessionId: bytes(capacity: 32) = 0,
     AuthenticationType: AuthenticationType = 1,
     KeyExchangeAlgorithms: vector<KeyExchangeAlgorithm>(capacity: 32) = 2,
@@ -38,11 +38,11 @@ table ProfileMessage {
     HashAlgorithms: vector<HashAlgorithm>(capacity: 32) = 5,
 }
 
-table VerificationMessage {
+message VerificationMessage {
     ProfileMessage: ProfileMessage = 0,
     AgreementPublicKey: OmniAgreementPublicKey = 1,
 }
 
-table AuthenticationMessage {
+message AuthenticationMessage {
     Hashes: vector<bytes(capacity: 32)>(capacity: 32) = 0,
 }

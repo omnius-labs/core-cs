@@ -29,45 +29,45 @@ struct OmniHash {
     Value: bytes(capacity: 256),
 }
 
-table OmniAgreement {
+message OmniAgreement {
     CreationTime: timestamp = 0,
     AlgorithmType: OmniAgreementAlgorithmType = 1,
     PublicKey: bytes(capacity: 8192) = 2,
     PrivateKey: bytes(capacity: 8192) = 3,
 }
 
-table OmniAgreementPublicKey {
+message OmniAgreementPublicKey {
     CreationTime: timestamp = 0,
     AlgorithmType: OmniAgreementAlgorithmType = 1,
     PublicKey: bytes(capacity: 8192) = 2,
 }
 
-table OmniAgreementPrivateKey {
+message OmniAgreementPrivateKey {
     CreationTime: timestamp = 0,
     AlgorithmType: OmniAgreementAlgorithmType = 1,
     PrivateKey: bytes(capacity: 8192) = 2,
 }
 
-table OmniDigitalSignature {
+message OmniDigitalSignature {
     Name: string(capacity: 32) = 0,
     AlgorithmType: OmniDigitalSignatureAlgorithmType = 1,
     PublicKey: bytes(capacity: 8192) = 2,
     PrivateKey: bytes(capacity: 8192) = 3,
 }
 
-table OmniCertificate {
+message OmniCertificate {
     Name: string(capacity: 32) = 0,
     AlgorithmType: OmniDigitalSignatureAlgorithmType = 1,
     PublicKey: bytes(capacity: 8192) = 2,
     Value: bytes(capacity: 8192) = 3,
 }
 
-table OmniSignature {
+message OmniSignature {
     Name: string(capacity: 32) = 0,
     Hash: OmniHash = 1,
 }
 
-table OmniHashcash {
+message OmniHashcash {
     AlgorithmType: OmniHashcashAlgorithmType = 0,
     Key: bytes(capacity: 32) = 1,
 }
