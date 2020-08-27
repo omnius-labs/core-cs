@@ -10,11 +10,12 @@ namespace Omnius.Core.Network.Connections.Secure
         Connected = 1,
         Accepted = 2,
     }
-
     public enum OmniSecureConnectionVersion : byte
     {
         Unknown = 0,
         Version1 = 1,
     }
+
+
 
 }

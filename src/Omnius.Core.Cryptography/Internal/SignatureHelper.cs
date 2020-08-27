@@ -2,7 +2,7 @@ using System;
 using System.Text;
 using System.Threading;
 using Omnius.Core;
-using Omnius.Core.Serialization.RocketPack;
+using Omnius.Core.RocketPack;
 
 namespace Omnius.Core.Cryptography.Internal
 {
@@ -20,7 +20,7 @@ namespace Omnius.Core.Cryptography.Internal
             using (var hub = new BytesHub())
             {
                 {
-                    var writer = new RocketPackWriter(hub.Writer, BytesPool.Shared);
+                    var writer = new RocketPackObjectWriter(hub.Writer, BytesPool.Shared);
 
                     writer.Write(name);
                     writer.Write(publicKey);

@@ -4,4 +4,4 @@
 
 ## Website
 
-+ <https://docs.omnius-labs.com/>
+-   <https://docs.omnius-labs.com/>

@@ -3,15 +3,16 @@
 
 namespace Omnius.Core.Network
 {
-    public sealed partial class OmniAddress : global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<global::Omnius.Core.Network.OmniAddress>
+
+    public sealed partial class OmniAddress : global::Omnius.Core.RocketPack.IRocketPackObject<global::Omnius.Core.Network.OmniAddress>
     {
-        public static global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<global::Omnius.Core.Network.OmniAddress> Formatter => global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<global::Omnius.Core.Network.OmniAddress>.Formatter;
-        public static global::Omnius.Core.Network.OmniAddress Empty => global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<global::Omnius.Core.Network.OmniAddress>.Empty;
+        public static global::Omnius.Core.RocketPack.IRocketPackObjectFormatter<global::Omnius.Core.Network.OmniAddress> Formatter => global::Omnius.Core.RocketPack.IRocketPackObject<global::Omnius.Core.Network.OmniAddress>.Formatter;
+        public static global::Omnius.Core.Network.OmniAddress Empty => global::Omnius.Core.RocketPack.IRocketPackObject<global::Omnius.Core.Network.OmniAddress>.Empty;
 
         static OmniAddress()
         {
-            global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<global::Omnius.Core.Network.OmniAddress>.Formatter = new ___CustomFormatter();
-            global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<global::Omnius.Core.Network.OmniAddress>.Empty = new global::Omnius.Core.Network.OmniAddress(string.Empty);
+            global::Omnius.Core.RocketPack.IRocketPackObject<global::Omnius.Core.Network.OmniAddress>.Formatter = new ___CustomFormatter();
+            global::Omnius.Core.RocketPack.IRocketPackObject<global::Omnius.Core.Network.OmniAddress>.Empty = new global::Omnius.Core.Network.OmniAddress(string.Empty);
         }
 
         private readonly global::System.Lazy<int> ___hashCode;
@@ -37,12 +38,12 @@ namespace Omnius.Core.Network
 
         public static global::Omnius.Core.Network.OmniAddress Import(global::System.Buffers.ReadOnlySequence<byte> sequence, global::Omnius.Core.IBytesPool bytesPool)
         {
-            var reader = new global::Omnius.Core.Serialization.RocketPack.RocketPackReader(sequence, bytesPool);
+            var reader = new global::Omnius.Core.RocketPack.RocketPackObjectReader(sequence, bytesPool);
             return Formatter.Deserialize(ref reader, 0);
         }
         public void Export(global::System.Buffers.IBufferWriter<byte> bufferWriter, global::Omnius.Core.IBytesPool bytesPool)
         {
-            var writer = new global::Omnius.Core.Serialization.RocketPack.RocketPackWriter(bufferWriter, bytesPool);
+            var writer = new global::Omnius.Core.RocketPack.RocketPackObjectWriter(bufferWriter, bytesPool);
             Formatter.Serialize(ref writer, this, 0);
         }
 
@@ -69,42 +70,33 @@ namespace Omnius.Core.Network
         }
         public override int GetHashCode() => ___hashCode.Value;
 
-        private sealed class ___CustomFormatter : global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<global::Omnius.Core.Network.OmniAddress>
+        private sealed class ___CustomFormatter : global::Omnius.Core.RocketPack.IRocketPackObjectFormatter<global::Omnius.Core.Network.OmniAddress>
         {
-            public void Serialize(ref global::Omnius.Core.Serialization.RocketPack.RocketPackWriter w, in global::Omnius.Core.Network.OmniAddress value, in int rank)
+            public void Serialize(ref global::Omnius.Core.RocketPack.RocketPackObjectWriter w, in global::Omnius.Core.Network.OmniAddress value, in int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
-
-                {
-                    uint propertyCount = 0;
-                    if (value.Value != string.Empty)
-                    {
-                        propertyCount++;
-                    }
-                    w.Write(propertyCount);
-                }
 
                 if (value.Value != string.Empty)
                 {
-                    w.Write((uint)0);
+                    w.Write((uint)1);
                     w.Write(value.Value);
                 }
+                w.Write((uint)0);
             }
 
-            public global::Omnius.Core.Network.OmniAddress Deserialize(ref global::Omnius.Core.Serialization.RocketPack.RocketPackReader r, in int rank)
+            public global::Omnius.Core.Network.OmniAddress Deserialize(ref global::Omnius.Core.RocketPack.RocketPackObjectReader r, in int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
-                uint propertyCount = r.GetUInt32();
-
                 string p_value = string.Empty;
 
-                for (; propertyCount > 0; propertyCount--)
+                for (;;)
                 {
                     uint id = r.GetUInt32();
+                    if (id == 0) break;
                     switch (id)
                     {
-                        case 0:
+                        case 1:
                             {
                                 p_value = r.GetString(8192);
                                 break;
@@ -116,5 +108,6 @@ namespace Omnius.Core.Network
             }
         }
     }
+
 
 }

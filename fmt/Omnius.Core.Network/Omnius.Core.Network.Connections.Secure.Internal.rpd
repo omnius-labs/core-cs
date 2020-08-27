@@ -5,5 +5,5 @@ namespace "Omnius.Core.Network.Connections.Secure.Internal";
 option csharp_access_level "internal";
 
 message HelloMessage {
-    Versions: vector<OmniSecureConnectionVersion>(capacity: 32) = 0,
+    Versions: vector<OmniSecureConnectionVersion>(capacity: 32),
 }

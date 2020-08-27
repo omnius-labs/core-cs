@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <IsPackable>true</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="NLog" Version="4.7.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Omnius.Core\Omnius.Core.csproj" />
+    <ProjectReference Include="..\Omnius.Core.Serialization\Omnius.Core.Serialization.csproj" />
+  </ItemGroup>
+
+</Project>

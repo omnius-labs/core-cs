@@ -381,7 +381,7 @@ namespace Omnius.Core.Network.Connections.Secure.V1.Internal
             }
             catch (OmniSecureConnectionException e)
             {
-                ExceptionDispatchInfo.Throw(e);
+                throw;
             }
 
             throw new OmniSecureConnectionException("Conversion failed.");
@@ -452,7 +452,7 @@ namespace Omnius.Core.Network.Connections.Secure.V1.Internal
             }
             catch (OmniSecureConnectionException e)
             {
-                ExceptionDispatchInfo.Throw(e);
+                throw;
             }
 
             throw new OmniSecureConnectionException("Conversion failed.");

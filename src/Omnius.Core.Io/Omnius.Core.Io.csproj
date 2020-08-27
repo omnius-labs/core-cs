@@ -10,7 +10,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Omnius.Core.Serialization.RocketPack\Omnius.Core.Serialization.RocketPack.csproj" />
+    <ProjectReference Include="..\Omnius.Core.RocketPack\Omnius.Core.RocketPack.csproj" />
     <ProjectReference Include="..\Omnius.Core.Serialization\Omnius.Core.Serialization.csproj" />
     <ProjectReference Include="..\Omnius.Core\Omnius.Core.csproj" />
   </ItemGroup>

@@ -30,44 +30,44 @@ struct OmniHash {
 }
 
 message OmniAgreement {
-    CreationTime: timestamp = 0,
-    AlgorithmType: OmniAgreementAlgorithmType = 1,
-    PublicKey: bytes(capacity: 8192) = 2,
-    PrivateKey: bytes(capacity: 8192) = 3,
+    CreationTime: timestamp,
+    AlgorithmType: OmniAgreementAlgorithmType,
+    PublicKey: bytes(capacity: 8192),
+    PrivateKey: bytes(capacity: 8192),
 }
 
 message OmniAgreementPublicKey {
-    CreationTime: timestamp = 0,
-    AlgorithmType: OmniAgreementAlgorithmType = 1,
-    PublicKey: bytes(capacity: 8192) = 2,
+    CreationTime: timestamp,
+    AlgorithmType: OmniAgreementAlgorithmType,
+    PublicKey: bytes(capacity: 8192),
 }
 
 message OmniAgreementPrivateKey {
-    CreationTime: timestamp = 0,
-    AlgorithmType: OmniAgreementAlgorithmType = 1,
-    PrivateKey: bytes(capacity: 8192) = 2,
+    CreationTime: timestamp,
+    AlgorithmType: OmniAgreementAlgorithmType,
+    PrivateKey: bytes(capacity: 8192),
 }
 
 message OmniDigitalSignature {
-    Name: string(capacity: 32) = 0,
-    AlgorithmType: OmniDigitalSignatureAlgorithmType = 1,
-    PublicKey: bytes(capacity: 8192) = 2,
-    PrivateKey: bytes(capacity: 8192) = 3,
+    Name: string(capacity: 32),
+    AlgorithmType: OmniDigitalSignatureAlgorithmType,
+    PublicKey: bytes(capacity: 8192),
+    PrivateKey: bytes(capacity: 8192),
 }
 
 message OmniCertificate {
-    Name: string(capacity: 32) = 0,
-    AlgorithmType: OmniDigitalSignatureAlgorithmType = 1,
-    PublicKey: bytes(capacity: 8192) = 2,
-    Value: bytes(capacity: 8192) = 3,
+    Name: string(capacity: 32),
+    AlgorithmType: OmniDigitalSignatureAlgorithmType,
+    PublicKey: bytes(capacity: 8192),
+    Value: bytes(capacity: 8192),
 }
 
 message OmniSignature {
-    Name: string(capacity: 32) = 0,
-    Hash: OmniHash = 1,
+    Name: string(capacity: 32),
+    Hash: OmniHash,
 }
 
 message OmniHashcash {
-    AlgorithmType: OmniHashcashAlgorithmType = 0,
-    Key: bytes(capacity: 32) = 1,
+    AlgorithmType: OmniHashcashAlgorithmType,
+    Key: bytes(capacity: 32),
 }

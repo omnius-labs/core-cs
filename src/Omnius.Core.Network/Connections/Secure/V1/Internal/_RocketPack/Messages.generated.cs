@@ -9,40 +9,36 @@ namespace Omnius.Core.Network.Connections.Secure.V1.Internal
         Unknown = 0,
         EcDh_P521_Sha2_256 = 1,
     }
-
     internal enum KeyDerivationAlgorithm : byte
     {
         Unknown = 0,
         Pbkdf2 = 1,
     }
-
     internal enum HashAlgorithm : byte
     {
         Unknown = 0,
         Sha2_256 = 1,
     }
-
     internal enum CryptoAlgorithm : byte
     {
         Unknown = 0,
         Aes_Gcm_256 = 1,
     }
-
     internal enum AuthenticationType : byte
     {
         None = 0,
         Password = 1,
     }
 
-    internal sealed partial class ProfileMessage : global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<global::Omnius.Core.Network.Connections.Secure.V1.Internal.ProfileMessage>
+    internal sealed partial class ProfileMessage : global::Omnius.Core.RocketPack.IRocketPackObject<global::Omnius.Core.Network.Connections.Secure.V1.Internal.ProfileMessage>
     {
-        public static global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<global::Omnius.Core.Network.Connections.Secure.V1.Internal.ProfileMessage> Formatter => global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<global::Omnius.Core.Network.Connections.Secure.V1.Internal.ProfileMessage>.Formatter;
-        public static global::Omnius.Core.Network.Connections.Secure.V1.Internal.ProfileMessage Empty => global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<global::Omnius.Core.Network.Connections.Secure.V1.Internal.ProfileMessage>.Empty;
+        public static global::Omnius.Core.RocketPack.IRocketPackObjectFormatter<global::Omnius.Core.Network.Connections.Secure.V1.Internal.ProfileMessage> Formatter => global::Omnius.Core.RocketPack.IRocketPackObject<global::Omnius.Core.Network.Connections.Secure.V1.Internal.ProfileMessage>.Formatter;
+        public static global::Omnius.Core.Network.Connections.Secure.V1.Internal.ProfileMessage Empty => global::Omnius.Core.RocketPack.IRocketPackObject<global::Omnius.Core.Network.Connections.Secure.V1.Internal.ProfileMessage>.Empty;
 
         static ProfileMessage()
         {
-            global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<global::Omnius.Core.Network.Connections.Secure.V1.Internal.ProfileMessage>.Formatter = new ___CustomFormatter();
-            global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<global::Omnius.Core.Network.Connections.Secure.V1.Internal.ProfileMessage>.Empty = new global::Omnius.Core.Network.Connections.Secure.V1.Internal.ProfileMessage(global::System.ReadOnlyMemory<byte>.Empty, (AuthenticationType)0, global::System.Array.Empty<KeyExchangeAlgorithm>(), global::System.Array.Empty<KeyDerivationAlgorithm>(), global::System.Array.Empty<CryptoAlgorithm>(), global::System.Array.Empty<HashAlgorithm>());
+            global::Omnius.Core.RocketPack.IRocketPackObject<global::Omnius.Core.Network.Connections.Secure.V1.Internal.ProfileMessage>.Formatter = new ___CustomFormatter();
+            global::Omnius.Core.RocketPack.IRocketPackObject<global::Omnius.Core.Network.Connections.Secure.V1.Internal.ProfileMessage>.Empty = new global::Omnius.Core.Network.Connections.Secure.V1.Internal.ProfileMessage(global::System.ReadOnlyMemory<byte>.Empty, (AuthenticationType)0, global::System.Array.Empty<KeyExchangeAlgorithm>(), global::System.Array.Empty<KeyDerivationAlgorithm>(), global::System.Array.Empty<CryptoAlgorithm>(), global::System.Array.Empty<HashAlgorithm>());
         }
 
         private readonly global::System.Lazy<int> ___hashCode;
@@ -106,12 +102,12 @@ namespace Omnius.Core.Network.Connections.Secure.V1.Internal
 
         public static global::Omnius.Core.Network.Connections.Secure.V1.Internal.ProfileMessage Import(global::System.Buffers.ReadOnlySequence<byte> sequence, global::Omnius.Core.IBytesPool bytesPool)
         {
-            var reader = new global::Omnius.Core.Serialization.RocketPack.RocketPackReader(sequence, bytesPool);
+            var reader = new global::Omnius.Core.RocketPack.RocketPackObjectReader(sequence, bytesPool);
             return Formatter.Deserialize(ref reader, 0);
         }
         public void Export(global::System.Buffers.IBufferWriter<byte> bufferWriter, global::Omnius.Core.IBytesPool bytesPool)
         {
-            var writer = new global::Omnius.Core.Serialization.RocketPack.RocketPackWriter(bufferWriter, bytesPool);
+            var writer = new global::Omnius.Core.RocketPack.RocketPackObjectWriter(bufferWriter, bytesPool);
             Formatter.Serialize(ref writer, this, 0);
         }
 
@@ -143,54 +139,25 @@ namespace Omnius.Core.Network.Connections.Secure.V1.Internal
         }
         public override int GetHashCode() => ___hashCode.Value;
 
-        private sealed class ___CustomFormatter : global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<global::Omnius.Core.Network.Connections.Secure.V1.Internal.ProfileMessage>
+        private sealed class ___CustomFormatter : global::Omnius.Core.RocketPack.IRocketPackObjectFormatter<global::Omnius.Core.Network.Connections.Secure.V1.Internal.ProfileMessage>
         {
-            public void Serialize(ref global::Omnius.Core.Serialization.RocketPack.RocketPackWriter w, in global::Omnius.Core.Network.Connections.Secure.V1.Internal.ProfileMessage value, in int rank)
+            public void Serialize(ref global::Omnius.Core.RocketPack.RocketPackObjectWriter w, in global::Omnius.Core.Network.Connections.Secure.V1.Internal.ProfileMessage value, in int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
-                {
-                    uint propertyCount = 0;
-                    if (!value.SessionId.IsEmpty)
-                    {
-                        propertyCount++;
-                    }
-                    if (value.AuthenticationType != (AuthenticationType)0)
-                    {
-                        propertyCount++;
-                    }
-                    if (value.KeyExchangeAlgorithms.Count != 0)
-                    {
-                        propertyCount++;
-                    }
-                    if (value.KeyDerivationAlgorithms.Count != 0)
-                    {
-                        propertyCount++;
-                    }
-                    if (value.CryptoAlgorithms.Count != 0)
-                    {
-                        propertyCount++;
-                    }
-                    if (value.HashAlgorithms.Count != 0)
-                    {
-                        propertyCount++;
-                    }
-                    w.Write(propertyCount);
-                }
-
                 if (!value.SessionId.IsEmpty)
                 {
-                    w.Write((uint)0);
+                    w.Write((uint)1);
                     w.Write(value.SessionId.Span);
                 }
                 if (value.AuthenticationType != (AuthenticationType)0)
                 {
-                    w.Write((uint)1);
+                    w.Write((uint)2);
                     w.Write((ulong)value.AuthenticationType);
                 }
                 if (value.KeyExchangeAlgorithms.Count != 0)
                 {
-                    w.Write((uint)2);
+                    w.Write((uint)3);
                     w.Write((uint)value.KeyExchangeAlgorithms.Count);
                     foreach (var n in value.KeyExchangeAlgorithms)
                     {
@@ -199,7 +166,7 @@ namespace Omnius.Core.Network.Connections.Secure.V1.Internal
                 }
                 if (value.KeyDerivationAlgorithms.Count != 0)
                 {
-                    w.Write((uint)3);
+                    w.Write((uint)4);
                     w.Write((uint)value.KeyDerivationAlgorithms.Count);
                     foreach (var n in value.KeyDerivationAlgorithms)
                     {
@@ -208,7 +175,7 @@ namespace Omnius.Core.Network.Connections.Secure.V1.Internal
                 }
                 if (value.CryptoAlgorithms.Count != 0)
                 {
-                    w.Write((uint)4);
+                    w.Write((uint)5);
                     w.Write((uint)value.CryptoAlgorithms.Count);
                     foreach (var n in value.CryptoAlgorithms)
                     {
@@ -217,20 +184,19 @@ namespace Omnius.Core.Network.Connections.Secure.V1.Internal
                 }
                 if (value.HashAlgorithms.Count != 0)
                 {
-                    w.Write((uint)5);
+                    w.Write((uint)6);
                     w.Write((uint)value.HashAlgorithms.Count);
                     foreach (var n in value.HashAlgorithms)
                     {
                         w.Write((ulong)n);
                     }
                 }
+                w.Write((uint)0);
             }
 
-            public global::Omnius.Core.Network.Connections.Secure.V1.Internal.ProfileMessage Deserialize(ref global::Omnius.Core.Serialization.RocketPack.RocketPackReader r, in int rank)
+            public global::Omnius.Core.Network.Connections.Secure.V1.Internal.ProfileMessage Deserialize(ref global::Omnius.Core.RocketPack.RocketPackObjectReader r, in int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
-
-                uint propertyCount = r.GetUInt32();
 
                 global::System.ReadOnlyMemory<byte> p_sessionId = global::System.ReadOnlyMemory<byte>.Empty;
                 AuthenticationType p_authenticationType = (AuthenticationType)0;
@@ -239,22 +205,23 @@ namespace Omnius.Core.Network.Connections.Secure.V1.Internal
                 CryptoAlgorithm[] p_cryptoAlgorithms = global::System.Array.Empty<CryptoAlgorithm>();
                 HashAlgorithm[] p_hashAlgorithms = global::System.Array.Empty<HashAlgorithm>();
 
-                for (; propertyCount > 0; propertyCount--)
+                for (;;)
                 {
                     uint id = r.GetUInt32();
+                    if (id == 0) break;
                     switch (id)
                     {
-                        case 0:
+                        case 1:
                             {
                                 p_sessionId = r.GetMemory(32);
                                 break;
                             }
-                        case 1:
+                        case 2:
                             {
                                 p_authenticationType = (AuthenticationType)r.GetUInt64();
                                 break;
                             }
-                        case 2:
+                        case 3:
                             {
                                 var length = r.GetUInt32();
                                 p_keyExchangeAlgorithms = new KeyExchangeAlgorithm[length];
@@ -264,7 +231,7 @@ namespace Omnius.Core.Network.Connections.Secure.V1.Internal
                                 }
                                 break;
                             }
-                        case 3:
+                        case 4:
                             {
                                 var length = r.GetUInt32();
                                 p_keyDerivationAlgorithms = new KeyDerivationAlgorithm[length];
@@ -274,7 +241,7 @@ namespace Omnius.Core.Network.Connections.Secure.V1.Internal
                                 }
                                 break;
                             }
-                        case 4:
+                        case 5:
                             {
                                 var length = r.GetUInt32();
                                 p_cryptoAlgorithms = new CryptoAlgorithm[length];
@@ -284,7 +251,7 @@ namespace Omnius.Core.Network.Connections.Secure.V1.Internal
                                 }
                                 break;
                             }
-                        case 5:
+                        case 6:
                             {
                                 var length = r.GetUInt32();
                                 p_hashAlgorithms = new HashAlgorithm[length];
@@ -301,16 +268,15 @@ namespace Omnius.Core.Network.Connections.Secure.V1.Internal
             }
         }
     }
-
-    internal sealed partial class VerificationMessage : global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<global::Omnius.Core.Network.Connections.Secure.V1.Internal.VerificationMessage>
+    internal sealed partial class VerificationMessage : global::Omnius.Core.RocketPack.IRocketPackObject<global::Omnius.Core.Network.Connections.Secure.V1.Internal.VerificationMessage>
     {
-        public static global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<global::Omnius.Core.Network.Connections.Secure.V1.Internal.VerificationMessage> Formatter => global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<global::Omnius.Core.Network.Connections.Secure.V1.Internal.VerificationMessage>.Formatter;
-        public static global::Omnius.Core.Network.Connections.Secure.V1.Internal.VerificationMessage Empty => global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<global::Omnius.Core.Network.Connections.Secure.V1.Internal.VerificationMessage>.Empty;
+        public static global::Omnius.Core.RocketPack.IRocketPackObjectFormatter<global::Omnius.Core.Network.Connections.Secure.V1.Internal.VerificationMessage> Formatter => global::Omnius.Core.RocketPack.IRocketPackObject<global::Omnius.Core.Network.Connections.Secure.V1.Internal.VerificationMessage>.Formatter;
+        public static global::Omnius.Core.Network.Connections.Secure.V1.Internal.VerificationMessage Empty => global::Omnius.Core.RocketPack.IRocketPackObject<global::Omnius.Core.Network.Connections.Secure.V1.Internal.VerificationMessage>.Empty;
 
         static VerificationMessage()
         {
-            global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<global::Omnius.Core.Network.Connections.Secure.V1.Internal.VerificationMessage>.Formatter = new ___CustomFormatter();
-            global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<global::Omnius.Core.Network.Connections.Secure.V1.Internal.VerificationMessage>.Empty = new global::Omnius.Core.Network.Connections.Secure.V1.Internal.VerificationMessage(ProfileMessage.Empty, OmniAgreementPublicKey.Empty);
+            global::Omnius.Core.RocketPack.IRocketPackObject<global::Omnius.Core.Network.Connections.Secure.V1.Internal.VerificationMessage>.Formatter = new ___CustomFormatter();
+            global::Omnius.Core.RocketPack.IRocketPackObject<global::Omnius.Core.Network.Connections.Secure.V1.Internal.VerificationMessage>.Empty = new global::Omnius.Core.Network.Connections.Secure.V1.Internal.VerificationMessage(ProfileMessage.Empty, OmniAgreementPublicKey.Empty);
         }
 
         private readonly global::System.Lazy<int> ___hashCode;
@@ -337,12 +303,12 @@ namespace Omnius.Core.Network.Connections.Secure.V1.Internal
 
         public static global::Omnius.Core.Network.Connections.Secure.V1.Internal.VerificationMessage Import(global::System.Buffers.ReadOnlySequence<byte> sequence, global::Omnius.Core.IBytesPool bytesPool)
         {
-            var reader = new global::Omnius.Core.Serialization.RocketPack.RocketPackReader(sequence, bytesPool);
+            var reader = new global::Omnius.Core.RocketPack.RocketPackObjectReader(sequence, bytesPool);
             return Formatter.Deserialize(ref reader, 0);
         }
         public void Export(global::System.Buffers.IBufferWriter<byte> bufferWriter, global::Omnius.Core.IBytesPool bytesPool)
         {
-            var writer = new global::Omnius.Core.Serialization.RocketPack.RocketPackWriter(bufferWriter, bytesPool);
+            var writer = new global::Omnius.Core.RocketPack.RocketPackObjectWriter(bufferWriter, bytesPool);
             Formatter.Serialize(ref writer, this, 0);
         }
 
@@ -370,57 +336,44 @@ namespace Omnius.Core.Network.Connections.Secure.V1.Internal
         }
         public override int GetHashCode() => ___hashCode.Value;
 
-        private sealed class ___CustomFormatter : global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<global::Omnius.Core.Network.Connections.Secure.V1.Internal.VerificationMessage>
+        private sealed class ___CustomFormatter : global::Omnius.Core.RocketPack.IRocketPackObjectFormatter<global::Omnius.Core.Network.Connections.Secure.V1.Internal.VerificationMessage>
         {
-            public void Serialize(ref global::Omnius.Core.Serialization.RocketPack.RocketPackWriter w, in global::Omnius.Core.Network.Connections.Secure.V1.Internal.VerificationMessage value, in int rank)
+            public void Serialize(ref global::Omnius.Core.RocketPack.RocketPackObjectWriter w, in global::Omnius.Core.Network.Connections.Secure.V1.Internal.VerificationMessage value, in int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
-                {
-                    uint propertyCount = 0;
-                    if (value.ProfileMessage != ProfileMessage.Empty)
-                    {
-                        propertyCount++;
-                    }
-                    if (value.AgreementPublicKey != OmniAgreementPublicKey.Empty)
-                    {
-                        propertyCount++;
-                    }
-                    w.Write(propertyCount);
-                }
-
                 if (value.ProfileMessage != ProfileMessage.Empty)
                 {
-                    w.Write((uint)0);
+                    w.Write((uint)1);
                     global::Omnius.Core.Network.Connections.Secure.V1.Internal.ProfileMessage.Formatter.Serialize(ref w, value.ProfileMessage, rank + 1);
                 }
                 if (value.AgreementPublicKey != OmniAgreementPublicKey.Empty)
                 {
-                    w.Write((uint)1);
+                    w.Write((uint)2);
                     global::Omnius.Core.Cryptography.OmniAgreementPublicKey.Formatter.Serialize(ref w, value.AgreementPublicKey, rank + 1);
                 }
+                w.Write((uint)0);
             }
 
-            public global::Omnius.Core.Network.Connections.Secure.V1.Internal.VerificationMessage Deserialize(ref global::Omnius.Core.Serialization.RocketPack.RocketPackReader r, in int rank)
+            public global::Omnius.Core.Network.Connections.Secure.V1.Internal.VerificationMessage Deserialize(ref global::Omnius.Core.RocketPack.RocketPackObjectReader r, in int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
-
-                uint propertyCount = r.GetUInt32();
 
                 ProfileMessage p_profileMessage = ProfileMessage.Empty;
                 OmniAgreementPublicKey p_agreementPublicKey = OmniAgreementPublicKey.Empty;
 
-                for (; propertyCount > 0; propertyCount--)
+                for (;;)
                 {
                     uint id = r.GetUInt32();
+                    if (id == 0) break;
                     switch (id)
                     {
-                        case 0:
+                        case 1:
                             {
                                 p_profileMessage = global::Omnius.Core.Network.Connections.Secure.V1.Internal.ProfileMessage.Formatter.Deserialize(ref r, rank + 1);
                                 break;
                             }
-                        case 1:
+                        case 2:
                             {
                                 p_agreementPublicKey = global::Omnius.Core.Cryptography.OmniAgreementPublicKey.Formatter.Deserialize(ref r, rank + 1);
                                 break;
@@ -432,16 +385,15 @@ namespace Omnius.Core.Network.Connections.Secure.V1.Internal
             }
         }
     }
-
-    internal sealed partial class AuthenticationMessage : global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<global::Omnius.Core.Network.Connections.Secure.V1.Internal.AuthenticationMessage>
+    internal sealed partial class AuthenticationMessage : global::Omnius.Core.RocketPack.IRocketPackObject<global::Omnius.Core.Network.Connections.Secure.V1.Internal.AuthenticationMessage>
     {
-        public static global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<global::Omnius.Core.Network.Connections.Secure.V1.Internal.AuthenticationMessage> Formatter => global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<global::Omnius.Core.Network.Connections.Secure.V1.Internal.AuthenticationMessage>.Formatter;
-        public static global::Omnius.Core.Network.Connections.Secure.V1.Internal.AuthenticationMessage Empty => global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<global::Omnius.Core.Network.Connections.Secure.V1.Internal.AuthenticationMessage>.Empty;
+        public static global::Omnius.Core.RocketPack.IRocketPackObjectFormatter<global::Omnius.Core.Network.Connections.Secure.V1.Internal.AuthenticationMessage> Formatter => global::Omnius.Core.RocketPack.IRocketPackObject<global::Omnius.Core.Network.Connections.Secure.V1.Internal.AuthenticationMessage>.Formatter;
+        public static global::Omnius.Core.Network.Connections.Secure.V1.Internal.AuthenticationMessage Empty => global::Omnius.Core.RocketPack.IRocketPackObject<global::Omnius.Core.Network.Connections.Secure.V1.Internal.AuthenticationMessage>.Empty;
 
         static AuthenticationMessage()
         {
-            global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<global::Omnius.Core.Network.Connections.Secure.V1.Internal.AuthenticationMessage>.Formatter = new ___CustomFormatter();
-            global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<global::Omnius.Core.Network.Connections.Secure.V1.Internal.AuthenticationMessage>.Empty = new global::Omnius.Core.Network.Connections.Secure.V1.Internal.AuthenticationMessage(global::System.Array.Empty<global::System.ReadOnlyMemory<byte>>());
+            global::Omnius.Core.RocketPack.IRocketPackObject<global::Omnius.Core.Network.Connections.Secure.V1.Internal.AuthenticationMessage>.Formatter = new ___CustomFormatter();
+            global::Omnius.Core.RocketPack.IRocketPackObject<global::Omnius.Core.Network.Connections.Secure.V1.Internal.AuthenticationMessage>.Empty = new global::Omnius.Core.Network.Connections.Secure.V1.Internal.AuthenticationMessage(global::System.Array.Empty<global::System.ReadOnlyMemory<byte>>());
         }
 
         private readonly global::System.Lazy<int> ___hashCode;
@@ -474,12 +426,12 @@ namespace Omnius.Core.Network.Connections.Secure.V1.Internal
 
         public static global::Omnius.Core.Network.Connections.Secure.V1.Internal.AuthenticationMessage Import(global::System.Buffers.ReadOnlySequence<byte> sequence, global::Omnius.Core.IBytesPool bytesPool)
         {
-            var reader = new global::Omnius.Core.Serialization.RocketPack.RocketPackReader(sequence, bytesPool);
+            var reader = new global::Omnius.Core.RocketPack.RocketPackObjectReader(sequence, bytesPool);
             return Formatter.Deserialize(ref reader, 0);
         }
         public void Export(global::System.Buffers.IBufferWriter<byte> bufferWriter, global::Omnius.Core.IBytesPool bytesPool)
         {
-            var writer = new global::Omnius.Core.Serialization.RocketPack.RocketPackWriter(bufferWriter, bytesPool);
+            var writer = new global::Omnius.Core.RocketPack.RocketPackObjectWriter(bufferWriter, bytesPool);
             Formatter.Serialize(ref writer, this, 0);
         }
 
@@ -506,46 +458,37 @@ namespace Omnius.Core.Network.Connections.Secure.V1.Internal
         }
         public override int GetHashCode() => ___hashCode.Value;
 
-        private sealed class ___CustomFormatter : global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<global::Omnius.Core.Network.Connections.Secure.V1.Internal.AuthenticationMessage>
+        private sealed class ___CustomFormatter : global::Omnius.Core.RocketPack.IRocketPackObjectFormatter<global::Omnius.Core.Network.Connections.Secure.V1.Internal.AuthenticationMessage>
         {
-            public void Serialize(ref global::Omnius.Core.Serialization.RocketPack.RocketPackWriter w, in global::Omnius.Core.Network.Connections.Secure.V1.Internal.AuthenticationMessage value, in int rank)
+            public void Serialize(ref global::Omnius.Core.RocketPack.RocketPackObjectWriter w, in global::Omnius.Core.Network.Connections.Secure.V1.Internal.AuthenticationMessage value, in int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
-                {
-                    uint propertyCount = 0;
-                    if (value.Hashes.Count != 0)
-                    {
-                        propertyCount++;
-                    }
-                    w.Write(propertyCount);
-                }
-
                 if (value.Hashes.Count != 0)
                 {
-                    w.Write((uint)0);
+                    w.Write((uint)1);
                     w.Write((uint)value.Hashes.Count);
                     foreach (var n in value.Hashes)
                     {
                         w.Write(n.Span);
                     }
                 }
+                w.Write((uint)0);
             }
 
-            public global::Omnius.Core.Network.Connections.Secure.V1.Internal.AuthenticationMessage Deserialize(ref global::Omnius.Core.Serialization.RocketPack.RocketPackReader r, in int rank)
+            public global::Omnius.Core.Network.Connections.Secure.V1.Internal.AuthenticationMessage Deserialize(ref global::Omnius.Core.RocketPack.RocketPackObjectReader r, in int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
-                uint propertyCount = r.GetUInt32();
-
                 global::System.ReadOnlyMemory<byte>[] p_hashes = global::System.Array.Empty<global::System.ReadOnlyMemory<byte>>();
 
-                for (; propertyCount > 0; propertyCount--)
+                for (;;)
                 {
                     uint id = r.GetUInt32();
+                    if (id == 0) break;
                     switch (id)
                     {
-                        case 0:
+                        case 1:
                             {
                                 var length = r.GetUInt32();
                                 p_hashes = new global::System.ReadOnlyMemory<byte>[length];
@@ -562,5 +505,6 @@ namespace Omnius.Core.Network.Connections.Secure.V1.Internal
             }
         }
     }
+
 
 }

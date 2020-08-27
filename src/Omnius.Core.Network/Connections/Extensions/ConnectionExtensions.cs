@@ -3,7 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Schema;
 using Omnius.Core;
-using Omnius.Core.Serialization.RocketPack;
+using Omnius.Core.RocketPack;
 
 namespace Omnius.Core.Network.Connections.Extensions
 {

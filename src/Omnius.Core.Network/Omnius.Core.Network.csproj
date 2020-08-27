@@ -14,7 +14,7 @@
     <ProjectReference Include="..\Omnius.Core\Omnius.Core.csproj" />
     <ProjectReference Include="..\Omnius.Core.Collections\Omnius.Core.Collections.csproj" />
     <ProjectReference Include="..\Omnius.Core.Cryptography\Omnius.Core.Cryptography.csproj" />
-    <ProjectReference Include="..\Omnius.Core.Serialization.RocketPack\Omnius.Core.Serialization.RocketPack.csproj" />
+    <ProjectReference Include="..\Omnius.Core.RocketPack\Omnius.Core.RocketPack.csproj" />
     <ProjectReference Include="..\Omnius.Core.Serialization\Omnius.Core.Serialization.csproj" />
   </ItemGroup>
 

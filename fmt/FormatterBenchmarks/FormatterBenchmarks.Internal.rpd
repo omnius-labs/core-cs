@@ -4,7 +4,7 @@ namespace "FormatterBenchmarks.Internal";
 option csharp_access_level "internal";
 
 message RocketPack_BytesElementsList {
-    List: vector<RocketPack_BytesElements>(capacity: 1048576) = 0,
+    List: vector<RocketPack_BytesElements>(capacity: 1048576),
 }
 
 struct RocketPack_BytesElements {
@@ -21,7 +21,7 @@ struct RocketPack_BytesElements {
 }
 
 message RocketPack_IntElementsList {
-    List: vector<RocketPack_IntElements>(capacity: 1048576) = 0,
+    List: vector<RocketPack_IntElements>(capacity: 1048576),
 }
 
 struct RocketPack_IntElements {
@@ -38,7 +38,7 @@ struct RocketPack_IntElements {
 }
 
 message RocketPack_StringElementsList {
-    List: vector<RocketPack_StringElements>(capacity: 1048576) = 0,
+    List: vector<RocketPack_StringElements>(capacity: 1048576),
 }
 
 struct RocketPack_StringElements {

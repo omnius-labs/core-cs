@@ -30,19 +30,19 @@ enum AuthenticationType : uint8 {
 }
 
 message ProfileMessage {
-    SessionId: bytes(capacity: 32) = 0,
-    AuthenticationType: AuthenticationType = 1,
-    KeyExchangeAlgorithms: vector<KeyExchangeAlgorithm>(capacity: 32) = 2,
-    KeyDerivationAlgorithms: vector<KeyDerivationAlgorithm>(capacity: 32) = 3,
-    CryptoAlgorithms: vector<CryptoAlgorithm>(capacity: 32) = 4,
-    HashAlgorithms: vector<HashAlgorithm>(capacity: 32) = 5,
+    SessionId: bytes(capacity: 32),
+    AuthenticationType: AuthenticationType,
+    KeyExchangeAlgorithms: vector<KeyExchangeAlgorithm>(capacity: 32),
+    KeyDerivationAlgorithms: vector<KeyDerivationAlgorithm>(capacity: 32),
+    CryptoAlgorithms: vector<CryptoAlgorithm>(capacity: 32),
+    HashAlgorithms: vector<HashAlgorithm>(capacity: 32),
 }
 
 message VerificationMessage {
-    ProfileMessage: ProfileMessage = 0,
-    AgreementPublicKey: OmniAgreementPublicKey = 1,
+    ProfileMessage: ProfileMessage,
+    AgreementPublicKey: OmniAgreementPublicKey,
 }
 
 message AuthenticationMessage {
-    Hashes: vector<bytes(capacity: 32)>(capacity: 32) = 0,
+    Hashes: vector<bytes(capacity: 32)>(capacity: 32),
 }

@@ -3,5 +3,5 @@
 namespace "Omnius.Core.Network";
 
 message OmniAddress {
-    Value: string(capacity: 8192) = 0,
+    Value: string(capacity: 8192),
 }

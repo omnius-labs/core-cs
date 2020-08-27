@@ -1,9 +1,0 @@
-﻿syntax v1.0;
-
-namespace "Omnius.Core.Remoting";
-
-message OmniRpcErrorMessage {
-    Type: string(capacity: 8192) = 0,
-    Message: string(capacity: 8192) = 1,
-    StackTrace: string(capacity: 8192) = 2,
-}

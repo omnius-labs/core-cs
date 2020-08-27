@@ -2,7 +2,7 @@ using System;
 using System.Buffers;
 using System.Collections.Generic;
 using Omnius.Core;
-using Omnius.Core.Serialization.RocketPack;
+using Omnius.Core.RocketPack;
 
 namespace Omnius.Core.Internal
 {

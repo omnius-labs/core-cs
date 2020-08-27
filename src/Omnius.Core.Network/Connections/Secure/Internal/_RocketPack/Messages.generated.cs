@@ -5,15 +5,16 @@ using Omnius.Core.Network.Connections.Secure;
 
 namespace Omnius.Core.Network.Connections.Secure.Internal
 {
-    internal sealed partial class HelloMessage : global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<global::Omnius.Core.Network.Connections.Secure.Internal.HelloMessage>
+
+    internal sealed partial class HelloMessage : global::Omnius.Core.RocketPack.IRocketPackObject<global::Omnius.Core.Network.Connections.Secure.Internal.HelloMessage>
     {
-        public static global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<global::Omnius.Core.Network.Connections.Secure.Internal.HelloMessage> Formatter => global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<global::Omnius.Core.Network.Connections.Secure.Internal.HelloMessage>.Formatter;
-        public static global::Omnius.Core.Network.Connections.Secure.Internal.HelloMessage Empty => global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<global::Omnius.Core.Network.Connections.Secure.Internal.HelloMessage>.Empty;
+        public static global::Omnius.Core.RocketPack.IRocketPackObjectFormatter<global::Omnius.Core.Network.Connections.Secure.Internal.HelloMessage> Formatter => global::Omnius.Core.RocketPack.IRocketPackObject<global::Omnius.Core.Network.Connections.Secure.Internal.HelloMessage>.Formatter;
+        public static global::Omnius.Core.Network.Connections.Secure.Internal.HelloMessage Empty => global::Omnius.Core.RocketPack.IRocketPackObject<global::Omnius.Core.Network.Connections.Secure.Internal.HelloMessage>.Empty;
 
         static HelloMessage()
         {
-            global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<global::Omnius.Core.Network.Connections.Secure.Internal.HelloMessage>.Formatter = new ___CustomFormatter();
-            global::Omnius.Core.Serialization.RocketPack.IRocketPackObject<global::Omnius.Core.Network.Connections.Secure.Internal.HelloMessage>.Empty = new global::Omnius.Core.Network.Connections.Secure.Internal.HelloMessage(global::System.Array.Empty<OmniSecureConnectionVersion>());
+            global::Omnius.Core.RocketPack.IRocketPackObject<global::Omnius.Core.Network.Connections.Secure.Internal.HelloMessage>.Formatter = new ___CustomFormatter();
+            global::Omnius.Core.RocketPack.IRocketPackObject<global::Omnius.Core.Network.Connections.Secure.Internal.HelloMessage>.Empty = new global::Omnius.Core.Network.Connections.Secure.Internal.HelloMessage(global::System.Array.Empty<OmniSecureConnectionVersion>());
         }
 
         private readonly global::System.Lazy<int> ___hashCode;
@@ -42,12 +43,12 @@ namespace Omnius.Core.Network.Connections.Secure.Internal
 
         public static global::Omnius.Core.Network.Connections.Secure.Internal.HelloMessage Import(global::System.Buffers.ReadOnlySequence<byte> sequence, global::Omnius.Core.IBytesPool bytesPool)
         {
-            var reader = new global::Omnius.Core.Serialization.RocketPack.RocketPackReader(sequence, bytesPool);
+            var reader = new global::Omnius.Core.RocketPack.RocketPackObjectReader(sequence, bytesPool);
             return Formatter.Deserialize(ref reader, 0);
         }
         public void Export(global::System.Buffers.IBufferWriter<byte> bufferWriter, global::Omnius.Core.IBytesPool bytesPool)
         {
-            var writer = new global::Omnius.Core.Serialization.RocketPack.RocketPackWriter(bufferWriter, bytesPool);
+            var writer = new global::Omnius.Core.RocketPack.RocketPackObjectWriter(bufferWriter, bytesPool);
             Formatter.Serialize(ref writer, this, 0);
         }
 
@@ -74,46 +75,37 @@ namespace Omnius.Core.Network.Connections.Secure.Internal
         }
         public override int GetHashCode() => ___hashCode.Value;
 
-        private sealed class ___CustomFormatter : global::Omnius.Core.Serialization.RocketPack.IRocketPackFormatter<global::Omnius.Core.Network.Connections.Secure.Internal.HelloMessage>
+        private sealed class ___CustomFormatter : global::Omnius.Core.RocketPack.IRocketPackObjectFormatter<global::Omnius.Core.Network.Connections.Secure.Internal.HelloMessage>
         {
-            public void Serialize(ref global::Omnius.Core.Serialization.RocketPack.RocketPackWriter w, in global::Omnius.Core.Network.Connections.Secure.Internal.HelloMessage value, in int rank)
+            public void Serialize(ref global::Omnius.Core.RocketPack.RocketPackObjectWriter w, in global::Omnius.Core.Network.Connections.Secure.Internal.HelloMessage value, in int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
-                {
-                    uint propertyCount = 0;
-                    if (value.Versions.Count != 0)
-                    {
-                        propertyCount++;
-                    }
-                    w.Write(propertyCount);
-                }
-
                 if (value.Versions.Count != 0)
                 {
-                    w.Write((uint)0);
+                    w.Write((uint)1);
                     w.Write((uint)value.Versions.Count);
                     foreach (var n in value.Versions)
                     {
                         w.Write((ulong)n);
                     }
                 }
+                w.Write((uint)0);
             }
 
-            public global::Omnius.Core.Network.Connections.Secure.Internal.HelloMessage Deserialize(ref global::Omnius.Core.Serialization.RocketPack.RocketPackReader r, in int rank)
+            public global::Omnius.Core.Network.Connections.Secure.Internal.HelloMessage Deserialize(ref global::Omnius.Core.RocketPack.RocketPackObjectReader r, in int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
-                uint propertyCount = r.GetUInt32();
-
                 OmniSecureConnectionVersion[] p_versions = global::System.Array.Empty<OmniSecureConnectionVersion>();
 
-                for (; propertyCount > 0; propertyCount--)
+                for (;;)
                 {
                     uint id = r.GetUInt32();
+                    if (id == 0) break;
                     switch (id)
                     {
-                        case 0:
+                        case 1:
                             {
                                 var length = r.GetUInt32();
                                 p_versions = new OmniSecureConnectionVersion[length];
@@ -130,5 +122,6 @@ namespace Omnius.Core.Network.Connections.Secure.Internal
             }
         }
     }
+
 
 }
