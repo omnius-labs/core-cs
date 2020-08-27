@@ -7,6 +7,9 @@ using Omnius.Core.Serialization.RocketPack;
 
 namespace Omnius.Core.Remoting
 {
+    /// <summary>
+    /// OmniusのRPCのAPI。
+    /// </summary>
     public sealed partial class OmniRpc
     {
         private readonly IBytesPool _bytesPool;

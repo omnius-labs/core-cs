@@ -19,6 +19,9 @@ namespace Omnius.Core.Network.Proxies
         private readonly int _destinationPort;
         private readonly object _lockObject = new object();
 
+        /// <summary>
+        /// HTTPのレスポンスコード
+        /// </summary>
         private enum HttpResponseCodes
         {
             None = 0,
