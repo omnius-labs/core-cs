@@ -5,7 +5,7 @@ using Omnius.Core;
 
 namespace Omnius.Core.Network
 {
-    internal static class SocketHelpers
+    internal static class SocketHelper
     {
         private static readonly object _lockObject = new object();
 

@@ -8,10 +8,9 @@ namespace Omnius.Core.RocketPack.Remoting
     {
         None = 0,
         Message = 0x1,
-        Cancel = 0x2,
-        Completed = 0x4,
-        Continue = 0x8,
-        Error = 0x10,
+        Completed = 0x2,
+        Continue = 0x4,
+        Error = 0x8,
     }
 
     public readonly struct RocketPackRpcStreamReceiveResult
@@ -23,11 +22,6 @@ namespace Omnius.Core.RocketPack.Remoting
         {
             _errorMessage = errorMessage;
             _resultFlags = flags;
-        }
-
-        public static RocketPackRpcStreamReceiveResult CreateCancel()
-        {
-            return new RocketPackRpcStreamReceiveResult(null, RocketPackRpcStreamReceiveResultFlags.Cancel);
         }
 
         public static RocketPackRpcStreamReceiveResult CreateCompleted()
@@ -46,8 +40,6 @@ namespace Omnius.Core.RocketPack.Remoting
         }
 
         public RocketPackRpcErrorMessage? ErrorMessage => _errorMessage;
-
-        public bool IsCancel => (_resultFlags & RocketPackRpcStreamReceiveResultFlags.Cancel) != 0;
 
         public bool IsCompleted => (_resultFlags & RocketPackRpcStreamReceiveResultFlags.Completed) != 0;
 
@@ -69,11 +61,6 @@ namespace Omnius.Core.RocketPack.Remoting
             _message = message;
             _errorMessage = errorMessage;
             _resultFlags = flags;
-        }
-
-        public static RocketPackRpcStreamReceiveResult<TMessage> CreateCancel()
-        {
-            return new RocketPackRpcStreamReceiveResult<TMessage>(default, null, RocketPackRpcStreamReceiveResultFlags.Cancel);
         }
 
         public static RocketPackRpcStreamReceiveResult<TMessage> CreateCompleted([NotNull] TMessage message)
@@ -105,8 +92,6 @@ namespace Omnius.Core.RocketPack.Remoting
         public TMessage Message => _message;
 
         public RocketPackRpcErrorMessage? ErrorMessage => _errorMessage;
-
-        public bool IsCancel => (_resultFlags & RocketPackRpcStreamReceiveResultFlags.Cancel) != 0;
 
         public bool IsCompleted => (_resultFlags & RocketPackRpcStreamReceiveResultFlags.Completed) != 0;
 

@@ -18,3 +18,4 @@ INCLUDE="$PWD/fmt/**/*.rpd"
 "$TOOL_PATH" compile -s "$PWD/fmt/Omnius.Core.RocketPack.Remoting/Omnius.Core.RocketPack.Remoting.rpd" -i "$INCLUDE" -o "$PWD/src/Omnius.Core.RocketPack.Remoting/_RocketPack/Messages.generated.cs"
 
 "$TOOL_PATH" compile -s "$PWD/fmt/Omnius.Core.RocketPack.DefinitionCompiler.Tests/Omnius.Core.RocketPack.DefinitionCompiler.Tests.Internal.rpd" -o "$PWD/test/Omnius.Core.RocketPack.DefinitionCompiler.Tests/Internal/_RocketPack/Messages.generated.cs"
+"$TOOL_PATH" compile -s "$PWD/fmt/Omnius.Core.RocketPack.Remoting.Tests/Omnius.Core.RocketPack.Remoting.Tests.Internal.rpd" -o "$PWD/test/Omnius.Core.RocketPack.Remoting.Tests/Internal/_RocketPack/Messages.generated.cs"

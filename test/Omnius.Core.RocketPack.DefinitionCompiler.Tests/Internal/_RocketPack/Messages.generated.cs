@@ -1,8 +1,6 @@
 
 #nullable enable
 
-using Omnius.Core.RocketPack.Remoting;
-
 namespace Omnius.Core.RocketPack.DefinitionCompiler.Tests.Internal
 {
     internal enum Enum1 : sbyte
@@ -3768,49 +3766,6 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler.Tests.Internal
                 }
 
                 return new global::Omnius.Core.RocketPack.DefinitionCompiler.Tests.Internal.RpcResult(p_r1);
-            }
-        }
-    }
-
-    internal interface IRpcService
-    {
-        global::System.Threading.Tasks.ValueTask<global::Omnius.Core.RocketPack.DefinitionCompiler.Tests.Internal.RpcResult> F1(global::Omnius.Core.RocketPack.DefinitionCompiler.Tests.Internal.RpcParam param, global::System.Threading.CancellationToken cancellationToken = default);
-    }
-    internal class RpcServiceSender : global::Omnius.Core.RocketPack.DefinitionCompiler.Tests.Internal.IRpcService
-    {
-        private global::Omnius.Core.RocketPack.Remoting.RocketPackRpc _rpc;
-
-        public RpcServiceSender(global::Omnius.Core.RocketPack.Remoting.RocketPackRpc rpc)
-        {
-            _rpc = rpc;
-        }
-
-        public async global::System.Threading.Tasks.ValueTask<global::Omnius.Core.RocketPack.DefinitionCompiler.Tests.Internal.RpcResult> F1(global::Omnius.Core.RocketPack.DefinitionCompiler.Tests.Internal.RpcParam param, global::System.Threading.CancellationToken cancellationToken = default)
-        {
-            var stream = await _rpc.ConnectAsync(0, cancellationToken);
-            return await stream.RequestFunctionAsync<global::Omnius.Core.RocketPack.DefinitionCompiler.Tests.Internal.RpcParam, global::Omnius.Core.RocketPack.DefinitionCompiler.Tests.Internal.RpcResult>(param, cancellationToken);
-        }
-    }
-    internal class RpcServiceReceiver
-    {
-        private global::Omnius.Core.RocketPack.Remoting.RocketPackRpc _rpc;
-        private readonly global::Omnius.Core.RocketPack.DefinitionCompiler.Tests.Internal.IRpcService _impl;
-        public RpcServiceReceiver(global::Omnius.Core.RocketPack.Remoting.RocketPackRpc rpc, global::Omnius.Core.RocketPack.DefinitionCompiler.Tests.Internal.IRpcService impl)
-        {
-            _impl = impl;
-            _rpc = rpc;
-        }
-        public async global::System.Threading.Tasks.ValueTask EventLoopAsync(global::System.Threading.CancellationToken cancellationToken)
-        {
-            for (; ; )
-            {
-                var acceptedResult = await _rpc.AcceptAsync(cancellationToken);
-                switch (acceptedResult.Type)
-                {
-                    case 1:
-                        _ = acceptedResult.Stream.ResponceFunctionAsync<global::Omnius.Core.RocketPack.DefinitionCompiler.Tests.Internal.RpcParam, global::Omnius.Core.RocketPack.DefinitionCompiler.Tests.Internal.RpcResult>(param => _impl.F1(param), cancellationToken);
-                        break;
-                }
             }
         }
     }

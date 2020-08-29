@@ -22,7 +22,7 @@ namespace Omnius.Core.Network.Connections
             caseList.AddRange(Enumerable.Range(1, 32));
             caseList.AddRange(new int[] { 100, 1000, 10000, 1024 * 1024 });
 
-            var (socket1, socket2) = SocketHelpers.GetSocketPair();
+            var (socket1, socket2) = SocketHelper.GetSocketPair();
 
             var dispatcherOptions = new BaseConnectionDispatcherOptions()
             {
