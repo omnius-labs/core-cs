@@ -1,7 +1,7 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Omnius.Core.RocketPack.Remoting
+namespace Omnius.Core.RocketPack.Remoting.Internal
 {
     [Flags]
     internal enum RocketPackRpcStreamReceiveResultFlags : byte

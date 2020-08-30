@@ -17,9 +17,9 @@ namespace Omnius.Core.RocketPack.Remoting
         private readonly Channel<ArraySegment<byte>> _receivedMessageChannel = Channel.CreateBounded<ArraySegment<byte>>(10);
         private readonly CancellationTokenSource _cancellationTokenSource = new();
 
-        internal RocketPackRpcStream(uint id, uint callId, RocketPackRpc rpc, IBytesPool bytesPool)
+        internal RocketPackRpcStream(uint streamId, uint callId, RocketPackRpc rpc, IBytesPool bytesPool)
         {
-            this.Id = id;
+            this.Id = streamId;
             this.CallId = callId;
             _rpc = rpc;
             _bytesPool = bytesPool;
@@ -83,7 +83,7 @@ namespace Omnius.Core.RocketPack.Remoting
             }
         }
 
-        public async ValueTask ResponceFunctionAsync<TParam, TResult>(Func<TParam, ValueTask<TResult>> func, CancellationToken cancellationToken = default)
+        public async ValueTask ResponceFunctionAsync<TParam, TResult>(Func<TParam, CancellationToken, ValueTask<TResult>> func, CancellationToken cancellationToken = default)
             where TParam : IRocketPackObject<TParam>
             where TResult : IRocketPackObject<TResult>
         {
@@ -95,7 +95,8 @@ namespace Omnius.Core.RocketPack.Remoting
             {
                 try
                 {
-                    var result = await func.Invoke(receivedParam.Message!);
+                    using var linkedTokenSource = CancellationTokenSource.CreateLinkedTokenSource(_cancellationTokenSource.Token, cancellationToken);
+                    var result = await func.Invoke(receivedParam.Message!, linkedTokenSource.Token);
                     await this.SendCompletedAsync(result, cancellationToken);
                 }
                 catch (Exception e)
@@ -126,14 +127,15 @@ namespace Omnius.Core.RocketPack.Remoting
             throw ThrowHelper.CreateRocketPackRpcProtocolException_UnexpectedProtocol();
         }
 
-        public async ValueTask ResponceFunctionAsync<TResult>(Func<ValueTask<TResult>> func, CancellationToken cancellationToken = default)
+        public async ValueTask ResponceFunctionAsync<TResult>(Func<CancellationToken, ValueTask<TResult>> func, CancellationToken cancellationToken = default)
             where TResult : IRocketPackObject<TResult>
         {
             this.ThrowIfDisposingRequested();
 
             try
             {
-                var result = await func.Invoke();
+                using var linkedTokenSource = CancellationTokenSource.CreateLinkedTokenSource(_cancellationTokenSource.Token, cancellationToken);
+                var result = await func.Invoke(linkedTokenSource.Token);
                 await this.SendCompletedAsync(result, cancellationToken);
             }
             catch (Exception e)
@@ -163,7 +165,7 @@ namespace Omnius.Core.RocketPack.Remoting
             throw ThrowHelper.CreateRocketPackRpcProtocolException_UnexpectedProtocol();
         }
 
-        public async ValueTask ResponceActionAsync<TParam>(Func<TParam, ValueTask> func, CancellationToken cancellationToken = default)
+        public async ValueTask ResponceActionAsync<TParam>(Func<TParam, CancellationToken, ValueTask> func, CancellationToken cancellationToken = default)
             where TParam : IRocketPackObject<TParam>
         {
             this.ThrowIfDisposingRequested();
@@ -174,7 +176,8 @@ namespace Omnius.Core.RocketPack.Remoting
             {
                 try
                 {
-                    await func.Invoke(receivedParam.Message!);
+                    using var linkedTokenSource = CancellationTokenSource.CreateLinkedTokenSource(_cancellationTokenSource.Token, cancellationToken);
+                    await func.Invoke(receivedParam.Message!, linkedTokenSource.Token);
                     await this.SendCompletedAsync(cancellationToken);
                 }
                 catch (Exception e)
@@ -204,7 +207,7 @@ namespace Omnius.Core.RocketPack.Remoting
             throw ThrowHelper.CreateRocketPackRpcProtocolException_UnexpectedProtocol();
         }
 
-        public async ValueTask ResponceActionAsync<TParam>(Func<ValueTask> func, CancellationToken cancellationToken = default)
+        public async ValueTask ResponceActionAsync<TParam>(Func<CancellationToken, ValueTask> func, CancellationToken cancellationToken = default)
         {
             this.ThrowIfDisposingRequested();
 
@@ -214,7 +217,8 @@ namespace Omnius.Core.RocketPack.Remoting
             {
                 try
                 {
-                    await func.Invoke();
+                    using var linkedTokenSource = CancellationTokenSource.CreateLinkedTokenSource(_cancellationTokenSource.Token, cancellationToken);
+                    await func.Invoke(linkedTokenSource.Token);
                     await this.SendCompletedAsync(cancellationToken);
                 }
                 catch (Exception e)
@@ -235,7 +239,7 @@ namespace Omnius.Core.RocketPack.Remoting
 
         private enum PacketType : byte
         {
-            None = 0,
+            Unknown = 0,
             Completed = 1,
             Continue = 2,
             Error = 3,
@@ -317,8 +321,10 @@ namespace Omnius.Core.RocketPack.Remoting
                         }
                         break;
                     case PacketType.Error:
-                        var errorMessage = RocketPackRpcErrorMessage.Import(sequence, _bytesPool);
-                        return RocketPackRpcStreamReceiveResult.CreateError(errorMessage);
+                        {
+                            var errorMessage = RocketPackRpcErrorMessage.Import(sequence, _bytesPool);
+                            return RocketPackRpcStreamReceiveResult.CreateError(errorMessage);
+                        }
                 }
 
                 throw ThrowHelper.CreateRocketPackRpcProtocolException_UnexpectedProtocol();
@@ -346,26 +352,28 @@ namespace Omnius.Core.RocketPack.Remoting
                     case PacketType.Completed:
                         if (sequence.Length == 0)
                         {
-                            var message = IRocketPackObject<TMessage>.Import(sequence, _bytesPool);
-                            return RocketPackRpcStreamReceiveResult<TMessage>.CreateCompleted(message);
+                            return RocketPackRpcStreamReceiveResult<TMessage>.CreateCompleted();
                         }
                         else
                         {
-                            return RocketPackRpcStreamReceiveResult<TMessage>.CreateCompleted();
+                            var message = IRocketPackObject<TMessage>.Import(sequence, _bytesPool);
+                            return RocketPackRpcStreamReceiveResult<TMessage>.CreateCompleted(message);
                         }
                     case PacketType.Continue:
                         if (sequence.Length == 0)
                         {
-                            var message = IRocketPackObject<TMessage>.Import(sequence, _bytesPool);
-                            return RocketPackRpcStreamReceiveResult<TMessage>.CreateContinue(message);
+                            return RocketPackRpcStreamReceiveResult<TMessage>.CreateContinue();
                         }
                         else
                         {
-                            return RocketPackRpcStreamReceiveResult<TMessage>.CreateContinue();
+                            var message = IRocketPackObject<TMessage>.Import(sequence, _bytesPool);
+                            return RocketPackRpcStreamReceiveResult<TMessage>.CreateContinue(message);
                         }
                     case PacketType.Error:
-                        var errorMessage = RocketPackRpcErrorMessage.Import(sequence, _bytesPool);
-                        return RocketPackRpcStreamReceiveResult<TMessage>.CreateError(errorMessage);
+                        {
+                            var errorMessage = RocketPackRpcErrorMessage.Import(sequence, _bytesPool);
+                            return RocketPackRpcStreamReceiveResult<TMessage>.CreateError(errorMessage);
+                        }
                 }
 
                 throw ThrowHelper.CreateRocketPackRpcProtocolException_UnexpectedProtocol();

@@ -10,7 +10,7 @@ using Omnius.Core.RocketPack;
 
 namespace Omnius.Core.RocketPack.Remoting.Internal
 {
-    public sealed partial class ThrowHelper
+    internal sealed partial class ThrowHelper
     {
         [DoesNotReturn]
         public static void ThrowRocketPackRpcProtocolException_UnexpectedProtocol() => throw CreateRocketPackRpcProtocolException_UnexpectedProtocol();

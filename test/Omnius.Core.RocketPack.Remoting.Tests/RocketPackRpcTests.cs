@@ -1,3 +1,4 @@
+using System.Threading;
 using System.Runtime.InteropServices;
 using System;
 using System.Buffers;
@@ -21,11 +22,8 @@ namespace Omnius.Core.RocketPack.Remoting
             using var senderConnection = new BaseConnection(new SocketCap(senderSocket), dispacher, new BaseConnectionOptions());
             using var receiverConnection = new BaseConnection(new SocketCap(receiverSocket), dispacher, new BaseConnectionOptions());
 
-            using var senderRpc = new RocketPackRpc(senderConnection, BytesPool.Shared);
-            using var receiverRpc = new RocketPackRpc(receiverConnection, BytesPool.Shared);
-
-            var senderEventLoopTask = senderRpc.EventLoop();
-            var receiverEventLoopTask = receiverRpc.EventLoop();
+            await using var senderRpc = new RocketPackRpc(senderConnection, BytesPool.Shared);
+            await using var receiverRpc = new RocketPackRpc(receiverConnection, BytesPool.Shared);
 
             var receiverAcceptTask = receiverRpc.AcceptAsync();
             var senderConnectTask = senderRpc.ConnectAsync(0);
@@ -33,7 +31,7 @@ namespace Omnius.Core.RocketPack.Remoting
             using var senderStream = await senderConnectTask;
             using var receiverStream = await receiverAcceptTask;
 
-            static async ValueTask<RpcResult> square(RpcParam param) => new RpcResult(param.P1 * param.P1);
+            static async ValueTask<RpcResult> square(RpcParam param, CancellationToken _) => new RpcResult(param.P1 * param.P1);
             var responceTask = receiverStream.ResponceFunctionAsync<RpcParam, RpcResult>(square);
             var result = await senderStream.RequestFunctionAsync<RpcParam, RpcResult>(new RpcParam(11));
             await responceTask;

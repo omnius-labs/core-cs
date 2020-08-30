@@ -1,3 +1,4 @@
+using System.IO;
 using System.ComponentModel;
 using System;
 using System.Buffers;
@@ -12,10 +13,15 @@ using System.Collections.Generic;
 
 namespace Omnius.Core.RocketPack.Remoting
 {
-    public sealed class RocketPackRpc : DisposableBase
+    public sealed class RocketPackRpc : AsyncDisposableBase
     {
+        private static readonly NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
+
         private readonly IConnection _connection;
         private readonly IBytesPool _bytesPool;
+
+        private readonly Task _eventLoopTask;
+        private readonly CancellationTokenSource _cancellationTokenSource = new();
 
         private readonly Channel<RocketPackRpcStream> _acceptedStreamChannel = Channel.CreateBounded<RocketPackRpcStream>(10);
         private readonly Dictionary<uint, RocketPackRpcStream> _streamMap = new();
@@ -27,19 +33,19 @@ namespace Omnius.Core.RocketPack.Remoting
         {
             _connection = connection;
             _bytesPool = bytesPool;
+            _eventLoopTask = this.EventLoop();
         }
 
-        protected override void OnDispose(bool disposing)
+        protected override async ValueTask OnDisposeAsync()
         {
-            if (disposing)
-            {
-                _connection.Dispose();
-            }
+            _cancellationTokenSource.Cancel();
+            await _eventLoopTask;
+            _connection.Dispose();
         }
 
         private enum PacketType : byte
         {
-            None = 0,
+            Unknown = 0,
             Connect = 1,
             Message = 2,
             Close = 3,
@@ -121,69 +127,81 @@ namespace Omnius.Core.RocketPack.Remoting
             }
         }
 
-        public async ValueTask EventLoop(CancellationToken cancellationToken = default)
+        private async Task EventLoop(CancellationToken cancellationToken = default)
         {
-            while (!cancellationToken.IsCancellationRequested)
+            try
             {
-                cancellationToken.ThrowIfCancellationRequested();
-
-                await _connection.DequeueAsync(async (sequence) =>
+                while (!cancellationToken.IsCancellationRequested)
                 {
-                    if (!Varint.TryGetUInt8(ref sequence, out var packetType)) throw ThrowHelper.CreateRocketPackRpcProtocolException_UnexpectedProtocol();
-                    if (!Varint.TryGetUInt32(ref sequence, out var streamId)) throw ThrowHelper.CreateRocketPackRpcProtocolException_UnexpectedProtocol();
+                    cancellationToken.ThrowIfCancellationRequested();
 
-                    switch ((PacketType)packetType)
+                    await _connection.DequeueAsync(async (sequence) =>
                     {
-                        case PacketType.Connect:
-                            {
-                                if (!Varint.TryGetUInt32(ref sequence, out var callId)) throw ThrowHelper.CreateRocketPackRpcProtocolException_UnexpectedProtocol();
+                        if (!Varint.TryGetUInt8(ref sequence, out var packetType)) throw ThrowHelper.CreateRocketPackRpcProtocolException_UnexpectedProtocol();
+                        if (!Varint.TryGetUInt32(ref sequence, out var streamId)) throw ThrowHelper.CreateRocketPackRpcProtocolException_UnexpectedProtocol();
 
-                                RocketPackRpcStream stream;
-
-                                lock (_lockObject)
+                        switch ((PacketType)packetType)
+                        {
+                            case PacketType.Connect:
                                 {
-                                    if (_streamMap.ContainsKey(streamId)) return;
+                                    if (!Varint.TryGetUInt32(ref sequence, out var callId)) throw ThrowHelper.CreateRocketPackRpcProtocolException_UnexpectedProtocol();
 
-                                    stream = new RocketPackRpcStream(streamId, callId, this, _bytesPool);
-                                    _streamMap.TryAdd(streamId, stream);
+                                    RocketPackRpcStream stream;
+
+                                    lock (_lockObject)
+                                    {
+                                        if (_streamMap.ContainsKey(streamId)) return;
+
+                                        stream = new RocketPackRpcStream(streamId, callId, this, _bytesPool);
+                                        _streamMap.TryAdd(streamId, stream);
+                                    }
+
+                                    await _acceptedStreamChannel.Writer.WriteAsync(stream);
                                 }
-
-                                await _acceptedStreamChannel.Writer.WriteAsync(stream);
-                            }
-                            break;
-                        case PacketType.Message:
-                            {
-                                RocketPackRpcStream? stream;
-
-                                lock (_lockObject)
+                                break;
+                            case PacketType.Message:
                                 {
-                                    if (!_streamMap.TryGetValue(streamId, out stream)) return;
+                                    RocketPackRpcStream? stream;
+
+                                    lock (_lockObject)
+                                    {
+                                        if (!_streamMap.TryGetValue(streamId, out stream)) return;
+                                    }
+
+                                    var buffer = _bytesPool.Array.Rent((int)sequence.Length);
+                                    sequence.CopyTo(buffer);
+                                    await stream.OnReceivedMessageAsync(new ArraySegment<byte>(buffer, 0, (int)sequence.Length));
                                 }
-
-                                var buffer = _bytesPool.Array.Rent((int)sequence.Length);
-                                sequence.CopyTo(buffer);
-                                await stream.OnReceivedMessageAsync(new ArraySegment<byte>(buffer, 0, (int)sequence.Length));
-                            }
-                            break;
-                        case PacketType.Close:
-                            {
-                                RocketPackRpcStream? stream;
-
-                                lock (_lockObject)
+                                break;
+                            case PacketType.Close:
                                 {
-                                    if (!_streamMap.TryGetValue(streamId, out stream)) return;
-                                }
+                                    RocketPackRpcStream? stream;
 
-                                stream.OnReceivedClose();
+                                    lock (_lockObject)
+                                    {
+                                        if (!_streamMap.TryGetValue(streamId, out stream)) return;
+                                    }
 
-                                lock (_lockObject)
-                                {
-                                    _streamMap.Remove(streamId);
+                                    stream.OnReceivedClose();
+
+                                    lock (_lockObject)
+                                    {
+                                        _streamMap.Remove(streamId);
+                                    }
                                 }
-                            }
-                            break;
-                    }
-                }, cancellationToken);
+                                break;
+                        }
+                    }, cancellationToken);
+                }
+            }
+            catch (OperationCanceledException e)
+            {
+                _logger.Info(e);
+            }
+            catch (Exception e)
+            {
+                _logger.Error(e);
+                throw;
             }
         }
     }
