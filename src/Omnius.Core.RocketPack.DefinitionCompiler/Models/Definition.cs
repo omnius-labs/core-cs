@@ -24,10 +24,13 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler.Models
         public IList<ObjectDefinition> Objects { get; }
         public IList<ServiceDefinition> Services { get; }
 
-        public string GetCSharpNamespace()
+        public string CSharpNamespace
         {
-            if (this.Options.FirstOrDefault(n => n.Name == "csharp_namespace")?.Value is string value) return value;
-            return this.Namespace.Value;
+            get
+            {
+                if (this.Options.FirstOrDefault(n => n.Name == "csharp_namespace")?.Value is string value) return value;
+                return this.Namespace.Value;
+            }
         }
     }
 
@@ -116,10 +119,10 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler.Models
         public MessageFormatType FormatType { get; }
         public IList<ObjectElement> Elements { get; }
 
-        public string FullName => "global::" + this.Namespace + "." + this.Name;
+        public string CSharpFullName => "global::" + this.Namespace + "." + this.Name;
 
-        public bool IsClass => !this.IsStruct;
-        public bool IsStruct => this.Attributes.Contains("csharp_struct");
+        public bool IsCSharpStruct => this.Attributes.Contains("csharp_struct");
+        public bool IsCSharpClass => !this.IsCSharpStruct;
     }
 
     internal sealed class ObjectElement
@@ -290,7 +293,8 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler.Models
         public string Name { get; }
         public IList<FuncElement> Elements { get; }
 
-        public string FullName => "global::" + this.Namespace + "." + this.Name;
+        public string CSharpInterfaceName => "I" + this.Name;
+        public string CSharpInterfaceFullName => "global::" + this.Namespace + "." + this.CSharpInterfaceName;
     }
 
     internal sealed class FuncElement
@@ -307,5 +311,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler.Models
         public string Name { get; }
         public CustomType? InType { get; }
         public CustomType? OutType { get; }
+
+        public string CSharpFunctionName => this.Name + "Async";
     }
 }

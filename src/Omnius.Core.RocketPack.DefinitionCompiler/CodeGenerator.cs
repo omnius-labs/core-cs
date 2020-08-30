@@ -15,7 +15,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
             {
                 var hashSet = new HashSet<string>();
 
-                var sortedList = externalDefinitions.Select(n => n.GetCSharpNamespace()).ToList();
+                var sortedList = externalDefinitions.Select(n => n.CSharpNamespace).ToList();
                 sortedList.Sort();
 
                 foreach (var name in sortedList)
@@ -34,7 +34,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
 
             // namespaceの宣言を行う。
             {
-                b.WriteLine($"namespace {rootDefinition.GetCSharpNamespace()}");
+                b.WriteLine($"namespace {rootDefinition.CSharpNamespace}");
                 b.WriteLine("{");
 
                 using (b.Indent())

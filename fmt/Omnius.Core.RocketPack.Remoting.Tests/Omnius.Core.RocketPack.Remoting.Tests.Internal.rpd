@@ -10,3 +10,10 @@ message RpcParam {
 message RpcResult {
     R1: int32,
 }
+
+service RpcService {
+    F1: (RpcParam) -> (RpcResult),
+    F2: (RpcParam) -> (),
+    F3: () -> (RpcResult),
+    F4: () -> (),
+}

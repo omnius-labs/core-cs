@@ -14,11 +14,11 @@ namespace Omnius.Core.RocketPack.Remoting
     public class RocketPackRpcTests
     {
         [Fact]
-        public async Task FunctionTest()
+        public async Task SimpleFunctionTest()
         {
             var (senderSocket, receiverSocket) = SocketHelper.GetSocketPair();
 
-            var dispacher = new BaseConnectionDispatcher(new BaseConnectionDispatcherOptions());
+            await using var dispacher = new BaseConnectionDispatcher(new BaseConnectionDispatcherOptions());
             using var senderConnection = new BaseConnection(new SocketCap(senderSocket), dispacher, new BaseConnectionOptions());
             using var receiverConnection = new BaseConnection(new SocketCap(receiverSocket), dispacher, new BaseConnectionOptions());
 
@@ -32,9 +32,10 @@ namespace Omnius.Core.RocketPack.Remoting
             using var receiverStream = await receiverAcceptTask;
 
             static async ValueTask<RpcResult> square(RpcParam param, CancellationToken _) => new RpcResult(param.P1 * param.P1);
-            var responceTask = receiverStream.ResponceFunctionAsync<RpcParam, RpcResult>(square);
-            var result = await senderStream.RequestFunctionAsync<RpcParam, RpcResult>(new RpcParam(11));
-            await responceTask;
+
+            var listenTask = receiverStream.ListenFunctionAsync<RpcParam, RpcResult>(square);
+            var result = await senderStream.CallFunctionAsync<RpcParam, RpcResult>(new RpcParam(11));
+            await listenTask;
 
             Assert.Equal(121, result.R1);
         }

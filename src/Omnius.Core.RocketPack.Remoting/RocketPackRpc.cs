@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using Omnius.Core.Network.Connections;
 using Omnius.Core.RocketPack.Remoting.Internal;
 using System.Collections.Generic;
+using System.Runtime.ExceptionServices;
 
 namespace Omnius.Core.RocketPack.Remoting
 {
@@ -20,12 +21,15 @@ namespace Omnius.Core.RocketPack.Remoting
         private readonly IConnection _connection;
         private readonly IBytesPool _bytesPool;
 
+        private readonly Random _random = new();
+
         private readonly Task _eventLoopTask;
         private readonly CancellationTokenSource _cancellationTokenSource = new();
+        private Exception? _eventLoopException = null;
 
         private readonly Channel<RocketPackRpcStream> _acceptedStreamChannel = Channel.CreateBounded<RocketPackRpcStream>(10);
+
         private readonly Dictionary<uint, RocketPackRpcStream> _streamMap = new();
-        private readonly Random _random = new();
 
         private readonly object _lockObject = new object();
 
@@ -33,13 +37,14 @@ namespace Omnius.Core.RocketPack.Remoting
         {
             _connection = connection;
             _bytesPool = bytesPool;
-            _eventLoopTask = this.EventLoop();
+            _eventLoopTask = this.EventLoop(_cancellationTokenSource.Token);
         }
 
         protected override async ValueTask OnDisposeAsync()
         {
             _cancellationTokenSource.Cancel();
             await _eventLoopTask;
+            _cancellationTokenSource.Dispose();
             _connection.Dispose();
         }
 
@@ -53,6 +58,9 @@ namespace Omnius.Core.RocketPack.Remoting
 
         public async ValueTask<RocketPackRpcStream> ConnectAsync(uint callId, CancellationToken cancellationToken = default)
         {
+            this.ThrowIfDisposingRequested();
+            this.ThrowIfEventLoopWasError();
+
             RocketPackRpcStream? stream = null;
 
             lock (_lockObject)
@@ -82,7 +90,18 @@ namespace Omnius.Core.RocketPack.Remoting
 
         public async ValueTask<RocketPackRpcStream> AcceptAsync(CancellationToken cancellationToken = default)
         {
+            this.ThrowIfDisposingRequested();
+            this.ThrowIfEventLoopWasError();
+
             return await _acceptedStreamChannel.Reader.ReadAsync(cancellationToken);
+        }
+
+        internal void RemoveStream(RocketPackRpcStream stream)
+        {
+            lock (_lockObject)
+            {
+                _streamMap.Remove(stream.Id);
+            }
         }
 
         internal async ValueTask SendMessageAsync(uint streamId, Action<IBufferWriter<byte>> action, CancellationToken cancellationToken = default)
@@ -124,6 +143,14 @@ namespace Omnius.Core.RocketPack.Remoting
             lock (_lockObject)
             {
                 _streamMap.Remove(streamId);
+            }
+        }
+
+        private void ThrowIfEventLoopWasError()
+        {
+            if (_eventLoopException is not null)
+            {
+                ExceptionDispatchInfo.Throw(_eventLoopException);
             }
         }
 
@@ -196,12 +223,17 @@ namespace Omnius.Core.RocketPack.Remoting
             }
             catch (OperationCanceledException e)
             {
-                _logger.Info(e);
+                _eventLoopException = e;
+                _logger.Debug(e);
             }
             catch (Exception e)
             {
+                _eventLoopException = e;
                 _logger.Error(e);
-                throw;
+            }
+            finally
+            {
+                _acceptedStreamChannel.Writer.Complete(_eventLoopException);
             }
         }
     }

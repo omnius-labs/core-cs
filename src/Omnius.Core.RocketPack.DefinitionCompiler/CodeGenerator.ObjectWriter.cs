@@ -186,26 +186,26 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
             {
                 foreach (var objectDefinition in _rootDefinition.Objects)
                 {
-                    if (objectDefinition.IsStruct)
+                    if (objectDefinition.IsCSharpStruct)
                     {
                         if (objectDefinition.Elements.Select(n => n.Type).OfType<BytesType>().Any(n => n.IsUseMemoryPool))
                         {
-                            b.WriteLine($"{_accessLevel} readonly partial struct {objectDefinition.Name} : {GenerateTypeFullName("IRocketPackObject<>", objectDefinition.FullName)}, {GenerateTypeFullName("IDisposable")}");
+                            b.WriteLine($"{_accessLevel} readonly partial struct {objectDefinition.Name} : {GenerateTypeFullName("IRocketPackObject<>", objectDefinition.CSharpFullName)}, {GenerateTypeFullName("IDisposable")}");
                         }
                         else
                         {
-                            b.WriteLine($"{_accessLevel} readonly partial struct {objectDefinition.Name} : {GenerateTypeFullName("IRocketPackObject<>", objectDefinition.FullName)}");
+                            b.WriteLine($"{_accessLevel} readonly partial struct {objectDefinition.Name} : {GenerateTypeFullName("IRocketPackObject<>", objectDefinition.CSharpFullName)}");
                         }
                     }
-                    else if (objectDefinition.IsClass)
+                    else if (objectDefinition.IsCSharpClass)
                     {
                         if (objectDefinition.Elements.Select(n => n.Type).OfType<BytesType>().Any(n => n.IsUseMemoryPool))
                         {
-                            b.WriteLine($"{_accessLevel} sealed partial class {objectDefinition.Name} : {GenerateTypeFullName("IRocketPackObject<>", objectDefinition.FullName)}, {GenerateTypeFullName("IDisposable")}");
+                            b.WriteLine($"{_accessLevel} sealed partial class {objectDefinition.Name} : {GenerateTypeFullName("IRocketPackObject<>", objectDefinition.CSharpFullName)}, {GenerateTypeFullName("IDisposable")}");
                         }
                         else
                         {
-                            b.WriteLine($"{_accessLevel} sealed partial class { objectDefinition.Name} : {GenerateTypeFullName("IRocketPackObject<>", objectDefinition.FullName)}");
+                            b.WriteLine($"{_accessLevel} sealed partial class { objectDefinition.Name} : {GenerateTypeFullName("IRocketPackObject<>", objectDefinition.CSharpFullName)}");
                         }
                     }
 
@@ -253,8 +253,8 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
             /// </summary>
             private void Write_StaticConstructor(CodeBuilder b, ObjectDefinition objectDefinition)
             {
-                b.WriteLine($"public static {GenerateTypeFullName("IRocketPackObjectFormatter<>", objectDefinition.FullName)} Formatter => {GenerateTypeFullName("IRocketPackObject<>", objectDefinition.FullName)}.Formatter;");
-                b.WriteLine($"public static {objectDefinition.FullName} Empty => {GenerateTypeFullName("IRocketPackObject<>", objectDefinition.FullName)}.Empty;");
+                b.WriteLine($"public static {GenerateTypeFullName("IRocketPackObjectFormatter<>", objectDefinition.CSharpFullName)} Formatter => {GenerateTypeFullName("IRocketPackObject<>", objectDefinition.CSharpFullName)}.Formatter;");
+                b.WriteLine($"public static {objectDefinition.CSharpFullName} Empty => {GenerateTypeFullName("IRocketPackObject<>", objectDefinition.CSharpFullName)}.Empty;");
                 b.WriteLine();
 
                 b.WriteLine($"static {objectDefinition.Name}()");
@@ -274,7 +274,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
 
             private void Write_StaticConstructor_CustomFormatterProperty(CodeBuilder b, ObjectDefinition objectDefinition)
             {
-                b.WriteLine($"{GenerateTypeFullName("IRocketPackObject<>", objectDefinition.FullName)}.Formatter = new {CustomFormatterName}();");
+                b.WriteLine($"{GenerateTypeFullName("IRocketPackObject<>", objectDefinition.CSharpFullName)}.Formatter = new {CustomFormatterName}();");
             }
 
             private void Write_StaticConstructor_EmptyProperty(CodeBuilder b, ObjectDefinition objectDefinition)
@@ -286,7 +286,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                     parameters.Add(this.GetDefaultValueString(element.Type));
                 }
 
-                b.WriteLine($"{GenerateTypeFullName("IRocketPackObject<>", objectDefinition.FullName)}.Empty = new {objectDefinition.FullName}({string.Join(", ", parameters)});");
+                b.WriteLine($"{GenerateTypeFullName("IRocketPackObject<>", objectDefinition.CSharpFullName)}.Empty = new {objectDefinition.CSharpFullName}({string.Join(", ", parameters)});");
             }
 
             /// <summary>
@@ -294,11 +294,11 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
             /// </summary>
             private void Write_Constructor(CodeBuilder b, ObjectDefinition objectDefinition)
             {
-                if (objectDefinition.IsStruct)
+                if (objectDefinition.IsCSharpStruct)
                 {
                     b.WriteLine($"private readonly int {HashCodeName};");
                 }
-                else if (objectDefinition.IsClass)
+                else if (objectDefinition.IsCSharpClass)
                 {
                     b.WriteLine($"private readonly {GenerateTypeFullName("Lazy<>", "int")} {HashCodeName};");
                 }
@@ -555,7 +555,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                     case CustomType customType when (!type.IsOptional):
                         switch (this.FindDefinition(customType))
                         {
-                            case ObjectDefinition objectDefinition when (objectDefinition.IsClass):
+                            case ObjectDefinition objectDefinition when (objectDefinition.IsCSharpClass):
                                 b.WriteLine($"if ({name} is null) throw new {GenerateTypeFullName("ArgumentNullException")}(\"{name}\");");
                                 return true;
                             default:
@@ -617,7 +617,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
             {
                 const string TempVariableName = "___h";
 
-                if (objectDefinition.IsStruct)
+                if (objectDefinition.IsCSharpStruct)
                 {
                     b.WriteLine("{");
 
@@ -755,7 +755,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                                 case EnumDefinition enumInfo:
                                     b.WriteLine($"if ({parameterName} != default) {hashCodeName}.Add({parameterName}.GetHashCode());");
                                     break;
-                                case ObjectDefinition objectDefinition when (objectDefinition.IsStruct):
+                                case ObjectDefinition objectDefinition when (objectDefinition.IsCSharpStruct):
                                     if (!customType.IsOptional)
                                     {
                                         b.WriteLine($"if ({parameterName} != default) {hashCodeName}.Add({parameterName}.GetHashCode());");
@@ -765,7 +765,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                                         b.WriteLine($"if ({parameterName} != default) {hashCodeName}.Add({parameterName}.Value.GetHashCode());");
                                     }
                                     break;
-                                case ObjectDefinition objectDefinition when (objectDefinition.IsClass):
+                                case ObjectDefinition objectDefinition when (objectDefinition.IsCSharpClass):
                                     b.WriteLine($"if ({parameterName} != default) {hashCodeName}.Add({parameterName}.GetHashCode());");
                                     break;
                             }
@@ -776,7 +776,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
 
             private void Write_ImportAndExport(CodeBuilder b, ObjectDefinition objectDefinition)
             {
-                b.WriteLine($"public static {objectDefinition.FullName} Import({GenerateTypeFullName("ReadOnlySequence<>", "byte")} sequence, {GenerateTypeFullName("IBytesPool")} bytesPool)");
+                b.WriteLine($"public static {objectDefinition.CSharpFullName} Import({GenerateTypeFullName("ReadOnlySequence<>", "byte")} sequence, {GenerateTypeFullName("IBytesPool")} bytesPool)");
                 b.WriteLine("{");
                 using (b.Indent())
                 {
@@ -797,9 +797,9 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
 
             private void Write_Equals(CodeBuilder b, ObjectDefinition objectDefinition)
             {
-                if (objectDefinition.IsStruct)
+                if (objectDefinition.IsCSharpStruct)
                 {
-                    b.WriteLine($"public static bool operator ==({objectDefinition.FullName} left, {objectDefinition.FullName} right)");
+                    b.WriteLine($"public static bool operator ==({objectDefinition.CSharpFullName} left, {objectDefinition.CSharpFullName} right)");
                     b.WriteLine("{");
                     using (b.Indent())
                     {
@@ -807,7 +807,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                     }
                     b.WriteLine("}");
 
-                    b.WriteLine($"public static bool operator !=({objectDefinition.FullName} left, {objectDefinition.FullName} right)");
+                    b.WriteLine($"public static bool operator !=({objectDefinition.CSharpFullName} left, {objectDefinition.CSharpFullName} right)");
                     b.WriteLine("{");
                     using (b.Indent())
                     {
@@ -815,9 +815,9 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                     }
                     b.WriteLine("}");
                 }
-                else if (objectDefinition.IsClass)
+                else if (objectDefinition.IsCSharpClass)
                 {
-                    b.WriteLine($"public static bool operator ==({objectDefinition.FullName}? left, {objectDefinition.FullName}? right)");
+                    b.WriteLine($"public static bool operator ==({objectDefinition.CSharpFullName}? left, {objectDefinition.CSharpFullName}? right)");
                     b.WriteLine("{");
                     using (b.Indent())
                     {
@@ -825,7 +825,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                     }
                     b.WriteLine("}");
 
-                    b.WriteLine($"public static bool operator !=({objectDefinition.FullName}? left, {objectDefinition.FullName}? right)");
+                    b.WriteLine($"public static bool operator !=({objectDefinition.CSharpFullName}? left, {objectDefinition.CSharpFullName}? right)");
                     b.WriteLine("{");
                     using (b.Indent())
                     {
@@ -838,24 +838,24 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                 b.WriteLine("{");
                 using (b.Indent())
                 {
-                    b.WriteLine($"if (!(other is {objectDefinition.FullName})) return false;");
-                    b.WriteLine($"return this.Equals(({objectDefinition.FullName})other);");
+                    b.WriteLine($"if (!(other is {objectDefinition.CSharpFullName})) return false;");
+                    b.WriteLine($"return this.Equals(({objectDefinition.CSharpFullName})other);");
                 }
                 b.WriteLine("}");
 
-                if (objectDefinition.IsStruct)
+                if (objectDefinition.IsCSharpStruct)
                 {
-                    b.WriteLine($"public bool Equals({objectDefinition.FullName} target)");
+                    b.WriteLine($"public bool Equals({objectDefinition.CSharpFullName} target)");
                 }
-                else if (objectDefinition.IsClass)
+                else if (objectDefinition.IsCSharpClass)
                 {
-                    b.WriteLine($"public bool Equals({objectDefinition.FullName}? target)");
+                    b.WriteLine($"public bool Equals({objectDefinition.CSharpFullName}? target)");
                 }
                 b.WriteLine("{");
 
                 using (b.Indent())
                 {
-                    if (objectDefinition.IsClass)
+                    if (objectDefinition.IsCSharpClass)
                     {
                         b.WriteLine("if (target is null) return false;");
                         b.WriteLine("if (object.ReferenceEquals(this, target)) return true;");
@@ -920,7 +920,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                                         case EnumDefinition enumInfo:
                                             b.WriteLine($"if (this.{element.Name} != target.{element.Name}) return false;");
                                             break;
-                                        case ObjectDefinition objectDefinition2 when (objectDefinition2.IsStruct):
+                                        case ObjectDefinition objectDefinition2 when (objectDefinition2.IsCSharpStruct):
                                             if (!type.IsOptional)
                                             {
                                                 b.WriteLine($"if (this.{element.Name} != target.{element.Name}) return false;");
@@ -931,7 +931,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                                                 b.WriteLine($"if (!(this.{element.Name} is null) && !(target.{element.Name} is null) && this.{element.Name} != target.{element.Name}) return false;");
                                             }
                                             break;
-                                        case ObjectDefinition objectDefinition2 when (objectDefinition2.IsClass):
+                                        case ObjectDefinition objectDefinition2 when (objectDefinition2.IsCSharpClass):
                                             if (!type.IsOptional)
                                             {
                                                 b.WriteLine($"if (this.{element.Name} != target.{element.Name}) return false;");
@@ -956,11 +956,11 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
 
                 b.WriteLine("}");
 
-                if (objectDefinition.IsStruct)
+                if (objectDefinition.IsCSharpStruct)
                 {
                     b.WriteLine($"public override int GetHashCode() => {HashCodeName};");
                 }
-                else if (objectDefinition.IsClass)
+                else if (objectDefinition.IsCSharpClass)
                 {
                     b.WriteLine($"public override int GetHashCode() => {HashCodeName}.Value;");
                 }
@@ -1014,13 +1014,13 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
 
             private void Write_Medium_Formatter(CodeBuilder b, ObjectDefinition objectDefinition)
             {
-                b.WriteLine($"private sealed class ___CustomFormatter : {GenerateTypeFullName("IRocketPackObjectFormatter<>", objectDefinition.FullName)}");
+                b.WriteLine($"private sealed class ___CustomFormatter : {GenerateTypeFullName("IRocketPackObjectFormatter<>", objectDefinition.CSharpFullName)}");
                 b.WriteLine("{");
 
                 using (b.Indent())
                 {
                     {
-                        b.WriteLine($"public void Serialize(ref {GenerateTypeFullName("RocketPackObjectWriter")} w, in {objectDefinition.FullName} value, in int rank)");
+                        b.WriteLine($"public void Serialize(ref {GenerateTypeFullName("RocketPackObjectWriter")} w, in {objectDefinition.CSharpFullName} value, in int rank)");
                         b.WriteLine("{");
 
                         using (b.Indent())
@@ -1046,7 +1046,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                     b.WriteLine();
 
                     {
-                        b.WriteLine($"public {objectDefinition.FullName} Deserialize(ref {GenerateTypeFullName("RocketPackObjectReader")} r, in int rank)");
+                        b.WriteLine($"public {objectDefinition.CSharpFullName} Deserialize(ref {GenerateTypeFullName("RocketPackObjectReader")} r, in int rank)");
                         b.WriteLine("{");
 
                         using (b.Indent())
@@ -1099,7 +1099,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                             b.WriteLine("}");
                             b.WriteLine();
 
-                            b.WriteLine($"return new {objectDefinition.FullName}({ string.Join(", ", objectDefinition.Elements.Select(n => "p_" + GenerateFieldVariableName(n.Name)))});");
+                            b.WriteLine($"return new {objectDefinition.CSharpFullName}({ string.Join(", ", objectDefinition.Elements.Select(n => "p_" + GenerateFieldVariableName(n.Name)))});");
                         }
 
                         b.WriteLine("}");
@@ -1235,18 +1235,18 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                                         break;
                                 }
                                 break;
-                            case ObjectDefinition objectDefinition when (objectDefinition.IsStruct):
+                            case ObjectDefinition objectDefinition when (objectDefinition.IsCSharpStruct):
                                 if (!type.IsOptional)
                                 {
-                                    b.WriteLine($"{objectDefinition.FullName}.Formatter.Serialize(ref w, {name}, rank + 1);");
+                                    b.WriteLine($"{objectDefinition.CSharpFullName}.Formatter.Serialize(ref w, {name}, rank + 1);");
                                 }
                                 else
                                 {
-                                    b.WriteLine($"{objectDefinition.FullName}.Formatter.Serialize(ref w, {name}.Value, rank + 1);");
+                                    b.WriteLine($"{objectDefinition.CSharpFullName}.Formatter.Serialize(ref w, {name}.Value, rank + 1);");
                                 }
                                 break;
-                            case ObjectDefinition objectDefinition when (objectDefinition.IsClass):
-                                b.WriteLine($"{objectDefinition.FullName}.Formatter.Serialize(ref w, {name}, rank + 1);");
+                            case ObjectDefinition objectDefinition when (objectDefinition.IsCSharpClass):
+                                b.WriteLine($"{objectDefinition.CSharpFullName}.Formatter.Serialize(ref w, {name}, rank + 1);");
                                 break;
                         }
                         break;
@@ -1334,11 +1334,11 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                                         break;
                                 }
                                 break;
-                            case ObjectDefinition objectDefinition when (objectDefinition.IsStruct):
-                                b.WriteLine($"{name} = {objectDefinition.FullName}.Formatter.Deserialize(ref r, rank + 1);");
+                            case ObjectDefinition objectDefinition when (objectDefinition.IsCSharpStruct):
+                                b.WriteLine($"{name} = {objectDefinition.CSharpFullName}.Formatter.Deserialize(ref r, rank + 1);");
                                 break;
-                            case ObjectDefinition objectDefinition when (objectDefinition.IsClass):
-                                b.WriteLine($"{name} = {objectDefinition.FullName}.Formatter.Deserialize(ref r, rank + 1);");
+                            case ObjectDefinition objectDefinition when (objectDefinition.IsCSharpClass):
+                                b.WriteLine($"{name} = {objectDefinition.CSharpFullName}.Formatter.Deserialize(ref r, rank + 1);");
                                 break;
                         }
                         break;
@@ -1347,13 +1347,13 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
 
             private void Write_Small_Formatter(CodeBuilder b, ObjectDefinition objectDefinition)
             {
-                b.WriteLine($"private sealed class ___CustomFormatter : {GenerateTypeFullName("IRocketPackObjectFormatter<>", objectDefinition.FullName)}");
+                b.WriteLine($"private sealed class ___CustomFormatter : {GenerateTypeFullName("IRocketPackObjectFormatter<>", objectDefinition.CSharpFullName)}");
                 b.WriteLine("{");
 
                 using (b.Indent())
                 {
                     {
-                        b.WriteLine($"public void Serialize(ref {GenerateTypeFullName("RocketPackObjectWriter")} w, in {objectDefinition.FullName} value, in int rank)");
+                        b.WriteLine($"public void Serialize(ref {GenerateTypeFullName("RocketPackObjectWriter")} w, in {objectDefinition.CSharpFullName} value, in int rank)");
                         b.WriteLine("{");
 
                         using (b.Indent())
@@ -1373,7 +1373,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                     b.WriteLine();
 
                     {
-                        b.WriteLine($"public {objectDefinition.FullName} Deserialize(ref {GenerateTypeFullName("RocketPackObjectReader")} r, in int rank)");
+                        b.WriteLine($"public {objectDefinition.CSharpFullName} Deserialize(ref {GenerateTypeFullName("RocketPackObjectReader")} r, in int rank)");
                         b.WriteLine("{");
 
                         using (b.Indent())
@@ -1397,7 +1397,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                                 b.WriteLine("}");
                             }
 
-                            b.WriteLine($"return new {objectDefinition.FullName}({ string.Join(", ", objectDefinition.Elements.Select(n => "p_" + GenerateFieldVariableName(n.Name)))});");
+                            b.WriteLine($"return new {objectDefinition.CSharpFullName}({ string.Join(", ", objectDefinition.Elements.Select(n => "p_" + GenerateFieldVariableName(n.Name)))});");
 
                         }
 
@@ -1534,18 +1534,18 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                                         break;
                                 }
                                 break;
-                            case ObjectDefinition objectDefinition when (objectDefinition.IsStruct):
+                            case ObjectDefinition objectDefinition when (objectDefinition.IsCSharpStruct):
                                 if (!customType.IsOptional)
                                 {
-                                    b.WriteLine($"{objectDefinition.FullName}.Formatter.Serialize(ref w, {name}, rank + 1);");
+                                    b.WriteLine($"{objectDefinition.CSharpFullName}.Formatter.Serialize(ref w, {name}, rank + 1);");
                                 }
                                 else
                                 {
-                                    b.WriteLine($"{objectDefinition.FullName}.Formatter.Serialize(ref w, {name}.Value, rank + 1);");
+                                    b.WriteLine($"{objectDefinition.CSharpFullName}.Formatter.Serialize(ref w, {name}.Value, rank + 1);");
                                 }
                                 break;
-                            case ObjectDefinition objectDefinition when (objectDefinition.IsClass):
-                                b.WriteLine($"{objectDefinition.FullName}.Formatter.Serialize(ref w, {name}, rank + 1);");
+                            case ObjectDefinition objectDefinition when (objectDefinition.IsCSharpClass):
+                                b.WriteLine($"{objectDefinition.CSharpFullName}.Formatter.Serialize(ref w, {name}, rank + 1);");
                                 break;
                         }
                         break;
@@ -1633,11 +1633,11 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                                         break;
                                 }
                                 break;
-                            case ObjectDefinition objectDefinition when (objectDefinition.IsStruct):
-                                b.WriteLine($"{name} = {objectDefinition.FullName}.Formatter.Deserialize(ref r, rank + 1);");
+                            case ObjectDefinition objectDefinition when (objectDefinition.IsCSharpStruct):
+                                b.WriteLine($"{name} = {objectDefinition.CSharpFullName}.Formatter.Deserialize(ref r, rank + 1);");
                                 break;
-                            case ObjectDefinition objectDefinition when (objectDefinition.IsClass):
-                                b.WriteLine($"{name} = {objectDefinition.FullName}.Formatter.Deserialize(ref r, rank + 1);");
+                            case ObjectDefinition objectDefinition when (objectDefinition.IsCSharpClass):
+                                b.WriteLine($"{name} = {objectDefinition.CSharpFullName}.Formatter.Deserialize(ref r, rank + 1);");
                                 break;
                         }
                         break;

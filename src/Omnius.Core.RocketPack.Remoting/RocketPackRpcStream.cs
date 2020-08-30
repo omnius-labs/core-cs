@@ -29,6 +29,8 @@ namespace Omnius.Core.RocketPack.Remoting
         {
             if (disposing)
             {
+                _rpc.RemoveStream(this);
+
                 _receivedMessageChannel.Writer.Complete();
 
                 _cancellationTokenSource.Cancel();
@@ -39,21 +41,7 @@ namespace Omnius.Core.RocketPack.Remoting
         internal uint Id { get; }
         internal uint CallId { get; }
 
-        internal async ValueTask OnReceivedMessageAsync(ArraySegment<byte> receivedMessage)
-        {
-            this.ThrowIfDisposingRequested();
-
-            await _receivedMessageChannel.Writer.WriteAsync(receivedMessage);
-        }
-
-        internal void OnReceivedClose()
-        {
-            this.ThrowIfDisposingRequested();
-
-            _cancellationTokenSource.Cancel();
-        }
-
-        public async ValueTask<TResult> RequestFunctionAsync<TParam, TResult>(TParam param, CancellationToken cancellationToken = default)
+        public async ValueTask<TResult> CallFunctionAsync<TParam, TResult>(TParam param, CancellationToken cancellationToken = default)
             where TParam : IRocketPackObject<TParam>
             where TResult : IRocketPackObject<TResult>
         {
@@ -83,21 +71,22 @@ namespace Omnius.Core.RocketPack.Remoting
             }
         }
 
-        public async ValueTask ResponceFunctionAsync<TParam, TResult>(Func<TParam, CancellationToken, ValueTask<TResult>> func, CancellationToken cancellationToken = default)
+        public async ValueTask ListenFunctionAsync<TParam, TResult>(Func<TParam, CancellationToken, ValueTask<TResult>> func, CancellationToken cancellationToken = default)
             where TParam : IRocketPackObject<TParam>
             where TResult : IRocketPackObject<TResult>
         {
             this.ThrowIfDisposingRequested();
 
-            var receivedParam = await this.ReceiveAsync<TParam>(cancellationToken);
+            using var linkedTokenSource = CancellationTokenSource.CreateLinkedTokenSource(_cancellationTokenSource.Token, cancellationToken);
+            var receivedParam = await this.ReceiveAsync<TParam>(linkedTokenSource.Token);
 
             if (receivedParam.IsCompleted)
             {
                 try
                 {
-                    using var linkedTokenSource = CancellationTokenSource.CreateLinkedTokenSource(_cancellationTokenSource.Token, cancellationToken);
                     var result = await func.Invoke(receivedParam.Message!, linkedTokenSource.Token);
-                    await this.SendCompletedAsync(result, cancellationToken);
+                    await this.SendCompletedAsync(result, linkedTokenSource.Token);
+                    return;
                 }
                 catch (Exception e)
                 {
@@ -108,35 +97,45 @@ namespace Omnius.Core.RocketPack.Remoting
             throw ThrowHelper.CreateRocketPackRpcProtocolException_UnexpectedProtocol();
         }
 
-        public async ValueTask<TResult> RequestFunctionAsync<TResult>(CancellationToken cancellationToken = default)
-            where TResult : IRocketPackObject<TResult>
-        {
-            this.ThrowIfDisposingRequested();
-
-            var receivedResult = await this.ReceiveAsync<TResult>(cancellationToken);
-
-            if (receivedResult.IsCompleted)
-            {
-                return receivedResult.Message!;
-            }
-            else if (receivedResult.IsError)
-            {
-                throw ThrowHelper.CreateRocketPackRpcApplicationException(receivedResult.ErrorMessage!);
-            }
-
-            throw ThrowHelper.CreateRocketPackRpcProtocolException_UnexpectedProtocol();
-        }
-
-        public async ValueTask ResponceFunctionAsync<TResult>(Func<CancellationToken, ValueTask<TResult>> func, CancellationToken cancellationToken = default)
+        public async ValueTask<TResult> CallFunctionAsync<TResult>(CancellationToken cancellationToken = default)
             where TResult : IRocketPackObject<TResult>
         {
             this.ThrowIfDisposingRequested();
 
             try
             {
-                using var linkedTokenSource = CancellationTokenSource.CreateLinkedTokenSource(_cancellationTokenSource.Token, cancellationToken);
+                var receivedResult = await this.ReceiveAsync<TResult>(cancellationToken);
+
+                if (receivedResult.IsCompleted)
+                {
+                    return receivedResult.Message!;
+                }
+                else if (receivedResult.IsError)
+                {
+                    throw ThrowHelper.CreateRocketPackRpcApplicationException(receivedResult.ErrorMessage!);
+                }
+
+                throw ThrowHelper.CreateRocketPackRpcProtocolException_UnexpectedProtocol();
+            }
+            catch (OperationCanceledException)
+            {
+                await _rpc.SendCloseAsync(this.Id);
+                throw;
+            }
+        }
+
+        public async ValueTask ListenFunctionAsync<TResult>(Func<CancellationToken, ValueTask<TResult>> func, CancellationToken cancellationToken = default)
+            where TResult : IRocketPackObject<TResult>
+        {
+            this.ThrowIfDisposingRequested();
+
+            using var linkedTokenSource = CancellationTokenSource.CreateLinkedTokenSource(_cancellationTokenSource.Token, cancellationToken);
+
+            try
+            {
                 var result = await func.Invoke(linkedTokenSource.Token);
-                await this.SendCompletedAsync(result, cancellationToken);
+                await this.SendCompletedAsync(result, linkedTokenSource.Token);
+                return;
             }
             catch (Exception e)
             {
@@ -144,97 +143,121 @@ namespace Omnius.Core.RocketPack.Remoting
             }
         }
 
-        public async ValueTask RequestActionAsync<TParam>(TParam param, CancellationToken cancellationToken = default)
+        public async ValueTask CallActionAsync<TParam>(TParam param, CancellationToken cancellationToken = default)
             where TParam : IRocketPackObject<TParam>
         {
             this.ThrowIfDisposingRequested();
 
-            await this.SendCompletedAsync(param, cancellationToken);
-
-            var receivedResult = await this.ReceiveAsync(cancellationToken);
-
-            if (receivedResult.IsCompleted)
+            try
             {
-                return;
-            }
-            else if (receivedResult.IsError)
-            {
-                throw ThrowHelper.CreateRocketPackRpcApplicationException(receivedResult.ErrorMessage!);
-            }
+                await this.SendCompletedAsync(param, cancellationToken);
 
-            throw ThrowHelper.CreateRocketPackRpcProtocolException_UnexpectedProtocol();
-        }
+                var receivedResult = await this.ReceiveAsync(cancellationToken);
 
-        public async ValueTask ResponceActionAsync<TParam>(Func<TParam, CancellationToken, ValueTask> func, CancellationToken cancellationToken = default)
-            where TParam : IRocketPackObject<TParam>
-        {
-            this.ThrowIfDisposingRequested();
-
-            var receivedParam = await this.ReceiveAsync<TParam>(cancellationToken);
-
-            if (receivedParam.IsCompleted)
-            {
-                try
+                if (receivedResult.IsCompleted)
                 {
-                    using var linkedTokenSource = CancellationTokenSource.CreateLinkedTokenSource(_cancellationTokenSource.Token, cancellationToken);
-                    await func.Invoke(receivedParam.Message!, linkedTokenSource.Token);
-                    await this.SendCompletedAsync(cancellationToken);
+                    return;
                 }
-                catch (Exception e)
+                else if (receivedResult.IsError)
                 {
-                    await this.SendErrorAsync(this.CreateErrorMessage(e));
+                    throw ThrowHelper.CreateRocketPackRpcApplicationException(receivedResult.ErrorMessage!);
                 }
-            }
 
-            throw ThrowHelper.CreateRocketPackRpcProtocolException_UnexpectedProtocol();
-        }
-
-        public async ValueTask RequestActionAsync(CancellationToken cancellationToken = default)
-        {
-            this.ThrowIfDisposingRequested();
-
-            var receivedResult = await this.ReceiveAsync(cancellationToken);
-
-            if (receivedResult.IsCompleted)
-            {
-                return;
-            }
-            else if (receivedResult.IsError)
-            {
-                throw ThrowHelper.CreateRocketPackRpcApplicationException(receivedResult.ErrorMessage!);
-            }
-
-            throw ThrowHelper.CreateRocketPackRpcProtocolException_UnexpectedProtocol();
-        }
-
-        public async ValueTask ResponceActionAsync<TParam>(Func<CancellationToken, ValueTask> func, CancellationToken cancellationToken = default)
-        {
-            this.ThrowIfDisposingRequested();
-
-            var receivedParam = await this.ReceiveAsync(cancellationToken);
-
-            if (receivedParam.IsCompleted)
-            {
-                try
-                {
-                    using var linkedTokenSource = CancellationTokenSource.CreateLinkedTokenSource(_cancellationTokenSource.Token, cancellationToken);
-                    await func.Invoke(linkedTokenSource.Token);
-                    await this.SendCompletedAsync(cancellationToken);
-                }
-                catch (Exception e)
-                {
-                    await this.SendErrorAsync(this.CreateErrorMessage(e));
-                }
-            }
-            else
-            {
                 throw ThrowHelper.CreateRocketPackRpcProtocolException_UnexpectedProtocol();
+            }
+            catch (OperationCanceledException)
+            {
+                await _rpc.SendCloseAsync(this.Id);
+                throw;
+            }
+        }
+
+        public async ValueTask ListenActionAsync<TParam>(Func<TParam, CancellationToken, ValueTask> func, CancellationToken cancellationToken = default)
+            where TParam : IRocketPackObject<TParam>
+        {
+            this.ThrowIfDisposingRequested();
+
+            using var linkedTokenSource = CancellationTokenSource.CreateLinkedTokenSource(_cancellationTokenSource.Token, cancellationToken);
+            var receivedParam = await this.ReceiveAsync<TParam>(linkedTokenSource.Token);
+
+            if (receivedParam.IsCompleted)
+            {
+                try
+                {
+                    await func.Invoke(receivedParam.Message!, linkedTokenSource.Token);
+                    await this.SendCompletedAsync(linkedTokenSource.Token);
+                    return;
+                }
+                catch (Exception e)
+                {
+                    await this.SendErrorAsync(this.CreateErrorMessage(e));
+                }
+            }
+
+            throw ThrowHelper.CreateRocketPackRpcProtocolException_UnexpectedProtocol();
+        }
+
+        public async ValueTask CallActionAsync(CancellationToken cancellationToken = default)
+        {
+            this.ThrowIfDisposingRequested();
+
+            try
+            {
+                var receivedResult = await this.ReceiveAsync(cancellationToken);
+
+                if (receivedResult.IsCompleted)
+                {
+                    return;
+                }
+                else if (receivedResult.IsError)
+                {
+                    throw ThrowHelper.CreateRocketPackRpcApplicationException(receivedResult.ErrorMessage!);
+                }
+
+                throw ThrowHelper.CreateRocketPackRpcProtocolException_UnexpectedProtocol();
+            }
+            catch (OperationCanceledException)
+            {
+                await _rpc.SendCloseAsync(this.Id);
+                throw;
+            }
+        }
+
+        public async ValueTask ListenActionAsync(Func<CancellationToken, ValueTask> func, CancellationToken cancellationToken = default)
+        {
+            this.ThrowIfDisposingRequested();
+
+            using var linkedTokenSource = CancellationTokenSource.CreateLinkedTokenSource(_cancellationTokenSource.Token, cancellationToken);
+
+            try
+            {
+                await func.Invoke(linkedTokenSource.Token);
+                await this.SendCompletedAsync(linkedTokenSource.Token);
+                return;
+            }
+            catch (Exception e)
+            {
+                await this.SendErrorAsync(this.CreateErrorMessage(e));
             }
         }
 
         private RocketPackRpcErrorMessage CreateErrorMessage(Exception e)
         {
             return new RocketPackRpcErrorMessage(e.GetType()?.FullName ?? string.Empty, e.Message, e.StackTrace);
+        }
+
+        internal async ValueTask OnReceivedMessageAsync(ArraySegment<byte> receivedMessage)
+        {
+            this.ThrowIfDisposingRequested();
+
+            await _receivedMessageChannel.Writer.WriteAsync(receivedMessage);
+        }
+
+        internal void OnReceivedClose()
+        {
+            this.ThrowIfDisposingRequested();
+
+            _cancellationTokenSource.Cancel();
         }
 
         private enum PacketType : byte
