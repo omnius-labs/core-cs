@@ -49,6 +49,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
             {
                 var result = name switch
                 {
+                    "AsyncDisposableBase" => "Omnius.Core.AsyncDisposableBase",
                     "ArgumentNullException" => "System.ArgumentNullException",
                     "ArgumentOutOfRangeException" => "System.ArgumentOutOfRangeException",
                     "Array" => "System.Array",
@@ -146,7 +147,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
             public void Write_Sender(CodeBuilder b, ServiceDefinition serviceDefinition)
             {
                 var className = serviceDefinition.Name + "Sender";
-                b.WriteLine($"{_accessLevel} class { className } : AsyncDisposableBase, { serviceDefinition.CSharpInterfaceFullName }");
+                b.WriteLine($"{_accessLevel} class { className } : { GenerateTypeFullName("AsyncDisposableBase") }, { serviceDefinition.CSharpInterfaceFullName }");
                 b.WriteLine("{");
                 using (b.Indent())
                 {
@@ -183,7 +184,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                                 b.WriteLine("{");
                                 using (b.Indent())
                                 {
-                                    b.WriteLine($"var stream = await _rpc.ConnectAsync({ index }, cancellationToken);");
+                                    b.WriteLine($"using var stream = await _rpc.ConnectAsync({ index }, cancellationToken);");
                                     b.WriteLine($"return await stream.CallFunctionAsync<{ inTypeObjectDef.CSharpFullName }, { outTypeObjectDef.CSharpFullName }>(param, cancellationToken);");
                                 }
                                 b.WriteLine("}");
@@ -197,7 +198,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                                 b.WriteLine("{");
                                 using (b.Indent())
                                 {
-                                    b.WriteLine($"var stream = await _rpc.ConnectAsync({ index }, cancellationToken);");
+                                    b.WriteLine($"using var stream = await _rpc.ConnectAsync({ index }, cancellationToken);");
                                     b.WriteLine($"return await stream.CallFunctionAsync<{ outTypeObjectDef.CSharpFullName }>(cancellationToken);");
                                 }
                                 b.WriteLine("}");
@@ -211,7 +212,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                                 b.WriteLine("{");
                                 using (b.Indent())
                                 {
-                                    b.WriteLine($"var stream = await _rpc.ConnectAsync({ index }, cancellationToken);");
+                                    b.WriteLine($"using var stream = await _rpc.ConnectAsync({ index }, cancellationToken);");
                                     b.WriteLine($"await stream.CallActionAsync<{ inTypeObjectDef.CSharpFullName }>(param, cancellationToken);");
                                 }
                                 b.WriteLine("}");
@@ -224,7 +225,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                                 b.WriteLine("{");
                                 using (b.Indent())
                                 {
-                                    b.WriteLine($"var stream = await _rpc.ConnectAsync({ index }, cancellationToken);");
+                                    b.WriteLine($"using var stream = await _rpc.ConnectAsync({ index }, cancellationToken);");
                                     b.WriteLine($"await stream.CallActionAsync(cancellationToken);");
                                 }
                                 b.WriteLine("}");
@@ -238,7 +239,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
             public void Write_Receiver(CodeBuilder b, ServiceDefinition serviceDefinition)
             {
                 var className = serviceDefinition.Name + "Receiver";
-                b.WriteLine($"{_accessLevel} class { className } : AsyncDisposableBase");
+                b.WriteLine($"{_accessLevel} class { className } : { GenerateTypeFullName("AsyncDisposableBase") }");
                 b.WriteLine("{");
                 using (b.Indent())
                 {
@@ -273,7 +274,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                         using (b.Indent())
                         {
                             b.WriteLine("cancellationToken.ThrowIfCancellationRequested();");
-                            b.WriteLine("var stream = await _rpc.AcceptAsync(cancellationToken);");
+                            b.WriteLine("using var stream = await _rpc.AcceptAsync(cancellationToken);");
 
                             b.WriteLine("switch (stream.CallId)");
                             b.WriteLine("{");

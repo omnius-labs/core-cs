@@ -39,7 +39,7 @@ namespace Omnius.Core.RocketPack.Remoting
         }
 
         internal uint Id { get; }
-        internal uint CallId { get; }
+        public uint CallId { get; }
 
         public async ValueTask<TResult> CallFunctionAsync<TParam, TResult>(TParam param, CancellationToken cancellationToken = default)
             where TParam : IRocketPackObject<TParam>
@@ -358,7 +358,7 @@ namespace Omnius.Core.RocketPack.Remoting
             }
         }
 
-        public async ValueTask<RocketPackRpcStreamReceiveResult<TMessage>> ReceiveAsync<TMessage>(CancellationToken cancellationToken = default)
+        private async ValueTask<RocketPackRpcStreamReceiveResult<TMessage>> ReceiveAsync<TMessage>(CancellationToken cancellationToken = default)
             where TMessage : IRocketPackObject<TMessage>
         {
             var receivedMessage = await _receivedMessageChannel.Reader.ReadAsync(cancellationToken);

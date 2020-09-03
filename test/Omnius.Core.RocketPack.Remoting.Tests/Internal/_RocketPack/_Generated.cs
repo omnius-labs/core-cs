@@ -85,7 +85,7 @@ namespace Omnius.Core.RocketPack.Remoting.Tests.Internal
 
                 int p_p1 = 0;
 
-                for (; ; )
+                for (;;)
                 {
                     uint id = r.GetUInt32();
                     if (id == 0) break;
@@ -184,7 +184,7 @@ namespace Omnius.Core.RocketPack.Remoting.Tests.Internal
 
                 int p_r1 = 0;
 
-                for (; ; )
+                for (;;)
                 {
                     uint id = r.GetUInt32();
                     if (id == 0) break;
@@ -210,7 +210,7 @@ namespace Omnius.Core.RocketPack.Remoting.Tests.Internal
         global::System.Threading.Tasks.ValueTask<global::Omnius.Core.RocketPack.Remoting.Tests.Internal.RpcResult> F3Async(global::System.Threading.CancellationToken cancellationToken);
         global::System.Threading.Tasks.ValueTask F4Async(global::System.Threading.CancellationToken cancellationToken);
     }
-    internal class RpcServiceSender : AsyncDisposableBase, global::Omnius.Core.RocketPack.Remoting.Tests.Internal.IRpcService
+    internal class RpcServiceSender : global::Omnius.Core.AsyncDisposableBase, global::Omnius.Core.RocketPack.Remoting.Tests.Internal.IRpcService
     {
         private readonly global::Omnius.Core.RocketPack.Remoting.Tests.Internal.IRpcService _impl;
         private readonly global::Omnius.Core.Network.Connections.IConnection _connection;
@@ -229,26 +229,26 @@ namespace Omnius.Core.RocketPack.Remoting.Tests.Internal
         }
         public async global::System.Threading.Tasks.ValueTask<global::Omnius.Core.RocketPack.Remoting.Tests.Internal.RpcResult> F1Async(global::Omnius.Core.RocketPack.Remoting.Tests.Internal.RpcParam param, global::System.Threading.CancellationToken cancellationToken)
         {
-            var stream = await _rpc.ConnectAsync(0, cancellationToken);
+            using var stream = await _rpc.ConnectAsync(0, cancellationToken);
             return await stream.CallFunctionAsync<global::Omnius.Core.RocketPack.Remoting.Tests.Internal.RpcParam, global::Omnius.Core.RocketPack.Remoting.Tests.Internal.RpcResult>(param, cancellationToken);
         }
         public async global::System.Threading.Tasks.ValueTask F2Async(global::Omnius.Core.RocketPack.Remoting.Tests.Internal.RpcParam param, global::System.Threading.CancellationToken cancellationToken)
         {
-            var stream = await _rpc.ConnectAsync(1, cancellationToken);
+            using var stream = await _rpc.ConnectAsync(1, cancellationToken);
             await stream.CallActionAsync<global::Omnius.Core.RocketPack.Remoting.Tests.Internal.RpcParam>(param, cancellationToken);
         }
         public async global::System.Threading.Tasks.ValueTask<global::Omnius.Core.RocketPack.Remoting.Tests.Internal.RpcResult> F3Async(global::System.Threading.CancellationToken cancellationToken)
         {
-            var stream = await _rpc.ConnectAsync(2, cancellationToken);
+            using var stream = await _rpc.ConnectAsync(2, cancellationToken);
             return await stream.CallFunctionAsync<global::Omnius.Core.RocketPack.Remoting.Tests.Internal.RpcResult>(cancellationToken);
         }
         public async global::System.Threading.Tasks.ValueTask F4Async(global::System.Threading.CancellationToken cancellationToken)
         {
-            var stream = await _rpc.ConnectAsync(3, cancellationToken);
+            using var stream = await _rpc.ConnectAsync(3, cancellationToken);
             await stream.CallActionAsync(cancellationToken);
         }
     }
-    internal class RpcServiceReceiver : AsyncDisposableBase
+    internal class RpcServiceReceiver : global::Omnius.Core.AsyncDisposableBase
     {
         private readonly global::Omnius.Core.RocketPack.Remoting.Tests.Internal.IRpcService _impl;
         private readonly global::Omnius.Core.Network.Connections.IConnection _connection;
@@ -270,7 +270,7 @@ namespace Omnius.Core.RocketPack.Remoting.Tests.Internal
             while (!cancellationToken.IsCancellationRequested)
             {
                 cancellationToken.ThrowIfCancellationRequested();
-                var stream = await _rpc.AcceptAsync(cancellationToken);
+                using var stream = await _rpc.AcceptAsync(cancellationToken);
                 switch (stream.CallId)
                 {
                     case 0:

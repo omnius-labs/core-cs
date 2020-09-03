@@ -3,17 +3,17 @@ syntax v1.0;
 namespace "Omnius.Core.RocketPack.Remoting.Tests.Internal";
 option csharp_access_level "internal";
 
-message RpcParam {
-    P1: int32,
+message TestParam {
+    Value: int32,
 }
 
-message RpcResult {
-    R1: int32,
+message TestResult {
+    Value: int32,
 }
 
-service RpcService {
-    F1: (RpcParam) -> (RpcResult),
-    F2: (RpcParam) -> (),
-    F3: () -> (RpcResult),
-    F4: () -> (),
+service TestService {
+    Unary1: (TestParam) -> (TestResult),
+    Unary2: (TestParam) -> (),
+    Unary3: () -> (TestResult),
+    Unary4: () -> (),
 }
