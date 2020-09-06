@@ -90,7 +90,7 @@ namespace Omnius.Core.Network
 
                 string p_value = string.Empty;
 
-                for (;;)
+                for (; ; )
                 {
                     uint id = r.GetUInt32();
                     if (id == 0) break;
