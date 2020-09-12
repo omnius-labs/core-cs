@@ -1,7 +1,7 @@
-using System.Threading;
-using System.Runtime.InteropServices;
 using System;
 using System.Buffers;
+using System.Runtime.InteropServices;
+using System.Threading;
 using System.Threading.Tasks;
 using Omnius.Core;
 using Omnius.Core.Network.Caps;

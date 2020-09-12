@@ -205,7 +205,7 @@ namespace Omnius.Core.Network.Connections.Secure.V1.Internal
                 CryptoAlgorithm[] p_cryptoAlgorithms = global::System.Array.Empty<CryptoAlgorithm>();
                 HashAlgorithm[] p_hashAlgorithms = global::System.Array.Empty<HashAlgorithm>();
 
-                for (;;)
+                for (; ; )
                 {
                     uint id = r.GetUInt32();
                     if (id == 0) break;
@@ -362,7 +362,7 @@ namespace Omnius.Core.Network.Connections.Secure.V1.Internal
                 ProfileMessage p_profileMessage = ProfileMessage.Empty;
                 OmniAgreementPublicKey p_agreementPublicKey = OmniAgreementPublicKey.Empty;
 
-                for (;;)
+                for (; ; )
                 {
                     uint id = r.GetUInt32();
                     if (id == 0) break;
@@ -482,7 +482,7 @@ namespace Omnius.Core.Network.Connections.Secure.V1.Internal
 
                 global::System.ReadOnlyMemory<byte>[] p_hashes = global::System.Array.Empty<global::System.ReadOnlyMemory<byte>>();
 
-                for (;;)
+                for (; ; )
                 {
                     uint id = r.GetUInt32();
                     if (id == 0) break;

@@ -101,7 +101,7 @@ namespace FormatterBenchmarks.Internal
 
                 RocketPack_BytesElements[] p_list = global::System.Array.Empty<RocketPack_BytesElements>();
 
-                for (;;)
+                for (; ; )
                 {
                     uint id = r.GetUInt32();
                     if (id == 0) break;
@@ -441,7 +441,7 @@ namespace FormatterBenchmarks.Internal
 
                 RocketPack_IntElements[] p_list = global::System.Array.Empty<RocketPack_IntElements>();
 
-                for (;;)
+                for (; ; )
                 {
                     uint id = r.GetUInt32();
                     if (id == 0) break;
@@ -725,7 +725,7 @@ namespace FormatterBenchmarks.Internal
 
                 RocketPack_StringElements[] p_list = global::System.Array.Empty<RocketPack_StringElements>();
 
-                for (;;)
+                for (; ; )
                 {
                     uint id = r.GetUInt32();
                     if (id == 0) break;

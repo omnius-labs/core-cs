@@ -85,7 +85,7 @@ namespace Omnius.Core.RocketPack.Remoting.Tests.Internal
 
                 int p_p1 = 0;
 
-                for (;;)
+                for (; ; )
                 {
                     uint id = r.GetUInt32();
                     if (id == 0) break;
@@ -184,7 +184,7 @@ namespace Omnius.Core.RocketPack.Remoting.Tests.Internal
 
                 int p_r1 = 0;
 
-                for (;;)
+                for (; ; )
                 {
                     uint id = r.GetUInt32();
                     if (id == 0) break;

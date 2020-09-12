@@ -99,7 +99,7 @@ namespace Omnius.Core.Network.Connections.Secure.Internal
 
                 OmniSecureConnectionVersion[] p_versions = global::System.Array.Empty<OmniSecureConnectionVersion>();
 
-                for (;;)
+                for (; ; )
                 {
                     uint id = r.GetUInt32();
                     if (id == 0) break;

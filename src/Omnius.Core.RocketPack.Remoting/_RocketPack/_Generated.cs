@@ -115,7 +115,7 @@ namespace Omnius.Core.RocketPack.Remoting
                 string p_message = string.Empty;
                 string? p_stackTrace = null;
 
-                for (;;)
+                for (; ; )
                 {
                     uint id = r.GetUInt32();
                     if (id == 0) break;

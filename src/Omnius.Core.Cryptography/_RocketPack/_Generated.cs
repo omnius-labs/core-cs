@@ -234,7 +234,7 @@ namespace Omnius.Core.Cryptography
                 global::System.ReadOnlyMemory<byte> p_publicKey = global::System.ReadOnlyMemory<byte>.Empty;
                 global::System.ReadOnlyMemory<byte> p_privateKey = global::System.ReadOnlyMemory<byte>.Empty;
 
-                for (;;)
+                for (; ; )
                 {
                     uint id = r.GetUInt32();
                     if (id == 0) break;
@@ -372,7 +372,7 @@ namespace Omnius.Core.Cryptography
                 OmniAgreementAlgorithmType p_algorithmType = (OmniAgreementAlgorithmType)0;
                 global::System.ReadOnlyMemory<byte> p_publicKey = global::System.ReadOnlyMemory<byte>.Empty;
 
-                for (;;)
+                for (; ; )
                 {
                     uint id = r.GetUInt32();
                     if (id == 0) break;
@@ -505,7 +505,7 @@ namespace Omnius.Core.Cryptography
                 OmniAgreementAlgorithmType p_algorithmType = (OmniAgreementAlgorithmType)0;
                 global::System.ReadOnlyMemory<byte> p_privateKey = global::System.ReadOnlyMemory<byte>.Empty;
 
-                for (;;)
+                for (; ; )
                 {
                     uint id = r.GetUInt32();
                     if (id == 0) break;
@@ -653,7 +653,7 @@ namespace Omnius.Core.Cryptography
                 global::System.ReadOnlyMemory<byte> p_publicKey = global::System.ReadOnlyMemory<byte>.Empty;
                 global::System.ReadOnlyMemory<byte> p_privateKey = global::System.ReadOnlyMemory<byte>.Empty;
 
-                for (;;)
+                for (; ; )
                 {
                     uint id = r.GetUInt32();
                     if (id == 0) break;
@@ -806,7 +806,7 @@ namespace Omnius.Core.Cryptography
                 global::System.ReadOnlyMemory<byte> p_publicKey = global::System.ReadOnlyMemory<byte>.Empty;
                 global::System.ReadOnlyMemory<byte> p_value = global::System.ReadOnlyMemory<byte>.Empty;
 
-                for (;;)
+                for (; ; )
                 {
                     uint id = r.GetUInt32();
                     if (id == 0) break;
@@ -934,7 +934,7 @@ namespace Omnius.Core.Cryptography
                 string p_name = string.Empty;
                 OmniHash p_hash = OmniHash.Empty;
 
-                for (;;)
+                for (; ; )
                 {
                     uint id = r.GetUInt32();
                     if (id == 0) break;
@@ -1052,7 +1052,7 @@ namespace Omnius.Core.Cryptography
                 OmniHashcashAlgorithmType p_algorithmType = (OmniHashcashAlgorithmType)0;
                 global::System.ReadOnlyMemory<byte> p_key = global::System.ReadOnlyMemory<byte>.Empty;
 
-                for (;;)
+                for (; ; )
                 {
                     uint id = r.GetUInt32();
                     if (id == 0) break;
