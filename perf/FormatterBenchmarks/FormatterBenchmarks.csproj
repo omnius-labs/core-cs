@@ -10,7 +10,7 @@
   <ItemGroup>
     <PackageReference Include="BenchmarkDotNet" Version="0.12.1" />
     <PackageReference Include="MessagePack" Version="2.1.165" />
-    <PackageReference Include="NLog" Version="4.7.3" />
+    <PackageReference Include="NLog" Version="4.7.4" />
   </ItemGroup>
 
   <ItemGroup>
