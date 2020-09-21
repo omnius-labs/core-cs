@@ -1061,7 +1061,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                             }
                             b.WriteLine();
 
-                            b.WriteLine("for (;;)");
+                            b.WriteLine("for (; ; )");
                             b.WriteLine("{");
 
                             using (b.Indent())
