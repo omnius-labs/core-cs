@@ -1,10 +1,8 @@
 using System;
 using System.Buffers;
-using System.Runtime.InteropServices.ComTypes;
 using System.Threading;
 using System.Threading.Channels;
 using System.Threading.Tasks;
-using Omnius.Core.Network.Connections;
 using Omnius.Core.RocketPack.Remoting.Internal;
 
 namespace Omnius.Core.RocketPack.Remoting

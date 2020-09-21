@@ -1,5 +1,4 @@
 using System;
-using System.Runtime.InteropServices;
 using Omnius.Core.Internal;
 
 namespace Omnius.Core

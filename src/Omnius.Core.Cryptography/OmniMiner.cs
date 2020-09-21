@@ -6,7 +6,6 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Omnius.Core;
 using Omnius.Core.Helpers;
 
 namespace Omnius.Core.Cryptography

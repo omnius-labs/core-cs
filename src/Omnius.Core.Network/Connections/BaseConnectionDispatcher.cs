@@ -1,10 +1,8 @@
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Omnius.Core;
 using Omnius.Core.Extensions;
 
 namespace Omnius.Core.Network.Connections

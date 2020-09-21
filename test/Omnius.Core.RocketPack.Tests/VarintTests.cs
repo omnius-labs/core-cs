@@ -1,6 +1,5 @@
 using System;
 using System.Buffers;
-using Omnius.Core;
 using Xunit;
 
 namespace Omnius.Core.RocketPack

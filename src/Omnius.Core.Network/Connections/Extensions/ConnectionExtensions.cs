@@ -1,8 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Xml.Schema;
-using Omnius.Core;
 using Omnius.Core.RocketPack;
 
 namespace Omnius.Core.Network.Connections.Extensions

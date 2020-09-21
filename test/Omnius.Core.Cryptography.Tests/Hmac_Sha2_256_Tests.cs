@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
-using Omnius.Core;
 using Omnius.Core.Serialization;
 using Omnius.Core.Serialization.Extensions;
 using Xunit;

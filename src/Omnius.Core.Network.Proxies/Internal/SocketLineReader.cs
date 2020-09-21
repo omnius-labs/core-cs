@@ -3,7 +3,6 @@ using System.IO;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
-using Omnius.Core;
 
 namespace Omnius.Core.Network.Proxies.Internal
 {

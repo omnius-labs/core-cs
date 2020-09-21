@@ -2,7 +2,6 @@ using System;
 using System.Buffers;
 using System.Runtime.CompilerServices;
 using System.Text;
-using Omnius.Core;
 using Omnius.Core.RocketPack.Internal;
 
 namespace Omnius.Core.RocketPack

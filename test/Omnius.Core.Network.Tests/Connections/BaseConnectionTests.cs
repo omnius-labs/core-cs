@@ -3,9 +3,7 @@ using System.Buffers;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
-using Omnius.Core;
 using Omnius.Core.Network.Caps;
 using Xunit;
 

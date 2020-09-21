@@ -1,7 +1,6 @@
 using System;
 using System.Net;
 using System.Net.Sockets;
-using Omnius.Core;
 
 namespace Omnius.Core.Network
 {

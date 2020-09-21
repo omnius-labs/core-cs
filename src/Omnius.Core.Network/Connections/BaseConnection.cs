@@ -3,7 +3,6 @@ using System.Buffers;
 using System.Buffers.Binary;
 using System.Threading;
 using System.Threading.Tasks;
-using Omnius.Core;
 using Omnius.Core.Network.Caps;
 
 namespace Omnius.Core.Network.Connections

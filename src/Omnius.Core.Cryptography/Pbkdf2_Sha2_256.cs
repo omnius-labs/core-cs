@@ -1,5 +1,4 @@
 using System;
-using Omnius.Core;
 
 namespace Omnius.Core.Cryptography
 {

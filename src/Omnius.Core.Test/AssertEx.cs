@@ -1,13 +1,9 @@
-using System.Linq;
-using System.Dynamic;
-using System.Collections.Generic;
-using System.Text;
 using System;
+using System.Text.Encodings.Web;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using DiffPlex.DiffBuilder;
 using DiffPlex.DiffBuilder.Model;
-using System.Text.Json.Serialization;
-using System.Text.Encodings.Web;
 
 namespace Omnius.Core.Test
 {

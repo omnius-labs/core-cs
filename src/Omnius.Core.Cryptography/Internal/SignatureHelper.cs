@@ -1,7 +1,6 @@
 using System;
 using System.Text;
 using System.Threading;
-using Omnius.Core;
 using Omnius.Core.RocketPack;
 
 namespace Omnius.Core.Cryptography.Internal

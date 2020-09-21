@@ -2,7 +2,6 @@ using System;
 using System.Buffers;
 using System.Collections.Generic;
 using System.IO;
-using Omnius.Core;
 
 namespace Omnius.Core.Io
 {
