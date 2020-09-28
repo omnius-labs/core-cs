@@ -4,7 +4,7 @@ using Xunit;
 
 namespace Omnius.Core.Network.Connections.Secure.V1.Internal
 {
-    public class SecureConnectionTests
+    public class SecureConnectionTest
     {
         [Fact]
         public async Task IncrementTest()

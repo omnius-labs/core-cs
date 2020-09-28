@@ -43,13 +43,10 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                     var serviceWriter = new ServiceWriter(rootDefinition, externalDefinitions);
 
                     enumWriter.Write(b);
-                    b.WriteLine();
 
                     objectWriter.Write(b);
-                    b.WriteLine();
 
                     serviceWriter.Write(b);
-                    b.WriteLine();
                 }
 
                 b.WriteLine("}");

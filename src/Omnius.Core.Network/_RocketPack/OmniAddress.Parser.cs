@@ -1,6 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Net;
+using System.Net.Sockets;
 using Omnius.Core.Collections;
 using Omnius.Core.Network.Internal.Extensions;
 using Sprache;
@@ -9,10 +12,128 @@ namespace Omnius.Core.Network
 {
     public partial class OmniAddress
     {
-        internal static class Parser
+        public static OmniAddress CreateTcpEndpoint(string host, ushort port)
+        {
+            return new OmniAddress($"tcp(dns({host}),{port})");
+        }
+
+        public static OmniAddress CreateTcpEndpoint(IPAddress ipAddress, ushort port)
+        {
+            if (ipAddress.AddressFamily == AddressFamily.InterNetwork)
+            {
+                return new OmniAddress($"tcp(ip4({ipAddress}),{port})");
+            }
+            else if (ipAddress.AddressFamily == AddressFamily.InterNetworkV6)
+            {
+                return new OmniAddress($"tcp(ip4({ipAddress}),{port})");
+            }
+            else
+            {
+                throw new NotSupportedException($"AddressFamily is not supported");
+            }
+        }
+
+        public bool TryParseTcpEndpoint([NotNullWhen(true)] out IPAddress? ipAddress, out ushort port, bool nameResolving = false)
+        {
+            ipAddress = IPAddress.None;
+            port = 0;
+
+            var rootFunction = this.Parse();
+
+            if (rootFunction == null)
+            {
+                return false;
+            }
+
+            if (rootFunction.Name == "tcp")
+            {
+                if (!(rootFunction.Arguments.Count == 2
+                    && rootFunction.Arguments[0] is FunctionElement hostFunction
+                    && rootFunction.Arguments[1] is ConstantElement portConstant))
+                {
+                    return false;
+                }
+
+                if (hostFunction.Name == "ip4")
+                {
+                    if (!(hostFunction.Arguments.Count == 1
+                        && hostFunction.Arguments[0] is ConstantElement ipAddressConstant))
+                    {
+                        return false;
+                    }
+
+                    if (!IPAddress.TryParse(ipAddressConstant.Text, out var temp)
+                        || temp.AddressFamily != AddressFamily.InterNetwork)
+                    {
+                        return false;
+                    }
+
+                    ipAddress = temp;
+                }
+                else if (hostFunction.Name == "ip6")
+                {
+                    if (!(hostFunction.Arguments.Count == 1
+                        && hostFunction.Arguments[0] is ConstantElement ipAddressConstant))
+                    {
+                        return false;
+                    }
+
+                    if (!IPAddress.TryParse(ipAddressConstant.Text, out var temp)
+                        || temp.AddressFamily != AddressFamily.InterNetworkV6)
+                    {
+                        return false;
+                    }
+
+                    ipAddress = temp;
+                }
+                else if (nameResolving && hostFunction.Name == "dns")
+                {
+                    if (!(hostFunction.Arguments.Count == 1
+                        && hostFunction.Arguments[0] is ConstantElement hostnameConstant))
+                    {
+                        return false;
+                    }
+
+                    try
+                    {
+                        var hostEntry = Dns.GetHostEntry(hostnameConstant.Text);
+
+                        if (hostEntry.AddressList.Length == 0)
+                        {
+                            return false;
+                        }
+
+                        ipAddress = hostEntry.AddressList[0];
+                    }
+                    catch (Exception e)
+                    {
+                        _logger.Error(e);
+                        return false;
+                    }
+                }
+                else
+                {
+                    return false;
+                }
+
+                if (!ushort.TryParse(portConstant.Text, out port))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        private FunctionElement Parse()
+        {
+            return Parser.Parse(this.Value);
+        }
+
+        private static class Parser
         {
             private static readonly Parser<string> _stringLiteralParser =
-                from name in Sprache.Parse.Char(x => ('0' <= x && x <= '9') || ('A' <= x && x <= 'Z') || ('a' <= x && x <= 'z') || x == '_', "Name").AtLeastOnce().Text()
+                from name in Sprache.Parse.CharExcept(x => x == ',' || x == '(' || x == ')', "Name").AtLeastOnce().TokenWithSkipSpace().Text()
                 select name;
 
             private static readonly Parser<string> _quotedStringLiteralParser =
@@ -49,7 +170,7 @@ namespace Omnius.Core.Network
             }
         }
 
-        public sealed class FunctionElement
+        private sealed class FunctionElement
         {
             public FunctionElement(string name, object[] arguments)
             {
@@ -59,14 +180,9 @@ namespace Omnius.Core.Network
 
             public string Name { get; }
             public IReadOnlyList<object> Arguments { get; }
-
-            public override string ToString()
-            {
-                return $"{this.Name}({string.Join(',', this.Arguments)})";
-            }
         }
 
-        public sealed class ConstantElement
+        private sealed class ConstantElement
         {
             public ConstantElement(string text)
             {

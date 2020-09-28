@@ -1,3 +1,5 @@
+using Omnius.Core.Cryptography;
+
 #nullable enable
 
 namespace Omnius.Core.Network.Connections.Secure
@@ -13,7 +15,4 @@ namespace Omnius.Core.Network.Connections.Secure
         Unknown = 0,
         Version1 = 1,
     }
-
-
-
 }

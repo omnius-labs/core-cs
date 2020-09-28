@@ -9,7 +9,7 @@ using Xunit;
 
 namespace Omnius.Core.Network.Connections
 {
-    public class BaseConnectionTests
+    public class BaseConnectionTest
     {
         [Fact]
         public async Task RandomSendAndReceiveTest()

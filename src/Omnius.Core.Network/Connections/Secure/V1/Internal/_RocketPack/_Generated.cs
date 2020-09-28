@@ -29,7 +29,6 @@ namespace Omnius.Core.Network.Connections.Secure.V1.Internal
         None = 0,
         Password = 1,
     }
-
     internal sealed partial class ProfileMessage : global::Omnius.Core.RocketPack.IRocketPackObject<global::Omnius.Core.Network.Connections.Secure.V1.Internal.ProfileMessage>
     {
         public static global::Omnius.Core.RocketPack.IRocketPackObjectFormatter<global::Omnius.Core.Network.Connections.Secure.V1.Internal.ProfileMessage> Formatter => global::Omnius.Core.RocketPack.IRocketPackObject<global::Omnius.Core.Network.Connections.Secure.V1.Internal.ProfileMessage>.Formatter;
@@ -505,6 +504,4 @@ namespace Omnius.Core.Network.Connections.Secure.V1.Internal
             }
         }
     }
-
-
 }

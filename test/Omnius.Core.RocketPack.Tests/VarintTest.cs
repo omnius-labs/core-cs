@@ -4,7 +4,7 @@ using Xunit;
 
 namespace Omnius.Core.RocketPack
 {
-    public class VarintTests
+    public class VarintTest
     {
         [Fact]
         public void RandomTest()

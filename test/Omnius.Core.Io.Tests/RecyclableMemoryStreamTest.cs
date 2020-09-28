@@ -2,7 +2,7 @@ using Xunit;
 
 namespace Omnius.Core.Io
 {
-    public class RecyclableMemoryStreamTests
+    public class RecyclableMemoryStreamTest
     {
         [Fact]
         public void RandomReadAndWriteTest()

@@ -3,7 +3,7 @@ using Xunit;
 
 namespace Omnius.Core.Extensions
 {
-    public class StringExtensionTests
+    public class StringExtensionTest
     {
         [Fact]
         public void ContainsTest()

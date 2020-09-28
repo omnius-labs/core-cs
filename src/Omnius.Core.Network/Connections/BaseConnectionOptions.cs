@@ -1,9 +1,9 @@
 namespace Omnius.Core.Network.Connections
 {
-    public sealed class BaseConnectionOptions
+    public record BaseConnectionOptions
     {
-        public int MaxSendByteCount { get; set; } = 1024 * 64;
-        public int MaxReceiveByteCount { get; set; } = 1024 * 64;
-        public IBytesPool? BytesPool { get; set; }
+        public int MaxSendByteCount = 1024 * 64;
+        public int MaxReceiveByteCount = 1024 * 64;
+        public IBytesPool? BytesPool;
     }
 }

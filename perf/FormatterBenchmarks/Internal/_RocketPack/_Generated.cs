@@ -3,7 +3,6 @@
 
 namespace FormatterBenchmarks.Internal
 {
-
     internal sealed partial class RocketPack_BytesElementsList : global::Omnius.Core.RocketPack.IRocketPackObject<global::FormatterBenchmarks.Internal.RocketPack_BytesElementsList>
     {
         public static global::Omnius.Core.RocketPack.IRocketPackObjectFormatter<global::FormatterBenchmarks.Internal.RocketPack_BytesElementsList> Formatter => global::Omnius.Core.RocketPack.IRocketPackObject<global::FormatterBenchmarks.Internal.RocketPack_BytesElementsList>.Formatter;
@@ -944,6 +943,4 @@ namespace FormatterBenchmarks.Internal
             }
         }
     }
-
-
 }

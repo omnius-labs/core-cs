@@ -3,7 +3,7 @@ using Xunit;
 
 namespace Omnius.Core
 {
-    public class BufferPoolTests
+    public class BufferPoolTest
     {
         [Fact]
         public void RentAndDisposeTest()

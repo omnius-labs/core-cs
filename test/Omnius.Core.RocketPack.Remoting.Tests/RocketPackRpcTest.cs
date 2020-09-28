@@ -7,7 +7,7 @@ using Xunit;
 
 namespace Omnius.Core.RocketPack.Remoting
 {
-    public class RocketPackRpcTests
+    public class RocketPackRpcTest
     {
         [Fact]
         public async Task SimpleFunctionTest()
@@ -27,13 +27,13 @@ namespace Omnius.Core.RocketPack.Remoting
             using var senderStream = await senderConnectTask;
             using var receiverStream = await receiverAcceptTask;
 
-            static async ValueTask<RpcResult> square(RpcParam param, CancellationToken _) => new RpcResult(param.P1 * param.P1);
+            static async ValueTask<TestResult> square(TestParam param, CancellationToken _) => new TestResult(param.Value * param.Value);
 
-            var listenTask = receiverStream.ListenFunctionAsync<RpcParam, RpcResult>(square);
-            var result = await senderStream.CallFunctionAsync<RpcParam, RpcResult>(new RpcParam(11));
+            var listenTask = receiverStream.ListenFunctionAsync<TestParam, TestResult>(square);
+            var result = await senderStream.CallFunctionAsync<TestParam, TestResult>(new TestParam(11));
             await listenTask;
 
-            Assert.Equal(121, result.R1);
+            Assert.Equal(121, result.Value);
         }
     }
 }

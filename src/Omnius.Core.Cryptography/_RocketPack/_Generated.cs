@@ -23,7 +23,6 @@ namespace Omnius.Core.Cryptography
         Unknown = 0,
         Sha2_256 = 1,
     }
-
     public readonly partial struct OmniHash : global::Omnius.Core.RocketPack.IRocketPackObject<global::Omnius.Core.Cryptography.OmniHash>
     {
         public static global::Omnius.Core.RocketPack.IRocketPackObjectFormatter<global::Omnius.Core.Cryptography.OmniHash> Formatter => global::Omnius.Core.RocketPack.IRocketPackObject<global::Omnius.Core.Cryptography.OmniHash>.Formatter;
@@ -1075,6 +1074,4 @@ namespace Omnius.Core.Cryptography
             }
         }
     }
-
-
 }

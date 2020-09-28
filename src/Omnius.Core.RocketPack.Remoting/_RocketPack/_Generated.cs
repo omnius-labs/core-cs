@@ -3,7 +3,6 @@
 
 namespace Omnius.Core.RocketPack.Remoting
 {
-
     public sealed partial class RocketPackRpcErrorMessage : global::Omnius.Core.RocketPack.IRocketPackObject<global::Omnius.Core.RocketPack.Remoting.RocketPackRpcErrorMessage>
     {
         public static global::Omnius.Core.RocketPack.IRocketPackObjectFormatter<global::Omnius.Core.RocketPack.Remoting.RocketPackRpcErrorMessage> Formatter => global::Omnius.Core.RocketPack.IRocketPackObject<global::Omnius.Core.RocketPack.Remoting.RocketPackRpcErrorMessage>.Formatter;
@@ -143,6 +142,4 @@ namespace Omnius.Core.RocketPack.Remoting
             }
         }
     }
-
-
 }

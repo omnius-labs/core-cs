@@ -4,7 +4,7 @@ using Xunit;
 
 namespace Omnius.Core.Extensions
 {
-    public class BitArrayExtensionTests
+    public class BitArrayExtensionTest
     {
         [Fact]
         public void GetCardinalityTest()

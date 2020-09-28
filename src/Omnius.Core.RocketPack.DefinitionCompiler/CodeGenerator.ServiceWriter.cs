@@ -149,15 +149,15 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                 b.WriteLine("{");
                 using (b.Indent())
                 {
-                    b.WriteLine($"private readonly { serviceDefinition.CSharpInterfaceFullName } _impl;");
+                    b.WriteLine($"private readonly { serviceDefinition.CSharpInterfaceFullName } _service;");
                     b.WriteLine($"private readonly { GenerateTypeFullName("IConnection") } _connection;");
                     b.WriteLine($"private readonly { GenerateTypeFullName("IBytesPool") } _bytesPool;");
                     b.WriteLine($"private readonly { GenerateTypeFullName("RocketPackRpc") } _rpc;");
-                    b.WriteLine($"public { className }({ serviceDefinition.CSharpInterfaceFullName } impl, { GenerateTypeFullName("IConnection") } connection, { GenerateTypeFullName("IBytesPool") } bytesPool)");
+                    b.WriteLine($"public { className }({ serviceDefinition.CSharpInterfaceFullName } service, { GenerateTypeFullName("IConnection") } connection, { GenerateTypeFullName("IBytesPool") } bytesPool)");
                     b.WriteLine("{");
                     using (b.Indent())
                     {
-                        b.WriteLine("_impl = impl;");
+                        b.WriteLine("_service = service;");
                         b.WriteLine("_connection = connection;");
                         b.WriteLine("_bytesPool = bytesPool;");
                         b.WriteLine($"_rpc = new { GenerateTypeFullName("RocketPackRpc") }(_connection, _bytesPool);");
@@ -241,15 +241,15 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                 b.WriteLine("{");
                 using (b.Indent())
                 {
-                    b.WriteLine($"private readonly { serviceDefinition.CSharpInterfaceFullName } _impl;");
+                    b.WriteLine($"private readonly { serviceDefinition.CSharpInterfaceFullName } _service;");
                     b.WriteLine($"private readonly { GenerateTypeFullName("IConnection") } _connection;");
                     b.WriteLine($"private readonly { GenerateTypeFullName("IBytesPool") } _bytesPool;");
                     b.WriteLine($"private readonly { GenerateTypeFullName("RocketPackRpc") } _rpc;");
-                    b.WriteLine($"public { className }({ serviceDefinition.CSharpInterfaceFullName } impl, { GenerateTypeFullName("IConnection") } connection, { GenerateTypeFullName("IBytesPool") } bytesPool)");
+                    b.WriteLine($"public { className }({ serviceDefinition.CSharpInterfaceFullName } service, { GenerateTypeFullName("IConnection") } connection, { GenerateTypeFullName("IBytesPool") } bytesPool)");
                     b.WriteLine("{");
                     using (b.Indent())
                     {
-                        b.WriteLine("_impl = impl;");
+                        b.WriteLine("_service = service;");
                         b.WriteLine("_connection = connection;");
                         b.WriteLine("_bytesPool = bytesPool;");
                         b.WriteLine($"_rpc = new { GenerateTypeFullName("RocketPackRpc") }(_connection, _bytesPool);");
@@ -291,7 +291,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                                             {
                                                 using (b.Indent())
                                                 {
-                                                    b.WriteLine($"await stream.ListenFunctionAsync<{ inTypeObjectDef.CSharpFullName }, { outTypeObjectDef.CSharpFullName }>(_impl.{ func.CSharpFunctionName }, cancellationToken);");
+                                                    b.WriteLine($"await stream.ListenFunctionAsync<{ inTypeObjectDef.CSharpFullName }, { outTypeObjectDef.CSharpFullName }>(_service.{ func.CSharpFunctionName }, cancellationToken);");
                                                 }
                                             }
                                         }
@@ -301,7 +301,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                                             {
                                                 using (b.Indent())
                                                 {
-                                                    b.WriteLine($"await stream.ListenFunctionAsync<{ outTypeObjectDef.CSharpFullName }>(_impl.{ func.CSharpFunctionName }, cancellationToken);");
+                                                    b.WriteLine($"await stream.ListenFunctionAsync<{ outTypeObjectDef.CSharpFullName }>(_service.{ func.CSharpFunctionName }, cancellationToken);");
                                                 }
                                             }
                                         }
@@ -311,7 +311,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                                             {
                                                 using (b.Indent())
                                                 {
-                                                    b.WriteLine($"await stream.ListenActionAsync<{ inTypeObjectDef.CSharpFullName }>(_impl.{ func.CSharpFunctionName }, cancellationToken);");
+                                                    b.WriteLine($"await stream.ListenActionAsync<{ inTypeObjectDef.CSharpFullName }>(_service.{ func.CSharpFunctionName }, cancellationToken);");
                                                 }
                                             }
                                         }
@@ -320,7 +320,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                                             {
                                                 using (b.Indent())
                                                 {
-                                                    b.WriteLine($"await stream.ListenActionAsync(_impl.{ func.CSharpFunctionName }, cancellationToken);");
+                                                    b.WriteLine($"await stream.ListenActionAsync(_service.{ func.CSharpFunctionName }, cancellationToken);");
                                                 }
                                             }
                                         }

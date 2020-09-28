@@ -4,24 +4,20 @@ namespace Omnius.Core.Network
     {
         private static readonly NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
 
-        public static implicit operator string(OmniAddress omniAddress)
+        public static explicit operator string?(OmniAddress? omniAddress)
         {
-            return omniAddress.Value;
+            return omniAddress?.Value;
         }
 
-        public static implicit operator OmniAddress(string text)
+        public static explicit operator OmniAddress?(string? text)
         {
+            if (text is null) return null;
             return new OmniAddress(text);
         }
 
         public override string ToString()
         {
             return this.Value;
-        }
-
-        public FunctionElement Parse()
-        {
-            return Parser.Parse(this.Value);
         }
     }
 }

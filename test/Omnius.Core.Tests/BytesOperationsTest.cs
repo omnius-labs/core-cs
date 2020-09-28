@@ -5,7 +5,7 @@ using Xunit;
 
 namespace Omnius.Core
 {
-    public class BytesOperationsTests
+    public class BytesOperationsTest
     {
         [Fact]
         public void CopyTest()

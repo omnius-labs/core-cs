@@ -3,25 +3,41 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
+using System.Text.Json;
 using Omnius.Core.Serialization;
 using Omnius.Core.Serialization.Extensions;
 using Xunit;
 
 namespace Omnius.Core.Cryptography
 {
-    public class Hmac_Sha2_256_Tests
+    public class Hmac_Sha2_256_Test
     {
+        public record TestCase
+        {
+            public string? Key { get; set; }
+            public string? Value { get; set; }
+            public string? Result { get; set; }
+        }
+
         [Fact]
         public void ComputeHashTest()
         {
-            // http://tools.ietf.org/html/rfc4868#section-2.7.1
-            var base16 = new Base16(ConvertStringCase.Lower);
+            var serializeOptions = new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            };
+            var caseList = JsonSerializer.Deserialize<TestCase[]>(File.ReadAllText("./Data/Hmac_Sha2_256.json"), serializeOptions);
 
-            var key = base16.StringToBytes("0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b");
-            var value = base16.StringToBytes("4869205468657265");
-            var result = base16.BytesToString(Hmac_Sha2_256.ComputeHash(value, key));
+            foreach (var c in caseList!)
+            {
+                var base16 = new Base16(ConvertStringCase.Lower);
 
-            Assert.Equal("b0344c61d8db38535ca8afceaf0bf12b881dc200c9833da726e9376c2e32cff7", result);
+                var key = base16.StringToBytes(c.Key!);
+                var value = base16.StringToBytes(c.Value!);
+                var result = base16.BytesToString(Hmac_Sha2_256.ComputeHash(value, key));
+
+                Assert.Equal(c.Result, result);
+            }
         }
 
         [Fact]

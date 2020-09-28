@@ -3,7 +3,6 @@
 
 namespace Omnius.Core.Network
 {
-
     public sealed partial class OmniAddress : global::Omnius.Core.RocketPack.IRocketPackObject<global::Omnius.Core.Network.OmniAddress>
     {
         public static global::Omnius.Core.RocketPack.IRocketPackObjectFormatter<global::Omnius.Core.Network.OmniAddress> Formatter => global::Omnius.Core.RocketPack.IRocketPackObject<global::Omnius.Core.Network.OmniAddress>.Formatter;
@@ -108,6 +107,4 @@ namespace Omnius.Core.Network
             }
         }
     }
-
-
 }

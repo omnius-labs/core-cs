@@ -5,7 +5,7 @@ using Xunit;
 
 namespace Omnius.Core.Extensions
 {
-    public class WaitHandleExtensionTests
+    public class WaitHandleExtensionTest
     {
         [Fact]
         public void WaitOneTest()

@@ -5,7 +5,7 @@ using Xunit;
 
 namespace Omnius.Core.Network.Upnp
 {
-    public class UpnpClientTests
+    public class UpnpClientTest
     {
         [Fact]
         public async Task GetExternalIpAddressTest()

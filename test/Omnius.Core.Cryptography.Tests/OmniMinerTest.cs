@@ -7,7 +7,7 @@ using Xunit;
 
 namespace Omnius.Core.Cryptography
 {
-    public class OmniMinerTests
+    public class OmniMinerTest
     {
         [Fact]
         public async Task SimpleTest()
