@@ -11,7 +11,6 @@ namespace Omnius.Core.Network.Connections
     {
         private readonly ICap _cap;
         private readonly BaseConnectionDispatcher _dispatcher;
-        private readonly int _maxSendByteCount;
         private readonly int _maxReceiveByteCount;
         private readonly IBytesPool _bytesPool;
 
@@ -43,7 +42,6 @@ namespace Omnius.Core.Network.Connections
 
             _cap = cap;
             _dispatcher = dispatcher;
-            _maxSendByteCount = Math.Max(256, option.MaxSendByteCount);
             _maxReceiveByteCount = Math.Max(256, option.MaxReceiveByteCount);
             _bytesPool = option.BytesPool ?? BytesPool.Shared;
 

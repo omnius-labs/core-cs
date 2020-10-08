@@ -30,7 +30,6 @@ namespace Omnius.Core.Network.Connections
 
             var options = new BaseConnectionOptions()
             {
-                MaxSendByteCount = 1024 * 1024 * 256,
                 MaxReceiveByteCount = 1024 * 1024 * 256,
                 BytesPool = BytesPool.Shared,
             };

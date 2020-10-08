@@ -94,8 +94,8 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                 foreach (var serviceDefinition in _rootDefinition.Services)
                 {
                     this.Write_Interface(b, serviceDefinition);
-                    this.Write_Sender(b, serviceDefinition);
-                    this.Write_Receiver(b, serviceDefinition);
+                    this.Write_Client(b, serviceDefinition);
+                    this.Write_Server(b, serviceDefinition);
                 }
             }
 
@@ -142,9 +142,9 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                 b.WriteLine("}");
             }
 
-            public void Write_Sender(CodeBuilder b, ServiceDefinition serviceDefinition)
+            public void Write_Client(CodeBuilder b, ServiceDefinition serviceDefinition)
             {
-                var className = serviceDefinition.Name + "Sender";
+                var className = serviceDefinition.Name + "Client";
                 b.WriteLine($"{_accessLevel} class { className } : { GenerateTypeFullName("AsyncDisposableBase") }, { serviceDefinition.CSharpInterfaceFullName }");
                 b.WriteLine("{");
                 using (b.Indent())
@@ -171,7 +171,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                     }
                     b.WriteLine("}");
 
-                    foreach (var (index, func) in serviceDefinition.Elements.Select((n, i) => (i, n)))
+                    foreach (var (index, func) in serviceDefinition.Elements.Select((n, i) => (i + 1, n)))
                     {
                         if (func.InType is not null && func.OutType is not null)
                         {
@@ -234,9 +234,9 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                 b.WriteLine("}");
             }
 
-            public void Write_Receiver(CodeBuilder b, ServiceDefinition serviceDefinition)
+            public void Write_Server(CodeBuilder b, ServiceDefinition serviceDefinition)
             {
-                var className = serviceDefinition.Name + "Receiver";
+                var className = serviceDefinition.Name + "Server";
                 b.WriteLine($"{_accessLevel} class { className } : { GenerateTypeFullName("AsyncDisposableBase") }");
                 b.WriteLine("{");
                 using (b.Indent())
@@ -278,7 +278,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                             b.WriteLine("{");
                             using (b.Indent())
                             {
-                                foreach (var (index, func) in serviceDefinition.Elements.Select((n, i) => (i, n)))
+                                foreach (var (index, func) in serviceDefinition.Elements.Select((n, i) => (i + 1, n)))
                                 {
                                     b.WriteLine($"case { index }:");
                                     using (b.Indent())
