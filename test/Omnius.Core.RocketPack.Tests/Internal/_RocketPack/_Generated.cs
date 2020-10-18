@@ -1448,7 +1448,7 @@ namespace Omnius.Core.RocketPack.Tests.Internal
             {
                 this.X23 = null;
             }
-            if(x24 != null)
+            if (x24 != null)
             {
                 this.X24 = new global::Omnius.Core.Collections.ReadOnlyDictionarySlim<byte, string>(x24);
             }
@@ -1486,14 +1486,14 @@ namespace Omnius.Core.RocketPack.Tests.Internal
                 if (x20 != default) ___h.Add(x20.GetHashCode());
                 if (!(x21 is null) && !x21.Value.IsEmpty) ___h.Add(global::Omnius.Core.Helpers.ObjectHelper.GetHashCode(x21.Value.Span));
                 if (!(x22 is null) && !x22.Memory.IsEmpty) ___h.Add(global::Omnius.Core.Helpers.ObjectHelper.GetHashCode(x22.Memory.Span));
-                if(x23 != null)
+                if (x23 != null)
                 {
                     foreach (var n in x23)
                     {
                         if (n != default) ___h.Add(n.GetHashCode());
                     }
                 }
-                if(x24 != null)
+                if (x24 != null)
                 {
                     foreach (var n in x24)
                     {
@@ -3034,7 +3034,7 @@ namespace Omnius.Core.RocketPack.Tests.Internal
             {
                 this.X23 = null;
             }
-            if(x24 != null)
+            if (x24 != null)
             {
                 this.X24 = new global::Omnius.Core.Collections.ReadOnlyDictionarySlim<byte, string>(x24);
             }
@@ -3073,14 +3073,14 @@ namespace Omnius.Core.RocketPack.Tests.Internal
                 if (x20 != default) ___h.Add(x20.GetHashCode());
                 if (!(x21 is null) && !x21.Value.IsEmpty) ___h.Add(global::Omnius.Core.Helpers.ObjectHelper.GetHashCode(x21.Value.Span));
                 if (!(x22 is null) && !x22.Memory.IsEmpty) ___h.Add(global::Omnius.Core.Helpers.ObjectHelper.GetHashCode(x22.Memory.Span));
-                if(x23 != null)
+                if (x23 != null)
                 {
                     foreach (var n in x23)
                     {
                         if (n != default) ___h.Add(n.GetHashCode());
                     }
                 }
-                if(x24 != null)
+                if (x24 != null)
                 {
                     foreach (var n in x24)
                     {
