@@ -94,9 +94,21 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                 foreach (var serviceDefinition in _rootDefinition.Services)
                 {
                     this.Write_Interface(b, serviceDefinition);
-                    this.Write_Client(b, serviceDefinition);
-                    this.Write_Server(b, serviceDefinition);
+                    this.Write_ClientAndServerClass(b, serviceDefinition);
                 }
+            }
+
+            private void Write_ClientAndServerClass(CodeBuilder b, ServiceDefinition serviceDefinition)
+            {
+                var className = serviceDefinition.Name;
+                b.WriteLine($"{_accessLevel} class { className }");
+                b.WriteLine("{");
+                using (b.Indent())
+                {
+                    this.Write_ClientClass(b, serviceDefinition);
+                    this.Write_ServerClass(b, serviceDefinition);
+                }
+                b.WriteLine("}");
             }
 
             public void Write_Interface(CodeBuilder b, ServiceDefinition serviceDefinition)
@@ -113,27 +125,27 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                             if (this.FindDefinition(func.InType) is ObjectDefinition inTypeObjectDef
                                 && this.FindDefinition(func.OutType) is ObjectDefinition outTypeObjectDef)
                             {
-                                b.WriteLine($"{GenerateTypeFullName("ValueTask<>", outTypeObjectDef.CSharpFullName)} {func.CSharpFunctionName}({inTypeObjectDef.CSharpFullName} param, {GenerateTypeFullName("CancellationToken")} cancellationToken);");
+                                b.WriteLine($"{GenerateTypeFullName("ValueTask<>", outTypeObjectDef.CSharpFullName)} {func.CSharpFunctionName}({inTypeObjectDef.CSharpFullName} param, {GenerateTypeFullName("CancellationToken")} cancellationToken = default);");
                             }
                         }
                         else if (func.InType is null && func.OutType is not null)
                         {
                             if (this.FindDefinition(func.OutType) is ObjectDefinition outTypeObjectDef)
                             {
-                                b.WriteLine($"{GenerateTypeFullName("ValueTask<>", outTypeObjectDef.CSharpFullName)} {func.CSharpFunctionName}({GenerateTypeFullName("CancellationToken")} cancellationToken);");
+                                b.WriteLine($"{GenerateTypeFullName("ValueTask<>", outTypeObjectDef.CSharpFullName)} {func.CSharpFunctionName}({GenerateTypeFullName("CancellationToken")} cancellationToken = default);");
                             }
                         }
                         else if (func.InType is not null && func.OutType is null)
                         {
                             if (this.FindDefinition(func.InType) is ObjectDefinition inTypeObjectDef)
                             {
-                                b.WriteLine($"{GenerateTypeFullName("ValueTask")} {func.CSharpFunctionName}({inTypeObjectDef.CSharpFullName} param, {GenerateTypeFullName("CancellationToken")} cancellationToken);");
+                                b.WriteLine($"{GenerateTypeFullName("ValueTask")} {func.CSharpFunctionName}({inTypeObjectDef.CSharpFullName} param, {GenerateTypeFullName("CancellationToken")} cancellationToken = default);");
                             }
                         }
                         else if (func.InType is null && func.OutType is null)
                         {
                             {
-                                b.WriteLine($"{GenerateTypeFullName("ValueTask")} {func.CSharpFunctionName}({GenerateTypeFullName("CancellationToken")} cancellationToken);");
+                                b.WriteLine($"{GenerateTypeFullName("ValueTask")} {func.CSharpFunctionName}({GenerateTypeFullName("CancellationToken")} cancellationToken = default);");
                             }
                         }
                     }
@@ -142,9 +154,9 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                 b.WriteLine("}");
             }
 
-            public void Write_Client(CodeBuilder b, ServiceDefinition serviceDefinition)
+            public void Write_ClientClass(CodeBuilder b, ServiceDefinition serviceDefinition)
             {
-                var className = serviceDefinition.Name + "Client";
+                var className = "Client";
                 b.WriteLine($"{_accessLevel} class { className } : { GenerateTypeFullName("AsyncDisposableBase") }, { serviceDefinition.CSharpInterfaceFullName }");
                 b.WriteLine("{");
                 using (b.Indent())
@@ -234,9 +246,9 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                 b.WriteLine("}");
             }
 
-            public void Write_Server(CodeBuilder b, ServiceDefinition serviceDefinition)
+            public void Write_ServerClass(CodeBuilder b, ServiceDefinition serviceDefinition)
             {
-                var className = serviceDefinition.Name + "Server";
+                var className = "Server";
                 b.WriteLine($"{_accessLevel} class { className } : { GenerateTypeFullName("AsyncDisposableBase") }");
                 b.WriteLine("{");
                 using (b.Indent())
