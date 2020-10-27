@@ -11,15 +11,6 @@
     <GenerateFullPaths>true</GenerateFullPaths>
   </PropertyGroup>
 
-  <!--
-  <PropertyGroup>
-    <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
-    <RestoreLockedMode>true</RestoreLockedMode>
-    <NoWarn>NU1603</NoWarn>
-    <DisableImplicitNuGetFallbackFolder>true</DisableImplicitNuGetFallbackFolder>
-  </PropertyGroup>
-  -->
-
   <PropertyGroup>
     <RootNamespace>$(ProjectName)</RootNamespace>
     <Title>$(ProjectName)</Title>
@@ -68,6 +59,20 @@
   <PropertyGroup Condition=" '$(NativeDepsPlatform)' == 'Linux' ">
     <BaseIntermediateOutputPath Condition=" '$(BaseIntermediateOutputPath)' == '' ">$(MSBuildThisFileDirectory)tmp\obj\linux\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
     <BaseOutputPath Condition=" '$(BaseOutputPath)' == '' ">$(MSBuildThisFileDirectory)tmp\bin\linux\$(MSBuildProjectName)\</BaseOutputPath>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+    <RestoreLockedMode>true</RestoreLockedMode>
+    <NoWarn>NU1603</NoWarn>
+    <DisableImplicitNuGetFallbackFolder>true</DisableImplicitNuGetFallbackFolder>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(RuntimeIdentifier)' == '' ">
+    <NuGetLockFilePath>packages.lock.any.json</NuGetLockFilePath>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(RuntimeIdentifier)' != '' ">
+    <NuGetLockFilePath>packages.lock.$(RuntimeIdentifier).json</NuGetLockFilePath>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
