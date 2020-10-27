@@ -7,7 +7,7 @@
     <Nullable>enable</Nullable>
     <IsPackable>false</IsPackable>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <NoWarn>CS1591,CS1998,NU5105</NoWarn>
+    <NoWarn>CS1591,CS1998,NU5105,NU1603</NoWarn>
     <GenerateFullPaths>true</GenerateFullPaths>
   </PropertyGroup>
 
@@ -64,7 +64,6 @@
   <PropertyGroup>
     <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
     <RestoreLockedMode>true</RestoreLockedMode>
-    <NoWarn>NU1603</NoWarn>
     <DisableImplicitNuGetFallbackFolder>true</DisableImplicitNuGetFallbackFolder>
   </PropertyGroup>
 
