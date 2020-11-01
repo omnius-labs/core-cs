@@ -10,8 +10,6 @@ namespace Omnius.Core.Extensions
         /// <summary>
         /// Setされたフラグの数を取得します。
         /// </summary>
-        /// <param name="bitArray"></param>
-        /// <returns></returns>
         public static int GetCardinality(this BitArray bitArray)
         {
             int intsLength = (bitArray.Count >> 5) + 1;

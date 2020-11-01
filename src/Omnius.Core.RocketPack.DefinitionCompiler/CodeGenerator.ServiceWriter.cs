@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Omnius.Core.RocketPack.DefinitionCompiler.Models;
 
-
 namespace Omnius.Core.RocketPack.DefinitionCompiler
 {
     internal partial class CodeGenerator
@@ -23,14 +22,23 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                 _accessLevel = accessLevelOption?.Value as string ?? "public";
             }
 
+            public void Write(CodeWriter b)
+            {
+                foreach (var serviceDefinition in _rootDefinition.Services)
+                {
+                    this.Write_Interface(b, serviceDefinition);
+                    this.Write_ClientAndServerClass(b, serviceDefinition);
+                }
+            }
+
             private object? FindDefinition(CustomType customType)
             {
                 foreach (var definition in new[] { _rootDefinition }.Union(_externalDefinitions))
                 {
-                    var enumDefinitiom = definition.Enums.FirstOrDefault(m => m.Name == customType.TypeName);
-                    if (enumDefinitiom != null)
+                    var enumDefinition = definition.Enums.FirstOrDefault(m => m.Name == customType.TypeName);
+                    if (enumDefinition != null)
                     {
-                        return enumDefinitiom;
+                        return enumDefinition;
                     }
 
                     var objectDefinition = definition.Objects.FirstOrDefault(m => m.Name == customType.TypeName);
@@ -43,75 +51,22 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                 return null;
             }
 
-            private static string GenerateTypeFullName(string name, params string[] types)
-            {
-                var result = name switch
-                {
-                    "AsyncDisposableBase" => "Omnius.Core.AsyncDisposableBase",
-                    "ArgumentNullException" => "System.ArgumentNullException",
-                    "ArgumentOutOfRangeException" => "System.ArgumentOutOfRangeException",
-                    "Array" => "System.Array",
-                    "BytesOperations" => "Omnius.Core.BytesOperations",
-                    "CancellationToken" => $"System.Threading.CancellationToken",
-                    "CollectionHelper" => "Omnius.Core.Helpers.CollectionHelper",
-                    "Dictionary<,>" => $"System.Collections.Generic.Dictionary<{types[0]}, {types[1]}>",
-                    "FormatException" => "System.FormatException",
-                    "HashCode" => "System.HashCode",
-                    "IBufferWriter<>" => $"System.Buffers.IBufferWriter<{types[0]}>",
-                    "IBytesPool" => "Omnius.Core.IBytesPool",
-                    "IConnection" => $"Omnius.Core.Network.Connections.IConnection",
-                    "IDisposable" => "System.IDisposable",
-                    "IMemoryOwner<>" => $"System.Buffers.IMemoryOwner<{types[0]}>",
-                    "IRocketPackFormatter<>" => $"Omnius.Core.RocketPack.IRocketPackFormatter<{types[0]}>",
-                    "IRocketPackObject<>" => $"Omnius.Core.RocketPack.IRocketPackObject<{types[0]}>",
-                    "Lazy<>" => $"System.Lazy<{types[0]}>",
-                    "Memory<>" => $"System.Memory<{types[0]}>",
-                    "MemoryOwner<>" => $"Omnius.Core.MemoryOwner<{types[0]}>",
-                    "ObjectHelper" => "Omnius.Core.Helpers.ObjectHelper",
-                    "ReadOnlyDictionarySlim<,>" => $"Omnius.Core.Collections.ReadOnlyDictionarySlim<{types[0]}, {types[1]}>",
-                    "ReadOnlyListSlim<>" => $"Omnius.Core.Collections.ReadOnlyListSlim<{types[0]}>",
-                    "ReadOnlyMemory<>" => $"System.ReadOnlyMemory<{types[0]}>",
-                    "ReadOnlySequence<>" => $"System.Buffers.ReadOnlySequence<{types[0]}>",
-                    "ReadOnlySpan<>" => $"System.ReadOnlySpan<{types[0]}>",
-                    "RocketPackMessageBase<>" => $"Omnius.Core.RocketPack.RocketPackMessageBase<{types[0]}>",
-                    "RocketPackReader" => "Omnius.Core.RocketPack.RocketPackReader",
-                    "RocketPackRpc" => $"Omnius.Core.RocketPack.Remoting.RocketPackRpc",
-                    "RocketPackWriter" => "Omnius.Core.RocketPack.RocketPackWriter",
-                    "Span<>" => $"System.Span<{types[0]}>",
-                    "Task" => $"System.Threading.Tasks.Task",
-                    "Task<>" => $"System.Threading.Tasks.Task<{types[0]}>",
-                    "Timestamp" => "Omnius.Core.RocketPack.Timestamp",
-                    "ValueTask" => $"System.Threading.Tasks.ValueTask",
-                    "ValueTask<>" => $"System.Threading.Tasks.ValueTask<{types[0]}>",
-                    _ => throw new InvalidOperationException(name)
-                };
-
-                return "global::" + result;
-            }
-
-            public void Write(CodeBuilder b)
-            {
-                foreach (var serviceDefinition in _rootDefinition.Services)
-                {
-                    this.Write_Interface(b, serviceDefinition);
-                    this.Write_ClientAndServerClass(b, serviceDefinition);
-                }
-            }
-
-            private void Write_ClientAndServerClass(CodeBuilder b, ServiceDefinition serviceDefinition)
+            private void Write_ClientAndServerClass(CodeWriter b, ServiceDefinition serviceDefinition)
             {
                 var className = serviceDefinition.Name;
-                b.WriteLine($"{_accessLevel} class { className }");
+                b.WriteLine($"{_accessLevel} class {className}");
                 b.WriteLine("{");
+
                 using (b.Indent())
                 {
                     this.Write_ClientClass(b, serviceDefinition);
                     this.Write_ServerClass(b, serviceDefinition);
                 }
+
                 b.WriteLine("}");
             }
 
-            public void Write_Interface(CodeBuilder b, ServiceDefinition serviceDefinition)
+            private void Write_Interface(CodeWriter b, ServiceDefinition serviceDefinition)
             {
                 b.WriteLine($"{_accessLevel} interface {serviceDefinition.CSharpInterfaceName}");
                 b.WriteLine("{");
@@ -154,33 +109,38 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                 b.WriteLine("}");
             }
 
-            public void Write_ClientClass(CodeBuilder b, ServiceDefinition serviceDefinition)
+            private void Write_ClientClass(CodeWriter b, ServiceDefinition serviceDefinition)
             {
                 var className = "Client";
-                b.WriteLine($"{_accessLevel} class { className } : { GenerateTypeFullName("AsyncDisposableBase") }, { serviceDefinition.CSharpInterfaceFullName }");
+                b.WriteLine($"{_accessLevel} class {className} : {GenerateTypeFullName("AsyncDisposableBase")}, {serviceDefinition.CSharpInterfaceFullName}");
                 b.WriteLine("{");
+
                 using (b.Indent())
                 {
-                    b.WriteLine($"private readonly { serviceDefinition.CSharpInterfaceFullName } _service;");
-                    b.WriteLine($"private readonly { GenerateTypeFullName("IConnection") } _connection;");
-                    b.WriteLine($"private readonly { GenerateTypeFullName("IBytesPool") } _bytesPool;");
-                    b.WriteLine($"private readonly { GenerateTypeFullName("RocketPackRpc") } _rpc;");
-                    b.WriteLine($"public { className }({ serviceDefinition.CSharpInterfaceFullName } service, { GenerateTypeFullName("IConnection") } connection, { GenerateTypeFullName("IBytesPool") } bytesPool)");
+                    b.WriteLine($"private readonly {serviceDefinition.CSharpInterfaceFullName} _service;");
+                    b.WriteLine($"private readonly {GenerateTypeFullName("IConnection")} _connection;");
+                    b.WriteLine($"private readonly {GenerateTypeFullName("IBytesPool")} _bytesPool;");
+                    b.WriteLine($"private readonly {GenerateTypeFullName("RocketPackRpc")} _rpc;");
+                    b.WriteLine($"public {className}({serviceDefinition.CSharpInterfaceFullName} service, {GenerateTypeFullName("IConnection")} connection, {GenerateTypeFullName("IBytesPool")} bytesPool)");
                     b.WriteLine("{");
+
                     using (b.Indent())
                     {
                         b.WriteLine("_service = service;");
                         b.WriteLine("_connection = connection;");
                         b.WriteLine("_bytesPool = bytesPool;");
-                        b.WriteLine($"_rpc = new { GenerateTypeFullName("RocketPackRpc") }(_connection, _bytesPool);");
+                        b.WriteLine($"_rpc = new {GenerateTypeFullName("RocketPackRpc")}(_connection, _bytesPool);");
                     }
+
                     b.WriteLine("}");
                     b.WriteLine($"protected override async {GenerateTypeFullName("ValueTask")} OnDisposeAsync()");
                     b.WriteLine("{");
+
                     using (b.Indent())
                     {
                         b.WriteLine("await _rpc.DisposeAsync();");
                     }
+
                     b.WriteLine("}");
 
                     foreach (var (index, func) in serviceDefinition.Elements.Select((n, i) => (i + 1, n)))
@@ -192,11 +152,13 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                             {
                                 b.WriteLine($"public async {GenerateTypeFullName("ValueTask<>", outTypeObjectDef.CSharpFullName)} {func.CSharpFunctionName}({inTypeObjectDef.CSharpFullName} param, {GenerateTypeFullName("CancellationToken")} cancellationToken)");
                                 b.WriteLine("{");
+
                                 using (b.Indent())
                                 {
-                                    b.WriteLine($"using var stream = await _rpc.ConnectAsync({ index }, cancellationToken);");
-                                    b.WriteLine($"return await stream.CallFunctionAsync<{ inTypeObjectDef.CSharpFullName }, { outTypeObjectDef.CSharpFullName }>(param, cancellationToken);");
+                                    b.WriteLine($"using var stream = await _rpc.ConnectAsync({index}, cancellationToken);");
+                                    b.WriteLine($"return await stream.CallFunctionAsync<{inTypeObjectDef.CSharpFullName}, {outTypeObjectDef.CSharpFullName}>(param, cancellationToken);");
                                 }
+
                                 b.WriteLine("}");
                             }
                         }
@@ -206,11 +168,13 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                             {
                                 b.WriteLine($"public async {GenerateTypeFullName("ValueTask<>", outTypeObjectDef.CSharpFullName)} {func.CSharpFunctionName}({GenerateTypeFullName("CancellationToken")} cancellationToken)");
                                 b.WriteLine("{");
+
                                 using (b.Indent())
                                 {
-                                    b.WriteLine($"using var stream = await _rpc.ConnectAsync({ index }, cancellationToken);");
-                                    b.WriteLine($"return await stream.CallFunctionAsync<{ outTypeObjectDef.CSharpFullName }>(cancellationToken);");
+                                    b.WriteLine($"using var stream = await _rpc.ConnectAsync({index}, cancellationToken);");
+                                    b.WriteLine($"return await stream.CallFunctionAsync<{outTypeObjectDef.CSharpFullName}>(cancellationToken);");
                                 }
+
                                 b.WriteLine("}");
                             }
                         }
@@ -220,11 +184,13 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                             {
                                 b.WriteLine($"public async {GenerateTypeFullName("ValueTask")} {func.CSharpFunctionName}({inTypeObjectDef.CSharpFullName} param, {GenerateTypeFullName("CancellationToken")} cancellationToken)");
                                 b.WriteLine("{");
+
                                 using (b.Indent())
                                 {
-                                    b.WriteLine($"using var stream = await _rpc.ConnectAsync({ index }, cancellationToken);");
-                                    b.WriteLine($"await stream.CallActionAsync<{ inTypeObjectDef.CSharpFullName }>(param, cancellationToken);");
+                                    b.WriteLine($"using var stream = await _rpc.ConnectAsync({index}, cancellationToken);");
+                                    b.WriteLine($"await stream.CallActionAsync<{inTypeObjectDef.CSharpFullName}>(param, cancellationToken);");
                                 }
+
                                 b.WriteLine("}");
                             }
                         }
@@ -233,39 +199,45 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                             {
                                 b.WriteLine($"public async {GenerateTypeFullName("ValueTask")} {func.CSharpFunctionName}({GenerateTypeFullName("CancellationToken")} cancellationToken)");
                                 b.WriteLine("{");
+
                                 using (b.Indent())
                                 {
-                                    b.WriteLine($"using var stream = await _rpc.ConnectAsync({ index }, cancellationToken);");
+                                    b.WriteLine($"using var stream = await _rpc.ConnectAsync({index}, cancellationToken);");
                                     b.WriteLine($"await stream.CallActionAsync(cancellationToken);");
                                 }
+
                                 b.WriteLine("}");
                             }
                         }
                     }
                 }
+
                 b.WriteLine("}");
             }
 
-            public void Write_ServerClass(CodeBuilder b, ServiceDefinition serviceDefinition)
+            private void Write_ServerClass(CodeWriter b, ServiceDefinition serviceDefinition)
             {
                 var className = "Server";
-                b.WriteLine($"{_accessLevel} class { className } : { GenerateTypeFullName("AsyncDisposableBase") }");
+                b.WriteLine($"{_accessLevel} class {className} : {GenerateTypeFullName("AsyncDisposableBase")}");
                 b.WriteLine("{");
+
                 using (b.Indent())
                 {
-                    b.WriteLine($"private readonly { serviceDefinition.CSharpInterfaceFullName } _service;");
-                    b.WriteLine($"private readonly { GenerateTypeFullName("IConnection") } _connection;");
-                    b.WriteLine($"private readonly { GenerateTypeFullName("IBytesPool") } _bytesPool;");
-                    b.WriteLine($"private readonly { GenerateTypeFullName("RocketPackRpc") } _rpc;");
-                    b.WriteLine($"public { className }({ serviceDefinition.CSharpInterfaceFullName } service, { GenerateTypeFullName("IConnection") } connection, { GenerateTypeFullName("IBytesPool") } bytesPool)");
+                    b.WriteLine($"private readonly {serviceDefinition.CSharpInterfaceFullName} _service;");
+                    b.WriteLine($"private readonly {GenerateTypeFullName("IConnection")} _connection;");
+                    b.WriteLine($"private readonly {GenerateTypeFullName("IBytesPool")} _bytesPool;");
+                    b.WriteLine($"private readonly {GenerateTypeFullName("RocketPackRpc")} _rpc;");
+                    b.WriteLine($"public {className}({serviceDefinition.CSharpInterfaceFullName} service, {GenerateTypeFullName("IConnection")} connection, {GenerateTypeFullName("IBytesPool")} bytesPool)");
                     b.WriteLine("{");
+
                     using (b.Indent())
                     {
                         b.WriteLine("_service = service;");
                         b.WriteLine("_connection = connection;");
                         b.WriteLine("_bytesPool = bytesPool;");
-                        b.WriteLine($"_rpc = new { GenerateTypeFullName("RocketPackRpc") }(_connection, _bytesPool);");
+                        b.WriteLine($"_rpc = new {GenerateTypeFullName("RocketPackRpc")}(_connection, _bytesPool);");
                     }
+
                     b.WriteLine("}");
                     b.WriteLine($"protected override async {GenerateTypeFullName("ValueTask")} OnDisposeAsync()");
                     b.WriteLine("{");
@@ -273,14 +245,17 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                     {
                         b.WriteLine("await _rpc.DisposeAsync();");
                     }
+
                     b.WriteLine("}");
 
-                    b.WriteLine($"public async {GenerateTypeFullName("Task")} EventLoop({ GenerateTypeFullName("CancellationToken") } cancellationToken = default)");
+                    b.WriteLine($"public async {GenerateTypeFullName("Task")} EventLoop({GenerateTypeFullName("CancellationToken")} cancellationToken = default)");
                     b.WriteLine("{");
+
                     using (b.Indent())
                     {
                         b.WriteLine("while (!cancellationToken.IsCancellationRequested)");
                         b.WriteLine("{");
+
                         using (b.Indent())
                         {
                             b.WriteLine("cancellationToken.ThrowIfCancellationRequested();");
@@ -288,11 +263,13 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
 
                             b.WriteLine("switch (stream.CallId)");
                             b.WriteLine("{");
+
                             using (b.Indent())
                             {
                                 foreach (var (index, func) in serviceDefinition.Elements.Select((n, i) => (i + 1, n)))
                                 {
-                                    b.WriteLine($"case { index }:");
+                                    b.WriteLine($"case {index}:");
+
                                     using (b.Indent())
                                     {
                                         b.WriteLine("{");
@@ -303,7 +280,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                                             {
                                                 using (b.Indent())
                                                 {
-                                                    b.WriteLine($"await stream.ListenFunctionAsync<{ inTypeObjectDef.CSharpFullName }, { outTypeObjectDef.CSharpFullName }>(_service.{ func.CSharpFunctionName }, cancellationToken);");
+                                                    b.WriteLine($"await stream.ListenFunctionAsync<{inTypeObjectDef.CSharpFullName}, {outTypeObjectDef.CSharpFullName}>(_service.{func.CSharpFunctionName}, cancellationToken);");
                                                 }
                                             }
                                         }
@@ -313,7 +290,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                                             {
                                                 using (b.Indent())
                                                 {
-                                                    b.WriteLine($"await stream.ListenFunctionAsync<{ outTypeObjectDef.CSharpFullName }>(_service.{ func.CSharpFunctionName }, cancellationToken);");
+                                                    b.WriteLine($"await stream.ListenFunctionAsync<{outTypeObjectDef.CSharpFullName}>(_service.{func.CSharpFunctionName}, cancellationToken);");
                                                 }
                                             }
                                         }
@@ -323,30 +300,33 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                                             {
                                                 using (b.Indent())
                                                 {
-                                                    b.WriteLine($"await stream.ListenActionAsync<{ inTypeObjectDef.CSharpFullName }>(_service.{ func.CSharpFunctionName }, cancellationToken);");
+                                                    b.WriteLine($"await stream.ListenActionAsync<{inTypeObjectDef.CSharpFullName}>(_service.{func.CSharpFunctionName}, cancellationToken);");
                                                 }
                                             }
                                         }
                                         else if (func.InType is null && func.OutType is null)
                                         {
+                                            using (b.Indent())
                                             {
-                                                using (b.Indent())
-                                                {
-                                                    b.WriteLine($"await stream.ListenActionAsync(_service.{ func.CSharpFunctionName }, cancellationToken);");
-                                                }
+                                                b.WriteLine($"await stream.ListenActionAsync(_service.{func.CSharpFunctionName}, cancellationToken);");
                                             }
                                         }
+
                                         b.WriteLine("}");
                                         b.WriteLine("break;");
                                     }
                                 }
                             }
+
                             b.WriteLine("}");
                         }
+
                         b.WriteLine("}");
                     }
+
                     b.WriteLine("}");
                 }
+
                 b.WriteLine("}");
             }
         }

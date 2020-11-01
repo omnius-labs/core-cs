@@ -8,11 +8,11 @@ using Cocona;
 
 namespace Omnius.Core.RocketPack.DefinitionCompiler
 {
-    class Program
+    public class Program
     {
         private static readonly NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
 
-        static void Main(string[] args)
+        public static void Main(string[] args)
         {
             CoconaLiteApp.Run<Program>(args);
         }
@@ -43,32 +43,33 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                 {
                     var destinationParentDirectoryPath = Path.GetDirectoryName(output);
 
-                    if (!Directory.Exists(destinationParentDirectoryPath))
+                    if (destinationParentDirectoryPath is not null && !Directory.Exists(destinationParentDirectoryPath))
                     {
                         Directory.CreateDirectory(destinationParentDirectoryPath);
                     }
                 }
 
                 // 書き込み
-                using (var writer = new StreamWriter(output, false, new UTF8Encoding(false)))
-                {
-                    writer.Write(CodeGenerator.Generate(rootDefinition, includedDefinitions));
-                }
+                using var writer = new StreamWriter(output, false, new UTF8Encoding(false));
+                var codeGenerator = new CodeGenerator(rootDefinition, includedDefinitions);
+                writer.Write(codeGenerator.Generate());
             }
             catch (Exception e)
             {
                 _logger.Error(e);
+                throw;
             }
         }
 
         private class FilePathExistsAttribute : ValidationAttribute
         {
-            protected override ValidationResult IsValid(object value, ValidationContext validationContext)
+            protected override ValidationResult IsValid(object? value, ValidationContext validationContext)
             {
                 if (value is string path && (File.Exists(path) || File.Exists(path)))
                 {
-                    return ValidationResult.Success;
+                    return ValidationResult.Success!;
                 }
+
                 return new ValidationResult($"The path '{value}' is not found.");
             }
         }

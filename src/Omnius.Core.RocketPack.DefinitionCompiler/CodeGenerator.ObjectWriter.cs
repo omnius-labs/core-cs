@@ -10,12 +10,12 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
     {
         private sealed class ObjectWriter
         {
+            private const string CustomFormatterName = "___CustomFormatter";
+            private const string HashCodeName = "___hashCode";
+
             private readonly RocketPackDefinition _rootDefinition;
             private readonly IList<RocketPackDefinition> _externalDefinitions;
             private readonly string _accessLevel;
-
-            private const string CustomFormatterName = "___CustomFormatter";
-            private const string HashCodeName = "___hashCode";
 
             public ObjectWriter(RocketPackDefinition rootDefinition, IEnumerable<RocketPackDefinition> externalDefinitions)
             {
@@ -26,163 +26,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                 _accessLevel = accessLevelOption?.Value as string ?? "public";
             }
 
-            private object? FindDefinition(CustomType customType)
-            {
-                foreach (var definition in new[] { _rootDefinition }.Union(_externalDefinitions))
-                {
-                    var enumDefinitiom = definition.Enums.FirstOrDefault(m => m.Name == customType.TypeName);
-                    if (enumDefinitiom != null)
-                    {
-                        return enumDefinitiom;
-                    }
-
-                    var objectDefinition = definition.Objects.FirstOrDefault(m => m.Name == customType.TypeName);
-                    if (objectDefinition != null)
-                    {
-                        return objectDefinition;
-                    }
-                }
-
-                return null;
-            }
-
-            /// <summary>
-            /// プロパティ名からフィールド変数名を生成します。
-            /// </summary>
-            private static string GenerateFieldVariableName(string name)
-            {
-                return name[0].ToString().ToLower() + name.Substring(1);
-            }
-
-            private static string GenerateTypeFullName(string name, params string[] types)
-            {
-                var result = name switch
-                {
-                    "Lazy<>" => $"System.Lazy<{types[0]}>",
-                    "ReadOnlySequence<>" => $"System.Buffers.ReadOnlySequence<{types[0]}>",
-                    "IBufferWriter<>" => $"System.Buffers.IBufferWriter<{types[0]}>",
-                    "IRocketPackObject<>" => $"Omnius.Core.RocketPack.IRocketPackObject<{types[0]}>",
-                    "RocketPackObjectReader" => "Omnius.Core.RocketPack.RocketPackObjectReader",
-                    "RocketPackObjectWriter" => "Omnius.Core.RocketPack.RocketPackObjectWriter",
-                    "IRocketPackObjectFormatter<>" => $"Omnius.Core.RocketPack.IRocketPackObjectFormatter<{types[0]}>",
-                    "FormatException" => "System.FormatException",
-                    "BytesOperations" => "Omnius.Core.BytesOperations",
-                    "CollectionHelper" => "Omnius.Core.Helpers.CollectionHelper",
-                    "ObjectHelper" => "Omnius.Core.Helpers.ObjectHelper",
-                    "HashCode" => "System.HashCode",
-                    "Array" => "System.Array",
-                    "Timestamp" => "Omnius.Core.RocketPack.Timestamp",
-                    "IMemoryOwner<>" => $"System.Buffers.IMemoryOwner<{types[0]}>",
-                    "Span<>" => $"System.Span<{types[0]}>",
-                    "ReadOnlySpan<>" => $"System.ReadOnlySpan<{types[0]}>",
-                    "Memory<>" => $"System.Memory<{types[0]}>",
-                    "ReadOnlyMemory<>" => $"System.ReadOnlyMemory<{types[0]}>",
-                    "ReadOnlyListSlim<>" => $"Omnius.Core.Collections.ReadOnlyListSlim<{types[0]}>",
-                    "ReadOnlyDictionarySlim<,>" => $"Omnius.Core.Collections.ReadOnlyDictionarySlim<{types[0]}, {types[1]}>",
-                    "Dictionary<,>" => $"System.Collections.Generic.Dictionary<{types[0]}, {types[1]}>",
-                    "RocketPackMessageBase<>" => $"Omnius.Core.RocketPack.RocketPackMessageBase<{types[0]}>",
-                    "IDisposable" => "System.IDisposable",
-                    "IBytesPool" => "Omnius.Core.IBytesPool",
-                    "MemoryOwner<>" => $"Omnius.Core.MemoryOwner<{types[0]}>",
-                    "ArgumentNullException" => "System.ArgumentNullException",
-                    "ArgumentOutOfRangeException" => "System.ArgumentOutOfRangeException",
-                    _ => throw new InvalidOperationException(name)
-                };
-
-                return "global::" + result;
-            }
-
-            private string GenerateParameterTypeFullName(TypeBase typeBase)
-            {
-                return typeBase switch
-                {
-                    BoolType type => "bool" + (type.IsOptional ? "?" : ""),
-                    IntType type when (!type.IsSigned && type.Size == 8) => "byte" + (type.IsOptional ? "?" : ""),
-                    IntType type when (!type.IsSigned && type.Size == 16) => "ushort" + (type.IsOptional ? "?" : ""),
-                    IntType type when (!type.IsSigned && type.Size == 32) => "uint" + (type.IsOptional ? "?" : ""),
-                    IntType type when (!type.IsSigned && type.Size == 64) => "ulong" + (type.IsOptional ? "?" : ""),
-                    IntType type when (type.IsSigned && type.Size == 8) => "sbyte" + (type.IsOptional ? "?" : ""),
-                    IntType type when (type.IsSigned && type.Size == 16) => "short" + (type.IsOptional ? "?" : ""),
-                    IntType type when (type.IsSigned && type.Size == 32) => "int" + (type.IsOptional ? "?" : ""),
-                    IntType type when (type.IsSigned && type.Size == 64) => "long" + (type.IsOptional ? "?" : ""),
-                    FloatType type when (type.Size == 32) => "float" + (type.IsOptional ? "?" : ""),
-                    FloatType type when (type.Size == 64) => "double" + (type.IsOptional ? "?" : ""),
-                    StringType type => "string" + (type.IsOptional ? "?" : ""),
-                    TimestampType type => GenerateTypeFullName("Timestamp") + (type.IsOptional ? "?" : ""),
-                    BytesType type when (type.IsUseMemoryPool) => GenerateTypeFullName("IMemoryOwner<>", "byte") + (type.IsOptional ? "?" : ""),
-                    BytesType type when (!type.IsUseMemoryPool) => GenerateTypeFullName("ReadOnlyMemory<>", "byte") + (type.IsOptional ? "?" : ""),
-                    VectorType type => $"{this.GenerateParameterTypeFullName(type.ElementType)}[]" + (type.IsOptional ? "?" : ""),
-                    MapType type => GenerateTypeFullName("Dictionary<,>", this.GenerateParameterTypeFullName(type.KeyType), this.GenerateParameterTypeFullName(type.ValueType)) + (type.IsOptional ? "?" : ""),
-                    CustomType type => this.FindDefinition(type) switch
-                    {
-                        EnumDefinition _ => type.TypeName + (type.IsOptional ? "?" : ""),
-                        ObjectDefinition objectDefinition when (objectDefinition.FormatType == MessageFormatType.Table) => type.TypeName + (type.IsOptional ? "?" : ""),
-                        ObjectDefinition objectDefinition when (objectDefinition.FormatType == MessageFormatType.Struct) => type.TypeName + (type.IsOptional ? "?" : ""),
-                        _ => throw new ArgumentException($"Type \"{type.TypeName}\" was not found", nameof(type)),
-                    },
-                    _ => throw new ArgumentException($"Type \"{typeBase.GetType().Name}\" was not found", nameof(typeBase)),
-                };
-            }
-
-            private string GeneratePropertyTypeFullName(TypeBase typeBase)
-            {
-                return typeBase switch
-                {
-                    BoolType type => "bool" + (type.IsOptional ? "?" : ""),
-                    IntType type when (!type.IsSigned && type.Size == 8) => "byte" + (type.IsOptional ? "?" : ""),
-                    IntType type when (!type.IsSigned && type.Size == 16) => "ushort" + (type.IsOptional ? "?" : ""),
-                    IntType type when (!type.IsSigned && type.Size == 32) => "uint" + (type.IsOptional ? "?" : ""),
-                    IntType type when (!type.IsSigned && type.Size == 64) => "ulong" + (type.IsOptional ? "?" : ""),
-                    IntType type when (type.IsSigned && type.Size == 8) => "sbyte" + (type.IsOptional ? "?" : ""),
-                    IntType type when (type.IsSigned && type.Size == 16) => "short" + (type.IsOptional ? "?" : ""),
-                    IntType type when (type.IsSigned && type.Size == 32) => "int" + (type.IsOptional ? "?" : ""),
-                    IntType type when (type.IsSigned && type.Size == 64) => "long" + (type.IsOptional ? "?" : ""),
-                    FloatType type when (type.Size == 32) => "float" + (type.IsOptional ? "?" : ""),
-                    FloatType type when (type.Size == 64) => "double" + (type.IsOptional ? "?" : ""),
-                    StringType type => "string" + (type.IsOptional ? "?" : ""),
-                    TimestampType type => GenerateTypeFullName("Timestamp") + (type.IsOptional ? "?" : ""),
-                    BytesType type when (!type.IsUseMemoryPool) => GenerateTypeFullName("ReadOnlyMemory<>", "byte") + (type.IsOptional ? "?" : ""),
-                    BytesType type when (type.IsUseMemoryPool) => GenerateTypeFullName("ReadOnlyMemory<>", "byte") + (type.IsOptional ? "?" : ""),
-                    VectorType type => GenerateTypeFullName("ReadOnlyListSlim<>", this.GenerateParameterTypeFullName(type.ElementType)) + (type.IsOptional ? "?" : ""),
-                    MapType type => GenerateTypeFullName("ReadOnlyDictionarySlim<,>", this.GenerateParameterTypeFullName(type.KeyType), this.GenerateParameterTypeFullName(type.ValueType)) + (type.IsOptional ? "?" : ""),
-                    CustomType type => this.FindDefinition(type) switch
-                    {
-                        EnumDefinition _ => type.TypeName + (type.IsOptional ? "?" : ""),
-                        ObjectDefinition objectDefinition when (objectDefinition.FormatType == MessageFormatType.Table) => type.TypeName + (type.IsOptional ? "?" : ""),
-                        ObjectDefinition objectDefinition when (objectDefinition.FormatType == MessageFormatType.Struct) => type.TypeName + (type.IsOptional ? "?" : ""),
-                        _ => throw new ArgumentException($"Type \"{type.TypeName}\" was not found", nameof(type)),
-                    },
-                    _ => throw new ArgumentException($"Type \"{typeBase.GetType().Name}\" was not found", nameof(typeBase)),
-                };
-            }
-
-            private string GetDefaultValueString(TypeBase typeBase)
-            {
-                return typeBase switch
-                {
-                    BoolType type => type.IsOptional ? "null" : "false",
-                    IntType type => type.IsOptional ? "null" : "0",
-                    FloatType type when (type.Size == 32) => type.IsOptional ? "null" : "0.0F",
-                    FloatType type when (type.Size == 64) => type.IsOptional ? "null" : "0.0D",
-                    StringType type => type.IsOptional ? "null" : "string.Empty",
-                    TimestampType type => type.IsOptional ? "null" : GenerateTypeFullName("Timestamp") + ".Zero",
-                    BytesType type when (!type.IsUseMemoryPool) => type.IsOptional ? "null" : GenerateTypeFullName("ReadOnlyMemory<>", "byte") + ".Empty",
-                    BytesType type when (type.IsUseMemoryPool) => type.IsOptional ? "null" : GenerateTypeFullName("MemoryOwner<>", "byte") + ".Empty",
-                    VectorType type => type.IsOptional ? "null" : GenerateTypeFullName("Array") + ".Empty<" + this.GenerateParameterTypeFullName(type.ElementType) + ">()",
-                    MapType type => type.IsOptional
-                            ? "null"
-                            : "new " + GenerateTypeFullName("Dictionary<,>", this.GenerateParameterTypeFullName(type.KeyType), this.GenerateParameterTypeFullName(type.ValueType)) + "()",
-                    CustomType type => this.FindDefinition(type) switch
-                    {
-                        EnumDefinition elementEnumDefinition => type.IsOptional ? "null" : $"({elementEnumDefinition.Name})0",
-                        ObjectDefinition elementMessageDefinition => type.IsOptional ? "null" : $"{elementMessageDefinition.Name}.Empty",
-                        _ => throw new ArgumentException($"Type \"{type.TypeName}\" was not found", nameof(typeBase)),
-                    },
-                    _ => throw new ArgumentException($"Type \"{typeBase.GetType().Name}\" was not found", nameof(typeBase)),
-                };
-            }
-
-            public void Write(CodeBuilder b)
+            public void Write(CodeWriter b)
             {
                 foreach (var objectDefinition in _rootDefinition.Objects)
                 {
@@ -205,7 +49,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                         }
                         else
                         {
-                            b.WriteLine($"{_accessLevel} sealed partial class { objectDefinition.Name} : {GenerateTypeFullName("IRocketPackObject<>", objectDefinition.CSharpFullName)}");
+                            b.WriteLine($"{_accessLevel} sealed partial class {objectDefinition.Name} : {GenerateTypeFullName("IRocketPackObject<>", objectDefinition.CSharpFullName)}");
                         }
                     }
 
@@ -251,7 +95,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
             /// <summary>
             /// 静的コンストラクタの生成。
             /// </summary>
-            private void Write_StaticConstructor(CodeBuilder b, ObjectDefinition objectDefinition)
+            private void Write_StaticConstructor(CodeWriter b, ObjectDefinition objectDefinition)
             {
                 b.WriteLine($"public static {GenerateTypeFullName("IRocketPackObjectFormatter<>", objectDefinition.CSharpFullName)} Formatter => {GenerateTypeFullName("IRocketPackObject<>", objectDefinition.CSharpFullName)}.Formatter;");
                 b.WriteLine($"public static {objectDefinition.CSharpFullName} Empty => {GenerateTypeFullName("IRocketPackObject<>", objectDefinition.CSharpFullName)}.Empty;");
@@ -272,12 +116,12 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                 b.WriteLine("}");
             }
 
-            private void Write_StaticConstructor_CustomFormatterProperty(CodeBuilder b, ObjectDefinition objectDefinition)
+            private void Write_StaticConstructor_CustomFormatterProperty(CodeWriter b, ObjectDefinition objectDefinition)
             {
                 b.WriteLine($"{GenerateTypeFullName("IRocketPackObject<>", objectDefinition.CSharpFullName)}.Formatter = new {CustomFormatterName}();");
             }
 
-            private void Write_StaticConstructor_EmptyProperty(CodeBuilder b, ObjectDefinition objectDefinition)
+            private void Write_StaticConstructor_EmptyProperty(CodeWriter b, ObjectDefinition objectDefinition)
             {
                 var parameters = new List<string>();
 
@@ -292,7 +136,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
             /// <summary>
             /// コンストラクタの生成。
             /// </summary>
-            private void Write_Constructor(CodeBuilder b, ObjectDefinition objectDefinition)
+            private void Write_Constructor(CodeWriter b, ObjectDefinition objectDefinition)
             {
                 if (objectDefinition.IsCSharpStruct)
                 {
@@ -302,6 +146,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                 {
                     b.WriteLine($"private readonly {GenerateTypeFullName("Lazy<>", "int")} {HashCodeName};");
                 }
+
                 b.WriteLine();
 
                 // 最大サイズの宣言。
@@ -326,7 +171,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                 b.WriteLine("}");
             }
 
-            private void Write_Constructor_Init(CodeBuilder b, ObjectDefinition objectDefinition)
+            private void Write_Constructor_Init(CodeWriter b, ObjectDefinition objectDefinition)
             {
                 foreach (var element in objectDefinition.Elements)
                 {
@@ -360,6 +205,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
 
                                 b.WriteLine("}");
                             }
+
                             break;
                         case MapType type:
                             if (type.IsOptional)
@@ -386,6 +232,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
 
                                 b.WriteLine("}");
                             }
+
                             break;
                         default:
                             b.WriteLine($"this.{element.Name} = {GenerateFieldVariableName(element.Name)};");
@@ -396,7 +243,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                 b.WriteLine();
             }
 
-            private void Write_Constructor_Define_MaxLength(CodeBuilder b, ObjectDefinition objectDefinition)
+            private void Write_Constructor_Define_MaxLength(CodeWriter b, ObjectDefinition objectDefinition)
             {
                 bool isDefinedMaxLength = false;
 
@@ -411,7 +258,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                 }
             }
 
-            private bool Try_Write_Constructor_Define_MaxLength_Element(CodeBuilder b, string name, TypeBase type)
+            private bool Try_Write_Constructor_Define_MaxLength_Element(CodeWriter b, string name, TypeBase type)
             {
                 switch (type)
                 {
@@ -432,7 +279,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                 }
             }
 
-            private void Write_Constructor_Parameter_Check(CodeBuilder b, ObjectDefinition objectDefinition)
+            private void Write_Constructor_Parameter_Check(CodeWriter b, ObjectDefinition objectDefinition)
             {
                 bool isChecked = false;
 
@@ -447,7 +294,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                 }
             }
 
-            private bool Try_Write_Constructor_Parameter_Check_Element(CodeBuilder b, ObjectElement element)
+            private bool Try_Write_Constructor_Parameter_Check_Element(CodeWriter b, ObjectElement element)
             {
                 bool isChecked = false;
 
@@ -456,7 +303,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
 
                 if (element.Type is VectorType listType)
                 {
-                    var b2 = new CodeBuilder();
+                    var b2 = new CodeWriter();
                     bool isChecked2 = false;
 
                     if (listType.IsOptional)
@@ -494,7 +341,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                 }
                 else if (element.Type is MapType mapType)
                 {
-                    var b2 = new CodeBuilder();
+                    var b2 = new CodeWriter();
                     bool isChecked2 = false;
 
                     if (mapType.IsOptional)
@@ -536,37 +383,37 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                 return isChecked;
             }
 
-            private bool Try_Write_Constructor_Parameter_Check_Element_Null(CodeBuilder b, string name, TypeBase type)
+            private bool Try_Write_Constructor_Parameter_Check_Element_Null(CodeWriter b, string name, TypeBase type)
             {
                 switch (type)
                 {
-                    case StringType stringType when (!type.IsOptional):
+                    case StringType when !type.IsOptional:
                         b.WriteLine($"if ({name} is null) throw new {GenerateTypeFullName("ArgumentNullException")}(\"{name}\");");
                         return true;
-                    case BytesType memoryType when (!type.IsOptional && memoryType.IsUseMemoryPool):
+                    case BytesType memoryType when !type.IsOptional && memoryType.IsUseMemoryPool:
                         b.WriteLine($"if ({name} is null) throw new {GenerateTypeFullName("ArgumentNullException")}(\"{name}\");");
                         return true;
-                    case VectorType listType when (!type.IsOptional):
+                    case VectorType when !type.IsOptional:
                         b.WriteLine($"if ({name} is null) throw new {GenerateTypeFullName("ArgumentNullException")}(\"{name}\");");
                         return true;
-                    case MapType mapType when (!type.IsOptional):
+                    case MapType when !type.IsOptional:
                         b.WriteLine($"if ({name} is null) throw new {GenerateTypeFullName("ArgumentNullException")}(\"{name}\");");
                         return true;
-                    case CustomType customType when (!type.IsOptional):
+                    case CustomType customType when !type.IsOptional:
                         switch (this.FindDefinition(customType))
                         {
-                            case ObjectDefinition objectDefinition when (objectDefinition.IsCSharpClass):
+                            case ObjectDefinition objectDefinition when objectDefinition.IsCSharpClass:
                                 b.WriteLine($"if ({name} is null) throw new {GenerateTypeFullName("ArgumentNullException")}(\"{name}\");");
                                 return true;
-                            default:
-                                return false;
                         }
+
+                        return false;
                     default:
                         return false;
                 }
             }
 
-            private bool Try_Write_Constructor_Parameter_Check_Element_MaxLength(CodeBuilder b, string name, TypeBase type)
+            private bool Try_Write_Constructor_Parameter_Check_Element_MaxLength(CodeWriter b, string name, TypeBase type)
             {
                 string property;
                 int maxLength;
@@ -613,7 +460,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                 return true;
             }
 
-            private void Write_Constructor_HashCode(CodeBuilder b, ObjectDefinition objectDefinition)
+            private void Write_Constructor_HashCode(CodeWriter b, ObjectDefinition objectDefinition)
             {
                 const string TempVariableName = "___h";
 
@@ -656,23 +503,23 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                 }
             }
 
-            private void Write_Constructor_HashCode_Element(CodeBuilder b, string hashCodeName, string parameterName, TypeBase type)
+            private void Write_Constructor_HashCode_Element(CodeWriter b, string hashCodeName, string parameterName, TypeBase type)
             {
                 switch (type)
                 {
-                    case BoolType boolType:
+                    case BoolType:
                         b.WriteLine($"if ({parameterName} != default) {hashCodeName}.Add({parameterName}.GetHashCode());");
                         break;
-                    case IntType intType:
+                    case IntType:
                         b.WriteLine($"if ({parameterName} != default) {hashCodeName}.Add({parameterName}.GetHashCode());");
                         break;
-                    case FloatType floatType:
+                    case FloatType:
                         b.WriteLine($"if ({parameterName} != default) {hashCodeName}.Add({parameterName}.GetHashCode());");
                         break;
-                    case StringType stringType:
+                    case StringType:
                         b.WriteLine($"if ({parameterName} != default) {hashCodeName}.Add({parameterName}.GetHashCode());");
                         break;
-                    case TimestampType timestampType:
+                    case TimestampType:
                         b.WriteLine($"if ({parameterName} != default) {hashCodeName}.Add({parameterName}.GetHashCode());");
                         break;
                     case BytesType memoryType when (!memoryType.IsOptional):
@@ -684,6 +531,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                         {
                             b.WriteLine($"if (!{parameterName}.Memory.IsEmpty) {hashCodeName}.Add({GenerateTypeFullName("ObjectHelper")}.GetHashCode({parameterName}.Memory.Span));");
                         }
+
                         break;
                     case BytesType memoryType when (memoryType.IsOptional):
                         if (!memoryType.IsUseMemoryPool)
@@ -694,153 +542,166 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                         {
                             b.WriteLine($"if (!({parameterName} is null) && !{parameterName}.Memory.IsEmpty) {hashCodeName}.Add({GenerateTypeFullName("ObjectHelper")}.GetHashCode({parameterName}.Memory.Span));");
                         }
+
                         break;
                     case VectorType listType:
+                        if (type.IsOptional)
                         {
-                            if (type.IsOptional)
-                            {
-                                b.WriteLine($"if({GenerateFieldVariableName(parameterName)} != null)");
-                                b.WriteLine("{");
-                                b.PushIndent();
-                            }
-
-                            b.WriteLine($"foreach (var n in {GenerateFieldVariableName(parameterName)})");
+                            b.WriteLine($"if({GenerateFieldVariableName(parameterName)} != null)");
                             b.WriteLine("{");
-
-                            using (b.Indent())
-                            {
-                                this.Write_Constructor_HashCode_Element(b, hashCodeName, "n", listType.ElementType);
-                            }
-
-                            b.WriteLine("}");
-
-                            if (type.IsOptional)
-                            {
-                                b.PopIndent();
-                                b.WriteLine("}");
-                            }
+                            b.PushIndent();
                         }
+
+                        b.WriteLine($"foreach (var n in {GenerateFieldVariableName(parameterName)})");
+                        b.WriteLine("{");
+
+                        using (b.Indent())
+                        {
+                            this.Write_Constructor_HashCode_Element(b, hashCodeName, "n", listType.ElementType);
+                        }
+
+                        b.WriteLine("}");
+
+                        if (type.IsOptional)
+                        {
+                            b.PopIndent();
+                            b.WriteLine("}");
+                        }
+
                         break;
                     case MapType mapType:
+                        if (type.IsOptional)
                         {
-                            if (type.IsOptional)
-                            {
-                                b.WriteLine($"if({GenerateFieldVariableName(parameterName)} != null)");
-                                b.WriteLine("{");
-                                b.PushIndent();
-                            }
-
-                            b.WriteLine($"foreach (var n in {GenerateFieldVariableName(parameterName)})");
+                            b.WriteLine($"if({GenerateFieldVariableName(parameterName)} != null)");
                             b.WriteLine("{");
-
-                            using (b.Indent())
-                            {
-                                this.Write_Constructor_HashCode_Element(b, hashCodeName, "n.Key", mapType.KeyType);
-                                this.Write_Constructor_HashCode_Element(b, hashCodeName, "n.Value", mapType.ValueType);
-                            }
-
-                            b.WriteLine("}");
-
-                            if (type.IsOptional)
-                            {
-                                b.PopIndent();
-                                b.WriteLine("}");
-                            }
+                            b.PushIndent();
                         }
+
+                        b.WriteLine($"foreach (var n in {GenerateFieldVariableName(parameterName)})");
+                        b.WriteLine("{");
+
+                        using (b.Indent())
+                        {
+                            this.Write_Constructor_HashCode_Element(b, hashCodeName, "n.Key", mapType.KeyType);
+                            this.Write_Constructor_HashCode_Element(b, hashCodeName, "n.Value", mapType.ValueType);
+                        }
+
+                        b.WriteLine("}");
+
+                        if (type.IsOptional)
+                        {
+                            b.PopIndent();
+                            b.WriteLine("}");
+                        }
+
                         break;
                     case CustomType customType:
+                        switch (this.FindDefinition(customType))
                         {
-                            switch (this.FindDefinition(customType))
-                            {
-                                case EnumDefinition enumInfo:
+                            case EnumDefinition:
+                                b.WriteLine($"if ({parameterName} != default) {hashCodeName}.Add({parameterName}.GetHashCode());");
+                                break;
+                            case ObjectDefinition objectDefinition when (objectDefinition.IsCSharpStruct):
+                                if (!customType.IsOptional)
+                                {
                                     b.WriteLine($"if ({parameterName} != default) {hashCodeName}.Add({parameterName}.GetHashCode());");
-                                    break;
-                                case ObjectDefinition objectDefinition when (objectDefinition.IsCSharpStruct):
-                                    if (!customType.IsOptional)
-                                    {
-                                        b.WriteLine($"if ({parameterName} != default) {hashCodeName}.Add({parameterName}.GetHashCode());");
-                                    }
-                                    else
-                                    {
-                                        b.WriteLine($"if ({parameterName} != default) {hashCodeName}.Add({parameterName}.Value.GetHashCode());");
-                                    }
-                                    break;
-                                case ObjectDefinition objectDefinition when (objectDefinition.IsCSharpClass):
-                                    b.WriteLine($"if ({parameterName} != default) {hashCodeName}.Add({parameterName}.GetHashCode());");
-                                    break;
-                            }
+                                }
+                                else
+                                {
+                                    b.WriteLine($"if ({parameterName} != default) {hashCodeName}.Add({parameterName}.Value.GetHashCode());");
+                                }
+
+                                break;
+                            case ObjectDefinition objectDefinition when (objectDefinition.IsCSharpClass):
+                                b.WriteLine($"if ({parameterName} != default) {hashCodeName}.Add({parameterName}.GetHashCode());");
+                                break;
                         }
+
                         break;
                 }
             }
 
-            private void Write_ImportAndExport(CodeBuilder b, ObjectDefinition objectDefinition)
+            private void Write_ImportAndExport(CodeWriter b, ObjectDefinition objectDefinition)
             {
                 b.WriteLine($"public static {objectDefinition.CSharpFullName} Import({GenerateTypeFullName("ReadOnlySequence<>", "byte")} sequence, {GenerateTypeFullName("IBytesPool")} bytesPool)");
                 b.WriteLine("{");
+
                 using (b.Indent())
                 {
                     b.WriteLine($"var reader = new {GenerateTypeFullName("RocketPackObjectReader")}(sequence, bytesPool);");
                     b.WriteLine($"return Formatter.Deserialize(ref reader, 0);");
                 }
+
                 b.WriteLine("}");
 
                 b.WriteLine($"public void Export({GenerateTypeFullName("IBufferWriter<>", "byte")} bufferWriter, {GenerateTypeFullName("IBytesPool")} bytesPool)");
                 b.WriteLine("{");
+
                 using (b.Indent())
                 {
                     b.WriteLine($"var writer = new {GenerateTypeFullName("RocketPackObjectWriter")}(bufferWriter, bytesPool);");
                     b.WriteLine($"Formatter.Serialize(ref writer, this, 0);");
                 }
+
                 b.WriteLine("}");
             }
 
-            private void Write_Equals(CodeBuilder b, ObjectDefinition objectDefinition)
+            private void Write_Equals(CodeWriter b, ObjectDefinition objectDefinition)
             {
                 if (objectDefinition.IsCSharpStruct)
                 {
                     b.WriteLine($"public static bool operator ==({objectDefinition.CSharpFullName} left, {objectDefinition.CSharpFullName} right)");
                     b.WriteLine("{");
+
                     using (b.Indent())
                     {
                         b.WriteLine("return right.Equals(left);");
                     }
+
                     b.WriteLine("}");
 
                     b.WriteLine($"public static bool operator !=({objectDefinition.CSharpFullName} left, {objectDefinition.CSharpFullName} right)");
                     b.WriteLine("{");
+
                     using (b.Indent())
                     {
                         b.WriteLine("return !(left == right);");
                     }
+
                     b.WriteLine("}");
                 }
                 else if (objectDefinition.IsCSharpClass)
                 {
                     b.WriteLine($"public static bool operator ==({objectDefinition.CSharpFullName}? left, {objectDefinition.CSharpFullName}? right)");
                     b.WriteLine("{");
+
                     using (b.Indent())
                     {
                         b.WriteLine("return (right is null) ? (left is null) : right.Equals(left);");
                     }
+
                     b.WriteLine("}");
 
                     b.WriteLine($"public static bool operator !=({objectDefinition.CSharpFullName}? left, {objectDefinition.CSharpFullName}? right)");
                     b.WriteLine("{");
+
                     using (b.Indent())
                     {
                         b.WriteLine("return !(left == right);");
                     }
+
                     b.WriteLine("}");
                 }
 
                 b.WriteLine("public override bool Equals(object? other)");
                 b.WriteLine("{");
+
                 using (b.Indent())
                 {
                     b.WriteLine($"if (!(other is {objectDefinition.CSharpFullName})) return false;");
                     b.WriteLine($"return this.Equals(({objectDefinition.CSharpFullName})other);");
                 }
+
                 b.WriteLine("}");
 
                 if (objectDefinition.IsCSharpStruct)
@@ -851,6 +712,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                 {
                     b.WriteLine($"public bool Equals({objectDefinition.CSharpFullName}? target)");
                 }
+
                 b.WriteLine("{");
 
                 using (b.Indent())
@@ -890,6 +752,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                                     b.WriteLine($"if ((this.{element.Name} is null) != (target.{element.Name} is null)) return false;");
                                     b.WriteLine($"if (!(this.{element.Name} is null) && !(target.{element.Name} is null) && !{GenerateTypeFullName("BytesOperations")}.Equals(this.{element.Name}.Value.Span, target.{element.Name}.Value.Span)) return false;");
                                 }
+
                                 break;
                             case VectorType type:
                                 if (!type.IsOptional)
@@ -901,6 +764,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                                     b.WriteLine($"if ((this.{element.Name} is null) != (target.{element.Name} is null)) return false;");
                                     b.WriteLine($"if (!(this.{element.Name} is null) && !(target.{element.Name} is null) && !{GenerateTypeFullName("CollectionHelper")}.Equals(this.{element.Name}, target.{element.Name})) return false;");
                                 }
+
                                 break;
                             case MapType type:
                                 if (!type.IsOptional)
@@ -912,38 +776,40 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                                     b.WriteLine($"if ((this.{element.Name} is null) != (target.{element.Name} is null)) return false;");
                                     b.WriteLine($"if (!(this.{element.Name} is null) && !(target.{element.Name} is null) && !{GenerateTypeFullName("CollectionHelper")}.Equals(this.{element.Name}, target.{element.Name})) return false;");
                                 }
+
                                 break;
                             case CustomType type:
+                                switch (this.FindDefinition(type))
                                 {
-                                    switch (this.FindDefinition(type))
-                                    {
-                                        case EnumDefinition enumInfo:
+                                    case EnumDefinition enumInfo:
+                                        b.WriteLine($"if (this.{element.Name} != target.{element.Name}) return false;");
+                                        break;
+                                    case ObjectDefinition objectDefinition2 when (objectDefinition2.IsCSharpStruct):
+                                        if (!type.IsOptional)
+                                        {
                                             b.WriteLine($"if (this.{element.Name} != target.{element.Name}) return false;");
-                                            break;
-                                        case ObjectDefinition objectDefinition2 when (objectDefinition2.IsCSharpStruct):
-                                            if (!type.IsOptional)
-                                            {
-                                                b.WriteLine($"if (this.{element.Name} != target.{element.Name}) return false;");
-                                            }
-                                            else
-                                            {
-                                                b.WriteLine($"if ((this.{element.Name} is null) != (target.{element.Name} is null)) return false;");
-                                                b.WriteLine($"if (!(this.{element.Name} is null) && !(target.{element.Name} is null) && this.{element.Name} != target.{element.Name}) return false;");
-                                            }
-                                            break;
-                                        case ObjectDefinition objectDefinition2 when (objectDefinition2.IsCSharpClass):
-                                            if (!type.IsOptional)
-                                            {
-                                                b.WriteLine($"if (this.{element.Name} != target.{element.Name}) return false;");
-                                            }
-                                            else
-                                            {
-                                                b.WriteLine($"if ((this.{element.Name} is null) != (target.{element.Name} is null)) return false;");
-                                                b.WriteLine($"if (!(this.{element.Name} is null) && !(target.{element.Name} is null) && this.{element.Name} != target.{element.Name}) return false;");
-                                            }
-                                            break;
-                                    }
+                                        }
+                                        else
+                                        {
+                                            b.WriteLine($"if ((this.{element.Name} is null) != (target.{element.Name} is null)) return false;");
+                                            b.WriteLine($"if (!(this.{element.Name} is null) && !(target.{element.Name} is null) && this.{element.Name} != target.{element.Name}) return false;");
+                                        }
+
+                                        break;
+                                    case ObjectDefinition objectDefinition2 when (objectDefinition2.IsCSharpClass):
+                                        if (!type.IsOptional)
+                                        {
+                                            b.WriteLine($"if (this.{element.Name} != target.{element.Name}) return false;");
+                                        }
+                                        else
+                                        {
+                                            b.WriteLine($"if ((this.{element.Name} is null) != (target.{element.Name} is null)) return false;");
+                                            b.WriteLine($"if (!(this.{element.Name} is null) && !(target.{element.Name} is null) && this.{element.Name} != target.{element.Name}) return false;");
+                                        }
+
+                                        break;
                                 }
+
                                 break;
                         }
                     }
@@ -952,7 +818,6 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
 
                     b.WriteLine("return true;");
                 }
-
 
                 b.WriteLine("}");
 
@@ -966,7 +831,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                 }
             }
 
-            private void Write_Properties(CodeBuilder b, ObjectDefinition objectDefinition)
+            private void Write_Properties(CodeWriter b, ObjectDefinition objectDefinition)
             {
                 foreach (var element in objectDefinition.Elements)
                 {
@@ -983,6 +848,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                                 b.WriteLine($"private readonly {this.GenerateParameterTypeFullName(element.Type)} _{GenerateFieldVariableName(element.Name)};");
                                 b.WriteLine($"public {this.GeneratePropertyTypeFullName(element.Type)} {element.Name} => _{GenerateFieldVariableName(element.Name)}?.Memory;");
                             }
+
                             break;
                         default:
                             b.WriteLine($"public {this.GeneratePropertyTypeFullName(element.Type)} {element.Name} {{ get; }}");
@@ -991,7 +857,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                 }
             }
 
-            private void Write_Dispose(CodeBuilder b, ObjectDefinition objectDefinition)
+            private void Write_Dispose(CodeWriter b, ObjectDefinition objectDefinition)
             {
                 b.WriteLine("public void Dispose()");
                 b.WriteLine("{");
@@ -1012,108 +878,50 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                 b.WriteLine("}");
             }
 
-            private void Write_Medium_Formatter(CodeBuilder b, ObjectDefinition objectDefinition)
+            private void Write_Medium_Formatter(CodeWriter b, ObjectDefinition objectDefinition)
             {
-                b.WriteLine($"private sealed class ___CustomFormatter : {GenerateTypeFullName("IRocketPackObjectFormatter<>", objectDefinition.CSharpFullName)}");
+                b.WriteLine($"private sealed class {CustomFormatterName} : {GenerateTypeFullName("IRocketPackObjectFormatter<>", objectDefinition.CSharpFullName)}");
                 b.WriteLine("{");
 
                 using (b.Indent())
                 {
-                    {
-                        b.WriteLine($"public void Serialize(ref {GenerateTypeFullName("RocketPackObjectWriter")} w, in {objectDefinition.CSharpFullName} value, in int rank)");
-                        b.WriteLine("{");
-
-                        using (b.Indent())
-                        {
-                            b.WriteLine($"if (rank > 256) throw new {GenerateTypeFullName("FormatException")}();");
-                            b.WriteLine();
-
-                            foreach (var (index, element) in objectDefinition.Elements.Select((n, i) => (i + 1, n)))
-                            {
-                                this.BlockWhoseValueIsNotDefault(b, element, () =>
-                                {
-                                    b.WriteLine($"w.Write((uint){index});");
-                                    this.Write_Medium_Formatter_Serialize_PropertyDef(b, "value." + element.Name, element.Type, 0);
-                                });
-                            }
-
-                            b.WriteLine($"w.Write((uint){0});");
-                        }
-
-                        b.WriteLine("}");
-                    }
-
-                    b.WriteLine();
-
-                    {
-                        b.WriteLine($"public {objectDefinition.CSharpFullName} Deserialize(ref {GenerateTypeFullName("RocketPackObjectReader")} r, in int rank)");
-                        b.WriteLine("{");
-
-                        using (b.Indent())
-                        {
-
-                            b.WriteLine($"if (rank > 256) throw new {GenerateTypeFullName("FormatException")}();");
-                            b.WriteLine();
-
-                            foreach (var element in objectDefinition.Elements)
-                            {
-                                b.WriteLine($"{this.GenerateParameterTypeFullName(element.Type)} p_{GenerateFieldVariableName(element.Name)} = {this.GetDefaultValueString(element.Type)};");
-                            }
-                            b.WriteLine();
-
-                            b.WriteLine("for (; ; )");
-                            b.WriteLine("{");
-
-                            using (b.Indent())
-                            {
-                                b.WriteLine("uint id = r.GetUInt32();");
-                                b.WriteLine("if (id == 0) break;");
-                                b.WriteLine("switch (id)");
-                                b.WriteLine("{");
-
-                                using (b.Indent())
-                                {
-                                    foreach (var (index, element) in objectDefinition.Elements.Select((n, i) => (i + 1, n)))
-                                    {
-                                        b.WriteLine($"case {index}:");
-
-                                        using (b.Indent())
-                                        {
-                                            b.WriteLine("{");
-
-                                            using (b.Indent())
-                                            {
-                                                this.Write_Medium_Formatter_Deserialize_PropertyDef(b, "p_" + GenerateFieldVariableName(element.Name), element.Type, 0);
-
-                                                b.WriteLine("break;");
-                                            }
-
-                                            b.WriteLine("}");
-                                        }
-                                    }
-                                }
-
-                                b.WriteLine("}");
-                            }
-
-                            b.WriteLine("}");
-                            b.WriteLine();
-
-                            b.WriteLine($"return new {objectDefinition.CSharpFullName}({ string.Join(", ", objectDefinition.Elements.Select(n => "p_" + GenerateFieldVariableName(n.Name)))});");
-                        }
-
-                        b.WriteLine("}");
-                    }
+                    this.Write_Medium_Formatter_Serialize(b, objectDefinition);
+                    this.Write_Medium_Formatter_Deserialize(b, objectDefinition);
                 }
 
                 b.WriteLine("}");
             }
 
-            private void Write_Medium_Formatter_Serialize_PropertyDef(CodeBuilder b, string name, TypeBase type, int rank)
+            private void Write_Medium_Formatter_Serialize(CodeWriter b, ObjectDefinition objectDefinition)
+            {
+                b.WriteLine($"public void Serialize(ref {GenerateTypeFullName("RocketPackObjectWriter")} w, in {objectDefinition.CSharpFullName} value, in int rank)");
+                b.WriteLine("{");
+
+                using (b.Indent())
+                {
+                    b.WriteLine($"if (rank > 256) throw new {GenerateTypeFullName("FormatException")}();");
+                    b.WriteLine();
+
+                    foreach (var (index, element) in objectDefinition.Elements.Select((n, i) => (i + 1, n)))
+                    {
+                        this.BlockWhoseValueIsNotDefault(b, element, () =>
+                        {
+                            b.WriteLine($"w.Write((uint){index});");
+                            this.Write_Medium_Formatter_Serialize_PropertyDef(b, "value." + element.Name, element.Type, 0);
+                        });
+                    }
+
+                    b.WriteLine($"w.Write((uint){0});");
+                }
+
+                b.WriteLine("}");
+            }
+
+            private void Write_Medium_Formatter_Serialize_PropertyDef(CodeWriter b, string name, TypeBase type, int rank)
             {
                 switch (type)
                 {
-                    case BoolType boolType:
+                    case BoolType:
                         if (!type.IsOptional)
                         {
                             b.WriteLine($"w.Write({name});");
@@ -1122,8 +930,9 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                         {
                             b.WriteLine($"w.Write({name}.Value);");
                         }
+
                         break;
-                    case IntType inttype:
+                    case IntType:
                         if (!type.IsOptional)
                         {
                             b.WriteLine($"w.Write({name});");
@@ -1132,8 +941,9 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                         {
                             b.WriteLine($"w.Write({name}.Value);");
                         }
+
                         break;
-                    case FloatType floatType:
+                    case FloatType:
                         if (!type.IsOptional)
                         {
                             b.WriteLine($"w.Write({name});");
@@ -1142,11 +952,12 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                         {
                             b.WriteLine($"w.Write({name}.Value);");
                         }
+
                         break;
-                    case StringType stringType:
+                    case StringType:
                         b.WriteLine($"w.Write({name});");
                         break;
-                    case TimestampType timestampType:
+                    case TimestampType:
                         if (!type.IsOptional)
                         {
                             b.WriteLine($"w.Write({name});");
@@ -1155,6 +966,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                         {
                             b.WriteLine($"w.Write({name}.Value);");
                         }
+
                         break;
                     case BytesType memoryType when (memoryType.IsUseMemoryPool):
                         if (!type.IsOptional)
@@ -1165,6 +977,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                         {
                             b.WriteLine($"w.Write({name}.Value.Span);");
                         }
+
                         break;
                     case BytesType memoryType when (!memoryType.IsUseMemoryPool):
                         if (!type.IsOptional)
@@ -1175,35 +988,34 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                         {
                             b.WriteLine($"w.Write({name}.Value.Span);");
                         }
+
                         break;
                     case VectorType listType:
+                        b.WriteLine($"w.Write((uint){name}.Count);");
+                        b.WriteLine($"foreach (var n in {name})");
+                        b.WriteLine("{");
+
+                        using (b.Indent())
                         {
-                            b.WriteLine($"w.Write((uint){name}.Count);");
-                            b.WriteLine($"foreach (var n in {name})");
-                            b.WriteLine("{");
-
-                            using (b.Indent())
-                            {
-                                this.Write_Medium_Formatter_Serialize_PropertyDef(b, "n", listType.ElementType, rank + 1);
-                            }
-
-                            b.WriteLine("}");
+                            this.Write_Medium_Formatter_Serialize_PropertyDef(b, "n", listType.ElementType, rank + 1);
                         }
+
+                        b.WriteLine("}");
+
                         break;
                     case MapType mapType:
+                        b.WriteLine($"w.Write((uint){name}.Count);");
+                        b.WriteLine($"foreach (var n in {name})");
+                        b.WriteLine("{");
+
+                        using (b.Indent())
                         {
-                            b.WriteLine($"w.Write((uint){name}.Count);");
-                            b.WriteLine($"foreach (var n in {name})");
-                            b.WriteLine("{");
-
-                            using (b.Indent())
-                            {
-                                this.Write_Medium_Formatter_Serialize_PropertyDef(b, "n.Key", mapType.KeyType, rank + 1);
-                                this.Write_Medium_Formatter_Serialize_PropertyDef(b, "n.Value", mapType.ValueType, rank + 1);
-                            }
-
-                            b.WriteLine("}");
+                            this.Write_Medium_Formatter_Serialize_PropertyDef(b, "n.Key", mapType.KeyType, rank + 1);
+                            this.Write_Medium_Formatter_Serialize_PropertyDef(b, "n.Value", mapType.ValueType, rank + 1);
                         }
+
+                        b.WriteLine("}");
+
                         break;
                     case CustomType customType:
                         switch (this.FindDefinition(customType))
@@ -1234,6 +1046,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
 
                                         break;
                                 }
+
                                 break;
                             case ObjectDefinition objectDefinition when (objectDefinition.IsCSharpStruct):
                                 if (!type.IsOptional)
@@ -1244,20 +1057,83 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                                 {
                                     b.WriteLine($"{objectDefinition.CSharpFullName}.Formatter.Serialize(ref w, {name}.Value, rank + 1);");
                                 }
+
                                 break;
                             case ObjectDefinition objectDefinition when (objectDefinition.IsCSharpClass):
                                 b.WriteLine($"{objectDefinition.CSharpFullName}.Formatter.Serialize(ref w, {name}, rank + 1);");
                                 break;
                         }
+
                         break;
                 }
             }
 
-            private void Write_Medium_Formatter_Deserialize_PropertyDef(CodeBuilder b, string name, TypeBase type, int rank)
+            private void Write_Medium_Formatter_Deserialize(CodeWriter b, ObjectDefinition objectDefinition)
+            {
+                b.WriteLine($"public {objectDefinition.CSharpFullName} Deserialize(ref {GenerateTypeFullName("RocketPackObjectReader")} r, in int rank)");
+                b.WriteLine("{");
+
+                using (b.Indent())
+                {
+                    b.WriteLine($"if (rank > 256) throw new {GenerateTypeFullName("FormatException")}();");
+                    b.WriteLine();
+
+                    foreach (var element in objectDefinition.Elements)
+                    {
+                        b.WriteLine($"{this.GenerateParameterTypeFullName(element.Type)} p_{GenerateFieldVariableName(element.Name)} = {this.GetDefaultValueString(element.Type)};");
+                    }
+
+                    b.WriteLine();
+
+                    b.WriteLine("for (; ; )");
+                    b.WriteLine("{");
+
+                    using (b.Indent())
+                    {
+                        b.WriteLine("uint id = r.GetUInt32();");
+                        b.WriteLine("if (id == 0) break;");
+                        b.WriteLine("switch (id)");
+                        b.WriteLine("{");
+
+                        using (b.Indent())
+                        {
+                            foreach (var (index, element) in objectDefinition.Elements.Select((n, i) => (i + 1, n)))
+                            {
+                                b.WriteLine($"case {index}:");
+
+                                using (b.Indent())
+                                {
+                                    b.WriteLine("{");
+
+                                    using (b.Indent())
+                                    {
+                                        this.Write_Medium_Formatter_Deserialize_PropertyDef(b, "p_" + GenerateFieldVariableName(element.Name), element.Type, 0);
+
+                                        b.WriteLine("break;");
+                                    }
+
+                                    b.WriteLine("}");
+                                }
+                            }
+                        }
+
+                        b.WriteLine("}");
+                    }
+
+                    b.WriteLine("}");
+                    b.WriteLine();
+
+                    b.WriteLine($"return new {objectDefinition.CSharpFullName}({string.Join(", ", objectDefinition.Elements.Select(n => "p_" + GenerateFieldVariableName(n.Name)))});");
+                }
+
+                b.WriteLine("}");
+            }
+
+            private void Write_Medium_Formatter_Deserialize_PropertyDef(CodeWriter b, string name, TypeBase type, int rank)
             {
                 switch (type)
                 {
-                    case BoolType boolType:
+                    case BoolType:
                         b.WriteLine($"{name} = r.GetBoolean();");
                         break;
                     case IntType inttype when (!inttype.IsSigned):
@@ -1275,7 +1151,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                     case StringType stringType:
                         b.WriteLine($"{name} = r.GetString({stringType.MaxLength});");
                         break;
-                    case TimestampType timestampType:
+                    case TimestampType:
                         b.WriteLine($"{name} = r.GetTimestamp();");
                         break;
                     case BytesType memoryType when (memoryType.IsUseMemoryPool):
@@ -1299,6 +1175,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
 
                             b.WriteLine("}");
                         }
+
                         break;
                     case MapType mapType:
                         {
@@ -1319,6 +1196,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
 
                             b.WriteLine("}");
                         }
+
                         break;
                     case CustomType customType:
                         switch (this.FindDefinition(customType))
@@ -1333,6 +1211,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                                         b.WriteLine($"{name} = ({enumInfo.Name})r.GetUInt64();");
                                         break;
                                 }
+
                                 break;
                             case ObjectDefinition objectDefinition when (objectDefinition.IsCSharpStruct):
                                 b.WriteLine($"{name} = {objectDefinition.CSharpFullName}.Formatter.Deserialize(ref r, rank + 1);");
@@ -1341,78 +1220,49 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                                 b.WriteLine($"{name} = {objectDefinition.CSharpFullName}.Formatter.Deserialize(ref r, rank + 1);");
                                 break;
                         }
+
                         break;
                 }
             }
 
-            private void Write_Small_Formatter(CodeBuilder b, ObjectDefinition objectDefinition)
+            private void Write_Small_Formatter(CodeWriter b, ObjectDefinition objectDefinition)
             {
                 b.WriteLine($"private sealed class ___CustomFormatter : {GenerateTypeFullName("IRocketPackObjectFormatter<>", objectDefinition.CSharpFullName)}");
                 b.WriteLine("{");
 
                 using (b.Indent())
                 {
-                    {
-                        b.WriteLine($"public void Serialize(ref {GenerateTypeFullName("RocketPackObjectWriter")} w, in {objectDefinition.CSharpFullName} value, in int rank)");
-                        b.WriteLine("{");
+                    this.Write_Small_Formatter_Serialize(b, objectDefinition);
+                    this.Write_Small_Formatter_Deserialize(b, objectDefinition);
+                }
 
-                        using (b.Indent())
-                        {
-                            b.WriteLine($"if (rank > 256) throw new {GenerateTypeFullName("FormatException")}();");
-                            b.WriteLine();
+                b.WriteLine("}");
+            }
 
-                            foreach (var element in objectDefinition.Elements)
-                            {
-                                this.Write_Small_Formatter_Serialize_PropertyDef(b, "value." + element.Name, element.Type, 0);
-                            }
-                        }
+            private void Write_Small_Formatter_Serialize(CodeWriter b, ObjectDefinition objectDefinition)
+            {
+                b.WriteLine($"public void Serialize(ref {GenerateTypeFullName("RocketPackObjectWriter")} w, in {objectDefinition.CSharpFullName} value, in int rank)");
+                b.WriteLine("{");
 
-                        b.WriteLine("}");
-                    }
-
+                using (b.Indent())
+                {
+                    b.WriteLine($"if (rank > 256) throw new {GenerateTypeFullName("FormatException")}();");
                     b.WriteLine();
 
+                    foreach (var element in objectDefinition.Elements)
                     {
-                        b.WriteLine($"public {objectDefinition.CSharpFullName} Deserialize(ref {GenerateTypeFullName("RocketPackObjectReader")} r, in int rank)");
-                        b.WriteLine("{");
-
-                        using (b.Indent())
-                        {
-                            b.WriteLine($"if (rank > 256) throw new {GenerateTypeFullName("FormatException")}();");
-                            b.WriteLine();
-
-                            foreach (var elementInfo in objectDefinition.Elements)
-                            {
-                                b.WriteLine($"{this.GenerateParameterTypeFullName(elementInfo.Type)} p_{GenerateFieldVariableName(elementInfo.Name)} = {this.GetDefaultValueString(elementInfo.Type)};");
-                            }
-                            b.WriteLine();
-
-                            foreach (var elementInfo in objectDefinition.Elements)
-                            {
-                                b.WriteLine("{");
-                                using (b.Indent())
-                                {
-                                    this.Write_Small_Formatter_Deserialize_PropertyDef(b, "p_" + GenerateFieldVariableName(elementInfo.Name), elementInfo.Type, 0);
-                                }
-                                b.WriteLine("}");
-                            }
-
-                            b.WriteLine($"return new {objectDefinition.CSharpFullName}({ string.Join(", ", objectDefinition.Elements.Select(n => "p_" + GenerateFieldVariableName(n.Name)))});");
-
-                        }
-
-                        b.WriteLine("}");
+                        this.Write_Small_Formatter_Serialize_PropertyDef(b, "value." + element.Name, element.Type, 0);
                     }
                 }
 
                 b.WriteLine("}");
             }
 
-            private void Write_Small_Formatter_Serialize_PropertyDef(CodeBuilder b, string name, TypeBase type, int rank)
+            private void Write_Small_Formatter_Serialize_PropertyDef(CodeWriter b, string name, TypeBase type, int rank)
             {
                 switch (type)
                 {
-                    case BoolType boolType:
+                    case BoolType:
                         if (!type.IsOptional)
                         {
                             b.WriteLine($"w.Write({name});");
@@ -1421,8 +1271,9 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                         {
                             b.WriteLine($"w.Write({name}.Value);");
                         }
+
                         break;
-                    case IntType inttype:
+                    case IntType:
                         if (!type.IsOptional)
                         {
                             b.WriteLine($"w.Write({name});");
@@ -1431,8 +1282,9 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                         {
                             b.WriteLine($"w.Write({name}.Value);");
                         }
+
                         break;
-                    case FloatType floatType:
+                    case FloatType:
                         if (!type.IsOptional)
                         {
                             b.WriteLine($"w.Write({name});");
@@ -1441,11 +1293,12 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                         {
                             b.WriteLine($"w.Write({name}.Value);");
                         }
+
                         break;
-                    case StringType stringType:
+                    case StringType:
                         b.WriteLine($"w.Write({name});");
                         break;
-                    case TimestampType timestampType:
+                    case TimestampType:
                         if (!type.IsOptional)
                         {
                             b.WriteLine($"w.Write({name});");
@@ -1454,6 +1307,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                         {
                             b.WriteLine($"w.Write({name}.Value);");
                         }
+
                         break;
                     case BytesType memoryType when (memoryType.IsUseMemoryPool):
                         if (!type.IsOptional)
@@ -1464,6 +1318,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                         {
                             b.WriteLine($"w.Write({name}.Value.Span);");
                         }
+
                         break;
                     case BytesType memoryType when (!memoryType.IsUseMemoryPool):
                         if (!type.IsOptional)
@@ -1474,6 +1329,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                         {
                             b.WriteLine($"w.Write({name}.Value.Span);");
                         }
+
                         break;
                     case VectorType listType:
                         {
@@ -1488,6 +1344,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
 
                             b.WriteLine("}");
                         }
+
                         break;
                     case MapType mapType:
                         {
@@ -1503,6 +1360,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
 
                             b.WriteLine("}");
                         }
+
                         break;
                     case CustomType customType:
                         switch (this.FindDefinition(customType))
@@ -1533,6 +1391,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
 
                                         break;
                                 }
+
                                 break;
                             case ObjectDefinition objectDefinition when (objectDefinition.IsCSharpStruct):
                                 if (!customType.IsOptional)
@@ -1543,20 +1402,57 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                                 {
                                     b.WriteLine($"{objectDefinition.CSharpFullName}.Formatter.Serialize(ref w, {name}.Value, rank + 1);");
                                 }
+
                                 break;
                             case ObjectDefinition objectDefinition when (objectDefinition.IsCSharpClass):
                                 b.WriteLine($"{objectDefinition.CSharpFullName}.Formatter.Serialize(ref w, {name}, rank + 1);");
                                 break;
                         }
+
                         break;
                 }
             }
 
-            private void Write_Small_Formatter_Deserialize_PropertyDef(CodeBuilder b, string name, TypeBase type, int rank)
+            private void Write_Small_Formatter_Deserialize(CodeWriter b, ObjectDefinition objectDefinition)
+            {
+                b.WriteLine($"public {objectDefinition.CSharpFullName} Deserialize(ref {GenerateTypeFullName("RocketPackObjectReader")} r, in int rank)");
+                b.WriteLine("{");
+
+                using (b.Indent())
+                {
+                    b.WriteLine($"if (rank > 256) throw new {GenerateTypeFullName("FormatException")}();");
+                    b.WriteLine();
+
+                    foreach (var elementInfo in objectDefinition.Elements)
+                    {
+                        b.WriteLine($"{this.GenerateParameterTypeFullName(elementInfo.Type)} p_{GenerateFieldVariableName(elementInfo.Name)} = {this.GetDefaultValueString(elementInfo.Type)};");
+                    }
+
+                    b.WriteLine();
+
+                    foreach (var elementInfo in objectDefinition.Elements)
+                    {
+                        b.WriteLine("{");
+
+                        using (b.Indent())
+                        {
+                            this.Write_Small_Formatter_Deserialize_PropertyDef(b, "p_" + GenerateFieldVariableName(elementInfo.Name), elementInfo.Type, 0);
+                        }
+
+                        b.WriteLine("}");
+                    }
+
+                    b.WriteLine($"return new {objectDefinition.CSharpFullName}({string.Join(", ", objectDefinition.Elements.Select(n => "p_" + GenerateFieldVariableName(n.Name)))});");
+                }
+
+                b.WriteLine("}");
+            }
+
+            private void Write_Small_Formatter_Deserialize_PropertyDef(CodeWriter b, string name, TypeBase type, int rank)
             {
                 switch (type)
                 {
-                    case BoolType boolType:
+                    case BoolType:
                         b.WriteLine($"{name} = r.GetBoolean();");
                         break;
                     case IntType inttype when (!inttype.IsSigned):
@@ -1598,6 +1494,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
 
                             b.WriteLine("}");
                         }
+
                         break;
                     case MapType mapType:
                         {
@@ -1618,6 +1515,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
 
                             b.WriteLine("}");
                         }
+
                         break;
                     case CustomType customType:
                         switch (this.FindDefinition(customType))
@@ -1632,6 +1530,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                                         b.WriteLine($"{name} = ({enumInfo.Name})r.GetUInt64();");
                                         break;
                                 }
+
                                 break;
                             case ObjectDefinition objectDefinition when (objectDefinition.IsCSharpStruct):
                                 b.WriteLine($"{name} = {objectDefinition.CSharpFullName}.Formatter.Deserialize(ref r, rank + 1);");
@@ -1640,11 +1539,12 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                                 b.WriteLine($"{name} = {objectDefinition.CSharpFullName}.Formatter.Deserialize(ref r, rank + 1);");
                                 break;
                         }
+
                         break;
                 }
             }
 
-            private void BlockWhoseValueIsNotDefault(CodeBuilder b, ObjectElement element, Action callback)
+            private void BlockWhoseValueIsNotDefault(CodeWriter b, ObjectElement element, Action callback)
             {
                 var sb = new StringBuilder();
                 sb.Append($"if (");
@@ -1660,6 +1560,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                         {
                             sb.Append($"value.{element.Name} != null)");
                         }
+
                         break;
                     case IntType type:
                         if (!type.IsOptional)
@@ -1670,6 +1571,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                         {
                             sb.Append($"value.{element.Name} != null)");
                         }
+
                         break;
                     case FloatType type when (type.Size == 32):
                         if (!type.IsOptional)
@@ -1680,6 +1582,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                         {
                             sb.Append($"value.{element.Name} != null)");
                         }
+
                         break;
                     case FloatType type when (type.Size == 64):
                         if (!type.IsOptional)
@@ -1690,6 +1593,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                         {
                             sb.Append($"value.{element.Name} != null)");
                         }
+
                         break;
                     case StringType type:
                         if (!type.IsOptional)
@@ -1700,6 +1604,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                         {
                             sb.Append($"value.{element.Name} != null)");
                         }
+
                         break;
                     case TimestampType type:
                         if (!type.IsOptional)
@@ -1710,6 +1615,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                         {
                             sb.Append($"value.{element.Name} != null)");
                         }
+
                         break;
                     case BytesType type:
                         if (!type.IsOptional)
@@ -1720,6 +1626,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                         {
                             sb.Append($"value.{element.Name} != null)");
                         }
+
                         break;
                     case VectorType type:
                         if (!type.IsOptional)
@@ -1730,6 +1637,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                         {
                             sb.Append($"value.{element.Name} != null)");
                         }
+
                         break;
                     case MapType type:
                         if (!type.IsOptional)
@@ -1740,47 +1648,153 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                         {
                             sb.Append($"value.{element.Name} != null)");
                         }
+
                         break;
                     case CustomType type:
+                        switch (this.FindDefinition(type))
                         {
-                            switch (this.FindDefinition(type))
-                            {
-                                case EnumDefinition elementEnumDefinition:
-                                    if (!type.IsOptional)
-                                    {
-                                        sb.Append($"value.{element.Name} != ({elementEnumDefinition.Name})0)");
-                                    }
-                                    else
-                                    {
-                                        sb.Append($"value.{element.Name} != null)");
-                                    }
-                                    break;
-                                case ObjectDefinition elementMessageDefinition:
-                                    if (!type.IsOptional)
-                                    {
-                                        sb.Append($"value.{element.Name} != {elementMessageDefinition.Name}.Empty)");
-                                    }
-                                    else
-                                    {
-                                        sb.Append($"value.{element.Name} != null)");
-                                    }
-                                    break;
-                                default:
-                                    throw new ArgumentException($"Type \"{type.TypeName}\" was not found", nameof(element.Type));
-                            }
-                            break;
+                            case EnumDefinition elementEnumDefinition:
+                                if (!type.IsOptional)
+                                {
+                                    sb.Append($"value.{element.Name} != ({elementEnumDefinition.Name})0)");
+                                }
+                                else
+                                {
+                                    sb.Append($"value.{element.Name} != null)");
+                                }
+
+                                break;
+                            case ObjectDefinition elementMessageDefinition:
+                                if (!type.IsOptional)
+                                {
+                                    sb.Append($"value.{element.Name} != {elementMessageDefinition.Name}.Empty)");
+                                }
+                                else
+                                {
+                                    sb.Append($"value.{element.Name} != null)");
+                                }
+
+                                break;
+                            default:
+                                throw new ArgumentException($"Type \"{type.TypeName}\" was not found", nameof(element));
                         }
+
+                        break;
                     default:
-                        throw new ArgumentException($"Type \"{element.Type.GetType().Name}\" was not found", nameof(element.Type));
+                        throw new ArgumentException($"Type \"{element.Type.GetType().Name}\" was not found", nameof(element));
                 }
 
                 b.WriteLine(sb.ToString());
                 b.WriteLine("{");
+
                 using (b.Indent())
                 {
                     callback.Invoke();
                 }
+
                 b.WriteLine("}");
+            }
+
+            /// <summary>
+            /// プロパティ名からフィールド変数名を生成します。
+            /// </summary>
+            private static string GenerateFieldVariableName(string name)
+            {
+                return name[0].ToString().ToLower() + name[1..];
+            }
+
+            private object? FindDefinition(CustomType customType)
+            {
+                var results = new List<object>();
+
+                if (customType.TypeName.Contains("."))
+                {
+                    foreach (var definition in new[] { _rootDefinition }.Union(_externalDefinitions))
+                    {
+                        var enumDefinitions = definition.Enums.Where(m => m.FullName == customType.TypeName).ToArray();
+                        var objectDefinitions = definition.Objects.Where(m => m.FullName == customType.TypeName).ToArray();
+                        results.AddRange(enumDefinitions.Union<object>(objectDefinitions));
+                    }
+                }
+                else
+                {
+                    foreach (var definition in new[] { _rootDefinition }.Union(_externalDefinitions))
+                    {
+                        var enumDefinitions = definition.Enums.Where(m => m.Name == customType.TypeName).ToArray();
+                        var objectDefinitions = definition.Objects.Where(m => m.Name == customType.TypeName).ToArray();
+                        results.AddRange(enumDefinitions.Union<object>(objectDefinitions));
+                    }
+                }
+
+                return results.Single();
+            }
+
+            private string GeneratePropertyTypeFullName(TypeBase typeBase)
+            {
+                return typeBase switch
+                {
+                    BytesType type when (!type.IsUseMemoryPool) => GenerateTypeFullName("ReadOnlyMemory<>", "byte") + (type.IsOptional ? "?" : ""),
+                    BytesType type when (type.IsUseMemoryPool) => GenerateTypeFullName("ReadOnlyMemory<>", "byte") + (type.IsOptional ? "?" : ""),
+                    VectorType type => GenerateTypeFullName("ReadOnlyListSlim<>", this.GenerateParameterTypeFullName(type.ElementType)) + (type.IsOptional ? "?" : ""),
+                    MapType type => GenerateTypeFullName("ReadOnlyDictionarySlim<,>", this.GenerateParameterTypeFullName(type.KeyType), this.GenerateParameterTypeFullName(type.ValueType)) + (type.IsOptional ? "?" : ""),
+                    _ => this.GenerateParameterTypeFullName(typeBase),
+                };
+            }
+
+            private string GenerateParameterTypeFullName(TypeBase typeBase)
+            {
+                return typeBase switch
+                {
+                    BoolType type => "bool" + (type.IsOptional ? "?" : ""),
+                    IntType type when (!type.IsSigned && type.Size == 8) => "byte" + (type.IsOptional ? "?" : ""),
+                    IntType type when (!type.IsSigned && type.Size == 16) => "ushort" + (type.IsOptional ? "?" : ""),
+                    IntType type when (!type.IsSigned && type.Size == 32) => "uint" + (type.IsOptional ? "?" : ""),
+                    IntType type when (!type.IsSigned && type.Size == 64) => "ulong" + (type.IsOptional ? "?" : ""),
+                    IntType type when (type.IsSigned && type.Size == 8) => "sbyte" + (type.IsOptional ? "?" : ""),
+                    IntType type when (type.IsSigned && type.Size == 16) => "short" + (type.IsOptional ? "?" : ""),
+                    IntType type when (type.IsSigned && type.Size == 32) => "int" + (type.IsOptional ? "?" : ""),
+                    IntType type when (type.IsSigned && type.Size == 64) => "long" + (type.IsOptional ? "?" : ""),
+                    FloatType type when (type.Size == 32) => "float" + (type.IsOptional ? "?" : ""),
+                    FloatType type when (type.Size == 64) => "double" + (type.IsOptional ? "?" : ""),
+                    StringType type => "string" + (type.IsOptional ? "?" : ""),
+                    TimestampType type => GenerateTypeFullName("Timestamp") + (type.IsOptional ? "?" : ""),
+                    BytesType type when (type.IsUseMemoryPool) => GenerateTypeFullName("IMemoryOwner<>", "byte") + (type.IsOptional ? "?" : ""),
+                    BytesType type when (!type.IsUseMemoryPool) => GenerateTypeFullName("ReadOnlyMemory<>", "byte") + (type.IsOptional ? "?" : ""),
+                    VectorType type => $"{this.GenerateParameterTypeFullName(type.ElementType)}[]" + (type.IsOptional ? "?" : ""),
+                    MapType type => GenerateTypeFullName("Dictionary<,>", this.GenerateParameterTypeFullName(type.KeyType), this.GenerateParameterTypeFullName(type.ValueType)) + (type.IsOptional ? "?" : ""),
+                    CustomType type => this.FindDefinition(type) switch
+                    {
+                        EnumDefinition enumDefinition => enumDefinition.CSharpFullName + (type.IsOptional ? "?" : ""),
+                        ObjectDefinition objectDefinition when (objectDefinition.FormatType == MessageFormatType.Table) => objectDefinition.CSharpFullName + (type.IsOptional ? "?" : ""),
+                        ObjectDefinition objectDefinition when (objectDefinition.FormatType == MessageFormatType.Struct) => objectDefinition.CSharpFullName + (type.IsOptional ? "?" : ""),
+                        _ => throw new ArgumentException($"Type \"{type.TypeName}\" was not found", nameof(typeBase)),
+                    },
+                    _ => throw new ArgumentException($"Type \"{typeBase.GetType().Name}\" was not found", nameof(typeBase)),
+                };
+            }
+
+            private string GetDefaultValueString(TypeBase typeBase)
+            {
+                return typeBase switch
+                {
+                    BoolType type => type.IsOptional ? "null" : "false",
+                    IntType type => type.IsOptional ? "null" : "0",
+                    FloatType type when (type.Size == 32) => type.IsOptional ? "null" : "0.0F",
+                    FloatType type when (type.Size == 64) => type.IsOptional ? "null" : "0.0D",
+                    StringType type => type.IsOptional ? "null" : "string.Empty",
+                    TimestampType type => type.IsOptional ? "null" : GenerateTypeFullName("Timestamp") + ".Zero",
+                    BytesType type when (!type.IsUseMemoryPool) => type.IsOptional ? "null" : GenerateTypeFullName("ReadOnlyMemory<>", "byte") + ".Empty",
+                    BytesType type when (type.IsUseMemoryPool) => type.IsOptional ? "null" : GenerateTypeFullName("MemoryOwner<>", "byte") + ".Empty",
+                    VectorType type => type.IsOptional ? "null" : GenerateTypeFullName("Array") + ".Empty<" + this.GenerateParameterTypeFullName(type.ElementType) + ">()",
+                    MapType type => type.IsOptional ? "null" : "new " + GenerateTypeFullName("Dictionary<,>", this.GenerateParameterTypeFullName(type.KeyType), this.GenerateParameterTypeFullName(type.ValueType)) + "()",
+                    CustomType type => this.FindDefinition(type) switch
+                    {
+                        EnumDefinition elementEnumDefinition => type.IsOptional ? "null" : $"({elementEnumDefinition.CSharpFullName})0",
+                        ObjectDefinition elementMessageDefinition => type.IsOptional ? "null" : $"{elementMessageDefinition.CSharpFullName}.Empty",
+                        _ => throw new ArgumentException($"Type \"{type.TypeName}\" was not found", nameof(typeBase)),
+                    },
+                    _ => throw new ArgumentException($"Type \"{typeBase.GetType().Name}\" was not found", nameof(typeBase)),
+                };
             }
         }
     }

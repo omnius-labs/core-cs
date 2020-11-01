@@ -19,26 +19,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                 _accessLevel = accessLevelOption?.Value as string ?? "public";
             }
 
-            /// <summary>
-            /// <see cref="TypeBase"/>から型を生成します。
-            /// </summary>
-            private string GetTypeString(TypeBase typeBase)
-            {
-                return typeBase switch
-                {
-                    IntType type when (!type.IsSigned && type.Size == 8) => "byte",
-                    IntType type when (!type.IsSigned && type.Size == 16) => "ushort",
-                    IntType type when (!type.IsSigned && type.Size == 32) => "uint",
-                    IntType type when (!type.IsSigned && type.Size == 64) => "ulong",
-                    IntType type when (type.IsSigned && type.Size == 8) => "sbyte",
-                    IntType type when (type.IsSigned && type.Size == 16) => "short",
-                    IntType type when (type.IsSigned && type.Size == 32) => "int",
-                    IntType type when (type.IsSigned && type.Size == 64) => "long",
-                    _ => throw new ArgumentException(nameof(typeBase)),
-                };
-            }
-
-            public void Write(CodeBuilder b)
+            public void Write(CodeWriter b)
             {
                 foreach (var enumDefinition in _rootDefinition.Enums)
                 {
@@ -55,6 +36,25 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
 
                     b.WriteLine("}");
                 }
+            }
+
+            /// <summary>
+            /// <see cref="TypeBase"/>から型を生成します。
+            /// </summary>
+            private string GetTypeString(TypeBase typeBase)
+            {
+                return typeBase switch
+                {
+                    IntType type when (!type.IsSigned && type.Size == 8) => "byte",
+                    IntType type when (!type.IsSigned && type.Size == 16) => "ushort",
+                    IntType type when (!type.IsSigned && type.Size == 32) => "uint",
+                    IntType type when (!type.IsSigned && type.Size == 64) => "ulong",
+                    IntType type when (type.IsSigned && type.Size == 8) => "sbyte",
+                    IntType type when (type.IsSigned && type.Size == 16) => "short",
+                    IntType type when (type.IsSigned && type.Size == 32) => "int",
+                    IntType type when (type.IsSigned && type.Size == 64) => "long",
+                    _ => throw new ArgumentException("unknown type", nameof(typeBase)),
+                };
             }
         }
     }

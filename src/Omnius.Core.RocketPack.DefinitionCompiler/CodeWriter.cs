@@ -3,32 +3,14 @@ using System.Text;
 
 namespace Omnius.Core.RocketPack.DefinitionCompiler
 {
-    internal sealed class CodeBuilder
+    internal sealed class CodeWriter
     {
         private readonly StringBuilder _sb = new StringBuilder();
-        private int _indentDepth = 0;
-        private bool _wroteIndent = false;
+        private int _indentDepth;
+        private bool _wroteIndent;
 
-        public CodeBuilder()
+        public CodeWriter()
         {
-
-        }
-
-        private bool TryWriteIndent()
-        {
-            if (_wroteIndent)
-            {
-                return false;
-            }
-
-            _wroteIndent = true;
-
-            for (int i = 0; i < _indentDepth; i++)
-            {
-                _sb.Append("    ");
-            }
-
-            return true;
         }
 
         public void WriteLine()
@@ -53,21 +35,6 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
             return new IndentCookie(this);
         }
 
-        private struct IndentCookie : IDisposable
-        {
-            private CodeBuilder _CodeBuilder;
-
-            public IndentCookie(CodeBuilder CodeBuilder)
-            {
-                _CodeBuilder = CodeBuilder;
-            }
-
-            public void Dispose()
-            {
-                _CodeBuilder.PopIndent();
-            }
-        }
-
         public void PushIndent()
         {
             _indentDepth++;
@@ -81,6 +48,38 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
         public override string ToString()
         {
             return _sb.ToString().Replace("\r\n", "\n");
+        }
+
+        private bool TryWriteIndent()
+        {
+            if (_wroteIndent)
+            {
+                return false;
+            }
+
+            _wroteIndent = true;
+
+            for (int i = 0; i < _indentDepth; i++)
+            {
+                _sb.Append("    ");
+            }
+
+            return true;
+        }
+
+        private struct IndentCookie : IDisposable
+        {
+            private readonly CodeWriter _codeBuilder;
+
+            public IndentCookie(CodeWriter codeBuilder)
+            {
+                _codeBuilder = codeBuilder;
+            }
+
+            public void Dispose()
+            {
+                _codeBuilder.PopIndent();
+            }
         }
     }
 }

@@ -256,46 +256,36 @@ namespace Omnius.Core.Helpers
 
         public static bool Equals<T>(IList<T> source, int sourceIndex, IList<T> destination, int destinationIndex, int length)
         {
+            if (source is byte[] x && destination is byte[] y)
             {
-                var x = source as byte[];
-                var y = destination as byte[];
-
-                if (x != null && y != null)
+                if (0 > (x.Length - sourceIndex))
                 {
-                    if (0 > (source.Count - sourceIndex))
-                    {
-                        throw new ArgumentOutOfRangeException(nameof(sourceIndex));
-                    }
-
-                    if (0 > (destination.Count - destinationIndex))
-                    {
-                        throw new ArgumentOutOfRangeException(nameof(destinationIndex));
-                    }
-
-                    if (length > (source.Count - sourceIndex))
-                    {
-                        throw new ArgumentOutOfRangeException(nameof(length));
-                    }
-
-                    if (length > (destination.Count - destinationIndex))
-                    {
-                        throw new ArgumentOutOfRangeException(nameof(length));
-                    }
-
-                    return BytesOperations.Equals(x.AsSpan(sourceIndex, length), y.AsSpan(destinationIndex, length));
+                    throw new ArgumentOutOfRangeException(nameof(sourceIndex));
                 }
+                if (0 > (y.Length - destinationIndex))
+                {
+                    throw new ArgumentOutOfRangeException(nameof(destinationIndex));
+                }
+                if (length > (x.Length - sourceIndex))
+                {
+                    throw new ArgumentOutOfRangeException(nameof(length));
+                }
+                if (length > (y.Length - destinationIndex))
+                {
+                    throw new ArgumentOutOfRangeException(nameof(length));
+                }
+
+                return BytesOperations.Equals(x.AsSpan(sourceIndex, length), y.AsSpan(destinationIndex, length));
             }
 
-            {
-                var equalityComparer = EqualityComparer<T>.Default;
-                return CollectionHelper.Equals(source, sourceIndex, destination, destinationIndex, length, equalityComparer);
-            }
+            var equalityComparer = EqualityComparer<T>.Default;
+            return Equals(source, sourceIndex, destination, destinationIndex, length, equalityComparer);
         }
 
         public static bool Equals<T>(IEnumerable<T> source, int sourceIndex, IEnumerable<T> destination, int destinationIndex, int length)
         {
             var equalityComparer = EqualityComparer<T>.Default;
-            return CollectionHelper.Equals(source, sourceIndex, destination, destinationIndex, length, equalityComparer);
+            return Equals(source, sourceIndex, destination, destinationIndex, length, equalityComparer);
         }
 
         public static int Compare<T>(IList<T> source, IList<T> destination, IComparer<T> comparer)

@@ -18,17 +18,26 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler.Models
         }
 
         public IList<UsingDefinition> Usings { get; }
+
         public NamespaceDefinition Namespace { get; }
+
         public IList<OptionDefinition> Options { get; }
+
         public IList<EnumDefinition> Enums { get; }
+
         public IList<ObjectDefinition> Objects { get; }
+
         public IList<ServiceDefinition> Services { get; }
 
         public string CSharpNamespace
         {
             get
             {
-                if (this.Options.FirstOrDefault(n => n.Name == "csharp_namespace")?.Value is string value) return value;
+                if (this.Options.FirstOrDefault(n => n.Name == "csharp_namespace")?.Value is string value)
+                {
+                    return value;
+                }
+
                 return this.Namespace.Value;
             }
         }
@@ -63,6 +72,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler.Models
         }
 
         public string Name { get; }
+
         public object Value { get; }
     }
 
@@ -77,10 +87,18 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler.Models
         }
 
         public string Namespace { get; set; } = string.Empty;
+
         public IList<string> Attributes { get; }
+
         public string Name { get; }
+
+        public string FullName => this.Namespace + "." + this.Name;
+
         public TypeBase Type { get; }
+
         public IList<EnumElement> Elements { get; }
+
+        public string CSharpFullName => "global::" + this.FullName;
     }
 
     internal sealed class EnumElement
@@ -93,7 +111,9 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler.Models
         }
 
         public IList<string> Attributes { get; }
+
         public string Name { get; }
+
         public int Id { get; }
     }
 
@@ -114,14 +134,21 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler.Models
         }
 
         public string Namespace { get; set; } = string.Empty;
+
         public IList<string> Attributes { get; }
+
         public string Name { get; }
+
+        public string FullName => this.Namespace + "." + this.Name;
+
         public MessageFormatType FormatType { get; }
+
         public IList<ObjectElement> Elements { get; }
 
-        public string CSharpFullName => "global::" + this.Namespace + "." + this.Name;
+        public string CSharpFullName => "global::" + this.FullName;
 
         public bool IsCSharpStruct => this.Attributes.Contains("csharp_struct");
+
         public bool IsCSharpClass => !this.IsCSharpStruct;
     }
 
@@ -135,7 +162,9 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler.Models
         }
 
         public IList<string> Attributes { get; }
+
         public string Name { get; }
+
         public TypeBase Type { get; }
     }
 
@@ -144,36 +173,48 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler.Models
         public TypeBase(bool isOptional, IDictionary<string, object>? parameters = null)
         {
             this.IsOptional = isOptional;
-            if (parameters != null) this.Parameters = new ReadOnlyDictionary<string, object>(parameters);
-            else this.Parameters = new ReadOnlyDictionary<string, object>(new Dictionary<string, object>());
+
+            if (parameters != null)
+            {
+                this.Parameters = new ReadOnlyDictionary<string, object>(parameters);
+            }
+            else
+            {
+                this.Parameters = new ReadOnlyDictionary<string, object>(new Dictionary<string, object>());
+            }
         }
 
         public bool IsOptional { get; }
+
         public IReadOnlyDictionary<string, object> Parameters { get; }
     }
 
     internal sealed class BoolType : TypeBase
     {
-        public BoolType(bool isOptional) : base(isOptional)
+        public BoolType(bool isOptional)
+            : base(isOptional)
         {
         }
     }
 
     internal sealed class IntType : TypeBase
     {
-        public IntType(bool isSigned, int size, bool isOptional) : base(isOptional)
+        public IntType(bool isSigned, int size, bool isOptional)
+            : base(isOptional)
         {
             this.IsSigned = isSigned;
             this.Size = size;
         }
 
         public bool IsSigned { get; }
+
         public int Size { get; }
     }
 
     internal sealed class FloatType : TypeBase
     {
-        public FloatType(int size, bool isOptional) : base(isOptional)
+        public FloatType(int size, bool isOptional)
+            : base(isOptional)
         {
             this.Size = size;
         }
@@ -183,7 +224,8 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler.Models
 
     internal sealed class StringType : TypeBase
     {
-        public StringType(bool isOptional, IDictionary<string, object> parameters) : base(isOptional, parameters)
+        public StringType(bool isOptional, IDictionary<string, object> parameters)
+            : base(isOptional, parameters)
         {
         }
 
@@ -191,7 +233,11 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler.Models
         {
             get
             {
-                if (this.Parameters.GetValueOrDefault("capacity") is long result) return (int)result;
+                if (this.Parameters.GetValueOrDefault("capacity") is long result)
+                {
+                    return (int)result;
+                }
+
                 return int.MaxValue;
             }
         }
@@ -199,14 +245,16 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler.Models
 
     internal sealed class TimestampType : TypeBase
     {
-        public TimestampType(bool isOptional) : base(isOptional)
+        public TimestampType(bool isOptional)
+            : base(isOptional)
         {
         }
     }
 
     internal sealed class BytesType : TypeBase
     {
-        public BytesType(bool isOptional, IDictionary<string, object> parameters) : base(isOptional, parameters)
+        public BytesType(bool isOptional, IDictionary<string, object> parameters)
+            : base(isOptional, parameters)
         {
         }
 
@@ -214,7 +262,11 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler.Models
         {
             get
             {
-                if (this.Parameters.GetValueOrDefault("capacity") is long result) return (int)result;
+                if (this.Parameters.GetValueOrDefault("capacity") is long result)
+                {
+                    return (int)result;
+                }
+
                 return int.MaxValue;
             }
         }
@@ -223,7 +275,11 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler.Models
         {
             get
             {
-                if (this.Parameters.GetValueOrDefault("recyclable") is bool result) return result;
+                if (this.Parameters.GetValueOrDefault("recyclable") is bool result)
+                {
+                    return result;
+                }
+
                 return false;
             }
         }
@@ -231,7 +287,8 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler.Models
 
     internal sealed class VectorType : TypeBase
     {
-        public VectorType(TypeBase elementType, bool isOptional, IDictionary<string, object> parameters) : base(isOptional, parameters)
+        public VectorType(TypeBase elementType, bool isOptional, IDictionary<string, object> parameters)
+            : base(isOptional, parameters)
         {
             this.ElementType = elementType ?? throw new ArgumentNullException(nameof(elementType));
         }
@@ -242,7 +299,11 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler.Models
         {
             get
             {
-                if (this.Parameters.GetValueOrDefault("capacity") is long result) return (int)result;
+                if (this.Parameters.GetValueOrDefault("capacity") is long result)
+                {
+                    return (int)result;
+                }
+
                 return int.MaxValue;
             }
         }
@@ -250,20 +311,26 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler.Models
 
     internal sealed class MapType : TypeBase
     {
-        public MapType(TypeBase keyType, TypeBase valueType, bool isOptional, IDictionary<string, object> parameters) : base(isOptional, parameters)
+        public MapType(TypeBase keyType, TypeBase valueType, bool isOptional, IDictionary<string, object> parameters)
+            : base(isOptional, parameters)
         {
             this.KeyType = keyType ?? throw new ArgumentNullException(nameof(keyType));
             this.ValueType = valueType ?? throw new ArgumentNullException(nameof(valueType));
         }
 
         public TypeBase KeyType { get; }
+
         public TypeBase ValueType { get; }
 
         public int MaxLength
         {
             get
             {
-                if (this.Parameters.GetValueOrDefault("capacity") is long result) return (int)result;
+                if (this.Parameters.GetValueOrDefault("capacity") is long result)
+                {
+                    return (int)result;
+                }
+
                 return int.MaxValue;
             }
         }
@@ -271,7 +338,8 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler.Models
 
     internal sealed class CustomType : TypeBase
     {
-        public CustomType(string typeName, bool isOptional) : base(isOptional)
+        public CustomType(string typeName, bool isOptional)
+            : base(isOptional)
         {
             this.TypeName = typeName ?? throw new ArgumentNullException(nameof(typeName));
         }
@@ -289,11 +357,15 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler.Models
         }
 
         public string Namespace { get; set; } = string.Empty;
+
         public IList<string> Attributes { get; }
+
         public string Name { get; }
+
         public IList<FuncElement> Elements { get; }
 
         public string CSharpInterfaceName => "I" + this.Name;
+
         public string CSharpInterfaceFullName => "global::" + this.Namespace + "." + this.CSharpInterfaceName;
     }
 
@@ -308,8 +380,11 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler.Models
         }
 
         public IList<string> Attributes { get; }
+
         public string Name { get; }
+
         public CustomType? InType { get; }
+
         public CustomType? OutType { get; }
 
         public string CSharpFunctionName => this.Name + "Async";
