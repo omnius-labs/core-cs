@@ -205,7 +205,7 @@ namespace Omnius.Core.Cryptography
                     w.Write((uint)1);
                     w.Write(value.CreationTime);
                 }
-                if (value.AlgorithmType != (OmniAgreementAlgorithmType)0)
+                if (value.AlgorithmType != (global::Omnius.Core.Cryptography.OmniAgreementAlgorithmType)0)
                 {
                     w.Write((uint)2);
                     w.Write((ulong)value.AlgorithmType);
@@ -348,7 +348,7 @@ namespace Omnius.Core.Cryptography
                     w.Write((uint)1);
                     w.Write(value.CreationTime);
                 }
-                if (value.AlgorithmType != (OmniAgreementAlgorithmType)0)
+                if (value.AlgorithmType != (global::Omnius.Core.Cryptography.OmniAgreementAlgorithmType)0)
                 {
                     w.Write((uint)2);
                     w.Write((ulong)value.AlgorithmType);
@@ -480,7 +480,7 @@ namespace Omnius.Core.Cryptography
                     w.Write((uint)1);
                     w.Write(value.CreationTime);
                 }
-                if (value.AlgorithmType != (OmniAgreementAlgorithmType)0)
+                if (value.AlgorithmType != (global::Omnius.Core.Cryptography.OmniAgreementAlgorithmType)0)
                 {
                     w.Write((uint)2);
                     w.Write((ulong)value.AlgorithmType);
@@ -621,7 +621,7 @@ namespace Omnius.Core.Cryptography
                     w.Write((uint)1);
                     w.Write(value.Name);
                 }
-                if (value.AlgorithmType != (OmniDigitalSignatureAlgorithmType)0)
+                if (value.AlgorithmType != (global::Omnius.Core.Cryptography.OmniDigitalSignatureAlgorithmType)0)
                 {
                     w.Write((uint)2);
                     w.Write((ulong)value.AlgorithmType);
@@ -773,7 +773,7 @@ namespace Omnius.Core.Cryptography
                     w.Write((uint)1);
                     w.Write(value.Name);
                 }
-                if (value.AlgorithmType != (OmniDigitalSignatureAlgorithmType)0)
+                if (value.AlgorithmType != (global::Omnius.Core.Cryptography.OmniDigitalSignatureAlgorithmType)0)
                 {
                     w.Write((uint)2);
                     w.Write((ulong)value.AlgorithmType);
@@ -912,7 +912,7 @@ namespace Omnius.Core.Cryptography
                     w.Write((uint)1);
                     w.Write(value.Name);
                 }
-                if (value.Hash != OmniHash.Empty)
+                if (value.Hash != global::Omnius.Core.Cryptography.OmniHash.Empty)
                 {
                     w.Write((uint)2);
                     global::Omnius.Core.Cryptography.OmniHash.Formatter.Serialize(ref w, value.Hash, rank + 1);
@@ -1024,7 +1024,7 @@ namespace Omnius.Core.Cryptography
             {
                 if (rank > 256) throw new global::System.FormatException();
 
-                if (value.AlgorithmType != (OmniHashcashAlgorithmType)0)
+                if (value.AlgorithmType != (global::Omnius.Core.Cryptography.OmniHashcashAlgorithmType)0)
                 {
                     w.Write((uint)1);
                     w.Write((ulong)value.AlgorithmType);

@@ -1052,42 +1052,42 @@ namespace Omnius.Core.RocketPack.Tests.Internal
                     w.Write((uint)9);
                     w.Write(value.X8);
                 }
-                if (value.X9 != (Enum1)0)
+                if (value.X9 != (global::Omnius.Core.RocketPack.Tests.Internal.Enum1)0)
                 {
                     w.Write((uint)10);
                     w.Write((long)value.X9);
                 }
-                if (value.X10 != (Enum2)0)
+                if (value.X10 != (global::Omnius.Core.RocketPack.Tests.Internal.Enum2)0)
                 {
                     w.Write((uint)11);
                     w.Write((long)value.X10);
                 }
-                if (value.X11 != (Enum3)0)
+                if (value.X11 != (global::Omnius.Core.RocketPack.Tests.Internal.Enum3)0)
                 {
                     w.Write((uint)12);
                     w.Write((long)value.X11);
                 }
-                if (value.X12 != (Enum4)0)
+                if (value.X12 != (global::Omnius.Core.RocketPack.Tests.Internal.Enum4)0)
                 {
                     w.Write((uint)13);
                     w.Write((long)value.X12);
                 }
-                if (value.X13 != (Enum5)0)
+                if (value.X13 != (global::Omnius.Core.RocketPack.Tests.Internal.Enum5)0)
                 {
                     w.Write((uint)14);
                     w.Write((ulong)value.X13);
                 }
-                if (value.X14 != (Enum6)0)
+                if (value.X14 != (global::Omnius.Core.RocketPack.Tests.Internal.Enum6)0)
                 {
                     w.Write((uint)15);
                     w.Write((ulong)value.X14);
                 }
-                if (value.X15 != (Enum7)0)
+                if (value.X15 != (global::Omnius.Core.RocketPack.Tests.Internal.Enum7)0)
                 {
                     w.Write((uint)16);
                     w.Write((ulong)value.X15);
                 }
-                if (value.X16 != (Enum8)0)
+                if (value.X16 != (global::Omnius.Core.RocketPack.Tests.Internal.Enum8)0)
                 {
                     w.Write((uint)17);
                     w.Write((ulong)value.X16);
@@ -1141,22 +1141,22 @@ namespace Omnius.Core.RocketPack.Tests.Internal
                         w.Write(n.Value);
                     }
                 }
-                if (value.X25 != StructElement_Struct.Empty)
+                if (value.X25 != global::Omnius.Core.RocketPack.Tests.Internal.StructElement_Struct.Empty)
                 {
                     w.Write((uint)26);
                     global::Omnius.Core.RocketPack.Tests.Internal.StructElement_Struct.Formatter.Serialize(ref w, value.X25, rank + 1);
                 }
-                if (value.X26 != MessageElement_Struct.Empty)
+                if (value.X26 != global::Omnius.Core.RocketPack.Tests.Internal.MessageElement_Struct.Empty)
                 {
                     w.Write((uint)27);
                     global::Omnius.Core.RocketPack.Tests.Internal.MessageElement_Struct.Formatter.Serialize(ref w, value.X26, rank + 1);
                 }
-                if (value.X27 != StructElement_Class.Empty)
+                if (value.X27 != global::Omnius.Core.RocketPack.Tests.Internal.StructElement_Class.Empty)
                 {
                     w.Write((uint)28);
                     global::Omnius.Core.RocketPack.Tests.Internal.StructElement_Class.Formatter.Serialize(ref w, value.X27, rank + 1);
                 }
-                if (value.X28 != MessageElement_Class.Empty)
+                if (value.X28 != global::Omnius.Core.RocketPack.Tests.Internal.MessageElement_Class.Empty)
                 {
                     w.Write((uint)29);
                     global::Omnius.Core.RocketPack.Tests.Internal.MessageElement_Class.Formatter.Serialize(ref w, value.X28, rank + 1);
@@ -2635,42 +2635,42 @@ namespace Omnius.Core.RocketPack.Tests.Internal
                     w.Write((uint)9);
                     w.Write(value.X8);
                 }
-                if (value.X9 != (Enum1)0)
+                if (value.X9 != (global::Omnius.Core.RocketPack.Tests.Internal.Enum1)0)
                 {
                     w.Write((uint)10);
                     w.Write((long)value.X9);
                 }
-                if (value.X10 != (Enum2)0)
+                if (value.X10 != (global::Omnius.Core.RocketPack.Tests.Internal.Enum2)0)
                 {
                     w.Write((uint)11);
                     w.Write((long)value.X10);
                 }
-                if (value.X11 != (Enum3)0)
+                if (value.X11 != (global::Omnius.Core.RocketPack.Tests.Internal.Enum3)0)
                 {
                     w.Write((uint)12);
                     w.Write((long)value.X11);
                 }
-                if (value.X12 != (Enum4)0)
+                if (value.X12 != (global::Omnius.Core.RocketPack.Tests.Internal.Enum4)0)
                 {
                     w.Write((uint)13);
                     w.Write((long)value.X12);
                 }
-                if (value.X13 != (Enum5)0)
+                if (value.X13 != (global::Omnius.Core.RocketPack.Tests.Internal.Enum5)0)
                 {
                     w.Write((uint)14);
                     w.Write((ulong)value.X13);
                 }
-                if (value.X14 != (Enum6)0)
+                if (value.X14 != (global::Omnius.Core.RocketPack.Tests.Internal.Enum6)0)
                 {
                     w.Write((uint)15);
                     w.Write((ulong)value.X14);
                 }
-                if (value.X15 != (Enum7)0)
+                if (value.X15 != (global::Omnius.Core.RocketPack.Tests.Internal.Enum7)0)
                 {
                     w.Write((uint)16);
                     w.Write((ulong)value.X15);
                 }
-                if (value.X16 != (Enum8)0)
+                if (value.X16 != (global::Omnius.Core.RocketPack.Tests.Internal.Enum8)0)
                 {
                     w.Write((uint)17);
                     w.Write((ulong)value.X16);
@@ -2724,22 +2724,22 @@ namespace Omnius.Core.RocketPack.Tests.Internal
                         w.Write(n.Value);
                     }
                 }
-                if (value.X25 != StructElement_Struct.Empty)
+                if (value.X25 != global::Omnius.Core.RocketPack.Tests.Internal.StructElement_Struct.Empty)
                 {
                     w.Write((uint)26);
                     global::Omnius.Core.RocketPack.Tests.Internal.StructElement_Struct.Formatter.Serialize(ref w, value.X25, rank + 1);
                 }
-                if (value.X26 != MessageElement_Struct.Empty)
+                if (value.X26 != global::Omnius.Core.RocketPack.Tests.Internal.MessageElement_Struct.Empty)
                 {
                     w.Write((uint)27);
                     global::Omnius.Core.RocketPack.Tests.Internal.MessageElement_Struct.Formatter.Serialize(ref w, value.X26, rank + 1);
                 }
-                if (value.X27 != StructElement_Class.Empty)
+                if (value.X27 != global::Omnius.Core.RocketPack.Tests.Internal.StructElement_Class.Empty)
                 {
                     w.Write((uint)28);
                     global::Omnius.Core.RocketPack.Tests.Internal.StructElement_Class.Formatter.Serialize(ref w, value.X27, rank + 1);
                 }
-                if (value.X28 != MessageElement_Class.Empty)
+                if (value.X28 != global::Omnius.Core.RocketPack.Tests.Internal.MessageElement_Class.Empty)
                 {
                     w.Write((uint)29);
                     global::Omnius.Core.RocketPack.Tests.Internal.MessageElement_Class.Formatter.Serialize(ref w, value.X28, rank + 1);

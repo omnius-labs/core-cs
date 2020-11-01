@@ -148,7 +148,7 @@ namespace Omnius.Core.Network.Connections.Secure.V1.Internal
                     w.Write((uint)1);
                     w.Write(value.SessionId.Span);
                 }
-                if (value.AuthenticationType != (AuthenticationType)0)
+                if (value.AuthenticationType != (global::Omnius.Core.Network.Connections.Secure.V1.Internal.AuthenticationType)0)
                 {
                     w.Write((uint)2);
                     w.Write((ulong)value.AuthenticationType);
@@ -339,12 +339,12 @@ namespace Omnius.Core.Network.Connections.Secure.V1.Internal
             {
                 if (rank > 256) throw new global::System.FormatException();
 
-                if (value.ProfileMessage != ProfileMessage.Empty)
+                if (value.ProfileMessage != global::Omnius.Core.Network.Connections.Secure.V1.Internal.ProfileMessage.Empty)
                 {
                     w.Write((uint)1);
                     global::Omnius.Core.Network.Connections.Secure.V1.Internal.ProfileMessage.Formatter.Serialize(ref w, value.ProfileMessage, rank + 1);
                 }
-                if (value.AgreementPublicKey != OmniAgreementPublicKey.Empty)
+                if (value.AgreementPublicKey != global::Omnius.Core.Cryptography.OmniAgreementPublicKey.Empty)
                 {
                     w.Write((uint)2);
                     global::Omnius.Core.Cryptography.OmniAgreementPublicKey.Formatter.Serialize(ref w, value.AgreementPublicKey, rank + 1);

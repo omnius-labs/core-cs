@@ -1656,7 +1656,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                             case EnumDefinition elementEnumDefinition:
                                 if (!type.IsOptional)
                                 {
-                                    sb.Append($"value.{element.Name} != ({elementEnumDefinition.Name})0)");
+                                    sb.Append($"value.{element.Name} != ({elementEnumDefinition.CSharpFullName})0)");
                                 }
                                 else
                                 {
@@ -1667,7 +1667,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                             case ObjectDefinition elementMessageDefinition:
                                 if (!type.IsOptional)
                                 {
-                                    sb.Append($"value.{element.Name} != {elementMessageDefinition.Name}.Empty)");
+                                    sb.Append($"value.{element.Name} != {elementMessageDefinition.CSharpFullName}.Empty)");
                                 }
                                 else
                                 {
