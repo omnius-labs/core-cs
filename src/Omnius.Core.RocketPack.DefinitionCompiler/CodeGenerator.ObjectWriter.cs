@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Omnius.Core.RocketPack.DefinitionCompiler.Internal;
 using Omnius.Core.RocketPack.DefinitionCompiler.Models;
 
 namespace Omnius.Core.RocketPack.DefinitionCompiler
@@ -12,6 +13,8 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
         {
             private const string CustomFormatterName = "___CustomFormatter";
             private const string HashCodeName = "___hashCode";
+
+            private static readonly NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
 
             private readonly RocketPackDefinition _rootDefinition;
             private readonly IList<RocketPackDefinition> _externalDefinitions;
@@ -1705,28 +1708,73 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
 
             private object? FindDefinition(CustomType customType)
             {
-                var results = new List<object>();
-
                 if (customType.TypeName.Contains("."))
+                {
+                    var result = FindDefsForRootAndExternalByFullName(customType);
+                    if (result is not null)
+                    {
+                        return result;
+                    }
+                }
+                else
+                {
+                    var result = FindDefsForRootByName(customType);
+                    if (result is not null)
+                    {
+                        return result;
+                    }
+
+                    result = FindDefsForExternalByName(customType);
+                    if (result is not null)
+                    {
+                        return result;
+                    }
+                }
+
+                throw ThrowHelper.CreateRocketPackDefinitionCompilerException_DefinitionNotFound(customType.TypeName);
+
+                object? FindDefsForRootByName(CustomType customType)
+                {
+                    var enumDefinitions = _rootDefinition.Enums.Where(m => m.Name == customType.TypeName).ToArray();
+                    var objectDefinitions = _rootDefinition.Objects.Where(m => m.Name == customType.TypeName).ToArray();
+                    return Validate(enumDefinitions.Union<object>(objectDefinitions));
+                }
+
+                object? FindDefsForExternalByName(CustomType customType)
+                {
+                    foreach (var definition in _externalDefinitions)
+                    {
+                        var enumDefinitions = definition.Enums.Where(m => m.Name == customType.TypeName).ToArray();
+                        var objectDefinitions = definition.Objects.Where(m => m.Name == customType.TypeName).ToArray();
+                        return Validate(enumDefinitions.Union<object>(objectDefinitions));
+                    }
+
+                    return null;
+                }
+
+                object? FindDefsForRootAndExternalByFullName(CustomType customType)
                 {
                     foreach (var definition in new[] { _rootDefinition }.Union(_externalDefinitions))
                     {
                         var enumDefinitions = definition.Enums.Where(m => m.FullName == customType.TypeName).ToArray();
                         var objectDefinitions = definition.Objects.Where(m => m.FullName == customType.TypeName).ToArray();
-                        results.AddRange(enumDefinitions.Union<object>(objectDefinitions));
+                        return Validate(enumDefinitions.Union<object>(objectDefinitions));
                     }
-                }
-                else
-                {
-                    foreach (var definition in new[] { _rootDefinition }.Union(_externalDefinitions))
-                    {
-                        var enumDefinitions = definition.Enums.Where(m => m.Name == customType.TypeName).ToArray();
-                        var objectDefinitions = definition.Objects.Where(m => m.Name == customType.TypeName).ToArray();
-                        results.AddRange(enumDefinitions.Union<object>(objectDefinitions));
-                    }
+
+                    return null;
                 }
 
-                return results.Single();
+                object? Validate(IEnumerable<object> results)
+                {
+                    int count = results.Count();
+
+                    if (count > 1)
+                    {
+                        throw ThrowHelper.CreateRocketPackDefinitionCompilerException_NotOneDefinitionFound(customType.TypeName);
+                    }
+
+                    return results.FirstOrDefault();
+                }
             }
 
             private string GeneratePropertyTypeFullName(TypeBase typeBase)

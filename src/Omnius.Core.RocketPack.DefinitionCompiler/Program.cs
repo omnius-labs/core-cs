@@ -57,6 +57,18 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
             catch (Exception e)
             {
                 _logger.Error(e);
+
+                var sb = new StringBuilder();
+                sb.AppendLine($"source: {source}");
+                sb.AppendLine($"output: {output}");
+
+                if (include is not null)
+                {
+                    sb.AppendLine($"include: {string.Join(", ", include)}");
+                }
+
+                _logger.Error(sb.ToString());
+
                 throw;
             }
         }
