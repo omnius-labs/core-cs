@@ -1708,7 +1708,9 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
 
             private object? FindDefinition(CustomType customType)
             {
-                if (customType.TypeName.Contains("."))
+                bool isFullName = customType.TypeName.Contains(".");
+
+                if (isFullName)
                 {
                     var result = FindDefsForRootAndExternalByFullName(customType);
                     if (result is not null)
@@ -1742,26 +1744,30 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
 
                 object? FindDefsForExternalByName(CustomType customType)
                 {
+                    var results = new List<object>();
+
                     foreach (var definition in _externalDefinitions)
                     {
                         var enumDefinitions = definition.Enums.Where(m => m.Name == customType.TypeName).ToArray();
                         var objectDefinitions = definition.Objects.Where(m => m.Name == customType.TypeName).ToArray();
-                        return Validate(enumDefinitions.Union<object>(objectDefinitions));
+                        results.AddRange(enumDefinitions.Union<object>(objectDefinitions));
                     }
 
-                    return null;
+                    return Validate(results);
                 }
 
                 object? FindDefsForRootAndExternalByFullName(CustomType customType)
                 {
+                    var results = new List<object>();
+
                     foreach (var definition in new[] { _rootDefinition }.Union(_externalDefinitions))
                     {
                         var enumDefinitions = definition.Enums.Where(m => m.FullName == customType.TypeName).ToArray();
                         var objectDefinitions = definition.Objects.Where(m => m.FullName == customType.TypeName).ToArray();
-                        return Validate(enumDefinitions.Union<object>(objectDefinitions));
+                        results.AddRange(enumDefinitions.Union<object>(objectDefinitions));
                     }
 
-                    return null;
+                    return Validate(results);
                 }
 
                 object? Validate(IEnumerable<object> results)

@@ -22,8 +22,16 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
             // 変換対象の定義ファイルがUsing可能な定義ファイル群
             if (includeFiles != null)
             {
+                var ignoreSet = new HashSet<string>();
+
                 foreach (var path in includeFiles)
                 {
+                    // 重複排除
+                    if (!ignoreSet.Add(path))
+                    {
+                        continue;
+                    }
+
                     var definition = DefinitionParser.Load(path);
                     if (!definitionMap.TryGetValue(definition.Namespace.Value, out var list))
                     {
@@ -38,19 +46,22 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
             var includedDefinitions = new List<RocketPackDefinition>();
             includedDefinitions.Add(rootDefinition);
 
-            var loadedNamespaceSet = new HashSet<string>();
-
-            for (int i = 0; i < includedDefinitions.Count; i++)
+            // 関連する定義を取得する
             {
-                // 既に読み込み済みの場合は読み込まない
-                if (!loadedNamespaceSet.Add(includedDefinitions[i].Namespace.Value))
-                {
-                    continue;
-                }
+                var ignoreSet = new HashSet<string>();
 
-                foreach (var @using in includedDefinitions[i].Usings)
+                for (int i = 0; i < includedDefinitions.Count; i++)
                 {
-                    includedDefinitions.AddRange(definitionMap[@using.Value]);
+                    foreach (var @using in includedDefinitions[i].Usings)
+                    {
+                        // 既に読み込み済みの場合は読み込まない
+                        if (!ignoreSet.Add(@using.Value))
+                        {
+                            continue;
+                        }
+
+                        includedDefinitions.AddRange(definitionMap[@using.Value]);
+                    }
                 }
             }
 
