@@ -4,7 +4,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
 
-namespace Omnius.Core.Cryptography
+namespace Omnius.Core.Cryptography.Functions
 {
     public static class Sha2_256
     {

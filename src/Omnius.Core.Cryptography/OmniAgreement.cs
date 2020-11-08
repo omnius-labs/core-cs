@@ -1,4 +1,5 @@
 using System;
+using Omnius.Core.Cryptography.Functions;
 using Omnius.Core.Cryptography.Internal;
 using Omnius.Core.RocketPack;
 

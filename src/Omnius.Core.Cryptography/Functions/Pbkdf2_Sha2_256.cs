@@ -1,6 +1,6 @@
 using System;
 
-namespace Omnius.Core.Cryptography
+namespace Omnius.Core.Cryptography.Functions
 {
     public unsafe class Pbkdf2_Sha2_256
     {

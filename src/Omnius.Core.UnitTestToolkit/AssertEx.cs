@@ -5,7 +5,7 @@ using System.Text.Json.Serialization;
 using DiffPlex.DiffBuilder;
 using DiffPlex.DiffBuilder.Model;
 
-namespace Omnius.Core.Test
+namespace Omnius.Core.UnitTestToolkit
 {
     public class BytesReadOnlyMemoryConverter : JsonConverter<ReadOnlyMemory<byte>>
     {

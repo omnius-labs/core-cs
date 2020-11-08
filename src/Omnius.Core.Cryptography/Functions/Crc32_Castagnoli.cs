@@ -3,7 +3,7 @@ using System.Buffers;
 using System.Text;
 using System.Threading;
 
-namespace Omnius.Core.Cryptography
+namespace Omnius.Core.Cryptography.Functions
 {
     public static unsafe class Crc32_Castagnoli
     {

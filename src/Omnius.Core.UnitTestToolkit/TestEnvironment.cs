@@ -1,6 +1,6 @@
 using System.IO;
 
-namespace Omnius.Core.Test
+namespace Omnius.Core.UnitTestToolkit
 {
     public class TestEnvironment
     {

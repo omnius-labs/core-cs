@@ -1,9 +1,9 @@
 using System;
 using System.Security.Cryptography;
 
-namespace Omnius.Core.Cryptography.Internal
+namespace Omnius.Core.Cryptography.Functions
 {
-    internal static class EcDh_P521_Sha2_256
+    public static class EcDh_P521_Sha2_256
     {
         public static (byte[] publicKey, byte[] privateKey) CreateKeys()
         {

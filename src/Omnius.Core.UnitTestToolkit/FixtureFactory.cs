@@ -3,7 +3,7 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace Omnius.Core.Test
+namespace Omnius.Core.UnitTestToolkit
 {
     public class FixtureFactory
     {

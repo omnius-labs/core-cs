@@ -2,7 +2,7 @@ using System;
 using System.Buffers;
 using System.Security.Cryptography;
 
-namespace Omnius.Core.Cryptography
+namespace Omnius.Core.Cryptography.Functions
 {
     public static class Hmac_Sha2_256
     {

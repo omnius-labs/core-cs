@@ -1,5 +1,6 @@
 using System;
 using System.Buffers;
+using Omnius.Core.Cryptography.Functions;
 using Omnius.Core.Cryptography.Internal;
 
 namespace Omnius.Core.Cryptography
