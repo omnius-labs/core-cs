@@ -346,15 +346,22 @@ namespace Omnius.Core.Io
 
         public IMemoryOwner<byte> ToMemoryOwner()
         {
-            var memoryOwner = _bytesPool.Memory.Rent((int)this.Length);
+            var bufferLength = (int)this.Length;
+            var buffer = _bytesPool.Array.Rent(bufferLength);
 
             long position = this.Position;
 
-            this.Seek(0, SeekOrigin.Begin);
-            this.Read(memoryOwner.Memory.Span.Slice(0, (int)this.Length));
+            try
+            {
+                this.Seek(0, SeekOrigin.Begin);
+                this.Read(buffer.AsSpan().Slice(0, bufferLength));
+            }
+            finally
+            {
+                this.Position = position;
+            }
 
-            this.Position = position;
-
+            var memoryOwner = new MemoryOwner<byte>(buffer.AsMemory().Slice(0, bufferLength), () => _bytesPool.Array.Return(buffer));
             return memoryOwner;
         }
     }

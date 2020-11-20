@@ -73,6 +73,10 @@ namespace Omnius.Core.Network.Connections
                                     receiveBytesLimiter.AddConsumedBytes(consumedBytes);
                                 }
                             }
+                            catch (ConnectionException)
+                            {
+                                _connections.Remove(connection);
+                            }
                             catch (ObjectDisposedException)
                             {
                                 _connections.Remove(connection);

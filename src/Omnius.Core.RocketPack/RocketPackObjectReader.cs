@@ -2,6 +2,7 @@ using System;
 using System.Buffers;
 using System.Runtime.CompilerServices;
 using System.Text;
+using Omnius.Core.Extensions;
 using Omnius.Core.RocketPack.Internal;
 
 namespace Omnius.Core.RocketPack
@@ -40,7 +41,7 @@ namespace Omnius.Core.RocketPack
                 return MemoryOwner<byte>.Empty;
             }
 
-            var memoryOwner = _bytesPool.Memory.Rent((int)length);
+            var memoryOwner = _bytesPool.Memory.Rent((int)length).Shrink((int)length);
 
             _reader.TryCopyTo(memoryOwner.Memory.Span);
             _reader.Advance(length);
@@ -87,7 +88,7 @@ namespace Omnius.Core.RocketPack
                 throw new FormatException();
             }
 
-            using (var memoryOwner = _bytesPool.Memory.Rent((int)length))
+            using (var memoryOwner = _bytesPool.Memory.Rent((int)length).Shrink((int)length))
             {
                 _reader.TryCopyTo(memoryOwner.Memory.Span);
                 _reader.Advance(length);
