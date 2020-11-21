@@ -1,6 +1,4 @@
-using System;
 using System.Linq;
-using System.Linq.Expressions;
 using Sprache;
 using Xunit;
 
@@ -12,7 +10,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler.Parsers
         public void NormalTest()
         {
             var p =
-                from value in ExpressionParser.GetParser()
+                from value in ExpressionParser.GetParser().End()
                 select value.Compile().Invoke();
 
             // long
@@ -33,7 +31,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler.Parsers
         public void ComputeLongTest()
         {
             var p =
-                from value in ExpressionParser.GetParser()
+                from value in ExpressionParser.GetParser().End()
                 select value.Compile().Invoke();
 
             Assert.Equal((long)3, p.Parse("2 + 1"));
@@ -56,7 +54,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler.Parsers
         public void ComputeDoubleTest()
         {
             var p =
-                from value in ExpressionParser.GetParser()
+                from value in ExpressionParser.GetParser().End()
                 select value.Compile().Invoke();
 
             Assert.Equal((double)0.2 + 0.1, p.Parse("0.2 + 0.1"));

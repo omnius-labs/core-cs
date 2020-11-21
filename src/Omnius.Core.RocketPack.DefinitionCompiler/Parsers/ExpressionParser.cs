@@ -95,7 +95,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler.Parsers
             select Expression.Constant(string.Join(string.Empty, fragments).Replace("\\\"", "\""), typeof(object));
 
         private static readonly Parser<Expression<Func<object>>> _lambda =
-            _expr.Or(_stringLiteral).Or(_boolLiteral).Select(body => Expression.Lambda<Func<object>>(body)).End();
+            _expr.Or(_stringLiteral).Or(_boolLiteral).Select(body => Expression.Lambda<Func<object>>(body));
 
         public static Parser<Expression<Func<object>>> GetParser() => _lambda;
     }
