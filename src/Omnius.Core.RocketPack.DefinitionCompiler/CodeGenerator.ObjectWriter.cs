@@ -1208,10 +1208,10 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                                 switch (enumInfo.Type)
                                 {
                                     case IntType inttype when (inttype.IsSigned):
-                                        b.WriteLine($"{name} = ({enumInfo.Name})r.GetInt64();");
+                                        b.WriteLine($"{name} = ({enumInfo.CSharpFullName})r.GetInt64();");
                                         break;
                                     case IntType inttype when (!inttype.IsSigned):
-                                        b.WriteLine($"{name} = ({enumInfo.Name})r.GetUInt64();");
+                                        b.WriteLine($"{name} = ({enumInfo.CSharpFullName})r.GetUInt64();");
                                         break;
                                 }
 
@@ -1527,10 +1527,10 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                                 switch (enumInfo.Type)
                                 {
                                     case IntType inttype when (inttype.IsSigned):
-                                        b.WriteLine($"{name} = ({enumInfo.Name})r.GetInt64();");
+                                        b.WriteLine($"{name} = ({enumInfo.CSharpFullName})r.GetInt64();");
                                         break;
                                     case IntType inttype when (!inttype.IsSigned):
-                                        b.WriteLine($"{name} = ({enumInfo.Name})r.GetUInt64();");
+                                        b.WriteLine($"{name} = ({enumInfo.CSharpFullName})r.GetUInt64();");
                                         break;
                                 }
 
