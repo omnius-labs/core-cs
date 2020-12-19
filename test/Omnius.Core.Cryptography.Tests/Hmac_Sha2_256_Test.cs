@@ -13,11 +13,11 @@ namespace Omnius.Core.Cryptography
 {
     public class Hmac_Sha2_256_Test
     {
-        public record TestCase
+        public class TestCase
         {
-            public string? Key { get; set; }
-            public string? Value { get; set; }
-            public string? Result { get; set; }
+            public string? Key { get; init; }
+            public string? Value { get; init; }
+            public string? Result { get; init; }
         }
 
         [Fact]

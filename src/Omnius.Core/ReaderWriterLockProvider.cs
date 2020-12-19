@@ -65,7 +65,6 @@ namespace Omnius.Core
             public void Dispose()
             {
                 _readerWriterLock.ExitUpgradeableReadLock();
-
             }
         }
 

@@ -117,16 +117,14 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
 
                 using (b.Indent())
                 {
-                    b.WriteLine($"private readonly {serviceDefinition.CSharpInterfaceFullName} _service;");
                     b.WriteLine($"private readonly {GenerateTypeFullName("IConnection")} _connection;");
                     b.WriteLine($"private readonly {GenerateTypeFullName("IBytesPool")} _bytesPool;");
                     b.WriteLine($"private readonly {GenerateTypeFullName("RocketPackRpc")} _rpc;");
-                    b.WriteLine($"public {className}({serviceDefinition.CSharpInterfaceFullName} service, {GenerateTypeFullName("IConnection")} connection, {GenerateTypeFullName("IBytesPool")} bytesPool)");
+                    b.WriteLine($"public {className}({GenerateTypeFullName("IConnection")} connection, {GenerateTypeFullName("IBytesPool")} bytesPool)");
                     b.WriteLine("{");
 
                     using (b.Indent())
                     {
-                        b.WriteLine("_service = service;");
                         b.WriteLine("_connection = connection;");
                         b.WriteLine("_bytesPool = bytesPool;");
                         b.WriteLine($"_rpc = new {GenerateTypeFullName("RocketPackRpc")}(_connection, _bytesPool);");

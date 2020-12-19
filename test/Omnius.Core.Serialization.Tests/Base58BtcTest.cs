@@ -11,10 +11,10 @@ namespace Omnius.Core.Serialization
 {
     public class Base58BtcTest
     {
-        public record TestCase
+        public class TestCase
         {
-            public string? Input { get; set; }
-            public string? Output { get; set; }
+            public string? Input { get; init; }
+            public string? Output { get; init; }
         }
 
         [Fact]

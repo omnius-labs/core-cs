@@ -102,7 +102,7 @@ namespace Omnius.Core.Extensions
             return false;
         }
 
-        public static bool TryRemove<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key, out TValue value)
+        public static bool TryRemove<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key, out TValue? value)
             where TKey : notnull
         {
             if (dictionary == null)
