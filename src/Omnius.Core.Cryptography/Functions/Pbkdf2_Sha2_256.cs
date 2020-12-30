@@ -27,15 +27,15 @@ namespace Omnius.Core.Cryptography.Functions
 
             BytesOperations.Copy(salt, extendedkey, salt.Length);
 
+            Span<byte> f = stackalloc byte[hashLength];
+            Span<byte> u = stackalloc byte[hashLength];
+
             for (int i = 0; i < keyLength; i++)
             {
                 extendedkey[salt.Length] = (byte)(((i + 1) >> 24) & 0xFF);
                 extendedkey[salt.Length + 1] = (byte)(((i + 1) >> 16) & 0xFF);
                 extendedkey[salt.Length + 2] = (byte)(((i + 1) >> 8) & 0xFF);
                 extendedkey[salt.Length + 3] = (byte)(((i + 1)) & 0xFF);
-
-                Span<byte> f = stackalloc byte[hashLength];
-                Span<byte> u = stackalloc byte[hashLength];
 
                 Hmac_Sha2_256.TryComputeHash(extendedkey, password, u);
                 BytesOperations.Zero(extendedkey.Slice(salt.Length, 4));

@@ -51,7 +51,7 @@ namespace Omnius.Core.Serialization
             int length = 0;
 
             // Allocate enough space in big-endian base58 representation.
-            int b58Length = (span.Length - zeroCount) * 138 / 100 + 1; // log(256) / log(58), rounded up.
+            int b58Length = ((span.Length - zeroCount) * 138 / 100) + 1; // log(256) / log(58), rounded up.
 
             using (var b58 = MemoryPool<byte>.Shared.Rent(b58Length))
             {
@@ -159,7 +159,7 @@ namespace Omnius.Core.Serialization
             int length = 0;
 
             // Allocate enough space in big-endian base58 representation.
-            int b58Length = (int)(sequence.Length - zeroCount) * 138 / 100 + 1; // log(256) / log(58), rounded up.
+            int b58Length = ((int)(sequence.Length - zeroCount) * 138 / 100) + 1; // log(256) / log(58), rounded up.
 
             using (var b58 = MemoryPool<byte>.Shared.Rent(b58Length))
             {
@@ -270,7 +270,7 @@ namespace Omnius.Core.Serialization
             int length = 0;
 
             // Allocate enough space in big-endian base256 representation.
-            int b256Length = (text.Length - zeroCount) * 733 / 1000 + 1; // log(58) / log(256), rounded up.
+            int b256Length = ((text.Length - zeroCount) * 733 / 1000) + 1; // log(58) / log(256), rounded up.
 
             using (var b256 = MemoryPool<byte>.Shared.Rent(b256Length))
             {

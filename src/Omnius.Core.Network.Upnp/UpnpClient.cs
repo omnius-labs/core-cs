@@ -37,7 +37,6 @@ namespace Omnius.Core.Network.Upnp
 
         internal UpnpClient()
         {
-
         }
 
         public bool IsConnected => _contents != null;
@@ -87,7 +86,7 @@ namespace Omnius.Core.Network.Upnp
                 "Man: \"ssdp:discover\"\r\n" +
                 "ST: urn:schemas-upnp-org:service:WANPPPConnection:1\r\n" +
                 "MX: 3\r\n" +
-                "\r\n"
+                "\r\n",
             };
 
             var random = new Random();
@@ -528,15 +527,25 @@ namespace Omnius.Core.Network.Upnp
         {
             if (disposing)
             {
-
             }
         }
     }
 
     public class UpnpClientException : Exception
     {
-        public UpnpClientException() : base() { }
-        public UpnpClientException(string message) : base(message) { }
-        public UpnpClientException(string message, Exception innerException) : base(message, innerException) { }
+        public UpnpClientException()
+            : base()
+        {
+        }
+
+        public UpnpClientException(string message)
+            : base(message)
+        {
+        }
+
+        public UpnpClientException(string message, Exception innerException)
+            : base(message, innerException)
+        {
+        }
     }
 }

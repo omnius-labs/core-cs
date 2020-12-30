@@ -63,7 +63,7 @@ namespace FormatterBenchmarks.Internal
         }
         public override bool Equals(object? other)
         {
-            if (!(other is global::FormatterBenchmarks.Internal.RocketPack_BytesElementsList)) return false;
+            if (other is not global::FormatterBenchmarks.Internal.RocketPack_BytesElementsList) return false;
             return this.Equals((global::FormatterBenchmarks.Internal.RocketPack_BytesElementsList)other);
         }
         public bool Equals(global::FormatterBenchmarks.Internal.RocketPack_BytesElementsList? target)
@@ -239,7 +239,7 @@ namespace FormatterBenchmarks.Internal
         }
         public override bool Equals(object? other)
         {
-            if (!(other is global::FormatterBenchmarks.Internal.RocketPack_BytesElements)) return false;
+            if (other is not global::FormatterBenchmarks.Internal.RocketPack_BytesElements) return false;
             return this.Equals((global::FormatterBenchmarks.Internal.RocketPack_BytesElements)other);
         }
         public bool Equals(global::FormatterBenchmarks.Internal.RocketPack_BytesElements? target)
@@ -401,7 +401,7 @@ namespace FormatterBenchmarks.Internal
         }
         public override bool Equals(object? other)
         {
-            if (!(other is global::FormatterBenchmarks.Internal.RocketPack_IntElementsList)) return false;
+            if (other is not global::FormatterBenchmarks.Internal.RocketPack_IntElementsList) return false;
             return this.Equals((global::FormatterBenchmarks.Internal.RocketPack_IntElementsList)other);
         }
         public bool Equals(global::FormatterBenchmarks.Internal.RocketPack_IntElementsList? target)
@@ -535,7 +535,7 @@ namespace FormatterBenchmarks.Internal
         }
         public override bool Equals(object? other)
         {
-            if (!(other is global::FormatterBenchmarks.Internal.RocketPack_IntElements)) return false;
+            if (other is not global::FormatterBenchmarks.Internal.RocketPack_IntElements) return false;
             return this.Equals((global::FormatterBenchmarks.Internal.RocketPack_IntElements)other);
         }
         public bool Equals(global::FormatterBenchmarks.Internal.RocketPack_IntElements? target)
@@ -683,7 +683,7 @@ namespace FormatterBenchmarks.Internal
         }
         public override bool Equals(object? other)
         {
-            if (!(other is global::FormatterBenchmarks.Internal.RocketPack_StringElementsList)) return false;
+            if (other is not global::FormatterBenchmarks.Internal.RocketPack_StringElementsList) return false;
             return this.Equals((global::FormatterBenchmarks.Internal.RocketPack_StringElementsList)other);
         }
         public bool Equals(global::FormatterBenchmarks.Internal.RocketPack_StringElementsList? target)
@@ -849,7 +849,7 @@ namespace FormatterBenchmarks.Internal
         }
         public override bool Equals(object? other)
         {
-            if (!(other is global::FormatterBenchmarks.Internal.RocketPack_StringElements)) return false;
+            if (other is not global::FormatterBenchmarks.Internal.RocketPack_StringElements) return false;
             return this.Equals((global::FormatterBenchmarks.Internal.RocketPack_StringElements)other);
         }
         public bool Equals(global::FormatterBenchmarks.Internal.RocketPack_StringElements? target)

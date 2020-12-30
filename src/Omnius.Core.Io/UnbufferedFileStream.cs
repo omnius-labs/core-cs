@@ -36,7 +36,6 @@ namespace Omnius.Core.Io
                 const FileOptions FileFlagNoBuffering = (FileOptions)0x20000000;
 
                 _stream = new FileStream(path, mode, access, share, 8, options | FileFlagNoBuffering);
-
             }
             else
             {
@@ -111,6 +110,7 @@ namespace Omnius.Core.Io
 
                 return _position;
             }
+
             set
             {
                 if (_disposed)

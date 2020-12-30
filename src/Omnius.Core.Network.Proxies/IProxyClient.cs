@@ -12,8 +12,18 @@ namespace Omnius.Core.Network.Proxies
 
     public class ProxyClientException : Exception
     {
-        public ProxyClientException() { }
-        public ProxyClientException(string message) : base(message) { }
-        public ProxyClientException(string message, Exception innerException) : base(message, innerException) { }
+        public ProxyClientException()
+        {
+        }
+
+        public ProxyClientException(string message)
+            : base(message)
+        {
+        }
+
+        public ProxyClientException(string message, Exception innerException)
+            : base(message, innerException)
+        {
+        }
     }
 }

@@ -11,8 +11,15 @@ namespace Omnius.Core.Network.Caps
 
         public SocketCap(Socket socket)
         {
-            if (socket == null) throw new ArgumentNullException(nameof(socket));
-            if (!socket.Connected) throw new ArgumentException("Socket is not connected.");
+            if (socket == null)
+            {
+                throw new ArgumentNullException(nameof(socket));
+            }
+
+            if (!socket.Connected)
+            {
+                throw new ArgumentException("Socket is not connected.");
+            }
 
             _socket = socket;
             _socket.Blocking = false;
@@ -26,6 +33,7 @@ namespace Omnius.Core.Network.Caps
         public Socket Socket => _socket;
 
         public bool IsBlocking => _socket.Blocking;
+
         public bool IsConnected => !(_socket.Poll(0, SelectMode.SelectRead) && (_socket.Available == 0));
 
         public bool CanSend()

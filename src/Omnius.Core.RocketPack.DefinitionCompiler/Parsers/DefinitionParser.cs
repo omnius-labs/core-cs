@@ -23,7 +23,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler.Parsers
 
         // 英数字と'_'の文字列を抽出するパーサー
         private static readonly Parser<string> _nameParser =
-            from name in Parse.Char(x => ('0' <= x && x <= '9') || ('A' <= x && x <= 'Z') || ('a' <= x && x <= 'z') || x == '_', "Name").AtLeastOnce().Text()
+            from name in Parse.Char(x => (x >= '0' && x <= '9') || (x >= 'A' && x <= 'Z') || (x >= 'a' && x <= 'z') || x == '_', "Name").AtLeastOnce().Text()
             select name;
 
         // example: syntax v1.0;
@@ -259,8 +259,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler.Parsers
                 options,
                 contents.OfType<EnumDefinition>().ToList(),
                 contents.OfType<ObjectDefinition>().ToList(),
-                contents.OfType<ServiceDefinition>().ToList()
-            );
+                contents.OfType<ServiceDefinition>().ToList());
 
         private static string LoadDefinition(string path)
         {

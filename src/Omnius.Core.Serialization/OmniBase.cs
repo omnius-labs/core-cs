@@ -6,9 +6,9 @@ namespace Omnius.Core.Serialization
 {
     public static class OmniBase
     {
-        private static readonly Lazy<Base16> _base16_Lower = new Lazy<Base16>(() => new Base16(ConvertStringCase.Lower));
-        private static readonly Lazy<Base16> _base16_Upper = new Lazy<Base16>(() => new Base16(ConvertStringCase.Upper));
-        private static readonly Lazy<Base58Btc> _base58Btc = new Lazy<Base58Btc>(() => new Base58Btc());
+        private static readonly Lazy<Base16> _base16_Lower = new(() => new Base16(ConvertStringCase.Lower));
+        private static readonly Lazy<Base16> _base16_Upper = new(() => new Base16(ConvertStringCase.Upper));
+        private static readonly Lazy<Base58Btc> _base58Btc = new(() => new Base58Btc());
 
         public static string Encode(ReadOnlySpan<byte> span, ConvertStringType convertStringType, ConvertStringCase convertStringCase = ConvertStringCase.Lower)
         {
@@ -21,11 +21,13 @@ namespace Omnius.Core.Serialization
                             _base16_Lower.Value.TryEncode(span, out string text, true);
                             return text;
                         }
+
                     case ConvertStringCase.Upper:
                         {
                             _base16_Upper.Value.TryEncode(span, out string text, true);
                             return text;
                         }
+
                     default:
                         throw new NotSupportedException(nameof(convertStringCase));
                 }
@@ -52,11 +54,13 @@ namespace Omnius.Core.Serialization
                             _base16_Lower.Value.TryEncode(sequence, out string text, true);
                             return text;
                         }
+
                     case ConvertStringCase.Upper:
                         {
                             _base16_Upper.Value.TryEncode(sequence, out string text, true);
                             return text;
                         }
+
                     default:
                         throw new NotSupportedException(nameof(convertStringCase));
                 }

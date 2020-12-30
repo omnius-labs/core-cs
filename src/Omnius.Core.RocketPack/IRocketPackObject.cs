@@ -5,8 +5,9 @@ namespace Omnius.Core.RocketPack
 {
     public interface IRocketPackObject<T> : IEquatable<T>
     {
-        private static IRocketPackObjectFormatter<T> _formatter;
-        private static T _empty;
+        private static IRocketPackObjectFormatter<T> _formatter = default!;
+
+        private static T _empty = default!;
 
         public static IRocketPackObjectFormatter<T> Formatter
         {
@@ -15,6 +16,7 @@ namespace Omnius.Core.RocketPack
                 System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(T).TypeHandle);
                 return _formatter;
             }
+
             protected set
             {
                 _formatter = value;
@@ -28,6 +30,7 @@ namespace Omnius.Core.RocketPack
                 System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(T).TypeHandle);
                 return _empty;
             }
+
             protected set
             {
                 _empty = value;

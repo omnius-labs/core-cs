@@ -5,7 +5,6 @@ namespace Omnius.Core.Helpers
 {
     public static class CollectionHelper
     {
-        [Obsolete]
         [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
         public static new bool Equals(object obj1, object obj2)
         {
@@ -141,12 +140,12 @@ namespace Omnius.Core.Helpers
                 throw new ArgumentNullException(nameof(equalityComparer));
             }
 
-            if (0 > (source.Count - sourceIndex))
+            if ((source.Count - sourceIndex) < 0)
             {
                 throw new ArgumentOutOfRangeException(nameof(sourceIndex));
             }
 
-            if (0 > (destination.Count - destinationIndex))
+            if ((destination.Count - destinationIndex) < 0)
             {
                 throw new ArgumentOutOfRangeException(nameof(destinationIndex));
             }
@@ -232,20 +231,13 @@ namespace Omnius.Core.Helpers
 
         public static bool Equals<T>(IList<T> source, IList<T> destination)
         {
+            if (source is byte[] x && destination is byte[] y)
             {
-                var x = source as byte[];
-                var y = destination as byte[];
-
-                if (x != null && y != null)
-                {
-                    return BytesOperations.Equals(x.AsSpan(), y.AsSpan());
-                }
+                return BytesOperations.Equals(x.AsSpan(), y.AsSpan());
             }
 
-            {
-                var equalityComparer = EqualityComparer<T>.Default;
-                return CollectionHelper.Equals(source, destination, equalityComparer);
-            }
+            var equalityComparer = EqualityComparer<T>.Default;
+            return CollectionHelper.Equals(source, destination, equalityComparer);
         }
 
         public static bool Equals<T>(IEnumerable<T> source, IEnumerable<T> destination)
@@ -258,18 +250,21 @@ namespace Omnius.Core.Helpers
         {
             if (source is byte[] x && destination is byte[] y)
             {
-                if (0 > (x.Length - sourceIndex))
+                if ((x.Length - sourceIndex) < 0)
                 {
                     throw new ArgumentOutOfRangeException(nameof(sourceIndex));
                 }
-                if (0 > (y.Length - destinationIndex))
+
+                if ((y.Length - destinationIndex) < 0)
                 {
                     throw new ArgumentOutOfRangeException(nameof(destinationIndex));
                 }
+
                 if (length > (x.Length - sourceIndex))
                 {
                     throw new ArgumentOutOfRangeException(nameof(length));
                 }
+
                 if (length > (y.Length - destinationIndex))
                 {
                     throw new ArgumentOutOfRangeException(nameof(length));
@@ -402,12 +397,12 @@ namespace Omnius.Core.Helpers
                 throw new ArgumentNullException(nameof(comparer));
             }
 
-            if (0 > (source.Count - sourceIndex))
+            if ((source.Count - sourceIndex) < 0)
             {
                 throw new ArgumentOutOfRangeException(nameof(sourceIndex));
             }
 
-            if (0 > (destination.Count - destinationIndex))
+            if ((destination.Count - destinationIndex) < 0)
             {
                 throw new ArgumentOutOfRangeException(nameof(destinationIndex));
             }
@@ -497,20 +492,13 @@ namespace Omnius.Core.Helpers
 
         public static int Compare<T>(IList<T> source, IList<T> destination)
         {
+            if (source is byte[] x && destination is byte[] y)
             {
-                var x = source as byte[];
-                var y = destination as byte[];
-
-                if (x != null && y != null)
-                {
-                    return BytesOperations.Compare(x, y);
-                }
+                return BytesOperations.Compare(x, y);
             }
 
-            {
-                var compare = Comparer<T>.Default;
-                return CollectionHelper.Compare(source, destination, compare);
-            }
+            var compare = Comparer<T>.Default;
+            return CollectionHelper.Compare(source, destination, compare);
         }
 
         public static int Compare<T>(IEnumerable<T> source, IEnumerable<T> destination)
@@ -521,40 +509,33 @@ namespace Omnius.Core.Helpers
 
         public static int Compare<T>(IList<T> source, int sourceIndex, IList<T> destination, int destinationIndex, int length)
         {
+            if (source is byte[] x && destination is byte[] y)
             {
-                var x = source as byte[];
-                var y = destination as byte[];
-
-                if (x != null && y != null)
+                if ((source.Count - sourceIndex) < 0)
                 {
-                    if (0 > (source.Count - sourceIndex))
-                    {
-                        throw new ArgumentOutOfRangeException(nameof(sourceIndex));
-                    }
-
-                    if (0 > (destination.Count - destinationIndex))
-                    {
-                        throw new ArgumentOutOfRangeException(nameof(destinationIndex));
-                    }
-
-                    if (length > (source.Count - sourceIndex))
-                    {
-                        throw new ArgumentOutOfRangeException(nameof(length));
-                    }
-
-                    if (length > (destination.Count - destinationIndex))
-                    {
-                        throw new ArgumentOutOfRangeException(nameof(length));
-                    }
-
-                    return BytesOperations.Compare(x.AsSpan(sourceIndex, length), y.AsSpan(destinationIndex, length));
+                    throw new ArgumentOutOfRangeException(nameof(sourceIndex));
                 }
+
+                if ((destination.Count - destinationIndex) < 0)
+                {
+                    throw new ArgumentOutOfRangeException(nameof(destinationIndex));
+                }
+
+                if (length > (source.Count - sourceIndex))
+                {
+                    throw new ArgumentOutOfRangeException(nameof(length));
+                }
+
+                if (length > (destination.Count - destinationIndex))
+                {
+                    throw new ArgumentOutOfRangeException(nameof(length));
+                }
+
+                return BytesOperations.Compare(x.AsSpan(sourceIndex, length), y.AsSpan(destinationIndex, length));
             }
 
-            {
-                var compare = Comparer<T>.Default;
-                return CollectionHelper.Compare(source, sourceIndex, destination, destinationIndex, length, compare);
-            }
+            var compare = Comparer<T>.Default;
+            return CollectionHelper.Compare(source, sourceIndex, destination, destinationIndex, length, compare);
         }
 
         public static int Compare<T>(IEnumerable<T> source, int sourceIndex, IEnumerable<T> destination, int destinationIndex, int length)

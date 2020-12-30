@@ -6,9 +6,6 @@ namespace Omnius.Core.Internal
     internal unsafe sealed partial class NativeMethods
     {
         private static readonly NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
-        private static readonly NativeLibraryManager? _nativeLibraryManager;
-
-        internal static NativeLibraryManager? NativeLibraryManager => _nativeLibraryManager;
 
         static NativeMethods()
         {
@@ -18,7 +15,7 @@ namespace Omnius.Core.Internal
                 {
                     if (RuntimeInformation.ProcessArchitecture == Architecture.X64)
                     {
-                        _nativeLibraryManager = new NativeLibraryManager("omnius-core.x64.dll");
+                        NativeLibraryManager = new NativeLibraryManager("omnius-core.x64.dll");
                     }
                     else
                     {
@@ -29,7 +26,7 @@ namespace Omnius.Core.Internal
                 {
                     if (RuntimeInformation.ProcessArchitecture == Architecture.X64)
                     {
-                        _nativeLibraryManager = new NativeLibraryManager("omnius-core.x64.so");
+                        NativeLibraryManager = new NativeLibraryManager("omnius-core.x64.so");
                     }
                     else
                     {
@@ -46,5 +43,7 @@ namespace Omnius.Core.Internal
                 _logger.Error(e);
             }
         }
+
+        internal static NativeLibraryManager? NativeLibraryManager { get; private set; }
     }
 }

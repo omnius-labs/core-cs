@@ -119,7 +119,7 @@ namespace Omnius.Core.Network.Connections.Secure.V1.Internal
         }
         public override bool Equals(object? other)
         {
-            if (!(other is global::Omnius.Core.Network.Connections.Secure.V1.Internal.ProfileMessage)) return false;
+            if (other is not global::Omnius.Core.Network.Connections.Secure.V1.Internal.ProfileMessage) return false;
             return this.Equals((global::Omnius.Core.Network.Connections.Secure.V1.Internal.ProfileMessage)other);
         }
         public bool Equals(global::Omnius.Core.Network.Connections.Secure.V1.Internal.ProfileMessage? target)
@@ -215,7 +215,7 @@ namespace Omnius.Core.Network.Connections.Secure.V1.Internal
                             }
                         case 2:
                             {
-                                p_authenticationType = (AuthenticationType)r.GetUInt64();
+                                p_authenticationType = (global::Omnius.Core.Network.Connections.Secure.V1.Internal.AuthenticationType)r.GetUInt64();
                                 break;
                             }
                         case 3:
@@ -224,7 +224,7 @@ namespace Omnius.Core.Network.Connections.Secure.V1.Internal
                                 p_keyExchangeAlgorithms = new global::Omnius.Core.Network.Connections.Secure.V1.Internal.KeyExchangeAlgorithm[length];
                                 for (int i = 0; i < p_keyExchangeAlgorithms.Length; i++)
                                 {
-                                    p_keyExchangeAlgorithms[i] = (KeyExchangeAlgorithm)r.GetUInt64();
+                                    p_keyExchangeAlgorithms[i] = (global::Omnius.Core.Network.Connections.Secure.V1.Internal.KeyExchangeAlgorithm)r.GetUInt64();
                                 }
                                 break;
                             }
@@ -234,7 +234,7 @@ namespace Omnius.Core.Network.Connections.Secure.V1.Internal
                                 p_keyDerivationAlgorithms = new global::Omnius.Core.Network.Connections.Secure.V1.Internal.KeyDerivationAlgorithm[length];
                                 for (int i = 0; i < p_keyDerivationAlgorithms.Length; i++)
                                 {
-                                    p_keyDerivationAlgorithms[i] = (KeyDerivationAlgorithm)r.GetUInt64();
+                                    p_keyDerivationAlgorithms[i] = (global::Omnius.Core.Network.Connections.Secure.V1.Internal.KeyDerivationAlgorithm)r.GetUInt64();
                                 }
                                 break;
                             }
@@ -244,7 +244,7 @@ namespace Omnius.Core.Network.Connections.Secure.V1.Internal
                                 p_cryptoAlgorithms = new global::Omnius.Core.Network.Connections.Secure.V1.Internal.CryptoAlgorithm[length];
                                 for (int i = 0; i < p_cryptoAlgorithms.Length; i++)
                                 {
-                                    p_cryptoAlgorithms[i] = (CryptoAlgorithm)r.GetUInt64();
+                                    p_cryptoAlgorithms[i] = (global::Omnius.Core.Network.Connections.Secure.V1.Internal.CryptoAlgorithm)r.GetUInt64();
                                 }
                                 break;
                             }
@@ -254,7 +254,7 @@ namespace Omnius.Core.Network.Connections.Secure.V1.Internal
                                 p_hashAlgorithms = new global::Omnius.Core.Network.Connections.Secure.V1.Internal.HashAlgorithm[length];
                                 for (int i = 0; i < p_hashAlgorithms.Length; i++)
                                 {
-                                    p_hashAlgorithms[i] = (HashAlgorithm)r.GetUInt64();
+                                    p_hashAlgorithms[i] = (global::Omnius.Core.Network.Connections.Secure.V1.Internal.HashAlgorithm)r.GetUInt64();
                                 }
                                 break;
                             }
@@ -319,7 +319,7 @@ namespace Omnius.Core.Network.Connections.Secure.V1.Internal
         }
         public override bool Equals(object? other)
         {
-            if (!(other is global::Omnius.Core.Network.Connections.Secure.V1.Internal.VerificationMessage)) return false;
+            if (other is not global::Omnius.Core.Network.Connections.Secure.V1.Internal.VerificationMessage) return false;
             return this.Equals((global::Omnius.Core.Network.Connections.Secure.V1.Internal.VerificationMessage)other);
         }
         public bool Equals(global::Omnius.Core.Network.Connections.Secure.V1.Internal.VerificationMessage? target)
@@ -441,7 +441,7 @@ namespace Omnius.Core.Network.Connections.Secure.V1.Internal
         }
         public override bool Equals(object? other)
         {
-            if (!(other is global::Omnius.Core.Network.Connections.Secure.V1.Internal.AuthenticationMessage)) return false;
+            if (other is not global::Omnius.Core.Network.Connections.Secure.V1.Internal.AuthenticationMessage) return false;
             return this.Equals((global::Omnius.Core.Network.Connections.Secure.V1.Internal.AuthenticationMessage)other);
         }
         public bool Equals(global::Omnius.Core.Network.Connections.Secure.V1.Internal.AuthenticationMessage? target)

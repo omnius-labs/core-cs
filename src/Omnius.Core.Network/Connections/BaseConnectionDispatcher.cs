@@ -11,12 +11,12 @@ namespace Omnius.Core.Network.Connections
     {
         private readonly BaseConnectionDispatcherOptions _options;
 
-        private readonly HashSet<BaseConnection> _connections = new HashSet<BaseConnection>();
+        private readonly HashSet<BaseConnection> _connections = new();
 
         private readonly Task _eventLoop;
-        private readonly CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
+        private readonly CancellationTokenSource _cancellationTokenSource = new();
 
-        private readonly object _lockObject = new object();
+        private readonly object _lockObject = new();
 
         public BaseConnectionDispatcher(BaseConnectionDispatcherOptions options)
         {
@@ -35,60 +35,60 @@ namespace Omnius.Core.Network.Connections
 
         private Task EventLoop(CancellationToken cancellationToken)
         {
-            return Task.Factory.StartNew(() =>
-            {
-                try
+            return Task.Factory.StartNew(
+                () =>
                 {
-                    var sendBytesLimiter = new Limiter(_options.MaxSendBytesPerSeconds);
-                    var receiveBytesLimiter = new Limiter(_options.MaxReceiveBytesPerSeconds);
-                    var random = new Random();
-
-                    while (!cancellationToken.IsCancellationRequested)
+                    try
                     {
-                        cancellationToken.WaitHandle.WaitOne(200, cancellationToken);
+                        var sendBytesLimiter = new Limiter(_options.MaxSendBytesPerSeconds);
+                        var receiveBytesLimiter = new Limiter(_options.MaxReceiveBytesPerSeconds);
+                        var random = new Random();
 
-                        List<BaseConnection>? tempList = null;
-
-                        lock (_lockObject)
+                        while (!cancellationToken.IsCancellationRequested)
                         {
-                            tempList = _connections.ToList();
-                        }
+                            cancellationToken.WaitHandle.WaitOne(200, cancellationToken);
 
-                        random.Shuffle(tempList);
-                        foreach (var connection in tempList)
-                        {
-                            try
-                            {
-                                // Send
-                                {
-                                    var freeBytes = sendBytesLimiter.ComputeFreeBytes();
-                                    var consumedBytes = connection.Send(freeBytes);
-                                    sendBytesLimiter.AddConsumedBytes(consumedBytes);
-                                }
+                            List<BaseConnection>? tempList = null;
 
-                                // Receive
+                            lock (_lockObject)
+                            {
+                                tempList = _connections.ToList();
+                            }
+
+                            random.Shuffle(tempList);
+                            foreach (var connection in tempList)
+                            {
+                                try
                                 {
-                                    var freeBytes = receiveBytesLimiter.ComputeFreeBytes();
-                                    var consumedBytes = connection.Receive(freeBytes);
-                                    receiveBytesLimiter.AddConsumedBytes(consumedBytes);
+                                    // Send
+                                    {
+                                        var freeBytes = sendBytesLimiter.ComputeFreeBytes();
+                                        var consumedBytes = connection.Send(freeBytes);
+                                        sendBytesLimiter.AddConsumedBytes(consumedBytes);
+                                    }
+
+                                    // Receive
+                                    {
+                                        var freeBytes = receiveBytesLimiter.ComputeFreeBytes();
+                                        var consumedBytes = connection.Receive(freeBytes);
+                                        receiveBytesLimiter.AddConsumedBytes(consumedBytes);
+                                    }
                                 }
-                            }
-                            catch (ConnectionException)
-                            {
-                                _connections.Remove(connection);
-                            }
-                            catch (ObjectDisposedException)
-                            {
-                                _connections.Remove(connection);
+                                catch (ConnectionException)
+                                {
+                                    _connections.Remove(connection);
+                                }
+                                catch (ObjectDisposedException)
+                                {
+                                    _connections.Remove(connection);
+                                }
                             }
                         }
                     }
-                }
-                catch (OperationCanceledException)
-                {
-
-                }
-            }, TaskCreationOptions.LongRunning);
+                    catch (OperationCanceledException)
+                    {
+                    }
+                }, TaskCreationOptions.LongRunning);
         }
 
         internal void Add(BaseConnection connection)
@@ -126,7 +126,10 @@ namespace Omnius.Core.Network.Connections
 
             public void AddConsumedBytes(int size)
             {
-                if (size < 0) throw new ArgumentOutOfRangeException(nameof(size));
+                if (size < 0)
+                {
+                    throw new ArgumentOutOfRangeException(nameof(size));
+                }
 
                 var now = DateTime.UtcNow;
                 _queue.Enqueue((now, size));

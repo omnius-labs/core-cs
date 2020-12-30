@@ -10,8 +10,6 @@ namespace Omnius.Core
         private readonly Dictionary<int, T> _idMap = new Dictionary<int, T>();
         private int _current;
 
-        private readonly object _lockObject = new object();
-
         public int Add(T item)
         {
             int id;

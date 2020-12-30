@@ -573,6 +573,7 @@ namespace Omnius.Core.RocketPack
                 }
             }
         }
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool TryGetUInt32(ref ReadOnlySequence<byte> sequence, out uint value)
         {

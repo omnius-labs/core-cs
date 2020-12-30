@@ -13,17 +13,6 @@ namespace Omnius.Core.Helpers
             return EnumInfo<T>.IsValid(value);
         }
 
-        private static class EnumInfo<T>
-            where T : Enum
-        {
-            private static readonly ConcurrentDictionary<T, bool> _resultMap = new ConcurrentDictionary<T, bool>();
-
-            public static bool IsValid(T value)
-            {
-                return _resultMap.GetOrAdd(value, (_) => Enum.IsDefined(typeof(T), value));
-            }
-        }
-
         public static T GetOverlappedMaxValue<T>(IEnumerable<T> s1, IEnumerable<T> s2)
             where T : Enum
         {
@@ -41,6 +30,17 @@ namespace Omnius.Core.Helpers
             }
 
             throw new Exception($"Overlap enum of {nameof(T)} could not be found.");
+        }
+
+        private static class EnumInfo<T>
+            where T : Enum
+        {
+            private static readonly ConcurrentDictionary<T, bool> _resultMap = new();
+
+            public static bool IsValid(T value)
+            {
+                return _resultMap.GetOrAdd(value, (_) => Enum.IsDefined(typeof(T), value));
+            }
         }
     }
 }

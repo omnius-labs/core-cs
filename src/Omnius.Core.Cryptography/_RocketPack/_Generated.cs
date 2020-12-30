@@ -77,7 +77,7 @@ namespace Omnius.Core.Cryptography
         }
         public override bool Equals(object? other)
         {
-            if (!(other is global::Omnius.Core.Cryptography.OmniHash)) return false;
+            if (other is not global::Omnius.Core.Cryptography.OmniHash) return false;
             return this.Equals((global::Omnius.Core.Cryptography.OmniHash)other);
         }
         public bool Equals(global::Omnius.Core.Cryptography.OmniHash target)
@@ -106,7 +106,7 @@ namespace Omnius.Core.Cryptography
                 global::System.ReadOnlyMemory<byte> p_value = global::System.ReadOnlyMemory<byte>.Empty;
 
                 {
-                    p_algorithmType = (OmniHashAlgorithmType)r.GetUInt64();
+                    p_algorithmType = (global::Omnius.Core.Cryptography.OmniHashAlgorithmType)r.GetUInt64();
                 }
                 {
                     p_value = r.GetMemory(256);
@@ -178,7 +178,7 @@ namespace Omnius.Core.Cryptography
         }
         public override bool Equals(object? other)
         {
-            if (!(other is global::Omnius.Core.Cryptography.OmniAgreement)) return false;
+            if (other is not global::Omnius.Core.Cryptography.OmniAgreement) return false;
             return this.Equals((global::Omnius.Core.Cryptography.OmniAgreement)other);
         }
         public bool Equals(global::Omnius.Core.Cryptography.OmniAgreement? target)
@@ -244,7 +244,7 @@ namespace Omnius.Core.Cryptography
                             }
                         case 2:
                             {
-                                p_algorithmType = (OmniAgreementAlgorithmType)r.GetUInt64();
+                                p_algorithmType = (global::Omnius.Core.Cryptography.OmniAgreementAlgorithmType)r.GetUInt64();
                                 break;
                             }
                         case 3:
@@ -322,7 +322,7 @@ namespace Omnius.Core.Cryptography
         }
         public override bool Equals(object? other)
         {
-            if (!(other is global::Omnius.Core.Cryptography.OmniAgreementPublicKey)) return false;
+            if (other is not global::Omnius.Core.Cryptography.OmniAgreementPublicKey) return false;
             return this.Equals((global::Omnius.Core.Cryptography.OmniAgreementPublicKey)other);
         }
         public bool Equals(global::Omnius.Core.Cryptography.OmniAgreementPublicKey? target)
@@ -381,7 +381,7 @@ namespace Omnius.Core.Cryptography
                             }
                         case 2:
                             {
-                                p_algorithmType = (OmniAgreementAlgorithmType)r.GetUInt64();
+                                p_algorithmType = (global::Omnius.Core.Cryptography.OmniAgreementAlgorithmType)r.GetUInt64();
                                 break;
                             }
                         case 3:
@@ -454,7 +454,7 @@ namespace Omnius.Core.Cryptography
         }
         public override bool Equals(object? other)
         {
-            if (!(other is global::Omnius.Core.Cryptography.OmniAgreementPrivateKey)) return false;
+            if (other is not global::Omnius.Core.Cryptography.OmniAgreementPrivateKey) return false;
             return this.Equals((global::Omnius.Core.Cryptography.OmniAgreementPrivateKey)other);
         }
         public bool Equals(global::Omnius.Core.Cryptography.OmniAgreementPrivateKey? target)
@@ -513,7 +513,7 @@ namespace Omnius.Core.Cryptography
                             }
                         case 2:
                             {
-                                p_algorithmType = (OmniAgreementAlgorithmType)r.GetUInt64();
+                                p_algorithmType = (global::Omnius.Core.Cryptography.OmniAgreementAlgorithmType)r.GetUInt64();
                                 break;
                             }
                         case 3:
@@ -594,7 +594,7 @@ namespace Omnius.Core.Cryptography
         }
         public override bool Equals(object? other)
         {
-            if (!(other is global::Omnius.Core.Cryptography.OmniDigitalSignature)) return false;
+            if (other is not global::Omnius.Core.Cryptography.OmniDigitalSignature) return false;
             return this.Equals((global::Omnius.Core.Cryptography.OmniDigitalSignature)other);
         }
         public bool Equals(global::Omnius.Core.Cryptography.OmniDigitalSignature? target)
@@ -660,7 +660,7 @@ namespace Omnius.Core.Cryptography
                             }
                         case 2:
                             {
-                                p_algorithmType = (OmniDigitalSignatureAlgorithmType)r.GetUInt64();
+                                p_algorithmType = (global::Omnius.Core.Cryptography.OmniDigitalSignatureAlgorithmType)r.GetUInt64();
                                 break;
                             }
                         case 3:
@@ -746,7 +746,7 @@ namespace Omnius.Core.Cryptography
         }
         public override bool Equals(object? other)
         {
-            if (!(other is global::Omnius.Core.Cryptography.OmniCertificate)) return false;
+            if (other is not global::Omnius.Core.Cryptography.OmniCertificate) return false;
             return this.Equals((global::Omnius.Core.Cryptography.OmniCertificate)other);
         }
         public bool Equals(global::Omnius.Core.Cryptography.OmniCertificate? target)
@@ -812,7 +812,7 @@ namespace Omnius.Core.Cryptography
                             }
                         case 2:
                             {
-                                p_algorithmType = (OmniDigitalSignatureAlgorithmType)r.GetUInt64();
+                                p_algorithmType = (global::Omnius.Core.Cryptography.OmniDigitalSignatureAlgorithmType)r.GetUInt64();
                                 break;
                             }
                         case 3:
@@ -887,7 +887,7 @@ namespace Omnius.Core.Cryptography
         }
         public override bool Equals(object? other)
         {
-            if (!(other is global::Omnius.Core.Cryptography.OmniSignature)) return false;
+            if (other is not global::Omnius.Core.Cryptography.OmniSignature) return false;
             return this.Equals((global::Omnius.Core.Cryptography.OmniSignature)other);
         }
         public bool Equals(global::Omnius.Core.Cryptography.OmniSignature? target)
@@ -1004,7 +1004,7 @@ namespace Omnius.Core.Cryptography
         }
         public override bool Equals(object? other)
         {
-            if (!(other is global::Omnius.Core.Cryptography.OmniHashcash)) return false;
+            if (other is not global::Omnius.Core.Cryptography.OmniHashcash) return false;
             return this.Equals((global::Omnius.Core.Cryptography.OmniHashcash)other);
         }
         public bool Equals(global::Omnius.Core.Cryptography.OmniHashcash? target)
@@ -1051,7 +1051,7 @@ namespace Omnius.Core.Cryptography
                     {
                         case 1:
                             {
-                                p_algorithmType = (OmniHashcashAlgorithmType)r.GetUInt64();
+                                p_algorithmType = (global::Omnius.Core.Cryptography.OmniHashcashAlgorithmType)r.GetUInt64();
                                 break;
                             }
                         case 2:

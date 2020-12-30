@@ -15,6 +15,7 @@ namespace Omnius.Core.RocketPack
         public static Timestamp Zero { get; } = new Timestamp(0, 0);
 
         public long Seconds { get; }
+
         public int Nanos { get; }
 
         public static bool operator ==(Timestamp x, Timestamp y)
@@ -34,7 +35,11 @@ namespace Omnius.Core.RocketPack
 
         public override bool Equals(object? obj)
         {
-            if (!(obj is Timestamp)) return false;
+            if (obj is not Timestamp)
+            {
+                return false;
+            }
+
             return this.Equals((Timestamp)obj);
         }
 

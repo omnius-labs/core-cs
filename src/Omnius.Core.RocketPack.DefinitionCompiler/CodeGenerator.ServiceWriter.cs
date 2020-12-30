@@ -119,7 +119,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                 {
                     b.WriteLine($"private readonly {GenerateTypeFullName("IConnection")} _connection;");
                     b.WriteLine($"private readonly {GenerateTypeFullName("IBytesPool")} _bytesPool;");
-                    b.WriteLine($"private readonly {GenerateTypeFullName("RocketPackRpc")} _rpc;");
+                    b.WriteLine($"private readonly {GenerateTypeFullName("RocketPackRemoting")} _remoting;");
                     b.WriteLine($"public {className}({GenerateTypeFullName("IConnection")} connection, {GenerateTypeFullName("IBytesPool")} bytesPool)");
                     b.WriteLine("{");
 
@@ -127,7 +127,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                     {
                         b.WriteLine("_connection = connection;");
                         b.WriteLine("_bytesPool = bytesPool;");
-                        b.WriteLine($"_rpc = new {GenerateTypeFullName("RocketPackRpc")}(_connection, _bytesPool);");
+                        b.WriteLine($"_remoting = new {GenerateTypeFullName("RocketPackRemoting")}(_connection, _bytesPool);");
                     }
 
                     b.WriteLine("}");
@@ -136,7 +136,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
 
                     using (b.Indent())
                     {
-                        b.WriteLine("await _rpc.DisposeAsync();");
+                        b.WriteLine("await _remoting.DisposeAsync();");
                     }
 
                     b.WriteLine("}");
@@ -153,8 +153,8 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
 
                                 using (b.Indent())
                                 {
-                                    b.WriteLine($"using var stream = await _rpc.ConnectAsync({index}, cancellationToken);");
-                                    b.WriteLine($"return await stream.CallFunctionAsync<{inTypeObjectDef.CSharpFullName}, {outTypeObjectDef.CSharpFullName}>(param, cancellationToken);");
+                                    b.WriteLine($"using var function = await _remoting.ConnectAsync({index}, cancellationToken);");
+                                    b.WriteLine($"return await function.CallFunctionAsync<{inTypeObjectDef.CSharpFullName}, {outTypeObjectDef.CSharpFullName}>(param, cancellationToken);");
                                 }
 
                                 b.WriteLine("}");
@@ -169,8 +169,8 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
 
                                 using (b.Indent())
                                 {
-                                    b.WriteLine($"using var stream = await _rpc.ConnectAsync({index}, cancellationToken);");
-                                    b.WriteLine($"return await stream.CallFunctionAsync<{outTypeObjectDef.CSharpFullName}>(cancellationToken);");
+                                    b.WriteLine($"using var function = await _remoting.ConnectAsync({index}, cancellationToken);");
+                                    b.WriteLine($"return await function.CallFunctionAsync<{outTypeObjectDef.CSharpFullName}>(cancellationToken);");
                                 }
 
                                 b.WriteLine("}");
@@ -185,8 +185,8 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
 
                                 using (b.Indent())
                                 {
-                                    b.WriteLine($"using var stream = await _rpc.ConnectAsync({index}, cancellationToken);");
-                                    b.WriteLine($"await stream.CallActionAsync<{inTypeObjectDef.CSharpFullName}>(param, cancellationToken);");
+                                    b.WriteLine($"using var function = await _remoting.ConnectAsync({index}, cancellationToken);");
+                                    b.WriteLine($"await function.CallActionAsync<{inTypeObjectDef.CSharpFullName}>(param, cancellationToken);");
                                 }
 
                                 b.WriteLine("}");
@@ -200,8 +200,8 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
 
                                 using (b.Indent())
                                 {
-                                    b.WriteLine($"using var stream = await _rpc.ConnectAsync({index}, cancellationToken);");
-                                    b.WriteLine($"await stream.CallActionAsync(cancellationToken);");
+                                    b.WriteLine($"using var function = await _remoting.ConnectAsync({index}, cancellationToken);");
+                                    b.WriteLine($"await function.CallActionAsync(cancellationToken);");
                                 }
 
                                 b.WriteLine("}");
@@ -224,7 +224,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                     b.WriteLine($"private readonly {serviceDefinition.CSharpInterfaceFullName} _service;");
                     b.WriteLine($"private readonly {GenerateTypeFullName("IConnection")} _connection;");
                     b.WriteLine($"private readonly {GenerateTypeFullName("IBytesPool")} _bytesPool;");
-                    b.WriteLine($"private readonly {GenerateTypeFullName("RocketPackRpc")} _rpc;");
+                    b.WriteLine($"private readonly {GenerateTypeFullName("RocketPackRemoting")} _remoting;");
                     b.WriteLine($"public {className}({serviceDefinition.CSharpInterfaceFullName} service, {GenerateTypeFullName("IConnection")} connection, {GenerateTypeFullName("IBytesPool")} bytesPool)");
                     b.WriteLine("{");
 
@@ -233,7 +233,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                         b.WriteLine("_service = service;");
                         b.WriteLine("_connection = connection;");
                         b.WriteLine("_bytesPool = bytesPool;");
-                        b.WriteLine($"_rpc = new {GenerateTypeFullName("RocketPackRpc")}(_connection, _bytesPool);");
+                        b.WriteLine($"_remoting = new {GenerateTypeFullName("RocketPackRemoting")}(_connection, _bytesPool);");
                     }
 
                     b.WriteLine("}");
@@ -241,12 +241,12 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                     b.WriteLine("{");
                     using (b.Indent())
                     {
-                        b.WriteLine("await _rpc.DisposeAsync();");
+                        b.WriteLine("await _remoting.DisposeAsync();");
                     }
 
                     b.WriteLine("}");
 
-                    b.WriteLine($"public async {GenerateTypeFullName("Task")} EventLoop({GenerateTypeFullName("CancellationToken")} cancellationToken = default)");
+                    b.WriteLine($"public async {GenerateTypeFullName("Task")} EventLoopAsync({GenerateTypeFullName("CancellationToken")} cancellationToken = default)");
                     b.WriteLine("{");
 
                     using (b.Indent())
@@ -257,9 +257,9 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                         using (b.Indent())
                         {
                             b.WriteLine("cancellationToken.ThrowIfCancellationRequested();");
-                            b.WriteLine("using var stream = await _rpc.AcceptAsync(cancellationToken);");
+                            b.WriteLine("using var function = await _remoting.AcceptAsync(cancellationToken);");
 
-                            b.WriteLine("switch (stream.CallId)");
+                            b.WriteLine("switch (function.Id)");
                             b.WriteLine("{");
 
                             using (b.Indent())
@@ -278,7 +278,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                                             {
                                                 using (b.Indent())
                                                 {
-                                                    b.WriteLine($"await stream.ListenFunctionAsync<{inTypeObjectDef.CSharpFullName}, {outTypeObjectDef.CSharpFullName}>(_service.{func.CSharpFunctionName}, cancellationToken);");
+                                                    b.WriteLine($"await function.ListenFunctionAsync<{inTypeObjectDef.CSharpFullName}, {outTypeObjectDef.CSharpFullName}>(_service.{func.CSharpFunctionName}, cancellationToken);");
                                                 }
                                             }
                                         }
@@ -288,7 +288,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                                             {
                                                 using (b.Indent())
                                                 {
-                                                    b.WriteLine($"await stream.ListenFunctionAsync<{outTypeObjectDef.CSharpFullName}>(_service.{func.CSharpFunctionName}, cancellationToken);");
+                                                    b.WriteLine($"await function.ListenFunctionAsync<{outTypeObjectDef.CSharpFullName}>(_service.{func.CSharpFunctionName}, cancellationToken);");
                                                 }
                                             }
                                         }
@@ -298,7 +298,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                                             {
                                                 using (b.Indent())
                                                 {
-                                                    b.WriteLine($"await stream.ListenActionAsync<{inTypeObjectDef.CSharpFullName}>(_service.{func.CSharpFunctionName}, cancellationToken);");
+                                                    b.WriteLine($"await function.ListenActionAsync<{inTypeObjectDef.CSharpFullName}>(_service.{func.CSharpFunctionName}, cancellationToken);");
                                                 }
                                             }
                                         }
@@ -306,7 +306,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                                         {
                                             using (b.Indent())
                                             {
-                                                b.WriteLine($"await stream.ListenActionAsync(_service.{func.CSharpFunctionName}, cancellationToken);");
+                                                b.WriteLine($"await function.ListenActionAsync(_service.{func.CSharpFunctionName}, cancellationToken);");
                                             }
                                         }
 

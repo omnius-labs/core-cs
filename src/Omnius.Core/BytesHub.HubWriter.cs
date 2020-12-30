@@ -16,7 +16,6 @@ namespace Omnius.Core
 
             public void Reset()
             {
-
             }
 
             public long WrittenBytes => _bufferWriter.WrittenCount;

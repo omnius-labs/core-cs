@@ -90,7 +90,7 @@ namespace Omnius.Core.RocketPack.Tests.Internal
         }
         public override bool Equals(object? other)
         {
-            if (!(other is global::Omnius.Core.RocketPack.Tests.Internal.StructElement_Struct)) return false;
+            if (other is not global::Omnius.Core.RocketPack.Tests.Internal.StructElement_Struct) return false;
             return this.Equals((global::Omnius.Core.RocketPack.Tests.Internal.StructElement_Struct)other);
         }
         public bool Equals(global::Omnius.Core.RocketPack.Tests.Internal.StructElement_Struct target)
@@ -169,7 +169,7 @@ namespace Omnius.Core.RocketPack.Tests.Internal
         }
         public override bool Equals(object? other)
         {
-            if (!(other is global::Omnius.Core.RocketPack.Tests.Internal.MessageElement_Struct)) return false;
+            if (other is not global::Omnius.Core.RocketPack.Tests.Internal.MessageElement_Struct) return false;
             return this.Equals((global::Omnius.Core.RocketPack.Tests.Internal.MessageElement_Struct)other);
         }
         public bool Equals(global::Omnius.Core.RocketPack.Tests.Internal.MessageElement_Struct target)
@@ -265,7 +265,7 @@ namespace Omnius.Core.RocketPack.Tests.Internal
         }
         public override bool Equals(object? other)
         {
-            if (!(other is global::Omnius.Core.RocketPack.Tests.Internal.StructElement_Class)) return false;
+            if (other is not global::Omnius.Core.RocketPack.Tests.Internal.StructElement_Class) return false;
             return this.Equals((global::Omnius.Core.RocketPack.Tests.Internal.StructElement_Class)other);
         }
         public bool Equals(global::Omnius.Core.RocketPack.Tests.Internal.StructElement_Class? target)
@@ -347,7 +347,7 @@ namespace Omnius.Core.RocketPack.Tests.Internal
         }
         public override bool Equals(object? other)
         {
-            if (!(other is global::Omnius.Core.RocketPack.Tests.Internal.MessageElement_Class)) return false;
+            if (other is not global::Omnius.Core.RocketPack.Tests.Internal.MessageElement_Class) return false;
             return this.Equals((global::Omnius.Core.RocketPack.Tests.Internal.MessageElement_Class)other);
         }
         public bool Equals(global::Omnius.Core.RocketPack.Tests.Internal.MessageElement_Class? target)
@@ -564,7 +564,7 @@ namespace Omnius.Core.RocketPack.Tests.Internal
         }
         public override bool Equals(object? other)
         {
-            if (!(other is global::Omnius.Core.RocketPack.Tests.Internal.Struct_Struct)) return false;
+            if (other is not global::Omnius.Core.RocketPack.Tests.Internal.Struct_Struct) return false;
             return this.Equals((global::Omnius.Core.RocketPack.Tests.Internal.Struct_Struct)other);
         }
         public bool Equals(global::Omnius.Core.RocketPack.Tests.Internal.Struct_Struct target)
@@ -714,28 +714,28 @@ namespace Omnius.Core.RocketPack.Tests.Internal
                     p_x8 = r.GetUInt64();
                 }
                 {
-                    p_x9 = (Enum1)r.GetInt64();
+                    p_x9 = (global::Omnius.Core.RocketPack.Tests.Internal.Enum1)r.GetInt64();
                 }
                 {
-                    p_x10 = (Enum2)r.GetInt64();
+                    p_x10 = (global::Omnius.Core.RocketPack.Tests.Internal.Enum2)r.GetInt64();
                 }
                 {
-                    p_x11 = (Enum3)r.GetInt64();
+                    p_x11 = (global::Omnius.Core.RocketPack.Tests.Internal.Enum3)r.GetInt64();
                 }
                 {
-                    p_x12 = (Enum4)r.GetInt64();
+                    p_x12 = (global::Omnius.Core.RocketPack.Tests.Internal.Enum4)r.GetInt64();
                 }
                 {
-                    p_x13 = (Enum5)r.GetUInt64();
+                    p_x13 = (global::Omnius.Core.RocketPack.Tests.Internal.Enum5)r.GetUInt64();
                 }
                 {
-                    p_x14 = (Enum6)r.GetUInt64();
+                    p_x14 = (global::Omnius.Core.RocketPack.Tests.Internal.Enum6)r.GetUInt64();
                 }
                 {
-                    p_x15 = (Enum7)r.GetUInt64();
+                    p_x15 = (global::Omnius.Core.RocketPack.Tests.Internal.Enum7)r.GetUInt64();
                 }
                 {
-                    p_x16 = (Enum8)r.GetUInt64();
+                    p_x16 = (global::Omnius.Core.RocketPack.Tests.Internal.Enum8)r.GetUInt64();
                 }
                 {
                     p_x17 = r.GetFloat32();
@@ -958,7 +958,7 @@ namespace Omnius.Core.RocketPack.Tests.Internal
         }
         public override bool Equals(object? other)
         {
-            if (!(other is global::Omnius.Core.RocketPack.Tests.Internal.Message_Struct)) return false;
+            if (other is not global::Omnius.Core.RocketPack.Tests.Internal.Message_Struct) return false;
             return this.Equals((global::Omnius.Core.RocketPack.Tests.Internal.Message_Struct)other);
         }
         public bool Equals(global::Omnius.Core.RocketPack.Tests.Internal.Message_Struct target)
@@ -1250,42 +1250,42 @@ namespace Omnius.Core.RocketPack.Tests.Internal
                             }
                         case 10:
                             {
-                                p_x9 = (Enum1)r.GetInt64();
+                                p_x9 = (global::Omnius.Core.RocketPack.Tests.Internal.Enum1)r.GetInt64();
                                 break;
                             }
                         case 11:
                             {
-                                p_x10 = (Enum2)r.GetInt64();
+                                p_x10 = (global::Omnius.Core.RocketPack.Tests.Internal.Enum2)r.GetInt64();
                                 break;
                             }
                         case 12:
                             {
-                                p_x11 = (Enum3)r.GetInt64();
+                                p_x11 = (global::Omnius.Core.RocketPack.Tests.Internal.Enum3)r.GetInt64();
                                 break;
                             }
                         case 13:
                             {
-                                p_x12 = (Enum4)r.GetInt64();
+                                p_x12 = (global::Omnius.Core.RocketPack.Tests.Internal.Enum4)r.GetInt64();
                                 break;
                             }
                         case 14:
                             {
-                                p_x13 = (Enum5)r.GetUInt64();
+                                p_x13 = (global::Omnius.Core.RocketPack.Tests.Internal.Enum5)r.GetUInt64();
                                 break;
                             }
                         case 15:
                             {
-                                p_x14 = (Enum6)r.GetUInt64();
+                                p_x14 = (global::Omnius.Core.RocketPack.Tests.Internal.Enum6)r.GetUInt64();
                                 break;
                             }
                         case 16:
                             {
-                                p_x15 = (Enum7)r.GetUInt64();
+                                p_x15 = (global::Omnius.Core.RocketPack.Tests.Internal.Enum7)r.GetUInt64();
                                 break;
                             }
                         case 17:
                             {
-                                p_x16 = (Enum8)r.GetUInt64();
+                                p_x16 = (global::Omnius.Core.RocketPack.Tests.Internal.Enum8)r.GetUInt64();
                                 break;
                             }
                         case 18:
@@ -1390,11 +1390,11 @@ namespace Omnius.Core.RocketPack.Tests.Internal
 
         public NullableMessage_Struct(bool? x0, sbyte? x1, short? x2, int? x3, long? x4, byte? x5, ushort? x6, uint? x7, ulong? x8, global::Omnius.Core.RocketPack.Tests.Internal.Enum1? x9, global::Omnius.Core.RocketPack.Tests.Internal.Enum2? x10, global::Omnius.Core.RocketPack.Tests.Internal.Enum3? x11, global::Omnius.Core.RocketPack.Tests.Internal.Enum4? x12, global::Omnius.Core.RocketPack.Tests.Internal.Enum5? x13, global::Omnius.Core.RocketPack.Tests.Internal.Enum6? x14, global::Omnius.Core.RocketPack.Tests.Internal.Enum7? x15, global::Omnius.Core.RocketPack.Tests.Internal.Enum8? x16, float? x17, double? x18, string? x19, global::Omnius.Core.RocketPack.Timestamp? x20, global::System.ReadOnlyMemory<byte>? x21, global::System.Buffers.IMemoryOwner<byte>? x22, string[]? x23, global::System.Collections.Generic.Dictionary<byte, string>? x24, global::Omnius.Core.RocketPack.Tests.Internal.StructElement_Struct? x25, global::Omnius.Core.RocketPack.Tests.Internal.MessageElement_Struct? x26, global::Omnius.Core.RocketPack.Tests.Internal.StructElement_Class? x27, global::Omnius.Core.RocketPack.Tests.Internal.MessageElement_Class? x28)
         {
-            if (!(x19 is null) && x19.Length > 128) throw new global::System.ArgumentOutOfRangeException("x19");
-            if (!(x21 is null) && x21.Value.Length > 256) throw new global::System.ArgumentOutOfRangeException("x21");
-            if (!(x22 is null) && x22.Memory.Length > 256) throw new global::System.ArgumentOutOfRangeException("x22");
-            if (!(x23 is null) && x23.Length > 16) throw new global::System.ArgumentOutOfRangeException("x23");
-            if (!(x23 is null))
+            if (x19 is not null && x19.Length > 128) throw new global::System.ArgumentOutOfRangeException("x19");
+            if (x21 is not null && x21.Value.Length > 256) throw new global::System.ArgumentOutOfRangeException("x21");
+            if (x22 is not null && x22.Memory.Length > 256) throw new global::System.ArgumentOutOfRangeException("x22");
+            if (x23 is not null && x23.Length > 16) throw new global::System.ArgumentOutOfRangeException("x23");
+            if (x23 is not null)
             {
                 foreach (var n in x23)
                 {
@@ -1402,8 +1402,8 @@ namespace Omnius.Core.RocketPack.Tests.Internal
                     if (n.Length > 128) throw new global::System.ArgumentOutOfRangeException("n");
                 }
             }
-            if (!(x24 is null) && x24.Count > 32) throw new global::System.ArgumentOutOfRangeException("x24");
-            if (!(x24 is null))
+            if (x24 is not null && x24.Count > 32) throw new global::System.ArgumentOutOfRangeException("x24");
+            if (x24 is not null)
             {
                 foreach (var n in x24)
                 {
@@ -1478,8 +1478,8 @@ namespace Omnius.Core.RocketPack.Tests.Internal
                 if (x18 != default) ___h.Add(x18.GetHashCode());
                 if (x19 != default) ___h.Add(x19.GetHashCode());
                 if (x20 != default) ___h.Add(x20.GetHashCode());
-                if (!(x21 is null) && !x21.Value.IsEmpty) ___h.Add(global::Omnius.Core.Helpers.ObjectHelper.GetHashCode(x21.Value.Span));
-                if (!(x22 is null) && !x22.Memory.IsEmpty) ___h.Add(global::Omnius.Core.Helpers.ObjectHelper.GetHashCode(x22.Memory.Span));
+                if (x21 is not null && !x21.Value.IsEmpty) ___h.Add(global::Omnius.Core.Helpers.ObjectHelper.GetHashCode(x21.Value.Span));
+                if (x22 is not null && !x22.Memory.IsEmpty) ___h.Add(global::Omnius.Core.Helpers.ObjectHelper.GetHashCode(x22.Memory.Span));
                 if(x23 != null)
                 {
                     foreach (var n in x23)
@@ -1495,8 +1495,8 @@ namespace Omnius.Core.RocketPack.Tests.Internal
                         if (n.Value != default) ___h.Add(n.Value.GetHashCode());
                     }
                 }
-                if (x25 != default) ___h.Add(x25.Value.GetHashCode());
-                if (x26 != default) ___h.Add(x26.Value.GetHashCode());
+                if (x25 is not null) ___h.Add(x25.Value.GetHashCode());
+                if (x26 is not null) ___h.Add(x26.Value.GetHashCode());
                 if (x27 != default) ___h.Add(x27.GetHashCode());
                 if (x28 != default) ___h.Add(x28.GetHashCode());
                 ___hashCode = ___h.ToHashCode();
@@ -1555,7 +1555,7 @@ namespace Omnius.Core.RocketPack.Tests.Internal
         }
         public override bool Equals(object? other)
         {
-            if (!(other is global::Omnius.Core.RocketPack.Tests.Internal.NullableMessage_Struct)) return false;
+            if (other is not global::Omnius.Core.RocketPack.Tests.Internal.NullableMessage_Struct) return false;
             return this.Equals((global::Omnius.Core.RocketPack.Tests.Internal.NullableMessage_Struct)other);
         }
         public bool Equals(global::Omnius.Core.RocketPack.Tests.Internal.NullableMessage_Struct target)
@@ -1581,21 +1581,21 @@ namespace Omnius.Core.RocketPack.Tests.Internal
             if (this.X19 != target.X19) return false;
             if (this.X20 != target.X20) return false;
             if ((this.X21 is null) != (target.X21 is null)) return false;
-            if (!(this.X21 is null) && !(target.X21 is null) && !global::Omnius.Core.BytesOperations.Equals(this.X21.Value.Span, target.X21.Value.Span)) return false;
+            if ((this.X21 is not null) && (target.X21 is not null) && !global::Omnius.Core.BytesOperations.Equals(this.X21.Value.Span, target.X21.Value.Span)) return false;
             if ((this.X22 is null) != (target.X22 is null)) return false;
-            if (!(this.X22 is null) && !(target.X22 is null) && !global::Omnius.Core.BytesOperations.Equals(this.X22.Value.Span, target.X22.Value.Span)) return false;
+            if ((this.X22 is not null) && (target.X22 is not null) && !global::Omnius.Core.BytesOperations.Equals(this.X22.Value.Span, target.X22.Value.Span)) return false;
             if ((this.X23 is null) != (target.X23 is null)) return false;
-            if (!(this.X23 is null) && !(target.X23 is null) && !global::Omnius.Core.Helpers.CollectionHelper.Equals(this.X23, target.X23)) return false;
+            if ((this.X23 is not null) && (target.X23 is not null) && !global::Omnius.Core.Helpers.CollectionHelper.Equals(this.X23, target.X23)) return false;
             if ((this.X24 is null) != (target.X24 is null)) return false;
-            if (!(this.X24 is null) && !(target.X24 is null) && !global::Omnius.Core.Helpers.CollectionHelper.Equals(this.X24, target.X24)) return false;
+            if ((this.X24 is not null) && (target.X24 is not null) && !global::Omnius.Core.Helpers.CollectionHelper.Equals(this.X24, target.X24)) return false;
             if ((this.X25 is null) != (target.X25 is null)) return false;
-            if (!(this.X25 is null) && !(target.X25 is null) && this.X25 != target.X25) return false;
+            if ((this.X25 is not null) && (target.X25 is not null) && this.X25 != target.X25) return false;
             if ((this.X26 is null) != (target.X26 is null)) return false;
-            if (!(this.X26 is null) && !(target.X26 is null) && this.X26 != target.X26) return false;
+            if ((this.X26 is not null) && (target.X26 is not null) && this.X26 != target.X26) return false;
             if ((this.X27 is null) != (target.X27 is null)) return false;
-            if (!(this.X27 is null) && !(target.X27 is null) && this.X27 != target.X27) return false;
+            if ((this.X27 is not null) && (target.X27 is not null) && this.X27 != target.X27) return false;
             if ((this.X28 is null) != (target.X28 is null)) return false;
-            if (!(this.X28 is null) && !(target.X28 is null) && this.X28 != target.X28) return false;
+            if ((this.X28 is not null) && (target.X28 is not null) && this.X28 != target.X28) return false;
 
             return true;
         }
@@ -1855,42 +1855,42 @@ namespace Omnius.Core.RocketPack.Tests.Internal
                             }
                         case 10:
                             {
-                                p_x9 = (Enum1)r.GetInt64();
+                                p_x9 = (global::Omnius.Core.RocketPack.Tests.Internal.Enum1)r.GetInt64();
                                 break;
                             }
                         case 11:
                             {
-                                p_x10 = (Enum2)r.GetInt64();
+                                p_x10 = (global::Omnius.Core.RocketPack.Tests.Internal.Enum2)r.GetInt64();
                                 break;
                             }
                         case 12:
                             {
-                                p_x11 = (Enum3)r.GetInt64();
+                                p_x11 = (global::Omnius.Core.RocketPack.Tests.Internal.Enum3)r.GetInt64();
                                 break;
                             }
                         case 13:
                             {
-                                p_x12 = (Enum4)r.GetInt64();
+                                p_x12 = (global::Omnius.Core.RocketPack.Tests.Internal.Enum4)r.GetInt64();
                                 break;
                             }
                         case 14:
                             {
-                                p_x13 = (Enum5)r.GetUInt64();
+                                p_x13 = (global::Omnius.Core.RocketPack.Tests.Internal.Enum5)r.GetUInt64();
                                 break;
                             }
                         case 15:
                             {
-                                p_x14 = (Enum6)r.GetUInt64();
+                                p_x14 = (global::Omnius.Core.RocketPack.Tests.Internal.Enum6)r.GetUInt64();
                                 break;
                             }
                         case 16:
                             {
-                                p_x15 = (Enum7)r.GetUInt64();
+                                p_x15 = (global::Omnius.Core.RocketPack.Tests.Internal.Enum7)r.GetUInt64();
                                 break;
                             }
                         case 17:
                             {
-                                p_x16 = (Enum8)r.GetUInt64();
+                                p_x16 = (global::Omnius.Core.RocketPack.Tests.Internal.Enum8)r.GetUInt64();
                                 break;
                             }
                         case 18:
@@ -2142,7 +2142,7 @@ namespace Omnius.Core.RocketPack.Tests.Internal
         }
         public override bool Equals(object? other)
         {
-            if (!(other is global::Omnius.Core.RocketPack.Tests.Internal.Struct_Class)) return false;
+            if (other is not global::Omnius.Core.RocketPack.Tests.Internal.Struct_Class) return false;
             return this.Equals((global::Omnius.Core.RocketPack.Tests.Internal.Struct_Class)other);
         }
         public bool Equals(global::Omnius.Core.RocketPack.Tests.Internal.Struct_Class? target)
@@ -2294,28 +2294,28 @@ namespace Omnius.Core.RocketPack.Tests.Internal
                     p_x8 = r.GetUInt64();
                 }
                 {
-                    p_x9 = (Enum1)r.GetInt64();
+                    p_x9 = (global::Omnius.Core.RocketPack.Tests.Internal.Enum1)r.GetInt64();
                 }
                 {
-                    p_x10 = (Enum2)r.GetInt64();
+                    p_x10 = (global::Omnius.Core.RocketPack.Tests.Internal.Enum2)r.GetInt64();
                 }
                 {
-                    p_x11 = (Enum3)r.GetInt64();
+                    p_x11 = (global::Omnius.Core.RocketPack.Tests.Internal.Enum3)r.GetInt64();
                 }
                 {
-                    p_x12 = (Enum4)r.GetInt64();
+                    p_x12 = (global::Omnius.Core.RocketPack.Tests.Internal.Enum4)r.GetInt64();
                 }
                 {
-                    p_x13 = (Enum5)r.GetUInt64();
+                    p_x13 = (global::Omnius.Core.RocketPack.Tests.Internal.Enum5)r.GetUInt64();
                 }
                 {
-                    p_x14 = (Enum6)r.GetUInt64();
+                    p_x14 = (global::Omnius.Core.RocketPack.Tests.Internal.Enum6)r.GetUInt64();
                 }
                 {
-                    p_x15 = (Enum7)r.GetUInt64();
+                    p_x15 = (global::Omnius.Core.RocketPack.Tests.Internal.Enum7)r.GetUInt64();
                 }
                 {
-                    p_x16 = (Enum8)r.GetUInt64();
+                    p_x16 = (global::Omnius.Core.RocketPack.Tests.Internal.Enum8)r.GetUInt64();
                 }
                 {
                     p_x17 = r.GetFloat32();
@@ -2539,7 +2539,7 @@ namespace Omnius.Core.RocketPack.Tests.Internal
         }
         public override bool Equals(object? other)
         {
-            if (!(other is global::Omnius.Core.RocketPack.Tests.Internal.Message_Class)) return false;
+            if (other is not global::Omnius.Core.RocketPack.Tests.Internal.Message_Class) return false;
             return this.Equals((global::Omnius.Core.RocketPack.Tests.Internal.Message_Class)other);
         }
         public bool Equals(global::Omnius.Core.RocketPack.Tests.Internal.Message_Class? target)
@@ -2833,42 +2833,42 @@ namespace Omnius.Core.RocketPack.Tests.Internal
                             }
                         case 10:
                             {
-                                p_x9 = (Enum1)r.GetInt64();
+                                p_x9 = (global::Omnius.Core.RocketPack.Tests.Internal.Enum1)r.GetInt64();
                                 break;
                             }
                         case 11:
                             {
-                                p_x10 = (Enum2)r.GetInt64();
+                                p_x10 = (global::Omnius.Core.RocketPack.Tests.Internal.Enum2)r.GetInt64();
                                 break;
                             }
                         case 12:
                             {
-                                p_x11 = (Enum3)r.GetInt64();
+                                p_x11 = (global::Omnius.Core.RocketPack.Tests.Internal.Enum3)r.GetInt64();
                                 break;
                             }
                         case 13:
                             {
-                                p_x12 = (Enum4)r.GetInt64();
+                                p_x12 = (global::Omnius.Core.RocketPack.Tests.Internal.Enum4)r.GetInt64();
                                 break;
                             }
                         case 14:
                             {
-                                p_x13 = (Enum5)r.GetUInt64();
+                                p_x13 = (global::Omnius.Core.RocketPack.Tests.Internal.Enum5)r.GetUInt64();
                                 break;
                             }
                         case 15:
                             {
-                                p_x14 = (Enum6)r.GetUInt64();
+                                p_x14 = (global::Omnius.Core.RocketPack.Tests.Internal.Enum6)r.GetUInt64();
                                 break;
                             }
                         case 16:
                             {
-                                p_x15 = (Enum7)r.GetUInt64();
+                                p_x15 = (global::Omnius.Core.RocketPack.Tests.Internal.Enum7)r.GetUInt64();
                                 break;
                             }
                         case 17:
                             {
-                                p_x16 = (Enum8)r.GetUInt64();
+                                p_x16 = (global::Omnius.Core.RocketPack.Tests.Internal.Enum8)r.GetUInt64();
                                 break;
                             }
                         case 18:
@@ -2973,11 +2973,11 @@ namespace Omnius.Core.RocketPack.Tests.Internal
 
         public NullableMessage_Class(bool? x0, sbyte? x1, short? x2, int? x3, long? x4, byte? x5, ushort? x6, uint? x7, ulong? x8, global::Omnius.Core.RocketPack.Tests.Internal.Enum1? x9, global::Omnius.Core.RocketPack.Tests.Internal.Enum2? x10, global::Omnius.Core.RocketPack.Tests.Internal.Enum3? x11, global::Omnius.Core.RocketPack.Tests.Internal.Enum4? x12, global::Omnius.Core.RocketPack.Tests.Internal.Enum5? x13, global::Omnius.Core.RocketPack.Tests.Internal.Enum6? x14, global::Omnius.Core.RocketPack.Tests.Internal.Enum7? x15, global::Omnius.Core.RocketPack.Tests.Internal.Enum8? x16, float? x17, double? x18, string? x19, global::Omnius.Core.RocketPack.Timestamp? x20, global::System.ReadOnlyMemory<byte>? x21, global::System.Buffers.IMemoryOwner<byte>? x22, string[]? x23, global::System.Collections.Generic.Dictionary<byte, string>? x24, global::Omnius.Core.RocketPack.Tests.Internal.StructElement_Struct? x25, global::Omnius.Core.RocketPack.Tests.Internal.MessageElement_Struct? x26, global::Omnius.Core.RocketPack.Tests.Internal.StructElement_Class? x27, global::Omnius.Core.RocketPack.Tests.Internal.MessageElement_Class? x28)
         {
-            if (!(x19 is null) && x19.Length > 128) throw new global::System.ArgumentOutOfRangeException("x19");
-            if (!(x21 is null) && x21.Value.Length > 256) throw new global::System.ArgumentOutOfRangeException("x21");
-            if (!(x22 is null) && x22.Memory.Length > 256) throw new global::System.ArgumentOutOfRangeException("x22");
-            if (!(x23 is null) && x23.Length > 16) throw new global::System.ArgumentOutOfRangeException("x23");
-            if (!(x23 is null))
+            if (x19 is not null && x19.Length > 128) throw new global::System.ArgumentOutOfRangeException("x19");
+            if (x21 is not null && x21.Value.Length > 256) throw new global::System.ArgumentOutOfRangeException("x21");
+            if (x22 is not null && x22.Memory.Length > 256) throw new global::System.ArgumentOutOfRangeException("x22");
+            if (x23 is not null && x23.Length > 16) throw new global::System.ArgumentOutOfRangeException("x23");
+            if (x23 is not null)
             {
                 foreach (var n in x23)
                 {
@@ -2985,8 +2985,8 @@ namespace Omnius.Core.RocketPack.Tests.Internal
                     if (n.Length > 128) throw new global::System.ArgumentOutOfRangeException("n");
                 }
             }
-            if (!(x24 is null) && x24.Count > 32) throw new global::System.ArgumentOutOfRangeException("x24");
-            if (!(x24 is null))
+            if (x24 is not null && x24.Count > 32) throw new global::System.ArgumentOutOfRangeException("x24");
+            if (x24 is not null)
             {
                 foreach (var n in x24)
                 {
@@ -3062,8 +3062,8 @@ namespace Omnius.Core.RocketPack.Tests.Internal
                 if (x18 != default) ___h.Add(x18.GetHashCode());
                 if (x19 != default) ___h.Add(x19.GetHashCode());
                 if (x20 != default) ___h.Add(x20.GetHashCode());
-                if (!(x21 is null) && !x21.Value.IsEmpty) ___h.Add(global::Omnius.Core.Helpers.ObjectHelper.GetHashCode(x21.Value.Span));
-                if (!(x22 is null) && !x22.Memory.IsEmpty) ___h.Add(global::Omnius.Core.Helpers.ObjectHelper.GetHashCode(x22.Memory.Span));
+                if (x21 is not null && !x21.Value.IsEmpty) ___h.Add(global::Omnius.Core.Helpers.ObjectHelper.GetHashCode(x21.Value.Span));
+                if (x22 is not null && !x22.Memory.IsEmpty) ___h.Add(global::Omnius.Core.Helpers.ObjectHelper.GetHashCode(x22.Memory.Span));
                 if(x23 != null)
                 {
                     foreach (var n in x23)
@@ -3079,8 +3079,8 @@ namespace Omnius.Core.RocketPack.Tests.Internal
                         if (n.Value != default) ___h.Add(n.Value.GetHashCode());
                     }
                 }
-                if (x25 != default) ___h.Add(x25.Value.GetHashCode());
-                if (x26 != default) ___h.Add(x26.Value.GetHashCode());
+                if (x25 is not null) ___h.Add(x25.Value.GetHashCode());
+                if (x26 is not null) ___h.Add(x26.Value.GetHashCode());
                 if (x27 != default) ___h.Add(x27.GetHashCode());
                 if (x28 != default) ___h.Add(x28.GetHashCode());
                 return ___h.ToHashCode();
@@ -3139,7 +3139,7 @@ namespace Omnius.Core.RocketPack.Tests.Internal
         }
         public override bool Equals(object? other)
         {
-            if (!(other is global::Omnius.Core.RocketPack.Tests.Internal.NullableMessage_Class)) return false;
+            if (other is not global::Omnius.Core.RocketPack.Tests.Internal.NullableMessage_Class) return false;
             return this.Equals((global::Omnius.Core.RocketPack.Tests.Internal.NullableMessage_Class)other);
         }
         public bool Equals(global::Omnius.Core.RocketPack.Tests.Internal.NullableMessage_Class? target)
@@ -3167,21 +3167,21 @@ namespace Omnius.Core.RocketPack.Tests.Internal
             if (this.X19 != target.X19) return false;
             if (this.X20 != target.X20) return false;
             if ((this.X21 is null) != (target.X21 is null)) return false;
-            if (!(this.X21 is null) && !(target.X21 is null) && !global::Omnius.Core.BytesOperations.Equals(this.X21.Value.Span, target.X21.Value.Span)) return false;
+            if ((this.X21 is not null) && (target.X21 is not null) && !global::Omnius.Core.BytesOperations.Equals(this.X21.Value.Span, target.X21.Value.Span)) return false;
             if ((this.X22 is null) != (target.X22 is null)) return false;
-            if (!(this.X22 is null) && !(target.X22 is null) && !global::Omnius.Core.BytesOperations.Equals(this.X22.Value.Span, target.X22.Value.Span)) return false;
+            if ((this.X22 is not null) && (target.X22 is not null) && !global::Omnius.Core.BytesOperations.Equals(this.X22.Value.Span, target.X22.Value.Span)) return false;
             if ((this.X23 is null) != (target.X23 is null)) return false;
-            if (!(this.X23 is null) && !(target.X23 is null) && !global::Omnius.Core.Helpers.CollectionHelper.Equals(this.X23, target.X23)) return false;
+            if ((this.X23 is not null) && (target.X23 is not null) && !global::Omnius.Core.Helpers.CollectionHelper.Equals(this.X23, target.X23)) return false;
             if ((this.X24 is null) != (target.X24 is null)) return false;
-            if (!(this.X24 is null) && !(target.X24 is null) && !global::Omnius.Core.Helpers.CollectionHelper.Equals(this.X24, target.X24)) return false;
+            if ((this.X24 is not null) && (target.X24 is not null) && !global::Omnius.Core.Helpers.CollectionHelper.Equals(this.X24, target.X24)) return false;
             if ((this.X25 is null) != (target.X25 is null)) return false;
-            if (!(this.X25 is null) && !(target.X25 is null) && this.X25 != target.X25) return false;
+            if ((this.X25 is not null) && (target.X25 is not null) && this.X25 != target.X25) return false;
             if ((this.X26 is null) != (target.X26 is null)) return false;
-            if (!(this.X26 is null) && !(target.X26 is null) && this.X26 != target.X26) return false;
+            if ((this.X26 is not null) && (target.X26 is not null) && this.X26 != target.X26) return false;
             if ((this.X27 is null) != (target.X27 is null)) return false;
-            if (!(this.X27 is null) && !(target.X27 is null) && this.X27 != target.X27) return false;
+            if ((this.X27 is not null) && (target.X27 is not null) && this.X27 != target.X27) return false;
             if ((this.X28 is null) != (target.X28 is null)) return false;
-            if (!(this.X28 is null) && !(target.X28 is null) && this.X28 != target.X28) return false;
+            if ((this.X28 is not null) && (target.X28 is not null) && this.X28 != target.X28) return false;
 
             return true;
         }
@@ -3441,42 +3441,42 @@ namespace Omnius.Core.RocketPack.Tests.Internal
                             }
                         case 10:
                             {
-                                p_x9 = (Enum1)r.GetInt64();
+                                p_x9 = (global::Omnius.Core.RocketPack.Tests.Internal.Enum1)r.GetInt64();
                                 break;
                             }
                         case 11:
                             {
-                                p_x10 = (Enum2)r.GetInt64();
+                                p_x10 = (global::Omnius.Core.RocketPack.Tests.Internal.Enum2)r.GetInt64();
                                 break;
                             }
                         case 12:
                             {
-                                p_x11 = (Enum3)r.GetInt64();
+                                p_x11 = (global::Omnius.Core.RocketPack.Tests.Internal.Enum3)r.GetInt64();
                                 break;
                             }
                         case 13:
                             {
-                                p_x12 = (Enum4)r.GetInt64();
+                                p_x12 = (global::Omnius.Core.RocketPack.Tests.Internal.Enum4)r.GetInt64();
                                 break;
                             }
                         case 14:
                             {
-                                p_x13 = (Enum5)r.GetUInt64();
+                                p_x13 = (global::Omnius.Core.RocketPack.Tests.Internal.Enum5)r.GetUInt64();
                                 break;
                             }
                         case 15:
                             {
-                                p_x14 = (Enum6)r.GetUInt64();
+                                p_x14 = (global::Omnius.Core.RocketPack.Tests.Internal.Enum6)r.GetUInt64();
                                 break;
                             }
                         case 16:
                             {
-                                p_x15 = (Enum7)r.GetUInt64();
+                                p_x15 = (global::Omnius.Core.RocketPack.Tests.Internal.Enum7)r.GetUInt64();
                                 break;
                             }
                         case 17:
                             {
-                                p_x16 = (Enum8)r.GetUInt64();
+                                p_x16 = (global::Omnius.Core.RocketPack.Tests.Internal.Enum8)r.GetUInt64();
                                 break;
                             }
                         case 18:

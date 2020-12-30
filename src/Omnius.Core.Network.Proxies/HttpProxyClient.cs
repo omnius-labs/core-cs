@@ -17,7 +17,7 @@ namespace Omnius.Core.Network.Proxies
 
         private readonly string _destinationHost;
         private readonly int _destinationPort;
-        private readonly object _lockObject = new object();
+        private readonly object _lockObject = new();
 
         private enum HttpResponseCodes
         {
@@ -60,7 +60,7 @@ namespace Omnius.Core.Network.Proxies
             BadGateway = 502,
             ServiceUnavailable = 503,
             GatewayTimeout = 504,
-            HTTPVersionNotSupported = 505
+            HTTPVersionNotSupported = 505,
         }
 
         internal sealed class HttpProxyClientFactory : IHttpProxyClientFactory
@@ -90,18 +90,19 @@ namespace Omnius.Core.Network.Proxies
 
         public async ValueTask ConnectAsync(Socket socket, CancellationToken cancellationToken = default)
         {
-            await Task.Run(() =>
+            await Task.Delay(1, cancellationToken).ConfigureAwait(false);
+
+            try
             {
-                try
-                {
-                    // send connection command to proxy host for the specified destination host and port
-                    this.SendConnectionCommand(socket, _destinationHost, _destinationPort, cancellationToken);
-                }
-                catch (SocketException ex)
-                {
-                    throw new ProxyClientException(string.Format(CultureInfo.InvariantCulture, "Connection to proxy host {0} on port {1} failed.", ((System.Net.IPEndPoint)socket.RemoteEndPoint).Address.ToString(), ((System.Net.IPEndPoint)socket.RemoteEndPoint).Port.ToString()), ex);
-                }
-            });
+                // send connection command to proxy host for the specified destination host and port
+                this.SendConnectionCommand(socket, _destinationHost, _destinationPort, cancellationToken);
+            }
+            catch (SocketException ex)
+            {
+                var remoteAddress = ((System.Net.IPEndPoint)socket.RemoteEndPoint!).Address?.ToString();
+                var remotePort = ((System.Net.IPEndPoint)socket.RemoteEndPoint!).Port.ToString();
+                throw new ProxyClientException($"Connection to proxy host {remoteAddress} on port {remotePort} failed.", ex);
+            }
         }
 
         private void SendConnectionCommand(Socket socket, string host, int port, CancellationToken cancellationToken = default)
@@ -131,7 +132,6 @@ namespace Omnius.Core.Network.Proxies
 
                 // create an byte response array
                 var sb = new StringBuilder();
-
                 {
                     string line;
 
@@ -153,23 +153,15 @@ namespace Omnius.Core.Network.Proxies
 
         private void HandleProxyCommandError(Socket socket, string host, int port, HttpResponseCodes code, string text)
         {
-            string msg;
+            var remoteAddress = ((System.Net.IPEndPoint)socket.RemoteEndPoint!).Address?.ToString();
+            var remotePort = ((System.Net.IPEndPoint)socket.RemoteEndPoint!).Port.ToString();
+            var codeText = ((int)code).ToString();
 
-            switch (code)
+            string msg = code switch
             {
-                case HttpResponseCodes.None:
-                    msg = string.Format(CultureInfo.InvariantCulture, "Proxy destination {0} on port {1} failed to return a recognized HTTP response code.  Server response: {2}", ((System.Net.IPEndPoint)socket.RemoteEndPoint).Address.ToString(), ((System.Net.IPEndPoint)socket.RemoteEndPoint).Port.ToString(), text);
-                    break;
-
-                case HttpResponseCodes.BadGateway:
-                    // HTTP/1.1 502 Proxy Error (The specified Secure Sockets Layer (SSL) port is not allowed. ISA Server is not configured to allow SSL requests from this port. Most Web browsers use port 443 for SSL requests.)
-                    msg = string.Format(CultureInfo.InvariantCulture, "Proxy destination {0} on port {1} responded with a 502 code - Bad Gateway.  If you are connecting to a Microsoft ISA destination please refer to knowledge based article Q283284 for more information.  Server response: {2}", ((System.Net.IPEndPoint)socket.RemoteEndPoint).Address.ToString(), ((System.Net.IPEndPoint)socket.RemoteEndPoint).Port.ToString(), text);
-                    break;
-
-                default:
-                    msg = string.Format(CultureInfo.InvariantCulture, "Proxy destination {0} on port {1} responded with a {2} code - {3}", ((System.Net.IPEndPoint)socket.RemoteEndPoint).Address.ToString(), ((System.Net.IPEndPoint)socket.RemoteEndPoint).Port.ToString(), ((int)code).ToString(CultureInfo.InvariantCulture), text);
-                    break;
-            }
+                HttpResponseCodes.None => $"Proxy destination {remoteAddress} on port {remotePort} failed to return a recognized HTTP response code. Server response: {text}",
+                _ => $"Proxy destination {remoteAddress} on port {remotePort} responded with a {codeText} code. Server response: {text}",
+            };
 
             // throw a new application exception
             throw new ProxyClientException(msg);
@@ -182,22 +174,21 @@ namespace Omnius.Core.Network.Proxies
             // get rid of the LF character if it exists and then split the string on all CR
             string line = response.Replace('\n', ' ').Split('\r')[0];
 
-            if (line.IndexOf("HTTP") == -1)
+            if (!line.Contains("HTTP"))
             {
-                throw new ProxyClientException(string.Format("No HTTP response received from proxy destination.  Server response: {0}.", line));
+                throw new ProxyClientException($"No HTTP response received from proxy destination. Server response: {line}");
             }
 
             int begin = line.IndexOf(" ") + 1;
             int end = line.IndexOf(" ", begin);
-            string value = line.Substring(begin, end - begin);
-
+            string value = line[begin..end];
 
             if (!int.TryParse(value, out int code))
             {
-                throw new ProxyClientException(string.Format("An invalid response code was received from proxy destination.  Server response: {0}.", line));
+                throw new ProxyClientException($"An invalid response code was received from proxy destination. Server response: {line}");
             }
 
-            text = line.Substring(end + 1).Trim();
+            text = line[(end + 1)..].Trim();
             return (HttpResponseCodes)code;
         }
     }

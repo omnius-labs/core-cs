@@ -7,12 +7,12 @@ namespace Omnius.Core.Cryptography.Functions
 {
     public static unsafe class Crc32_Castagnoli
     {
-        private static readonly ThreadLocal<Encoding> _utf8Encoding = new ThreadLocal<Encoding>(() => new UTF8Encoding(false));
+        private static readonly ThreadLocal<Encoding> _utf8Encoding = new(() => new UTF8Encoding(false));
         private static readonly uint[] _table;
 
         static Crc32_Castagnoli()
         {
-            //uint poly = 0xedb88320;
+            // uint poly = 0xedb88320;
             uint poly = 0x82F63B78;
             _table = new uint[256];
 

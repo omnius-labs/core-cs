@@ -82,7 +82,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                 "ReadOnlySequence<>" => $"System.Buffers.ReadOnlySequence<{types[0]}>",
                 "ReadOnlySpan<>" => $"System.ReadOnlySpan<{types[0]}>",
                 "RocketPackObjectReader" => "Omnius.Core.RocketPack.RocketPackObjectReader",
-                "RocketPackRpc" => $"Omnius.Core.RocketPack.Remoting.RocketPackRpc",
+                "RocketPackRemoting" => $"Omnius.Core.RocketPack.Remoting.RocketPackRemoting",
                 "RocketPackObjectWriter" => "Omnius.Core.RocketPack.RocketPackObjectWriter",
                 "Span<>" => $"System.Span<{types[0]}>",
                 "Task" => $"System.Threading.Tasks.Task",

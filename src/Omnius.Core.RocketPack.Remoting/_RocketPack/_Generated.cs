@@ -26,7 +26,7 @@ namespace Omnius.Core.RocketPack.Remoting
             if (type.Length > 8192) throw new global::System.ArgumentOutOfRangeException("type");
             if (message is null) throw new global::System.ArgumentNullException("message");
             if (message.Length > 8192) throw new global::System.ArgumentOutOfRangeException("message");
-            if (!(stackTrace is null) && stackTrace.Length > 8192) throw new global::System.ArgumentOutOfRangeException("stackTrace");
+            if (stackTrace is not null && stackTrace.Length > 8192) throw new global::System.ArgumentOutOfRangeException("stackTrace");
 
             this.Type = type;
             this.Message = message;
@@ -67,7 +67,7 @@ namespace Omnius.Core.RocketPack.Remoting
         }
         public override bool Equals(object? other)
         {
-            if (!(other is global::Omnius.Core.RocketPack.Remoting.RocketPackRpcErrorMessage)) return false;
+            if (other is not global::Omnius.Core.RocketPack.Remoting.RocketPackRpcErrorMessage) return false;
             return this.Equals((global::Omnius.Core.RocketPack.Remoting.RocketPackRpcErrorMessage)other);
         }
         public bool Equals(global::Omnius.Core.RocketPack.Remoting.RocketPackRpcErrorMessage? target)

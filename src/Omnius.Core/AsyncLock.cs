@@ -28,8 +28,7 @@ namespace Omnius.Core
                 _releaser,
                 CancellationToken.None,
                 TaskContinuationOptions.ExecuteSynchronously,
-                TaskScheduler.Default
-            );
+                TaskScheduler.Default);
         }
 
         protected override void OnDispose(bool disposing)
@@ -42,16 +41,16 @@ namespace Omnius.Core
 
         private readonly struct Releaser : IDisposable
         {
-            private readonly AsyncLock _asynkLock;
+            private readonly AsyncLock _asyncLock;
 
-            public Releaser(AsyncLock asynkLock)
+            public Releaser(AsyncLock asyncLock)
             {
-                _asynkLock = asynkLock;
+                _asyncLock = asyncLock;
             }
 
             public void Dispose()
             {
-                _asynkLock._semaphore.Release();
+                _asyncLock._semaphore.Release();
             }
         }
     }

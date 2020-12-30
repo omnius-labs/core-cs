@@ -7,19 +7,16 @@ using Omnius.Core.RocketPack.Remoting.Internal;
 
 namespace Omnius.Core.RocketPack.Remoting
 {
-    public sealed partial class RocketPackRpcStream : DisposableBase
+    public sealed partial class RocketPackRemotingFunction : DisposableBase
     {
-        private readonly RocketPackRpc _rpc;
+        private readonly RocketPackRemoting.DataStream _stream;
         private readonly IBytesPool _bytesPool;
 
-        private readonly Channel<ArraySegment<byte>> _receivedMessageChannel = Channel.CreateBounded<ArraySegment<byte>>(10);
         private readonly CancellationTokenSource _cancellationTokenSource = new();
 
-        internal RocketPackRpcStream(uint streamId, uint callId, RocketPackRpc rpc, IBytesPool bytesPool)
+        internal RocketPackRemotingFunction(RocketPackRemoting.DataStream stream, IBytesPool bytesPool)
         {
-            this.Id = streamId;
-            this.CallId = callId;
-            _rpc = rpc;
+            _stream = stream;
             _bytesPool = bytesPool;
         }
 
@@ -27,17 +24,11 @@ namespace Omnius.Core.RocketPack.Remoting
         {
             if (disposing)
             {
-                _rpc.RemoveStream(this);
-
-                _receivedMessageChannel.Writer.Complete();
-
-                _cancellationTokenSource.Cancel();
-                _cancellationTokenSource.Dispose();
+                _stream.Dispose();
             }
         }
 
-        internal uint Id { get; }
-        public uint CallId { get; }
+        public uint Id => _stream.FunctionId;
 
         public async ValueTask<TResult> CallFunctionAsync<TParam, TResult>(TParam param, CancellationToken cancellationToken = default)
             where TParam : IRocketPackObject<TParam>
@@ -64,7 +55,7 @@ namespace Omnius.Core.RocketPack.Remoting
             }
             catch (OperationCanceledException)
             {
-                await _rpc.SendCloseAsync(this.Id);
+                await _stream.SendCloseAsync();
                 throw;
             }
         }
@@ -117,7 +108,7 @@ namespace Omnius.Core.RocketPack.Remoting
             }
             catch (OperationCanceledException)
             {
-                await _rpc.SendCloseAsync(this.Id);
+                await _stream.SendCloseAsync();
                 throw;
             }
         }
@@ -165,7 +156,7 @@ namespace Omnius.Core.RocketPack.Remoting
             }
             catch (OperationCanceledException)
             {
-                await _rpc.SendCloseAsync(this.Id);
+                await _stream.SendCloseAsync();
                 throw;
             }
         }
@@ -216,7 +207,7 @@ namespace Omnius.Core.RocketPack.Remoting
             }
             catch (OperationCanceledException)
             {
-                await _rpc.SendCloseAsync(this.Id);
+                await _stream.SendCloseAsync();
                 throw;
             }
         }
@@ -244,21 +235,7 @@ namespace Omnius.Core.RocketPack.Remoting
             return new RocketPackRpcErrorMessage(e.GetType()?.FullName ?? string.Empty, e.Message, e.StackTrace);
         }
 
-        internal async ValueTask OnReceivedMessageAsync(ArraySegment<byte> receivedMessage)
-        {
-            this.ThrowIfDisposingRequested();
-
-            await _receivedMessageChannel.Writer.WriteAsync(receivedMessage);
-        }
-
-        internal void OnReceivedClose()
-        {
-            this.ThrowIfDisposingRequested();
-
-            _cancellationTokenSource.Cancel();
-        }
-
-        private enum PacketType : byte
+        private enum FunctionPacketType : byte
         {
             Unknown = 0,
             Completed = 1,
@@ -269,86 +246,82 @@ namespace Omnius.Core.RocketPack.Remoting
         private async ValueTask SendCompletedAsync<TMessage>(TMessage message, CancellationToken cancellationToken = default)
             where TMessage : IRocketPackObject<TMessage>
         {
-            await _rpc.SendMessageAsync(this.Id, (bufferWriter) =>
-            {
-                var type = (byte)PacketType.Completed;
-                Varint.SetUInt8(in type, in bufferWriter);
-                message.Export(bufferWriter, _bytesPool);
-            }, cancellationToken);
+            await _stream.SendMessageAsync(
+                (bufferWriter) =>
+                {
+                    var type = (byte)FunctionPacketType.Completed;
+                    Varint.SetUInt8(in type, in bufferWriter);
+                    message.Export(bufferWriter, _bytesPool);
+                }, cancellationToken);
         }
 
         private async ValueTask SendCompletedAsync(CancellationToken cancellationToken = default)
         {
-            await _rpc.SendMessageAsync(this.Id, (bufferWriter) =>
-            {
-                var type = (byte)PacketType.Completed;
-                Varint.SetUInt8(in type, in bufferWriter);
-            }, cancellationToken);
+            await _stream.SendMessageAsync(
+                (bufferWriter) =>
+                {
+                    var type = (byte)FunctionPacketType.Completed;
+                    Varint.SetUInt8(in type, in bufferWriter);
+                }, cancellationToken);
         }
 
         private async ValueTask SendContinueAsync<TMessage>(TMessage message, CancellationToken cancellationToken = default)
             where TMessage : IRocketPackObject<TMessage>
         {
-            await _rpc.SendMessageAsync(this.Id, (bufferWriter) =>
-            {
-                var type = (byte)PacketType.Continue;
-                Varint.SetUInt8(in type, in bufferWriter);
-                message.Export(bufferWriter, _bytesPool);
-            }, cancellationToken);
+            await _stream.SendMessageAsync(
+                (bufferWriter) =>
+                {
+                    var type = (byte)FunctionPacketType.Continue;
+                    Varint.SetUInt8(in type, in bufferWriter);
+                    message.Export(bufferWriter, _bytesPool);
+                }, cancellationToken);
         }
 
         private async ValueTask SendContinueAsync(CancellationToken cancellationToken = default)
         {
-            await _rpc.SendMessageAsync(this.Id, (bufferWriter) =>
-            {
-                var type = (byte)PacketType.Continue;
-                Varint.SetUInt8(in type, in bufferWriter);
-            }, cancellationToken);
+            await _stream.SendMessageAsync(
+                (bufferWriter) =>
+                {
+                    var type = (byte)FunctionPacketType.Continue;
+                    Varint.SetUInt8(in type, in bufferWriter);
+                }, cancellationToken);
         }
 
         private async ValueTask SendErrorAsync(RocketPackRpcErrorMessage errorMessage, CancellationToken cancellationToken = default)
         {
-            await _rpc.SendMessageAsync(this.Id, (bufferWriter) =>
-            {
-                var type = (byte)PacketType.Error;
-                Varint.SetUInt8(in type, in bufferWriter);
-                errorMessage.Export(bufferWriter, _bytesPool);
-            }, cancellationToken);
+            await _stream.SendMessageAsync(
+                (bufferWriter) =>
+                {
+                    var type = (byte)FunctionPacketType.Error;
+                    Varint.SetUInt8(in type, in bufferWriter);
+                    errorMessage.Export(bufferWriter, _bytesPool);
+                }, cancellationToken);
         }
 
-        private async ValueTask<RocketPackRpcStreamReceiveResult> ReceiveAsync(CancellationToken cancellationToken = default)
+        private async ValueTask<ReceiveResult> ReceiveAsync(CancellationToken cancellationToken = default)
         {
-            var receivedMessage = await _receivedMessageChannel.Reader.ReadAsync(cancellationToken);
+            var receivedMessage = await _stream.ReceiveAsync(cancellationToken);
 
             try
             {
                 var sequence = new ReadOnlySequence<byte>(receivedMessage);
-                if (sequence.Length == 0) throw ThrowHelper.CreateRocketPackRpcProtocolException_UnexpectedProtocol();
-
-                if (!Varint.TryGetUInt8(ref sequence, out var type)) throw ThrowHelper.CreateRocketPackRpcProtocolException_UnexpectedProtocol();
-
-                switch ((PacketType)type)
+                if (sequence.Length == 0)
                 {
-                    case PacketType.Completed:
-                        if (sequence.Length == 0)
-                        {
-                            return RocketPackRpcStreamReceiveResult.CreateCompleted();
-                        }
-                        break;
-                    case PacketType.Continue:
-                        if (sequence.Length == 0)
-                        {
-                            return RocketPackRpcStreamReceiveResult.CreateContinue();
-                        }
-                        break;
-                    case PacketType.Error:
-                        {
-                            var errorMessage = RocketPackRpcErrorMessage.Import(sequence, _bytesPool);
-                            return RocketPackRpcStreamReceiveResult.CreateError(errorMessage);
-                        }
+                    throw ThrowHelper.CreateRocketPackRpcProtocolException_UnexpectedProtocol();
                 }
 
-                throw ThrowHelper.CreateRocketPackRpcProtocolException_UnexpectedProtocol();
+                if (!Varint.TryGetUInt8(ref sequence, out var type))
+                {
+                    throw ThrowHelper.CreateRocketPackRpcProtocolException_UnexpectedProtocol();
+                }
+
+                return ((FunctionPacketType)type) switch
+                {
+                    FunctionPacketType.Completed when (sequence.Length == 0) => ReceiveResult.CreateCompleted(),
+                    FunctionPacketType.Continue when (sequence.Length == 0) => ReceiveResult.CreateContinue(),
+                    FunctionPacketType.Error => ReceiveResult.CreateError(RocketPackRpcErrorMessage.Import(sequence, _bytesPool)),
+                    _ => throw ThrowHelper.CreateRocketPackRpcProtocolException_UnexpectedProtocol(),
+                };
             }
             finally
             {
@@ -356,48 +329,33 @@ namespace Omnius.Core.RocketPack.Remoting
             }
         }
 
-        private async ValueTask<RocketPackRpcStreamReceiveResult<TMessage>> ReceiveAsync<TMessage>(CancellationToken cancellationToken = default)
+        private async ValueTask<ReceiveResult<TMessage>> ReceiveAsync<TMessage>(CancellationToken cancellationToken = default)
             where TMessage : IRocketPackObject<TMessage>
         {
-            var receivedMessage = await _receivedMessageChannel.Reader.ReadAsync(cancellationToken);
+            var receivedMessage = await _stream.ReceiveAsync(cancellationToken);
 
             try
             {
                 var sequence = new ReadOnlySequence<byte>(receivedMessage);
-                if (sequence.Length == 0) throw ThrowHelper.CreateRocketPackRpcProtocolException_UnexpectedProtocol();
-
-                if (!Varint.TryGetUInt8(ref sequence, out var type)) throw ThrowHelper.CreateRocketPackRpcProtocolException_UnexpectedProtocol();
-
-                switch ((PacketType)type)
+                if (sequence.Length == 0)
                 {
-                    case PacketType.Completed:
-                        if (sequence.Length == 0)
-                        {
-                            return RocketPackRpcStreamReceiveResult<TMessage>.CreateCompleted();
-                        }
-                        else
-                        {
-                            var message = IRocketPackObject<TMessage>.Import(sequence, _bytesPool);
-                            return RocketPackRpcStreamReceiveResult<TMessage>.CreateCompleted(message);
-                        }
-                    case PacketType.Continue:
-                        if (sequence.Length == 0)
-                        {
-                            return RocketPackRpcStreamReceiveResult<TMessage>.CreateContinue();
-                        }
-                        else
-                        {
-                            var message = IRocketPackObject<TMessage>.Import(sequence, _bytesPool);
-                            return RocketPackRpcStreamReceiveResult<TMessage>.CreateContinue(message);
-                        }
-                    case PacketType.Error:
-                        {
-                            var errorMessage = RocketPackRpcErrorMessage.Import(sequence, _bytesPool);
-                            return RocketPackRpcStreamReceiveResult<TMessage>.CreateError(errorMessage);
-                        }
+                    throw ThrowHelper.CreateRocketPackRpcProtocolException_UnexpectedProtocol();
                 }
 
-                throw ThrowHelper.CreateRocketPackRpcProtocolException_UnexpectedProtocol();
+                if (!Varint.TryGetUInt8(ref sequence, out var type))
+                {
+                    throw ThrowHelper.CreateRocketPackRpcProtocolException_UnexpectedProtocol();
+                }
+
+                return ((FunctionPacketType)type) switch
+                {
+                    FunctionPacketType.Completed when (sequence.Length == 0) => ReceiveResult<TMessage>.CreateCompleted(),
+                    FunctionPacketType.Completed when (sequence.Length != 0) => ReceiveResult<TMessage>.CreateCompleted(IRocketPackObject<TMessage>.Import(sequence, _bytesPool)),
+                    FunctionPacketType.Continue when (sequence.Length == 0) => ReceiveResult<TMessage>.CreateContinue(),
+                    FunctionPacketType.Continue when (sequence.Length != 0) => ReceiveResult<TMessage>.CreateContinue(IRocketPackObject<TMessage>.Import(sequence, _bytesPool)),
+                    FunctionPacketType.Error => ReceiveResult<TMessage>.CreateError(RocketPackRpcErrorMessage.Import(sequence, _bytesPool)),
+                    _ => throw ThrowHelper.CreateRocketPackRpcProtocolException_UnexpectedProtocol(),
+                };
             }
             finally
             {

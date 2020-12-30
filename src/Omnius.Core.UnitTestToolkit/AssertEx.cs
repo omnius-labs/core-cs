@@ -30,13 +30,16 @@ namespace Omnius.Core.UnitTestToolkit
             var options = new JsonSerializerOptions()
             {
                 Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
-                WriteIndented = true
+                WriteIndented = true,
             };
             options.Converters.Add(BytesReadOnlyMemoryConverter.Default);
 
             var expectedJsonString = JsonSerializer.Serialize(expected, options);
             var actualJsonString = JsonSerializer.Serialize(actual, options);
-            if (expectedJsonString == actualJsonString) return;
+            if (expectedJsonString == actualJsonString)
+            {
+                return;
+            }
 
             var diff = InlineDiffBuilder.Diff(expectedJsonString, actualJsonString);
 

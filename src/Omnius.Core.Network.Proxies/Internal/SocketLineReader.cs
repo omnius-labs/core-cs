@@ -52,7 +52,6 @@ namespace Omnius.Core.Network.Proxies.Internal
 
         protected override void OnDispose(bool isDisposing)
         {
-
         }
     }
 }

@@ -9,25 +9,24 @@ namespace Omnius.Core.Common
 {
     internal class SipHasher
     {
-#pragma warning disable IDE1006 // Naming Styles
-        private ulong v_0;
-        private ulong v_1;
-        private ulong v_2;
-        private ulong v_3;
+        private ulong _v0;
+        private ulong _v1;
+        private ulong _v2;
+        private ulong _v3;
         private ulong _count;
         private ulong _tmp;
-#pragma warning restore IDE1006 // Naming Styles
 
-        public SipHasher(ReadOnlySpan<byte> key) : this(BitConverter.ToUInt64(key), BitConverter.ToUInt64(key.Slice(8)))
+        public SipHasher(ReadOnlySpan<byte> key)
+            : this(BitConverter.ToUInt64(key), BitConverter.ToUInt64(key.Slice(8)))
         {
         }
 
         public SipHasher(ulong k0, ulong k1)
         {
-            v_0 = 0x736f6d6570736575UL ^ k0;
-            v_1 = 0x646f72616e646f6dUL ^ k1;
-            v_2 = 0x6c7967656e657261UL ^ k0;
-            v_3 = 0x7465646279746573UL ^ k1;
+            _v0 = 0x736f6d6570736575UL ^ k0;
+            _v1 = 0x646f72616e646f6dUL ^ k1;
+            _v2 = 0x6c7967656e657261UL ^ k0;
+            _v3 = 0x7465646279746573UL ^ k1;
             _count = 0;
             _tmp = 0;
         }
@@ -67,7 +66,7 @@ namespace Omnius.Core.Common
 
         public void Write(ReadOnlySpan<byte> data)
         {
-            ulong v0 = v_0, v1 = v_1, v2 = v_2, v3 = v_3;
+            ulong v0 = _v0, v1 = _v1, v2 = _v2, v3 = _v3;
             var size = data.Length;
             var t = _tmp;
             var c = _count;
@@ -87,10 +86,10 @@ namespace Omnius.Core.Common
                 }
             }
 
-            v_0 = v0;
-            v_1 = v1;
-            v_2 = v2;
-            v_3 = v3;
+            _v0 = v0;
+            _v1 = v1;
+            _v2 = v2;
+            _v3 = v3;
             _count = c;
             _tmp = t;
 
@@ -99,7 +98,7 @@ namespace Omnius.Core.Common
 
         public ulong Finalize()
         {
-            ulong v0 = v_0, v1 = v_1, v2 = v_2, v3 = v_3;
+            ulong v0 = _v0, v1 = _v1, v2 = _v2, v3 = _v3;
 
             ulong t = _tmp | (_count << 56);
 

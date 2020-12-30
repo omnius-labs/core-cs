@@ -36,7 +36,7 @@ namespace Omnius.Core.Collections
             {
                 lock (this.LockObject)
                 {
-                    return _keys ?? (_keys = new LockedCollection<TKey>(_dic.Keys, this.LockObject));
+                    return _keys ??= new LockedCollection<TKey>(_dic.Keys, this.LockObject);
                 }
             }
         }
@@ -72,6 +72,7 @@ namespace Omnius.Core.Collections
                     return _dic[key];
                 }
             }
+
             set
             {
                 lock (this.LockObject)

@@ -10,7 +10,6 @@ namespace Omnius.Core
 
         public NativeLibraryManager(string path)
         {
-            //string fullPath = Path.Combine(Directory.GetCurrentDirectory(), path);
             string fullPath = Path.Combine(Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly()!.Location)!, path);
             NativeLibrary.TryLoad(fullPath, out _moduleHandle);
         }
@@ -38,7 +37,6 @@ namespace Omnius.Core
                 }
                 catch (Exception)
                 {
-
                 }
 
                 _moduleHandle = IntPtr.Zero;

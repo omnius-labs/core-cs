@@ -24,7 +24,9 @@ namespace Omnius.Core.Collections
         public TValue this[TKey key] => _map[key];
 
         public IEnumerable<TKey> Keys => _map.Keys;
+
         public IEnumerable<TValue> Values => _map.Values;
+
         public int Count => _map.Count;
 
         public bool ContainsKey(TKey key)

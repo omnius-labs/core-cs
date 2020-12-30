@@ -3,7 +3,7 @@ using Omnius.Core.Serialization;
 
 namespace Omnius.Core.Cryptography
 {
-    partial struct OmniHash
+    public partial struct OmniHash
     {
         public string ToString(ConvertStringType convertStringType, ConvertStringCase convertStringCase = ConvertStringCase.Lower)
         {
@@ -22,7 +22,10 @@ namespace Omnius.Core.Cryptography
             value = default;
 
             var hub = new BytesHub();
-            if (!OmniBase.TryDecode(text, hub.Writer)) return false;
+            if (!OmniBase.TryDecode(text, hub.Writer))
+            {
+                return false;
+            }
 
             value = OmniHash.Import(hub.Reader.GetSequence(), BytesPool.Shared);
             return true;

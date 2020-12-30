@@ -56,7 +56,7 @@ namespace Omnius.Core.Network
         }
         public override bool Equals(object? other)
         {
-            if (!(other is global::Omnius.Core.Network.OmniAddress)) return false;
+            if (other is not global::Omnius.Core.Network.OmniAddress) return false;
             return this.Equals((global::Omnius.Core.Network.OmniAddress)other);
         }
         public bool Equals(global::Omnius.Core.Network.OmniAddress? target)

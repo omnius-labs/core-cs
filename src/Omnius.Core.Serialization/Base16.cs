@@ -47,15 +47,15 @@ namespace Omnius.Core.Serialization
 
         private byte WordToByte(in byte c)
         {
-            if ('0' <= c && c <= '9')
+            if (c >= '0' && c <= '9')
             {
                 return (byte)(c - '0');
             }
-            else if ('a' <= c && c <= 'f')
+            else if (c >= 'a' && c <= 'f')
             {
                 return (byte)((c - 'a') + 10);
             }
-            else if ('A' <= c && c <= 'F')
+            else if (c >= 'A' && c <= 'F')
             {
                 return (byte)((c - 'A') + 10);
             }

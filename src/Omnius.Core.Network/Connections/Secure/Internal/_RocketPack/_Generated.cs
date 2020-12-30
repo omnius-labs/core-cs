@@ -59,7 +59,7 @@ namespace Omnius.Core.Network.Connections.Secure.Internal
         }
         public override bool Equals(object? other)
         {
-            if (!(other is global::Omnius.Core.Network.Connections.Secure.Internal.HelloMessage)) return false;
+            if (other is not global::Omnius.Core.Network.Connections.Secure.Internal.HelloMessage) return false;
             return this.Equals((global::Omnius.Core.Network.Connections.Secure.Internal.HelloMessage)other);
         }
         public bool Equals(global::Omnius.Core.Network.Connections.Secure.Internal.HelloMessage? target)
@@ -107,7 +107,7 @@ namespace Omnius.Core.Network.Connections.Secure.Internal
                                 p_versions = new global::Omnius.Core.Network.Connections.Secure.OmniSecureConnectionVersion[length];
                                 for (int i = 0; i < p_versions.Length; i++)
                                 {
-                                    p_versions[i] = (OmniSecureConnectionVersion)r.GetUInt64();
+                                    p_versions[i] = (global::Omnius.Core.Network.Connections.Secure.OmniSecureConnectionVersion)r.GetUInt64();
                                 }
                                 break;
                             }

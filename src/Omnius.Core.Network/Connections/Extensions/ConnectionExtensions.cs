@@ -22,7 +22,7 @@ namespace Omnius.Core.Network.Connections.Extensions
         public static bool TryDequeue<T>(this IConnection connection, [NotNullWhen(true)] out T value)
             where T : IRocketPackObject<T>
         {
-            T valueResult = default;
+            T valueResult = default!;
             var returnResult = connection.TryDequeue(sequence => valueResult = IRocketPackObject<T>.Import(sequence, BytesPool.Shared));
 
             value = valueResult!;
@@ -32,8 +32,8 @@ namespace Omnius.Core.Network.Connections.Extensions
         public static async ValueTask<T> DequeueAsync<T>(this IConnection connection, CancellationToken cancellationToken = default)
             where T : IRocketPackObject<T>
         {
-            T valueResult = default;
-            await connection.DequeueAsync(sequence => valueResult = IRocketPackObject<T>.Import(sequence, BytesPool.Shared));
+            T valueResult = default!;
+            await connection.DequeueAsync(sequence => valueResult = IRocketPackObject<T>.Import(sequence, BytesPool.Shared), cancellationToken);
 
             return valueResult!;
         }

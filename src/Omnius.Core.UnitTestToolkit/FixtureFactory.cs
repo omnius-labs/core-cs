@@ -7,7 +7,7 @@ namespace Omnius.Core.UnitTestToolkit
 {
     public class FixtureFactory
     {
-        private static readonly Random _random = new Random();
+        private static readonly Random _random = new();
 
         public static IDisposable GenTempDirectory(out string path)
         {
@@ -20,7 +20,9 @@ namespace Omnius.Core.UnitTestToolkit
         private sealed class DirectoryDeleter : IDisposable
         {
             public DirectoryDeleter(string path) => this.Path = path;
+
             public void Dispose() => Directory.Delete(this.Path, true);
+
             private string Path { get; }
         }
 

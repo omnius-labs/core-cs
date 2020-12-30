@@ -311,7 +311,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
 
                     if (listType.IsOptional)
                     {
-                        b2.WriteLine($"if (!({GenerateFieldVariableName(element.Name)} is null))");
+                        b2.WriteLine($"if ({GenerateFieldVariableName(element.Name)} is not null)");
                         b2.WriteLine("{");
 
                         b2.PushIndent();
@@ -349,7 +349,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
 
                     if (mapType.IsOptional)
                     {
-                        b2.WriteLine($"if (!({GenerateFieldVariableName(element.Name)} is null))");
+                        b2.WriteLine($"if ({GenerateFieldVariableName(element.Name)} is not null)");
                         b2.WriteLine("{");
 
                         b2.PushIndent();
@@ -453,7 +453,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
 
                 if (type.IsOptional)
                 {
-                    b.WriteLine($"if (!({name} is null) && {name}.{property} > {maxLength}) throw new {GenerateTypeFullName("ArgumentOutOfRangeException")}(\"{name}\");");
+                    b.WriteLine($"if ({name} is not null && {name}.{property} > {maxLength}) throw new {GenerateTypeFullName("ArgumentOutOfRangeException")}(\"{name}\");");
                 }
                 else
                 {
@@ -539,11 +539,11 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                     case BytesType memoryType when (memoryType.IsOptional):
                         if (!memoryType.IsUseMemoryPool)
                         {
-                            b.WriteLine($"if (!({parameterName} is null) && !{parameterName}.Value.IsEmpty) {hashCodeName}.Add({GenerateTypeFullName("ObjectHelper")}.GetHashCode({parameterName}.Value.Span));");
+                            b.WriteLine($"if ({parameterName} is not null && !{parameterName}.Value.IsEmpty) {hashCodeName}.Add({GenerateTypeFullName("ObjectHelper")}.GetHashCode({parameterName}.Value.Span));");
                         }
                         else
                         {
-                            b.WriteLine($"if (!({parameterName} is null) && !{parameterName}.Memory.IsEmpty) {hashCodeName}.Add({GenerateTypeFullName("ObjectHelper")}.GetHashCode({parameterName}.Memory.Span));");
+                            b.WriteLine($"if ({parameterName} is not null && !{parameterName}.Memory.IsEmpty) {hashCodeName}.Add({GenerateTypeFullName("ObjectHelper")}.GetHashCode({parameterName}.Memory.Span));");
                         }
 
                         break;
@@ -611,7 +611,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                                 }
                                 else
                                 {
-                                    b.WriteLine($"if ({parameterName} != default) {hashCodeName}.Add({parameterName}.Value.GetHashCode());");
+                                    b.WriteLine($"if ({parameterName} is not null) {hashCodeName}.Add({parameterName}.Value.GetHashCode());");
                                 }
 
                                 break;
@@ -701,7 +701,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
 
                 using (b.Indent())
                 {
-                    b.WriteLine($"if (!(other is {objectDefinition.CSharpFullName})) return false;");
+                    b.WriteLine($"if (other is not {objectDefinition.CSharpFullName}) return false;");
                     b.WriteLine($"return this.Equals(({objectDefinition.CSharpFullName})other);");
                 }
 
@@ -753,7 +753,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                                 else
                                 {
                                     b.WriteLine($"if ((this.{element.Name} is null) != (target.{element.Name} is null)) return false;");
-                                    b.WriteLine($"if (!(this.{element.Name} is null) && !(target.{element.Name} is null) && !{GenerateTypeFullName("BytesOperations")}.Equals(this.{element.Name}.Value.Span, target.{element.Name}.Value.Span)) return false;");
+                                    b.WriteLine($"if ((this.{element.Name} is not null) && (target.{element.Name} is not null) && !{GenerateTypeFullName("BytesOperations")}.Equals(this.{element.Name}.Value.Span, target.{element.Name}.Value.Span)) return false;");
                                 }
 
                                 break;
@@ -765,7 +765,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                                 else
                                 {
                                     b.WriteLine($"if ((this.{element.Name} is null) != (target.{element.Name} is null)) return false;");
-                                    b.WriteLine($"if (!(this.{element.Name} is null) && !(target.{element.Name} is null) && !{GenerateTypeFullName("CollectionHelper")}.Equals(this.{element.Name}, target.{element.Name})) return false;");
+                                    b.WriteLine($"if ((this.{element.Name} is not null) && (target.{element.Name} is not null) && !{GenerateTypeFullName("CollectionHelper")}.Equals(this.{element.Name}, target.{element.Name})) return false;");
                                 }
 
                                 break;
@@ -777,7 +777,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                                 else
                                 {
                                     b.WriteLine($"if ((this.{element.Name} is null) != (target.{element.Name} is null)) return false;");
-                                    b.WriteLine($"if (!(this.{element.Name} is null) && !(target.{element.Name} is null) && !{GenerateTypeFullName("CollectionHelper")}.Equals(this.{element.Name}, target.{element.Name})) return false;");
+                                    b.WriteLine($"if ((this.{element.Name} is not null) && (target.{element.Name} is not null) && !{GenerateTypeFullName("CollectionHelper")}.Equals(this.{element.Name}, target.{element.Name})) return false;");
                                 }
 
                                 break;
@@ -795,7 +795,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                                         else
                                         {
                                             b.WriteLine($"if ((this.{element.Name} is null) != (target.{element.Name} is null)) return false;");
-                                            b.WriteLine($"if (!(this.{element.Name} is null) && !(target.{element.Name} is null) && this.{element.Name} != target.{element.Name}) return false;");
+                                            b.WriteLine($"if ((this.{element.Name} is not null) && (target.{element.Name} is not null) && this.{element.Name} != target.{element.Name}) return false;");
                                         }
 
                                         break;
@@ -807,7 +807,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                                         else
                                         {
                                             b.WriteLine($"if ((this.{element.Name} is null) != (target.{element.Name} is null)) return false;");
-                                            b.WriteLine($"if (!(this.{element.Name} is null) && !(target.{element.Name} is null) && this.{element.Name} != target.{element.Name}) return false;");
+                                            b.WriteLine($"if ((this.{element.Name} is not null) && (target.{element.Name} is not null) && this.{element.Name} != target.{element.Name}) return false;");
                                         }
 
                                         break;

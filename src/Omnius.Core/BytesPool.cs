@@ -21,6 +21,7 @@ namespace Omnius.Core
         }
 
         public ArrayPool<byte> Array => _arrayPool;
+
         public MemoryPool<byte> Memory => _memoryPool;
     }
 }

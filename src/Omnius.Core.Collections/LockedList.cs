@@ -56,6 +56,7 @@ namespace Omnius.Core.Collections
                     return _list[index];
                 }
             }
+
             set
             {
                 lock (this.LockObject)

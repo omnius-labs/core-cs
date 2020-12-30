@@ -45,7 +45,7 @@ namespace Omnius.Core.Network.Proxies
         private readonly string? _proxyUsername;
         private readonly string? _proxyPassword;
 
-        private readonly object _lockObject = new object();
+        private readonly object _lockObject = new();
 
         internal sealed class Socks5ProxyClientFactory : ISocks5ProxyClientFactory
         {
@@ -86,21 +86,22 @@ namespace Omnius.Core.Network.Proxies
 
         public async ValueTask ConnectAsync(Socket socket, CancellationToken cancellationToken = default)
         {
-            await Task.Run(() =>
-            {
-                try
-                {
-                    // negotiate which authentication methods are supported / accepted by the server
-                    this.NegotiateServerAuthMethod(socket);
+            await Task.Delay(1, cancellationToken).ConfigureAwait(false);
 
-                    // send a connect command to the proxy server for destination host and port
-                    this.SendCommand(socket, SOCKS5_CMD_CONNECT, _destinationHost, _destinationPort);
-                }
-                catch (Exception ex)
-                {
-                    throw new ProxyClientException(string.Format(CultureInfo.InvariantCulture, "Connection to proxy host {0} on port {1} failed.", ((System.Net.IPEndPoint)socket.RemoteEndPoint).Address.ToString(), ((System.Net.IPEndPoint)socket.RemoteEndPoint).Port.ToString()), ex);
-                }
-            });
+            try
+            {
+                // negotiate which authentication methods are supported / accepted by the server
+                this.NegotiateServerAuthMethod(socket);
+
+                // send a connect command to the proxy server for destination host and port
+                this.SendCommand(socket, SOCKS5_CMD_CONNECT, _destinationHost, _destinationPort);
+            }
+            catch (Exception ex)
+            {
+                var remoteAddress = ((System.Net.IPEndPoint)socket.RemoteEndPoint!).Address?.ToString();
+                var remotePort = ((System.Net.IPEndPoint)socket.RemoteEndPoint!).Port.ToString();
+                throw new ProxyClientException($"Connection to proxy host {remoteAddress} on port {remotePort} failed.", ex);
+            }
         }
 
         private void NegotiateServerAuthMethod(Socket socket)
@@ -220,15 +221,12 @@ namespace Omnius.Core.Network.Proxies
                 return SOCKS5_ADDRTYPE_DOMAIN_NAME;
             }
 
-            switch (ipAddress.AddressFamily)
+            return ipAddress.AddressFamily switch
             {
-                case AddressFamily.InterNetwork:
-                    return SOCKS5_ADDRTYPE_IPV4;
-                case AddressFamily.InterNetworkV6:
-                    return SOCKS5_ADDRTYPE_IPV6;
-                default:
-                    throw new ProxyClientException(string.Format(CultureInfo.InvariantCulture, "The host addess {0} of type '{1}' is not a supported address type.  The supported types are InterNetwork and InterNetworkV6.", host, Enum.GetName(typeof(AddressFamily), ipAddress.AddressFamily)));
-            }
+                AddressFamily.InterNetwork => SOCKS5_ADDRTYPE_IPV4,
+                AddressFamily.InterNetworkV6 => SOCKS5_ADDRTYPE_IPV6,
+                _ => throw new ProxyClientException($"The host addess {host} of type '{Enum.GetName(typeof(AddressFamily), ipAddress.AddressFamily)}' is not a supported address type.  The supported types are InterNetwork and InterNetworkV6."),
+            };
         }
 
         private byte[] GetDestAddressBytes(byte addressType, string host)
@@ -341,7 +339,6 @@ namespace Omnius.Core.Network.Proxies
 
         private void HandleProxyCommandError(byte[] response, string destinationHost, int destinationPort)
         {
-            string proxyErrorText;
             byte replyCode = response[1];
             byte addrType = response[3];
             string addr = "";
@@ -395,38 +392,19 @@ namespace Omnius.Core.Network.Proxies
                     break;
             }
 
-            switch (replyCode)
+            string proxyErrorText = replyCode switch
             {
-                case SOCKS5_CMD_REPLY_GENERAL_SOCKS_SERVER_FAILURE:
-                    proxyErrorText = "a general socks destination failure occurred";
-                    break;
-                case SOCKS5_CMD_REPLY_CONNECTION_NOT_ALLOWED_BY_RULESET:
-                    proxyErrorText = "the connection is not allowed by proxy destination rule set";
-                    break;
-                case SOCKS5_CMD_REPLY_NETWORK_UNREACHABLE:
-                    proxyErrorText = "the network was unreachable";
-                    break;
-                case SOCKS5_CMD_REPLY_HOST_UNREACHABLE:
-                    proxyErrorText = "the host was unreachable";
-                    break;
-                case SOCKS5_CMD_REPLY_CONNECTION_REFUSED:
-                    proxyErrorText = "the connection was refused by the remote network";
-                    break;
-                case SOCKS5_CMD_REPLY_TTL_EXPIRED:
-                    proxyErrorText = "the time to live (TTL) has expired";
-                    break;
-                case SOCKS5_CMD_REPLY_COMMAND_NOT_SUPPORTED:
-                    proxyErrorText = "the command issued by the proxy client is not supported by the proxy destination";
-                    break;
-                case SOCKS5_CMD_REPLY_ADDRESS_TYPE_NOT_SUPPORTED:
-                    proxyErrorText = "the address type specified is not supported";
-                    break;
-                default:
-                    proxyErrorText = string.Format(CultureInfo.InvariantCulture, "that an unknown reply with the code value '{0}' was received by the destination", replyCode.ToString(CultureInfo.InvariantCulture));
-                    break;
-            }
-
-            string exceptionMessage = string.Format(CultureInfo.InvariantCulture, "The {0} concerning destination host {1} port number {2}.  The destination reported the host as {3} port {4}.", proxyErrorText, destinationHost, destinationPort, addr, port.ToString(CultureInfo.InvariantCulture));
+                SOCKS5_CMD_REPLY_GENERAL_SOCKS_SERVER_FAILURE => "a general socks destination failure occurred",
+                SOCKS5_CMD_REPLY_CONNECTION_NOT_ALLOWED_BY_RULESET => "the connection is not allowed by proxy destination rule set",
+                SOCKS5_CMD_REPLY_NETWORK_UNREACHABLE => "the network was unreachable",
+                SOCKS5_CMD_REPLY_HOST_UNREACHABLE => "the host was unreachable",
+                SOCKS5_CMD_REPLY_CONNECTION_REFUSED => "the connection was refused by the remote network",
+                SOCKS5_CMD_REPLY_TTL_EXPIRED => "the time to live (TTL) has expired",
+                SOCKS5_CMD_REPLY_COMMAND_NOT_SUPPORTED => "the command issued by the proxy client is not supported by the proxy destination",
+                SOCKS5_CMD_REPLY_ADDRESS_TYPE_NOT_SUPPORTED => "the address type specified is not supported",
+                _ => $"that an unknown reply with the code value '{replyCode}' was received by the destination",
+            };
+            string exceptionMessage = $"The {proxyErrorText} concerning destination host {destinationHost} port number {destinationPort}.  The destination reported the host as {addr} port {port}";
 
             throw new ProxyClientException(exceptionMessage);
         }

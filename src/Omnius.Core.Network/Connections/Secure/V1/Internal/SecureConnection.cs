@@ -30,10 +30,7 @@ namespace Omnius.Core.Network.Connections.Secure.V1.Internal
 
         public SecureConnection(IConnection connection, OmniSecureConnectionOptions options)
         {
-            if (connection == null)
-            {
-                throw new ArgumentNullException(nameof(connection));
-            }
+            _connection = connection ?? throw new ArgumentNullException(nameof(connection));
 
             if (options == null)
             {
@@ -45,7 +42,6 @@ namespace Omnius.Core.Network.Connections.Secure.V1.Internal
                 throw new ArgumentException(nameof(options.Type));
             }
 
-            _connection = connection;
             _type = options.Type;
             _passwords = options.Passwords ?? Array.Empty<string>();
             _bytesPool = options.BufferPool ?? BytesPool.Shared;
@@ -55,7 +51,6 @@ namespace Omnius.Core.Network.Connections.Secure.V1.Internal
         {
             if (disposing)
             {
-
             }
         }
 
@@ -142,14 +137,17 @@ namespace Omnius.Core.Network.Connections.Secure.V1.Internal
             {
                 throw new OmniSecureConnectionException("key exchange algorithm does not match.");
             }
+
             if (!EnumHelper.IsValid(keyDerivationAlgorithm))
             {
                 throw new OmniSecureConnectionException("key derivation algorithm does not match.");
             }
+
             if (!EnumHelper.IsValid(cryptoAlgorithm))
             {
                 throw new OmniSecureConnectionException("Crypto algorithm does not match.");
             }
+
             if (!EnumHelper.IsValid(hashAlgorithm))
             {
                 throw new OmniSecureConnectionException("Hash algorithm does not match.");
@@ -207,7 +205,6 @@ namespace Omnius.Core.Network.Connections.Secure.V1.Internal
 
                             var matchedPasswords = new List<string>();
                             {
-
                                 var equalityComparer = new CustomEqualityComparer<ReadOnlyMemory<byte>>((x, y) => BytesOperations.Equals(x.Span, y.Span), (x) => Fnv1_32.ComputeHash(x.Span));
                                 var receiveHashes = new HashSet<ReadOnlyMemory<byte>>(otherAuthenticationMessage.Hashes, equalityComparer);
 
@@ -376,7 +373,7 @@ namespace Omnius.Core.Network.Connections.Secure.V1.Internal
                     return;
                 }
             }
-            catch (OmniSecureConnectionException e)
+            catch (OmniSecureConnectionException)
             {
                 throw;
             }
@@ -417,7 +414,10 @@ namespace Omnius.Core.Network.Connections.Secure.V1.Internal
                         {
                             while (sequence.Length > 0)
                             {
-                                if (sequence.Length <= tag.Length) throw new FormatException();
+                                if (sequence.Length <= tag.Length)
+                                {
+                                    throw new FormatException();
+                                }
 
                                 int contentLength = (int)Math.Min(sequence.Length, FrameSize) - tag.Length;
 
@@ -447,7 +447,7 @@ namespace Omnius.Core.Network.Connections.Secure.V1.Internal
                     return;
                 }
             }
-            catch (OmniSecureConnectionException e)
+            catch (OmniSecureConnectionException)
             {
                 throw;
             }
@@ -478,12 +478,15 @@ namespace Omnius.Core.Network.Connections.Secure.V1.Internal
             }
 
             public CryptoAlgorithm CryptoAlgorithm { get; }
+
             public HashAlgorithm HashAlgorithm { get; }
 
             public byte[] MyCryptoKey { get; }
+
             public byte[] OtherCryptoKey { get; }
 
             public byte[] MyNonce { get; }
+
             public byte[] OtherNonce { get; }
         }
     }

@@ -18,8 +18,8 @@ namespace Omnius.Core.RocketPack.Remoting
             using var senderConnection = new BaseConnection(new SocketCap(senderSocket), dispacher, new BaseConnectionOptions());
             using var receiverConnection = new BaseConnection(new SocketCap(receiverSocket), dispacher, new BaseConnectionOptions());
 
-            await using var senderRpc = new RocketPackRpc(senderConnection, BytesPool.Shared);
-            await using var receiverRpc = new RocketPackRpc(receiverConnection, BytesPool.Shared);
+            await using var senderRpc = new RocketPackRemoting(senderConnection, BytesPool.Shared);
+            await using var receiverRpc = new RocketPackRemoting(receiverConnection, BytesPool.Shared);
 
             var receiverAcceptTask = receiverRpc.AcceptAsync();
             var senderConnectTask = senderRpc.ConnectAsync(0);

@@ -11,7 +11,11 @@ namespace Omnius.Core.Network
 
         public static explicit operator OmniAddress?(string? text)
         {
-            if (text is null) return null;
+            if (text is null)
+            {
+                return null;
+            }
+
             return new OmniAddress(text);
         }
 

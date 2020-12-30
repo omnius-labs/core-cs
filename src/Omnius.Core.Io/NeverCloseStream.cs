@@ -8,6 +8,8 @@ namespace Omnius.Core.Io
     /// </summary>
     public class NeverCloseStream : Stream
     {
+        private static readonly NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
+
         private readonly Stream _stream;
 
         private bool _disposed;
@@ -67,6 +69,7 @@ namespace Omnius.Core.Io
 
                 return _stream.Position;
             }
+
             set
             {
                 if (_disposed)
@@ -137,9 +140,9 @@ namespace Omnius.Core.Io
             {
                 _stream.Flush();
             }
-            catch (Exception)
+            catch (Exception e)
             {
-
+                _logger.Debug(e);
             }
         }
 

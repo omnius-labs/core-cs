@@ -78,6 +78,7 @@ namespace Omnius.Core.Io
 
                 return _position;
             }
+
             set
             {
                 if (_disposed)

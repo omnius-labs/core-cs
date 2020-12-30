@@ -4,8 +4,19 @@ namespace Omnius.Core.Network.Connections
 {
     public class ConnectionException : Exception
     {
-        public ConnectionException() : base() { }
-        public ConnectionException(string message) : base(message) { }
-        public ConnectionException(string message, Exception innerException) : base(message, innerException) { }
+        public ConnectionException()
+            : base()
+        {
+        }
+
+        public ConnectionException(string message)
+        : base(message)
+        {
+        }
+
+        public ConnectionException(string message, Exception innerException)
+            : base(message, innerException)
+        {
+        }
     }
 }

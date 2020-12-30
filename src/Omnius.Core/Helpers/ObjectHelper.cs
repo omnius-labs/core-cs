@@ -11,13 +11,11 @@ namespace Omnius.Core.Helpers
 
         static ObjectHelper()
         {
-            using (var random = RandomNumberGenerator.Create())
-            {
-                var buffer = new byte[16];
-                random.GetBytes(buffer);
+            using var random = RandomNumberGenerator.Create();
+            var buffer = new byte[16];
+            random.GetBytes(buffer);
 
-                _hashFunction = new SipHasher(buffer);
-            }
+            _hashFunction = new SipHasher(buffer);
         }
 
         public static int GetHashCode(ReadOnlySpan<byte> value)

@@ -6,7 +6,10 @@ namespace Omnius.Core
         private readonly HubReader _hubReader;
         private readonly HubWriter _hubWriter;
 
-        public BytesHub() : this(BytesPool.Shared) { }
+        public BytesHub()
+            : this(BytesPool.Shared)
+        {
+        }
 
         public BytesHub(IBytesPool bytesPool)
         {
@@ -16,6 +19,7 @@ namespace Omnius.Core
         }
 
         public HubReader Reader => _hubReader;
+
         public HubWriter Writer => _hubWriter;
 
         public void Reset()

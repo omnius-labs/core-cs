@@ -179,6 +179,7 @@ namespace Omnius.Core.Network
             }
 
             public string Name { get; }
+
             public IReadOnlyList<object> Arguments { get; }
         }
 

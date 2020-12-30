@@ -95,7 +95,10 @@ namespace Omnius.Core
         }
 
         // implicit
-        public static implicit operator long(in AtomicCounter safeInteger) { return safeInteger.Value; }
+        public static implicit operator long(in AtomicCounter safeInteger)
+        {
+            return safeInteger.Value;
+        }
 
         public long Increment()
         {
