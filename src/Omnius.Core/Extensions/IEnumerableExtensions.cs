@@ -126,5 +126,14 @@ namespace Omnius.Core.Extensions
                 await Task.WhenAll(tasks.ToArray()).ConfigureAwait(configureAwait);
             }
         }
+
+        private static readonly Lazy<Random> _random = new(() => new Random());
+
+        public static IEnumerable<T> Randomize<T>(this IEnumerable<T> items)
+        {
+            var array = items.ToList();
+            _random.Value.Shuffle(array);
+            return array;
+        }
     }
 }
