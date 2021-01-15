@@ -8,34 +8,24 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
     {
         private sealed class EnumWriter
         {
-            private readonly RocketPackDefinition _rootDefinition;
-            private readonly string _accessLevel;
-
-            public EnumWriter(RocketPackDefinition rootDefinition)
+            public EnumWriter()
             {
-                _rootDefinition = rootDefinition;
-
-                var accessLevelOption = _rootDefinition.Options.FirstOrDefault(n => n.Name == "csharp_access_level");
-                _accessLevel = accessLevelOption?.Value as string ?? "public";
             }
 
-            public void Write(CodeWriter b)
+            public void Write(CodeWriter b, EnumDefinition enumDefinition, string accessLevel = "public")
             {
-                foreach (var enumDefinition in _rootDefinition.Enums)
+                b.WriteLine($"{accessLevel} enum {enumDefinition.Name} : {this.GetTypeString(enumDefinition.Type)}");
+                b.WriteLine("{");
+
+                using (b.Indent())
                 {
-                    b.WriteLine($"{_accessLevel} enum {enumDefinition.Name} : {this.GetTypeString(enumDefinition.Type)}");
-                    b.WriteLine("{");
-
-                    using (b.Indent())
+                    foreach (var element in enumDefinition.Elements)
                     {
-                        foreach (var element in enumDefinition.Elements)
-                        {
-                            b.WriteLine($"{element.Name} = {element.Id},");
-                        }
+                        b.WriteLine($"{element.Name} = {element.Id},");
                     }
-
-                    b.WriteLine("}");
                 }
+
+                b.WriteLine("}");
             }
 
             /// <summary>

@@ -11,69 +11,27 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
         {
             private readonly RocketPackDefinition _rootDefinition;
             private readonly IList<RocketPackDefinition> _externalDefinitions;
-            private readonly string _accessLevel;
 
             public ServiceWriter(RocketPackDefinition rootDefinition, IEnumerable<RocketPackDefinition> externalDefinitions)
             {
                 _rootDefinition = rootDefinition;
                 _externalDefinitions = externalDefinitions.ToList();
-
-                var accessLevelOption = _rootDefinition.Options.FirstOrDefault(n => n.Name == "csharp_access_level");
-                _accessLevel = accessLevelOption?.Value as string ?? "public";
             }
 
-            public void Write(CodeWriter b)
+            public void Write(CodeWriter b, ServiceDefinition serviceDefinition, string accessLevel = "public")
             {
-                foreach (var serviceDefinition in _rootDefinition.Services)
-                {
-                    this.Write_Interface(b, serviceDefinition);
-                    this.Write_ClientAndServerClass(b, serviceDefinition);
-                }
+                this.Write_Interface(b, serviceDefinition, accessLevel);
+                this.Write_ClientAndServerClass(b, serviceDefinition, accessLevel);
             }
 
-            private object? FindDefinition(CustomType customType)
+            private void Write_Interface(CodeWriter b, ServiceDefinition serviceDefinition, string accessLevel)
             {
-                foreach (var definition in new[] { _rootDefinition }.Union(_externalDefinitions))
-                {
-                    var enumDefinition = definition.Enums.FirstOrDefault(m => m.Name == customType.TypeName);
-                    if (enumDefinition != null)
-                    {
-                        return enumDefinition;
-                    }
-
-                    var objectDefinition = definition.Objects.FirstOrDefault(m => m.Name == customType.TypeName);
-                    if (objectDefinition != null)
-                    {
-                        return objectDefinition;
-                    }
-                }
-
-                return null;
-            }
-
-            private void Write_ClientAndServerClass(CodeWriter b, ServiceDefinition serviceDefinition)
-            {
-                var className = serviceDefinition.Name;
-                b.WriteLine($"{_accessLevel} class {className}");
+                b.WriteLine($"{accessLevel} interface {serviceDefinition.CSharpInterfaceName}");
                 b.WriteLine("{");
 
                 using (b.Indent())
                 {
-                    this.Write_ClientClass(b, serviceDefinition);
-                    this.Write_ServerClass(b, serviceDefinition);
-                }
-
-                b.WriteLine("}");
-            }
-
-            private void Write_Interface(CodeWriter b, ServiceDefinition serviceDefinition)
-            {
-                b.WriteLine($"{_accessLevel} interface {serviceDefinition.CSharpInterfaceName}");
-                b.WriteLine("{");
-
-                using (b.Indent())
-                {
-                    foreach (var func in serviceDefinition.Elements)
+                    foreach (var func in serviceDefinition.Functions)
                     {
                         if (func.InType is not null && func.OutType is not null)
                         {
@@ -109,10 +67,25 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                 b.WriteLine("}");
             }
 
+            private void Write_ClientAndServerClass(CodeWriter b, ServiceDefinition serviceDefinition, string accessLevel)
+            {
+                var className = serviceDefinition.Name;
+                b.WriteLine($"{accessLevel} class {className}");
+                b.WriteLine("{");
+
+                using (b.Indent())
+                {
+                    this.Write_ClientClass(b, serviceDefinition);
+                    this.Write_ServerClass(b, serviceDefinition);
+                }
+
+                b.WriteLine("}");
+            }
+
             private void Write_ClientClass(CodeWriter b, ServiceDefinition serviceDefinition)
             {
                 var className = "Client";
-                b.WriteLine($"{_accessLevel} class {className} : {GenerateTypeFullName("AsyncDisposableBase")}, {serviceDefinition.CSharpInterfaceFullName}");
+                b.WriteLine($"public class {className} : {GenerateTypeFullName("AsyncDisposableBase")}, {serviceDefinition.CSharpInterfaceFullName}");
                 b.WriteLine("{");
 
                 using (b.Indent())
@@ -141,7 +114,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
 
                     b.WriteLine("}");
 
-                    foreach (var (index, func) in serviceDefinition.Elements.Select((n, i) => (i + 1, n)))
+                    foreach (var (index, func) in serviceDefinition.Functions.Select((n, i) => (i + 1, n)))
                     {
                         if (func.InType is not null && func.OutType is not null)
                         {
@@ -216,7 +189,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
             private void Write_ServerClass(CodeWriter b, ServiceDefinition serviceDefinition)
             {
                 var className = "Server";
-                b.WriteLine($"{_accessLevel} class {className} : {GenerateTypeFullName("AsyncDisposableBase")}");
+                b.WriteLine($"public class {className} : {GenerateTypeFullName("AsyncDisposableBase")}");
                 b.WriteLine("{");
 
                 using (b.Indent())
@@ -264,7 +237,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
 
                             using (b.Indent())
                             {
-                                foreach (var (index, func) in serviceDefinition.Elements.Select((n, i) => (i + 1, n)))
+                                foreach (var (index, func) in serviceDefinition.Functions.Select((n, i) => (i + 1, n)))
                                 {
                                     b.WriteLine($"case {index}:");
 
@@ -326,6 +299,26 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                 }
 
                 b.WriteLine("}");
+            }
+
+            private object? FindDefinition(CustomType customType)
+            {
+                foreach (var definition in new[] { _rootDefinition }.Union(_externalDefinitions))
+                {
+                    var enumDefinition = definition.Enums.FirstOrDefault(m => m.Name == customType.TypeName);
+                    if (enumDefinition != null)
+                    {
+                        return enumDefinition;
+                    }
+
+                    var objectDefinition = definition.Objects.FirstOrDefault(m => m.Name == customType.TypeName);
+                    if (objectDefinition != null)
+                    {
+                        return objectDefinition;
+                    }
+                }
+
+                return null;
             }
         }
     }

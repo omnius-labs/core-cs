@@ -18,81 +18,74 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
 
             private readonly RocketPackDefinition _rootDefinition;
             private readonly IList<RocketPackDefinition> _externalDefinitions;
-            private readonly string _accessLevel;
 
             public ObjectWriter(RocketPackDefinition rootDefinition, IEnumerable<RocketPackDefinition> externalDefinitions)
             {
                 _rootDefinition = rootDefinition;
                 _externalDefinitions = externalDefinitions.ToList();
-
-                var accessLevelOption = _rootDefinition.Options.FirstOrDefault(n => n.Name == "csharp_access_level");
-                _accessLevel = accessLevelOption?.Value as string ?? "public";
             }
 
-            public void Write(CodeWriter b)
+            public void Write(CodeWriter b, ObjectDefinition objectDefinition, string accessLevel = "public")
             {
-                foreach (var objectDefinition in _rootDefinition.Objects)
+                if (objectDefinition.IsCSharpStruct)
                 {
-                    if (objectDefinition.IsCSharpStruct)
+                    if (objectDefinition.Elements.Select(n => n.Type).OfType<BytesType>().Any(n => n.IsUseMemoryPool))
                     {
-                        if (objectDefinition.Elements.Select(n => n.Type).OfType<BytesType>().Any(n => n.IsUseMemoryPool))
-                        {
-                            b.WriteLine($"{_accessLevel} readonly partial struct {objectDefinition.Name} : {GenerateTypeFullName("IRocketPackObject<>", objectDefinition.CSharpFullName)}, {GenerateTypeFullName("IDisposable")}");
-                        }
-                        else
-                        {
-                            b.WriteLine($"{_accessLevel} readonly partial struct {objectDefinition.Name} : {GenerateTypeFullName("IRocketPackObject<>", objectDefinition.CSharpFullName)}");
-                        }
+                        b.WriteLine($"{accessLevel} readonly partial struct {objectDefinition.Name} : {GenerateTypeFullName("IRocketPackObject<>", objectDefinition.CSharpFullName)}, {GenerateTypeFullName("IDisposable")}");
                     }
-                    else if (objectDefinition.IsCSharpClass)
+                    else
                     {
-                        if (objectDefinition.Elements.Select(n => n.Type).OfType<BytesType>().Any(n => n.IsUseMemoryPool))
-                        {
-                            b.WriteLine($"{_accessLevel} sealed partial class {objectDefinition.Name} : {GenerateTypeFullName("IRocketPackObject<>", objectDefinition.CSharpFullName)}, {GenerateTypeFullName("IDisposable")}");
-                        }
-                        else
-                        {
-                            b.WriteLine($"{_accessLevel} sealed partial class {objectDefinition.Name} : {GenerateTypeFullName("IRocketPackObject<>", objectDefinition.CSharpFullName)}");
-                        }
+                        b.WriteLine($"{accessLevel} readonly partial struct {objectDefinition.Name} : {GenerateTypeFullName("IRocketPackObject<>", objectDefinition.CSharpFullName)}");
                     }
-
-                    b.WriteLine("{");
-
-                    using (b.Indent())
-                    {
-                        this.Write_StaticConstructor(b, objectDefinition);
-                        b.WriteLine();
-
-                        this.Write_Constructor(b, objectDefinition);
-                        b.WriteLine();
-
-                        this.Write_Properties(b, objectDefinition);
-                        b.WriteLine();
-
-                        this.Write_ImportAndExport(b, objectDefinition);
-                        b.WriteLine();
-
-                        this.Write_Equals(b, objectDefinition);
-                        b.WriteLine();
-
-                        if (objectDefinition.Elements.Select(n => n.Type).OfType<BytesType>().Any(n => n.IsUseMemoryPool))
-                        {
-                            this.Write_Dispose(b, objectDefinition);
-                            b.WriteLine();
-                        }
-
-                        if (objectDefinition.FormatType == MessageFormatType.Table)
-                        {
-                            this.Write_Medium_Formatter(b, objectDefinition);
-                        }
-                        else if (objectDefinition.FormatType == MessageFormatType.Struct)
-                        {
-                            this.Write_Small_Formatter(b, objectDefinition);
-                        }
-                    }
-
-                    b.WriteLine("}");
                 }
+                else if (objectDefinition.IsCSharpClass)
+                {
+                    if (objectDefinition.Elements.Select(n => n.Type).OfType<BytesType>().Any(n => n.IsUseMemoryPool))
+                    {
+                        b.WriteLine($"{accessLevel} sealed partial class {objectDefinition.Name} : {GenerateTypeFullName("IRocketPackObject<>", objectDefinition.CSharpFullName)}, {GenerateTypeFullName("IDisposable")}");
+                    }
+                    else
+                    {
+                        b.WriteLine($"{accessLevel} sealed partial class {objectDefinition.Name} : {GenerateTypeFullName("IRocketPackObject<>", objectDefinition.CSharpFullName)}");
+                    }
+                }
+
+                b.WriteLine("{");
+
+                using (b.Indent())
+                {
+                    this.Write_StaticConstructor(b, objectDefinition);
+                    b.WriteLine();
+
+                    this.Write_Constructor(b, objectDefinition);
+                    b.WriteLine();
+
+                    this.Write_Properties(b, objectDefinition);
+                    b.WriteLine();
+
+                    this.Write_ImportAndExport(b, objectDefinition);
+                    b.WriteLine();
+
+                    this.Write_Equals(b, objectDefinition);
+                    b.WriteLine();
+
+                    if (objectDefinition.Elements.Select(n => n.Type).OfType<BytesType>().Any(n => n.IsUseMemoryPool))
+                    {
+                        this.Write_Dispose(b, objectDefinition);
+                        b.WriteLine();
+                    }
+
+                    if (objectDefinition.FormatType == MessageFormatType.Message)
+                    {
+                        this.Write_Medium_Formatter(b, objectDefinition);
+                    }
+                    else if (objectDefinition.FormatType == MessageFormatType.Struct)
+                    {
+                        this.Write_Small_Formatter(b, objectDefinition);
+                    }
+                }
+
+                b.WriteLine("}");
             }
 
             /// <summary>
@@ -1819,7 +1812,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                     CustomType type => this.FindDefinition(type) switch
                     {
                         EnumDefinition enumDefinition => enumDefinition.CSharpFullName + (type.IsOptional ? "?" : ""),
-                        ObjectDefinition objectDefinition when (objectDefinition.FormatType == MessageFormatType.Table) => objectDefinition.CSharpFullName + (type.IsOptional ? "?" : ""),
+                        ObjectDefinition objectDefinition when (objectDefinition.FormatType == MessageFormatType.Message) => objectDefinition.CSharpFullName + (type.IsOptional ? "?" : ""),
                         ObjectDefinition objectDefinition when (objectDefinition.FormatType == MessageFormatType.Struct) => objectDefinition.CSharpFullName + (type.IsOptional ? "?" : ""),
                         _ => throw new ArgumentException($"Type \"{type.TypeName}\" was not found", nameof(typeBase)),
                     },

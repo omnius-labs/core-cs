@@ -12,8 +12,8 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
 
         public CodeGenerator(RocketPackDefinition rootDefinition, IEnumerable<RocketPackDefinition> externalDefinitions)
         {
-            _externalDefinitions = externalDefinitions.ToList();
             _rootDefinition = rootDefinition;
+            _externalDefinitions = externalDefinitions.ToList();
         }
 
         public string Generate()
@@ -34,21 +34,37 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
 
                 using (b.Indent())
                 {
-                    var enumWriter = new EnumWriter(_rootDefinition);
+                    var accessLevel = this.GetAccessLevel();
+
+                    var enumWriter = new EnumWriter();
+                    foreach (var enumDefinition in _rootDefinition.Enums)
+                    {
+                        enumWriter.Write(b, enumDefinition, accessLevel);
+                    }
+
                     var objectWriter = new ObjectWriter(_rootDefinition, _externalDefinitions);
+                    foreach (var objectDefinition in _rootDefinition.Objects)
+                    {
+                        objectWriter.Write(b, objectDefinition, accessLevel);
+                    }
+
                     var serviceWriter = new ServiceWriter(_rootDefinition, _externalDefinitions);
-
-                    enumWriter.Write(b);
-
-                    objectWriter.Write(b);
-
-                    serviceWriter.Write(b);
+                    foreach (var serviceDefinition in _rootDefinition.Services)
+                    {
+                        serviceWriter.Write(b, serviceDefinition, accessLevel);
+                    }
                 }
 
                 b.WriteLine("}");
             }
 
             return b.ToString();
+        }
+
+        private string GetAccessLevel()
+        {
+            var accessLevelOption = _rootDefinition.Options.FirstOrDefault(n => n.Name == "csharp_access_level");
+            return accessLevelOption?.Value as string ?? "public";
         }
 
         private static string GenerateTypeFullName(string name, params string[] types)

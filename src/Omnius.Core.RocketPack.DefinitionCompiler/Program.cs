@@ -21,33 +21,13 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
         {
             try
             {
-                var includeFiles = new List<string>();
-
-                if (include != null)
-                {
-                    foreach (var path in include)
-                    {
-                        var result = Ganss.IO.Glob.Expand(path)
-                            .Where(n => !n.Attributes.HasFlag(FileAttributes.Directory))
-                            .Select(n => n.FullName)
-                            .OrderBy(n => n)
-                            .ToArray();
-                        includeFiles.AddRange(result);
-                    }
-                }
+                var includeFiles = GlobFiles(include);
 
                 // 読み込み
                 var (rootDefinition, includedDefinitions) = DefinitionLoader.Load(source, includeFiles);
 
                 // 出力先フォルダが存在しない場合は作成する
-                {
-                    var destinationParentDirectoryPath = Path.GetDirectoryName(output);
-
-                    if (destinationParentDirectoryPath is not null && !Directory.Exists(destinationParentDirectoryPath))
-                    {
-                        Directory.CreateDirectory(destinationParentDirectoryPath);
-                    }
-                }
+                CreateParentDirectory(output);
 
                 // 書き込み
                 using var writer = new StreamWriter(output, false, new UTF8Encoding(false));
@@ -71,6 +51,36 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
 
                 throw;
             }
+        }
+
+        private static void CreateParentDirectory(string output)
+        {
+            var dirPath = Path.GetDirectoryName(output);
+
+            if (dirPath is not null && !Directory.Exists(dirPath))
+            {
+                Directory.CreateDirectory(dirPath);
+            }
+        }
+
+        private static IEnumerable<string> GlobFiles(IEnumerable<string>? include)
+        {
+            var includeFiles = new List<string>();
+
+            if (include != null)
+            {
+                foreach (var path in include)
+                {
+                    var result = Ganss.IO.Glob.Expand(path)
+                        .Where(n => !n.Attributes.HasFlag(FileAttributes.Directory))
+                        .Select(n => n.FullName)
+                        .OrderBy(n => n)
+                        .ToArray();
+                    includeFiles.AddRange(result);
+                }
+            }
+
+            return includeFiles;
         }
 
         private class FilePathExistsAttribute : ValidationAttribute

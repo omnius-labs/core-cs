@@ -120,7 +120,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler.Models
     internal enum MessageFormatType
     {
         Struct,
-        Table,
+        Message,
     }
 
     internal sealed class ObjectDefinition
@@ -349,11 +349,11 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler.Models
 
     internal sealed class ServiceDefinition
     {
-        public ServiceDefinition(IEnumerable<string> attributes, string name, IEnumerable<FuncElement> elements)
+        public ServiceDefinition(IEnumerable<string> attributes, string name, IEnumerable<FuncElement> functions)
         {
             this.Attributes = attributes?.ToList() ?? throw new ArgumentNullException(nameof(attributes));
             this.Name = name ?? throw new ArgumentNullException(nameof(name));
-            this.Elements = elements?.ToList() ?? throw new ArgumentNullException(nameof(elements));
+            this.Functions = functions?.ToList() ?? throw new ArgumentNullException(nameof(functions));
         }
 
         public string Namespace { get; set; } = string.Empty;
@@ -362,7 +362,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler.Models
 
         public string Name { get; }
 
-        public IList<FuncElement> Elements { get; }
+        public IList<FuncElement> Functions { get; }
 
         public string CSharpInterfaceName => "I" + this.Name;
 

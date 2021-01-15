@@ -20,8 +20,6 @@ namespace Omnius.Core.Network.Upnp
         private string? _contents;
         private Uri? _location;
 
-        private readonly AsyncLock _lock = new AsyncLock();
-
         private static readonly Regex _deviceTypeRegex = new Regex(@"<(\s*)deviceType((\s*)|(\s+)(.*?))>(\s*)urn:schemas-upnp-org:device:InternetGatewayDevice:1(\s*)</(\s*)deviceType(\s*)>", RegexOptions.Singleline | RegexOptions.IgnoreCase);
         private static readonly Regex _controlUrlRegex = new Regex(@"<(\s*)controlURL((\s*)|(\s+)(.*?))>(\s*)(?<url>.*?)(\s*)</(\s*)controlURL(\s*)>", RegexOptions.Singleline | RegexOptions.IgnoreCase);
 
@@ -43,30 +41,27 @@ namespace Omnius.Core.Network.Upnp
 
         public async ValueTask ConnectAsync(CancellationToken cancellationToken = default)
         {
-            using (await _lock.LockAsync())
+            try
             {
-                try
-                {
-                    var hostEntry = await Dns.GetHostEntryAsync(Dns.GetHostName());
+                var hostEntry = await Dns.GetHostEntryAsync(Dns.GetHostName());
 
-                    foreach (var machineIp in hostEntry.AddressList)
+                foreach (var machineIp in hostEntry.AddressList)
+                {
+                    if (machineIp.AddressFamily != AddressFamily.InterNetwork)
                     {
-                        if (machineIp.AddressFamily != AddressFamily.InterNetwork)
-                        {
-                            continue;
-                        }
-
-                        (_contents, _location) = await GetContentsAndLocationFromDeviceAsync(IPAddress.Parse("239.255.255.250"), machineIp, cancellationToken);
+                        continue;
                     }
+
+                    (_contents, _location) = await GetContentsAndLocationFromDeviceAsync(IPAddress.Parse("239.255.255.250"), machineIp, cancellationToken);
                 }
-                catch (UpnpClientException)
-                {
-                    throw;
-                }
-                catch (Exception e)
-                {
-                    throw new UpnpClientException("Failed to connect.", e);
-                }
+            }
+            catch (UpnpClientException)
+            {
+                throw;
+            }
+            catch (Exception e)
+            {
+                throw new UpnpClientException("Failed to connect.", e);
             }
         }
 

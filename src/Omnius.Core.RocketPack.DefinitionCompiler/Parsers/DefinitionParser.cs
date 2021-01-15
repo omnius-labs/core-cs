@@ -174,7 +174,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler.Parsers
              from endTag in Parse.Char('}').TokenWithSkipComment()
              select new EnumDefinition(attributes.ToList(), name, type, enumProperties.ToList())).Named("enum");
 
-        private static readonly Parser<ObjectElement> _structElementParser =
+        private static readonly Parser<ObjectElement> _objectElementParser =
             from attributes in _attributeParser.XMany().TokenWithSkipComment()
             from name in _nameParser.TokenWithSkipComment()
             from colon in Parse.Char(':').TokenWithSkipComment()
@@ -190,39 +190,14 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler.Parsers
             from comma in Parse.Char(',').TokenWithSkipComment()
             select new ObjectElement(attributes.ToList(), name, type);
 
-        private static readonly Parser<ObjectDefinition> _structDefinitionParser =
+        private static readonly Parser<ObjectDefinition> _objectDefinitionParser =
             from attributes in _attributeParser.XMany().TokenWithSkipComment()
-            from keyword in Parse.String("struct").TokenWithSkipComment()
+            from type in Parse.String("struct").TokenWithSkipComment().Return(MessageFormatType.Struct).Or(Parse.String("message").TokenWithSkipComment().Return(MessageFormatType.Message))
             from name in _nameParser.TokenWithSkipComment()
             from beginTag in Parse.Char('{').TokenWithSkipComment()
-            from elements in _structElementParser.Except(Parse.Char('}')).XMany().TokenWithSkipComment()
+            from elements in _objectElementParser.Except(Parse.Char('}')).XMany().TokenWithSkipComment()
             from endTag in Parse.Char('}').TokenWithSkipComment()
-            select new ObjectDefinition(attributes.ToList(), name, MessageFormatType.Struct, elements.ToList());
-
-        private static readonly Parser<ObjectElement> _messageElementParser =
-            from attributes in _attributeParser.XMany().TokenWithSkipComment()
-            from name in _nameParser.TokenWithSkipComment()
-            from colon in Parse.Char(':').TokenWithSkipComment()
-            from type in _boolTypeParser
-                .Or<TypeBase>(_intTypeParser)
-                .Or(_floatTypeParser)
-                .Or(_stringTypeParser)
-                .Or(_timestampTypeParser)
-                .Or(_memoryTypeParser)
-                .Or(_vectorTypeParser)
-                .Or(_mapTypeParser)
-                .Or(_customTypeParser).TokenWithSkipComment()
-            from comma in Parse.Char(',').TokenWithSkipComment()
-            select new ObjectElement(attributes.ToList(), name, type);
-
-        private static readonly Parser<ObjectDefinition> _messageDefinitionParser =
-            from attributes in _attributeParser.XMany().TokenWithSkipComment()
-            from keyword in Parse.String("message").TokenWithSkipComment()
-            from name in _nameParser.TokenWithSkipComment()
-            from beginTag in Parse.Char('{').TokenWithSkipComment()
-            from elements in _messageElementParser.Except(Parse.Char('}')).XMany().TokenWithSkipComment()
-            from endTag in Parse.Char('}').TokenWithSkipComment()
-            select new ObjectDefinition(attributes.ToList(), name, MessageFormatType.Table, elements.ToList());
+            select new ObjectDefinition(attributes.ToList(), name, type, elements.ToList());
 
         private static readonly Parser<FuncElement> _funcElementParser =
             from attributes in _attributeParser.XMany().TokenWithSkipComment()
@@ -252,7 +227,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler.Parsers
             from usings in _usingParser.XMany().TokenWithSkipComment()
             from @namespace in _namespaceParser.Once().TokenWithSkipComment()
             from options in _optionParser.XMany().TokenWithSkipComment()
-            from contents in _enumDefinitionParser.Or<object>(_structDefinitionParser).Or(_messageDefinitionParser).Or(_serviceDefinitionParser).XMany().TokenWithSkipComment().End()
+            from contents in _enumDefinitionParser.Or<object>(_objectDefinitionParser).Or(_serviceDefinitionParser).XMany().TokenWithSkipComment().End()
             select new RocketPackDefinition(
                 usings,
                 @namespace.First(),
