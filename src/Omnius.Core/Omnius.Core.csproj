@@ -30,7 +30,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="NLog" Version="4.7.5" />
+    <PackageReference Include="NLog" Version="4.7.6" />
     <PackageReference Include="System.IO.Pipelines" Version="5.0.1" />
   </ItemGroup>
 
