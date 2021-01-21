@@ -10,9 +10,9 @@
       },
       "NLog": {
         "type": "Direct",
-        "requested": "[4.7.4, )",
-        "resolved": "4.7.4",
-        "contentHash": "gSGX/ur0P3jp17H37HW7ycXR6L1578tQbilf4HLX1t2viCDFgtwEsfHMPf0/jcuf7/qqGgoU/vKgyQ9hzxuOEQ=="
+        "requested": "[4.7.6, )",
+        "resolved": "4.7.6",
+        "contentHash": "mVYfNsZk6HY26/S/T3vVd2RS/1GySaeNh6bjP8uE7mKAdTENlRycQr7S4FC+I//QflXl/D/HEEugE47BDxQ5wA=="
       },
       "StyleCop.Analyzers": {
         "type": "Direct",
