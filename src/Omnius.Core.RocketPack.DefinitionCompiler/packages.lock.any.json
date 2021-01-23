@@ -22,18 +22,18 @@
       },
       "NLog": {
         "type": "Direct",
-        "requested": "[4.7.6, )",
-        "resolved": "4.7.6",
-        "contentHash": "mVYfNsZk6HY26/S/T3vVd2RS/1GySaeNh6bjP8uE7mKAdTENlRycQr7S4FC+I//QflXl/D/HEEugE47BDxQ5wA=="
+        "requested": "[4.7.7, )",
+        "resolved": "4.7.7",
+        "contentHash": "lCfAaKel4trne8Suf4/0aR9YPKDFLWKgqBupnHKNYx+cIjutF2BsVxfF2fAb+ObaYN3m5hDjx/ToVS15ouB+SA=="
       },
       "NLog.Config": {
         "type": "Direct",
-        "requested": "[4.7.6, )",
-        "resolved": "4.7.6",
-        "contentHash": "4rrKtrgMZ4w9dyk/5aVISyGsfdcd+STumZONKouJFlJ3cvWLhw5cLe7QpqE/8SwW4E5Lr3xCqJA9e5QPCVMZNw==",
+        "requested": "[4.7.7, )",
+        "resolved": "4.7.7",
+        "contentHash": "SvcBYLm7ZDKiJTh0VE+ys3wTKLuYCABQ4fmLQrIBnM0zql/k0QCD3AF8evA5OKy6/l3vDxFnC02bdxT2LJGAPw==",
         "dependencies": {
-          "NLog": "4.7.6",
-          "NLog.Schema": "4.7.6"
+          "NLog": "4.7.7",
+          "NLog.Schema": "4.7.7"
         }
       },
       "Sprache": {
@@ -76,8 +76,8 @@
       },
       "NLog.Schema": {
         "type": "Transitive",
-        "resolved": "4.7.6",
-        "contentHash": "wHlakqgco/grSxtY6g2kq0o3QMmpTXgV6kBGXn9CkYxOzoVxMQkB/p5ZoayjOBvWbOUsWqpppo0ETaa/nysg2Q=="
+        "resolved": "4.7.7",
+        "contentHash": "qaRZ1CS8Dqq1B4HsnXt3+6K2mPjiTDb/SkDkNGbivSwXSk1ioUcmg5YgD7dO8zKJTvjWKTQcXNjHGiKpUoI8Ow=="
       },
       "System.Collections": {
         "type": "Transitive",

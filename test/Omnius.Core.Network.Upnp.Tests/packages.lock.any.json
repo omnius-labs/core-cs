@@ -4,9 +4,9 @@
     ".NETCoreApp,Version=v5.0": {
       "coverlet.msbuild": {
         "type": "Direct",
-        "requested": "[3.0.0, )",
-        "resolved": "3.0.0",
-        "contentHash": "NR4lbSqBn3o/qj3MjTG2Ppx3v61BD7Qn2jZoiSRnc1ZdPRK2GHE6y3EsnzsXDiRPU8VjR4t24XgvMkrIQG8ryg=="
+        "requested": "[3.0.1, )",
+        "resolved": "3.0.1",
+        "contentHash": "qSS2jZAFd3cPCbH4HESrvekg/zjmU+y5mfqwCfSFdnjL38/6rI1ov6QHGVsSKSlQCcEdqdjBZvO4IL9cEnBh8Q=="
       },
       "Microsoft.NET.Test.Sdk": {
         "type": "Direct",
@@ -20,9 +20,9 @@
       },
       "NLog": {
         "type": "Direct",
-        "requested": "[4.7.6, )",
-        "resolved": "4.7.6",
-        "contentHash": "mVYfNsZk6HY26/S/T3vVd2RS/1GySaeNh6bjP8uE7mKAdTENlRycQr7S4FC+I//QflXl/D/HEEugE47BDxQ5wA=="
+        "requested": "[4.7.7, )",
+        "resolved": "4.7.7",
+        "contentHash": "lCfAaKel4trne8Suf4/0aR9YPKDFLWKgqBupnHKNYx+cIjutF2BsVxfF2fAb+ObaYN3m5hDjx/ToVS15ouB+SA=="
       },
       "xunit": {
         "type": "Direct",
@@ -1116,7 +1116,7 @@
       "omnius.core.network.upnp": {
         "type": "Project",
         "dependencies": {
-          "NLog": "4.7.6",
+          "NLog": "4.7.7",
           "Omnius.Core": "0.0.1-alpha.1"
         }
       }
