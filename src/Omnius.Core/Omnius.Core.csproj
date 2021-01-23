@@ -6,8 +6,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="Nuget\build\netcoreapp3.1\Omnius.Core.targets">
-      <PackagePath>build/netcoreapp3.1/</PackagePath>
+    <Content Include="Nuget\build\net5.0\Omnius.Core.targets">
+      <PackagePath>build/net5.0/</PackagePath>
       <Pack>true</Pack>
     </Content>
     <Compile Include="$(ProjectDir)..\..\src\Omnius.Core.Common\**\*">
