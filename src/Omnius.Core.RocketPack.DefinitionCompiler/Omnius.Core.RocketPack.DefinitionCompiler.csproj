@@ -4,7 +4,7 @@
     <OutputType>Exe</OutputType>
     <IsPackable>true</IsPackable>
     <PackAsTool>true</PackAsTool>
-    <ToolCommandName>rpdc</ToolCommandName>
+    <ToolCommandName>rpfc</ToolCommandName>
   </PropertyGroup>
 
   <ItemGroup>
@@ -13,6 +13,7 @@
     <PackageReference Include="NLog" Version="4.7.7" />
     <PackageReference Include="NLog.Config" Version="4.7.7" />
     <PackageReference Include="Sprache" Version="2.3.1" />
+    <PackageReference Include="YamlDotNet" Version="9.1.4" />
   </ItemGroup>
 
   <ItemGroup>

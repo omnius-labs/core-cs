@@ -1184,6 +1184,11 @@
           "xunit.extensibility.core": "[2.4.1]"
         }
       },
+      "YamlDotNet": {
+        "type": "Transitive",
+        "resolved": "9.1.4",
+        "contentHash": "dVVZVhQxTI4xTNc9YorE+RruBFPPYKP44kMijE6Z5OQQE7zK+SEmh2sPm091CrTYVz1jjIuXKIBm1kFLrlsQJg=="
+      },
       "omnius.core.rocketpack.definitioncompiler": {
         "type": "Project",
         "dependencies": {
@@ -1191,7 +1196,8 @@
           "Glob.cs": "5.0.224",
           "NLog": "4.7.7",
           "NLog.Config": "4.7.7",
-          "Sprache": "2.3.1"
+          "Sprache": "2.3.1",
+          "YamlDotNet": "9.1.4"
         }
       }
     }
