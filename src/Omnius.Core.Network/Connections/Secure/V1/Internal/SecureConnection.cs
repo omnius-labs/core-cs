@@ -22,7 +22,7 @@ namespace Omnius.Core.Network.Connections.Secure.V1.Internal
 
         private string[]? _matchedPasswords;
 
-        private Status? _status;
+        private State? _state;
 
         private readonly Random _random = new Random();
 
@@ -287,7 +287,7 @@ namespace Omnius.Core.Network.Connections.Secure.V1.Internal
                 throw new NotSupportedException(nameof(keyDerivationAlgorithm));
             }
 
-            _status = new Status(cryptoAlgorithm, hashAlgorithm, myCryptoKey, otherCryptoKey, myNonce, otherNonce);
+            _state = new State(cryptoAlgorithm, hashAlgorithm, myCryptoKey, otherCryptoKey, myNonce, otherNonce);
         }
 
         private (ReadOnlyMemory<byte>, string)[] GetHashes(ProfileMessage profileMessage, OmniAgreementPublicKey agreementPublicKey, HashAlgorithm hashAlgorithm)
@@ -324,7 +324,7 @@ namespace Omnius.Core.Network.Connections.Secure.V1.Internal
 
         private void Encode(IBufferWriter<byte> bufferWriter, Action<IBufferWriter<byte>> action)
         {
-            if (_status == null)
+            if (_state == null)
             {
                 throw new OmniSecureConnectionException("Not handshaked");
             }
@@ -336,9 +336,9 @@ namespace Omnius.Core.Network.Connections.Secure.V1.Internal
 
             try
             {
-                if (_status.CryptoAlgorithm.HasFlag(CryptoAlgorithm.Aes_Gcm_256))
+                if (_state.CryptoAlgorithm.HasFlag(CryptoAlgorithm.Aes_Gcm_256))
                 {
-                    using (var aes = new AesGcm(_status.MyCryptoKey))
+                    using (var aes = new AesGcm(_state.MyCryptoKey))
                     {
                         Span<byte> tag = stackalloc byte[16];
                         var inBuffer = _bytesPool.Array.Rent(FrameSize - tag.Length);
@@ -356,8 +356,8 @@ namespace Omnius.Core.Network.Connections.Secure.V1.Internal
                                 sequence.Slice(0, contentLength).CopyTo(plaintext);
                                 sequence = sequence.Slice(contentLength);
 
-                                aes.Encrypt(_status.MyNonce, plaintext, ciphertext, tag);
-                                Increment(_status.MyNonce);
+                                aes.Encrypt(_state.MyNonce, plaintext, ciphertext, tag);
+                                Increment(_state.MyNonce);
 
                                 bufferWriter.Write(ciphertext);
                                 bufferWriter.Write(tag);
@@ -393,7 +393,7 @@ namespace Omnius.Core.Network.Connections.Secure.V1.Internal
 
         private void Decode(ReadOnlySequence<byte> sequence, Action<ReadOnlySequence<byte>> action)
         {
-            if (_status == null)
+            if (_state == null)
             {
                 throw new OmniSecureConnectionException("Not handshaked");
             }
@@ -402,9 +402,9 @@ namespace Omnius.Core.Network.Connections.Secure.V1.Internal
 
             try
             {
-                if (_status.CryptoAlgorithm.HasFlag(CryptoAlgorithm.Aes_Gcm_256))
+                if (_state.CryptoAlgorithm.HasFlag(CryptoAlgorithm.Aes_Gcm_256))
                 {
-                    using (var aes = new AesGcm(_status.OtherCryptoKey))
+                    using (var aes = new AesGcm(_state.OtherCryptoKey))
                     {
                         Span<byte> tag = stackalloc byte[16];
                         var inBuffer = _bytesPool.Array.Rent(FrameSize - tag.Length);
@@ -430,8 +430,8 @@ namespace Omnius.Core.Network.Connections.Secure.V1.Internal
                                 sequence.Slice(0, tag.Length).CopyTo(tag);
                                 sequence = sequence.Slice(tag.Length);
 
-                                aes.Decrypt(_status.OtherNonce, ciphertext, tag, plaintext);
-                                Increment(_status.OtherNonce);
+                                aes.Decrypt(_state.OtherNonce, ciphertext, tag, plaintext);
+                                Increment(_state.OtherNonce);
 
                                 hub.Writer.Write(plaintext);
                             }
@@ -465,9 +465,9 @@ namespace Omnius.Core.Network.Connections.Secure.V1.Internal
             await _connection.DequeueAsync((sequence) => this.Decode(sequence, action), cancellationToken);
         }
 
-        private sealed class Status
+        private sealed class State
         {
-            public Status(CryptoAlgorithm cryptoAlgorithm, HashAlgorithm hashAlgorithm, byte[] myCryptoKey, byte[] otherCryptoKey, byte[] myNonce, byte[] otherNonce)
+            public State(CryptoAlgorithm cryptoAlgorithm, HashAlgorithm hashAlgorithm, byte[] myCryptoKey, byte[] otherCryptoKey, byte[] myNonce, byte[] otherNonce)
             {
                 this.CryptoAlgorithm = cryptoAlgorithm;
                 this.HashAlgorithm = hashAlgorithm;
