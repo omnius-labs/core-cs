@@ -5,6 +5,8 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using Cocona;
+using Omnius.Core.RocketPack.DefinitionCompiler.Internal;
+using Omnius.Core.RocketPack.DefinitionCompiler.Models;
 
 namespace Omnius.Core.RocketPack.DefinitionCompiler
 {
@@ -17,39 +19,45 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
             CoconaLiteApp.Run<Program>(args);
         }
 
-        public void Compile([Option('s')][FilePathExists] string source, [Option('o')] string output, [Option('i')] string[]? include = null)
+        public void Compile([Option("config", new[] { 'c' })][FilePathExists] string configPath)
         {
-            try
+            var configs = YamlHelper.ReadFile<Config[]>(configPath);
+
+            foreach (var config in configs)
             {
-                var includeFiles = GlobFiles(include);
+                var includeFiles = GlobFiles(config.Includes);
 
-                // 読み込み
-                var (rootDefinition, includedDefinitions) = DefinitionLoader.Load(source, includeFiles);
-
-                // 出力先フォルダが存在しない場合は作成する
-                CreateParentDirectory(output);
-
-                // 書き込み
-                using var writer = new StreamWriter(output, false, new UTF8Encoding(false));
-                var codeGenerator = new CodeGenerator(rootDefinition, includedDefinitions);
-                writer.Write(codeGenerator.Generate());
-            }
-            catch (Exception e)
-            {
-                _logger.Error(e);
-
-                var sb = new StringBuilder();
-                sb.AppendLine($"source: {source}");
-                sb.AppendLine($"output: {output}");
-
-                if (include is not null)
+                foreach (var target in config.CompileTargets ?? throw new NullReferenceException(nameof(config.CompileTargets)))
                 {
-                    sb.AppendLine($"include: {string.Join(", ", include)}");
+                    try
+                    {
+                        var input = target.Input ?? throw new NullReferenceException(nameof(target.Input));
+                        var output = target.Output ?? throw new NullReferenceException(nameof(target.Output));
+
+                        // 読み込み
+                        var (rootDefinition, includedDefinitions) = DefinitionLoader.Load(input, includeFiles);
+
+                        // 出力先フォルダが存在しない場合は作成する
+                        CreateParentDirectory(output);
+
+                        // 書き込み
+                        using var writer = new StreamWriter(output, false, new UTF8Encoding(false));
+                        var codeGenerator = new CodeGenerator(rootDefinition, includedDefinitions);
+                        writer.Write(codeGenerator.Generate());
+                    }
+                    catch (Exception e)
+                    {
+                        _logger.Error(e);
+
+                        var sb = new StringBuilder();
+                        sb.AppendLine($"input: {target.Input}");
+                        sb.AppendLine($"output: {target.Output}");
+
+                        _logger.Error(sb.ToString());
+
+                        throw;
+                    }
                 }
-
-                _logger.Error(sb.ToString());
-
-                throw;
             }
         }
 

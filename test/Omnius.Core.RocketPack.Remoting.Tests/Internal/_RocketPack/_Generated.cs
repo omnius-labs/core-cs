@@ -208,7 +208,7 @@ namespace Omnius.Core.RocketPack.Remoting.Tests.Internal
     }
     internal class TestService
     {
-        internal class Client : global::Omnius.Core.AsyncDisposableBase, global::Omnius.Core.RocketPack.Remoting.Tests.Internal.ITestService
+        public class Client : global::Omnius.Core.AsyncDisposableBase, global::Omnius.Core.RocketPack.Remoting.Tests.Internal.ITestService
         {
             private readonly global::Omnius.Core.Network.Connections.IConnection _connection;
             private readonly global::Omnius.Core.IBytesPool _bytesPool;
@@ -244,7 +244,7 @@ namespace Omnius.Core.RocketPack.Remoting.Tests.Internal
                 await function.CallActionAsync(cancellationToken);
             }
         }
-        internal class Server : global::Omnius.Core.AsyncDisposableBase
+        public class Server : global::Omnius.Core.AsyncDisposableBase
         {
             private readonly global::Omnius.Core.RocketPack.Remoting.Tests.Internal.ITestService _service;
             private readonly global::Omnius.Core.Network.Connections.IConnection _connection;
