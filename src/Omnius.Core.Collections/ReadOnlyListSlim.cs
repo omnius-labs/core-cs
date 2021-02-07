@@ -22,6 +22,13 @@ namespace Omnius.Core.Collections
 
         public T this[int index] => _array[index];
 
+        public T[] Slice(int start, int length)
+        {
+            var slice = new T[length];
+            Array.Copy(_array, start, slice, 0, length);
+            return slice;
+        }
+
         public int Count => _array.Length;
 
         public Enumerator GetEnumerator()
