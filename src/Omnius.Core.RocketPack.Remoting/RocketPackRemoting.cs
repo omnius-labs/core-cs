@@ -66,10 +66,7 @@ namespace Omnius.Core.RocketPack.Remoting
                 for (; ; )
                 {
                     streamId = (uint)_random.Next();
-                    if (!_streamMap.ContainsKey(streamId))
-                    {
-                        break;
-                    }
+                    if (!_streamMap.ContainsKey(streamId)) break;
                 }
 
                 stream = new DataStream(streamId, functionId, _connection, () => this.RemoveStream(streamId));
@@ -109,33 +106,20 @@ namespace Omnius.Core.RocketPack.Remoting
                     await _connection.DequeueAsync(
                         async (sequence) =>
                         {
-                            if (!Varint.TryGetUInt8(ref sequence, out var packetType))
-                            {
-                                throw ThrowHelper.CreateRocketPackRpcProtocolException_UnexpectedProtocol();
-                            }
-
-                            if (!Varint.TryGetUInt32(ref sequence, out var streamId))
-                            {
-                                throw ThrowHelper.CreateRocketPackRpcProtocolException_UnexpectedProtocol();
-                            }
+                            if (!Varint.TryGetUInt8(ref sequence, out var packetType)) throw ThrowHelper.CreateRocketPackRpcProtocolException_UnexpectedProtocol();
+                            if (!Varint.TryGetUInt32(ref sequence, out var streamId)) throw ThrowHelper.CreateRocketPackRpcProtocolException_UnexpectedProtocol();
 
                             switch ((StreamPacketType)packetType)
                             {
                                 case StreamPacketType.ConnectMessage:
                                     {
-                                        if (!Varint.TryGetUInt32(ref sequence, out var callId))
-                                        {
-                                            throw ThrowHelper.CreateRocketPackRpcProtocolException_UnexpectedProtocol();
-                                        }
+                                        if (!Varint.TryGetUInt32(ref sequence, out var callId)) throw ThrowHelper.CreateRocketPackRpcProtocolException_UnexpectedProtocol();
 
                                         DataStream stream;
 
                                         lock (_lockObject)
                                         {
-                                            if (_streamMap.ContainsKey(streamId))
-                                            {
-                                                throw ThrowHelper.CreateRocketPackRpcProtocolException_UnexpectedProtocol();
-                                            }
+                                            if (_streamMap.ContainsKey(streamId)) throw ThrowHelper.CreateRocketPackRpcProtocolException_UnexpectedProtocol();
 
                                             stream = new DataStream(streamId, callId, _connection, () => this.RemoveStream(streamId));
                                             _streamMap.TryAdd(streamId, stream);
@@ -151,10 +135,7 @@ namespace Omnius.Core.RocketPack.Remoting
 
                                         lock (_lockObject)
                                         {
-                                            if (!_streamMap.TryGetValue(streamId, out stream))
-                                            {
-                                                throw ThrowHelper.CreateRocketPackRpcProtocolException_UnexpectedProtocol();
-                                            }
+                                            if (!_streamMap.TryGetValue(streamId, out stream)) throw ThrowHelper.CreateRocketPackRpcProtocolException_UnexpectedProtocol();
                                         }
 
                                         stream.OnReceivedCloseMessage();
@@ -172,10 +153,7 @@ namespace Omnius.Core.RocketPack.Remoting
 
                                         lock (_lockObject)
                                         {
-                                            if (!_streamMap.TryGetValue(streamId, out stream))
-                                            {
-                                                throw ThrowHelper.CreateRocketPackRpcProtocolException_UnexpectedProtocol();
-                                            }
+                                            if (!_streamMap.TryGetValue(streamId, out stream)) throw ThrowHelper.CreateRocketPackRpcProtocolException_UnexpectedProtocol();
                                         }
 
                                         var buffer = _bytesPool.Array.Rent((int)sequence.Length);

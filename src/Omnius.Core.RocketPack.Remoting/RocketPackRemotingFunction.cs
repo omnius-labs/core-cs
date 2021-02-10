@@ -143,14 +143,8 @@ namespace Omnius.Core.RocketPack.Remoting
 
                 var receivedResult = await this.ReceiveAsync(cancellationToken);
 
-                if (receivedResult.IsCompleted)
-                {
-                    return;
-                }
-                else if (receivedResult.IsError)
-                {
-                    throw ThrowHelper.CreateRocketPackRpcApplicationException(receivedResult.ErrorMessage!);
-                }
+                if (receivedResult.IsCompleted) return;
+                else if (receivedResult.IsError) throw ThrowHelper.CreateRocketPackRpcApplicationException(receivedResult.ErrorMessage!);
 
                 throw ThrowHelper.CreateRocketPackRpcProtocolException_UnexpectedProtocol();
             }
@@ -194,14 +188,8 @@ namespace Omnius.Core.RocketPack.Remoting
             {
                 var receivedResult = await this.ReceiveAsync(cancellationToken);
 
-                if (receivedResult.IsCompleted)
-                {
-                    return;
-                }
-                else if (receivedResult.IsError)
-                {
-                    throw ThrowHelper.CreateRocketPackRpcApplicationException(receivedResult.ErrorMessage!);
-                }
+                if (receivedResult.IsCompleted) return;
+                else if (receivedResult.IsError) throw ThrowHelper.CreateRocketPackRpcApplicationException(receivedResult.ErrorMessage!);
 
                 throw ThrowHelper.CreateRocketPackRpcProtocolException_UnexpectedProtocol();
             }
@@ -305,15 +293,8 @@ namespace Omnius.Core.RocketPack.Remoting
             try
             {
                 var sequence = new ReadOnlySequence<byte>(receivedMessage);
-                if (sequence.Length == 0)
-                {
-                    throw ThrowHelper.CreateRocketPackRpcProtocolException_UnexpectedProtocol();
-                }
-
-                if (!Varint.TryGetUInt8(ref sequence, out var type))
-                {
-                    throw ThrowHelper.CreateRocketPackRpcProtocolException_UnexpectedProtocol();
-                }
+                if (sequence.Length == 0) throw ThrowHelper.CreateRocketPackRpcProtocolException_UnexpectedProtocol();
+                if (!Varint.TryGetUInt8(ref sequence, out var type)) throw ThrowHelper.CreateRocketPackRpcProtocolException_UnexpectedProtocol();
 
                 return ((FunctionPacketType)type) switch
                 {
@@ -337,15 +318,8 @@ namespace Omnius.Core.RocketPack.Remoting
             try
             {
                 var sequence = new ReadOnlySequence<byte>(receivedMessage);
-                if (sequence.Length == 0)
-                {
-                    throw ThrowHelper.CreateRocketPackRpcProtocolException_UnexpectedProtocol();
-                }
-
-                if (!Varint.TryGetUInt8(ref sequence, out var type))
-                {
-                    throw ThrowHelper.CreateRocketPackRpcProtocolException_UnexpectedProtocol();
-                }
+                if (sequence.Length == 0) throw ThrowHelper.CreateRocketPackRpcProtocolException_UnexpectedProtocol();
+                if (!Varint.TryGetUInt8(ref sequence, out var type)) throw ThrowHelper.CreateRocketPackRpcProtocolException_UnexpectedProtocol();
 
                 return ((FunctionPacketType)type) switch
                 {

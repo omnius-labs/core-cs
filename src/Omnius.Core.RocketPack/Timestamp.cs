@@ -35,10 +35,7 @@ namespace Omnius.Core.RocketPack
 
         public override bool Equals(object? obj)
         {
-            if (obj is not Timestamp)
-            {
-                return false;
-            }
+            if (obj is not Timestamp) return false;
 
             return this.Equals((Timestamp)obj);
         }
@@ -53,16 +50,10 @@ namespace Omnius.Core.RocketPack
             int result;
 
             result = this.Seconds.CompareTo(other.Seconds);
-            if (result != 0)
-            {
-                return result;
-            }
+            if (result != 0) return result;
 
             result = this.Nanos.CompareTo(other.Nanos);
-            if (result != 0)
-            {
-                return result;
-            }
+            if (result != 0) return result;
 
             return 0;
         }
@@ -74,10 +65,7 @@ namespace Omnius.Core.RocketPack
 
         public static Timestamp FromDateTime(DateTime dateTime)
         {
-            if (dateTime.Kind != DateTimeKind.Utc)
-            {
-                throw new ArgumentException("Conversion from DateTime to Timestamp requires the DateTime kind to be Utc", "dateTime");
-            }
+            if (dateTime.Kind != DateTimeKind.Utc) throw new ArgumentException("Conversion from DateTime to Timestamp requires the DateTime kind to be Utc", "dateTime");
 
             long ticks = dateTime.Ticks - DateTime.UnixEpoch.Ticks;
             long seconds = ticks / TimeSpan.TicksPerSecond;

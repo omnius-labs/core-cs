@@ -394,10 +394,7 @@ namespace Omnius.Core.RocketPack
             {
                 if (reader.UnreadSpan.Length >= 2)
                 {
-                    if (!InternalTryGetUInt8(reader.UnreadSpan, out value, out int consumed))
-                    {
-                        return false;
-                    }
+                    if (!InternalTryGetUInt8(reader.UnreadSpan, out value, out int consumed)) return false;
 
                     reader.Advance(consumed);
                     return true;
@@ -408,15 +405,8 @@ namespace Omnius.Core.RocketPack
                     byte* buffer = stackalloc byte[size];
                     var tempSpan = new Span<byte>(buffer, size);
 
-                    if (!reader.TryCopyTo(tempSpan))
-                    {
-                        return false;
-                    }
-
-                    if (!InternalTryGetUInt8(tempSpan, out value, out int consumed))
-                    {
-                        return false;
-                    }
+                    if (!reader.TryCopyTo(tempSpan)) return false;
+                    if (!InternalTryGetUInt8(tempSpan, out value, out int consumed)) return false;
 
                     reader.Advance(consumed);
                     return true;
@@ -433,10 +423,7 @@ namespace Omnius.Core.RocketPack
             {
                 if (sequence.FirstSpan.Length >= 2)
                 {
-                    if (!InternalTryGetUInt8(sequence.FirstSpan, out value, out int consumed))
-                    {
-                        return false;
-                    }
+                    if (!InternalTryGetUInt8(sequence.FirstSpan, out value, out int consumed)) return false;
 
                     sequence = sequence.Slice(consumed);
                     return true;
@@ -449,10 +436,7 @@ namespace Omnius.Core.RocketPack
 
                     sequence.CopyTo(tempSpan);
 
-                    if (!InternalTryGetUInt8(tempSpan, out value, out int consumed))
-                    {
-                        return false;
-                    }
+                    if (!InternalTryGetUInt8(tempSpan, out value, out int consumed)) return false;
 
                     sequence = sequence.Slice(consumed);
                     return true;
@@ -469,10 +453,7 @@ namespace Omnius.Core.RocketPack
             {
                 if (reader.UnreadSpan.Length >= 3)
                 {
-                    if (!InternalTryGetUInt16(reader.UnreadSpan, out value, out int consumed))
-                    {
-                        return false;
-                    }
+                    if (!InternalTryGetUInt16(reader.UnreadSpan, out value, out int consumed)) return false;
 
                     reader.Advance(consumed);
                     return true;
@@ -483,15 +464,8 @@ namespace Omnius.Core.RocketPack
                     byte* buffer = stackalloc byte[size];
                     var tempSpan = new Span<byte>(buffer, size);
 
-                    if (!reader.TryCopyTo(tempSpan))
-                    {
-                        return false;
-                    }
-
-                    if (!InternalTryGetUInt16(tempSpan, out value, out int consumed))
-                    {
-                        return false;
-                    }
+                    if (!reader.TryCopyTo(tempSpan)) return false;
+                    if (!InternalTryGetUInt16(tempSpan, out value, out int consumed)) return false;
 
                     reader.Advance(consumed);
                     return true;
@@ -508,10 +482,7 @@ namespace Omnius.Core.RocketPack
             {
                 if (sequence.FirstSpan.Length >= 3)
                 {
-                    if (!InternalTryGetUInt16(sequence.FirstSpan, out value, out int consumed))
-                    {
-                        return false;
-                    }
+                    if (!InternalTryGetUInt16(sequence.FirstSpan, out value, out int consumed)) return false;
 
                     sequence = sequence.Slice(consumed);
                     return true;
@@ -524,10 +495,7 @@ namespace Omnius.Core.RocketPack
 
                     sequence.CopyTo(tempSpan);
 
-                    if (!InternalTryGetUInt16(tempSpan, out value, out int consumed))
-                    {
-                        return false;
-                    }
+                    if (!InternalTryGetUInt16(tempSpan, out value, out int consumed)) return false;
 
                     sequence = sequence.Slice(consumed);
                     return true;
@@ -544,10 +512,7 @@ namespace Omnius.Core.RocketPack
             {
                 if (reader.UnreadSpan.Length >= 5)
                 {
-                    if (!InternalTryGetUInt32(reader.UnreadSpan, out value, out int consumed))
-                    {
-                        return false;
-                    }
+                    if (!InternalTryGetUInt32(reader.UnreadSpan, out value, out int consumed)) return false;
 
                     reader.Advance(consumed);
                     return true;
@@ -558,15 +523,8 @@ namespace Omnius.Core.RocketPack
                     byte* buffer = stackalloc byte[size];
                     var tempSpan = new Span<byte>(buffer, size);
 
-                    if (!reader.TryCopyTo(tempSpan))
-                    {
-                        return false;
-                    }
-
-                    if (!InternalTryGetUInt32(tempSpan, out value, out int consumed))
-                    {
-                        return false;
-                    }
+                    if (!reader.TryCopyTo(tempSpan)) return false;
+                    if (!InternalTryGetUInt32(tempSpan, out value, out int consumed)) return false;
 
                     reader.Advance(consumed);
                     return true;
@@ -583,10 +541,7 @@ namespace Omnius.Core.RocketPack
             {
                 if (sequence.FirstSpan.Length >= 5)
                 {
-                    if (!InternalTryGetUInt32(sequence.FirstSpan, out value, out int consumed))
-                    {
-                        return false;
-                    }
+                    if (!InternalTryGetUInt32(sequence.FirstSpan, out value, out int consumed)) return false;
 
                     sequence = sequence.Slice(consumed);
                     return true;
@@ -599,10 +554,7 @@ namespace Omnius.Core.RocketPack
 
                     sequence.CopyTo(tempSpan);
 
-                    if (!InternalTryGetUInt32(tempSpan, out value, out int consumed))
-                    {
-                        return false;
-                    }
+                    if (!InternalTryGetUInt32(tempSpan, out value, out int consumed)) return false;
 
                     sequence = sequence.Slice(consumed);
                     return true;
@@ -619,10 +571,7 @@ namespace Omnius.Core.RocketPack
             {
                 if (reader.UnreadSpan.Length >= 9)
                 {
-                    if (!InternalTryGetUInt64(reader.UnreadSpan, out value, out int consumed))
-                    {
-                        return false;
-                    }
+                    if (!InternalTryGetUInt64(reader.UnreadSpan, out value, out int consumed)) return false;
 
                     reader.Advance(consumed);
                     return true;
@@ -633,15 +582,8 @@ namespace Omnius.Core.RocketPack
                     byte* buffer = stackalloc byte[size];
                     var tempSpan = new Span<byte>(buffer, size);
 
-                    if (!reader.TryCopyTo(tempSpan))
-                    {
-                        return false;
-                    }
-
-                    if (!InternalTryGetUInt64(tempSpan, out value, out int consumed))
-                    {
-                        return false;
-                    }
+                    if (!reader.TryCopyTo(tempSpan)) return false;
+                    if (!InternalTryGetUInt64(tempSpan, out value, out int consumed)) return false;
 
                     reader.Advance(consumed);
                     return true;
@@ -658,10 +600,7 @@ namespace Omnius.Core.RocketPack
             {
                 if (sequence.FirstSpan.Length >= 9)
                 {
-                    if (!InternalTryGetUInt64(sequence.FirstSpan, out value, out int consumed))
-                    {
-                        return false;
-                    }
+                    if (!InternalTryGetUInt64(sequence.FirstSpan, out value, out int consumed)) return false;
 
                     sequence = sequence.Slice(consumed);
                     return true;
@@ -674,10 +613,7 @@ namespace Omnius.Core.RocketPack
 
                     sequence.CopyTo(tempSpan);
 
-                    if (!InternalTryGetUInt64(tempSpan, out value, out int consumed))
-                    {
-                        return false;
-                    }
+                    if (!InternalTryGetUInt64(tempSpan, out value, out int consumed)) return false;
 
                     sequence = sequence.Slice(consumed);
                     return true;
@@ -692,10 +628,7 @@ namespace Omnius.Core.RocketPack
             {
                 result = 0;
 
-                if (!TryGetUInt8(ref reader, out byte byte_result))
-                {
-                    return false;
-                }
+                if (!TryGetUInt8(ref reader, out byte byte_result)) return false;
 
                 result = (sbyte)((byte_result >> 1) ^ (-((sbyte)byte_result & 1)));
                 return true;
@@ -709,10 +642,7 @@ namespace Omnius.Core.RocketPack
             {
                 result = 0;
 
-                if (!TryGetUInt8(ref sequence, out byte byte_result))
-                {
-                    return false;
-                }
+                if (!TryGetUInt8(ref sequence, out byte byte_result)) return false;
 
                 result = (sbyte)((byte_result >> 1) ^ (-((sbyte)byte_result & 1)));
                 return true;
@@ -726,10 +656,7 @@ namespace Omnius.Core.RocketPack
             {
                 result = 0;
 
-                if (!TryGetUInt16(ref reader, out ushort ushort_result))
-                {
-                    return false;
-                }
+                if (!TryGetUInt16(ref reader, out ushort ushort_result)) return false;
 
                 result = (short)((ushort_result >> 1) ^ (-((short)ushort_result & 1)));
                 return true;
@@ -743,10 +670,7 @@ namespace Omnius.Core.RocketPack
             {
                 result = 0;
 
-                if (!TryGetUInt16(ref sequence, out ushort ushort_result))
-                {
-                    return false;
-                }
+                if (!TryGetUInt16(ref sequence, out ushort ushort_result)) return false;
 
                 result = (short)((ushort_result >> 1) ^ (-((short)ushort_result & 1)));
                 return true;
@@ -760,10 +684,7 @@ namespace Omnius.Core.RocketPack
             {
                 result = 0;
 
-                if (!TryGetUInt32(ref reader, out uint uint_result))
-                {
-                    return false;
-                }
+                if (!TryGetUInt32(ref reader, out uint uint_result)) return false;
 
                 result = (int)(uint_result >> 1) ^ (-((int)uint_result & 1));
                 return true;
@@ -777,10 +698,7 @@ namespace Omnius.Core.RocketPack
             {
                 result = 0;
 
-                if (!TryGetUInt32(ref sequence, out uint uint_result))
-                {
-                    return false;
-                }
+                if (!TryGetUInt32(ref sequence, out uint uint_result)) return false;
 
                 result = (int)(uint_result >> 1) ^ (-((int)uint_result & 1));
                 return true;
@@ -794,10 +712,7 @@ namespace Omnius.Core.RocketPack
             {
                 result = 0;
 
-                if (!TryGetUInt64(ref reader, out ulong ulong_result))
-                {
-                    return false;
-                }
+                if (!TryGetUInt64(ref reader, out ulong ulong_result)) return false;
 
                 result = (long)(ulong_result >> 1) ^ (-((long)ulong_result & 1));
                 return true;
@@ -811,10 +726,7 @@ namespace Omnius.Core.RocketPack
             {
                 result = 0;
 
-                if (!TryGetUInt64(ref sequence, out ulong ulong_result))
-                {
-                    return false;
-                }
+                if (!TryGetUInt64(ref sequence, out ulong ulong_result)) return false;
 
                 result = (long)(ulong_result >> 1) ^ (-((long)ulong_result & 1));
                 return true;

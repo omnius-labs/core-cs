@@ -50,10 +50,7 @@ namespace Omnius.Core.Network.Connections
 
                 while (!valueTask1.IsCompleted || !valueTask2.IsCompleted)
                 {
-                    if (stopwatch.Elapsed.TotalSeconds > 60)
-                    {
-                        throw new TimeoutException("Handshake");
-                    }
+                    if (stopwatch.Elapsed.TotalSeconds > 60) throw new TimeoutException("Handshake");
 
                     await Task.Delay(100).ConfigureAwait(false);
                 }
@@ -80,10 +77,7 @@ namespace Omnius.Core.Network.Connections
 
                 while (!valueTask1.IsCompleted || !valueTask2.IsCompleted)
                 {
-                    if (stopwatch.Elapsed.TotalSeconds > 60)
-                    {
-                        throw new TimeoutException("SendAndReceive");
-                    }
+                    if (stopwatch.Elapsed.TotalSeconds > 60) throw new TimeoutException("SendAndReceive");
 
                     await Task.Delay(100).ConfigureAwait(false);
                 }

@@ -126,10 +126,7 @@ namespace Omnius.Core.Network.Connections
 
             public void AddConsumedBytes(int size)
             {
-                if (size < 0)
-                {
-                    throw new ArgumentOutOfRangeException(nameof(size));
-                }
+                if (size < 0) throw new ArgumentOutOfRangeException(nameof(size));
 
                 var now = DateTime.UtcNow;
                 _queue.Enqueue((now, size));

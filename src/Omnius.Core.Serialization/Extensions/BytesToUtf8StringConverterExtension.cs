@@ -10,10 +10,7 @@ namespace Omnius.Core.Serialization.Extensions
 
         public static bool TryEncode(this IBytesToUtf8StringConverter converter, ReadOnlySpan<byte> span, out string text, bool includePrefix = false)
         {
-            if (!converter.TryEncode(span, out var utf8string, includePrefix))
-            {
-                throw new FormatException(nameof(span));
-            }
+            if (!converter.TryEncode(span, out var utf8string, includePrefix)) throw new FormatException(nameof(span));
 
             text = _utf8Encoding.Value.GetString(utf8string);
 
@@ -22,10 +19,7 @@ namespace Omnius.Core.Serialization.Extensions
 
         public static bool TryEncode(this IBytesToUtf8StringConverter converter, ReadOnlySequence<byte> sequence, out string text, bool includePrefix = false)
         {
-            if (!converter.TryEncode(sequence, out var utf8string, includePrefix))
-            {
-                throw new FormatException(nameof(sequence));
-            }
+            if (!converter.TryEncode(sequence, out var utf8string, includePrefix)) throw new FormatException(nameof(sequence));
 
             text = _utf8Encoding.Value.GetString(utf8string);
 
@@ -38,10 +32,7 @@ namespace Omnius.Core.Serialization.Extensions
             {
                 var length = _utf8Encoding.Value.GetBytes(text, recyclableMemory.Memory.Span);
 
-                if (!converter.TryDecode(recyclableMemory.Memory.Span.Slice(0, length), bufferWriter))
-                {
-                    throw new FormatException(nameof(text));
-                }
+                if (!converter.TryDecode(recyclableMemory.Memory.Span.Slice(0, length), bufferWriter)) throw new FormatException(nameof(text));
             }
 
             return true;

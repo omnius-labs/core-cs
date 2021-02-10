@@ -40,10 +40,7 @@ namespace Omnius.Core.Network
 
             var rootFunction = this.Parse();
 
-            if (rootFunction == null)
-            {
-                return false;
-            }
+            if (rootFunction == null) return false;
 
             if (rootFunction.Name == "tcp")
             {
@@ -98,10 +95,7 @@ namespace Omnius.Core.Network
                     {
                         var hostEntry = Dns.GetHostEntry(hostnameConstant.Text);
 
-                        if (hostEntry.AddressList.Length == 0)
-                        {
-                            return false;
-                        }
+                        if (hostEntry.AddressList.Length == 0) return false;
 
                         ipAddress = hostEntry.AddressList[0];
                     }
@@ -116,10 +110,7 @@ namespace Omnius.Core.Network
                     return false;
                 }
 
-                if (!ushort.TryParse(portConstant.Text, out port))
-                {
-                    return false;
-                }
+                if (!ushort.TryParse(portConstant.Text, out port)) return false;
             }
 
             return true;

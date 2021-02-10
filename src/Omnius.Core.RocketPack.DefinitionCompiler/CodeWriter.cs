@@ -52,10 +52,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
 
         private bool TryWriteIndent()
         {
-            if (_wroteIndent)
-            {
-                return false;
-            }
+            if (_wroteIndent) return false;
 
             _wroteIndent = true;
 

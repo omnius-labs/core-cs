@@ -21,10 +21,7 @@ namespace Omnius.Core.Extensions
 
             try
             {
-                if (process.HasExited)
-                {
-                    return;
-                }
+                if (process.HasExited) return;
 
                 using (cancellationToken.Register(() => tcs.TrySetCanceled()))
                 {

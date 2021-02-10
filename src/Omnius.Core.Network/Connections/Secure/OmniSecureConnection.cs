@@ -20,20 +20,9 @@ namespace Omnius.Core.Network.Connections.Secure
 
         public OmniSecureConnection(IConnection connection, OmniSecureConnectionOptions options)
         {
-            if (connection == null)
-            {
-                throw new ArgumentNullException(nameof(connection));
-            }
-
-            if (options == null)
-            {
-                throw new ArgumentNullException(nameof(options));
-            }
-
-            if (!EnumHelper.IsValid(options.Type))
-            {
-                throw new ArgumentException(nameof(options.Type));
-            }
+            if (connection == null) throw new ArgumentNullException(nameof(connection));
+            if (options == null) throw new ArgumentNullException(nameof(options));
+            if (!EnumHelper.IsValid(options.Type)) throw new ArgumentException(nameof(options.Type));
 
             _connection = connection;
             _options = options;
@@ -62,10 +51,7 @@ namespace Omnius.Core.Network.Connections.Secure
         {
             get
             {
-                if (_secureConnection_v1 != null)
-                {
-                    return _secureConnection_v1.MatchedPasswords;
-                }
+                if (_secureConnection_v1 != null) return _secureConnection_v1.MatchedPasswords;
 
                 return Enumerable.Empty<string>();
             }
@@ -81,10 +67,7 @@ namespace Omnius.Core.Network.Connections.Secure
 
             foreach (var item in list)
             {
-                if (hashSet.Contains(item))
-                {
-                    return item;
-                }
+                if (hashSet.Contains(item)) return item;
             }
 
             throw new OmniSecureConnectionException($"Overlap enum of {nameof(T)} could not be found.");
@@ -128,10 +111,7 @@ namespace Omnius.Core.Network.Connections.Secure
 
                 await ValueTaskHelper.WhenAll(enqueueTask, dequeueTask);
 
-                if (receiveHelloMessage is null)
-                {
-                    throw new NullReferenceException();
-                }
+                if (receiveHelloMessage is null) throw new NullReferenceException();
             }
 
             _version = GetOverlapMaxEnum(sendHelloMessage.Versions, receiveHelloMessage.Versions);
@@ -139,50 +119,28 @@ namespace Omnius.Core.Network.Connections.Secure
 
         public bool TryEnqueue(Action<IBufferWriter<byte>> action)
         {
-            if (_secureConnection_v1 != null)
-            {
-                return _secureConnection_v1.TryEnqueue(action);
-            }
-            else
-            {
-                throw new NotSupportedException("Not supported OmniSecureConnectionVersion.");
-            }
+            if (_secureConnection_v1 != null) return _secureConnection_v1.TryEnqueue(action);
+
+            throw new NotSupportedException("Not supported OmniSecureConnectionVersion.");
         }
 
         public async ValueTask EnqueueAsync(Action<IBufferWriter<byte>> action, CancellationToken cancellationToken = default)
         {
-            if (_secureConnection_v1 != null)
-            {
-                await _secureConnection_v1.EnqueueAsync(action, cancellationToken);
-            }
-            else
-            {
-                throw new NotSupportedException("Not supported OmniSecureConnectionVersion.");
-            }
+            if (_secureConnection_v1 != null) await _secureConnection_v1.EnqueueAsync(action, cancellationToken);
+
+            throw new NotSupportedException("Not supported OmniSecureConnectionVersion.");
         }
 
         public bool TryDequeue(Action<ReadOnlySequence<byte>> action)
         {
-            if (_secureConnection_v1 != null)
-            {
-                return _secureConnection_v1.TryDequeue(action);
-            }
-            else
-            {
-                throw new NotSupportedException("Not supported OmniSecureConnectionVersion.");
-            }
+            if (_secureConnection_v1 != null) return _secureConnection_v1.TryDequeue(action);
+
+            throw new NotSupportedException("Not supported OmniSecureConnectionVersion.");
         }
 
         public async ValueTask DequeueAsync(Action<ReadOnlySequence<byte>> action, CancellationToken cancellationToken = default)
         {
-            if (_secureConnection_v1 != null)
-            {
-                await _secureConnection_v1.DequeueAsync(action, cancellationToken);
-            }
-            else
-            {
-                throw new NotSupportedException("Not supported OmniSecureConnectionVersion.");
-            }
+            if (_secureConnection_v1 != null) await _secureConnection_v1.DequeueAsync(action, cancellationToken);
         }
     }
 }

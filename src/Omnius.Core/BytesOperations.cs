@@ -14,10 +14,7 @@ namespace Omnius.Core
 
         public static void Zero(Span<byte> source)
         {
-            if (source.Length == 0)
-            {
-                return;
-            }
+            if (source.Length == 0) return;
 
             fixed (byte* p = source)
             {
@@ -27,20 +24,10 @@ namespace Omnius.Core
 
         public static void Copy(ReadOnlySpan<byte> source, Span<byte> destination, int length)
         {
-            if (length > source.Length)
-            {
-                throw new ArgumentOutOfRangeException(nameof(length));
-            }
+            if (length > source.Length) throw new ArgumentOutOfRangeException(nameof(length));
+            if (length > destination.Length) throw new ArgumentOutOfRangeException(nameof(length));
 
-            if (length > destination.Length)
-            {
-                throw new ArgumentOutOfRangeException(nameof(length));
-            }
-
-            if (length == 0)
-            {
-                return;
-            }
+            if (length == 0) return;
 
             fixed (byte* p_x = source, p_y = destination)
             {
@@ -54,10 +41,7 @@ namespace Omnius.Core
         // http://stackoverflow.com/questions/43289/comparing-two-byte-arrays-in-net
         public static bool Equals(ReadOnlySpan<byte> source1, ReadOnlySpan<byte> source2)
         {
-            if (source1.Length != source2.Length)
-            {
-                return false;
-            }
+            if (source1.Length != source2.Length) return false;
 
             fixed (byte* p_x = source1, p_y = source2)
             {
@@ -67,15 +51,8 @@ namespace Omnius.Core
 
         public static bool Equals(ReadOnlySpan<byte> source1, ReadOnlySpan<byte> source2, int length)
         {
-            if (length > source1.Length)
-            {
-                throw new ArgumentOutOfRangeException(nameof(length));
-            }
-
-            if (length > source2.Length)
-            {
-                throw new ArgumentOutOfRangeException(nameof(length));
-            }
+            if (length > source1.Length) throw new ArgumentOutOfRangeException(nameof(length));
+            if (length > source2.Length) throw new ArgumentOutOfRangeException(nameof(length));
 
             fixed (byte* p_x = source1, p_y = source2)
             {
@@ -85,15 +62,8 @@ namespace Omnius.Core
 
         public static int Compare(ReadOnlySpan<byte> source1, ReadOnlySpan<byte> source2)
         {
-            if (source1.Length != source2.Length)
-            {
-                return (source1.Length > source2.Length) ? 1 : -1;
-            }
-
-            if (source1.Length == 0)
-            {
-                return 0;
-            }
+            if (source1.Length != source2.Length) return (source1.Length > source2.Length) ? 1 : -1;
+            if (source1.Length == 0) return 0;
 
             fixed (byte* p_x = source1, p_y = source2)
             {

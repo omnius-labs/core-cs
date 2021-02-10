@@ -27,10 +27,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                 foreach (var path in includeFiles)
                 {
                     // 重複排除
-                    if (!ignoreSet.Add(path))
-                    {
-                        continue;
-                    }
+                    if (!ignoreSet.Add(path)) continue;
 
                     var definition = DefinitionParser.Load(path);
                     if (!definitionMap.TryGetValue(definition.Namespace.Value, out var list))
@@ -55,10 +52,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                     foreach (var @using in includedDefinitions[i].Usings)
                     {
                         // 既に読み込み済みの場合は読み込まない
-                        if (!ignoreSet.Add(@using.Value))
-                        {
-                            continue;
-                        }
+                        if (!ignoreSet.Add(@using.Value)) continue;
 
                         includedDefinitions.AddRange(definitionMap[@using.Value]);
                     }

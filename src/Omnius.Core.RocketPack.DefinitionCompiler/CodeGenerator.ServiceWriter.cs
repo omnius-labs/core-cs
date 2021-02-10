@@ -306,16 +306,10 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                 foreach (var definition in new[] { _rootDefinition }.Union(_externalDefinitions))
                 {
                     var enumDefinition = definition.Enums.FirstOrDefault(m => m.Name == customType.TypeName);
-                    if (enumDefinition != null)
-                    {
-                        return enumDefinition;
-                    }
+                    if (enumDefinition != null) return enumDefinition;
 
                     var objectDefinition = definition.Objects.FirstOrDefault(m => m.Name == customType.TypeName);
-                    if (objectDefinition != null)
-                    {
-                        return objectDefinition;
-                    }
+                    if (objectDefinition != null) return objectDefinition;
                 }
 
                 return null;

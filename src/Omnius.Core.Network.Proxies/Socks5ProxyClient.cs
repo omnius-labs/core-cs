@@ -64,14 +64,8 @@ namespace Omnius.Core.Network.Proxies
 
         internal Socks5ProxyClient(string destinationHost, int destinationPort)
         {
-            if (string.IsNullOrEmpty(destinationHost))
-            {
-                throw new ArgumentNullException(nameof(destinationHost));
-            }
-            else if (destinationPort <= 0 || destinationPort > 65535)
-            {
-                throw new ArgumentOutOfRangeException(nameof(destinationPort), "port must be greater than zero and less than 65535");
-            }
+            if (string.IsNullOrEmpty(destinationHost)) throw new ArgumentNullException(nameof(destinationHost));
+            else if (destinationPort <= 0 || destinationPort > 65535) throw new ArgumentOutOfRangeException(nameof(destinationPort), "port must be greater than zero and less than 65535");
 
             _destinationHost = destinationHost;
             _destinationPort = destinationPort;
@@ -157,17 +151,11 @@ namespace Omnius.Core.Network.Proxies
                 byte acceptedAuthMethod = response[1];
 
                 // if the server does not accept any of our supported authenication methods then throw an error
-                if (acceptedAuthMethod == SOCKS5_AUTH_METHOD_REPLY_NO_ACCEPTABLE_METHODS)
-                {
-                    throw new ProxyClientException("The proxy destination does not accept the supported proxy client authentication methods.");
-                }
+                if (acceptedAuthMethod == SOCKS5_AUTH_METHOD_REPLY_NO_ACCEPTABLE_METHODS) throw new ProxyClientException("The proxy destination does not accept the supported proxy client authentication methods.");
 
                 if (acceptedAuthMethod == SOCKS5_AUTH_METHOD_USERNAME_PASSWORD)
                 {
-                    if (_proxyUsername is null || _proxyPassword is null)
-                    {
-                        throw new ProxyClientException("The proxy destination requires a username and password for authentication.");
-                    }
+                    if (_proxyUsername is null || _proxyPassword is null) throw new ProxyClientException("The proxy destination requires a username and password for authentication.");
 
                     // USERNAME / PASSWORD SERVER REQUEST
                     // Once the SOCKS V5 server has started, and the client has selected the
@@ -216,10 +204,7 @@ namespace Omnius.Core.Network.Proxies
 
         private byte GetDestAddressType(string host)
         {
-            if (!IPAddress.TryParse(host, out var ipAddress))
-            {
-                return SOCKS5_ADDRTYPE_DOMAIN_NAME;
-            }
+            if (!IPAddress.TryParse(host, out var ipAddress)) return SOCKS5_ADDRTYPE_DOMAIN_NAME;
 
             return ipAddress.AddressFamily switch
             {

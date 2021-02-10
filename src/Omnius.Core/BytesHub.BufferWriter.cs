@@ -52,10 +52,7 @@ namespace Omnius.Core
 
                 int length = _currentMemory.Length - _currentMemoryWrittenCount;
 
-                if (length >= sizeHint)
-                {
-                    return _currentMemory.Slice(_currentMemoryWrittenCount);
-                }
+                if (length >= sizeHint) return _currentMemory.Slice(_currentMemoryWrittenCount);
 
                 _memories.Add(_currentMemory.Slice(0, _currentMemoryWrittenCount));
 
@@ -75,10 +72,7 @@ namespace Omnius.Core
 
             public ReadOnlySequence<byte> GetSequence()
             {
-                if (_currentMemory.IsEmpty)
-                {
-                    return ReadOnlySequence<byte>.Empty;
-                }
+                if (_currentMemory.IsEmpty) return ReadOnlySequence<byte>.Empty;
 
                 MyReadOnlySequenceSegment firstSegment, lastSegment;
 

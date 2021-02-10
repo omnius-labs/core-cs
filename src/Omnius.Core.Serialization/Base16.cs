@@ -21,10 +21,7 @@ namespace Omnius.Core.Serialization
         {
             if (_convertStringCase == ConvertStringCase.Lower)
             {
-                if (c < 10)
-                {
-                    return (byte)(c + '0');
-                }
+                if (c < 10) return (byte)(c + '0');
                 else
                 {
                     return (byte)(c - 10 + 'a');
@@ -32,10 +29,7 @@ namespace Omnius.Core.Serialization
             }
             else if (_convertStringCase == ConvertStringCase.Upper)
             {
-                if (c < 10)
-                {
-                    return (byte)(c + '0');
-                }
+                if (c < 10) return (byte)(c + '0');
                 else
                 {
                     return (byte)(c - 10 + 'A');
@@ -47,18 +41,9 @@ namespace Omnius.Core.Serialization
 
         private byte WordToByte(in byte c)
         {
-            if (c >= '0' && c <= '9')
-            {
-                return (byte)(c - '0');
-            }
-            else if (c >= 'a' && c <= 'f')
-            {
-                return (byte)((c - 'a') + 10);
-            }
-            else if (c >= 'A' && c <= 'F')
-            {
-                return (byte)((c - 'A') + 10);
-            }
+            if (c >= '0' && c <= '9') return (byte)(c - '0');
+            else if (c >= 'a' && c <= 'f') return (byte)((c - 'a') + 10);
+            else if (c >= 'A' && c <= 'F') return (byte)((c - 'A') + 10);
 
             throw new FormatException();
         }
@@ -134,15 +119,9 @@ namespace Omnius.Core.Serialization
 
         public bool TryDecode(ReadOnlySpan<byte> text, IBufferWriter<byte> bufferWriter)
         {
-            if (bufferWriter == null)
-            {
-                throw new ArgumentNullException(nameof(bufferWriter));
-            }
+            if (bufferWriter == null) throw new ArgumentNullException(nameof(bufferWriter));
 
-            if (text.IsEmpty)
-            {
-                return true;
-            }
+            if (text.IsEmpty) return true;
 
             fixed (byte* p_text_fixed = text)
             {

@@ -32,15 +32,8 @@ namespace Omnius.Core.Network.Connections.Secure.V1.Internal
         {
             _connection = connection ?? throw new ArgumentNullException(nameof(connection));
 
-            if (options == null)
-            {
-                throw new ArgumentNullException(nameof(options));
-            }
-
-            if (!EnumHelper.IsValid(options.Type))
-            {
-                throw new ArgumentException(nameof(options.Type));
-            }
+            if (options == null) throw new ArgumentNullException(nameof(options));
+            if (!EnumHelper.IsValid(options.Type)) throw new ArgumentException(nameof(options.Type));
 
             _type = options.Type;
             _passwords = options.Passwords ?? Array.Empty<string>();
@@ -66,10 +59,7 @@ namespace Omnius.Core.Network.Connections.Secure.V1.Internal
 
             foreach (var item in list)
             {
-                if (hashSet.Contains(item))
-                {
-                    return item;
-                }
+                if (hashSet.Contains(item)) return item;
             }
 
             throw new OmniSecureConnectionException($"Overlap enum of {nameof(T)} could not be found.");
@@ -117,15 +107,8 @@ namespace Omnius.Core.Network.Connections.Secure.V1.Internal
 
                 await ValueTaskHelper.WhenAll(enqueueTask, dequeueTask);
 
-                if (otherProfileMessage is null)
-                {
-                    throw new NullReferenceException();
-                }
-
-                if (myProfileMessage.AuthenticationType != otherProfileMessage.AuthenticationType)
-                {
-                    throw new OmniSecureConnectionException("AuthenticationType does not match.");
-                }
+                if (otherProfileMessage is null) throw new NullReferenceException();
+                if (myProfileMessage.AuthenticationType != otherProfileMessage.AuthenticationType) throw new OmniSecureConnectionException("AuthenticationType does not match.");
             }
 
             var keyExchangeAlgorithm = GetOverlapMaxEnum(myProfileMessage.KeyExchangeAlgorithms, otherProfileMessage.KeyExchangeAlgorithms);
@@ -133,25 +116,10 @@ namespace Omnius.Core.Network.Connections.Secure.V1.Internal
             var cryptoAlgorithm = GetOverlapMaxEnum(myProfileMessage.CryptoAlgorithms, otherProfileMessage.CryptoAlgorithms);
             var hashAlgorithm = GetOverlapMaxEnum(myProfileMessage.HashAlgorithms, otherProfileMessage.HashAlgorithms);
 
-            if (!EnumHelper.IsValid(keyExchangeAlgorithm))
-            {
-                throw new OmniSecureConnectionException("key exchange algorithm does not match.");
-            }
-
-            if (!EnumHelper.IsValid(keyDerivationAlgorithm))
-            {
-                throw new OmniSecureConnectionException("key derivation algorithm does not match.");
-            }
-
-            if (!EnumHelper.IsValid(cryptoAlgorithm))
-            {
-                throw new OmniSecureConnectionException("Crypto algorithm does not match.");
-            }
-
-            if (!EnumHelper.IsValid(hashAlgorithm))
-            {
-                throw new OmniSecureConnectionException("Hash algorithm does not match.");
-            }
+            if (!EnumHelper.IsValid(keyExchangeAlgorithm)) throw new OmniSecureConnectionException("key exchange algorithm does not match.");
+            if (!EnumHelper.IsValid(keyDerivationAlgorithm)) throw new OmniSecureConnectionException("key derivation algorithm does not match.");
+            if (!EnumHelper.IsValid(cryptoAlgorithm)) throw new OmniSecureConnectionException("Crypto algorithm does not match.");
+            if (!EnumHelper.IsValid(hashAlgorithm)) throw new OmniSecureConnectionException("Hash algorithm does not match.");
 
             ReadOnlyMemory<byte> secret = null;
 
@@ -170,15 +138,8 @@ namespace Omnius.Core.Network.Connections.Secure.V1.Internal
 
                         await ValueTaskHelper.WhenAll(enqueueTask, dequeueTask);
 
-                        if (otherAgreementPublicKey is null)
-                        {
-                            throw new NullReferenceException();
-                        }
-
-                        if ((DateTime.UtcNow - otherAgreementPublicKey.CreationTime.ToDateTime()).TotalMinutes > 30)
-                        {
-                            throw new OmniSecureConnectionException("Agreement public key has Expired.");
-                        }
+                        if (otherAgreementPublicKey is null) throw new NullReferenceException();
+                        if ((DateTime.UtcNow - otherAgreementPublicKey.CreationTime.ToDateTime()).TotalMinutes > 30) throw new OmniSecureConnectionException("Agreement public key has Expired.");
                     }
 
                     if (_passwords.Count > 0)
@@ -198,10 +159,7 @@ namespace Omnius.Core.Network.Connections.Secure.V1.Internal
 
                             await ValueTaskHelper.WhenAll(enqueueTask, dequeueTask);
 
-                            if (otherAuthenticationMessage is null)
-                            {
-                                throw new NullReferenceException();
-                            }
+                            if (otherAuthenticationMessage is null) throw new NullReferenceException();
 
                             var matchedPasswords = new List<string>();
                             {
@@ -217,10 +175,7 @@ namespace Omnius.Core.Network.Connections.Secure.V1.Internal
                                 }
                             }
 
-                            if (matchedPasswords.Count == 0)
-                            {
-                                throw new OmniSecureConnectionException("Password does not match.");
-                            }
+                            if (matchedPasswords.Count == 0) throw new OmniSecureConnectionException("Password does not match.");
 
                             _matchedPasswords = matchedPasswords.ToArray();
                         }
@@ -324,10 +279,7 @@ namespace Omnius.Core.Network.Connections.Secure.V1.Internal
 
         private void Encode(IBufferWriter<byte> bufferWriter, Action<IBufferWriter<byte>> action)
         {
-            if (_state == null)
-            {
-                throw new OmniSecureConnectionException("Not handshaked");
-            }
+            if (_state == null) throw new OmniSecureConnectionException("Not handshaked");
 
             using var hub = new BytesHub();
             action.Invoke(hub.Writer);
@@ -393,10 +345,7 @@ namespace Omnius.Core.Network.Connections.Secure.V1.Internal
 
         private void Decode(ReadOnlySequence<byte> sequence, Action<ReadOnlySequence<byte>> action)
         {
-            if (_state == null)
-            {
-                throw new OmniSecureConnectionException("Not handshaked");
-            }
+            if (_state == null) throw new OmniSecureConnectionException("Not handshaked");
 
             using var hub = new BytesHub();
 
@@ -414,10 +363,7 @@ namespace Omnius.Core.Network.Connections.Secure.V1.Internal
                         {
                             while (sequence.Length > 0)
                             {
-                                if (sequence.Length <= tag.Length)
-                                {
-                                    throw new FormatException();
-                                }
+                                if (sequence.Length <= tag.Length) throw new FormatException();
 
                                 int contentLength = (int)Math.Min(sequence.Length, FrameSize) - tag.Length;
 

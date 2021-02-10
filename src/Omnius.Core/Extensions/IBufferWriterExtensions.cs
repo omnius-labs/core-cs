@@ -11,10 +11,7 @@ namespace Omnius.Core.Extensions
 
             while (sequence.TryGet(ref position, out var memory, true))
             {
-                if (memory.Length == 0)
-                {
-                    break;
-                }
+                if (memory.Length == 0) break;
 
                 bufferWriter.Write(memory.Span);
             }

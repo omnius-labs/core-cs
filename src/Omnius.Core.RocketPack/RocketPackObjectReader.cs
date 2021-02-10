@@ -26,20 +26,10 @@ namespace Omnius.Core.RocketPack
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public IMemoryOwner<byte> GetRecyclableMemory(in int limit)
         {
-            if (!Varint.TryGetUInt32(ref _reader, out uint length))
-            {
-                throw new FormatException();
-            }
+            if (!Varint.TryGetUInt32(ref _reader, out uint length)) throw new FormatException();
+            if (length > limit) throw new FormatException();
 
-            if (length > limit)
-            {
-                throw new FormatException();
-            }
-
-            if (length == 0)
-            {
-                return MemoryOwner<byte>.Empty;
-            }
+            if (length == 0) return MemoryOwner<byte>.Empty;
 
             var memoryOwner = _bytesPool.Memory.Rent((int)length).Shrink((int)length);
 
@@ -52,20 +42,10 @@ namespace Omnius.Core.RocketPack
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ReadOnlyMemory<byte> GetMemory(in int limit)
         {
-            if (!Varint.TryGetUInt32(ref _reader, out uint length))
-            {
-                throw new FormatException();
-            }
+            if (!Varint.TryGetUInt32(ref _reader, out uint length)) throw new FormatException();
+            if (length > limit) throw new FormatException();
 
-            if (length > limit)
-            {
-                throw new FormatException();
-            }
-
-            if (length == 0)
-            {
-                return ReadOnlyMemory<byte>.Empty;
-            }
+            if (length == 0) return ReadOnlyMemory<byte>.Empty;
 
             var result = new byte[(int)length];
 
@@ -78,15 +58,8 @@ namespace Omnius.Core.RocketPack
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public string GetString(in int limit)
         {
-            if (!Varint.TryGetUInt32(ref _reader, out uint length))
-            {
-                throw new FormatException();
-            }
-
-            if (length > limit)
-            {
-                throw new FormatException();
-            }
+            if (!Varint.TryGetUInt32(ref _reader, out uint length)) throw new FormatException();
+            if (length > limit) throw new FormatException();
 
             using (var memoryOwner = _bytesPool.Memory.Rent((int)length).Shrink((int)length))
             {
@@ -109,10 +82,7 @@ namespace Omnius.Core.RocketPack
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool GetBoolean()
         {
-            if (!Varint.TryGetUInt64(ref _reader, out ulong result))
-            {
-                throw new FormatException();
-            }
+            if (!Varint.TryGetUInt64(ref _reader, out ulong result)) throw new FormatException();
 
             return (result != 0);
         }
@@ -120,10 +90,7 @@ namespace Omnius.Core.RocketPack
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ulong GetUInt64()
         {
-            if (!Varint.TryGetUInt64(ref _reader, out ulong result))
-            {
-                throw new FormatException();
-            }
+            if (!Varint.TryGetUInt64(ref _reader, out ulong result)) throw new FormatException();
 
             return result;
         }
@@ -131,10 +98,7 @@ namespace Omnius.Core.RocketPack
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public byte GetUInt8()
         {
-            if (!Varint.TryGetUInt8(ref _reader, out byte result))
-            {
-                throw new FormatException();
-            }
+            if (!Varint.TryGetUInt8(ref _reader, out byte result)) throw new FormatException();
 
             return result;
         }
@@ -142,10 +106,7 @@ namespace Omnius.Core.RocketPack
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ushort GetUInt16()
         {
-            if (!Varint.TryGetUInt16(ref _reader, out ushort result))
-            {
-                throw new FormatException();
-            }
+            if (!Varint.TryGetUInt16(ref _reader, out ushort result)) throw new FormatException();
 
             return result;
         }
@@ -153,10 +114,7 @@ namespace Omnius.Core.RocketPack
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public uint GetUInt32()
         {
-            if (!Varint.TryGetUInt32(ref _reader, out uint result))
-            {
-                throw new FormatException();
-            }
+            if (!Varint.TryGetUInt32(ref _reader, out uint result)) throw new FormatException();
 
             return result;
         }
@@ -164,10 +122,7 @@ namespace Omnius.Core.RocketPack
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public sbyte GetInt8()
         {
-            if (!Varint.TryGetInt8(ref _reader, out sbyte result))
-            {
-                throw new FormatException();
-            }
+            if (!Varint.TryGetInt8(ref _reader, out sbyte result)) throw new FormatException();
 
             return result;
         }
@@ -175,10 +130,7 @@ namespace Omnius.Core.RocketPack
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public short GetInt16()
         {
-            if (!Varint.TryGetInt16(ref _reader, out short result))
-            {
-                throw new FormatException();
-            }
+            if (!Varint.TryGetInt16(ref _reader, out short result)) throw new FormatException();
 
             return result;
         }
@@ -186,10 +138,7 @@ namespace Omnius.Core.RocketPack
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public int GetInt32()
         {
-            if (!Varint.TryGetInt32(ref _reader, out int result))
-            {
-                throw new FormatException();
-            }
+            if (!Varint.TryGetInt32(ref _reader, out int result)) throw new FormatException();
 
             return result;
         }
@@ -197,10 +146,7 @@ namespace Omnius.Core.RocketPack
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public long GetInt64()
         {
-            if (!Varint.TryGetInt64(ref _reader, out long result))
-            {
-                throw new FormatException();
-            }
+            if (!Varint.TryGetInt64(ref _reader, out long result)) throw new FormatException();
 
             return result;
         }
