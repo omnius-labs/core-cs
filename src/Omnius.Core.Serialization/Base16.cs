@@ -22,18 +22,12 @@ namespace Omnius.Core.Serialization
             if (_convertStringCase == ConvertStringCase.Lower)
             {
                 if (c < 10) return (byte)(c + '0');
-                else
-                {
-                    return (byte)(c - 10 + 'a');
-                }
+                else return (byte)(c - 10 + 'a');
             }
             else if (_convertStringCase == ConvertStringCase.Upper)
             {
                 if (c < 10) return (byte)(c + '0');
-                else
-                {
-                    return (byte)(c - 10 + 'A');
-                }
+                else return (byte)(c - 10 + 'A');
             }
 
             throw new NotSupportedException();
