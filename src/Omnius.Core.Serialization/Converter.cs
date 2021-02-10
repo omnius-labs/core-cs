@@ -117,10 +117,7 @@ namespace Omnius.Core.Serialization
                         crcStream.Read(orignalCrc, 0, orignalCrc.Length);
                     }
 
-                    if (!BytesOperations.SequenceEqual(verifyCrc, orignalCrc))
-                    {
-                        throw new ArgumentException("Crc Error");
-                    }
+                    if (!BytesOperations.SequenceEqual(verifyCrc, orignalCrc)) throw new ArgumentException("Crc Error");
                 }
 
                 stream.Seek(0, SeekOrigin.Begin);

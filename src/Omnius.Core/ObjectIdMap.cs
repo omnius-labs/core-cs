@@ -17,10 +17,7 @@ namespace Omnius.Core
             for (; ; )
             {
                 id = _current++;
-                if (!_idMap.ContainsKey(id))
-                {
-                    break;
-                }
+                if (!_idMap.ContainsKey(id)) break;
             }
 
             _objectMap.Add(item, id);
@@ -31,30 +28,21 @@ namespace Omnius.Core
 
         public int GetId(T item)
         {
-            if (_objectMap.TryGetValue(item, out int id))
-            {
-                return id;
-            }
+            if (_objectMap.TryGetValue(item, out int id)) return id;
 
             throw new KeyNotFoundException();
         }
 
         public T GetItem(int id)
         {
-            if (_idMap.TryGetValue(id, out var item))
-            {
-                return item;
-            }
+            if (_idMap.TryGetValue(id, out var item)) return item;
 
             throw new KeyNotFoundException();
         }
 
         public void Remove(int id)
         {
-            if (!_idMap.TryGetValue(id, out var item))
-            {
-                return;
-            }
+            if (!_idMap.TryGetValue(id, out var item)) return;
 
             _idMap.Remove(id);
             _objectMap.Remove(item);

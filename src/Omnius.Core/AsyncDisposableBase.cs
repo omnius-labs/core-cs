@@ -15,10 +15,7 @@ namespace Omnius.Core
 
         protected void ThrowIfDisposingRequested()
         {
-            if (this.IsDisposed)
-            {
-                throw new ObjectDisposedException(this.GetType().FullName);
-            }
+            if (this.IsDisposed) throw new ObjectDisposedException(this.GetType().FullName);
         }
 
         public async ValueTask DisposeAsync()

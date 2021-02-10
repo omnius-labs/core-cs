@@ -7,15 +7,9 @@ namespace Omnius.Core.Extensions
     {
         public static IMemoryOwner<T> Shrink<T>(this IMemoryOwner<T> memoryOwner, int length)
         {
-            if (memoryOwner.Memory.Length < length)
-            {
-                throw new ArgumentOutOfRangeException(nameof(length));
-            }
+            if (memoryOwner.Memory.Length < length) throw new ArgumentOutOfRangeException(nameof(length));
 
-            if (memoryOwner.Memory.Length == length)
-            {
-                return memoryOwner;
-            }
+            if (memoryOwner.Memory.Length == length) return memoryOwner;
 
             return new CustomMemoryOwner<T>(memoryOwner, length);
         }

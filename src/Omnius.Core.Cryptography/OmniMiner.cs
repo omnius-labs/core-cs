@@ -15,10 +15,7 @@ namespace Omnius.Core.Cryptography
     {
         public static async ValueTask<OmniHashcash> Create(ReadOnlySequence<byte> sequence, ReadOnlyMemory<byte> key, OmniHashcashAlgorithmType hashcashAlgorithmType, int limit, TimeSpan timeout, CancellationToken cancellationToken)
         {
-            if (!EnumHelper.IsValid(hashcashAlgorithmType))
-            {
-                throw new ArgumentException(nameof(OmniHashcashAlgorithmType));
-            }
+            if (!EnumHelper.IsValid(hashcashAlgorithmType)) throw new ArgumentException(nameof(OmniHashcashAlgorithmType));
 
             await Task.Delay(1, cancellationToken).ConfigureAwait(false);
 
@@ -35,10 +32,7 @@ namespace Omnius.Core.Cryptography
 
         public static uint Verify(OmniHashcash hashcash, ReadOnlySequence<byte> sequence, ReadOnlyMemory<byte> key)
         {
-            if (hashcash is null)
-            {
-                throw new ArgumentNullException(nameof(hashcash));
-            }
+            if (hashcash is null) throw new ArgumentNullException(nameof(hashcash));
 
             if (hashcash.AlgorithmType == OmniHashcashAlgorithmType.Sha2_256)
             {
@@ -87,15 +81,8 @@ namespace Omnius.Core.Cryptography
 
             public static byte[] Compute_Simple_Sha2_256(ReadOnlySpan<byte> value, int limit, TimeSpan timeout, CancellationToken cancellationToken)
             {
-                if (value == null)
-                {
-                    throw new ArgumentNullException(nameof(value));
-                }
-
-                if (value.Length != 32)
-                {
-                    throw new ArgumentOutOfRangeException(nameof(value));
-                }
+                if (value == null) throw new ArgumentNullException(nameof(value));
+                if (value.Length != 32) throw new ArgumentOutOfRangeException(nameof(value));
 
                 if (limit < 0)
                 {
@@ -118,10 +105,7 @@ namespace Omnius.Core.Cryptography
 
                 using (var process = Process.Start(info))
                 {
-                    if (process is null)
-                    {
-                        throw new Exception("Failed to Process.Start()");
-                    }
+                    if (process is null) throw new Exception("Failed to Process.Start()");
 
                     process.PriorityClass = ProcessPriorityClass.Idle;
 
@@ -133,10 +117,7 @@ namespace Omnius.Core.Cryptography
                                 while (!process.HasExited)
                                 {
                                     var line = process.StandardOutput.ReadLine();
-                                    if (line is null)
-                                    {
-                                        return;
-                                    }
+                                    if (line is null) return;
 
                                     var result = line.Split(" ");
                                     difficulty = int.Parse(result[0]);
@@ -180,25 +161,10 @@ namespace Omnius.Core.Cryptography
 
             public static uint Verify_Simple_Sha2_256(ReadOnlySpan<byte> key, ReadOnlySpan<byte> value)
             {
-                if (key == null)
-                {
-                    throw new ArgumentNullException(nameof(key));
-                }
-
-                if (key.Length != 32)
-                {
-                    throw new ArgumentOutOfRangeException(nameof(key));
-                }
-
-                if (value == null)
-                {
-                    throw new ArgumentNullException(nameof(value));
-                }
-
-                if (value.Length != 32)
-                {
-                    throw new ArgumentOutOfRangeException(nameof(value));
-                }
+                if (key == null) throw new ArgumentNullException(nameof(key));
+                if (key.Length != 32) throw new ArgumentOutOfRangeException(nameof(key));
+                if (value == null) throw new ArgumentNullException(nameof(value));
+                if (value.Length != 32) throw new ArgumentOutOfRangeException(nameof(value));
 
                 Span<byte> buffer = stackalloc byte[64];
 

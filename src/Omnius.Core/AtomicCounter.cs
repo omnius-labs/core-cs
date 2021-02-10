@@ -35,25 +35,15 @@ namespace Omnius.Core
 
         public override bool Equals(object? obj)
         {
-            if (!(obj is AtomicCounter))
-            {
-                return false;
-            }
+            if (!(obj is AtomicCounter)) return false;
 
             return this.Equals((AtomicCounter)obj);
         }
 
         public bool Equals(AtomicCounter? other)
         {
-            if (other is null)
-            {
-                return false;
-            }
-
-            if (object.ReferenceEquals(this, other))
-            {
-                return true;
-            }
+            if (other is null) return false;
+            if (object.ReferenceEquals(this, other)) return true;
 
             return this.Value == other.Value;
         }

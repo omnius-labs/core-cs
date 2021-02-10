@@ -36,10 +36,7 @@ namespace Omnius.Core.UnitTestToolkit
 
             var expectedJsonString = JsonSerializer.Serialize(expected, options);
             var actualJsonString = JsonSerializer.Serialize(actual, options);
-            if (expectedJsonString == actualJsonString)
-            {
-                return;
-            }
+            if (expectedJsonString == actualJsonString) return;
 
             var diff = InlineDiffBuilder.Diff(expectedJsonString, actualJsonString);
 

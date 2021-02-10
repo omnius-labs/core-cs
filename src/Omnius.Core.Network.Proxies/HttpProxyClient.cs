@@ -75,14 +75,8 @@ namespace Omnius.Core.Network.Proxies
 
         internal HttpProxyClient(string destinationHost, int destinationPort)
         {
-            if (string.IsNullOrEmpty(destinationHost))
-            {
-                throw new ArgumentNullException(nameof(destinationHost));
-            }
-            else if (destinationPort <= 0 || destinationPort > 65535)
-            {
-                throw new ArgumentOutOfRangeException(nameof(destinationPort), "port must be greater than zero and less than 65535");
-            }
+            if (string.IsNullOrEmpty(destinationHost)) throw new ArgumentNullException(nameof(destinationHost));
+            else if (destinationPort <= 0 || destinationPort > 65535) throw new ArgumentOutOfRangeException(nameof(destinationPort), "port must be greater than zero and less than 65535");
 
             _destinationHost = destinationHost;
             _destinationPort = destinationPort;
@@ -174,19 +168,13 @@ namespace Omnius.Core.Network.Proxies
             // get rid of the LF character if it exists and then split the string on all CR
             string line = response.Replace('\n', ' ').Split('\r')[0];
 
-            if (!line.Contains("HTTP"))
-            {
-                throw new ProxyClientException($"No HTTP response received from proxy destination. Server response: {line}");
-            }
+            if (!line.Contains("HTTP")) throw new ProxyClientException($"No HTTP response received from proxy destination. Server response: {line}");
 
             int begin = line.IndexOf(" ") + 1;
             int end = line.IndexOf(" ", begin);
             string value = line[begin..end];
 
-            if (!int.TryParse(value, out int code))
-            {
-                throw new ProxyClientException($"An invalid response code was received from proxy destination. Server response: {line}");
-            }
+            if (!int.TryParse(value, out int code)) throw new ProxyClientException($"An invalid response code was received from proxy destination. Server response: {line}");
 
             text = line[(end + 1)..].Trim();
             return (HttpResponseCodes)code;

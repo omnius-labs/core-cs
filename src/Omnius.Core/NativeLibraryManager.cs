@@ -19,10 +19,7 @@ namespace Omnius.Core
         {
             var methodHandle = NativeLibrary.GetExport(_moduleHandle, method);
 
-            if (methodHandle == IntPtr.Zero)
-            {
-                throw new NotSupportedException();
-            }
+            if (methodHandle == IntPtr.Zero) throw new NotSupportedException();
 
             return Marshal.GetDelegateForFunctionPointer<T>(methodHandle);
         }

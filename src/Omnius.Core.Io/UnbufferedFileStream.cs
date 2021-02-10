@@ -64,10 +64,7 @@ namespace Omnius.Core.Io
         {
             get
             {
-                if (_disposed)
-                {
-                    throw new ObjectDisposedException(this.GetType().FullName);
-                }
+                if (_disposed) throw new ObjectDisposedException(this.GetType().FullName);
 
                 return _stream.CanRead;
             }
@@ -77,10 +74,7 @@ namespace Omnius.Core.Io
         {
             get
             {
-                if (_disposed)
-                {
-                    throw new ObjectDisposedException(this.GetType().FullName);
-                }
+                if (_disposed) throw new ObjectDisposedException(this.GetType().FullName);
 
                 return _stream.CanWrite;
             }
@@ -90,10 +84,7 @@ namespace Omnius.Core.Io
         {
             get
             {
-                if (_disposed)
-                {
-                    throw new ObjectDisposedException(this.GetType().FullName);
-                }
+                if (_disposed) throw new ObjectDisposedException(this.GetType().FullName);
 
                 return _stream.CanSeek;
             }
@@ -103,25 +94,16 @@ namespace Omnius.Core.Io
         {
             get
             {
-                if (_disposed)
-                {
-                    throw new ObjectDisposedException(this.GetType().FullName);
-                }
+                if (_disposed) throw new ObjectDisposedException(this.GetType().FullName);
 
                 return _position;
             }
 
             set
             {
-                if (_disposed)
-                {
-                    throw new ObjectDisposedException(this.GetType().FullName);
-                }
+                if (_disposed) throw new ObjectDisposedException(this.GetType().FullName);
 
-                if (_position == value)
-                {
-                    return;
-                }
+                if (_position == value) return;
 
                 if (_blockIsUpdated)
                 {
@@ -147,10 +129,7 @@ namespace Omnius.Core.Io
         {
             get
             {
-                if (_disposed)
-                {
-                    throw new ObjectDisposedException(this.GetType().FullName);
-                }
+                if (_disposed) throw new ObjectDisposedException(this.GetType().FullName);
 
                 return _length;
             }
@@ -158,10 +137,7 @@ namespace Omnius.Core.Io
 
         public override long Seek(long offset, SeekOrigin origin)
         {
-            if (_disposed)
-            {
-                throw new ObjectDisposedException(this.GetType().FullName);
-            }
+            if (_disposed) throw new ObjectDisposedException(this.GetType().FullName);
 
             if (origin == SeekOrigin.Begin)
             {
@@ -183,30 +159,16 @@ namespace Omnius.Core.Io
 
         public override void SetLength(long value)
         {
-            if (_disposed)
-            {
-                throw new ObjectDisposedException(this.GetType().FullName);
-            }
+            if (_disposed) throw new ObjectDisposedException(this.GetType().FullName);
 
             _length = value;
         }
 
         public override int Read(byte[] buffer, int offset, int count)
         {
-            if (_disposed)
-            {
-                throw new ObjectDisposedException(this.GetType().FullName);
-            }
-
-            if (offset < 0 || buffer.Length < offset)
-            {
-                throw new ArgumentOutOfRangeException(nameof(offset));
-            }
-
-            if (count < 0 || (buffer.Length - offset) < count)
-            {
-                throw new ArgumentOutOfRangeException(nameof(count));
-            }
+            if (_disposed) throw new ObjectDisposedException(this.GetType().FullName);
+            if (offset < 0 || buffer.Length < offset) throw new ArgumentOutOfRangeException(nameof(offset));
+            if (count < 0 || (buffer.Length - offset) < count) throw new ArgumentOutOfRangeException(nameof(count));
 
             if (count == 0)
             {
@@ -256,25 +218,11 @@ namespace Omnius.Core.Io
 
         public override void Write(byte[] buffer, int offset, int count)
         {
-            if (_disposed)
-            {
-                throw new ObjectDisposedException(this.GetType().FullName);
-            }
+            if (_disposed) throw new ObjectDisposedException(this.GetType().FullName);
+            if (offset < 0 || buffer.Length < offset) throw new ArgumentOutOfRangeException(nameof(offset));
+            if (count < 0 || (buffer.Length - offset) < count) throw new ArgumentOutOfRangeException(nameof(count));
 
-            if (offset < 0 || buffer.Length < offset)
-            {
-                throw new ArgumentOutOfRangeException(nameof(offset));
-            }
-
-            if (count < 0 || (buffer.Length - offset) < count)
-            {
-                throw new ArgumentOutOfRangeException(nameof(count));
-            }
-
-            if (count == 0)
-            {
-                return;
-            }
+            if (count == 0) return;
 
             while (count > 0)
             {
@@ -310,10 +258,7 @@ namespace Omnius.Core.Io
 
         public override void Flush()
         {
-            if (_blockPosition == -1)
-            {
-                return;
-            }
+            if (_blockPosition == -1) return;
 
             if (_blockIsUpdated)
             {
@@ -354,10 +299,7 @@ namespace Omnius.Core.Io
         {
             try
             {
-                if (_disposed)
-                {
-                    return;
-                }
+                if (_disposed) return;
 
                 _disposed = true;
 

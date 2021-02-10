@@ -28,10 +28,7 @@ namespace Omnius.Core.Serialization
         {
             text = Array.Empty<byte>();
 
-            if (span.IsEmpty)
-            {
-                return true;
-            }
+            if (span.IsEmpty) return true;
 
             // Skip & count leading zeroes.
             int zeroCount = 0;
@@ -133,10 +130,7 @@ namespace Omnius.Core.Serialization
         {
             text = Array.Empty<byte>();
 
-            if (sequence.IsEmpty)
-            {
-                return true;
-            }
+            if (sequence.IsEmpty) return true;
 
             // Skip & count leading zeroes.
             int zeroCount = 0;
@@ -242,15 +236,9 @@ namespace Omnius.Core.Serialization
 
         public bool TryDecode(ReadOnlySpan<byte> text, IBufferWriter<byte> bufferWriter)
         {
-            if (bufferWriter == null)
-            {
-                throw new ArgumentNullException(nameof(bufferWriter));
-            }
+            if (bufferWriter == null) throw new ArgumentNullException(nameof(bufferWriter));
 
-            if (text.IsEmpty)
-            {
-                return true;
-            }
+            if (text.IsEmpty) return true;
 
             // Skip and count leading '1's.
             int zeroCount = 0;

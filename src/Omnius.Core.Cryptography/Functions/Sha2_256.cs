@@ -20,10 +20,7 @@ namespace Omnius.Core.Cryptography.Functions
 
         public static byte[] ComputeHash(string value)
         {
-            if (value == null)
-            {
-                throw new ArgumentNullException(nameof(value));
-            }
+            if (value == null) throw new ArgumentNullException(nameof(value));
 
             byte[] result = new byte[32];
             TryComputeHash(value, result.AsSpan());
@@ -49,10 +46,7 @@ namespace Omnius.Core.Cryptography.Functions
 
         public static bool TryComputeHash(string value, Span<byte> destination)
         {
-            if (value == null)
-            {
-                throw new ArgumentNullException(nameof(value));
-            }
+            if (value == null) throw new ArgumentNullException(nameof(value));
 
             using (var recyclableMemory = MemoryPool<byte>.Shared.Rent(_utf8Encoding.Value!.GetMaxByteCount(value.Length)))
             {

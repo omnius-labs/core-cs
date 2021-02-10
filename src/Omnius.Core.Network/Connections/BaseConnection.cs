@@ -39,10 +39,7 @@ namespace Omnius.Core.Network.Connections
             _cap = cap ?? throw new ArgumentNullException(nameof(cap));
             _dispatcher = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));
 
-            if (option == null)
-            {
-                throw new ArgumentNullException(nameof(option));
-            }
+            if (option == null) throw new ArgumentNullException(nameof(option));
 
             _maxReceiveByteCount = Math.Max(256, option.MaxReceiveByteCount);
             _bytesPool = option.BytesPool ?? BytesPool.Shared;
@@ -84,10 +81,7 @@ namespace Omnius.Core.Network.Connections
         {
             this.ThrowIfDisposingRequested();
 
-            if (!this.IsConnected)
-            {
-                throw new ConnectionException("Not connected");
-            }
+            if (!this.IsConnected) throw new ConnectionException("Not connected");
 
             lock (_sendLockObject)
             {
@@ -96,28 +90,16 @@ namespace Omnius.Core.Network.Connections
 
                 while (total < maxSize)
                 {
-                    if (_sendHeaderBufferPosition == -1 && !_sendContentHubWriterIsCompleted)
-                    {
-                        break;
-                    }
+                    if (_sendHeaderBufferPosition == -1 && !_sendContentHubWriterIsCompleted) break;
 
-                    if (++loopCount > 5)
-                    {
-                        break;
-                    }
+                    if (++loopCount > 5) break;
 
                     if (_sendHeaderBufferPosition < 4)
                     {
-                        if (!_cap.CanSend())
-                        {
-                            break;
-                        }
+                        if (!_cap.CanSend()) break;
 
                         int sendLength = _cap.Send(_sendHeaderBuffer.AsSpan().Slice(_sendHeaderBufferPosition));
-                        if (sendLength <= 0)
-                        {
-                            break;
-                        }
+                        if (sendLength <= 0) break;
 
                         _sendHeaderBufferPosition += sendLength;
                     }
@@ -128,18 +110,12 @@ namespace Omnius.Core.Network.Connections
 
                         while (total < maxSize && sequence.Length > 0 && sequence.TryGet(ref position, out var memory, false))
                         {
-                            if (!_cap.CanSend())
-                            {
-                                break;
-                            }
+                            if (!_cap.CanSend()) break;
 
                             int readLength = Math.Min(maxSize - total, memory.Length);
 
                             int sendLength = _cap.Send(memory.Span.Slice(0, readLength));
-                            if (sendLength <= 0)
-                            {
-                                break;
-                            }
+                            if (sendLength <= 0) break;
 
                             position = sequence.GetPosition(sendLength, position);
 
@@ -170,10 +146,7 @@ namespace Omnius.Core.Network.Connections
         {
             this.ThrowIfDisposingRequested();
 
-            if (!this.IsConnected)
-            {
-                throw new ConnectionException("Not connected");
-            }
+            if (!this.IsConnected) throw new ConnectionException("Not connected");
 
             lock (_receiveLockObject)
             {
@@ -182,40 +155,25 @@ namespace Omnius.Core.Network.Connections
 
                 while (total < maxSize)
                 {
-                    if (_receiveContentHubWriterIsCompleted)
-                    {
-                        break;
-                    }
+                    if (_receiveContentHubWriterIsCompleted) break;
 
-                    if (++loopCount > 5)
-                    {
-                        break;
-                    }
+                    if (++loopCount > 5) break;
 
                     if (_receiveContentRemain == -1)
                     {
                         for (; ; )
                         {
-                            if (!_cap.CanReceive())
-                            {
-                                break;
-                            }
+                            if (!_cap.CanReceive()) break;
 
                             int receiveLength = _cap.Receive(_receiveHeaderBuffer.AsSpan().Slice(_receiveHeaderBufferPosition));
-                            if (receiveLength <= 0)
-                            {
-                                break;
-                            }
+                            if (receiveLength <= 0) break;
 
                             _receiveHeaderBufferPosition += receiveLength;
 
                             if (_receiveHeaderBufferPosition == 4)
                             {
                                 var contentLength = BinaryPrimitives.ReadInt32BigEndian(_receiveHeaderBuffer);
-                                if (contentLength > _maxReceiveByteCount)
-                                {
-                                    throw new ConnectionException("This message is too long");
-                                }
+                                if (contentLength > _maxReceiveByteCount) throw new ConnectionException("This message is too long");
 
                                 _receiveContentRemain = contentLength;
 
@@ -226,16 +184,10 @@ namespace Omnius.Core.Network.Connections
 
                     while (_receiveContentRemain > 0)
                     {
-                        if (!_cap.CanReceive())
-                        {
-                            break;
-                        }
+                        if (!_cap.CanReceive()) break;
 
                         int receiveLength = _cap.Receive(_receiveContentHub.Writer.GetSpan(_receiveContentRemain).Slice(0, _receiveContentRemain));
-                        if (receiveLength <= 0)
-                        {
-                            break;
-                        }
+                        if (receiveLength <= 0) break;
 
                         _receiveContentHub.Writer.Advance(receiveLength);
                         _receiveContentRemain -= receiveLength;
@@ -268,10 +220,7 @@ namespace Omnius.Core.Network.Connections
 
         public bool TryEnqueue(Action<IBufferWriter<byte>> action)
         {
-            if (!_sendSemaphoreSlim.Wait(0))
-            {
-                return false;
-            }
+            if (!_sendSemaphoreSlim.Wait(0)) return false;
 
             this.InternalEnqueue(action);
             return true;
@@ -294,10 +243,7 @@ namespace Omnius.Core.Network.Connections
 
         public bool TryDequeue(Action<ReadOnlySequence<byte>> action)
         {
-            if (!_receiveSemaphoreSlim.Wait(0))
-            {
-                return false;
-            }
+            if (!_receiveSemaphoreSlim.Wait(0)) return false;
 
             this.InternalDequeue(action);
             return true;

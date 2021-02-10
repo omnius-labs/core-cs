@@ -1706,24 +1706,15 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                 if (isFullName)
                 {
                     var result = FindDefsForRootAndExternalByFullName(customType);
-                    if (result is not null)
-                    {
-                        return result;
-                    }
+                    if (result is not null) return result;
                 }
                 else
                 {
                     var result = FindDefsForRootByName(customType);
-                    if (result is not null)
-                    {
-                        return result;
-                    }
+                    if (result is not null) return result;
 
                     result = FindDefsForExternalByName(customType);
-                    if (result is not null)
-                    {
-                        return result;
-                    }
+                    if (result is not null) return result;
                 }
 
                 throw ThrowHelper.CreateRocketPackDefinitionCompilerException_DefinitionNotFound(customType.TypeName);
@@ -1767,10 +1758,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                 {
                     int count = results.Count();
 
-                    if (count > 1)
-                    {
-                        throw ThrowHelper.CreateRocketPackDefinitionCompilerException_NotOneDefinitionFound(customType.TypeName);
-                    }
+                    if (count > 1) throw ThrowHelper.CreateRocketPackDefinitionCompilerException_NotOneDefinitionFound(customType.TypeName);
 
                     return results.FirstOrDefault();
                 }

@@ -8,15 +8,8 @@ namespace Omnius.Core.Extensions
         // http://stackoverflow.com/questions/8195242/removing-from-a-linkedlist
         public static int RemoveAll<T>(this LinkedList<T> list, Predicate<T> match)
         {
-            if (list == null)
-            {
-                throw new ArgumentNullException(nameof(list));
-            }
-
-            if (match == null)
-            {
-                throw new ArgumentNullException(nameof(match));
-            }
+            if (list == null) throw new ArgumentNullException(nameof(list));
+            if (match == null) throw new ArgumentNullException(nameof(match));
 
             int count = 0;
             var node = list.First;

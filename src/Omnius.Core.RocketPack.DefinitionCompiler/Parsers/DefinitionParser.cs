@@ -270,10 +270,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler.Parsers
             // struct形式のメッセージはOptional型は認めない。
             foreach (var objectDefinition in result.Objects.Where(n => n.FormatType == MessageFormatType.Struct))
             {
-                if (objectDefinition.Elements.Any(n => n.Type.IsOptional))
-                {
-                    throw new Exception();
-                }
+                if (objectDefinition.Elements.Any(n => n.Type.IsOptional)) throw new Exception();
             }
         }
 

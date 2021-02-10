@@ -11,15 +11,8 @@ namespace Omnius.Core.Network.Caps
 
         public SocketCap(Socket socket)
         {
-            if (socket == null)
-            {
-                throw new ArgumentNullException(nameof(socket));
-            }
-
-            if (!socket.Connected)
-            {
-                throw new ArgumentException("Socket is not connected.");
-            }
+            if (socket == null) throw new ArgumentNullException(nameof(socket));
+            if (!socket.Connected) throw new ArgumentException("Socket is not connected.");
 
             _socket = socket;
             _socket.Blocking = false;
@@ -50,10 +43,7 @@ namespace Omnius.Core.Network.Caps
         {
             this.ThrowIfDisposingRequested();
 
-            if (!_isConnected)
-            {
-                throw new CapException();
-            }
+            if (!_isConnected) throw new CapException();
 
             try
             {
@@ -71,10 +61,7 @@ namespace Omnius.Core.Network.Caps
         {
             this.ThrowIfDisposingRequested();
 
-            if (!_isConnected)
-            {
-                throw new CapException("Closed");
-            }
+            if (!_isConnected) throw new CapException("Closed");
 
             try
             {

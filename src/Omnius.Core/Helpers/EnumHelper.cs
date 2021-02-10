@@ -23,10 +23,7 @@ namespace Omnius.Core.Helpers
 
             foreach (var item in list)
             {
-                if (hashSet.Contains(item))
-                {
-                    return item;
-                }
+                if (hashSet.Contains(item)) return item;
             }
 
             throw new Exception($"Overlap enum of {nameof(T)} could not be found.");
