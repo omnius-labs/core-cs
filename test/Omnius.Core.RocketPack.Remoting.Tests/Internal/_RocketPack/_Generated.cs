@@ -3,7 +3,7 @@
 
 namespace Omnius.Core.RocketPack.Remoting.Tests.Internal
 {
-    internal sealed partial class TestParam : global::Omnius.Core.RocketPack.IRocketPackObject<global::Omnius.Core.RocketPack.Remoting.Tests.Internal.TestParam>
+    public sealed partial class TestParam : global::Omnius.Core.RocketPack.IRocketPackObject<global::Omnius.Core.RocketPack.Remoting.Tests.Internal.TestParam>
     {
         public static global::Omnius.Core.RocketPack.IRocketPackObjectFormatter<global::Omnius.Core.RocketPack.Remoting.Tests.Internal.TestParam> Formatter => global::Omnius.Core.RocketPack.IRocketPackObject<global::Omnius.Core.RocketPack.Remoting.Tests.Internal.TestParam>.Formatter;
         public static global::Omnius.Core.RocketPack.Remoting.Tests.Internal.TestParam Empty => global::Omnius.Core.RocketPack.IRocketPackObject<global::Omnius.Core.RocketPack.Remoting.Tests.Internal.TestParam>.Empty;
@@ -101,7 +101,7 @@ namespace Omnius.Core.RocketPack.Remoting.Tests.Internal
             }
         }
     }
-    internal sealed partial class TestResult : global::Omnius.Core.RocketPack.IRocketPackObject<global::Omnius.Core.RocketPack.Remoting.Tests.Internal.TestResult>
+    public sealed partial class TestResult : global::Omnius.Core.RocketPack.IRocketPackObject<global::Omnius.Core.RocketPack.Remoting.Tests.Internal.TestResult>
     {
         public static global::Omnius.Core.RocketPack.IRocketPackObjectFormatter<global::Omnius.Core.RocketPack.Remoting.Tests.Internal.TestResult> Formatter => global::Omnius.Core.RocketPack.IRocketPackObject<global::Omnius.Core.RocketPack.Remoting.Tests.Internal.TestResult>.Formatter;
         public static global::Omnius.Core.RocketPack.Remoting.Tests.Internal.TestResult Empty => global::Omnius.Core.RocketPack.IRocketPackObject<global::Omnius.Core.RocketPack.Remoting.Tests.Internal.TestResult>.Empty;
@@ -199,14 +199,14 @@ namespace Omnius.Core.RocketPack.Remoting.Tests.Internal
             }
         }
     }
-    internal interface ITestService
+    public interface ITestService
     {
         global::System.Threading.Tasks.ValueTask<global::Omnius.Core.RocketPack.Remoting.Tests.Internal.TestResult> Unary1Async(global::Omnius.Core.RocketPack.Remoting.Tests.Internal.TestParam param, global::System.Threading.CancellationToken cancellationToken = default);
         global::System.Threading.Tasks.ValueTask Unary2Async(global::Omnius.Core.RocketPack.Remoting.Tests.Internal.TestParam param, global::System.Threading.CancellationToken cancellationToken = default);
         global::System.Threading.Tasks.ValueTask<global::Omnius.Core.RocketPack.Remoting.Tests.Internal.TestResult> Unary3Async(global::System.Threading.CancellationToken cancellationToken = default);
         global::System.Threading.Tasks.ValueTask Unary4Async(global::System.Threading.CancellationToken cancellationToken = default);
     }
-    internal class TestService
+    public class TestService
     {
         public class Client : global::Omnius.Core.AsyncDisposableBase, global::Omnius.Core.RocketPack.Remoting.Tests.Internal.ITestService
         {
@@ -223,22 +223,22 @@ namespace Omnius.Core.RocketPack.Remoting.Tests.Internal
             {
                 await _remoting.DisposeAsync();
             }
-            public async global::System.Threading.Tasks.ValueTask<global::Omnius.Core.RocketPack.Remoting.Tests.Internal.TestResult> Unary1Async(global::Omnius.Core.RocketPack.Remoting.Tests.Internal.TestParam param, global::System.Threading.CancellationToken cancellationToken)
+            public async global::System.Threading.Tasks.ValueTask<global::Omnius.Core.RocketPack.Remoting.Tests.Internal.TestResult> Unary1Async(global::Omnius.Core.RocketPack.Remoting.Tests.Internal.TestParam param, global::System.Threading.CancellationToken cancellationToken = default)
             {
                 using var function = await _remoting.ConnectAsync(1, cancellationToken);
                 return await function.CallFunctionAsync<global::Omnius.Core.RocketPack.Remoting.Tests.Internal.TestParam, global::Omnius.Core.RocketPack.Remoting.Tests.Internal.TestResult>(param, cancellationToken);
             }
-            public async global::System.Threading.Tasks.ValueTask Unary2Async(global::Omnius.Core.RocketPack.Remoting.Tests.Internal.TestParam param, global::System.Threading.CancellationToken cancellationToken)
+            public async global::System.Threading.Tasks.ValueTask Unary2Async(global::Omnius.Core.RocketPack.Remoting.Tests.Internal.TestParam param, global::System.Threading.CancellationToken cancellationToken = default)
             {
                 using var function = await _remoting.ConnectAsync(2, cancellationToken);
                 await function.CallActionAsync<global::Omnius.Core.RocketPack.Remoting.Tests.Internal.TestParam>(param, cancellationToken);
             }
-            public async global::System.Threading.Tasks.ValueTask<global::Omnius.Core.RocketPack.Remoting.Tests.Internal.TestResult> Unary3Async(global::System.Threading.CancellationToken cancellationToken)
+            public async global::System.Threading.Tasks.ValueTask<global::Omnius.Core.RocketPack.Remoting.Tests.Internal.TestResult> Unary3Async(global::System.Threading.CancellationToken cancellationToken = default)
             {
                 using var function = await _remoting.ConnectAsync(3, cancellationToken);
                 return await function.CallFunctionAsync<global::Omnius.Core.RocketPack.Remoting.Tests.Internal.TestResult>(cancellationToken);
             }
-            public async global::System.Threading.Tasks.ValueTask Unary4Async(global::System.Threading.CancellationToken cancellationToken)
+            public async global::System.Threading.Tasks.ValueTask Unary4Async(global::System.Threading.CancellationToken cancellationToken = default)
             {
                 using var function = await _remoting.ConnectAsync(4, cancellationToken);
                 await function.CallActionAsync(cancellationToken);

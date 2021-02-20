@@ -10,16 +10,16 @@ namespace Omnius.Core.Extensions
         [Fact]
         public void WaitOneTest()
         {
-            using (var e1 = new ManualResetEvent(false))
+            using (var manualResetEvent = new ManualResetEvent(false))
             using (var cancellationTokenSource = new CancellationTokenSource())
             {
-                Assert.False(e1.WaitOne(1000, cancellationTokenSource.Token));
+                Assert.False(manualResetEvent.WaitOne(1000, cancellationTokenSource.Token));
 
                 Task.Run(() => { cancellationTokenSource.Cancel(); });
 
                 Assert.Throws<OperationCanceledException>(() =>
                 {
-                    e1.WaitOne(3000, cancellationTokenSource.Token);
+                    manualResetEvent.WaitOne(3000, cancellationTokenSource.Token);
                 });
             }
         }

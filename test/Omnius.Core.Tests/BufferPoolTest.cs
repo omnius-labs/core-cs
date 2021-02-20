@@ -14,11 +14,8 @@ namespace Omnius.Core
             for (int i = 0; i < 32; i++)
             {
                 int size = random.Next(1, 1024 * 1024 * 32);
-                var buffer = bytesPool.Memory.Rent(size);
-
+                using var buffer = bytesPool.Memory.Rent(size);
                 Assert.True(buffer.Memory.Length >= size);
-
-                buffer.Dispose();
             }
         }
     }

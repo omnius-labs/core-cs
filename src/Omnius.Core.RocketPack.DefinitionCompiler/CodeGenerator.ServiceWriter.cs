@@ -121,7 +121,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                             if (this.FindDefinition(func.InType) is ObjectDefinition inTypeObjectDef
                                 && this.FindDefinition(func.OutType) is ObjectDefinition outTypeObjectDef)
                             {
-                                b.WriteLine($"public async {GenerateTypeFullName("ValueTask<>", outTypeObjectDef.CSharpFullName)} {func.CSharpFunctionName}({inTypeObjectDef.CSharpFullName} param, {GenerateTypeFullName("CancellationToken")} cancellationToken)");
+                                b.WriteLine($"public async {GenerateTypeFullName("ValueTask<>", outTypeObjectDef.CSharpFullName)} {func.CSharpFunctionName}({inTypeObjectDef.CSharpFullName} param, {GenerateTypeFullName("CancellationToken")} cancellationToken = default)");
                                 b.WriteLine("{");
 
                                 using (b.Indent())
@@ -137,7 +137,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                         {
                             if (this.FindDefinition(func.OutType) is ObjectDefinition outTypeObjectDef)
                             {
-                                b.WriteLine($"public async {GenerateTypeFullName("ValueTask<>", outTypeObjectDef.CSharpFullName)} {func.CSharpFunctionName}({GenerateTypeFullName("CancellationToken")} cancellationToken)");
+                                b.WriteLine($"public async {GenerateTypeFullName("ValueTask<>", outTypeObjectDef.CSharpFullName)} {func.CSharpFunctionName}({GenerateTypeFullName("CancellationToken")} cancellationToken = default)");
                                 b.WriteLine("{");
 
                                 using (b.Indent())
@@ -153,7 +153,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                         {
                             if (this.FindDefinition(func.InType) is ObjectDefinition inTypeObjectDef)
                             {
-                                b.WriteLine($"public async {GenerateTypeFullName("ValueTask")} {func.CSharpFunctionName}({inTypeObjectDef.CSharpFullName} param, {GenerateTypeFullName("CancellationToken")} cancellationToken)");
+                                b.WriteLine($"public async {GenerateTypeFullName("ValueTask")} {func.CSharpFunctionName}({inTypeObjectDef.CSharpFullName} param, {GenerateTypeFullName("CancellationToken")} cancellationToken = default)");
                                 b.WriteLine("{");
 
                                 using (b.Indent())
@@ -168,7 +168,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                         else if (func.InType is null && func.OutType is null)
                         {
                             {
-                                b.WriteLine($"public async {GenerateTypeFullName("ValueTask")} {func.CSharpFunctionName}({GenerateTypeFullName("CancellationToken")} cancellationToken)");
+                                b.WriteLine($"public async {GenerateTypeFullName("ValueTask")} {func.CSharpFunctionName}({GenerateTypeFullName("CancellationToken")} cancellationToken = default)");
                                 b.WriteLine("{");
 
                                 using (b.Indent())

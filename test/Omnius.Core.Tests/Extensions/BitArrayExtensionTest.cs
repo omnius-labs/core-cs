@@ -9,7 +9,7 @@ namespace Omnius.Core.Extensions
         [Fact]
         public void GetCardinalityTest()
         {
-            var random = new Random();
+            var random = new Random(0);
 
             const int maxLength = 1024 * 8;
 

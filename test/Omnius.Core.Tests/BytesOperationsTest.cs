@@ -10,7 +10,7 @@ namespace Omnius.Core
         [Fact]
         public void CopyTest()
         {
-            var random = new Random();
+            var random = new Random(0);
 
             foreach (var maxLength in new int[] { 0, 32, 1024, 1024 * 32, 1024 * 1024 })
             {
@@ -24,7 +24,7 @@ namespace Omnius.Core
                     var offset = Math.Min(buffer.Length, random.Next(0, 1024 * 1024));
                     random.NextBytes(buffer);
 
-                    BytesOperations.Copy(buffer.AsSpan().Slice(offset), targetBuffer1.AsSpan().Slice(offset), buffer.Length - offset);
+                    BytesOperations.Copy(buffer.AsSpan()[offset..], targetBuffer1.AsSpan()[offset..], buffer.Length - offset);
                     Array.Copy(buffer, offset, targetBuffer2, offset, buffer.Length - offset);
 
                     Assert.True(Enumerable.SequenceEqual(targetBuffer1, targetBuffer2));
@@ -35,8 +35,6 @@ namespace Omnius.Core
         [Fact]
         public void EqualsTest()
         {
-            var random = new Random();
-
             Assert.True(BytesOperations.Equals(new byte[] { 0, 1, 2, 3, 4 }, (ReadOnlySpan<byte>)(new byte[] { 0, 1, 2, 3, 4 })));
             Assert.False(BytesOperations.Equals(new byte[] { 0, 1, 2, 3, 4 }, (ReadOnlySpan<byte>)(new byte[] { 0, 1, 2, 3, 4, 5 })));
             Assert.True(BytesOperations.Equals(new byte[] { 0, 1, 2, 3, 4 }.AsSpan().Slice(2), new byte[] { 0, 1, 2, 3, 4 }.AsSpan().Slice(2)));
@@ -72,7 +70,7 @@ namespace Omnius.Core
 
         private void InternalBitwiseTest()
         {
-            var random = new Random();
+            var random = new Random(0);
 
             for (int i = 0; i < 256; i++)
             {

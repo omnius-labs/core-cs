@@ -1,5 +1,7 @@
 using System.Threading;
+using System.Threading.Channels;
 using System.Threading.Tasks;
+using Moq;
 using Omnius.Core.Network.Caps;
 using Omnius.Core.Network.Connections;
 using Omnius.Core.RocketPack.Remoting.Tests.Internal;
@@ -18,22 +20,20 @@ namespace Omnius.Core.RocketPack.Remoting
             using var senderConnection = new BaseConnection(new SocketCap(senderSocket), dispacher, new BaseConnectionOptions());
             using var receiverConnection = new BaseConnection(new SocketCap(receiverSocket), dispacher, new BaseConnectionOptions());
 
-            await using var senderRpc = new RocketPackRemoting(senderConnection, BytesPool.Shared);
-            await using var receiverRpc = new RocketPackRemoting(receiverConnection, BytesPool.Shared);
+            var mockTestService = new Mock<ITestService>();
+            mockTestService.Setup(n => n.Unary1Async(It.IsAny<TestParam>(), It.IsAny<CancellationToken>())).Returns(new ValueTask<TestResult>(new TestResult(1)));
 
-            var receiverAcceptTask = receiverRpc.AcceptAsync();
-            var senderConnectTask = senderRpc.ConnectAsync(0);
+            var client = new TestService.Client(senderConnection, BytesPool.Shared);
+            var server = new TestService.Server(mockTestService.Object, receiverConnection, BytesPool.Shared);
 
-            using var senderStream = await senderConnectTask;
-            using var receiverStream = await receiverAcceptTask;
+            var eventLoop = server.EventLoopAsync();
 
-            static async ValueTask<TestResult> square(TestParam param, CancellationToken _) => new TestResult(param.Value * param.Value);
+            var testResult1 = await client.Unary1Async(new TestParam(1), default);
+            mockTestService.Verify(n => n.Unary1Async(new TestParam(1), default), Times.AtMostOnce());
 
-            var listenTask = receiverStream.ListenFunctionAsync<TestParam, TestResult>(square);
-            var result = await senderStream.CallFunctionAsync<TestParam, TestResult>(new TestParam(11));
-            await listenTask;
+            await client.DisposeAsync();
 
-            Assert.Equal(121, result.Value);
+            await Assert.ThrowsAsync<ChannelClosedException>(() => eventLoop);
         }
     }
 }

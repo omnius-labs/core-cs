@@ -9,6 +9,8 @@ namespace Omnius.Core.Network.Connections
 {
     public sealed class BaseConnectionDispatcher : AsyncDisposableBase
     {
+        private static readonly NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
+
         private readonly BaseConnectionDispatcherOptions _options;
 
         private readonly HashSet<BaseConnection> _connections = new();
@@ -21,7 +23,7 @@ namespace Omnius.Core.Network.Connections
         public BaseConnectionDispatcher(BaseConnectionDispatcherOptions options)
         {
             _options = options;
-            _eventLoop = this.EventLoop(_cancellationTokenSource.Token);
+            _eventLoop = this.EventLoopAsync(_cancellationTokenSource.Token);
         }
 
         protected override async ValueTask OnDisposeAsync()
@@ -33,7 +35,7 @@ namespace Omnius.Core.Network.Connections
             _cancellationTokenSource.Dispose();
         }
 
-        private Task EventLoop(CancellationToken cancellationToken)
+        private Task EventLoopAsync(CancellationToken cancellationToken)
         {
             return Task.Factory.StartNew(
                 () =>
@@ -48,17 +50,9 @@ namespace Omnius.Core.Network.Connections
                         {
                             cancellationToken.WaitHandle.WaitOne(200, cancellationToken);
 
-                            List<BaseConnection>? tempList = null;
-
                             lock (_lockObject)
                             {
-                                tempList = _connections.ToList();
-                            }
-
-                            random.Shuffle(tempList);
-                            foreach (var connection in tempList)
-                            {
-                                try
+                                foreach (var connection in _connections.Randomize())
                                 {
                                     // Send
                                     {
@@ -74,19 +68,12 @@ namespace Omnius.Core.Network.Connections
                                         receiveBytesLimiter.AddConsumedBytes(consumedBytes);
                                     }
                                 }
-                                catch (ConnectionException)
-                                {
-                                    _connections.Remove(connection);
-                                }
-                                catch (ObjectDisposedException)
-                                {
-                                    _connections.Remove(connection);
-                                }
                             }
                         }
                     }
-                    catch (OperationCanceledException)
+                    catch (OperationCanceledException e)
                     {
+                        _logger.Debug(e);
                     }
                 }, TaskCreationOptions.LongRunning);
         }
@@ -99,9 +86,17 @@ namespace Omnius.Core.Network.Connections
             }
         }
 
+        internal void Remove(BaseConnection connection)
+        {
+            lock (_lockObject)
+            {
+                _connections.Remove(connection);
+            }
+        }
+
         private sealed class Limiter
         {
-            private readonly Queue<(DateTime time, int size)> _queue = new Queue<(DateTime time, int size)>();
+            private readonly Queue<(DateTime time, int size)> _queue = new();
             private readonly int _maxBytesPerSecond;
 
             public Limiter(int maxBytesPerSecond)

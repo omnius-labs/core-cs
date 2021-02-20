@@ -5,12 +5,12 @@ namespace Omnius.Core.Helpers
 {
     public static class DirectoryHelper
     {
-        public static void CreateDirectory(string path)
+        public static bool CreateDirectory(string path)
         {
-            if (!Directory.Exists(path))
-            {
-                Directory.CreateDirectory(path);
-            }
+            if (Directory.Exists(path)) return false;
+
+            Directory.CreateDirectory(path);
+            return true;
         }
     }
 }
