@@ -10,29 +10,62 @@ using Omnius.Core.RocketPack.Remoting.Internal;
 
 namespace Omnius.Core.RocketPack.Remoting
 {
-    public sealed partial class RocketPackRemoting : AsyncDisposableBase
+    public interface IRocketPackRemotingFactory
+    {
+        IRocketPackRemoting Create(IConnection connection, IRocketPackRemotingMessengerFactory messengerFactory, IRocketPackRemotingFunctionFactory functionFactory, IBytesPool bytesPool);
+    }
+
+    public interface IRocketPackRemoting : IAsyncDisposable
+    {
+        ValueTask<IRocketPackRemotingFunction> ConnectAsync(uint functionId, CancellationToken cancellationToken = default);
+
+        ValueTask<IRocketPackRemotingFunction> AcceptAsync(CancellationToken cancellationToken = default);
+    }
+
+    public sealed class RocketPackRemoting : AsyncDisposableBase, IRocketPackRemoting
     {
         private static readonly NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
 
         private readonly IConnection _connection;
+        private readonly IRocketPackRemotingMessengerFactory _messengerFactory;
+        private readonly IRocketPackRemotingFunctionFactory _functionFactory;
         private readonly IBytesPool _bytesPool;
 
         private readonly Random _random = new();
 
-        private readonly Task _eventLoopTask;
+        private readonly IRocketPackRemotingMessenger _messenger = null!;
+        private readonly IRocketPackRemotingMessageReceiver _messageReceiver = null!;
+
+        private Task _eventLoopTask = null!;
         private readonly CancellationTokenSource _cancellationTokenSource = new();
-        private Exception? _eventLoopException = null;
 
-        private readonly Channel<DataStream> _acceptedStreamChannel = Channel.CreateBounded<DataStream>(10);
+        private readonly Channel<(uint sessionId, uint functionId)> _acceptedSessionChannel = Channel.CreateBounded<(uint, uint)>(10);
+        private readonly Dictionary<uint, RocketPackRemotingSession> _sessions = new();
 
-        private readonly Dictionary<uint, DataStream> _streamMap = new();
+        private uint _currentNextSessionId = 0;
 
         private readonly object _lockObject = new();
 
-        public RocketPackRemoting(IConnection connection, IBytesPool bytesPool)
+        internal sealed class RocketPackRemotingFactory : IRocketPackRemotingFactory
+        {
+            public IRocketPackRemoting Create(IConnection connection, IRocketPackRemotingMessengerFactory messengerFactory, IRocketPackRemotingFunctionFactory functionFactory, IBytesPool bytesPool)
+            {
+                var result = new RocketPackRemoting(connection, messengerFactory, functionFactory, bytesPool);
+                return result;
+            }
+        }
+
+        public static IRocketPackRemotingFactory Factory { get; } = new RocketPackRemotingFactory();
+
+        public RocketPackRemoting(IConnection connection, IRocketPackRemotingMessengerFactory messengerFactory, IRocketPackRemotingFunctionFactory functionFactory, IBytesPool bytesPool)
         {
             _connection = connection;
+            _messengerFactory = messengerFactory;
+            _functionFactory = functionFactory;
             _bytesPool = bytesPool;
+
+            _messageReceiver = new RocketPackRemotingMessageReceiver(this);
+            _messenger = _messengerFactory.Create(_connection, _messageReceiver, _bytesPool);
             _eventLoopTask = this.EventLoopAsync(_cancellationTokenSource.Token);
         }
 
@@ -41,160 +74,173 @@ namespace Omnius.Core.RocketPack.Remoting
             _cancellationTokenSource.Cancel();
             await _eventLoopTask;
             _cancellationTokenSource.Dispose();
+
             _connection.Dispose();
         }
 
-        private enum StreamPacketType : byte
+        private uint NextSessionId()
         {
-            Unknown = 0,
-            ConnectMessage = 1,
-            CloseMessage = 2,
-            DataMessage = 3,
-        }
-
-        public async ValueTask<RocketPackRemotingFunction> ConnectAsync(uint functionId, CancellationToken cancellationToken = default)
-        {
-            this.ThrowIfDisposingRequested();
-            this.ThrowIfEventLoopWasError();
-
-            DataStream? stream = null;
-
             lock (_lockObject)
             {
-                uint streamId;
-
                 for (; ; )
                 {
-                    streamId = (uint)_random.Next();
-                    if (!_streamMap.ContainsKey(streamId)) break;
+                    if (!_sessions.ContainsKey(_currentNextSessionId))
+                    {
+                        return _currentNextSessionId++;
+                    }
                 }
-
-                stream = new DataStream(streamId, functionId, _connection, () => this.RemoveStream(streamId));
-                _streamMap.TryAdd(streamId, stream);
             }
-
-            await _connection.EnqueueAsync(
-                (bufferWriter) =>
-                {
-                    var packetType = (byte)StreamPacketType.ConnectMessage;
-
-                    Varint.SetUInt8(packetType, bufferWriter);
-                    Varint.SetUInt32(stream.StreamId, bufferWriter);
-                    Varint.SetUInt32(functionId, bufferWriter);
-                }, cancellationToken);
-
-            return new RocketPackRemotingFunction(stream, _bytesPool);
         }
 
-        public async ValueTask<RocketPackRemotingFunction> AcceptAsync(CancellationToken cancellationToken = default)
+        public async ValueTask<IRocketPackRemotingFunction> ConnectAsync(uint functionId, CancellationToken cancellationToken = default)
         {
-            this.ThrowIfDisposingRequested();
-            this.ThrowIfEventLoopWasError();
+            var sessionId = this.NextSessionId();
+            await _messenger.SendConnectMessageAsync(sessionId, functionId, cancellationToken);
 
-            var stream = await _acceptedStreamChannel.Reader.ReadAsync(cancellationToken);
-            return new RocketPackRemotingFunction(stream, _bytesPool);
+            var session = new RocketPackRemotingSession(sessionId, functionId, this, _bytesPool);
+            _sessions.Add(session.Id, session);
+
+            return _functionFactory.Create(session, _bytesPool);
+        }
+
+        public async ValueTask<IRocketPackRemotingFunction> AcceptAsync(CancellationToken cancellationToken = default)
+        {
+            var (sessionId, functionId) = await _acceptedSessionChannel.Reader.ReadAsync(cancellationToken);
+
+            var session = new RocketPackRemotingSession(sessionId, functionId, this, _bytesPool);
+            _sessions.Add(sessionId, session);
+
+            return _functionFactory.Create(session, _bytesPool);
         }
 
         private async Task EventLoopAsync(CancellationToken cancellationToken = default)
         {
+            Exception? eventLoopException = null;
+
             try
             {
                 while (!cancellationToken.IsCancellationRequested)
                 {
                     cancellationToken.ThrowIfCancellationRequested();
 
-                    await _connection.DequeueAsync(
-                        async (sequence) =>
-                        {
-                            if (!Varint.TryGetUInt8(ref sequence, out var packetType)) throw ThrowHelper.CreateRocketPackRpcProtocolException_UnexpectedProtocol();
-                            if (!Varint.TryGetUInt32(ref sequence, out var streamId)) throw ThrowHelper.CreateRocketPackRpcProtocolException_UnexpectedProtocol();
-
-                            switch ((StreamPacketType)packetType)
-                            {
-                                case StreamPacketType.ConnectMessage:
-                                    {
-                                        if (!Varint.TryGetUInt32(ref sequence, out var callId)) throw ThrowHelper.CreateRocketPackRpcProtocolException_UnexpectedProtocol();
-
-                                        DataStream stream;
-
-                                        lock (_lockObject)
-                                        {
-                                            if (_streamMap.ContainsKey(streamId)) throw ThrowHelper.CreateRocketPackRpcProtocolException_UnexpectedProtocol();
-
-                                            stream = new DataStream(streamId, callId, _connection, () => this.RemoveStream(streamId));
-                                            _streamMap.TryAdd(streamId, stream);
-                                        }
-
-                                        await _acceptedStreamChannel.Writer.WriteAsync(stream);
-                                    }
-
-                                    break;
-                                case StreamPacketType.CloseMessage:
-                                    {
-                                        DataStream? stream;
-
-                                        lock (_lockObject)
-                                        {
-                                            if (!_streamMap.TryGetValue(streamId, out stream)) throw ThrowHelper.CreateRocketPackRpcProtocolException_UnexpectedProtocol();
-                                        }
-
-                                        stream.OnReceivedCloseMessage();
-
-                                        lock (_lockObject)
-                                        {
-                                            _streamMap.Remove(streamId);
-                                        }
-                                    }
-
-                                    break;
-                                case StreamPacketType.DataMessage:
-                                    {
-                                        DataStream? stream;
-
-                                        lock (_lockObject)
-                                        {
-                                            if (!_streamMap.TryGetValue(streamId, out stream)) throw ThrowHelper.CreateRocketPackRpcProtocolException_UnexpectedProtocol();
-                                        }
-
-                                        var buffer = _bytesPool.Array.Rent((int)sequence.Length);
-                                        sequence.CopyTo(buffer);
-                                        await stream.OnReceivedDataMessageAsync(new ArraySegment<byte>(buffer, 0, (int)sequence.Length));
-                                    }
-
-                                    break;
-                            }
-                        }, cancellationToken);
+                    await _messenger.EventLoopAsync(cancellationToken);
                 }
             }
             catch (OperationCanceledException e)
             {
-                _eventLoopException = e;
+                eventLoopException = e;
                 _logger.Debug(e);
             }
             catch (Exception e)
             {
-                _eventLoopException = e;
+                eventLoopException = e;
                 _logger.Error(e);
             }
             finally
             {
-                _acceptedStreamChannel.Writer.Complete(_eventLoopException);
+                if (eventLoopException is not null)
+                {
+                    _acceptedSessionChannel.Writer.Complete(eventLoopException);
+                }
             }
         }
 
-        private void ThrowIfEventLoopWasError()
+        internal class RocketPackRemotingSession : IRocketPackRemotingSession
         {
-            if (_eventLoopException is not null)
+            private readonly RocketPackRemoting _remoting;
+            private readonly IBytesPool _bytesPool;
+
+            private readonly Channel<ArraySegment<byte>> _receivedDataMessage = Channel.CreateBounded<ArraySegment<byte>>(10);
+
+            public RocketPackRemotingSession(uint id, uint functionId, RocketPackRemoting remoting, IBytesPool bytesPool)
             {
-                ExceptionDispatchInfo.Throw(_eventLoopException);
+                this.Id = id;
+                this.FunctionId = functionId;
+                _remoting = remoting;
+                _bytesPool = bytesPool;
+            }
+
+            public void Dispose()
+            {
+                _receivedDataMessage.Writer.Complete();
+
+                lock (_remoting._lockObject)
+                {
+                    _remoting._sessions.Remove(this.Id);
+                }
+            }
+
+            public uint Id { get; }
+
+            public uint FunctionId { get; }
+
+            public async ValueTask SendAbortMessageAsync()
+            {
+                await _remoting._messenger.SendCancelMessageAsync(this.Id);
+            }
+
+            internal void OnReceiveAbortMessageEvent()
+            {
+                this.ReceiveAbortMessageEvent.Invoke();
+            }
+
+            public event Action ReceiveAbortMessageEvent = () => { };
+
+            public async ValueTask SendDataMessageAsync(Action<IBufferWriter<byte>> action, CancellationToken cancellationToken = default)
+            {
+                await _remoting._messenger.SendDataMessageAsync(this.Id, action, cancellationToken);
+            }
+
+            internal async ValueTask OnReceiveDataMessageAsync(ReadOnlySequence<byte> sequence, CancellationToken cancellationToken = default)
+            {
+                var buffer = _bytesPool.Array.Rent((int)sequence.Length);
+                sequence.CopyTo(buffer);
+                await _receivedDataMessage.Writer.WriteAsync(new ArraySegment<byte>(buffer, 0, (int)sequence.Length), cancellationToken);
+            }
+
+            public async ValueTask ReceiveDataMessageAsync(Action<ReadOnlySequence<byte>> action, CancellationToken cancellationToken = default)
+            {
+                var buffer = await _receivedDataMessage.Reader.ReadAsync(cancellationToken);
+                action.Invoke(new ReadOnlySequence<byte>(buffer.Array!, buffer.Offset, buffer.Count));
             }
         }
 
-        internal void RemoveStream(uint streamId)
+        internal class RocketPackRemotingMessageReceiver : IRocketPackRemotingMessageReceiver
         {
-            lock (_lockObject)
+            private readonly RocketPackRemoting _remoting;
+
+            public RocketPackRemotingMessageReceiver(RocketPackRemoting remoting)
             {
-                _streamMap.Remove(streamId);
+                _remoting = remoting;
+            }
+
+            public async ValueTask OnReceiveConnectMessageAsync(uint sessionId, uint functionId)
+            {
+                await _remoting._acceptedSessionChannel.Writer.WriteAsync((sessionId, functionId));
+            }
+
+            public async ValueTask OnReceiveDataMessageAsync(uint sessionId, ReadOnlySequence<byte> sequence)
+            {
+                RocketPackRemotingSession? session = null;
+
+                lock (_remoting._lockObject)
+                {
+                    if (!_remoting._sessions.TryGetValue(sessionId, out session)) return;
+                }
+
+                await session.OnReceiveDataMessageAsync(sequence);
+            }
+
+            public async ValueTask OnReceiveCancelMessageAsync(uint sessionId)
+            {
+                RocketPackRemotingSession? session = null;
+
+                lock (_remoting._lockObject)
+                {
+                    if (!_remoting._sessions.TryGetValue(sessionId, out session)) return;
+                }
+
+                session.OnReceiveAbortMessageEvent();
             }
         }
     }

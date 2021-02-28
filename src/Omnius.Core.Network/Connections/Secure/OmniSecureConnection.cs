@@ -51,7 +51,10 @@ namespace Omnius.Core.Network.Connections.Secure
         {
             get
             {
-                if (_secureConnection_v1 != null) return _secureConnection_v1.MatchedPasswords;
+                if (_secureConnection_v1 != null)
+                {
+                    return _secureConnection_v1.MatchedPasswords;
+                }
 
                 return Enumerable.Empty<string>();
             }
@@ -119,28 +122,44 @@ namespace Omnius.Core.Network.Connections.Secure
 
         public bool TryEnqueue(Action<IBufferWriter<byte>> action)
         {
-            if (_secureConnection_v1 != null) return _secureConnection_v1.TryEnqueue(action);
+            if (_secureConnection_v1 != null)
+            {
+                return _secureConnection_v1.TryEnqueue(action);
+            }
 
             throw new NotSupportedException("Not supported OmniSecureConnectionVersion.");
         }
 
         public async ValueTask EnqueueAsync(Action<IBufferWriter<byte>> action, CancellationToken cancellationToken = default)
         {
-            if (_secureConnection_v1 != null) await _secureConnection_v1.EnqueueAsync(action, cancellationToken);
+            if (_secureConnection_v1 != null)
+            {
+                await _secureConnection_v1.EnqueueAsync(action, cancellationToken);
+                return;
+            }
 
             throw new NotSupportedException("Not supported OmniSecureConnectionVersion.");
         }
 
         public bool TryDequeue(Action<ReadOnlySequence<byte>> action)
         {
-            if (_secureConnection_v1 != null) return _secureConnection_v1.TryDequeue(action);
+            if (_secureConnection_v1 != null)
+            {
+                return _secureConnection_v1.TryDequeue(action);
+            }
 
             throw new NotSupportedException("Not supported OmniSecureConnectionVersion.");
         }
 
         public async ValueTask DequeueAsync(Action<ReadOnlySequence<byte>> action, CancellationToken cancellationToken = default)
         {
-            if (_secureConnection_v1 != null) await _secureConnection_v1.DequeueAsync(action, cancellationToken);
+            if (_secureConnection_v1 != null)
+            {
+                await _secureConnection_v1.DequeueAsync(action, cancellationToken);
+                return;
+            }
+
+            throw new NotSupportedException("Not supported OmniSecureConnectionVersion.");
         }
     }
 }

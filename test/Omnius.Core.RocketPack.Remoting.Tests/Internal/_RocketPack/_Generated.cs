@@ -212,12 +212,12 @@ namespace Omnius.Core.RocketPack.Remoting.Tests.Internal
         {
             private readonly global::Omnius.Core.Network.Connections.IConnection _connection;
             private readonly global::Omnius.Core.IBytesPool _bytesPool;
-            private readonly global::Omnius.Core.RocketPack.Remoting.RocketPackRemoting _remoting;
+            private readonly global::Omnius.Core.RocketPack.Remoting.IRocketPackRemoting _remoting;
             public Client(global::Omnius.Core.Network.Connections.IConnection connection, global::Omnius.Core.IBytesPool bytesPool)
             {
                 _connection = connection;
                 _bytesPool = bytesPool;
-                _remoting = new global::Omnius.Core.RocketPack.Remoting.RocketPackRemoting(_connection, _bytesPool);
+                _remoting = global::Omnius.Core.RocketPack.Remoting.RocketPackRemoting.Factory.Create(_connection, global::Omnius.Core.RocketPack.Remoting.RocketPackRemotingMessenger.Factory, global::Omnius.Core.RocketPack.Remoting.RocketPackRemotingFunction.Factory, _bytesPool);
             }
             protected override async global::System.Threading.Tasks.ValueTask OnDisposeAsync()
             {
@@ -249,13 +249,13 @@ namespace Omnius.Core.RocketPack.Remoting.Tests.Internal
             private readonly global::Omnius.Core.RocketPack.Remoting.Tests.Internal.ITestService _service;
             private readonly global::Omnius.Core.Network.Connections.IConnection _connection;
             private readonly global::Omnius.Core.IBytesPool _bytesPool;
-            private readonly global::Omnius.Core.RocketPack.Remoting.RocketPackRemoting _remoting;
+            private readonly global::Omnius.Core.RocketPack.Remoting.IRocketPackRemoting _remoting;
             public Server(global::Omnius.Core.RocketPack.Remoting.Tests.Internal.ITestService service, global::Omnius.Core.Network.Connections.IConnection connection, global::Omnius.Core.IBytesPool bytesPool)
             {
                 _service = service;
                 _connection = connection;
                 _bytesPool = bytesPool;
-                _remoting = new global::Omnius.Core.RocketPack.Remoting.RocketPackRemoting(_connection, _bytesPool);
+                _remoting = global::Omnius.Core.RocketPack.Remoting.RocketPackRemoting.Factory.Create(_connection, global::Omnius.Core.RocketPack.Remoting.RocketPackRemotingMessenger.Factory, global::Omnius.Core.RocketPack.Remoting.RocketPackRemotingFunction.Factory, _bytesPool);
             }
             protected override async global::System.Threading.Tasks.ValueTask OnDisposeAsync()
             {

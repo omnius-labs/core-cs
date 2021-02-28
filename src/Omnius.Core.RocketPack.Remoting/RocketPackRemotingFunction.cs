@@ -7,16 +7,77 @@ using Omnius.Core.RocketPack.Remoting.Internal;
 
 namespace Omnius.Core.RocketPack.Remoting
 {
-    public sealed partial class RocketPackRemotingFunction : DisposableBase
+    public interface IRocketPackRemotingFunctionFactory
     {
-        private readonly RocketPackRemoting.DataStream _stream;
+        IRocketPackRemotingFunction Create(IRocketPackRemotingSession session, IBytesPool bytesPool);
+    }
+
+    public interface IRocketPackRemotingSession : IDisposable
+    {
+        uint Id { get; }
+
+        uint FunctionId { get; }
+
+        ValueTask SendAbortMessageAsync();
+
+        event Action ReceiveAbortMessageEvent;
+
+        ValueTask SendDataMessageAsync(Action<IBufferWriter<byte>> action, CancellationToken cancellationToken = default);
+
+        ValueTask ReceiveDataMessageAsync(Action<ReadOnlySequence<byte>> action, CancellationToken cancellationToken = default);
+    }
+
+    public interface IRocketPackRemotingFunction : IDisposable
+    {
+        uint Id { get; }
+
+        ValueTask CallActionAsync(CancellationToken cancellationToken = default);
+
+        ValueTask CallActionAsync<TParam>(TParam param, CancellationToken cancellationToken = default)
+            where TParam : IRocketPackObject<TParam>;
+
+        ValueTask<TResult> CallFunctionAsync<TResult>(CancellationToken cancellationToken = default)
+            where TResult : IRocketPackObject<TResult>;
+
+        ValueTask<TResult> CallFunctionAsync<TParam, TResult>(TParam param, CancellationToken cancellationToken = default)
+            where TParam : IRocketPackObject<TParam>
+            where TResult : IRocketPackObject<TResult>;
+
+        ValueTask ListenActionAsync(Func<CancellationToken, ValueTask> callback, CancellationToken cancellationToken = default);
+
+        ValueTask ListenActionAsync<TParam>(Func<TParam, CancellationToken, ValueTask> callback, CancellationToken cancellationToken = default)
+            where TParam : IRocketPackObject<TParam>;
+
+        ValueTask ListenFunctionAsync<TResult>(Func<CancellationToken, ValueTask<TResult>> callback, CancellationToken cancellationToken = default)
+            where TResult : IRocketPackObject<TResult>;
+
+        ValueTask ListenFunctionAsync<TParam, TResult>(Func<TParam, CancellationToken, ValueTask<TResult>> callback, CancellationToken cancellationToken = default)
+            where TParam : IRocketPackObject<TParam>
+            where TResult : IRocketPackObject<TResult>;
+    }
+
+    public sealed partial class RocketPackRemotingFunction : DisposableBase, IRocketPackRemotingFunction
+    {
+        private readonly IRocketPackRemotingSession _session;
         private readonly IBytesPool _bytesPool;
 
         private readonly CancellationTokenSource _cancellationTokenSource = new();
 
-        internal RocketPackRemotingFunction(RocketPackRemoting.DataStream stream, IBytesPool bytesPool)
+        internal sealed class RocketPackRemotingFunctionFactory : IRocketPackRemotingFunctionFactory
         {
-            _stream = stream;
+            public IRocketPackRemotingFunction Create(IRocketPackRemotingSession session, IBytesPool bytesPool)
+            {
+                var result = new RocketPackRemotingFunction(session, bytesPool);
+                return result;
+            }
+        }
+
+        public static IRocketPackRemotingFunctionFactory Factory { get; } = new RocketPackRemotingFunctionFactory();
+
+        internal RocketPackRemotingFunction(IRocketPackRemotingSession session, IBytesPool bytesPool)
+        {
+            _session = session;
+            _session.ReceiveAbortMessageEvent += this.Abort;
             _bytesPool = bytesPool;
         }
 
@@ -24,11 +85,17 @@ namespace Omnius.Core.RocketPack.Remoting
         {
             if (disposing)
             {
-                _stream.Dispose();
+                _session.ReceiveAbortMessageEvent -= this.Abort;
+                _session.Dispose();
             }
         }
 
-        public uint Id => _stream.FunctionId;
+        public uint Id => _session.FunctionId;
+
+        private void Abort()
+        {
+            _cancellationTokenSource.Cancel();
+        }
 
         public async ValueTask<TResult> CallFunctionAsync<TParam, TResult>(TParam param, CancellationToken cancellationToken = default)
             where TParam : IRocketPackObject<TParam>
@@ -55,12 +122,12 @@ namespace Omnius.Core.RocketPack.Remoting
             }
             catch (OperationCanceledException)
             {
-                await _stream.SendCloseAsync();
+                await _session.SendAbortMessageAsync();
                 throw;
             }
         }
 
-        public async ValueTask ListenFunctionAsync<TParam, TResult>(Func<TParam, CancellationToken, ValueTask<TResult>> func, CancellationToken cancellationToken = default)
+        public async ValueTask ListenFunctionAsync<TParam, TResult>(Func<TParam, CancellationToken, ValueTask<TResult>> callback, CancellationToken cancellationToken = default)
             where TParam : IRocketPackObject<TParam>
             where TResult : IRocketPackObject<TResult>
         {
@@ -73,13 +140,13 @@ namespace Omnius.Core.RocketPack.Remoting
             {
                 try
                 {
-                    var result = await func.Invoke(receivedParam.Message!, linkedTokenSource.Token);
+                    var result = await callback.Invoke(receivedParam.Message!, linkedTokenSource.Token);
                     await this.SendCompletedAsync(result, linkedTokenSource.Token);
                     return;
                 }
                 catch (Exception e)
                 {
-                    await this.SendErrorAsync(this.CreateErrorMessage(e));
+                    await this.SendErrorAsync(this.CreateErrorMessage(e), cancellationToken);
                 }
             }
 
@@ -108,12 +175,12 @@ namespace Omnius.Core.RocketPack.Remoting
             }
             catch (OperationCanceledException)
             {
-                await _stream.SendCloseAsync();
+                await _session.SendAbortMessageAsync();
                 throw;
             }
         }
 
-        public async ValueTask ListenFunctionAsync<TResult>(Func<CancellationToken, ValueTask<TResult>> func, CancellationToken cancellationToken = default)
+        public async ValueTask ListenFunctionAsync<TResult>(Func<CancellationToken, ValueTask<TResult>> callback, CancellationToken cancellationToken = default)
             where TResult : IRocketPackObject<TResult>
         {
             this.ThrowIfDisposingRequested();
@@ -122,13 +189,13 @@ namespace Omnius.Core.RocketPack.Remoting
 
             try
             {
-                var result = await func.Invoke(linkedTokenSource.Token);
+                var result = await callback.Invoke(linkedTokenSource.Token);
                 await this.SendCompletedAsync(result, linkedTokenSource.Token);
                 return;
             }
             catch (Exception e)
             {
-                await this.SendErrorAsync(this.CreateErrorMessage(e));
+                await this.SendErrorAsync(this.CreateErrorMessage(e), cancellationToken);
             }
         }
 
@@ -143,19 +210,25 @@ namespace Omnius.Core.RocketPack.Remoting
 
                 var receivedResult = await this.ReceiveAsync(cancellationToken);
 
-                if (receivedResult.IsCompleted) return;
-                else if (receivedResult.IsError) throw ThrowHelper.CreateRocketPackRpcApplicationException(receivedResult.ErrorMessage!);
+                if (receivedResult.IsCompleted)
+                {
+                    return;
+                }
+                else if (receivedResult.IsError)
+                {
+                    throw ThrowHelper.CreateRocketPackRpcApplicationException(receivedResult.ErrorMessage!);
+                }
 
                 throw ThrowHelper.CreateRocketPackRpcProtocolException_UnexpectedProtocol();
             }
             catch (OperationCanceledException)
             {
-                await _stream.SendCloseAsync();
+                await _session.SendAbortMessageAsync();
                 throw;
             }
         }
 
-        public async ValueTask ListenActionAsync<TParam>(Func<TParam, CancellationToken, ValueTask> func, CancellationToken cancellationToken = default)
+        public async ValueTask ListenActionAsync<TParam>(Func<TParam, CancellationToken, ValueTask> callback, CancellationToken cancellationToken = default)
             where TParam : IRocketPackObject<TParam>
         {
             this.ThrowIfDisposingRequested();
@@ -167,13 +240,13 @@ namespace Omnius.Core.RocketPack.Remoting
             {
                 try
                 {
-                    await func.Invoke(receivedParam.Message!, linkedTokenSource.Token);
+                    await callback.Invoke(receivedParam.Message!, linkedTokenSource.Token);
                     await this.SendCompletedAsync(linkedTokenSource.Token);
                     return;
                 }
                 catch (Exception e)
                 {
-                    await this.SendErrorAsync(this.CreateErrorMessage(e));
+                    await this.SendErrorAsync(this.CreateErrorMessage(e), cancellationToken);
                 }
             }
 
@@ -188,19 +261,25 @@ namespace Omnius.Core.RocketPack.Remoting
             {
                 var receivedResult = await this.ReceiveAsync(cancellationToken);
 
-                if (receivedResult.IsCompleted) return;
-                else if (receivedResult.IsError) throw ThrowHelper.CreateRocketPackRpcApplicationException(receivedResult.ErrorMessage!);
+                if (receivedResult.IsCompleted)
+                {
+                    return;
+                }
+                else if (receivedResult.IsError)
+                {
+                    throw ThrowHelper.CreateRocketPackRpcApplicationException(receivedResult.ErrorMessage!);
+                }
 
                 throw ThrowHelper.CreateRocketPackRpcProtocolException_UnexpectedProtocol();
             }
             catch (OperationCanceledException)
             {
-                await _stream.SendCloseAsync();
+                await _session.SendAbortMessageAsync();
                 throw;
             }
         }
 
-        public async ValueTask ListenActionAsync(Func<CancellationToken, ValueTask> func, CancellationToken cancellationToken = default)
+        public async ValueTask ListenActionAsync(Func<CancellationToken, ValueTask> callback, CancellationToken cancellationToken = default)
         {
             this.ThrowIfDisposingRequested();
 
@@ -208,13 +287,13 @@ namespace Omnius.Core.RocketPack.Remoting
 
             try
             {
-                await func.Invoke(linkedTokenSource.Token);
+                await callback.Invoke(linkedTokenSource.Token);
                 await this.SendCompletedAsync(linkedTokenSource.Token);
                 return;
             }
             catch (Exception e)
             {
-                await this.SendErrorAsync(this.CreateErrorMessage(e));
+                await this.SendErrorAsync(this.CreateErrorMessage(e), cancellationToken);
             }
         }
 
@@ -226,15 +305,16 @@ namespace Omnius.Core.RocketPack.Remoting
         private enum FunctionPacketType : byte
         {
             Unknown = 0,
-            Completed = 1,
-            Continue = 2,
-            Error = 3,
+            Cancel = 1,
+            Completed = 2,
+            Continue = 3,
+            Error = 4,
         }
 
         private async ValueTask SendCompletedAsync<TMessage>(TMessage message, CancellationToken cancellationToken = default)
             where TMessage : IRocketPackObject<TMessage>
         {
-            await _stream.SendMessageAsync(
+            await _session.SendDataMessageAsync(
                 (bufferWriter) =>
                 {
                     var type = (byte)FunctionPacketType.Completed;
@@ -245,7 +325,7 @@ namespace Omnius.Core.RocketPack.Remoting
 
         private async ValueTask SendCompletedAsync(CancellationToken cancellationToken = default)
         {
-            await _stream.SendMessageAsync(
+            await _session.SendDataMessageAsync(
                 (bufferWriter) =>
                 {
                     var type = (byte)FunctionPacketType.Completed;
@@ -256,7 +336,7 @@ namespace Omnius.Core.RocketPack.Remoting
         private async ValueTask SendContinueAsync<TMessage>(TMessage message, CancellationToken cancellationToken = default)
             where TMessage : IRocketPackObject<TMessage>
         {
-            await _stream.SendMessageAsync(
+            await _session.SendDataMessageAsync(
                 (bufferWriter) =>
                 {
                     var type = (byte)FunctionPacketType.Continue;
@@ -267,7 +347,7 @@ namespace Omnius.Core.RocketPack.Remoting
 
         private async ValueTask SendContinueAsync(CancellationToken cancellationToken = default)
         {
-            await _stream.SendMessageAsync(
+            await _session.SendDataMessageAsync(
                 (bufferWriter) =>
                 {
                     var type = (byte)FunctionPacketType.Continue;
@@ -277,7 +357,7 @@ namespace Omnius.Core.RocketPack.Remoting
 
         private async ValueTask SendErrorAsync(RocketPackRpcErrorMessage errorMessage, CancellationToken cancellationToken = default)
         {
-            await _stream.SendMessageAsync(
+            await _session.SendDataMessageAsync(
                 (bufferWriter) =>
                 {
                     var type = (byte)FunctionPacketType.Error;
@@ -286,55 +366,51 @@ namespace Omnius.Core.RocketPack.Remoting
                 }, cancellationToken);
         }
 
-        private async ValueTask<ReceiveResult> ReceiveAsync(CancellationToken cancellationToken = default)
-        {
-            var receivedMessage = await _stream.ReceiveAsync(cancellationToken);
-
-            try
-            {
-                var sequence = new ReadOnlySequence<byte>(receivedMessage);
-                if (sequence.Length == 0) throw ThrowHelper.CreateRocketPackRpcProtocolException_UnexpectedProtocol();
-                if (!Varint.TryGetUInt8(ref sequence, out var type)) throw ThrowHelper.CreateRocketPackRpcProtocolException_UnexpectedProtocol();
-
-                return ((FunctionPacketType)type) switch
-                {
-                    FunctionPacketType.Completed when (sequence.Length == 0) => ReceiveResult.CreateCompleted(),
-                    FunctionPacketType.Continue when (sequence.Length == 0) => ReceiveResult.CreateContinue(),
-                    FunctionPacketType.Error => ReceiveResult.CreateError(RocketPackRpcErrorMessage.Import(sequence, _bytesPool)),
-                    _ => throw ThrowHelper.CreateRocketPackRpcProtocolException_UnexpectedProtocol(),
-                };
-            }
-            finally
-            {
-                _bytesPool.Array.Return(receivedMessage.Array!);
-            }
-        }
-
         private async ValueTask<ReceiveResult<TMessage>> ReceiveAsync<TMessage>(CancellationToken cancellationToken = default)
             where TMessage : IRocketPackObject<TMessage>
         {
-            var receivedMessage = await _stream.ReceiveAsync(cancellationToken);
+            ReceiveResult<TMessage>? result = null;
 
-            try
-            {
-                var sequence = new ReadOnlySequence<byte>(receivedMessage);
-                if (sequence.Length == 0) throw ThrowHelper.CreateRocketPackRpcProtocolException_UnexpectedProtocol();
-                if (!Varint.TryGetUInt8(ref sequence, out var type)) throw ThrowHelper.CreateRocketPackRpcProtocolException_UnexpectedProtocol();
-
-                return ((FunctionPacketType)type) switch
+            await _session.ReceiveDataMessageAsync(
+                (sequence) =>
                 {
-                    FunctionPacketType.Completed when (sequence.Length == 0) => ReceiveResult<TMessage>.CreateCompleted(),
-                    FunctionPacketType.Completed when (sequence.Length != 0) => ReceiveResult<TMessage>.CreateCompleted(IRocketPackObject<TMessage>.Import(sequence, _bytesPool)),
-                    FunctionPacketType.Continue when (sequence.Length == 0) => ReceiveResult<TMessage>.CreateContinue(),
-                    FunctionPacketType.Continue when (sequence.Length != 0) => ReceiveResult<TMessage>.CreateContinue(IRocketPackObject<TMessage>.Import(sequence, _bytesPool)),
-                    FunctionPacketType.Error => ReceiveResult<TMessage>.CreateError(RocketPackRpcErrorMessage.Import(sequence, _bytesPool)),
-                    _ => throw ThrowHelper.CreateRocketPackRpcProtocolException_UnexpectedProtocol(),
-                };
-            }
-            finally
-            {
-                _bytesPool.Array.Return(receivedMessage.Array!);
-            }
+                    if (sequence.Length == 0) throw ThrowHelper.CreateRocketPackRpcProtocolException_UnexpectedProtocol();
+                    if (!Varint.TryGetUInt8(ref sequence, out var type)) throw ThrowHelper.CreateRocketPackRpcProtocolException_UnexpectedProtocol();
+
+                    result = ((FunctionPacketType)type) switch
+                    {
+                        FunctionPacketType.Completed when (sequence.Length == 0) => ReceiveResult<TMessage>.CreateCompleted(),
+                        FunctionPacketType.Completed when (sequence.Length != 0) => ReceiveResult<TMessage>.CreateCompleted(IRocketPackObject<TMessage>.Import(sequence, _bytesPool)),
+                        FunctionPacketType.Continue when (sequence.Length == 0) => ReceiveResult<TMessage>.CreateContinue(),
+                        FunctionPacketType.Continue when (sequence.Length != 0) => ReceiveResult<TMessage>.CreateContinue(IRocketPackObject<TMessage>.Import(sequence, _bytesPool)),
+                        FunctionPacketType.Error => ReceiveResult<TMessage>.CreateError(RocketPackRpcErrorMessage.Import(sequence, _bytesPool)),
+                        _ => null,
+                    };
+                }, cancellationToken);
+
+            return result ?? throw ThrowHelper.CreateRocketPackRpcProtocolException_UnexpectedProtocol();
+        }
+
+        private async ValueTask<ReceiveResult> ReceiveAsync(CancellationToken cancellationToken = default)
+        {
+            ReceiveResult? result = null;
+
+            await _session.ReceiveDataMessageAsync(
+                (sequence) =>
+                {
+                    if (sequence.Length == 0) throw ThrowHelper.CreateRocketPackRpcProtocolException_UnexpectedProtocol();
+                    if (!Varint.TryGetUInt8(ref sequence, out var type)) throw ThrowHelper.CreateRocketPackRpcProtocolException_UnexpectedProtocol();
+
+                    result = ((FunctionPacketType)type) switch
+                    {
+                        FunctionPacketType.Completed when (sequence.Length == 0) => ReceiveResult.CreateCompleted(),
+                        FunctionPacketType.Continue when (sequence.Length == 0) => ReceiveResult.CreateContinue(),
+                        FunctionPacketType.Error => ReceiveResult.CreateError(RocketPackRpcErrorMessage.Import(sequence, _bytesPool)),
+                        _ => null,
+                    };
+                }, cancellationToken);
+
+            return result ?? throw ThrowHelper.CreateRocketPackRpcProtocolException_UnexpectedProtocol();
         }
     }
 }

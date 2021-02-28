@@ -12,6 +12,11 @@ namespace Omnius.Core.Network
 {
     public partial class OmniAddress
     {
+        public static OmniAddress Parse(string text)
+        {
+            return new OmniAddress(text);
+        }
+
         public static OmniAddress CreateTcpEndpoint(string host, ushort port)
         {
             return new OmniAddress($"tcp(dns({host}),{port})");
@@ -33,12 +38,12 @@ namespace Omnius.Core.Network
             }
         }
 
-        public bool TryParseTcpEndpoint([NotNullWhen(true)] out IPAddress? ipAddress, out ushort port, bool nameResolving = false)
+        public bool TryGetTcpEndpoint([NotNullWhen(true)] out IPAddress? ipAddress, out ushort port, bool nameResolving = false)
         {
             ipAddress = IPAddress.None;
             port = 0;
 
-            var rootFunction = this.Parse();
+            var rootFunction = this.Deconstruct();
 
             if (rootFunction == null) return false;
 
@@ -116,12 +121,12 @@ namespace Omnius.Core.Network
             return true;
         }
 
-        private FunctionElement Parse()
+        private FunctionElement Deconstruct()
         {
-            return Parser.Parse(this.Value);
+            return Deconstructor.Deconstruct(this.Value);
         }
 
-        private static class Parser
+        private static class Deconstructor
         {
             private static readonly Parser<string> _stringLiteralParser =
                 from name in Sprache.Parse.CharExcept(x => x == ',' || x == '(' || x == ')', "Name").AtLeastOnce().TokenWithSkipSpace().Text()
@@ -146,7 +151,7 @@ namespace Omnius.Core.Network
                 from comma in Sprache.Parse.Char(',').Optional().TokenWithSkipSpace()
                 select new FunctionElement(name, arguments.ToArray());
 
-            public static FunctionElement Parse(string text)
+            public static FunctionElement Deconstruct(string text)
             {
                 try
                 {
