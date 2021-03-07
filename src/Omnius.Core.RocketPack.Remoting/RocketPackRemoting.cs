@@ -1,5 +1,6 @@
 using System;
 using System.Buffers;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Runtime.ExceptionServices;
 using System.Threading;
@@ -40,11 +41,9 @@ namespace Omnius.Core.RocketPack.Remoting
         private readonly CancellationTokenSource _cancellationTokenSource = new();
 
         private readonly Channel<(uint sessionId, uint functionId)> _acceptedSessionChannel = Channel.CreateBounded<(uint, uint)>(10);
-        private readonly Dictionary<uint, RocketPackRemotingSession> _sessions = new();
+        private readonly ConcurrentDictionary<uint, RocketPackRemotingSession> _sessions = new();
 
         private uint _currentNextSessionId = 0;
-
-        private readonly object _lockObject = new();
 
         internal sealed class RocketPackRemotingFactory : IRocketPackRemotingFactory
         {
@@ -80,14 +79,11 @@ namespace Omnius.Core.RocketPack.Remoting
 
         private uint NextSessionId()
         {
-            lock (_lockObject)
+            for (; ; )
             {
-                for (; ; )
+                if (!_sessions.ContainsKey(_currentNextSessionId))
                 {
-                    if (!_sessions.ContainsKey(_currentNextSessionId))
-                    {
-                        return _currentNextSessionId++;
-                    }
+                    return _currentNextSessionId++;
                 }
             }
         }
@@ -98,7 +94,7 @@ namespace Omnius.Core.RocketPack.Remoting
             await _messenger.SendConnectMessageAsync(sessionId, functionId, cancellationToken);
 
             var session = new RocketPackRemotingSession(sessionId, functionId, this, _bytesPool);
-            _sessions.Add(session.Id, session);
+            _sessions.TryAdd(session.Id, session);
 
             return _functionFactory.Create(session, _bytesPool);
         }
@@ -108,7 +104,7 @@ namespace Omnius.Core.RocketPack.Remoting
             var (sessionId, functionId) = await _acceptedSessionChannel.Reader.ReadAsync(cancellationToken);
 
             var session = new RocketPackRemotingSession(sessionId, functionId, this, _bytesPool);
-            _sessions.Add(sessionId, session);
+            _sessions.TryAdd(sessionId, session);
 
             return _functionFactory.Create(session, _bytesPool);
         }
@@ -164,10 +160,7 @@ namespace Omnius.Core.RocketPack.Remoting
             {
                 _receivedDataMessage.Writer.Complete();
 
-                lock (_remoting._lockObject)
-                {
-                    _remoting._sessions.Remove(this.Id);
-                }
+                _remoting._sessions.TryRemove(this.Id, out _);
             }
 
             public uint Id { get; }
@@ -221,24 +214,14 @@ namespace Omnius.Core.RocketPack.Remoting
 
             public async ValueTask OnReceiveDataMessageAsync(uint sessionId, ReadOnlySequence<byte> sequence)
             {
-                RocketPackRemotingSession? session = null;
-
-                lock (_remoting._lockObject)
-                {
-                    if (!_remoting._sessions.TryGetValue(sessionId, out session)) return;
-                }
+                if (!_remoting._sessions.TryGetValue(sessionId, out var session)) return;
 
                 await session.OnReceiveDataMessageAsync(sequence);
             }
 
             public async ValueTask OnReceiveCancelMessageAsync(uint sessionId)
             {
-                RocketPackRemotingSession? session = null;
-
-                lock (_remoting._lockObject)
-                {
-                    if (!_remoting._sessions.TryGetValue(sessionId, out session)) return;
-                }
+                if (!_remoting._sessions.TryGetValue(sessionId, out var session)) return;
 
                 session.OnReceiveAbortMessageEvent();
             }

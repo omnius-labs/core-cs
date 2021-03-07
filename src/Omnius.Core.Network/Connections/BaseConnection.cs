@@ -152,9 +152,15 @@ namespace Omnius.Core.Network.Connections
                     return total;
                 }
             }
+            catch (ConnectionException e)
+            {
+                _receiveException = e;
+                _cancellationTokenSource.Cancel();
+                return 0;
+            }
             catch (Exception e)
             {
-                _sendException = e;
+                _receiveException = new ConnectionException("receive error", e);
                 _cancellationTokenSource.Cancel();
                 return 0;
             }
@@ -229,9 +235,15 @@ namespace Omnius.Core.Network.Connections
                     return total;
                 }
             }
-            catch (Exception e)
+            catch (ConnectionException e)
             {
                 _receiveException = e;
+                _cancellationTokenSource.Cancel();
+                return 0;
+            }
+            catch (Exception e)
+            {
+                _receiveException = new ConnectionException("receive error", e);
                 _cancellationTokenSource.Cancel();
                 return 0;
             }
