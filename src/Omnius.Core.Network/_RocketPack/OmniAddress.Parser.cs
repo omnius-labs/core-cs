@@ -38,7 +38,7 @@ namespace Omnius.Core.Network
             }
         }
 
-        public bool TryGetTcpEndpoint([NotNullWhen(true)] out IPAddress? ipAddress, out ushort port, bool nameResolving = false)
+        public bool TryGetTcpEndpoint(out IPAddress ipAddress, out ushort port, bool nameResolving = false)
         {
             ipAddress = IPAddress.None;
             port = 0;

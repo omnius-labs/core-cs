@@ -28,6 +28,26 @@ namespace Omnius.Core.RocketPack
             return !x.Equals(y);
         }
 
+        public static bool operator <(Timestamp x, Timestamp y)
+        {
+            return x.CompareTo(y) < 0;
+        }
+
+        public static bool operator >(Timestamp x, Timestamp y)
+        {
+            return x.CompareTo(y) > 0;
+        }
+
+        public static bool operator <=(Timestamp x, Timestamp y)
+        {
+            return x.CompareTo(y) <= 0;
+        }
+
+        public static bool operator >=(Timestamp x, Timestamp y)
+        {
+            return x.CompareTo(y) >= 0;
+        }
+
         public override int GetHashCode()
         {
             return (int)(this.Seconds ^ this.Nanos);
