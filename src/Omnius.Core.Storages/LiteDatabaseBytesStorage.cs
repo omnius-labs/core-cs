@@ -78,7 +78,7 @@ namespace Omnius.Core.Storages
 
         private ILiteCollection<BlockLink> GetCollection()
         {
-            var col = _database.GetCollection<BlockLink>("block-links");
+            var col = _database.GetCollection<BlockLink>("block_links");
             return col;
         }
 
