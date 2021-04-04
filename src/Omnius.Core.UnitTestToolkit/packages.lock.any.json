@@ -4,15 +4,15 @@
     ".NETCoreApp,Version=v5.0": {
       "DiffPlex": {
         "type": "Direct",
-        "requested": "[1.6.3, )",
-        "resolved": "1.6.3",
-        "contentHash": "4xTya9zoggi4I1srnLfUMjx+7J0xXRjeRcmXrgryIfQvV9Q2LX1koOxoYaHyURssryF4YIdEzOum9sTdYOPTRQ=="
+        "requested": "[1.7.0, )",
+        "resolved": "1.7.0",
+        "contentHash": "2Mna9MSihC3tujLJ34+FqhFdsS6xlaMzPd8ywuTz3Qq/Z7vWRKAe18H2R5v69TMbmGyzn3FuIngnhyuNkrfUzQ=="
       },
       "NLog": {
         "type": "Direct",
-        "requested": "[4.7.7, )",
-        "resolved": "4.7.7",
-        "contentHash": "lCfAaKel4trne8Suf4/0aR9YPKDFLWKgqBupnHKNYx+cIjutF2BsVxfF2fAb+ObaYN3m5hDjx/ToVS15ouB+SA=="
+        "requested": "[4.7.9, )",
+        "resolved": "4.7.9",
+        "contentHash": "Y0dKY5d506ZVcb8dTMp3BSb+jUGaFu/ArvRkgn4daDWKf7qqFXjEFYjqoyTrWkcNguqS6avkwICS0hsFsr4BzA=="
       },
       "StyleCop.Analyzers": {
         "type": "Direct",

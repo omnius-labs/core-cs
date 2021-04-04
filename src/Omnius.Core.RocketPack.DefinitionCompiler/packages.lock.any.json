@@ -22,18 +22,18 @@
       },
       "NLog": {
         "type": "Direct",
-        "requested": "[4.7.7, )",
-        "resolved": "4.7.7",
-        "contentHash": "lCfAaKel4trne8Suf4/0aR9YPKDFLWKgqBupnHKNYx+cIjutF2BsVxfF2fAb+ObaYN3m5hDjx/ToVS15ouB+SA=="
+        "requested": "[4.7.9, )",
+        "resolved": "4.7.9",
+        "contentHash": "Y0dKY5d506ZVcb8dTMp3BSb+jUGaFu/ArvRkgn4daDWKf7qqFXjEFYjqoyTrWkcNguqS6avkwICS0hsFsr4BzA=="
       },
       "NLog.Config": {
         "type": "Direct",
-        "requested": "[4.7.7, )",
-        "resolved": "4.7.7",
-        "contentHash": "SvcBYLm7ZDKiJTh0VE+ys3wTKLuYCABQ4fmLQrIBnM0zql/k0QCD3AF8evA5OKy6/l3vDxFnC02bdxT2LJGAPw==",
+        "requested": "[4.7.9, )",
+        "resolved": "4.7.9",
+        "contentHash": "qZp3XTzpoWue0EL51DWlgqbBuXsCBpR/80lTqsgxzIhcnR9eMgCSjDt3acgdBLEHNkxVDd5/COOIXyEOQUJf7g==",
         "dependencies": {
-          "NLog": "4.7.7",
-          "NLog.Schema": "4.7.7"
+          "NLog": "4.7.9",
+          "NLog.Schema": "4.7.9"
         }
       },
       "Sprache": {
@@ -57,9 +57,9 @@
       },
       "YamlDotNet": {
         "type": "Direct",
-        "requested": "[9.1.4, )",
-        "resolved": "9.1.4",
-        "contentHash": "dVVZVhQxTI4xTNc9YorE+RruBFPPYKP44kMijE6Z5OQQE7zK+SEmh2sPm091CrTYVz1jjIuXKIBm1kFLrlsQJg=="
+        "requested": "[11.0.1, )",
+        "resolved": "11.0.1",
+        "contentHash": "UvICfSN4gJfAmOsuY/go0hb5SFfr3ZYCXb7jg66yT7kh+wSJEt7tUiwuoCNMpt8ScEXLDwXttpFoWKWeirYU1A=="
       },
       "Cocona.Core": {
         "type": "Transitive",
@@ -82,8 +82,8 @@
       },
       "NLog.Schema": {
         "type": "Transitive",
-        "resolved": "4.7.7",
-        "contentHash": "qaRZ1CS8Dqq1B4HsnXt3+6K2mPjiTDb/SkDkNGbivSwXSk1ioUcmg5YgD7dO8zKJTvjWKTQcXNjHGiKpUoI8Ow=="
+        "resolved": "4.7.9",
+        "contentHash": "vTDiVjd07WHpyOS2sFIsLm+cUeAwV84w4/EM6VQN53VKFVKNcMpttEXx+scmvAM7Zwx/msKhCptqcS8W2TbjXg=="
       },
       "System.Collections": {
         "type": "Transitive",
