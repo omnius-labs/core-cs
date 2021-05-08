@@ -5,8 +5,8 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Omnius.Core.Net.Caps;
-using Xunit;
 using Omnius.Core.Net.Connections.Internal;
+using Xunit;
 
 namespace Omnius.Core.Net.Connections.Secure
 {
