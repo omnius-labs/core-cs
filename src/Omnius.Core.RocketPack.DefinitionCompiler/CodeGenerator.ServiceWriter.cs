@@ -92,7 +92,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                 {
                     b.WriteLine($"private readonly {GenerateTypeFullName("IConnection")} _connection;");
                     b.WriteLine($"private readonly {GenerateTypeFullName("IBytesPool")} _bytesPool;");
-                    b.WriteLine($"private readonly {GenerateTypeFullName("IRocketPackRemoting")} _remoting;");
+                    b.WriteLine($"private readonly {GenerateTypeFullName("IRemoting")} _remoting;");
                     b.WriteLine($"public {className}({GenerateTypeFullName("IConnection")} connection, {GenerateTypeFullName("IBytesPool")} bytesPool)");
                     b.WriteLine("{");
 
@@ -100,7 +100,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                     {
                         b.WriteLine("_connection = connection;");
                         b.WriteLine("_bytesPool = bytesPool;");
-                        b.WriteLine($"_remoting = {GenerateTypeFullName("RocketPackRemoting")}.Factory.Create(_connection, {GenerateTypeFullName("RocketPackRemotingMessenger")}.Factory, {GenerateTypeFullName("RocketPackRemotingFunction")}.Factory, _bytesPool);");
+                        b.WriteLine($"_remoting = {GenerateTypeFullName("Remoting")}.Factory.Create(_connection, {GenerateTypeFullName("RemotingMessenger")}.Factory, {GenerateTypeFullName("RemotingFunction")}.Factory, _bytesPool);");
                     }
 
                     b.WriteLine("}");
@@ -197,7 +197,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                     b.WriteLine($"private readonly {serviceDefinition.CSharpInterfaceFullName} _service;");
                     b.WriteLine($"private readonly {GenerateTypeFullName("IConnection")} _connection;");
                     b.WriteLine($"private readonly {GenerateTypeFullName("IBytesPool")} _bytesPool;");
-                    b.WriteLine($"private readonly {GenerateTypeFullName("IRocketPackRemoting")} _remoting;");
+                    b.WriteLine($"private readonly {GenerateTypeFullName("IRemoting")} _remoting;");
                     b.WriteLine($"public {className}({serviceDefinition.CSharpInterfaceFullName} service, {GenerateTypeFullName("IConnection")} connection, {GenerateTypeFullName("IBytesPool")} bytesPool)");
                     b.WriteLine("{");
 
@@ -206,7 +206,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                         b.WriteLine("_service = service;");
                         b.WriteLine("_connection = connection;");
                         b.WriteLine("_bytesPool = bytesPool;");
-                        b.WriteLine($"_remoting = {GenerateTypeFullName("RocketPackRemoting")}.Factory.Create(_connection, {GenerateTypeFullName("RocketPackRemotingMessenger")}.Factory, {GenerateTypeFullName("RocketPackRemotingFunction")}.Factory, _bytesPool);");
+                        b.WriteLine($"_remoting = {GenerateTypeFullName("Remoting")}.Factory.Create(_connection, {GenerateTypeFullName("RemotingMessenger")}.Factory, {GenerateTypeFullName("RemotingFunction")}.Factory, _bytesPool);");
                     }
 
                     b.WriteLine("}");
