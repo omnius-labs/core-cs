@@ -1,0 +1,9 @@
+﻿syntax v1.0;
+
+namespace "Omnius.Core.Remoting";
+
+message RocketPackRpcErrorMessage {
+    Type: string(capacity: 8192),
+    Message: string(capacity: 8192),
+    StackTrace: string?(capacity: 8192),
+}

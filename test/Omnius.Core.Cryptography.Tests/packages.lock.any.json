@@ -1125,26 +1125,16 @@
           "NLog": "4.7.9",
           "Omnius.Core": "0.0.1-alpha.1",
           "Omnius.Core.Collections": "0.0.1-alpha.1",
-          "Omnius.Core.Io": "0.0.1-alpha.1",
           "Omnius.Core.RocketPack": "0.0.1-alpha.1",
-          "Omnius.Core.Serialization": "0.0.1-alpha.1"
-        }
-      },
-      "omnius.core.io": {
-        "type": "Project",
-        "dependencies": {
-          "NLog": "4.7.9",
-          "Omnius.Core": "0.0.1-alpha.1",
-          "Omnius.Core.RocketPack": "0.0.1-alpha.1",
-          "Omnius.Core.Serialization": "0.0.1-alpha.1"
+          "Omnius.Core.Serialization": "0.0.1-alpha.1",
+          "Omnius.Core.Streams": "0.0.1-alpha.1"
         }
       },
       "omnius.core.rocketpack": {
         "type": "Project",
         "dependencies": {
           "NLog": "4.7.9",
-          "Omnius.Core": "0.0.1-alpha.1",
-          "Omnius.Core.Serialization": "0.0.1-alpha.1"
+          "Omnius.Core": "0.0.1-alpha.1"
         }
       },
       "omnius.core.serialization": {
@@ -1152,6 +1142,15 @@
         "dependencies": {
           "NLog": "4.7.9",
           "Omnius.Core": "0.0.1-alpha.1"
+        }
+      },
+      "omnius.core.streams": {
+        "type": "Project",
+        "dependencies": {
+          "NLog": "4.7.9",
+          "Omnius.Core": "0.0.1-alpha.1",
+          "Omnius.Core.RocketPack": "0.0.1-alpha.1",
+          "Omnius.Core.Serialization": "0.0.1-alpha.1"
         }
       }
     }

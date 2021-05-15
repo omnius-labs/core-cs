@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Omnius.Core.RocketPack.DefinitionCompiler.Configuration;
 using Omnius.Core.RocketPack.DefinitionCompiler.Models;
 
 namespace Omnius.Core.RocketPack.DefinitionCompiler
@@ -83,7 +84,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                 "HashCode" => "System.HashCode",
                 "IBufferWriter<>" => $"System.Buffers.IBufferWriter<{types[0]}>",
                 "IBytesPool" => "Omnius.Core.IBytesPool",
-                "IConnection" => $"Omnius.Core.Network.Connections.IConnection",
+                "IConnection" => $"Omnius.Core.Net.Connections.IConnection",
                 "IDisposable" => "System.IDisposable",
                 "IMemoryOwner<>" => $"System.Buffers.IMemoryOwner<{types[0]}>",
                 "IRocketPackObjectFormatter<>" => $"Omnius.Core.RocketPack.IRocketPackObjectFormatter<{types[0]}>",
@@ -98,10 +99,10 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                 "ReadOnlySequence<>" => $"System.Buffers.ReadOnlySequence<{types[0]}>",
                 "ReadOnlySpan<>" => $"System.ReadOnlySpan<{types[0]}>",
                 "RocketPackObjectReader" => "Omnius.Core.RocketPack.RocketPackObjectReader",
-                "IRocketPackRemoting" => $"Omnius.Core.RocketPack.Remoting.IRocketPackRemoting",
-                "RocketPackRemoting" => $"Omnius.Core.RocketPack.Remoting.RocketPackRemoting",
-                "RocketPackRemotingFunction" => $"Omnius.Core.RocketPack.Remoting.RocketPackRemotingFunction",
-                "RocketPackRemotingMessenger" => $"Omnius.Core.RocketPack.Remoting.RocketPackRemotingMessenger",
+                "IRemoting" => $"Omnius.Core.Remoting.IRemoting",
+                "Remoting" => $"Omnius.Core.Remoting.Remoting",
+                "RemotingFunction" => $"Omnius.Core.Remoting.RemotingFunction",
+                "RemotingMessenger" => $"Omnius.Core.Remoting.RemotingMessenger",
                 "RocketPackObjectWriter" => "Omnius.Core.RocketPack.RocketPackObjectWriter",
                 "Span<>" => $"System.Span<{types[0]}>",
                 "Task" => $"System.Threading.Tasks.Task",

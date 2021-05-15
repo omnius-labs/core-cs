@@ -1,0 +1,7 @@
+﻿syntax v1.0;
+
+namespace "Omnius.Core.Net";
+
+message OmniAddress {
+    Value: string(capacity: 8192),
+}

@@ -1,0 +1,18 @@
+syntax v1.0;
+
+namespace "Omnius.Core.Remoting.Tests.Internal";
+
+message TestParam {
+    Value: int32,
+}
+
+message TestResult {
+    Value: int32,
+}
+
+service TestService {
+    Unary1: (TestParam) -> (TestResult),
+    Unary2: (TestParam) -> (),
+    Unary3: () -> (TestResult),
+    Unary4: () -> (),
+}

@@ -1,0 +1,45 @@
+{
+  "version": 1,
+  "dependencies": {
+    ".NETCoreApp,Version=v5.0": {
+      "NLog": {
+        "type": "Direct",
+        "requested": "[4.7.9, )",
+        "resolved": "4.7.9",
+        "contentHash": "Y0dKY5d506ZVcb8dTMp3BSb+jUGaFu/ArvRkgn4daDWKf7qqFXjEFYjqoyTrWkcNguqS6avkwICS0hsFsr4BzA=="
+      },
+      "StyleCop.Analyzers": {
+        "type": "Direct",
+        "requested": "[1.1.118, )",
+        "resolved": "1.1.118",
+        "contentHash": "Onx6ovGSqXSK07n/0eM3ZusiNdB6cIlJdabQhWGgJp3Vooy9AaLS/tigeybOJAobqbtggTamoWndz72JscZBvw=="
+      },
+      "System.IO.Pipelines": {
+        "type": "Transitive",
+        "resolved": "5.0.1",
+        "contentHash": "qEePWsaq9LoEEIqhbGe6D5J8c9IqQOUuTzzV6wn1POlfdLkJliZY3OlB0j0f17uMWlqZYjH7txj+2YbyrIA8Yg=="
+      },
+      "omnius.core": {
+        "type": "Project",
+        "dependencies": {
+          "NLog": "4.7.9",
+          "System.IO.Pipelines": "5.0.1"
+        }
+      },
+      "omnius.core.rocketpack": {
+        "type": "Project",
+        "dependencies": {
+          "NLog": "4.7.9",
+          "Omnius.Core": "0.0.1-alpha.1"
+        }
+      },
+      "omnius.core.serialization": {
+        "type": "Project",
+        "dependencies": {
+          "NLog": "4.7.9",
+          "Omnius.Core": "0.0.1-alpha.1"
+        }
+      }
+    }
+  }
+}

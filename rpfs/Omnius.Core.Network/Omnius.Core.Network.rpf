@@ -1,7 +1,0 @@
-﻿syntax v1.0;
-
-namespace "Omnius.Core.Network";
-
-message OmniAddress {
-    Value: string(capacity: 8192),
-}

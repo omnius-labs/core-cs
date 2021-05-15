@@ -5,19 +5,18 @@
       Output: ./perf/FormatterBenchmarks/Internal/_RocketPack/_Generated.cs
     - Input: ./rpfs/Omnius.Core.Cryptography/Omnius.Core.Cryptography.rpf
       Output: ./src/Omnius.Core.Cryptography/_RocketPack/_Generated.cs
-    - Input: ./rpfs/Omnius.Core.Network/Omnius.Core.Network.rpf
-      Output: ./src/Omnius.Core.Network/_RocketPack/_Generated.cs
-    - Input: ./rpfs/Omnius.Core.Network/Omnius.Core.Network.Connections.Secure.rpf
-      Output: ./src/Omnius.Core.Network/Connections/Secure/_RocketPack/_Generated.cs
-    - Input: ./rpfs/Omnius.Core.Network/Omnius.Core.Network.Connections.Secure.Internal.rpf
-      Output: ./src/Omnius.Core.Network/Connections/Secure/Internal/_RocketPack/_Generated.cs
-    - Input: ./rpfs/Omnius.Core.Network/Omnius.Core.Network.Connections.Secure.V1.Internal.rpf
-      Output: ./src/Omnius.Core.Network/Connections/Secure/V1/Internal/_RocketPack/_Generated.cs
-    - Input: ./rpfs/Omnius.Core.RocketPack.Remoting/Omnius.Core.RocketPack.Remoting.rpf
-      Output: ./src/Omnius.Core.RocketPack.Remoting/_RocketPack/_Generated.cs
-- Includes:
-  CompileTargets:
+    - Input: ./rpfs/Omnius.Core.Net/Omnius.Core.Net.rpf
+      Output: ./src/Omnius.Core.Net/_RocketPack/_Generated.cs
+    - Input: ./rpfs/Omnius.Core.Net.Connections/Omnius.Core.Net.Connections.Secure.rpf
+      Output: ./src/Omnius.Core.Net.Connections/Secure/_RocketPack/_Generated.cs
+    - Input: ./rpfs/Omnius.Core.Net.Connections/Omnius.Core.Net.Connections.Secure.Internal.rpf
+      Output: ./src/Omnius.Core.Net.Connections/Secure/Internal/_RocketPack/_Generated.cs
+    - Input: ./rpfs/Omnius.Core.Net.Connections/Omnius.Core.Net.Connections.Secure.V1.Internal.rpf
+      Output: ./src/Omnius.Core.Net.Connections/Secure/V1/Internal/_RocketPack/_Generated.cs
+    - Input: ./rpfs/Omnius.Core.Remoting/Omnius.Core.Remoting.rpf
+      Output: ./src/Omnius.Core.Remoting/_RocketPack/_Generated.cs
+- CompileTargets:
     - Input: ./rpfs/Omnius.Core.RocketPack.Tests/Omnius.Core.RocketPack.Tests.Internal.rpf
       Output: ./test/Omnius.Core.RocketPack.Tests/Internal/_RocketPack/_Generated.cs
-    - Input: ./rpfs/Omnius.Core.RocketPack.Remoting.Tests/Omnius.Core.RocketPack.Remoting.Tests.Internal.rpf
-      Output: ./test/Omnius.Core.RocketPack.Remoting.Tests/Internal/_RocketPack/_Generated.cs
+    - Input: ./rpfs/Omnius.Core.Remoting.Tests/Omnius.Core.Remoting.Tests.Internal.rpf
+      Output: ./test/Omnius.Core.Remoting.Tests/Internal/_RocketPack/_Generated.cs

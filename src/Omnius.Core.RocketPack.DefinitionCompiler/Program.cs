@@ -5,8 +5,8 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using Cocona;
+using Omnius.Core.RocketPack.DefinitionCompiler.Configuration;
 using Omnius.Core.RocketPack.DefinitionCompiler.Internal;
-using Omnius.Core.RocketPack.DefinitionCompiler.Models;
 
 namespace Omnius.Core.RocketPack.DefinitionCompiler
 {
@@ -21,7 +21,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
 
         public void Compile([Option("config", new[] { 'c' })][FilePathExists] string configPath)
         {
-            var configs = YamlHelper.ReadFile<Config[]>(configPath);
+            var configs = YamlHelper.ReadFile<AppConfig[]>(configPath);
 
             foreach (var config in configs)
             {
