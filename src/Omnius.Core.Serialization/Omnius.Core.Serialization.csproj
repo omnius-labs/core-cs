@@ -8,9 +8,10 @@
   <ItemGroup>
     <PackageReference Include="NLog" Version="4.7.10" />
   </ItemGroup>
-  
+
   <ItemGroup>
     <ProjectReference Include="..\Omnius.Core\Omnius.Core.csproj" />
+    <ProjectReference Include="..\Omnius.Core.RocketPack\Omnius.Core.RocketPack.csproj" />
   </ItemGroup>
 
 </Project>
