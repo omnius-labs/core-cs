@@ -1,4 +1,5 @@
 using System;
+using System.Buffers;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -35,7 +36,7 @@ namespace Omnius.Core.Cryptography
 
                 var key = base16.StringToBytes(c.Key!);
                 var value = base16.StringToBytes(c.Value!);
-                var result = base16.BytesToString(Hmac_Sha2_256.ComputeHash(value, key));
+                var result = base16.BytesToString(new ReadOnlySequence<byte>(Hmac_Sha2_256.ComputeHash(value, key)));
 
                 Assert.Equal(c.Result, result);
             }

@@ -42,39 +42,6 @@ namespace Omnius.Core.Serialization
             throw new FormatException();
         }
 
-        public bool TryEncode(ReadOnlySpan<byte> span, out byte[] text, bool includePrefix = false)
-        {
-            var result = new byte[(includePrefix ? 1 : 0) + (span.Length * 2)];
-
-            fixed (byte* p_result_fixed = result)
-            {
-                var p_result_start = p_result_fixed;
-
-                if (includePrefix)
-                {
-                    *p_result_start++ = (_convertStringCase == ConvertStringCase.Lower) ? (byte)'f' : (byte)'F';
-                }
-
-                fixed (byte* p_value_fixed = span)
-                {
-                    var p_value_start = p_value_fixed;
-                    var p_value_end = p_value_fixed + span.Length;
-
-                    while (p_value_start != p_value_end)
-                    {
-                        byte b = *p_value_start++;
-
-                        *p_result_start++ = this.ByteToWord((byte)(b >> 4));
-                        *p_result_start++ = this.ByteToWord((byte)(b & 0x0F));
-                    }
-                }
-            }
-
-            text = result;
-
-            return true;
-        }
-
         public bool TryEncode(ReadOnlySequence<byte> sequence, out byte[] text, bool includePrefix = false)
         {
             var result = new byte[(includePrefix ? 1 : 0) + (sequence.Length * 2)];

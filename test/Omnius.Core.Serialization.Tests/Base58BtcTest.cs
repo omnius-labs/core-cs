@@ -26,26 +26,30 @@ namespace Omnius.Core.Serialization
             };
             var caseList = JsonSerializer.Deserialize<TestCase[]>(File.ReadAllText("./Data/base58_encode_decode.json"), serializeOptions);
 
-            var base58Btc = new Base58Btc();
-            var base16 = new Base16(ConvertStringCase.Lower);
-
             foreach (var c in caseList!)
             {
-                using var hub_base16 = new BytesHub();
+                Check(c.Input!, c.Output!);
+            }
+
+            static void Check(string b16, string b58)
+            {
+                var base58Btc = new Base58Btc();
+                var base16 = new Base16(ConvertStringCase.Lower);
+
+                var hub_base16 = new BytesHub();
 
                 // base16をデコードし、pipeに書き込む。
-                base16.TryDecode(c.Input!, hub_base16.Writer);
+                base16.TryDecode(b16!, hub_base16.Writer);
 
                 // base58Btcのテキストを取得する。
                 base58Btc.TryEncode(hub_base16.Reader.GetSequence(), out var text_base58);
 
                 // エンコード結果の検証
-                Assert.Equal(UTF8Encoding.Default.GetBytes(c.Output!), text_base58);
-
-                using var hub_base58Btc = new BytesHub();
+                Assert.Equal(Encoding.UTF8.GetBytes(b58), text_base58);
+                var hub_base58Btc = new BytesHub();
 
                 // base58Btcをデコードし、pipeに書き込む。
-                base58Btc.TryDecode(c.Output!, hub_base58Btc.Writer);
+                base58Btc.TryDecode(b58, hub_base58Btc.Writer);
 
                 // デコード結果の検証
                 Assert.Equal(hub_base16.Reader.GetSequence().ToArray(), hub_base58Btc.Reader.GetSequence().ToArray());
