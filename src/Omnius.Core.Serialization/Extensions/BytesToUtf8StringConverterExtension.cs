@@ -8,15 +8,6 @@ namespace Omnius.Core.Serialization.Extensions
     {
         private static readonly Lazy<UTF8Encoding> _utf8Encoding = new Lazy<UTF8Encoding>(() => new UTF8Encoding(false));
 
-        public static bool TryEncode(this IBytesToUtf8StringConverter converter, ReadOnlySpan<byte> span, out string text, bool includePrefix = false)
-        {
-            if (!converter.TryEncode(span, out var utf8string, includePrefix)) throw new FormatException(nameof(span));
-
-            text = _utf8Encoding.Value.GetString(utf8string);
-
-            return true;
-        }
-
         public static bool TryEncode(this IBytesToUtf8StringConverter converter, ReadOnlySequence<byte> sequence, out string text, bool includePrefix = false)
         {
             if (!converter.TryEncode(sequence, out var utf8string, includePrefix)) throw new FormatException(nameof(sequence));
@@ -38,21 +29,9 @@ namespace Omnius.Core.Serialization.Extensions
             return true;
         }
 
-        public static byte[] BytesToUtf8String(this IBytesToUtf8StringConverter converter, ReadOnlySpan<byte> span)
-        {
-            converter.TryEncode(span, out var text);
-            return text;
-        }
-
         public static byte[] BytesToUtf8String(this IBytesToUtf8StringConverter converter, ReadOnlySequence<byte> sequence)
         {
             converter.TryEncode(sequence, out var text);
-            return text;
-        }
-
-        public static string BytesToString(this IBytesToUtf8StringConverter converter, ReadOnlySpan<byte> span)
-        {
-            converter.TryEncode(span, out string text);
             return text;
         }
 

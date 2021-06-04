@@ -1,4 +1,5 @@
 using System;
+using System.Buffers;
 using Omnius.Core.Cryptography.Functions;
 using Omnius.Core.Serialization;
 
@@ -35,7 +36,7 @@ namespace Omnius.Core.Cryptography
                 OmniHashAlgorithmType.Sha2_256 => "sha2-256",
                 _ => throw new NotSupportedException()
             };
-            var value = OmniBase.Encode(this.Value.Span, convertStringType, convertStringCase);
+            var value = OmniBase.Encode(new ReadOnlySequence<byte>(this.Value), convertStringType, convertStringCase);
 
             return algorithmType + ":" + value;
         }
@@ -47,7 +48,7 @@ namespace Omnius.Core.Cryptography
             var hub = new BytesHub();
             if (!OmniBase.TryDecode(text, hub.Writer)) return false;
 
-            value = OmniHash.Import(hub.Reader.GetSequence(), BytesPool.Shared);
+            value = Import(hub.Reader.GetSequence(), BytesPool.Shared);
             return true;
         }
     }
