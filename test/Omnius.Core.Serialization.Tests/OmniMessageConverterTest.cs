@@ -17,8 +17,8 @@ namespace Omnius.Core.Serialization
             var inBody = new byte[random.Next(0, 1024 * 64)];
             random.NextBytes(inBody);
 
-            OmniMessageConverter.Write(inVersion, new ReadOnlySequence<byte>(inBody), inHub.Writer);
-            OmniMessageConverter.Read(inHub.Reader.GetSequence(), out var outVersion, outHub.Writer);
+            OmniMessageConverter.TryWrite(inVersion, new ReadOnlySequence<byte>(inBody), inHub.Writer);
+            OmniMessageConverter.TryRead(inHub.Reader.GetSequence(), out var outVersion, outHub.Writer);
 
             var outBody = outHub.Reader.GetSequence().ToArray();
             Assert.True(BytesOperations.Equals(inBody.AsSpan(), outBody.AsSpan()));
