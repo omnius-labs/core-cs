@@ -9,6 +9,101 @@ namespace Omnius.Core.RocketPack
     public class VarintTest
     {
         [Fact]
+        public void BrokenDataGetTest()
+        {
+            const byte Int8Code = 0x80;
+            const byte Int16Code = 0x81;
+            const byte Int32Code = 0x82;
+            const byte Int64Code = 0x83;
+
+            {
+                using var hub = new BytesHub();
+                hub.Writer.Write(new byte[] { Int8Code });
+                var reader = new SequenceReader<byte>(hub.Reader.GetSequence());
+                Assert.False(Varint.TryGetUInt8(ref reader, out var result1));
+            }
+
+            {
+                {
+                    using var hub = new BytesHub();
+                    hub.Writer.Write(new byte[] { Int8Code });
+                    var reader = new SequenceReader<byte>(hub.Reader.GetSequence());
+                    Assert.False(Varint.TryGetUInt16(ref reader, out var result1));
+                }
+                {
+                    using var hub = new BytesHub();
+                    hub.Writer.Write(new byte[] { Int16Code });
+                    var reader = new SequenceReader<byte>(hub.Reader.GetSequence());
+                    Assert.False(Varint.TryGetUInt16(ref reader, out var result1));
+                }
+            }
+
+            {
+                {
+                    using var hub = new BytesHub();
+                    hub.Writer.Write(new byte[] { Int8Code });
+                    var reader = new SequenceReader<byte>(hub.Reader.GetSequence());
+                    Assert.False(Varint.TryGetUInt32(ref reader, out var result1));
+                }
+                {
+                    using var hub = new BytesHub();
+                    hub.Writer.Write(new byte[] { Int16Code });
+                    var reader = new SequenceReader<byte>(hub.Reader.GetSequence());
+                    Assert.False(Varint.TryGetUInt32(ref reader, out var result1));
+                }
+                {
+                    using var hub = new BytesHub();
+                    hub.Writer.Write(new byte[] { Int32Code });
+                    var reader = new SequenceReader<byte>(hub.Reader.GetSequence());
+                    Assert.False(Varint.TryGetUInt32(ref reader, out var result1));
+                }
+            }
+
+            {
+                {
+                    using var hub = new BytesHub();
+                    hub.Writer.Write(new byte[] { Int8Code });
+                    var reader = new SequenceReader<byte>(hub.Reader.GetSequence());
+                    Assert.False(Varint.TryGetUInt64(ref reader, out var result1));
+                }
+                {
+                    using var hub = new BytesHub();
+                    hub.Writer.Write(new byte[] { Int16Code });
+                    var reader = new SequenceReader<byte>(hub.Reader.GetSequence());
+                    Assert.False(Varint.TryGetUInt64(ref reader, out var result1));
+                }
+                {
+                    using var hub = new BytesHub();
+                    hub.Writer.Write(new byte[] { Int32Code });
+                    var reader = new SequenceReader<byte>(hub.Reader.GetSequence());
+                    Assert.False(Varint.TryGetUInt64(ref reader, out var result1));
+                }
+                {
+                    using var hub = new BytesHub();
+                    hub.Writer.Write(new byte[] { Int64Code });
+                    var reader = new SequenceReader<byte>(hub.Reader.GetSequence());
+                    Assert.False(Varint.TryGetUInt64(ref reader, out var result1));
+                }
+            }
+        }
+
+
+        [Fact]
+        public void EmptyDataGetTest()
+        {
+            using var hub = new BytesHub();
+            var reader = new SequenceReader<byte>(hub.Reader.GetSequence());
+            Assert.False(Varint.TryGetUInt8(ref reader, out var result1));
+            Assert.False(Varint.TryGetUInt16(ref reader, out var result2));
+            Assert.False(Varint.TryGetUInt32(ref reader, out var result3));
+            Assert.False(Varint.TryGetUInt64(ref reader, out var result4));
+            Assert.False(Varint.TryGetInt8(ref reader, out var result5));
+            Assert.False(Varint.TryGetInt16(ref reader, out var result6));
+            Assert.False(Varint.TryGetInt32(ref reader, out var result7));
+            Assert.False(Varint.TryGetInt64(ref reader, out var result8));
+        }
+
+        [Fact]
         public void RandomTest()
         {
             var random = new Random(0);

@@ -15,12 +15,12 @@ namespace Omnius.Core.Serialization
             Brotli = 1,
         }
 
-        public static void Read(ReadOnlySequence<byte> sequence, out uint version, IBufferWriter<byte> writer)
+        public static bool TryRead(ReadOnlySequence<byte> sequence, out uint version, IBufferWriter<byte> writer)
         {
             var reader = new SequenceReader<byte>(sequence);
 
-            if (!Varint.TryGetUInt32(ref reader, out version)) throw new Exception();
-            if (!Varint.TryGetUInt32(ref reader, out var convertCompressionAlgorithmValue)) throw new Exception();
+            if (!Varint.TryGetUInt32(ref reader, out version)) return false;
+            if (!Varint.TryGetUInt32(ref reader, out var convertCompressionAlgorithmValue)) return false;
             var convertCompressionAlgorithm = (ConvertCompressionAlgorithm)convertCompressionAlgorithmValue;
 
             if (convertCompressionAlgorithm == ConvertCompressionAlgorithm.Brotli)
@@ -33,7 +33,8 @@ namespace Omnius.Core.Serialization
 
                     if (status == OperationStatus.InvalidData)
                     {
-                        throw new OmniMessageConverterException("invalid data");
+                        _logger.Warn("invalid data");
+                        return false;
                     }
 
                     reader.Advance(bytesConsumed);
@@ -44,14 +45,17 @@ namespace Omnius.Core.Serialization
                         break;
                     }
                 }
+
+                return true;
             }
             else
             {
-                throw new OmniMessageConverterException("not supported format");
+                _logger.Warn("not supported format");
+                return false;
             }
         }
 
-        public static void Write(uint version, ReadOnlySequence<byte> sequence, IBufferWriter<byte> writer)
+        public static bool TryWrite(uint version, ReadOnlySequence<byte> sequence, IBufferWriter<byte> writer)
         {
             Varint.SetUInt32(version, writer);
             Varint.SetUInt32((uint)ConvertCompressionAlgorithm.Brotli, writer);
@@ -66,7 +70,8 @@ namespace Omnius.Core.Serialization
 
                 if (status == OperationStatus.InvalidData)
                 {
-                    throw new OmniMessageConverterException("invalid data");
+                    _logger.Warn("invalid data");
+                    return false;
                 }
 
                 reader.Advance(bytesConsumed);
@@ -74,7 +79,7 @@ namespace Omnius.Core.Serialization
 
                 if (status == OperationStatus.Done)
                 {
-                    break;
+                    return true;
                 }
             }
         }

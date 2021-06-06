@@ -238,7 +238,7 @@ namespace Omnius.Core.RocketPack
                 {
                     var p = fixed_p;
 
-                    if ((*p & 0x80) == 0)
+                    if ((*p & 0x80) == 0 && span.Length >= 1)
                     {
                         value = *p;
                         consumed = 1;
@@ -248,7 +248,7 @@ namespace Omnius.Core.RocketPack
                     {
                         switch (*p)
                         {
-                            case Int8Code:
+                            case Int8Code when span.Length >= 2:
                                 value = p[1];
                                 consumed = 2;
                                 return true;
@@ -271,7 +271,7 @@ namespace Omnius.Core.RocketPack
                 {
                     var p = fixed_p;
 
-                    if ((*p & 0x80) == 0)
+                    if ((*p & 0x80) == 0 && span.Length >= 1)
                     {
                         value = *p;
                         consumed = 1;
@@ -281,11 +281,11 @@ namespace Omnius.Core.RocketPack
                     {
                         switch (*p)
                         {
-                            case Int8Code:
+                            case Int8Code when span.Length >= 2:
                                 value = p[1];
                                 consumed = 2;
                                 return true;
-                            case Int16Code:
+                            case Int16Code when span.Length >= 3:
                                 value = *(ushort*)(p + 1);
                                 consumed = 3;
                                 return true;
@@ -308,7 +308,7 @@ namespace Omnius.Core.RocketPack
                 {
                     var p = fixed_p;
 
-                    if ((*p & 0x80) == 0)
+                    if ((*p & 0x80) == 0 && span.Length >= 1)
                     {
                         value = *p;
                         consumed = 1;
@@ -318,15 +318,15 @@ namespace Omnius.Core.RocketPack
                     {
                         switch (*p)
                         {
-                            case Int8Code:
+                            case Int8Code when span.Length >= 2:
                                 value = p[1];
                                 consumed = 2;
                                 return true;
-                            case Int16Code:
+                            case Int16Code when span.Length >= 3:
                                 value = *(ushort*)(p + 1);
                                 consumed = 3;
                                 return true;
-                            case Int32Code:
+                            case Int32Code when span.Length >= 5:
                                 value = *(uint*)(p + 1);
                                 consumed = 5;
                                 return true;
@@ -349,7 +349,7 @@ namespace Omnius.Core.RocketPack
                 {
                     var p = fixed_p;
 
-                    if ((*p & 0x80) == 0)
+                    if ((*p & 0x80) == 0 && span.Length >= 1)
                     {
                         value = *p;
                         consumed = 1;
@@ -359,19 +359,19 @@ namespace Omnius.Core.RocketPack
                     {
                         switch (*p)
                         {
-                            case Int8Code:
+                            case Int8Code when span.Length >= 2:
                                 value = p[1];
                                 consumed = 2;
                                 return true;
-                            case Int16Code:
+                            case Int16Code when span.Length >= 3:
                                 value = *(ushort*)(p + 1);
                                 consumed = 3;
                                 return true;
-                            case Int32Code:
+                            case Int32Code when span.Length >= 5:
                                 value = *(uint*)(p + 1);
                                 consumed = 5;
                                 return true;
-                            case Int64Code:
+                            case Int64Code when span.Length >= 9:
                                 value = *(ulong*)(p + 1);
                                 consumed = 9;
                                 return true;
@@ -389,6 +389,7 @@ namespace Omnius.Core.RocketPack
         public static bool TryGetUInt8(ref SequenceReader<byte> reader, out byte value)
         {
             value = 0;
+            if (reader.Remaining == 0) return false;
 
             unchecked
             {
@@ -417,37 +418,17 @@ namespace Omnius.Core.RocketPack
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool TryGetUInt8(ref ReadOnlySequence<byte> sequence, out byte value)
         {
-            value = 0;
-
-            unchecked
-            {
-                if (sequence.FirstSpan.Length >= 2)
-                {
-                    if (!InternalTryGetUInt8(sequence.FirstSpan, out value, out int consumed)) return false;
-
-                    sequence = sequence.Slice(consumed);
-                    return true;
-                }
-                else
-                {
-                    int size = (int)Math.Min(2, sequence.Length);
-                    byte* buffer = stackalloc byte[size];
-                    var tempSpan = new Span<byte>(buffer, size);
-
-                    sequence.CopyTo(tempSpan);
-
-                    if (!InternalTryGetUInt8(tempSpan, out value, out int consumed)) return false;
-
-                    sequence = sequence.Slice(consumed);
-                    return true;
-                }
-            }
+            var reader = new SequenceReader<byte>(sequence);
+            var result = TryGetUInt8(ref reader, out value);
+            sequence = sequence.Slice(reader.Consumed);
+            return result;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool TryGetUInt16(ref SequenceReader<byte> reader, out ushort value)
         {
             value = 0;
+            if (reader.Remaining == 0) return false;
 
             unchecked
             {
@@ -476,37 +457,17 @@ namespace Omnius.Core.RocketPack
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool TryGetUInt16(ref ReadOnlySequence<byte> sequence, out ushort value)
         {
-            value = 0;
-
-            unchecked
-            {
-                if (sequence.FirstSpan.Length >= 3)
-                {
-                    if (!InternalTryGetUInt16(sequence.FirstSpan, out value, out int consumed)) return false;
-
-                    sequence = sequence.Slice(consumed);
-                    return true;
-                }
-                else
-                {
-                    int size = (int)Math.Min(3, sequence.Length);
-                    byte* buffer = stackalloc byte[size];
-                    var tempSpan = new Span<byte>(buffer, size);
-
-                    sequence.CopyTo(tempSpan);
-
-                    if (!InternalTryGetUInt16(tempSpan, out value, out int consumed)) return false;
-
-                    sequence = sequence.Slice(consumed);
-                    return true;
-                }
-            }
+            var reader = new SequenceReader<byte>(sequence);
+            var result = TryGetUInt16(ref reader, out value);
+            sequence = sequence.Slice(reader.Consumed);
+            return result;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool TryGetUInt32(ref SequenceReader<byte> reader, out uint value)
         {
             value = 0;
+            if (reader.Remaining == 0) return false;
 
             unchecked
             {
@@ -535,37 +496,17 @@ namespace Omnius.Core.RocketPack
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool TryGetUInt32(ref ReadOnlySequence<byte> sequence, out uint value)
         {
-            value = 0;
-
-            unchecked
-            {
-                if (sequence.FirstSpan.Length >= 5)
-                {
-                    if (!InternalTryGetUInt32(sequence.FirstSpan, out value, out int consumed)) return false;
-
-                    sequence = sequence.Slice(consumed);
-                    return true;
-                }
-                else
-                {
-                    int size = (int)Math.Min(5, sequence.Length);
-                    byte* buffer = stackalloc byte[size];
-                    var tempSpan = new Span<byte>(buffer, size);
-
-                    sequence.CopyTo(tempSpan);
-
-                    if (!InternalTryGetUInt32(tempSpan, out value, out int consumed)) return false;
-
-                    sequence = sequence.Slice(consumed);
-                    return true;
-                }
-            }
+            var reader = new SequenceReader<byte>(sequence);
+            var result = TryGetUInt32(ref reader, out value);
+            sequence = sequence.Slice(reader.Consumed);
+            return result;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool TryGetUInt64(ref SequenceReader<byte> reader, out ulong value)
         {
             value = 0;
+            if (reader.Remaining == 0) return false;
 
             unchecked
             {
@@ -594,115 +535,79 @@ namespace Omnius.Core.RocketPack
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool TryGetUInt64(ref ReadOnlySequence<byte> sequence, out ulong value)
         {
-            value = 0;
-
-            unchecked
-            {
-                if (sequence.FirstSpan.Length >= 9)
-                {
-                    if (!InternalTryGetUInt64(sequence.FirstSpan, out value, out int consumed)) return false;
-
-                    sequence = sequence.Slice(consumed);
-                    return true;
-                }
-                else
-                {
-                    int size = (int)Math.Min(9, sequence.Length);
-                    byte* buffer = stackalloc byte[size];
-                    var tempSpan = new Span<byte>(buffer, size);
-
-                    sequence.CopyTo(tempSpan);
-
-                    if (!InternalTryGetUInt64(tempSpan, out value, out int consumed)) return false;
-
-                    sequence = sequence.Slice(consumed);
-                    return true;
-                }
-            }
+            var reader = new SequenceReader<byte>(sequence);
+            var result = TryGetUInt64(ref reader, out value);
+            sequence = sequence.Slice(reader.Consumed);
+            return result;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool TryGetInt8(ref SequenceReader<byte> reader, out sbyte result)
+        public static bool TryGetInt8(ref SequenceReader<byte> reader, out sbyte value)
         {
             unchecked
             {
-                result = 0;
+                value = 0;
 
                 if (!TryGetUInt8(ref reader, out byte byte_result)) return false;
 
-                result = (sbyte)((byte_result >> 1) ^ (-((sbyte)byte_result & 1)));
+                value = (sbyte)((byte_result >> 1) ^ (-((sbyte)byte_result & 1)));
                 return true;
             }
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool TryGetInt8(ref ReadOnlySequence<byte> sequence, out sbyte result)
+        public static bool TryGetInt8(ref ReadOnlySequence<byte> sequence, out sbyte value)
         {
-            unchecked
-            {
-                result = 0;
-
-                if (!TryGetUInt8(ref sequence, out byte byte_result)) return false;
-
-                result = (sbyte)((byte_result >> 1) ^ (-((sbyte)byte_result & 1)));
-                return true;
-            }
+            var reader = new SequenceReader<byte>(sequence);
+            var result = TryGetInt8(ref reader, out value);
+            sequence = sequence.Slice(reader.Consumed);
+            return result;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool TryGetInt16(ref SequenceReader<byte> reader, out short result)
+        public static bool TryGetInt16(ref SequenceReader<byte> reader, out short value)
         {
             unchecked
             {
-                result = 0;
+                value = 0;
 
                 if (!TryGetUInt16(ref reader, out ushort ushort_result)) return false;
 
-                result = (short)((ushort_result >> 1) ^ (-((short)ushort_result & 1)));
+                value = (short)((ushort_result >> 1) ^ (-((short)ushort_result & 1)));
                 return true;
             }
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool TryGetInt16(ref ReadOnlySequence<byte> sequence, out short result)
+        public static bool TryGetInt16(ref ReadOnlySequence<byte> sequence, out short value)
         {
-            unchecked
-            {
-                result = 0;
-
-                if (!TryGetUInt16(ref sequence, out ushort ushort_result)) return false;
-
-                result = (short)((ushort_result >> 1) ^ (-((short)ushort_result & 1)));
-                return true;
-            }
+            var reader = new SequenceReader<byte>(sequence);
+            var result = TryGetInt16(ref reader, out value);
+            sequence = sequence.Slice(reader.Consumed);
+            return result;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool TryGetInt32(ref SequenceReader<byte> reader, out int result)
+        public static bool TryGetInt32(ref SequenceReader<byte> reader, out int value)
         {
             unchecked
             {
-                result = 0;
+                value = 0;
 
                 if (!TryGetUInt32(ref reader, out uint uint_result)) return false;
 
-                result = (int)(uint_result >> 1) ^ (-((int)uint_result & 1));
+                value = (int)(uint_result >> 1) ^ (-((int)uint_result & 1));
                 return true;
             }
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool TryGetInt32(ref ReadOnlySequence<byte> sequence, out int result)
+        public static bool TryGetInt32(ref ReadOnlySequence<byte> sequence, out int value)
         {
-            unchecked
-            {
-                result = 0;
-
-                if (!TryGetUInt32(ref sequence, out uint uint_result)) return false;
-
-                result = (int)(uint_result >> 1) ^ (-((int)uint_result & 1));
-                return true;
-            }
+            var reader = new SequenceReader<byte>(sequence);
+            var result = TryGetInt32(ref reader, out value);
+            sequence = sequence.Slice(reader.Consumed);
+            return result;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -720,17 +625,12 @@ namespace Omnius.Core.RocketPack
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool TryGetInt64(ref ReadOnlySequence<byte> sequence, out long result)
+        public static bool TryGetInt64(ref ReadOnlySequence<byte> sequence, out long value)
         {
-            unchecked
-            {
-                result = 0;
-
-                if (!TryGetUInt64(ref sequence, out ulong ulong_result)) return false;
-
-                result = (long)(ulong_result >> 1) ^ (-((long)ulong_result & 1));
-                return true;
-            }
+            var reader = new SequenceReader<byte>(sequence);
+            var result = TryGetInt64(ref reader, out value);
+            sequence = sequence.Slice(reader.Consumed);
+            return result;
         }
     }
 }
