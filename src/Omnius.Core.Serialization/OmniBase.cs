@@ -10,7 +10,7 @@ namespace Omnius.Core.Serialization
         private static readonly Lazy<Base16> _base16_Upper = new(() => new Base16(ConvertStringCase.Upper));
         private static readonly Lazy<Base58Btc> _base58Btc = new(() => new Base58Btc());
 
-        public static string Encode(ReadOnlySequence<byte> sequence, ConvertStringType convertStringType, ConvertStringCase convertStringCase = ConvertStringCase.Lower)
+        public static string? Encode(ReadOnlySequence<byte> sequence, ConvertStringType convertStringType, ConvertStringCase convertStringCase = ConvertStringCase.Lower)
         {
             if (convertStringType == ConvertStringType.Base16)
             {
@@ -18,13 +18,13 @@ namespace Omnius.Core.Serialization
                 {
                     case ConvertStringCase.Lower:
                         {
-                            _base16_Lower.Value.TryEncode(sequence, out string text, true);
+                            _base16_Lower.Value.TryEncode(sequence, out string? text, true);
                             return text;
                         }
 
                     case ConvertStringCase.Upper:
                         {
-                            _base16_Upper.Value.TryEncode(sequence, out string text, true);
+                            _base16_Upper.Value.TryEncode(sequence, out string? text, true);
                             return text;
                         }
 
@@ -34,7 +34,7 @@ namespace Omnius.Core.Serialization
             }
             else if (convertStringType == ConvertStringType.Base58)
             {
-                _base58Btc.Value.TryEncode(sequence, out string text, true);
+                _base58Btc.Value.TryEncode(sequence, out string? text, true);
                 return text;
             }
             else
@@ -53,13 +53,13 @@ namespace Omnius.Core.Serialization
             switch (text[0])
             {
                 case 'f':
-                    _base16_Lower.Value.TryDecode(text.Substring(1), bufferWriter);
+                    _base16_Lower.Value.TryDecode(text[1..], bufferWriter);
                     return true;
                 case 'F':
-                    _base16_Upper.Value.TryDecode(text.Substring(1), bufferWriter);
+                    _base16_Upper.Value.TryDecode(text[1..], bufferWriter);
                     return true;
                 case 'z':
-                    _base58Btc.Value.TryDecode(text.Substring(1), bufferWriter);
+                    _base58Btc.Value.TryDecode(text[1..], bufferWriter);
                     return true;
                 default:
                     return false;
