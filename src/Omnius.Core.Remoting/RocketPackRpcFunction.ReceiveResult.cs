@@ -4,7 +4,7 @@ using Omnius.Core.RocketPack;
 
 namespace Omnius.Core.Remoting
 {
-    public sealed partial class RemotingFunction
+    public sealed partial class RocketPackRpcFunction
     {
         [Flags]
         internal enum ReceiveResultFlags : byte
