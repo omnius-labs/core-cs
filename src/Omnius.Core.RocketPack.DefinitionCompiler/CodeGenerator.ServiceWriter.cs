@@ -92,7 +92,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                 {
                     b.WriteLine($"private readonly {GenerateTypeFullName("IConnection")} _connection;");
                     b.WriteLine($"private readonly {GenerateTypeFullName("IBytesPool")} _bytesPool;");
-                    b.WriteLine($"private readonly {GenerateTypeFullName("IRemoting")} _remoting;");
+                    b.WriteLine($"private readonly {GenerateTypeFullName("IRocketPackRpc")} _rpc;");
                     b.WriteLine($"public {className}({GenerateTypeFullName("IConnection")} connection, {GenerateTypeFullName("IBytesPool")} bytesPool)");
                     b.WriteLine("{");
 
@@ -100,7 +100,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                     {
                         b.WriteLine("_connection = connection;");
                         b.WriteLine("_bytesPool = bytesPool;");
-                        b.WriteLine($"_remoting = {GenerateTypeFullName("Remoting")}.Factory.Create(_connection, {GenerateTypeFullName("RemotingMessenger")}.Factory, {GenerateTypeFullName("RemotingFunction")}.Factory, _bytesPool);");
+                        b.WriteLine($"_rpc = {GenerateTypeFullName("RocketPackRpc")}.Factory.Create(_connection, {GenerateTypeFullName("RocketPackRpcMessenger")}.Factory, {GenerateTypeFullName("RocketPackRpcFunction")}.Factory, _bytesPool);");
                     }
 
                     b.WriteLine("}");
@@ -109,7 +109,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
 
                     using (b.Indent())
                     {
-                        b.WriteLine("await _remoting.DisposeAsync();");
+                        b.WriteLine("await _rpc.DisposeAsync();");
                     }
 
                     b.WriteLine("}");
@@ -126,7 +126,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
 
                                 using (b.Indent())
                                 {
-                                    b.WriteLine($"using var function = await _remoting.ConnectAsync({index}, cancellationToken);");
+                                    b.WriteLine($"using var function = await _rpc.ConnectAsync({index}, cancellationToken);");
                                     b.WriteLine($"return await function.CallFunctionAsync<{inTypeObjectDef.CSharpFullName}, {outTypeObjectDef.CSharpFullName}>(param, cancellationToken);");
                                 }
 
@@ -142,7 +142,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
 
                                 using (b.Indent())
                                 {
-                                    b.WriteLine($"using var function = await _remoting.ConnectAsync({index}, cancellationToken);");
+                                    b.WriteLine($"using var function = await _rpc.ConnectAsync({index}, cancellationToken);");
                                     b.WriteLine($"return await function.CallFunctionAsync<{outTypeObjectDef.CSharpFullName}>(cancellationToken);");
                                 }
 
@@ -158,7 +158,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
 
                                 using (b.Indent())
                                 {
-                                    b.WriteLine($"using var function = await _remoting.ConnectAsync({index}, cancellationToken);");
+                                    b.WriteLine($"using var function = await _rpc.ConnectAsync({index}, cancellationToken);");
                                     b.WriteLine($"await function.CallActionAsync<{inTypeObjectDef.CSharpFullName}>(param, cancellationToken);");
                                 }
 
@@ -173,7 +173,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
 
                                 using (b.Indent())
                                 {
-                                    b.WriteLine($"using var function = await _remoting.ConnectAsync({index}, cancellationToken);");
+                                    b.WriteLine($"using var function = await _rpc.ConnectAsync({index}, cancellationToken);");
                                     b.WriteLine($"await function.CallActionAsync(cancellationToken);");
                                 }
 
@@ -197,7 +197,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                     b.WriteLine($"private readonly {serviceDefinition.CSharpInterfaceFullName} _service;");
                     b.WriteLine($"private readonly {GenerateTypeFullName("IConnection")} _connection;");
                     b.WriteLine($"private readonly {GenerateTypeFullName("IBytesPool")} _bytesPool;");
-                    b.WriteLine($"private readonly {GenerateTypeFullName("IRemoting")} _remoting;");
+                    b.WriteLine($"private readonly {GenerateTypeFullName("IRocketPackRpc")} _rpc;");
                     b.WriteLine($"public {className}({serviceDefinition.CSharpInterfaceFullName} service, {GenerateTypeFullName("IConnection")} connection, {GenerateTypeFullName("IBytesPool")} bytesPool)");
                     b.WriteLine("{");
 
@@ -206,7 +206,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                         b.WriteLine("_service = service;");
                         b.WriteLine("_connection = connection;");
                         b.WriteLine("_bytesPool = bytesPool;");
-                        b.WriteLine($"_remoting = {GenerateTypeFullName("Remoting")}.Factory.Create(_connection, {GenerateTypeFullName("RemotingMessenger")}.Factory, {GenerateTypeFullName("RemotingFunction")}.Factory, _bytesPool);");
+                        b.WriteLine($"_rpc = {GenerateTypeFullName("RocketPackRpc")}.Factory.Create(_connection, {GenerateTypeFullName("RocketPackRpcMessenger")}.Factory, {GenerateTypeFullName("RocketPackRpcFunction")}.Factory, _bytesPool);");
                     }
 
                     b.WriteLine("}");
@@ -214,7 +214,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                     b.WriteLine("{");
                     using (b.Indent())
                     {
-                        b.WriteLine("await _remoting.DisposeAsync();");
+                        b.WriteLine("await _rpc.DisposeAsync();");
                     }
 
                     b.WriteLine("}");
@@ -230,7 +230,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                         using (b.Indent())
                         {
                             b.WriteLine("cancellationToken.ThrowIfCancellationRequested();");
-                            b.WriteLine("using var function = await _remoting.AcceptAsync(cancellationToken);");
+                            b.WriteLine("using var function = await _rpc.AcceptAsync(cancellationToken);");
 
                             b.WriteLine("switch (function.Id)");
                             b.WriteLine("{");

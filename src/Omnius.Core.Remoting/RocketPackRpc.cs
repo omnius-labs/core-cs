@@ -8,59 +8,59 @@ using Omnius.Core.Net.Connections;
 
 namespace Omnius.Core.Remoting
 {
-    public interface IRemotingFactory
+    public interface IRocketPackRpcFactory
     {
-        IRemoting Create(IConnection connection, IRemotingMessengerFactory messengerFactory, IRemotingFunctionFactory functionFactory, IBytesPool bytesPool);
+        IRocketPackRpc Create(IConnection connection, IRocketPackRpcMessengerFactory messengerFactory, IRocketPackRpcFunctionFactory functionFactory, IBytesPool bytesPool);
     }
 
-    public interface IRemoting : IAsyncDisposable
+    public interface IRocketPackRpc : IAsyncDisposable
     {
-        ValueTask<IRemotingFunction> ConnectAsync(uint functionId, CancellationToken cancellationToken = default);
+        ValueTask<IRocketPackRpcFunction> ConnectAsync(uint functionId, CancellationToken cancellationToken = default);
 
-        ValueTask<IRemotingFunction> AcceptAsync(CancellationToken cancellationToken = default);
+        ValueTask<IRocketPackRpcFunction> AcceptAsync(CancellationToken cancellationToken = default);
     }
 
-    public sealed class Remoting : AsyncDisposableBase, IRemoting
+    public sealed class RocketPackRpc : AsyncDisposableBase, IRocketPackRpc
     {
         private static readonly NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
 
         private readonly IConnection _connection;
-        private readonly IRemotingMessengerFactory _messengerFactory;
-        private readonly IRemotingFunctionFactory _functionFactory;
+        private readonly IRocketPackRpcMessengerFactory _messengerFactory;
+        private readonly IRocketPackRpcFunctionFactory _functionFactory;
         private readonly IBytesPool _bytesPool;
 
         private readonly Random _random = new();
 
-        private readonly IRemotingMessenger _messenger = null!;
-        private readonly IRemotingMessageReceiver _messageReceiver = null!;
+        private readonly IRocketPackRpcMessenger _messenger = null!;
+        private readonly IRocketPackRpcMessageReceiver _messageReceiver = null!;
 
         private Task _eventLoopTask = null!;
         private readonly CancellationTokenSource _cancellationTokenSource = new();
 
         private readonly Channel<(uint sessionId, uint functionId)> _acceptedSessionChannel = Channel.CreateBounded<(uint, uint)>(10);
-        private readonly ConcurrentDictionary<uint, RemotingSession> _sessions = new();
+        private readonly ConcurrentDictionary<uint, RocketPackRpcSession> _sessions = new();
 
         private uint _currentNextSessionId = 0;
 
-        internal sealed class RemotingFactory : IRemotingFactory
+        internal sealed class RemotingFactory : IRocketPackRpcFactory
         {
-            public IRemoting Create(IConnection connection, IRemotingMessengerFactory messengerFactory, IRemotingFunctionFactory functionFactory, IBytesPool bytesPool)
+            public IRocketPackRpc Create(IConnection connection, IRocketPackRpcMessengerFactory messengerFactory, IRocketPackRpcFunctionFactory functionFactory, IBytesPool bytesPool)
             {
-                var result = new Remoting(connection, messengerFactory, functionFactory, bytesPool);
+                var result = new RocketPackRpc(connection, messengerFactory, functionFactory, bytesPool);
                 return result;
             }
         }
 
-        public static IRemotingFactory Factory { get; } = new RemotingFactory();
+        public static IRocketPackRpcFactory Factory { get; } = new RemotingFactory();
 
-        public Remoting(IConnection connection, IRemotingMessengerFactory messengerFactory, IRemotingFunctionFactory functionFactory, IBytesPool bytesPool)
+        public RocketPackRpc(IConnection connection, IRocketPackRpcMessengerFactory messengerFactory, IRocketPackRpcFunctionFactory functionFactory, IBytesPool bytesPool)
         {
             _connection = connection;
             _messengerFactory = messengerFactory;
             _functionFactory = functionFactory;
             _bytesPool = bytesPool;
 
-            _messageReceiver = new RemotingMessageReceiver(this);
+            _messageReceiver = new RocketPackRpcMessageReceiver(this);
             _messenger = _messengerFactory.Create(_connection, _messageReceiver, _bytesPool);
             _eventLoopTask = this.EventLoopAsync(_cancellationTokenSource.Token);
         }
@@ -85,22 +85,22 @@ namespace Omnius.Core.Remoting
             }
         }
 
-        public async ValueTask<IRemotingFunction> ConnectAsync(uint functionId, CancellationToken cancellationToken = default)
+        public async ValueTask<IRocketPackRpcFunction> ConnectAsync(uint functionId, CancellationToken cancellationToken = default)
         {
             var sessionId = this.NextSessionId();
             await _messenger.SendConnectMessageAsync(sessionId, functionId, cancellationToken);
 
-            var session = new RemotingSession(sessionId, functionId, this, _bytesPool);
+            var session = new RocketPackRpcSession(sessionId, functionId, this, _bytesPool);
             _sessions.TryAdd(session.Id, session);
 
             return _functionFactory.Create(session, _bytesPool);
         }
 
-        public async ValueTask<IRemotingFunction> AcceptAsync(CancellationToken cancellationToken = default)
+        public async ValueTask<IRocketPackRpcFunction> AcceptAsync(CancellationToken cancellationToken = default)
         {
             var (sessionId, functionId) = await _acceptedSessionChannel.Reader.ReadAsync(cancellationToken);
 
-            var session = new RemotingSession(sessionId, functionId, this, _bytesPool);
+            var session = new RocketPackRpcSession(sessionId, functionId, this, _bytesPool);
             _sessions.TryAdd(sessionId, session);
 
             return _functionFactory.Create(session, _bytesPool);
@@ -138,14 +138,14 @@ namespace Omnius.Core.Remoting
             }
         }
 
-        internal class RemotingSession : IRemotingSession
+        internal class RocketPackRpcSession : IRocketPackRpcSession
         {
-            private readonly Remoting _remoting;
+            private readonly RocketPackRpc _remoting;
             private readonly IBytesPool _bytesPool;
 
             private readonly Channel<ArraySegment<byte>> _receivedDataMessage = Channel.CreateBounded<ArraySegment<byte>>(10);
 
-            public RemotingSession(uint id, uint functionId, Remoting remoting, IBytesPool bytesPool)
+            public RocketPackRpcSession(uint id, uint functionId, RocketPackRpc remoting, IBytesPool bytesPool)
             {
                 this.Id = id;
                 this.FunctionId = functionId;
@@ -195,11 +195,11 @@ namespace Omnius.Core.Remoting
             }
         }
 
-        internal class RemotingMessageReceiver : IRemotingMessageReceiver
+        internal class RocketPackRpcMessageReceiver : IRocketPackRpcMessageReceiver
         {
-            private readonly Remoting _remoting;
+            private readonly RocketPackRpc _remoting;
 
-            public RemotingMessageReceiver(Remoting remoting)
+            public RocketPackRpcMessageReceiver(RocketPackRpc remoting)
             {
                 _remoting = remoting;
             }

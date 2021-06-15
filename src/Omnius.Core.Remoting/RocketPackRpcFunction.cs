@@ -7,12 +7,12 @@ using Omnius.Core.RocketPack;
 
 namespace Omnius.Core.Remoting
 {
-    public interface IRemotingFunctionFactory
+    public interface IRocketPackRpcFunctionFactory
     {
-        IRemotingFunction Create(IRemotingSession session, IBytesPool bytesPool);
+        IRocketPackRpcFunction Create(IRocketPackRpcSession session, IBytesPool bytesPool);
     }
 
-    public interface IRemotingSession : IDisposable
+    public interface IRocketPackRpcSession : IDisposable
     {
         uint Id { get; }
 
@@ -27,7 +27,7 @@ namespace Omnius.Core.Remoting
         ValueTask ReceiveDataMessageAsync(Action<ReadOnlySequence<byte>> action, CancellationToken cancellationToken = default);
     }
 
-    public interface IRemotingFunction : IDisposable
+    public interface IRocketPackRpcFunction : IDisposable
     {
         uint Id { get; }
 
@@ -56,25 +56,25 @@ namespace Omnius.Core.Remoting
             where TResult : IRocketPackObject<TResult>;
     }
 
-    public sealed partial class RemotingFunction : DisposableBase, IRemotingFunction
+    public sealed partial class RocketPackRpcFunction : DisposableBase, IRocketPackRpcFunction
     {
-        private readonly IRemotingSession _session;
+        private readonly IRocketPackRpcSession _session;
         private readonly IBytesPool _bytesPool;
 
         private readonly CancellationTokenSource _cancellationTokenSource = new();
 
-        internal sealed class RemotingFunctionFactory : IRemotingFunctionFactory
+        internal sealed class RemotingFunctionFactory : IRocketPackRpcFunctionFactory
         {
-            public IRemotingFunction Create(IRemotingSession session, IBytesPool bytesPool)
+            public IRocketPackRpcFunction Create(IRocketPackRpcSession session, IBytesPool bytesPool)
             {
-                var result = new RemotingFunction(session, bytesPool);
+                var result = new RocketPackRpcFunction(session, bytesPool);
                 return result;
             }
         }
 
-        public static IRemotingFunctionFactory Factory { get; } = new RemotingFunctionFactory();
+        public static IRocketPackRpcFunctionFactory Factory { get; } = new RemotingFunctionFactory();
 
-        internal RemotingFunction(IRemotingSession session, IBytesPool bytesPool)
+        internal RocketPackRpcFunction(IRocketPackRpcSession session, IBytesPool bytesPool)
         {
             _session = session;
             _session.ReceiveAbortMessageEvent += this.Abort;

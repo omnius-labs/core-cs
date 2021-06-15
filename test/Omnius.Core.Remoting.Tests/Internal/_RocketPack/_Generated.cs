@@ -212,35 +212,35 @@ namespace Omnius.Core.Remoting.Tests.Internal
         {
             private readonly global::Omnius.Core.Net.Connections.IConnection _connection;
             private readonly global::Omnius.Core.IBytesPool _bytesPool;
-            private readonly global::Omnius.Core.Remoting.IRemoting _remoting;
+            private readonly global::Omnius.Core.Remoting.IRocketPackRpc _rpc;
             public Client(global::Omnius.Core.Net.Connections.IConnection connection, global::Omnius.Core.IBytesPool bytesPool)
             {
                 _connection = connection;
                 _bytesPool = bytesPool;
-                _remoting = global::Omnius.Core.Remoting.Remoting.Factory.Create(_connection, global::Omnius.Core.Remoting.RemotingMessenger.Factory, global::Omnius.Core.Remoting.RemotingFunction.Factory, _bytesPool);
+                _rpc = global::Omnius.Core.Remoting.RocketPackRpc.Factory.Create(_connection, global::Omnius.Core.Remoting.RocketPackRpcMessenger.Factory, global::Omnius.Core.Remoting.RocketPackRpcFunction.Factory, _bytesPool);
             }
             protected override async global::System.Threading.Tasks.ValueTask OnDisposeAsync()
             {
-                await _remoting.DisposeAsync();
+                await _rpc.DisposeAsync();
             }
             public async global::System.Threading.Tasks.ValueTask<global::Omnius.Core.Remoting.Tests.Internal.TestResult> Unary1Async(global::Omnius.Core.Remoting.Tests.Internal.TestParam param, global::System.Threading.CancellationToken cancellationToken = default)
             {
-                using var function = await _remoting.ConnectAsync(1, cancellationToken);
+                using var function = await _rpc.ConnectAsync(1, cancellationToken);
                 return await function.CallFunctionAsync<global::Omnius.Core.Remoting.Tests.Internal.TestParam, global::Omnius.Core.Remoting.Tests.Internal.TestResult>(param, cancellationToken);
             }
             public async global::System.Threading.Tasks.ValueTask Unary2Async(global::Omnius.Core.Remoting.Tests.Internal.TestParam param, global::System.Threading.CancellationToken cancellationToken = default)
             {
-                using var function = await _remoting.ConnectAsync(2, cancellationToken);
+                using var function = await _rpc.ConnectAsync(2, cancellationToken);
                 await function.CallActionAsync<global::Omnius.Core.Remoting.Tests.Internal.TestParam>(param, cancellationToken);
             }
             public async global::System.Threading.Tasks.ValueTask<global::Omnius.Core.Remoting.Tests.Internal.TestResult> Unary3Async(global::System.Threading.CancellationToken cancellationToken = default)
             {
-                using var function = await _remoting.ConnectAsync(3, cancellationToken);
+                using var function = await _rpc.ConnectAsync(3, cancellationToken);
                 return await function.CallFunctionAsync<global::Omnius.Core.Remoting.Tests.Internal.TestResult>(cancellationToken);
             }
             public async global::System.Threading.Tasks.ValueTask Unary4Async(global::System.Threading.CancellationToken cancellationToken = default)
             {
-                using var function = await _remoting.ConnectAsync(4, cancellationToken);
+                using var function = await _rpc.ConnectAsync(4, cancellationToken);
                 await function.CallActionAsync(cancellationToken);
             }
         }
@@ -249,24 +249,24 @@ namespace Omnius.Core.Remoting.Tests.Internal
             private readonly global::Omnius.Core.Remoting.Tests.Internal.ITestService _service;
             private readonly global::Omnius.Core.Net.Connections.IConnection _connection;
             private readonly global::Omnius.Core.IBytesPool _bytesPool;
-            private readonly global::Omnius.Core.Remoting.IRemoting _remoting;
+            private readonly global::Omnius.Core.Remoting.IRocketPackRpc _rpc;
             public Server(global::Omnius.Core.Remoting.Tests.Internal.ITestService service, global::Omnius.Core.Net.Connections.IConnection connection, global::Omnius.Core.IBytesPool bytesPool)
             {
                 _service = service;
                 _connection = connection;
                 _bytesPool = bytesPool;
-                _remoting = global::Omnius.Core.Remoting.Remoting.Factory.Create(_connection, global::Omnius.Core.Remoting.RemotingMessenger.Factory, global::Omnius.Core.Remoting.RemotingFunction.Factory, _bytesPool);
+                _rpc = global::Omnius.Core.Remoting.RocketPackRpc.Factory.Create(_connection, global::Omnius.Core.Remoting.RocketPackRpcMessenger.Factory, global::Omnius.Core.Remoting.RocketPackRpcFunction.Factory, _bytesPool);
             }
             protected override async global::System.Threading.Tasks.ValueTask OnDisposeAsync()
             {
-                await _remoting.DisposeAsync();
+                await _rpc.DisposeAsync();
             }
             public async global::System.Threading.Tasks.Task EventLoopAsync(global::System.Threading.CancellationToken cancellationToken = default)
             {
                 while (!cancellationToken.IsCancellationRequested)
                 {
                     cancellationToken.ThrowIfCancellationRequested();
-                    using var function = await _remoting.AcceptAsync(cancellationToken);
+                    using var function = await _rpc.AcceptAsync(cancellationToken);
                     switch (function.Id)
                     {
                         case 1:
