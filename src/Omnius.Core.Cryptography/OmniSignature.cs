@@ -55,7 +55,7 @@ namespace Omnius.Core.Cryptography
                     this.Hash.Export(hub.Writer, BytesPool.Shared);
 
                     // hubからHash情報を読み込み、Base58Btcへ変換する。
-                    hashString = OmniBase.Encode(hub.Reader.GetSequence(), ConvertStringType.Base58);
+                    hashString = OmniBase.Encode(hub.Reader.GetSequence(), ConvertStringType.Base58) ?? string.Empty;
                 }
 
                 _toString = StringHelper.Normalize(this.Name) + "@" + hashString;
