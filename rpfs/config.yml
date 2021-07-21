@@ -7,6 +7,12 @@
       Output: ./src/Omnius.Core.Cryptography/_RocketPack/_Generated.cs
     - Input: ./rpfs/Omnius.Core.Net/Omnius.Core.Net.rpf
       Output: ./src/Omnius.Core.Net/_RocketPack/_Generated.cs
+    - Input: ./rpfs/Omnius.Core.Net.Connections/Omnius.Core.Net.Connections.Multiplexer.rpf
+      Output: ./src/Omnius.Core.Net.Connections/Multiplexer/_RocketPack/_Generated.cs
+    - Input: ./rpfs/Omnius.Core.Net.Connections/Omnius.Core.Net.Connections.Multiplexer.Internal.rpf
+      Output: ./src/Omnius.Core.Net.Connections/Multiplexer/Internal/_RocketPack/_Generated.cs
+    - Input: ./rpfs/Omnius.Core.Net.Connections/Omnius.Core.Net.Connections.Multiplexer.V1.Internal.rpf
+      Output: ./src/Omnius.Core.Net.Connections/Multiplexer/V1/Internal/_RocketPack/_Generated.cs
     - Input: ./rpfs/Omnius.Core.Net.Connections/Omnius.Core.Net.Connections.Secure.rpf
       Output: ./src/Omnius.Core.Net.Connections/Secure/_RocketPack/_Generated.cs
     - Input: ./rpfs/Omnius.Core.Net.Connections/Omnius.Core.Net.Connections.Secure.Internal.rpf
