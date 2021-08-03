@@ -3,44 +3,50 @@
 
 namespace Omnius.Core.Net.Connections.Multiplexer.V1.Internal
 {
-    internal sealed partial class ProfileMessage : global::Omnius.Core.RocketPack.IRocketPackObject<global::Omnius.Core.Net.Connections.Multiplexer.V1.Internal.ProfileMessage>
+    internal sealed partial class ProfileMessage : global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.Net.Connections.Multiplexer.V1.Internal.ProfileMessage>
     {
-        public static global::Omnius.Core.RocketPack.IRocketPackObjectFormatter<global::Omnius.Core.Net.Connections.Multiplexer.V1.Internal.ProfileMessage> Formatter => global::Omnius.Core.RocketPack.IRocketPackObject<global::Omnius.Core.Net.Connections.Multiplexer.V1.Internal.ProfileMessage>.Formatter;
-        public static global::Omnius.Core.Net.Connections.Multiplexer.V1.Internal.ProfileMessage Empty => global::Omnius.Core.RocketPack.IRocketPackObject<global::Omnius.Core.Net.Connections.Multiplexer.V1.Internal.ProfileMessage>.Empty;
+        public static global::Omnius.Core.RocketPack.IRocketMessageFormatter<global::Omnius.Core.Net.Connections.Multiplexer.V1.Internal.ProfileMessage> Formatter => global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.Net.Connections.Multiplexer.V1.Internal.ProfileMessage>.Formatter;
+        public static global::Omnius.Core.Net.Connections.Multiplexer.V1.Internal.ProfileMessage Empty => global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.Net.Connections.Multiplexer.V1.Internal.ProfileMessage>.Empty;
 
         static ProfileMessage()
         {
-            global::Omnius.Core.RocketPack.IRocketPackObject<global::Omnius.Core.Net.Connections.Multiplexer.V1.Internal.ProfileMessage>.Formatter = new ___CustomFormatter();
-            global::Omnius.Core.RocketPack.IRocketPackObject<global::Omnius.Core.Net.Connections.Multiplexer.V1.Internal.ProfileMessage>.Empty = new global::Omnius.Core.Net.Connections.Multiplexer.V1.Internal.ProfileMessage(0, 0);
+            global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.Net.Connections.Multiplexer.V1.Internal.ProfileMessage>.Formatter = new ___CustomFormatter();
+            global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.Net.Connections.Multiplexer.V1.Internal.ProfileMessage>.Empty = new global::Omnius.Core.Net.Connections.Multiplexer.V1.Internal.ProfileMessage(0, 0, 0, 0);
         }
 
         private readonly global::System.Lazy<int> ___hashCode;
 
-        public ProfileMessage(uint maxMessageSize, uint maxQueueSize)
+        public ProfileMessage(uint packetReceiveTimeoutMilliseconds, uint maxStreamRequestQueueSize, uint maxStreamDataSize, uint maxStreamDataQueueSize)
         {
-            this.MaxMessageSize = maxMessageSize;
-            this.MaxQueueSize = maxQueueSize;
+            this.PacketReceiveTimeoutMilliseconds = packetReceiveTimeoutMilliseconds;
+            this.MaxStreamRequestQueueSize = maxStreamRequestQueueSize;
+            this.MaxStreamDataSize = maxStreamDataSize;
+            this.MaxStreamDataQueueSize = maxStreamDataQueueSize;
 
             ___hashCode = new global::System.Lazy<int>(() =>
             {
                 var ___h = new global::System.HashCode();
-                if (maxMessageSize != default) ___h.Add(maxMessageSize.GetHashCode());
-                if (maxQueueSize != default) ___h.Add(maxQueueSize.GetHashCode());
+                if (packetReceiveTimeoutMilliseconds != default) ___h.Add(packetReceiveTimeoutMilliseconds.GetHashCode());
+                if (maxStreamRequestQueueSize != default) ___h.Add(maxStreamRequestQueueSize.GetHashCode());
+                if (maxStreamDataSize != default) ___h.Add(maxStreamDataSize.GetHashCode());
+                if (maxStreamDataQueueSize != default) ___h.Add(maxStreamDataQueueSize.GetHashCode());
                 return ___h.ToHashCode();
             });
         }
 
-        public uint MaxMessageSize { get; }
-        public uint MaxQueueSize { get; }
+        public uint PacketReceiveTimeoutMilliseconds { get; }
+        public uint MaxStreamRequestQueueSize { get; }
+        public uint MaxStreamDataSize { get; }
+        public uint MaxStreamDataQueueSize { get; }
 
         public static global::Omnius.Core.Net.Connections.Multiplexer.V1.Internal.ProfileMessage Import(global::System.Buffers.ReadOnlySequence<byte> sequence, global::Omnius.Core.IBytesPool bytesPool)
         {
-            var reader = new global::Omnius.Core.RocketPack.RocketPackObjectReader(sequence, bytesPool);
+            var reader = new global::Omnius.Core.RocketPack.RocketMessageReader(sequence, bytesPool);
             return Formatter.Deserialize(ref reader, 0);
         }
         public void Export(global::System.Buffers.IBufferWriter<byte> bufferWriter, global::Omnius.Core.IBytesPool bytesPool)
         {
-            var writer = new global::Omnius.Core.RocketPack.RocketPackObjectWriter(bufferWriter, bytesPool);
+            var writer = new global::Omnius.Core.RocketPack.RocketMessageWriter(bufferWriter, bytesPool);
             Formatter.Serialize(ref writer, this, 0);
         }
 
@@ -61,37 +67,51 @@ namespace Omnius.Core.Net.Connections.Multiplexer.V1.Internal
         {
             if (target is null) return false;
             if (object.ReferenceEquals(this, target)) return true;
-            if (this.MaxMessageSize != target.MaxMessageSize) return false;
-            if (this.MaxQueueSize != target.MaxQueueSize) return false;
+            if (this.PacketReceiveTimeoutMilliseconds != target.PacketReceiveTimeoutMilliseconds) return false;
+            if (this.MaxStreamRequestQueueSize != target.MaxStreamRequestQueueSize) return false;
+            if (this.MaxStreamDataSize != target.MaxStreamDataSize) return false;
+            if (this.MaxStreamDataQueueSize != target.MaxStreamDataQueueSize) return false;
 
             return true;
         }
         public override int GetHashCode() => ___hashCode.Value;
 
-        private sealed class ___CustomFormatter : global::Omnius.Core.RocketPack.IRocketPackObjectFormatter<global::Omnius.Core.Net.Connections.Multiplexer.V1.Internal.ProfileMessage>
+        private sealed class ___CustomFormatter : global::Omnius.Core.RocketPack.IRocketMessageFormatter<global::Omnius.Core.Net.Connections.Multiplexer.V1.Internal.ProfileMessage>
         {
-            public void Serialize(ref global::Omnius.Core.RocketPack.RocketPackObjectWriter w, in global::Omnius.Core.Net.Connections.Multiplexer.V1.Internal.ProfileMessage value, in int rank)
+            public void Serialize(ref global::Omnius.Core.RocketPack.RocketMessageWriter w, in global::Omnius.Core.Net.Connections.Multiplexer.V1.Internal.ProfileMessage value, in int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
-                if (value.MaxMessageSize != 0)
+                if (value.PacketReceiveTimeoutMilliseconds != 0)
                 {
                     w.Write((uint)1);
-                    w.Write(value.MaxMessageSize);
+                    w.Write(value.PacketReceiveTimeoutMilliseconds);
                 }
-                if (value.MaxQueueSize != 0)
+                if (value.MaxStreamRequestQueueSize != 0)
                 {
                     w.Write((uint)2);
-                    w.Write(value.MaxQueueSize);
+                    w.Write(value.MaxStreamRequestQueueSize);
+                }
+                if (value.MaxStreamDataSize != 0)
+                {
+                    w.Write((uint)3);
+                    w.Write(value.MaxStreamDataSize);
+                }
+                if (value.MaxStreamDataQueueSize != 0)
+                {
+                    w.Write((uint)4);
+                    w.Write(value.MaxStreamDataQueueSize);
                 }
                 w.Write((uint)0);
             }
-            public global::Omnius.Core.Net.Connections.Multiplexer.V1.Internal.ProfileMessage Deserialize(ref global::Omnius.Core.RocketPack.RocketPackObjectReader r, in int rank)
+            public global::Omnius.Core.Net.Connections.Multiplexer.V1.Internal.ProfileMessage Deserialize(ref global::Omnius.Core.RocketPack.RocketMessageReader r, in int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
-                uint p_maxMessageSize = 0;
-                uint p_maxQueueSize = 0;
+                uint p_packetReceiveTimeoutMilliseconds = 0;
+                uint p_maxStreamRequestQueueSize = 0;
+                uint p_maxStreamDataSize = 0;
+                uint p_maxStreamDataQueueSize = 0;
 
                 for (; ; )
                 {
@@ -101,18 +121,28 @@ namespace Omnius.Core.Net.Connections.Multiplexer.V1.Internal
                     {
                         case 1:
                             {
-                                p_maxMessageSize = r.GetUInt32();
+                                p_packetReceiveTimeoutMilliseconds = r.GetUInt32();
                                 break;
                             }
                         case 2:
                             {
-                                p_maxQueueSize = r.GetUInt32();
+                                p_maxStreamRequestQueueSize = r.GetUInt32();
+                                break;
+                            }
+                        case 3:
+                            {
+                                p_maxStreamDataSize = r.GetUInt32();
+                                break;
+                            }
+                        case 4:
+                            {
+                                p_maxStreamDataQueueSize = r.GetUInt32();
                                 break;
                             }
                     }
                 }
 
-                return new global::Omnius.Core.Net.Connections.Multiplexer.V1.Internal.ProfileMessage(p_maxMessageSize, p_maxQueueSize);
+                return new global::Omnius.Core.Net.Connections.Multiplexer.V1.Internal.ProfileMessage(p_packetReceiveTimeoutMilliseconds, p_maxStreamRequestQueueSize, p_maxStreamDataSize, p_maxStreamDataQueueSize);
             }
         }
     }

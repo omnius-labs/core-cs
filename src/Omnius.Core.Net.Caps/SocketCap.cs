@@ -25,8 +25,6 @@ namespace Omnius.Core.Net.Caps
 
         public Socket Socket => _socket;
 
-        public bool IsBlocking => _socket.Blocking;
-
         public bool IsConnected => _isConnected && !(_socket.Poll(0, SelectMode.SelectRead) && (_socket.Available == 0));
 
         public bool CanSend()

@@ -6,64 +6,70 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
+using Omnius.Core;
 using Omnius.Core.Cryptography;
 using Omnius.Core.Cryptography.Functions;
-using Omnius.Core.Extensions;
 using Omnius.Core.Helpers;
+using Omnius.Core.Net.Connections.Internal;
+using Omnius.Core.Pipelines;
+using Omnius.Core.Tasks;
 
 namespace Omnius.Core.Net.Connections.Secure.V1.Internal
 {
-    public sealed class SecureConnection : DisposableBase
+    public sealed partial class SecureConnection : AsyncDisposableBase
     {
+        private static readonly NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
+
         private readonly IConnection _connection;
+        private readonly int _maxReceiveByteCount;
         private readonly OmniSecureConnectionType _type;
         private readonly IReadOnlyList<string> _passwords;
+        private readonly IBatchActionDispatcher _batchActionDispatcher;
         private readonly IBytesPool _bytesPool;
 
         private string[]? _matchedPasswords;
 
-        private State? _state;
+        private ConnectionSender? _sender;
+        private ConnectionReceiver? _receiver;
+        private ConnectionSubscribers? _subscribers;
+        private BatchAction? _batchAction;
 
         private readonly Random _random = new Random();
+        private readonly CancellationTokenSource _cancellationTokenSource = new();
 
         private const int FrameSize = 16 * 1024;
 
         public SecureConnection(IConnection connection, OmniSecureConnectionOptions options)
         {
-            _connection = connection ?? throw new ArgumentNullException(nameof(connection));
-
-            if (options == null) throw new ArgumentNullException(nameof(options));
-            if (!EnumHelper.IsValid(options.Type)) throw new ArgumentException(nameof(options.Type));
-
+            _connection = connection;
+            _maxReceiveByteCount = options.MaxReceiveByteCount;
             _type = options.Type;
             _passwords = options.Passwords ?? Array.Empty<string>();
-            _bytesPool = options.BufferPool ?? BytesPool.Shared;
+            _batchActionDispatcher = options.BatchActionDispatcher;
+            _bytesPool = options.BytesPool;
         }
 
-        protected override void OnDispose(bool disposing)
+        protected override async ValueTask OnDisposeAsync()
         {
-            if (disposing)
-            {
-            }
+            if (_batchAction is not null) _batchActionDispatcher.Unregister(_batchAction);
+
+            _cancellationTokenSource.Cancel();
+            _subscribers?.Dispose();
+            _sender?.Dispose();
+            _receiver?.Dispose();
+            await _connection.DisposeAsync();
+            _cancellationTokenSource.Dispose();
         }
+
+        public bool IsConnected => _connection.IsConnected;
+
+        public IConnectionSender Sender => _sender ?? throw new InvalidOperationException();
+
+        public IConnectionReceiver Receiver => _receiver ?? throw new InvalidOperationException();
+
+        public IConnectionSubscribers Subscribers => _subscribers ?? throw new InvalidOperationException();
 
         public IEnumerable<string> MatchedPasswords => _matchedPasswords ?? Enumerable.Empty<string>();
-
-        private static T GetOverlapMaxEnum<T>(IEnumerable<T> s1, IEnumerable<T> s2)
-            where T : Enum
-        {
-            var list = s1.ToList();
-            list.Sort((x, y) => y.CompareTo(x));
-
-            var hashSet = new HashSet<T>(s2);
-
-            foreach (var item in list)
-            {
-                if (hashSet.Contains(item)) return item;
-            }
-
-            throw new OmniSecureConnectionException($"Overlap enum of {nameof(T)} could not be found.");
-        }
 
         internal static void Increment(byte[] bytes)
         {
@@ -102,28 +108,29 @@ namespace Omnius.Core.Net.Connections.Secure.V1.Internal
                         new[] { HashAlgorithm.Sha2_256 });
                 }
 
-                var enqueueTask = _connection.EnqueueAsync((bufferWriter) => myProfileMessage.Export(bufferWriter, _bytesPool), cancellationToken);
-                var dequeueTask = _connection.DequeueAsync((sequence) => otherProfileMessage = ProfileMessage.Import(sequence, _bytesPool), cancellationToken);
+                var enqueueTask = _connection.Sender.SendAsync(myProfileMessage, cancellationToken).AsTask();
+                var dequeueTask = _connection.Receiver.ReceiveAsync<ProfileMessage>(cancellationToken).AsTask();
 
-                await ValueTaskHelper.WhenAll(enqueueTask, dequeueTask);
+                await Task.WhenAll(enqueueTask, dequeueTask);
+                otherProfileMessage = dequeueTask.Result;
 
                 if (otherProfileMessage is null) throw new NullReferenceException();
                 if (myProfileMessage.AuthenticationType != otherProfileMessage.AuthenticationType) throw new OmniSecureConnectionException("AuthenticationType does not match.");
             }
 
-            var keyExchangeAlgorithm = GetOverlapMaxEnum(myProfileMessage.KeyExchangeAlgorithms, otherProfileMessage.KeyExchangeAlgorithms);
-            var keyDerivationAlgorithm = GetOverlapMaxEnum(myProfileMessage.KeyDerivationAlgorithms, otherProfileMessage.KeyDerivationAlgorithms);
-            var cryptoAlgorithm = GetOverlapMaxEnum(myProfileMessage.CryptoAlgorithms, otherProfileMessage.CryptoAlgorithms);
-            var hashAlgorithm = GetOverlapMaxEnum(myProfileMessage.HashAlgorithms, otherProfileMessage.HashAlgorithms);
+            var keyExchangeAlgorithm = EnumHelper.GetOverlappedMaxValue(myProfileMessage.KeyExchangeAlgorithms, otherProfileMessage.KeyExchangeAlgorithms);
+            var keyDerivationAlgorithm = EnumHelper.GetOverlappedMaxValue(myProfileMessage.KeyDerivationAlgorithms, otherProfileMessage.KeyDerivationAlgorithms);
+            var cryptoAlgorithm = EnumHelper.GetOverlappedMaxValue(myProfileMessage.CryptoAlgorithms, otherProfileMessage.CryptoAlgorithms);
+            var hashAlgorithm = EnumHelper.GetOverlappedMaxValue(myProfileMessage.HashAlgorithms, otherProfileMessage.HashAlgorithms);
 
-            if (!EnumHelper.IsValid(keyExchangeAlgorithm)) throw new OmniSecureConnectionException("key exchange algorithm does not match.");
-            if (!EnumHelper.IsValid(keyDerivationAlgorithm)) throw new OmniSecureConnectionException("key derivation algorithm does not match.");
-            if (!EnumHelper.IsValid(cryptoAlgorithm)) throw new OmniSecureConnectionException("Crypto algorithm does not match.");
-            if (!EnumHelper.IsValid(hashAlgorithm)) throw new OmniSecureConnectionException("Hash algorithm does not match.");
+            if (keyExchangeAlgorithm is null) throw new OmniSecureConnectionException("key exchange algorithm does not match.");
+            if (keyDerivationAlgorithm is null) throw new OmniSecureConnectionException("key derivation algorithm does not match.");
+            if (cryptoAlgorithm is null) throw new OmniSecureConnectionException("Crypto algorithm does not match.");
+            if (hashAlgorithm is null) throw new OmniSecureConnectionException("Hash algorithm does not match.");
 
             ReadOnlyMemory<byte> secret = null;
 
-            if (keyExchangeAlgorithm.HasFlag(KeyExchangeAlgorithm.EcDh_P521_Sha2_256))
+            if (keyExchangeAlgorithm.Value.HasFlag(KeyExchangeAlgorithm.EcDh_P521_Sha2_256))
             {
                 var myAgreement = OmniAgreement.Create(OmniAgreementAlgorithmType.EcDh_P521_Sha2_256);
 
@@ -133,10 +140,11 @@ namespace Omnius.Core.Net.Connections.Secure.V1.Internal
                     {
                         myAgreementPrivateKey = myAgreement.GetOmniAgreementPrivateKey();
 
-                        var enqueueTask = _connection.EnqueueAsync((bufferWriter) => myAgreement.GetOmniAgreementPublicKey().Export(bufferWriter, _bytesPool), cancellationToken);
-                        var dequeueTask = _connection.DequeueAsync((sequence) => otherAgreementPublicKey = OmniAgreementPublicKey.Import(sequence, _bytesPool), cancellationToken);
+                        var enqueueTask = _connection.Sender.SendAsync(myAgreement.GetOmniAgreementPublicKey(), cancellationToken).AsTask();
+                        var dequeueTask = _connection.Receiver.ReceiveAsync<OmniAgreementPublicKey>(cancellationToken).AsTask();
 
-                        await ValueTaskHelper.WhenAll(enqueueTask, dequeueTask);
+                        await Task.WhenAll(enqueueTask, dequeueTask);
+                        otherAgreementPublicKey = dequeueTask.Result;
 
                         if (otherAgreementPublicKey is null) throw new NullReferenceException();
                         if ((DateTime.UtcNow - otherAgreementPublicKey.CreationTime.ToDateTime()).TotalMinutes > 30) throw new OmniSecureConnectionException("Agreement public key has Expired.");
@@ -148,16 +156,17 @@ namespace Omnius.Core.Net.Connections.Secure.V1.Internal
                         AuthenticationMessage? otherAuthenticationMessage = null;
                         {
                             {
-                                var myHashAndPasswordList = this.GetHashes(myProfileMessage, myAgreement.GetOmniAgreementPublicKey(), hashAlgorithm).ToList();
+                                var myHashAndPasswordList = this.GetHashes(myProfileMessage, myAgreement.GetOmniAgreementPublicKey(), hashAlgorithm.Value).ToList();
 
                                 _random.Shuffle(myHashAndPasswordList);
                                 myAuthenticationMessage = new AuthenticationMessage(myHashAndPasswordList.Select(n => n.Item1).ToArray());
                             }
 
-                            var enqueueTask = _connection.EnqueueAsync((bufferWriter) => myAuthenticationMessage.Export(bufferWriter, _bytesPool), cancellationToken);
-                            var dequeueTask = _connection.DequeueAsync((sequence) => otherAuthenticationMessage = AuthenticationMessage.Import(sequence, _bytesPool), cancellationToken);
+                            var enqueueTask = _connection.Sender.SendAsync(myAuthenticationMessage, cancellationToken).AsTask();
+                            var dequeueTask = _connection.Receiver.ReceiveAsync<AuthenticationMessage>(cancellationToken).AsTask();
 
-                            await ValueTaskHelper.WhenAll(enqueueTask, dequeueTask);
+                            await Task.WhenAll(enqueueTask, dequeueTask);
+                            otherAuthenticationMessage = dequeueTask.Result;
 
                             if (otherAuthenticationMessage is null) throw new NullReferenceException();
 
@@ -166,7 +175,7 @@ namespace Omnius.Core.Net.Connections.Secure.V1.Internal
                                 var equalityComparer = new CustomEqualityComparer<ReadOnlyMemory<byte>>((x, y) => BytesOperations.Equals(x.Span, y.Span), (x) => Fnv1_32.ComputeHash(x.Span));
                                 var receiveHashes = new HashSet<ReadOnlyMemory<byte>>(otherAuthenticationMessage.Hashes, equalityComparer);
 
-                                foreach (var (hash, password) in this.GetHashes(otherProfileMessage, otherAgreementPublicKey, hashAlgorithm))
+                                foreach (var (hash, password) in this.GetHashes(otherProfileMessage, otherAgreementPublicKey, hashAlgorithm.Value))
                                 {
                                     if (receiveHashes.Contains(hash))
                                     {
@@ -182,7 +191,7 @@ namespace Omnius.Core.Net.Connections.Secure.V1.Internal
                     }
                 }
 
-                if (hashAlgorithm.HasFlag(HashAlgorithm.Sha2_256))
+                if (hashAlgorithm.Value.HasFlag(HashAlgorithm.Sha2_256))
                 {
                     secret = OmniAgreement.GetSecret(otherAgreementPublicKey, myAgreementPrivateKey);
                 }
@@ -193,7 +202,7 @@ namespace Omnius.Core.Net.Connections.Secure.V1.Internal
             byte[] myNonce;
             byte[] otherNonce;
 
-            if (keyDerivationAlgorithm.HasFlag(KeyDerivationAlgorithm.Pbkdf2))
+            if (keyDerivationAlgorithm.Value.HasFlag(KeyDerivationAlgorithm.Pbkdf2))
             {
                 byte[] xorSessionId = new byte[Math.Max(myProfileMessage.SessionId.Length, otherProfileMessage.SessionId.Length)];
                 BytesOperations.Xor(myProfileMessage.SessionId.Span, otherProfileMessage.SessionId.Span, xorSessionId);
@@ -201,7 +210,7 @@ namespace Omnius.Core.Net.Connections.Secure.V1.Internal
                 int cryptoKeyLength = 0;
                 int nonceLength = 0;
 
-                if (cryptoAlgorithm.HasFlag(CryptoAlgorithm.Aes_Gcm_256))
+                if (cryptoAlgorithm.Value.HasFlag(CryptoAlgorithm.Aes_Gcm_256))
                 {
                     cryptoKeyLength = 32;
                     nonceLength = 12;
@@ -214,7 +223,7 @@ namespace Omnius.Core.Net.Connections.Secure.V1.Internal
 
                 var kdfResult = new byte[(cryptoKeyLength + nonceLength) * 2];
 
-                if (hashAlgorithm.HasFlag(HashAlgorithm.Sha2_256))
+                if (hashAlgorithm.Value.HasFlag(HashAlgorithm.Sha2_256))
                 {
                     Pbkdf2_Sha2_256.TryComputeHash(secret.Span, xorSessionId, 1024, kdfResult);
                 }
@@ -242,7 +251,12 @@ namespace Omnius.Core.Net.Connections.Secure.V1.Internal
                 throw new NotSupportedException(nameof(keyDerivationAlgorithm));
             }
 
-            _state = new State(cryptoAlgorithm, hashAlgorithm, myCryptoKey, otherCryptoKey, myNonce, otherNonce);
+            var sessionState = new SessionState(cryptoAlgorithm.Value, hashAlgorithm.Value, myCryptoKey, otherCryptoKey, myNonce, otherNonce);
+            _sender = new ConnectionSender(_connection.Sender, _bytesPool, sessionState, _cancellationTokenSource);
+            _receiver = new ConnectionReceiver(_connection.Receiver, _maxReceiveByteCount, _bytesPool, sessionState, _cancellationTokenSource);
+            _subscribers = new ConnectionSubscribers(_cancellationTokenSource.Token);
+            _batchAction = new BatchAction(_sender, _receiver);
+            _batchActionDispatcher.Register(_batchAction);
         }
 
         private (ReadOnlyMemory<byte>, string)[] GetHashes(ProfileMessage profileMessage, OmniAgreementPublicKey agreementPublicKey, HashAlgorithm hashAlgorithm)
@@ -255,10 +269,10 @@ namespace Omnius.Core.Net.Connections.Secure.V1.Internal
 
                 if (hashAlgorithm == HashAlgorithm.Sha2_256)
                 {
-                    using var hub = new BytesHub();
+                    using var bytesPipe = new BytesPipe();
 
-                    verificationMessage.Export(hub.Writer, _bytesPool);
-                    verificationMessageHash = Sha2_256.ComputeHash(hub.Reader.GetSequence());
+                    verificationMessage.Export(bytesPipe.Writer, _bytesPool);
+                    verificationMessageHash = Sha2_256.ComputeHash(bytesPipe.Reader.GetSequence());
                 }
                 else
                 {
@@ -277,143 +291,9 @@ namespace Omnius.Core.Net.Connections.Secure.V1.Internal
             return results.Select(item => (item.Key, item.Value)).ToArray();
         }
 
-        private void Encode(IBufferWriter<byte> bufferWriter, Action<IBufferWriter<byte>> action)
+        internal sealed class SessionState
         {
-            if (_state == null) throw new OmniSecureConnectionException("Not handshaked");
-
-            using var hub = new BytesHub();
-            action.Invoke(hub.Writer);
-
-            var sequence = hub.Reader.GetSequence();
-
-            try
-            {
-                if (_state.CryptoAlgorithm.HasFlag(CryptoAlgorithm.Aes_Gcm_256))
-                {
-                    using (var aes = new AesGcm(_state.MyCryptoKey))
-                    {
-                        Span<byte> tag = stackalloc byte[16];
-                        var inBuffer = _bytesPool.Array.Rent(FrameSize - tag.Length);
-                        var outBuffer = _bytesPool.Array.Rent(FrameSize - tag.Length);
-
-                        try
-                        {
-                            while (sequence.Length > 0)
-                            {
-                                int contentLength = (int)Math.Min(sequence.Length, FrameSize - tag.Length);
-
-                                var plaintext = inBuffer.AsSpan(0, contentLength);
-                                var ciphertext = outBuffer.AsSpan(0, contentLength);
-
-                                sequence.Slice(0, contentLength).CopyTo(plaintext);
-                                sequence = sequence.Slice(contentLength);
-
-                                aes.Encrypt(_state.MyNonce, plaintext, ciphertext, tag);
-                                Increment(_state.MyNonce);
-
-                                bufferWriter.Write(ciphertext);
-                                bufferWriter.Write(tag);
-                            }
-                        }
-                        finally
-                        {
-                            _bytesPool.Array.Return(inBuffer);
-                            _bytesPool.Array.Return(outBuffer);
-                        }
-                    }
-
-                    return;
-                }
-            }
-            catch (OmniSecureConnectionException)
-            {
-                throw;
-            }
-
-            throw new OmniSecureConnectionException("Conversion failed.");
-        }
-
-        public bool TryEnqueue(Action<IBufferWriter<byte>> action)
-        {
-            return _connection.TryEnqueue((bufferWriter) => this.Encode(bufferWriter, action));
-        }
-
-        public async ValueTask EnqueueAsync(Action<IBufferWriter<byte>> action, CancellationToken cancellationToken = default)
-        {
-            await _connection.EnqueueAsync((bufferWriter) => this.Encode(bufferWriter, action), cancellationToken);
-        }
-
-        private void Decode(ReadOnlySequence<byte> sequence, Action<ReadOnlySequence<byte>> action)
-        {
-            if (_state == null) throw new OmniSecureConnectionException("Not handshaked");
-
-            using var hub = new BytesHub();
-
-            try
-            {
-                if (_state.CryptoAlgorithm.HasFlag(CryptoAlgorithm.Aes_Gcm_256))
-                {
-                    using (var aes = new AesGcm(_state.OtherCryptoKey))
-                    {
-                        Span<byte> tag = stackalloc byte[16];
-                        var inBuffer = _bytesPool.Array.Rent(FrameSize - tag.Length);
-                        var outBuffer = _bytesPool.Array.Rent(FrameSize - tag.Length);
-
-                        try
-                        {
-                            while (sequence.Length > 0)
-                            {
-                                if (sequence.Length <= tag.Length) throw new FormatException();
-
-                                int contentLength = (int)Math.Min(sequence.Length, FrameSize) - tag.Length;
-
-                                var ciphertext = inBuffer.AsSpan(0, contentLength);
-                                var plaintext = outBuffer.AsSpan(0, contentLength);
-
-                                sequence.Slice(0, contentLength).CopyTo(ciphertext);
-                                sequence = sequence.Slice(contentLength);
-
-                                sequence.Slice(0, tag.Length).CopyTo(tag);
-                                sequence = sequence.Slice(tag.Length);
-
-                                aes.Decrypt(_state.OtherNonce, ciphertext, tag, plaintext);
-                                Increment(_state.OtherNonce);
-
-                                hub.Writer.Write(plaintext);
-                            }
-                        }
-                        finally
-                        {
-                            _bytesPool.Array.Return(inBuffer);
-                            _bytesPool.Array.Return(outBuffer);
-                        }
-                    }
-
-                    action.Invoke(hub.Reader.GetSequence());
-                    return;
-                }
-            }
-            catch (OmniSecureConnectionException)
-            {
-                throw;
-            }
-
-            throw new OmniSecureConnectionException("Conversion failed.");
-        }
-
-        public bool TryDequeue(Action<ReadOnlySequence<byte>> action)
-        {
-            return _connection.TryDequeue((sequence) => this.Decode(sequence, action));
-        }
-
-        public async ValueTask DequeueAsync(Action<ReadOnlySequence<byte>> action, CancellationToken cancellationToken = default)
-        {
-            await _connection.DequeueAsync((sequence) => this.Decode(sequence, action), cancellationToken);
-        }
-
-        private sealed class State
-        {
-            public State(CryptoAlgorithm cryptoAlgorithm, HashAlgorithm hashAlgorithm, byte[] myCryptoKey, byte[] otherCryptoKey, byte[] myNonce, byte[] otherNonce)
+            public SessionState(CryptoAlgorithm cryptoAlgorithm, HashAlgorithm hashAlgorithm, byte[] myCryptoKey, byte[] otherCryptoKey, byte[] myNonce, byte[] otherNonce)
             {
                 this.CryptoAlgorithm = cryptoAlgorithm;
                 this.HashAlgorithm = hashAlgorithm;

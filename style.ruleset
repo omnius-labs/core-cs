@@ -97,7 +97,7 @@
     <Rule Id="SA1310" Action="None" />
     <Rule Id="SA1311" Action="Warning" />
     <Rule Id="SA1312" Action="Warning" />
-    <Rule Id="SA1313" Action="Warning" />
+    <Rule Id="SA1313" Action="None" />
     <Rule Id="SA1314" Action="Warning" />
     <Rule Id="SA1400" Action="Warning" />
     <Rule Id="SA1401" Action="Warning" />

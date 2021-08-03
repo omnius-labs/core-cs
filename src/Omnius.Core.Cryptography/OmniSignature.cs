@@ -1,5 +1,6 @@
 using System;
 using Omnius.Core.Helpers;
+using Omnius.Core.Pipelines;
 using Omnius.Core.Serialization;
 
 namespace Omnius.Core.Cryptography
@@ -22,13 +23,13 @@ namespace Omnius.Core.Cryptography
 
                 OmniHash omniHash;
 
-                using (var hub = new BytesHub())
+                using (var bytesPipe = new BytesPipe())
                 {
-                    // @以降の文字列をデコードし、hubへ書き込む。
-                    OmniBase.TryDecode(item.Substring(index + 1), hub.Writer);
+                    // @以降の文字列をデコードし、bytesPipeへ書き込む。
+                    OmniBase.TryDecode(item.Substring(index + 1), bytesPipe.Writer);
 
-                    // hubからHash情報を読み取る。
-                    omniHash = OmniHash.Import(hub.Reader.GetSequence(), BytesPool.Shared);
+                    // bytesPipeからHash情報を読み取る。
+                    omniHash = OmniHash.Import(bytesPipe.Reader.GetSequence(), BytesPool.Shared);
                 }
 
                 signature = new OmniSignature(name, omniHash);
@@ -49,13 +50,13 @@ namespace Omnius.Core.Cryptography
             {
                 string hashString;
 
-                using (var hub = new BytesHub())
+                using (var bytesPipe = new BytesPipe())
                 {
-                    // Hash情報をhubへ書き込む。
-                    this.Hash.Export(hub.Writer, BytesPool.Shared);
+                    // Hash情報をbytesPipeへ書き込む。
+                    this.Hash.Export(bytesPipe.Writer, BytesPool.Shared);
 
-                    // hubからHash情報を読み込み、Base58Btcへ変換する。
-                    hashString = OmniBase.Encode(hub.Reader.GetSequence(), ConvertStringType.Base58) ?? string.Empty;
+                    // bytesPipeからHash情報を読み込み、Base58Btcへ変換する。
+                    hashString = OmniBase.Encode(bytesPipe.Reader.GetSequence(), ConvertStringType.Base58) ?? string.Empty;
                 }
 
                 _toString = StringHelper.Normalize(this.Name) + "@" + hashString;

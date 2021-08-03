@@ -43,7 +43,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                         enumWriter.Write(b, enumDefinition, accessLevel);
                     }
 
-                    var objectWriter = new ObjectWriter(_rootDefinition, _externalDefinitions);
+                    var objectWriter = new MessageWriter(_rootDefinition, _externalDefinitions);
                     foreach (var objectDefinition in _rootDefinition.Objects)
                     {
                         objectWriter.Write(b, objectDefinition, accessLevel);
@@ -87,8 +87,8 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                 "IConnection" => $"Omnius.Core.Net.Connections.IConnection",
                 "IDisposable" => "System.IDisposable",
                 "IMemoryOwner<>" => $"System.Buffers.IMemoryOwner<{types[0]}>",
-                "IRocketPackObjectFormatter<>" => $"Omnius.Core.RocketPack.IRocketPackObjectFormatter<{types[0]}>",
-                "IRocketPackObject<>" => $"Omnius.Core.RocketPack.IRocketPackObject<{types[0]}>",
+                "IRocketMessageFormatter<>" => $"Omnius.Core.RocketPack.IRocketMessageFormatter<{types[0]}>",
+                "IRocketMessage<>" => $"Omnius.Core.RocketPack.IRocketMessage<{types[0]}>",
                 "Lazy<>" => $"System.Lazy<{types[0]}>",
                 "Memory<>" => $"System.Memory<{types[0]}>",
                 "MemoryOwner<>" => $"Omnius.Core.MemoryOwner<{types[0]}>",
@@ -98,12 +98,12 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                 "ReadOnlyMemory<>" => $"System.ReadOnlyMemory<{types[0]}>",
                 "ReadOnlySequence<>" => $"System.Buffers.ReadOnlySequence<{types[0]}>",
                 "ReadOnlySpan<>" => $"System.ReadOnlySpan<{types[0]}>",
-                "RocketPackObjectReader" => "Omnius.Core.RocketPack.RocketPackObjectReader",
-                "IRocketPackRpc" => $"Omnius.Core.Remoting.IRocketPackRpc",
-                "RocketPackRpc" => $"Omnius.Core.Remoting.RocketPackRpc",
-                "RocketPackRpcFunction" => $"Omnius.Core.Remoting.RocketPackRpcFunction",
-                "RocketPackRpcMessenger" => $"Omnius.Core.Remoting.RocketPackRpcMessenger",
-                "RocketPackObjectWriter" => "Omnius.Core.RocketPack.RocketPackObjectWriter",
+                "RocketMessageReader" => "Omnius.Core.RocketPack.RocketMessageReader",
+                "IRocketPackRpc" => $"Omnius.Core.RocketPack.Remoting.IRocketPackRpc",
+                "RocketPackRpc" => $"Omnius.Core.RocketPack.Remoting.RocketPackRpc",
+                "RocketPackRpcFunction" => $"Omnius.Core.RocketPack.Remoting.RocketPackRpcFunction",
+                "RocketPackRpcMessenger" => $"Omnius.Core.RocketPack.Remoting.RocketPackRpcMessenger",
+                "RocketMessageWriter" => "Omnius.Core.RocketPack.RocketMessageWriter",
                 "Span<>" => $"System.Span<{types[0]}>",
                 "Task" => $"System.Threading.Tasks.Task",
                 "Task<>" => $"System.Threading.Tasks.Task<{types[0]}>",

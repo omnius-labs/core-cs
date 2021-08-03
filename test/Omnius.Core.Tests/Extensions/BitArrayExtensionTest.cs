@@ -2,7 +2,7 @@ using System;
 using System.Collections;
 using Xunit;
 
-namespace Omnius.Core.Extensions
+namespace Omnius.Core
 {
     public class BitArrayExtensionTest
     {

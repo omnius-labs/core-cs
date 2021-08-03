@@ -5,7 +5,7 @@ using Sprache;
 
 namespace Omnius.Core.RocketPack.DefinitionCompiler.Parsers
 {
-    // https://github.com/sprache/Sprache/blob/develop/samples/LinqyCalculator/ExpressionParser.cs
+    // https://gitbytesPipe.com/sprache/Sprache/blob/develop/samples/LinqyCalculator/ExpressionParser.cs
     internal static class ExpressionParser
     {
         private static Expression MakeBinary(string ops, Expression leftOp, Expression rightOp)

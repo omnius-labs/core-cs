@@ -2,6 +2,7 @@ using System;
 using System.Text;
 using System.Threading;
 using Omnius.Core.Cryptography.Functions;
+using Omnius.Core.Pipelines;
 using Omnius.Core.RocketPack;
 
 namespace Omnius.Core.Cryptography.Internal
@@ -14,25 +15,23 @@ namespace Omnius.Core.Cryptography.Internal
         {
             if (name == null) throw new ArgumentNullException(nameof(name));
 
-            using (var hub = new BytesHub())
+            using var bytesPipe = new BytesPipe();
             {
-                {
-                    var writer = new RocketPackObjectWriter(hub.Writer, BytesPool.Shared);
+                var writer = new RocketMessageWriter(bytesPipe.Writer, BytesPool.Shared);
 
-                    writer.Write(name);
-                    writer.Write(publicKey);
-                }
+                writer.Write(name);
+                writer.Write(publicKey);
+            }
 
-                if (hashAlgorithmType == OmniHashAlgorithmType.Sha2_256)
-                {
-                    var result = new OmniHash(hashAlgorithmType, Sha2_256.ComputeHash(hub.Reader.GetSequence()));
+            if (hashAlgorithmType == OmniHashAlgorithmType.Sha2_256)
+            {
+                var result = new OmniHash(hashAlgorithmType, Sha2_256.ComputeHash(bytesPipe.Reader.GetSequence()));
 
-                    return result;
-                }
-                else
-                {
-                    throw new NotSupportedException();
-                }
+                return result;
+            }
+            else
+            {
+                throw new NotSupportedException();
             }
         }
 

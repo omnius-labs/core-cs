@@ -10,6 +10,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Omnius.Core.Pipelines\Omnius.Core.Pipelines.csproj" />
     <ProjectReference Include="..\Omnius.Core\Omnius.Core.csproj" />
   </ItemGroup>
 

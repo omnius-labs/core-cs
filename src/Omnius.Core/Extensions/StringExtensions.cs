@@ -1,6 +1,6 @@
 using System;
 
-namespace Omnius.Core.Extensions
+namespace Omnius.Core
 {
     public static class StringExtensions
     {

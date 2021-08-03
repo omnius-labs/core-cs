@@ -1,4 +1,4 @@
-// https://github.com/lontivero/gcs/blob/master/src/SipHash.cs
+// https://gitbytesPipe.com/lontivero/gcs/blob/master/src/SipHash.cs
 // MIT License
 
 using System;

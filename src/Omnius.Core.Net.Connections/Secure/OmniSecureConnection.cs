@@ -1,5 +1,4 @@
 using System;
-using System.Buffers;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -9,7 +8,7 @@ using Omnius.Core.Net.Connections.Secure.Internal;
 
 namespace Omnius.Core.Net.Connections.Secure
 {
-    public sealed class OmniSecureConnection : DisposableBase, IConnection
+    public sealed class OmniSecureConnection : AsyncDisposableBase, IConnection
     {
         private readonly IConnection _connection;
         private readonly OmniSecureConnectionOptions _options;
@@ -26,24 +25,17 @@ namespace Omnius.Core.Net.Connections.Secure
 
             _connection = connection;
             _options = options;
-            _bytesPool = options.BufferPool ?? BytesPool.Shared;
+            _bytesPool = options.BytesPool;
         }
 
-        protected override void OnDispose(bool disposing)
+        protected override async ValueTask OnDisposeAsync()
         {
-            if (disposing)
-            {
-                _secureConnection_v1?.Dispose();
-            }
+            if (_secureConnection_v1 is not null) await _secureConnection_v1.DisposeAsync();
         }
 
         public IConnection BaseConnection => _connection;
 
         public bool IsConnected => _connection.IsConnected;
-
-        public long TotalBytesSent => _connection.TotalBytesSent;
-
-        public long TotalBytesReceived => _connection.TotalBytesReceived;
 
         public OmniSecureConnectionType Type => _options.Type;
 
@@ -60,20 +52,43 @@ namespace Omnius.Core.Net.Connections.Secure
             }
         }
 
-        private static T GetOverlapMaxEnum<T>(IEnumerable<T> s1, IEnumerable<T> s2)
-            where T : Enum
+        public IConnectionSender Sender
         {
-            var list = s1.ToList();
-            list.Sort((x, y) => y.CompareTo(x));
-
-            var hashSet = new HashSet<T>(s2);
-
-            foreach (var item in list)
+            get
             {
-                if (hashSet.Contains(item)) return item;
-            }
+                if (_secureConnection_v1 != null)
+                {
+                    return _secureConnection_v1.Sender;
+                }
 
-            throw new OmniSecureConnectionException($"Overlap enum of {nameof(T)} could not be found.");
+                throw new InvalidOperationException();
+            }
+        }
+
+        public IConnectionReceiver Receiver
+        {
+            get
+            {
+                if (_secureConnection_v1 != null)
+                {
+                    return _secureConnection_v1.Receiver;
+                }
+
+                throw new InvalidOperationException();
+            }
+        }
+
+        public IConnectionSubscribers Subscribers
+        {
+            get
+            {
+                if (_secureConnection_v1 != null)
+                {
+                    return _secureConnection_v1.Subscribers;
+                }
+
+                throw new InvalidOperationException();
+            }
         }
 
         public async ValueTask HandshakeAsync(CancellationToken cancellationToken = default)
@@ -109,57 +124,16 @@ namespace Omnius.Core.Net.Connections.Secure
             {
                 sendHelloMessage = new HelloMessage(new[] { _version });
 
-                var enqueueTask = _connection.EnqueueAsync((bufferWriter) => sendHelloMessage.Export(bufferWriter, _bytesPool), cancellationToken);
-                var dequeueTask = _connection.DequeueAsync((sequence) => receiveHelloMessage = HelloMessage.Import(sequence, _bytesPool), cancellationToken);
+                var enqueueTask = _connection.Sender.SendAsync(sendHelloMessage, cancellationToken).AsTask();
+                var dequeueTask = _connection.Receiver.ReceiveAsync<HelloMessage>(cancellationToken).AsTask();
 
-                await ValueTaskHelper.WhenAll(enqueueTask, dequeueTask);
+                await Task.WhenAll(enqueueTask, dequeueTask);
+                receiveHelloMessage = dequeueTask.Result;
 
                 if (receiveHelloMessage is null) throw new NullReferenceException();
             }
 
-            _version = GetOverlapMaxEnum(sendHelloMessage.Versions, receiveHelloMessage.Versions);
-        }
-
-        public bool TryEnqueue(Action<IBufferWriter<byte>> action)
-        {
-            if (_secureConnection_v1 != null)
-            {
-                return _secureConnection_v1.TryEnqueue(action);
-            }
-
-            throw new NotSupportedException("Not supported OmniSecureConnectionVersion.");
-        }
-
-        public async ValueTask EnqueueAsync(Action<IBufferWriter<byte>> action, CancellationToken cancellationToken = default)
-        {
-            if (_secureConnection_v1 != null)
-            {
-                await _secureConnection_v1.EnqueueAsync(action, cancellationToken);
-                return;
-            }
-
-            throw new NotSupportedException("Not supported OmniSecureConnectionVersion.");
-        }
-
-        public bool TryDequeue(Action<ReadOnlySequence<byte>> action)
-        {
-            if (_secureConnection_v1 != null)
-            {
-                return _secureConnection_v1.TryDequeue(action);
-            }
-
-            throw new NotSupportedException("Not supported OmniSecureConnectionVersion.");
-        }
-
-        public async ValueTask DequeueAsync(Action<ReadOnlySequence<byte>> action, CancellationToken cancellationToken = default)
-        {
-            if (_secureConnection_v1 != null)
-            {
-                await _secureConnection_v1.DequeueAsync(action, cancellationToken);
-                return;
-            }
-
-            throw new NotSupportedException("Not supported OmniSecureConnectionVersion.");
+            _version = EnumHelper.GetOverlappedMaxValue(sendHelloMessage.Versions, receiveHelloMessage.Versions) ?? OmniSecureConnectionVersion.Unknown;
         }
     }
 }

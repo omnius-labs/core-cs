@@ -1,42 +1,90 @@
 using System;
-using System.Buffers;
+using System.Collections.Generic;
 using System.Threading;
-using System.Threading.Channels;
 using System.Threading.Tasks;
-using Omnius.Core.Helpers;
-using Omnius.Core.Net.Connections.Extensions;
+using Omnius.Core.Net.Connections.Internal;
+using Omnius.Core.Pipelines;
 
 namespace Omnius.Core.Net.Connections.Multiplexer.V1.Internal
 {
     internal partial class ConnectionMultiplexer
     {
-        internal sealed class StreamConnection : IConnection
+        internal sealed class StreamConnection : AsyncDisposableBase, IConnection
         {
-            private readonly ChannelReader<ConnectionMultiplexerMessage> _inputReader;
-            private readonly ChannelWriter<ConnectionMultiplexerMessage> _outputWriter;
+            private readonly int _maxSendDataQueueSize;
+            private readonly int _maxReceiveDataQueueSize;
+            private readonly IBytesPool _bytesPool;
 
-            public StreamConnection(ChannelReader<ConnectionMultiplexerMessage> inputReader, ChannelWriter<ConnectionMultiplexerMessage> outputWriter)
+            private BoundedMessagePipe<ArraySegment<byte>> _sendDataMessagePipe;
+            private BoundedMessagePipe<ArraySegment<byte>> _receiveDataMessagePipe;
+            private BoundedMessagePipe _sendDataAcceptedMessagePipe;
+            private ActionPipe _receiveDataAcceptedActionPipe;
+            private readonly StreamConnectionSender _streamConnectionSender;
+            private readonly StreamConnectionReceiver _streamConnectionReceiver;
+            private readonly ConnectionSubscribers _subscribers;
+
+            private BoundedMessagePipe _sendFinishMessagePipe;
+            private ActionPipe _receiveFinishActionPipe;
+
+            private List<IDisposable> _disposables = new();
+            private readonly CancellationTokenSource _cancellationTokenSource = new();
+
+            public StreamConnection(int maxSendDataQueueSize, int maxReceiveDataQueueSize, IBytesPool bytesPool)
             {
-                _inputReader = inputReader;
-                _outputWriter = outputWriter;
+                _maxSendDataQueueSize = maxSendDataQueueSize;
+                _maxReceiveDataQueueSize = maxReceiveDataQueueSize;
+                _bytesPool = bytesPool;
+
+                _sendDataMessagePipe = new BoundedMessagePipe<ArraySegment<byte>>(_maxSendDataQueueSize);
+                _disposables.Add(_sendDataMessagePipe);
+                _receiveDataMessagePipe = new BoundedMessagePipe<ArraySegment<byte>>(_maxReceiveDataQueueSize);
+                _disposables.Add(_receiveDataMessagePipe);
+                _sendDataAcceptedMessagePipe = new BoundedMessagePipe(_maxReceiveDataQueueSize);
+                _receiveDataAcceptedActionPipe = new ActionPipe();
+
+                _streamConnectionSender = new StreamConnectionSender(maxSendDataQueueSize, _sendDataMessagePipe.Writer, _receiveDataAcceptedActionPipe.Subscriber, _bytesPool, _cancellationTokenSource.Token, _disposables);
+                _streamConnectionReceiver = new StreamConnectionReceiver(_receiveDataMessagePipe.Reader, _sendDataAcceptedMessagePipe.Writer, _bytesPool, _cancellationTokenSource.Token);
+                _subscribers = new ConnectionSubscribers(_cancellationTokenSource.Token);
+
+                _sendFinishMessagePipe = new BoundedMessagePipe(1);
+                _receiveFinishActionPipe = new ActionPipe();
+                _disposables.Add(_receiveFinishActionPipe.Subscriber.Subscribe(() => _cancellationTokenSource.Cancel()));
+
+                _disposables.Add(_cancellationTokenSource);
             }
 
-            public async ValueTask ConnectAsync(CancellationToken cancellationToken = default)
+            public bool IsConnected => !this.IsDisposed;
+
+            public IConnectionSender Sender => _streamConnectionSender;
+
+            public IConnectionReceiver Receiver => _streamConnectionReceiver;
+
+            public IConnectionSubscribers Subscribers => _subscribers;
+
+            internal IMessagePipeReader<ArraySegment<byte>> SendDataReader => _sendDataMessagePipe.Reader;
+
+            internal IMessagePipeWriter<ArraySegment<byte>> ReceiveDataWriter => _receiveDataMessagePipe.Writer;
+
+            internal IMessagePipeReader SendDataAcceptedReader => _sendDataAcceptedMessagePipe.Reader;
+
+            internal IActionPublicher ReceiveDataAcceptedPublicher => _receiveDataAcceptedActionPipe.Publicher;
+
+            internal IMessagePipeReader SendFinishReader => _sendFinishMessagePipe.Reader;
+
+            internal IActionPublicher ReceiveFinishPublicher => _receiveFinishActionPipe.Publicher;
+
+            protected override async ValueTask OnDisposeAsync()
             {
-                var connectionRequestMessage = new ConnectionMultiplexerMessage(ConnectionMultiplexerMessageType.ConnectionRequest, null);
-                await _outputWriter.WriteAsync(connectionRequestMessage, cancellationToken);
+                if (!_cancellationTokenSource.IsCancellationRequested)
+                {
+                    _cancellationTokenSource.Cancel();
+                    _sendFinishMessagePipe.Writer.TryWrite();
+                }
 
-                var receivedMessage = await _inputReader.ReadAsync(cancellationToken);
-                if (receivedMessage.Type != ConnectionMultiplexerMessageType.ConnectionRequestAccepted) throw new Exception(); // TODO
-            }
-
-            public async ValueTask AcceptAsync(CancellationToken cancellationToken = default)
-            {
-                var receivedMessage = await _inputReader.ReadAsync(cancellationToken);
-                if (receivedMessage.Type != ConnectionMultiplexerMessageType.ConnectionRequest) throw new Exception(); // TODO
-
-                var connectionRequestMessage = new ConnectionMultiplexerMessage(ConnectionMultiplexerMessageType.ConnectionRequestAccepted, null);
-                await _outputWriter.WriteAsync(connectionRequestMessage, cancellationToken);
+                foreach (var disposable in _disposables)
+                {
+                    disposable.Dispose();
+                }
             }
         }
     }

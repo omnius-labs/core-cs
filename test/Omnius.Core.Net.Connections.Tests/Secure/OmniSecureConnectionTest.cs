@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Omnius.Core.Net.Caps;
 using Omnius.Core.Net.Connections.Internal;
+using Omnius.Core.Tasks;
 using Xunit;
 
 namespace Omnius.Core.Net.Connections.Secure
@@ -23,23 +24,13 @@ namespace Omnius.Core.Net.Connections.Secure
 
             var (socket1, socket2) = SocketHelper.GetSocketPair();
 
-            var dispatcherOptions = new BaseConnectionDispatcherOptions()
-            {
-                MaxSendBytesPerSeconds = 1024 * 1024 * 1,
-                MaxReceiveBytesPerSeconds = 1024 * 1024 * 1,
-            };
+            var batchActionDispatcher = new BatchActionDispatcher();
+            var options = new BaseConnectionOptions(1024 * 1024 * 256, null, null, batchActionDispatcher, BytesPool.Shared);
 
-            var options = new BaseConnectionOptions()
-            {
-                MaxReceiveByteCount = 1024 * 1024 * 256,
-                BytesPool = BytesPool.Shared,
-            };
-
-            await using var dispatcher = new BaseConnectionDispatcher(dispatcherOptions);
-            using var baseConnection1 = new BaseConnection(new SocketCap(socket1), dispatcher, options);
-            using var baseConnection2 = new BaseConnection(new SocketCap(socket2), dispatcher, options);
-            using var connection1 = new OmniSecureConnection(baseConnection1, new OmniSecureConnectionOptions() { Type = OmniSecureConnectionType.Connected });
-            using var connection2 = new OmniSecureConnection(baseConnection2, new OmniSecureConnectionOptions() { Type = OmniSecureConnectionType.Accepted });
+            await using var baseConnection1 = new BaseConnection(new SocketCap(socket1), options);
+            await using var baseConnection2 = new BaseConnection(new SocketCap(socket2), options);
+            await using var connection1 = new OmniSecureConnection(baseConnection1, new OmniSecureConnectionOptions(1024 * 1024 * 256, OmniSecureConnectionType.Connected, null, batchActionDispatcher, BytesPool.Shared));
+            await using var connection2 = new OmniSecureConnection(baseConnection2, new OmniSecureConnectionOptions(1024 * 1024 * 256, OmniSecureConnectionType.Accepted, null, batchActionDispatcher, BytesPool.Shared));
 
             // ハンドシェイクを行う
             {
@@ -63,12 +54,12 @@ namespace Omnius.Core.Net.Connections.Secure
 
                 random.NextBytes(buffer1);
 
-                var valueTask1 = connection1.EnqueueAsync((bufferWriter) =>
+                var valueTask1 = connection1.Sender.SendAsync((bufferWriter) =>
                 {
                     bufferWriter.Write(buffer1);
                 });
 
-                var valueTask2 = connection2.DequeueAsync((sequence) =>
+                var valueTask2 = connection2.Receiver.ReceiveAsync((sequence) =>
                 {
                     sequence.CopyTo(buffer2);
                 });

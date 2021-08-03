@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Omnius.Core.Serialization\Omnius.Core.Serialization.csproj" />
+    <ProjectReference Include="..\..\src\Omnius.Core.Pipelines\Omnius.Core.Pipelines.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -45,7 +45,7 @@ namespace FormatterBenchmarks.Cases
             {
                 var bytesPool = BytesPool.Shared;
                 var random = new Random(0);
-                using (var hub = new BytesHub(bytesPool))
+                using (var bytesPipe = new BytesPipe(bytesPool))
                 {
 
                     var elementsList = new List<RocketPack_BytesElements>();
@@ -69,10 +69,10 @@ namespace FormatterBenchmarks.Cases
 
                     var message = new RocketPack_BytesElementsList(elementsList.ToArray());
 
-                    message.Export(hub.Writer, BytesPool.Shared);
+                    message.Export(bytesPipe.Writer, BytesPool.Shared);
 
-                    _rocketPack_Bytes = new byte[hub.Writer.WrittenBytes];
-                    hub.Reader.GetSequence().CopyTo(_rocketPack_Bytes);
+                    _rocketPack_Bytes = new byte[bytesPipe.Writer.WrittenBytes];
+                    bytesPipe.Reader.GetSequence().CopyTo(_rocketPack_Bytes);
                 }
             }
         }

@@ -1,6 +1,7 @@
 using System;
 using System.Buffers;
 using Omnius.Core.Cryptography.Functions;
+using Omnius.Core.Pipelines;
 using Omnius.Core.Serialization;
 
 namespace Omnius.Core.Cryptography
@@ -45,10 +46,10 @@ namespace Omnius.Core.Cryptography
         {
             value = default;
 
-            var hub = new BytesHub();
-            if (!OmniBase.TryDecode(text, hub.Writer)) return false;
+            var bytesPipe = new BytesPipe();
+            if (!OmniBase.TryDecode(text, bytesPipe.Writer)) return false;
 
-            value = Import(hub.Reader.GetSequence(), BytesPool.Shared);
+            value = Import(bytesPipe.Reader.GetSequence(), BytesPool.Shared);
             return true;
         }
     }

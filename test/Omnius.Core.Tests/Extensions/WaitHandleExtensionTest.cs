@@ -3,7 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace Omnius.Core.Extensions
+namespace Omnius.Core
 {
     public class WaitHandleExtensionTest
     {
