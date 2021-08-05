@@ -9,27 +9,34 @@ namespace Omnius.Core.RocketPack.Remoting
 {
     public partial class RocketRemoting
     {
-        internal sealed class Listener : IRocketRemotingListener
+        internal sealed class Listener<TError> : AsyncDisposableBase, IRocketRemotingListener<TError>
+            where TError : IRocketMessage<TError>
         {
             private readonly IConnection _connection;
+            private readonly IErrorMessageFactory<TError> _errorMessageFactory;
             private readonly IBytesPool _bytesPool;
 
-            public Listener(IConnection connection, int functionId, IBytesPool bytesPool)
+            public Listener(IConnection connection, uint functionId, IErrorMessageFactory<TError> errorMessageFactory, IBytesPool bytesPool)
             {
                 _connection = connection;
                 this.FunctionId = functionId;
+                _errorMessageFactory = errorMessageFactory;
                 _bytesPool = bytesPool;
             }
 
-            public int FunctionId { get; }
+            protected override async ValueTask OnDisposeAsync()
+            {
+                await _connection.DisposeAsync();
+            }
 
-            public async ValueTask ListenFunctionAsync<TParam, TResult, TError>(Func<TParam, CancellationToken, ValueTask<TResult>> callback, IErrorMessageFactory<TError> _errorMessageFactory, CancellationToken cancellationToken = default)
+            public uint FunctionId { get; }
+
+            public async ValueTask ListenFunctionAsync<TParam, TResult>(Func<TParam, CancellationToken, ValueTask<TResult>> callback, CancellationToken cancellationToken = default)
                 where TParam : IRocketMessage<TParam>
                 where TResult : IRocketMessage<TResult>
-                where TError : IRocketMessage<TError>
             {
-                using var linkedTokenSource = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
-                using var onClose = _connection.Subscribers.OnClosed.Subscribe(() => linkedTokenSource.Cancel());
+                using var cancellationTokenSource = this.CreateCancellationTokenSource(cancellationToken);
+                var connectionCloseWaitTask = this.ConnectionCloseWaitAsync(cancellationTokenSource.Token);
 
                 var param = ParsedPacketMessage<TParam, TError>.CreateUnknown();
 
@@ -43,7 +50,7 @@ namespace Omnius.Core.RocketPack.Remoting
                 {
                     try
                     {
-                        var result = await callback.Invoke(param.Message, linkedTokenSource.Token);
+                        var result = await callback.Invoke(param.Message, cancellationTokenSource.Token);
 
                         await _connection.Sender.SendAsync(
                             bufferWriter =>
@@ -52,6 +59,8 @@ namespace Omnius.Core.RocketPack.Remoting
                                 builder.WriteCompleted(result);
                             }, cancellationToken);
 
+                        await connectionCloseWaitTask;
+
                         return;
                     }
                     catch (Exception e)
@@ -64,22 +73,23 @@ namespace Omnius.Core.RocketPack.Remoting
                                 var builder = new PacketBuilder(bufferWriter, _bytesPool);
                                 builder.WriteError(errorMessage);
                             }, cancellationToken);
+
+                        throw;
                     }
                 }
 
                 throw ThrowHelper.CreateRocketPackRpcProtocolException_UnexpectedProtocol();
             }
 
-            public async ValueTask ListenFunctionAsync<TResult, TError>(Func<CancellationToken, ValueTask<TResult>> callback, IErrorMessageFactory<TError> _errorMessageFactory, CancellationToken cancellationToken = default)
+            public async ValueTask ListenFunctionAsync<TResult>(Func<CancellationToken, ValueTask<TResult>> callback, CancellationToken cancellationToken = default)
                 where TResult : IRocketMessage<TResult>
-                where TError : IRocketMessage<TError>
             {
-                using var linkedTokenSource = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
-                using var onClose = _connection.Subscribers.OnClosed.Subscribe(() => linkedTokenSource.Cancel());
+                using var cancellationTokenSource = this.CreateCancellationTokenSource(cancellationToken);
+                var connectionCloseWaitTask = this.ConnectionCloseWaitAsync(cancellationTokenSource.Token);
 
                 try
                 {
-                    var result = await callback.Invoke(linkedTokenSource.Token);
+                    var result = await callback.Invoke(cancellationTokenSource.Token);
 
                     await _connection.Sender.SendAsync(
                         bufferWriter =>
@@ -87,6 +97,8 @@ namespace Omnius.Core.RocketPack.Remoting
                             var builder = new PacketBuilder(bufferWriter, _bytesPool);
                             builder.WriteCompleted(result);
                         }, cancellationToken);
+
+                    await connectionCloseWaitTask;
 
                     return;
                 }
@@ -100,17 +112,18 @@ namespace Omnius.Core.RocketPack.Remoting
                             var builder = new PacketBuilder(bufferWriter, _bytesPool);
                             builder.WriteError(errorMessage);
                         }, cancellationToken);
+
+                    throw;
                 }
 
                 throw ThrowHelper.CreateRocketPackRpcProtocolException_UnexpectedProtocol();
             }
 
-            public async ValueTask ListenActionAsync<TParam, TError>(Func<TParam, CancellationToken, ValueTask> callback, IErrorMessageFactory<TError> _errorMessageFactory, CancellationToken cancellationToken = default)
+            public async ValueTask ListenActionAsync<TParam>(Func<TParam, CancellationToken, ValueTask> callback, CancellationToken cancellationToken = default)
                 where TParam : IRocketMessage<TParam>
-                where TError : IRocketMessage<TError>
             {
-                using var linkedTokenSource = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
-                using var onClose = _connection.Subscribers.OnClosed.Subscribe(() => linkedTokenSource.Cancel());
+                using var cancellationTokenSource = this.CreateCancellationTokenSource(cancellationToken);
+                var connectionCloseWaitTask = this.ConnectionCloseWaitAsync(cancellationTokenSource.Token);
 
                 var param = ParsedPacketMessage<TParam, TError>.CreateUnknown();
 
@@ -124,7 +137,7 @@ namespace Omnius.Core.RocketPack.Remoting
                 {
                     try
                     {
-                        await callback.Invoke(param.Message, linkedTokenSource.Token);
+                        await callback.Invoke(param.Message, cancellationTokenSource.Token);
 
                         await _connection.Sender.SendAsync(
                             bufferWriter =>
@@ -132,6 +145,8 @@ namespace Omnius.Core.RocketPack.Remoting
                                 var builder = new PacketBuilder(bufferWriter, _bytesPool);
                                 builder.WriteCompleted();
                             }, cancellationToken);
+
+                        await connectionCloseWaitTask;
 
                         return;
                     }
@@ -145,21 +160,22 @@ namespace Omnius.Core.RocketPack.Remoting
                                 var builder = new PacketBuilder(bufferWriter, _bytesPool);
                                 builder.WriteError(errorMessage);
                             }, cancellationToken);
+
+                        throw;
                     }
                 }
 
                 throw ThrowHelper.CreateRocketPackRpcProtocolException_UnexpectedProtocol();
             }
 
-            public async ValueTask ListenActionAsync<TError>(Func<CancellationToken, ValueTask> callback, IErrorMessageFactory<TError> _errorMessageFactory, CancellationToken cancellationToken = default)
-                where TError : IRocketMessage<TError>
+            public async ValueTask ListenActionAsync(Func<CancellationToken, ValueTask> callback, CancellationToken cancellationToken = default)
             {
-                using var linkedTokenSource = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
-                using var onClose = _connection.Subscribers.OnClosed.Subscribe(() => linkedTokenSource.Cancel());
+                using var cancellationTokenSource = this.CreateCancellationTokenSource(cancellationToken);
+                var connectionCloseWaitTask = this.ConnectionCloseWaitAsync(cancellationTokenSource.Token);
 
                 try
                 {
-                    await callback.Invoke(linkedTokenSource.Token);
+                    await callback.Invoke(cancellationTokenSource.Token);
 
                     await _connection.Sender.SendAsync(
                         bufferWriter =>
@@ -167,6 +183,8 @@ namespace Omnius.Core.RocketPack.Remoting
                             var builder = new PacketBuilder(bufferWriter, _bytesPool);
                             builder.WriteCompleted();
                         }, cancellationToken);
+
+                    await connectionCloseWaitTask;
 
                     return;
                 }
@@ -180,9 +198,26 @@ namespace Omnius.Core.RocketPack.Remoting
                             var builder = new PacketBuilder(bufferWriter, _bytesPool);
                             builder.WriteError(errorMessage);
                         }, cancellationToken);
+
+                        throw;
                 }
 
                 throw ThrowHelper.CreateRocketPackRpcProtocolException_UnexpectedProtocol();
+            }
+
+            private CancellationTokenSource CreateCancellationTokenSource(CancellationToken cancellationToken)
+            {
+                var linkedTokenSource = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+                using var onCloseSubscriber = _connection.Events.OnClosed.Subscribe(() => linkedTokenSource.Cancel());
+                return linkedTokenSource;
+            }
+
+            private async ValueTask ConnectionCloseWaitAsync(CancellationToken cancellationToken = default)
+            {
+                var tcs = new TaskCompletionSource();
+                using var register = cancellationToken.Register(() => tcs.TrySetCanceled());
+                using var onCloseSubscriber = _connection.Events.OnClosed.Subscribe(() => tcs.SetResult());
+                await tcs.Task;
             }
         }
     }

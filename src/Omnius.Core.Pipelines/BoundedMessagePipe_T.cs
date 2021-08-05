@@ -13,8 +13,8 @@ namespace Omnius.Core.Pipelines
 
         public BoundedMessagePipe(int capacity)
         {
-            _writerSemaphore = new SemaphoreSlim(0, capacity);
-            _readerSemaphore = new SemaphoreSlim(capacity, capacity);
+            _writerSemaphore = new SemaphoreSlim(capacity, capacity);
+            _readerSemaphore = new SemaphoreSlim(0, capacity);
 
             this.Writer = new QueueWriter(this);
             this.Reader = new QueueReader(this);

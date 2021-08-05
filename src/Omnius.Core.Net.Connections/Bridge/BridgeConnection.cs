@@ -6,9 +6,9 @@ using Omnius.Core.Net.Connections.Internal;
 using Omnius.Core.Pipelines;
 using Omnius.Core.Tasks;
 
-namespace Omnius.Core.Net.Connections
+namespace Omnius.Core.Net.Connections.Bridge
 {
-    public sealed partial class BaseConnection : AsyncDisposableBase, IConnection
+    public sealed partial class BridgeConnection : AsyncDisposableBase, IConnection
     {
         private static readonly NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
 
@@ -21,12 +21,12 @@ namespace Omnius.Core.Net.Connections
 
         private readonly ConnectionSender _sender;
         private readonly ConnectionReceiver _receiver;
-        private readonly ConnectionSubscribers _subscribers;
+        private readonly ConnectionEvents _subscribers;
         private readonly BatchAction _batchAction;
 
         private readonly CancellationTokenSource _cancellationTokenSource = new();
 
-        public BaseConnection(ICap cap, BaseConnectionOptions options)
+        public BridgeConnection(ICap cap, BridgeConnectionOptions options)
         {
             _cap = cap;
             _maxReceiveByteCount = options.MaxReceiveByteCount;
@@ -37,7 +37,7 @@ namespace Omnius.Core.Net.Connections
 
             _sender = new ConnectionSender(_cap, _bytesPool, _cancellationTokenSource);
             _receiver = new ConnectionReceiver(_cap, _maxReceiveByteCount, _bytesPool, _cancellationTokenSource);
-            _subscribers = new ConnectionSubscribers(_cancellationTokenSource.Token);
+            _subscribers = new ConnectionEvents(_cancellationTokenSource.Token);
             _batchAction = new BatchAction(_sender, _receiver, _senderBandwidthLimiter, _receiverBandwidthLimiter);
             _batchActionDispatcher.Register(_batchAction);
         }
@@ -60,6 +60,6 @@ namespace Omnius.Core.Net.Connections
 
         public IConnectionReceiver Receiver => _receiver;
 
-        public IConnectionSubscribers Subscribers => _subscribers;
+        public IConnectionEvents Events => _subscribers;
     }
 }

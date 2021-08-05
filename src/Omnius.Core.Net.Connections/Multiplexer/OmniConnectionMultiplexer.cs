@@ -8,7 +8,7 @@ using Omnius.Core.Tasks;
 
 namespace Omnius.Core.Net.Connections.Multiplexer
 {
-    public sealed class OmniConnectionMultiplexer : AsyncDisposableBase
+    public sealed class OmniConnectionMultiplexer : AsyncDisposableBase, IMultiplexer
     {
         private readonly IConnection _connection;
         private readonly BatchActionDispatcher _batchActionDispatcher;
@@ -31,7 +31,7 @@ namespace Omnius.Core.Net.Connections.Multiplexer
             if (_connectionMultiplexer_v1 is not null) await _connectionMultiplexer_v1.DisposeAsync();
         }
 
-        public IConnection BaseConnection => _connection;
+        public IConnection BridgeConnection => _connection;
 
         public bool IsConnected => _connection.IsConnected;
 
@@ -64,7 +64,7 @@ namespace Omnius.Core.Net.Connections.Multiplexer
         private async ValueTask HelloAsync(CancellationToken cancellationToken)
         {
             HelloMessage sendHelloMessage;
-            HelloMessage? receiveHelloMessage = null;
+            HelloMessage? receiveHelloMessage;
             {
                 sendHelloMessage = new HelloMessage(new[] { OmniConnectionMultiplexerVersion.Version1 });
 
@@ -72,6 +72,7 @@ namespace Omnius.Core.Net.Connections.Multiplexer
                 var dequeueTask = _connection.Receiver.ReceiveAsync<HelloMessage>(cancellationToken).AsTask();
 
                 await Task.WhenAll(enqueueTask, dequeueTask);
+                receiveHelloMessage = dequeueTask.Result;
 
                 if (receiveHelloMessage is null) throw new NullReferenceException();
             }
@@ -79,24 +80,24 @@ namespace Omnius.Core.Net.Connections.Multiplexer
             _version = EnumHelper.GetOverlappedMaxValue(sendHelloMessage.Versions, receiveHelloMessage.Versions);
         }
 
-        public async ValueTask<IConnection?> ConnectAsync(CancellationToken cancellationToken = default)
+        public async ValueTask<IConnection> ConnectAsync(CancellationToken cancellationToken = default)
         {
             if (_connectionMultiplexer_v1 is not null)
             {
                 return await _connectionMultiplexer_v1.ConnectAsync(cancellationToken);
             }
 
-            return null;
+            throw new InvalidOperationException();
         }
 
-        public async ValueTask<IConnection?> AcceptAsync(CancellationToken cancellationToken = default)
+        public async ValueTask<IConnection> AcceptAsync(CancellationToken cancellationToken = default)
         {
             if (_connectionMultiplexer_v1 is not null)
             {
                 return await _connectionMultiplexer_v1.AcceptAsync(cancellationToken);
             }
 
-            return null;
+            throw new InvalidOperationException();
         }
     }
 }

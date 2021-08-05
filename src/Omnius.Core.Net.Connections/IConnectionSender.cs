@@ -9,7 +9,7 @@ namespace Omnius.Core.Net.Connections
     {
         long TotalBytesSent { get; }
 
-        ValueTask WaitToSendAsync(CancellationToken cancellationToken);
+        ValueTask WaitToSendAsync(CancellationToken cancellationToken = default);
 
         bool TrySend(Action<IBufferWriter<byte>> action);
 

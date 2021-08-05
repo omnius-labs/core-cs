@@ -3,15 +3,15 @@
 
 namespace Omnius.Core.RocketPack.Remoting
 {
-    public sealed partial class DefaultRocketRemotingErrorMessage : global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.RocketPack.Remoting.DefaultRocketRemotingErrorMessage>
+    public sealed partial class DefaultErrorMessage : global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.RocketPack.Remoting.DefaultErrorMessage>
     {
-        public static global::Omnius.Core.RocketPack.IRocketMessageFormatter<global::Omnius.Core.RocketPack.Remoting.DefaultRocketRemotingErrorMessage> Formatter => global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.RocketPack.Remoting.DefaultRocketRemotingErrorMessage>.Formatter;
-        public static global::Omnius.Core.RocketPack.Remoting.DefaultRocketRemotingErrorMessage Empty => global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.RocketPack.Remoting.DefaultRocketRemotingErrorMessage>.Empty;
+        public static global::Omnius.Core.RocketPack.IRocketMessageFormatter<global::Omnius.Core.RocketPack.Remoting.DefaultErrorMessage> Formatter => global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.RocketPack.Remoting.DefaultErrorMessage>.Formatter;
+        public static global::Omnius.Core.RocketPack.Remoting.DefaultErrorMessage Empty => global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.RocketPack.Remoting.DefaultErrorMessage>.Empty;
 
-        static DefaultRocketRemotingErrorMessage()
+        static DefaultErrorMessage()
         {
-            global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.RocketPack.Remoting.DefaultRocketRemotingErrorMessage>.Formatter = new ___CustomFormatter();
-            global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.RocketPack.Remoting.DefaultRocketRemotingErrorMessage>.Empty = new global::Omnius.Core.RocketPack.Remoting.DefaultRocketRemotingErrorMessage(string.Empty, string.Empty, null);
+            global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.RocketPack.Remoting.DefaultErrorMessage>.Formatter = new ___CustomFormatter();
+            global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.RocketPack.Remoting.DefaultErrorMessage>.Empty = new global::Omnius.Core.RocketPack.Remoting.DefaultErrorMessage(string.Empty, string.Empty, null);
         }
 
         private readonly global::System.Lazy<int> ___hashCode;
@@ -20,7 +20,7 @@ namespace Omnius.Core.RocketPack.Remoting
         public static readonly int MaxMessageLength = 8192;
         public static readonly int MaxStackTraceLength = 8192;
 
-        public DefaultRocketRemotingErrorMessage(string type, string message, string? stackTrace)
+        public DefaultErrorMessage(string type, string message, string? stackTrace)
         {
             if (type is null) throw new global::System.ArgumentNullException("type");
             if (type.Length > 8192) throw new global::System.ArgumentOutOfRangeException("type");
@@ -46,7 +46,7 @@ namespace Omnius.Core.RocketPack.Remoting
         public string Message { get; }
         public string? StackTrace { get; }
 
-        public static global::Omnius.Core.RocketPack.Remoting.DefaultRocketRemotingErrorMessage Import(global::System.Buffers.ReadOnlySequence<byte> sequence, global::Omnius.Core.IBytesPool bytesPool)
+        public static global::Omnius.Core.RocketPack.Remoting.DefaultErrorMessage Import(global::System.Buffers.ReadOnlySequence<byte> sequence, global::Omnius.Core.IBytesPool bytesPool)
         {
             var reader = new global::Omnius.Core.RocketPack.RocketMessageReader(sequence, bytesPool);
             return Formatter.Deserialize(ref reader, 0);
@@ -57,20 +57,20 @@ namespace Omnius.Core.RocketPack.Remoting
             Formatter.Serialize(ref writer, this, 0);
         }
 
-        public static bool operator ==(global::Omnius.Core.RocketPack.Remoting.DefaultRocketRemotingErrorMessage? left, global::Omnius.Core.RocketPack.Remoting.DefaultRocketRemotingErrorMessage? right)
+        public static bool operator ==(global::Omnius.Core.RocketPack.Remoting.DefaultErrorMessage? left, global::Omnius.Core.RocketPack.Remoting.DefaultErrorMessage? right)
         {
             return (right is null) ? (left is null) : right.Equals(left);
         }
-        public static bool operator !=(global::Omnius.Core.RocketPack.Remoting.DefaultRocketRemotingErrorMessage? left, global::Omnius.Core.RocketPack.Remoting.DefaultRocketRemotingErrorMessage? right)
+        public static bool operator !=(global::Omnius.Core.RocketPack.Remoting.DefaultErrorMessage? left, global::Omnius.Core.RocketPack.Remoting.DefaultErrorMessage? right)
         {
             return !(left == right);
         }
         public override bool Equals(object? other)
         {
-            if (other is not global::Omnius.Core.RocketPack.Remoting.DefaultRocketRemotingErrorMessage) return false;
-            return this.Equals((global::Omnius.Core.RocketPack.Remoting.DefaultRocketRemotingErrorMessage)other);
+            if (other is not global::Omnius.Core.RocketPack.Remoting.DefaultErrorMessage) return false;
+            return this.Equals((global::Omnius.Core.RocketPack.Remoting.DefaultErrorMessage)other);
         }
-        public bool Equals(global::Omnius.Core.RocketPack.Remoting.DefaultRocketRemotingErrorMessage? target)
+        public bool Equals(global::Omnius.Core.RocketPack.Remoting.DefaultErrorMessage? target)
         {
             if (target is null) return false;
             if (object.ReferenceEquals(this, target)) return true;
@@ -82,9 +82,9 @@ namespace Omnius.Core.RocketPack.Remoting
         }
         public override int GetHashCode() => ___hashCode.Value;
 
-        private sealed class ___CustomFormatter : global::Omnius.Core.RocketPack.IRocketMessageFormatter<global::Omnius.Core.RocketPack.Remoting.DefaultRocketRemotingErrorMessage>
+        private sealed class ___CustomFormatter : global::Omnius.Core.RocketPack.IRocketMessageFormatter<global::Omnius.Core.RocketPack.Remoting.DefaultErrorMessage>
         {
-            public void Serialize(ref global::Omnius.Core.RocketPack.RocketMessageWriter w, in global::Omnius.Core.RocketPack.Remoting.DefaultRocketRemotingErrorMessage value, in int rank)
+            public void Serialize(ref global::Omnius.Core.RocketPack.RocketMessageWriter w, in global::Omnius.Core.RocketPack.Remoting.DefaultErrorMessage value, in int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
@@ -105,7 +105,7 @@ namespace Omnius.Core.RocketPack.Remoting
                 }
                 w.Write((uint)0);
             }
-            public global::Omnius.Core.RocketPack.Remoting.DefaultRocketRemotingErrorMessage Deserialize(ref global::Omnius.Core.RocketPack.RocketMessageReader r, in int rank)
+            public global::Omnius.Core.RocketPack.Remoting.DefaultErrorMessage Deserialize(ref global::Omnius.Core.RocketPack.RocketMessageReader r, in int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
@@ -137,7 +137,7 @@ namespace Omnius.Core.RocketPack.Remoting
                     }
                 }
 
-                return new global::Omnius.Core.RocketPack.Remoting.DefaultRocketRemotingErrorMessage(p_type, p_message, p_stackTrace);
+                return new global::Omnius.Core.RocketPack.Remoting.DefaultErrorMessage(p_type, p_message, p_stackTrace);
             }
         }
     }

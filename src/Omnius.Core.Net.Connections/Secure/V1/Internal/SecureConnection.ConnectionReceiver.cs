@@ -16,11 +16,9 @@ namespace Omnius.Core.Net.Connections.Secure.V1.Internal
             private readonly IConnectionReceiver _receiver;
             private readonly int _maxReceiveByteCount;
             private readonly IBytesPool _bytesPool;
-            private readonly SessionState _sessionState;
+            private readonly AesGcmDecrypter _decrypter;
             private readonly CancellationTokenSource _cancellationTokenSource;
 
-            private int _remainBytes = -1;
-            private readonly BytesPipe _bytesPipe;
             private Exception? _exception = null;
 
             private readonly SemaphoreSlim _semaphoreSlim;
@@ -28,17 +26,14 @@ namespace Omnius.Core.Net.Connections.Secure.V1.Internal
 
             private long _receivedByteCount;
 
-            private readonly object _lockObject = new();
-
-            public ConnectionReceiver(IConnectionReceiver receiver, int maxReceiveByteCount, IBytesPool bytesPool, SessionState sessionState, CancellationTokenSource cancellationTokenSource)
+            public ConnectionReceiver(IConnectionReceiver receiver, int maxReceiveByteCount, byte[] cryptoKey, byte[] nonce, IBytesPool bytesPool, CancellationTokenSource cancellationTokenSource)
             {
                 _receiver = receiver;
                 _maxReceiveByteCount = maxReceiveByteCount;
+                _decrypter = new AesGcmDecrypter(cryptoKey, nonce, bytesPool);
                 _bytesPool = bytesPool;
-                _sessionState = sessionState;
                 _cancellationTokenSource = cancellationTokenSource;
 
-                _bytesPipe = new BytesPipe(_bytesPool);
                 _semaphoreSlim = new SemaphoreSlim(0, 1);
                 _resetEvent = new ManualResetEventSlim(true);
             }
@@ -47,17 +42,24 @@ namespace Omnius.Core.Net.Connections.Secure.V1.Internal
             {
                 if (disposing)
                 {
-                    _bytesPipe.Dispose();
                     _semaphoreSlim.Dispose();
                     _resetEvent.Dispose();
+                    _decrypter.Dispose();
                 }
             }
 
             public long TotalBytesReceived => Interlocked.Read(ref _receivedByteCount);
 
-            internal async ValueTask InternalWaitAsync(CancellationToken cancellationToken = default)
+            internal async ValueTask InternalWaitToReceiveAsync(CancellationToken cancellationToken = default)
             {
-                await _resetEvent.WaitHandle.WaitAsync(cancellationToken);
+                try
+                {
+                    await _resetEvent.WaitHandle.WaitAsync(cancellationToken);
+                }
+                catch (Exception e)
+                {
+                    _logger.Debug(e);
+                }
             }
 
             internal void InternalReceive()
@@ -68,32 +70,17 @@ namespace Omnius.Core.Net.Connections.Secure.V1.Internal
                 {
                     if (!_resetEvent.IsSet) return;
 
-                    lock (_lockObject)
+                    _receiver.TryReceive(sequence =>
                     {
-                        _receiver.TryReceive(sequence =>
+                        if (!_decrypter.TryWrite(sequence, out var isCompleted)) return;
+                        if (_decrypter.WrittenBytes > _maxReceiveByteCount) throw new OmniSecureConnectionException("Receive buffer overflow.");
+
+                        if (isCompleted)
                         {
-                            this.Decrypt(sequence, _bytesPipe.Writer);
-
-                            if (_remainBytes == -1)
-                            {
-                                Span<byte> remainBytesBuffer = stackalloc byte[4];
-                                _bytesPipe.Reader.GetSequence().CopyTo(remainBytesBuffer);
-                                _bytesPipe.Reader.Advance(4);
-                                _remainBytes = BinaryPrimitives.ReadInt32BigEndian(remainBytesBuffer);
-
-                                if (_remainBytes > _maxReceiveByteCount) throw new ConnectionException("receive size over");
-                            }
-
-                            _remainBytes -= (int)sequence.Length;
-
-                            if (_remainBytes == 0)
-                            {
-                                _remainBytes = -1;
-                                _resetEvent.Reset();
-                                _semaphoreSlim.Release();
-                            }
-                        });
-                    }
+                            _resetEvent.Reset();
+                            _semaphoreSlim.Release();
+                        }
+                    });
                 }
                 catch (ConnectionException e)
                 {
@@ -107,59 +94,6 @@ namespace Omnius.Core.Net.Connections.Secure.V1.Internal
                     _cancellationTokenSource.Cancel();
                     return;
                 }
-            }
-
-            private void Decrypt(ReadOnlySequence<byte> sequence, IBufferWriter<byte> bufferWriter)
-            {
-                try
-                {
-                    if (_sessionState.CryptoAlgorithm.HasFlag(CryptoAlgorithm.Aes_Gcm_256))
-                    {
-                        using (var aes = new AesGcm(_sessionState.OtherCryptoKey))
-                        {
-                            Span<byte> tag = stackalloc byte[16];
-                            var inBuffer = _bytesPool.Array.Rent(FrameSize - tag.Length);
-                            var outBuffer = _bytesPool.Array.Rent(FrameSize - tag.Length);
-
-                            try
-                            {
-                                while (sequence.Length > 0)
-                                {
-                                    if (sequence.Length <= tag.Length) throw new FormatException();
-
-                                    int contentLength = (int)Math.Min(sequence.Length, FrameSize) - tag.Length;
-
-                                    var ciphertext = inBuffer.AsSpan(0, contentLength);
-                                    var plaintext = outBuffer.AsSpan(0, contentLength);
-
-                                    sequence.Slice(0, contentLength).CopyTo(ciphertext);
-                                    sequence = sequence.Slice(contentLength);
-
-                                    sequence.Slice(0, tag.Length).CopyTo(tag);
-                                    sequence = sequence.Slice(tag.Length);
-
-                                    aes.Decrypt(_sessionState.OtherNonce, ciphertext, tag, plaintext);
-                                    Increment(_sessionState.OtherNonce);
-
-                                    bufferWriter.Write(plaintext);
-                                }
-                            }
-                            finally
-                            {
-                                _bytesPool.Array.Return(inBuffer);
-                                _bytesPool.Array.Return(outBuffer);
-                            }
-                        }
-
-                        return;
-                    }
-                }
-                catch (OmniSecureConnectionException)
-                {
-                    throw;
-                }
-
-                throw new OmniSecureConnectionException("Decrypt failed.");
             }
 
             public async ValueTask WaitToReceiveAsync(CancellationToken cancellationToken = default)
@@ -202,11 +136,96 @@ namespace Omnius.Core.Net.Connections.Secure.V1.Internal
 
             private void ReadBytes(Action<ReadOnlySequence<byte>> action)
             {
-                var sequence = _bytesPipe.Reader.GetSequence();
-                action.Invoke(sequence);
+                _decrypter.Read(action);
+                _decrypter.Reset();
 
-                _bytesPipe.Reset();
                 _resetEvent.Set();
+            }
+        }
+
+        internal sealed class AesGcmDecrypter : DisposableBase
+        {
+            private readonly byte[] _cryptoKey;
+            private readonly byte[] _nonce;
+            private readonly IBytesPool _bytesPool;
+            private readonly BytesPipe _bytesPipe;
+            private int _payloadSize = -1;
+            private ReadOnlySequence<byte> _sequence;
+
+            public AesGcmDecrypter(byte[] cryptoKey, byte[] nonce, IBytesPool bytesPool)
+            {
+                _cryptoKey = cryptoKey;
+                _nonce = nonce;
+                _bytesPool = bytesPool;
+                _bytesPipe = new BytesPipe(_bytesPool);
+            }
+
+            protected override void OnDispose(bool disposing)
+            {
+                if (disposing)
+                {
+                    _bytesPipe.Dispose();
+                }
+            }
+
+            public long WrittenBytes => _sequence.Length;
+
+            public void Reset()
+            {
+                _bytesPipe.Reset();
+                _payloadSize = -1;
+                _sequence = ReadOnlySequence<byte>.Empty;
+            }
+
+            public bool TryWrite(ReadOnlySequence<byte> sequence, out bool isCompleted)
+            {
+                isCompleted = false;
+                if (!TryDecrypt(sequence, _bytesPipe.Writer, _cryptoKey, _nonce, _bytesPool)) return false;
+
+                if (_payloadSize == -1)
+                {
+                    Span<byte> remainBytesBuffer = stackalloc byte[4];
+                    _bytesPipe.Reader.GetSequence().Slice(0, 4).CopyTo(remainBytesBuffer);
+                    _bytesPipe.Reader.Advance(4);
+                    _payloadSize = BinaryPrimitives.ReadInt32BigEndian(remainBytesBuffer);
+                }
+
+                if (_bytesPipe.Reader.RemainBytes >= _payloadSize)
+                {
+                    _sequence = _bytesPipe.Reader.GetSequence().Slice(0, _payloadSize);
+                    isCompleted = true;
+                }
+
+                return true;
+            }
+
+            public void Read(Action<ReadOnlySequence<byte>> action)
+            {
+                action.Invoke(_sequence);
+            }
+
+            private static bool TryDecrypt(ReadOnlySequence<byte> sequence, IBufferWriter<byte> bufferWriter, byte[] cryptoKey, byte[] nonce, IBytesPool bytesPool)
+            {
+                if (sequence.Length <= TagSize) return false;
+
+                using var aes = new AesGcm(cryptoKey);
+
+                Span<byte> tag = stackalloc byte[TagSize];
+                using var inBuffer = bytesPool.Memory.Rent(FrameSize).Shrink(FrameSize);
+                using var outBuffer = bytesPool.Memory.Rent(FrameSize).Shrink(FrameSize);
+
+                sequence.Slice(0, FrameSize).CopyTo(inBuffer.Memory.Span);
+                sequence = sequence.Slice(FrameSize);
+
+                sequence.Slice(0, tag.Length).CopyTo(tag);
+                sequence = sequence.Slice(tag.Length);
+
+                aes.Decrypt(nonce, inBuffer.Memory.Span, tag, outBuffer.Memory.Span);
+                Increment(nonce);
+
+                bufferWriter.Write(outBuffer.Memory.Span);
+
+                return true;
             }
         }
     }

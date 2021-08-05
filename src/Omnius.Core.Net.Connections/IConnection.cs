@@ -10,6 +10,6 @@ namespace Omnius.Core.Net.Connections
 
         IConnectionReceiver Receiver { get; }
 
-        IConnectionSubscribers Subscribers { get; }
+        IConnectionEvents Events { get; }
     }
 }

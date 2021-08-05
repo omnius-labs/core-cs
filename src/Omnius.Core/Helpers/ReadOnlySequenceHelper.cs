@@ -36,7 +36,8 @@ namespace Omnius.Core.Helpers
                 firstSegment = new CustomReadOnlySequenceSegment<T>(currentElement, firstSegment, firstSegment.RunningIndex - currentElement.Length);
             }
 
-            return new ReadOnlySequence<T>(firstSegment, 0, lastSegment, lastSegment.Memory.Length);
+            var sequence = new ReadOnlySequence<T>(firstSegment, 0, lastSegment, lastSegment.Memory.Length);
+            return sequence;
         }
 
         private class CustomReadOnlySequenceSegment<T> : ReadOnlySequenceSegment<T>

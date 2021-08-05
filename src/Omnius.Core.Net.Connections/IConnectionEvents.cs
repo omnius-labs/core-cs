@@ -2,7 +2,7 @@ using Omnius.Core.Pipelines;
 
 namespace Omnius.Core.Net.Connections
 {
-    public interface IConnectionSubscribers
+    public interface IConnectionEvents
     {
         IActionSubscriber OnClosed { get; }
     }

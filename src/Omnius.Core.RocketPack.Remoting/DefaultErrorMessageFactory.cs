@@ -2,11 +2,13 @@ using System;
 
 namespace Omnius.Core.RocketPack.Remoting
 {
-    public class DefaultErrorMessageFactory : IErrorMessageFactory<DefaultRocketRemotingErrorMessage>
+    public class DefaultErrorMessageFactory : IErrorMessageFactory<DefaultErrorMessage>
     {
-        public DefaultRocketRemotingErrorMessage Create(Exception e)
+        public static DefaultErrorMessageFactory Default { get; } = new();
+
+        public DefaultErrorMessage Create(Exception e)
         {
-            return new DefaultRocketRemotingErrorMessage(e.GetType()?.FullName ?? string.Empty, e.Message, e.StackTrace);
+            return new DefaultErrorMessage(e.GetType()?.FullName ?? string.Empty, e.Message, e.StackTrace);
         }
     }
 }

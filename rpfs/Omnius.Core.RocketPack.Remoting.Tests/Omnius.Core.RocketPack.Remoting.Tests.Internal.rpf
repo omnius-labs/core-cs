@@ -1,6 +1,6 @@
 syntax v1.0;
 
-namespace "Omnius.Core.Remoting.Tests.Internal";
+namespace "Omnius.Core.RocketPack.Remoting.Tests.Internal";
 
 message TestParam {
     Value: int32,

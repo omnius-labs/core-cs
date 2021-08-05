@@ -7,9 +7,9 @@ using Omnius.Core.Pipelines;
 
 namespace Omnius.Core.Net.Connections.Multiplexer.V1.Internal
 {
-    internal partial class ConnectionMultiplexer
+    internal partial class StreamConnection
     {
-        public sealed class StreamConnectionSender : IConnectionSender
+        public sealed class ConnectionSender : DisposableBase, IConnectionSender
         {
             private readonly SemaphoreSlim _semaphoreSlim;
             private readonly IMessagePipeWriter<ArraySegment<byte>> _dataWriter;
@@ -17,14 +17,27 @@ namespace Omnius.Core.Net.Connections.Multiplexer.V1.Internal
             private readonly IBytesPool _bytesPool;
             private readonly CancellationToken _cancellationToken;
 
-            public StreamConnectionSender(int maxDataQueueSize, IMessagePipeWriter<ArraySegment<byte>> dataWriter, IActionSubscriber dataAcceptedSubscriber, IBytesPool bytesPool, CancellationToken cancellationToken, List<IDisposable> disposables)
+            private readonly List<IDisposable> _disposables = new();
+
+            public ConnectionSender(int maxDataQueueSize, IMessagePipeWriter<ArraySegment<byte>> dataWriter, IActionSubscriber dataAcceptedSubscriber, IBytesPool bytesPool, CancellationToken cancellationToken)
             {
-                _semaphoreSlim = new SemaphoreSlim(0, maxDataQueueSize);
+                _semaphoreSlim = new SemaphoreSlim(maxDataQueueSize, maxDataQueueSize);
                 _dataWriter = dataWriter;
                 _dataAcceptedSubscriber = dataAcceptedSubscriber;
-                disposables.Add(_dataAcceptedSubscriber.Subscribe(() => _semaphoreSlim.Release()));
+                _dataAcceptedSubscriber.Subscribe(() => _semaphoreSlim.Release()).ToAdd(_disposables);
                 _bytesPool = bytesPool;
                 _cancellationToken = cancellationToken;
+            }
+
+            protected override void OnDispose(bool disposing)
+            {
+                if (disposing)
+                {
+                    foreach (var disposable in _disposables)
+                    {
+                        disposable.Dispose();
+                    }
+                }
             }
 
             public long TotalBytesSent => throw new NotImplementedException();
@@ -54,7 +67,14 @@ namespace Omnius.Core.Net.Connections.Multiplexer.V1.Internal
 
                     await _semaphoreSlim.WaitAsync(linkedTokenSource.Token);
 
-                    await _dataWriter.WriteAsync(() => this.InternalSend(action), linkedTokenSource.Token);
+                    var payload = this.GetPayload(action);
+                    if (payload.Count == 0)
+                    {
+                        _semaphoreSlim.Release();
+                        return;
+                    }
+
+                    await _dataWriter.WriteAsync(() => payload, linkedTokenSource.Token);
                 }
                 catch (OperationCanceledException)
                 {
@@ -66,16 +86,26 @@ namespace Omnius.Core.Net.Connections.Multiplexer.V1.Internal
             {
                 if (!_semaphoreSlim.Wait(0)) return false;
 
-                return _dataWriter.TryWrite(() => this.InternalSend(action));
+                var payload = this.GetPayload(action);
+                if (payload.Count == 0)
+                {
+                    _semaphoreSlim.Release();
+                    return false;
+                }
+
+                return _dataWriter.TryWrite(() => payload);
             }
 
-            private ArraySegment<byte> InternalSend(Action<IBufferWriter<byte>> action)
+            private ArraySegment<byte> GetPayload(Action<IBufferWriter<byte>> action)
             {
                 using var bytesPipe = new BytesPipe(_bytesPool);
                 action.Invoke(bytesPipe.Writer);
+                if (bytesPipe.Writer.WrittenBytes == 0) return ArraySegment<byte>.Empty;
+
                 var sequence = bytesPipe.Reader.GetSequence();
                 var buffer = _bytesPool.Array.Rent((int)sequence.Length);
                 sequence.CopyTo(buffer.AsSpan());
+
                 return new ArraySegment<byte>(buffer, 0, (int)sequence.Length);
             }
         }

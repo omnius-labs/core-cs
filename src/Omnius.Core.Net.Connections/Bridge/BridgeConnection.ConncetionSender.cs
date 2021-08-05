@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 using Omnius.Core.Net.Caps;
 using Omnius.Core.Pipelines;
 
-namespace Omnius.Core.Net.Connections
+namespace Omnius.Core.Net.Connections.Bridge
 {
-    public partial class BaseConnection
+    public partial class BridgeConnection
     {
         internal class ConnectionSender : DisposableBase, IConnectionSender
         {
@@ -74,26 +74,29 @@ namespace Omnius.Core.Net.Connections
 
                                 _headerBufferPosition += sendLength;
                             }
-                            else if (_bytesPipe.Reader.RemainBytes > 0)
+                            else
                             {
-                                var sequence = _bytesPipe.Reader.GetSequence();
-                                var position = sequence.Start;
-
-                                while (total < maxSize && sequence.Length > 0 && sequence.TryGet(ref position, out var memory, false))
+                                if (_bytesPipe.Reader.RemainBytes > 0)
                                 {
-                                    if (!_cap.CanSend()) break;
+                                    var sequence = _bytesPipe.Reader.GetSequence();
+                                    var position = sequence.Start;
 
-                                    int readLength = Math.Min(maxSize - total, memory.Length);
+                                    while (total < maxSize && sequence.Length > 0 && sequence.TryGet(ref position, out var memory, false))
+                                    {
+                                        if (!_cap.CanSend()) break;
 
-                                    int sendLength = _cap.Send(memory.Span.Slice(0, readLength));
-                                    if (sendLength <= 0) break;
+                                        int readLength = Math.Min(maxSize - total, memory.Length);
 
-                                    position = sequence.GetPosition(sendLength, position);
+                                        int sendLength = _cap.Send(memory.Span.Slice(0, readLength));
+                                        if (sendLength <= 0) break;
 
-                                    total += sendLength;
-                                    Interlocked.Add(ref _sentByteCount, sendLength);
+                                        position = sequence.GetPosition(sendLength, position);
 
-                                    _bytesPipe.Reader.Advance(sendLength);
+                                        total += sendLength;
+                                        Interlocked.Add(ref _sentByteCount, sendLength);
+
+                                        _bytesPipe.Reader.Advance(sendLength);
+                                    }
                                 }
 
                                 if (_bytesPipe.Reader.RemainBytes == 0)
@@ -144,8 +147,7 @@ namespace Omnius.Core.Net.Connections
                     throw;
                 }
 
-                this.WriteBytes(action);
-                return true;
+                return this.TryWriteBytes(action);
             }
 
             public async ValueTask SendAsync(Action<IBufferWriter<byte>> action, CancellationToken cancellationToken = default)
@@ -161,16 +163,24 @@ namespace Omnius.Core.Net.Connections
                     throw;
                 }
 
-                this.WriteBytes(action);
+                this.TryWriteBytes(action);
             }
 
-            private void WriteBytes(Action<IBufferWriter<byte>> action)
+            private bool TryWriteBytes(Action<IBufferWriter<byte>> action)
             {
                 action.Invoke(_bytesPipe.Writer);
-                _bytesPipeWriterIsCompleted = true;
+
+                if (_bytesPipe.Writer.WrittenBytes == 0)
+                {
+                    _semaphoreSlim.Release();
+                    return false;
+                }
 
                 BinaryPrimitives.WriteInt32BigEndian(_headerBuffer, (int)_bytesPipe.Writer.WrittenBytes);
                 _headerBufferPosition = 0;
+                _bytesPipeWriterIsCompleted = true;
+
+                return true;
             }
         }
     }

@@ -6,17 +6,21 @@ namespace Omnius.Core.Net.Connections.Multiplexer.V1.Internal
         {
             Normal = 0,
 
-            UnknownMessageType = 1,
+            PacketReceiveTimeout = 1,
 
-            StreamDataSizeTooLarge = 1,
+            InvalidPacketType = 2,
 
-            StreamDataQueueOverflow = 2,
+            InvalidStreamId = 3,
 
-            MessageReceiveTimeout = 2,
+            StreamRequestQueueOverflow = 4,
 
-            StreamRequestQueueOverflow = 3,
+            StreamRequestAcceptedQueueOverflow = 5,
 
-            StreamRequestAcceptedQueueOverflow = 4,
+            StreamDataSizeTooLarge = 6,
+
+            StreamDataQueueOverflow = 7,
+
+            StreamDataAcceptedQueueOverflow = 8,
         }
     }
 }

@@ -6,16 +6,16 @@ using Omnius.Core.Pipelines;
 
 namespace Omnius.Core.Net.Connections.Multiplexer.V1.Internal
 {
-    internal partial class ConnectionMultiplexer
+    internal partial class StreamConnection
     {
-        public sealed class StreamConnectionReceiver : IConnectionReceiver
+        public sealed class ConnectionReceiver : IConnectionReceiver
         {
             private readonly IMessagePipeReader<ArraySegment<byte>> _dataReader;
             private readonly IMessagePipeWriter _dataAcceptedWriter;
             private readonly IBytesPool _bytesPool;
             private readonly CancellationToken _cancellationToken;
 
-            public StreamConnectionReceiver(IMessagePipeReader<ArraySegment<byte>> dataReader, IMessagePipeWriter dataAcceptedWriter, IBytesPool bytesPool, CancellationToken cancellationToken)
+            public ConnectionReceiver(IMessagePipeReader<ArraySegment<byte>> dataReader, IMessagePipeWriter dataAcceptedWriter, IBytesPool bytesPool, CancellationToken cancellationToken)
             {
                 _dataReader = dataReader;
                 _dataAcceptedWriter = dataAcceptedWriter;
@@ -45,8 +45,8 @@ namespace Omnius.Core.Net.Connections.Multiplexer.V1.Internal
                 {
                     using var linkedTokenSource = CancellationTokenSource.CreateLinkedTokenSource(_cancellationToken, cancellationToken);
 
-                    var buffer = await _dataReader.ReadAsync(linkedTokenSource.Token);
-                    this.InternalReceive(action, buffer);
+                    var payload = await _dataReader.ReadAsync(linkedTokenSource.Token);
+                    this.InternalReceive(action, payload);
                 }
                 catch (OperationCanceledException)
                 {
@@ -58,8 +58,8 @@ namespace Omnius.Core.Net.Connections.Multiplexer.V1.Internal
             {
                 try
                 {
-                    if (!_dataReader.TryRead(out var buffer)) return false;
-                    this.InternalReceive(action, buffer);
+                    if (!_dataReader.TryRead(out var payload)) return false;
+                    this.InternalReceive(action, payload);
                     return true;
                 }
                 catch (OperationCanceledException)

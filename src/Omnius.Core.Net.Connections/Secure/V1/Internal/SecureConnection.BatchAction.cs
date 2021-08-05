@@ -24,8 +24,8 @@ namespace Omnius.Core.Net.Connections.Secure.V1.Internal
                 try
                 {
                     var tasks = new List<Task>();
-                    tasks.Add(_sender.InternalWaitAsync(cancellationToken).AsTask());
-                    tasks.Add(_receiver.InternalWaitAsync(cancellationToken).AsTask());
+                    tasks.Add(_sender.InternalWaitToSendAsync(cancellationToken).AsTask());
+                    tasks.Add(_receiver.InternalWaitToReceiveAsync(cancellationToken).AsTask());
                     await Task.WhenAny(tasks);
                 }
                 catch (Exception e)

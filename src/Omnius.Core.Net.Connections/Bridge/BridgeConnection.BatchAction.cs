@@ -1,12 +1,13 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using Omnius.Core.Tasks;
 
-namespace Omnius.Core.Net.Connections
+namespace Omnius.Core.Net.Connections.Bridge
 {
-    public partial class BaseConnection
+    public partial class BridgeConnection
     {
         internal class BatchAction : IBatchAction
         {
@@ -14,6 +15,9 @@ namespace Omnius.Core.Net.Connections
             private readonly ConnectionReceiver _receiver;
             private readonly IBandwidthLimiter? _senderBandwidthLimiter;
             private readonly IBandwidthLimiter? _receiverBandwidthLimiter;
+            private readonly Stopwatch _stopwatch;
+
+            private static readonly TimeSpan _interval = TimeSpan.FromMilliseconds(50);
 
             public BatchAction(ConnectionSender sender, ConnectionReceiver receiver, IBandwidthLimiter? senderBandwidthLimiter, IBandwidthLimiter? receiverBandwidthLimiter)
             {
@@ -21,13 +25,17 @@ namespace Omnius.Core.Net.Connections
                 _receiver = receiver;
                 _senderBandwidthLimiter = senderBandwidthLimiter;
                 _receiverBandwidthLimiter = receiverBandwidthLimiter;
+                _stopwatch = Stopwatch.StartNew();
             }
 
             public async ValueTask WaitAsync(CancellationToken cancellationToken = default)
             {
                 try
                 {
-                    await Task.Delay(TimeSpan.FromMilliseconds(500), cancellationToken).ConfigureAwait(false);
+                    var delay = _interval - _stopwatch.Elapsed;
+                    if (delay <= TimeSpan.Zero) return;
+
+                    await Task.Delay(delay, cancellationToken).ConfigureAwait(false);
                 }
                 catch (Exception e)
                 {
@@ -37,6 +45,8 @@ namespace Omnius.Core.Net.Connections
 
             public void Run()
             {
+                _stopwatch.Restart();
+
                 this.Send();
                 this.Receive();
             }

@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 using Omnius.Core.Net.Caps;
 using Omnius.Core.Pipelines;
 
-namespace Omnius.Core.Net.Connections
+namespace Omnius.Core.Net.Connections.Bridge
 {
-    public partial class BaseConnection
+    public partial class BridgeConnection
     {
         internal class ConnectionReceiver : DisposableBase, IConnectionReceiver
         {
@@ -148,8 +148,7 @@ namespace Omnius.Core.Net.Connections
                     throw;
                 }
 
-                this.ReadBytes(action);
-                return true;
+                return this.TryReadBytes(action);
             }
 
             public async ValueTask ReceiveAsync(Action<ReadOnlySequence<byte>> action, CancellationToken cancellationToken = default)
@@ -165,16 +164,20 @@ namespace Omnius.Core.Net.Connections
                     throw;
                 }
 
-                this.ReadBytes(action);
+                this.TryReadBytes(action);
             }
 
-            private void ReadBytes(Action<ReadOnlySequence<byte>> action)
+            private bool TryReadBytes(Action<ReadOnlySequence<byte>> action)
             {
                 var sequence = _bytesPipe.Reader.GetSequence();
+                if (sequence.Length == 0) return false;
+
                 action.Invoke(sequence);
 
                 _bytesPipe.Reset();
                 _bytesPipeWriterIsCompleted = false;
+
+                return true;
             }
         }
     }

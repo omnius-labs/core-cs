@@ -1,32 +1,35 @@
-using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
 using Omnius.Core.Net.Connections;
 using Omnius.Core.RocketPack.Remoting.Internal;
-using Omnius.Core.RocketPack;
 
 namespace Omnius.Core.RocketPack.Remoting
 {
     public partial class RocketRemoting
     {
-        internal sealed class Caller : IRocketRemotingCaller
+        internal sealed class Caller<TError> : AsyncDisposableBase, IRocketRemotingCaller<TError>
+            where TError : IRocketMessage<TError>
         {
             private readonly IConnection _connection;
             private readonly IBytesPool _bytesPool;
 
-            public Caller(IConnection connection, int functionId, IBytesPool bytesPool)
+            public Caller(IConnection connection, uint functionId, IBytesPool bytesPool)
             {
                 _connection = connection;
                 this.FunctionId = functionId;
                 _bytesPool = bytesPool;
             }
 
-            public int FunctionId { get; }
+            protected override async ValueTask OnDisposeAsync()
+            {
+                await _connection.DisposeAsync();
+            }
 
-            public async ValueTask<TResult> CallFunctionAsync<TParam, TResult, TError>(TParam param, CancellationToken cancellationToken = default)
+            public uint FunctionId { get; }
+
+            public async ValueTask<TResult> CallFunctionAsync<TParam, TResult>(TParam param, CancellationToken cancellationToken = default)
                 where TParam : IRocketMessage<TParam>
                 where TResult : IRocketMessage<TResult>
-                where TError : IRocketMessage<TError>
             {
                 await _connection.Sender.SendAsync(
                     bufferWriter =>
@@ -55,9 +58,8 @@ namespace Omnius.Core.RocketPack.Remoting
                 throw ThrowHelper.CreateRocketPackRpcProtocolException_UnexpectedProtocol();
             }
 
-            public async ValueTask<TResult> CallFunctionAsync<TResult, TError>(CancellationToken cancellationToken = default)
+            public async ValueTask<TResult> CallFunctionAsync<TResult>(CancellationToken cancellationToken = default)
                 where TResult : IRocketMessage<TResult>
-                where TError : IRocketMessage<TError>
             {
                 var result = ParsedPacketMessage<TResult, TError>.CreateUnknown();
 
@@ -79,9 +81,8 @@ namespace Omnius.Core.RocketPack.Remoting
                 throw ThrowHelper.CreateRocketPackRpcProtocolException_UnexpectedProtocol();
             }
 
-            public async ValueTask CallActionAsync<TParam, TError>(TParam param, CancellationToken cancellationToken = default)
+            public async ValueTask CallActionAsync<TParam>(TParam param, CancellationToken cancellationToken = default)
                 where TParam : IRocketMessage<TParam>
-                where TError : IRocketMessage<TError>
             {
                 await _connection.Sender.SendAsync(
                     bufferWriter =>
@@ -110,8 +111,7 @@ namespace Omnius.Core.RocketPack.Remoting
                 throw ThrowHelper.CreateRocketPackRpcProtocolException_UnexpectedProtocol();
             }
 
-            public async ValueTask CallActionAsync<TError>(CancellationToken cancellationToken = default)
-                where TError : IRocketMessage<TError>
+            public async ValueTask CallActionAsync(CancellationToken cancellationToken = default)
             {
                 var result = ParsedPacketMessage<TError>.CreateUnknown();
 

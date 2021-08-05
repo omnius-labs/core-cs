@@ -31,13 +31,14 @@ namespace Omnius.Core.Net.Connections.Secure.V1.Internal
 
         private ConnectionSender? _sender;
         private ConnectionReceiver? _receiver;
-        private ConnectionSubscribers? _subscribers;
+        private ConnectionEvents? _subscribers;
         private BatchAction? _batchAction;
 
         private readonly Random _random = new Random();
         private readonly CancellationTokenSource _cancellationTokenSource = new();
 
-        private const int FrameSize = 16 * 1024;
+        private const int FrameSize = 32 * 1024;
+        private const int TagSize = 16;
 
         public SecureConnection(IConnection connection, OmniSecureConnectionOptions options)
         {
@@ -67,11 +68,11 @@ namespace Omnius.Core.Net.Connections.Secure.V1.Internal
 
         public IConnectionReceiver Receiver => _receiver ?? throw new InvalidOperationException();
 
-        public IConnectionSubscribers Subscribers => _subscribers ?? throw new InvalidOperationException();
+        public IConnectionEvents Subscribers => _subscribers ?? throw new InvalidOperationException();
 
         public IEnumerable<string> MatchedPasswords => _matchedPasswords ?? Enumerable.Empty<string>();
 
-        internal static void Increment(byte[] bytes)
+        internal static void Increment(in byte[] bytes)
         {
             for (int i = 0; i < bytes.Length; i++)
             {
@@ -197,10 +198,10 @@ namespace Omnius.Core.Net.Connections.Secure.V1.Internal
                 }
             }
 
-            byte[] myCryptoKey;
-            byte[] otherCryptoKey;
-            byte[] myNonce;
-            byte[] otherNonce;
+            byte[] encryptKey;
+            byte[] decryptKey;
+            byte[] encryptNonce;
+            byte[] decryptNonce;
 
             if (keyDerivationAlgorithm.Value.HasFlag(KeyDerivationAlgorithm.Pbkdf2))
             {
@@ -216,10 +217,10 @@ namespace Omnius.Core.Net.Connections.Secure.V1.Internal
                     nonceLength = 12;
                 }
 
-                myCryptoKey = new byte[cryptoKeyLength];
-                otherCryptoKey = new byte[cryptoKeyLength];
-                myNonce = new byte[nonceLength];
-                otherNonce = new byte[nonceLength];
+                encryptKey = new byte[cryptoKeyLength];
+                decryptKey = new byte[cryptoKeyLength];
+                encryptNonce = new byte[nonceLength];
+                decryptNonce = new byte[nonceLength];
 
                 var kdfResult = new byte[(cryptoKeyLength + nonceLength) * 2];
 
@@ -232,17 +233,17 @@ namespace Omnius.Core.Net.Connections.Secure.V1.Internal
                 {
                     if (_type == OmniSecureConnectionType.Connected)
                     {
-                        stream.Read(myCryptoKey, 0, myCryptoKey.Length);
-                        stream.Read(otherCryptoKey, 0, otherCryptoKey.Length);
-                        stream.Read(myNonce, 0, myNonce.Length);
-                        stream.Read(otherNonce, 0, otherNonce.Length);
+                        stream.Read(encryptKey, 0, encryptKey.Length);
+                        stream.Read(decryptKey, 0, decryptKey.Length);
+                        stream.Read(encryptNonce, 0, encryptNonce.Length);
+                        stream.Read(decryptNonce, 0, decryptNonce.Length);
                     }
                     else if (_type == OmniSecureConnectionType.Accepted)
                     {
-                        stream.Read(otherCryptoKey, 0, otherCryptoKey.Length);
-                        stream.Read(myCryptoKey, 0, myCryptoKey.Length);
-                        stream.Read(otherNonce, 0, otherNonce.Length);
-                        stream.Read(myNonce, 0, myNonce.Length);
+                        stream.Read(decryptKey, 0, decryptKey.Length);
+                        stream.Read(encryptKey, 0, encryptKey.Length);
+                        stream.Read(decryptNonce, 0, decryptNonce.Length);
+                        stream.Read(encryptNonce, 0, encryptNonce.Length);
                     }
                 }
             }
@@ -251,10 +252,9 @@ namespace Omnius.Core.Net.Connections.Secure.V1.Internal
                 throw new NotSupportedException(nameof(keyDerivationAlgorithm));
             }
 
-            var sessionState = new SessionState(cryptoAlgorithm.Value, hashAlgorithm.Value, myCryptoKey, otherCryptoKey, myNonce, otherNonce);
-            _sender = new ConnectionSender(_connection.Sender, _bytesPool, sessionState, _cancellationTokenSource);
-            _receiver = new ConnectionReceiver(_connection.Receiver, _maxReceiveByteCount, _bytesPool, sessionState, _cancellationTokenSource);
-            _subscribers = new ConnectionSubscribers(_cancellationTokenSource.Token);
+            _sender = new ConnectionSender(_connection.Sender, encryptKey, encryptNonce, _bytesPool, _cancellationTokenSource);
+            _receiver = new ConnectionReceiver(_connection.Receiver, _maxReceiveByteCount, decryptKey, decryptNonce, _bytesPool, _cancellationTokenSource);
+            _subscribers = new ConnectionEvents(_cancellationTokenSource.Token);
             _batchAction = new BatchAction(_sender, _receiver);
             _batchActionDispatcher.Register(_batchAction);
         }
@@ -289,31 +289,6 @@ namespace Omnius.Core.Net.Connections.Secure.V1.Internal
             }
 
             return results.Select(item => (item.Key, item.Value)).ToArray();
-        }
-
-        internal sealed class SessionState
-        {
-            public SessionState(CryptoAlgorithm cryptoAlgorithm, HashAlgorithm hashAlgorithm, byte[] myCryptoKey, byte[] otherCryptoKey, byte[] myNonce, byte[] otherNonce)
-            {
-                this.CryptoAlgorithm = cryptoAlgorithm;
-                this.HashAlgorithm = hashAlgorithm;
-                this.MyCryptoKey = myCryptoKey;
-                this.OtherCryptoKey = otherCryptoKey;
-                this.MyNonce = myNonce;
-                this.OtherNonce = otherNonce;
-            }
-
-            public CryptoAlgorithm CryptoAlgorithm { get; }
-
-            public HashAlgorithm HashAlgorithm { get; }
-
-            public byte[] MyCryptoKey { get; }
-
-            public byte[] OtherCryptoKey { get; }
-
-            public byte[] MyNonce { get; }
-
-            public byte[] OtherNonce { get; }
         }
     }
 }

@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Threading;
@@ -8,10 +7,15 @@ namespace Omnius.Core.Tasks
 {
     public sealed partial class BatchActionDispatcher : AsyncDisposableBase, IBatchActionDispatcher
     {
-        private ImmutableList<IBatchAction> _batchActions = ImmutableList<IBatchAction>.Empty;
+        private static readonly NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
+
+        private ImmutableHashSet<IBatchAction> _batchActions = ImmutableHashSet<IBatchAction>.Empty;
 
         private readonly Task _eventLoopTask;
+        private readonly ManualResetEvent _resetEvent = new(false);
         private readonly CancellationTokenSource _cancellationTokenSource = new();
+
+        private readonly object _lockObject = new();
 
         public BatchActionDispatcher()
         {
@@ -22,6 +26,7 @@ namespace Omnius.Core.Tasks
         {
             _cancellationTokenSource.Cancel();
             await _eventLoopTask;
+            _resetEvent.Dispose();
             _cancellationTokenSource.Dispose();
         }
 
@@ -29,48 +34,72 @@ namespace Omnius.Core.Tasks
         {
             try
             {
+                var tasks = ImmutableDictionary<IBatchAction, Task?>.Empty;
+
                 for (; ; )
                 {
+                    await _resetEvent.WaitAsync(_cancellationTokenSource.Token);
+
                     var batchActions = _batchActions;
 
-                    if (batchActions.Count == 0)
-                    {
-                        await Task.Delay(500, _cancellationTokenSource.Token);
-                        continue;
-                    }
-
-                    var map = new Dictionary<IBatchAction, Task>();
                     foreach (var batchAction in batchActions)
                     {
-                        map.Add(batchAction, batchAction.WaitAsync(_cancellationTokenSource.Token).AsTask());
+                        if (tasks.ContainsKey(batchAction)) continue;
+                        tasks = tasks.Add(batchAction, null);
                     }
 
-                    await Task.WhenAny(map.Values);
-
-                    foreach (var (batchAction, task) in map)
+                    foreach (var (batchAction, task) in tasks)
                     {
-                        if (task.IsCompletedSuccessfully)
+                        if (batchActions.Contains(batchAction)) continue;
+                        tasks = tasks.Remove(batchAction);
+                    }
+
+                    if (tasks.Count == 0) continue;
+
+                    foreach (var (batchAction, task) in tasks)
+                    {
+                        if (task is not null) continue;
+                        tasks = tasks.SetItem(batchAction, batchAction.WaitAsync(_cancellationTokenSource.Token).AsTask());
+                    }
+
+                    await Task.WhenAny(tasks.Values!);
+
+                    foreach (var (batchAction, task) in tasks)
+                    {
+                        if (task!.IsCompleted)
                         {
-                            batchAction.Run();
+                            tasks = tasks.Remove(batchAction);
+
+                            if (task!.IsCompletedSuccessfully)
+                            {
+                                batchAction.Run();
+                            }
                         }
                     }
                 }
             }
-            catch (TaskCanceledException)
+            catch (TaskCanceledException e)
             {
-                // ignore
-                return;
+                _logger.Debug(e);
             }
         }
 
         public void Register(IBatchAction batchAction)
         {
-            _batchActions = _batchActions.Add(batchAction);
+            lock (_lockObject)
+            {
+                _batchActions = _batchActions.Add(batchAction);
+                _resetEvent.Set();
+            }
         }
 
         public void Unregister(IBatchAction batchAction)
         {
-            _batchActions = _batchActions.Remove(batchAction);
+            lock (_lockObject)
+            {
+                _batchActions = _batchActions.Remove(batchAction);
+                if (_batchActions.Count == 0) _resetEvent.Reset();
+            }
         }
     }
 }

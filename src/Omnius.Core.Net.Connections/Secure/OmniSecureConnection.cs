@@ -33,7 +33,7 @@ namespace Omnius.Core.Net.Connections.Secure
             if (_secureConnection_v1 is not null) await _secureConnection_v1.DisposeAsync();
         }
 
-        public IConnection BaseConnection => _connection;
+        public IConnection BridgeConnection => _connection;
 
         public bool IsConnected => _connection.IsConnected;
 
@@ -78,7 +78,7 @@ namespace Omnius.Core.Net.Connections.Secure
             }
         }
 
-        public IConnectionSubscribers Subscribers
+        public IConnectionEvents Events
         {
             get
             {

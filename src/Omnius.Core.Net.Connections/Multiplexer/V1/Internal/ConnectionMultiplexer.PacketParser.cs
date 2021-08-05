@@ -10,31 +10,43 @@ namespace Omnius.Core.Net.Connections.Multiplexer.V1.Internal
     {
         internal sealed class PacketParser
         {
-            public static uint ParseStreamId(ref ReadOnlySequence<byte> sequence)
+            public static bool TryParseStreamId(ref ReadOnlySequence<byte> sequence, out uint streamId)
             {
+                streamId = 0;
+                if (sequence.Length < 4) return false;
+
                 Span<byte> streamIdBytes = stackalloc byte[4];
-                sequence.CopyTo(streamIdBytes);
-                var streamId = BinaryPrimitives.ReadUInt32BigEndian(streamIdBytes);
+                sequence.Slice(0, 4).CopyTo(streamIdBytes);
+                streamId = BinaryPrimitives.ReadUInt32BigEndian(streamIdBytes);
+
                 sequence = sequence.Slice(4);
-                return streamId;
+                return true;
             }
 
-            public static PacketType ParseMessageType(ref ReadOnlySequence<byte> sequence)
+            public static bool TryParsePacketType(ref ReadOnlySequence<byte> sequence, out PacketType type)
             {
-                Span<byte> messageTypeBytes = stackalloc byte[4];
-                sequence.CopyTo(messageTypeBytes);
-                var messageType = (PacketType)BinaryPrimitives.ReadUInt32BigEndian(messageTypeBytes);
+                type = PacketType.KeepAlive;
+                if (sequence.Length < 4) return false;
+
+                Span<byte> packetTypeBytes = stackalloc byte[4];
+                sequence.Slice(0, 4).CopyTo(packetTypeBytes);
+                type = (PacketType)BinaryPrimitives.ReadUInt32BigEndian(packetTypeBytes);
+
                 sequence = sequence.Slice(4);
-                return messageType;
+                return true;
             }
 
-            public static ErrorCode ParseErrorCode(ref ReadOnlySequence<byte> sequence)
+            public static bool TryParseErrorCode(ref ReadOnlySequence<byte> sequence, out ErrorCode errorCode)
             {
+                errorCode = ErrorCode.Normal;
+                if (sequence.Length < 4) return false;
+
                 Span<byte> messageTypeBytes = stackalloc byte[4];
-                sequence.CopyTo(messageTypeBytes);
-                var status = (ErrorCode)BinaryPrimitives.ReadUInt32BigEndian(messageTypeBytes);
+                sequence.Slice(0, 4).CopyTo(messageTypeBytes);
+                errorCode = (ErrorCode)BinaryPrimitives.ReadUInt32BigEndian(messageTypeBytes);
+
                 sequence = sequence.Slice(4);
-                return status;
+                return true;
             }
         }
     }

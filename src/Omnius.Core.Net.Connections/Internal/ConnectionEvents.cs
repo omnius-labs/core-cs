@@ -3,13 +3,13 @@ using Omnius.Core.Pipelines;
 
 namespace Omnius.Core.Net.Connections.Internal
 {
-    internal sealed class ConnectionSubscribers : DisposableBase, IConnectionSubscribers
+    internal sealed class ConnectionEvents : DisposableBase, IConnectionEvents
     {
         private readonly CancellationTokenRegistration _cancellationTokenRegistration;
         private int _onClosedCalled = 0;
         private readonly ActionPipe _closedPipe = new ActionPipe();
 
-        public ConnectionSubscribers(CancellationToken cancellationToken)
+        public ConnectionEvents(CancellationToken cancellationToken)
         {
             _cancellationTokenRegistration = cancellationToken.Register(() => this.InternalOnClosed());
         }
