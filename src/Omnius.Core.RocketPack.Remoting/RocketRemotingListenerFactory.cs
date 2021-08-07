@@ -6,7 +6,7 @@ using Omnius.Core.Net.Connections;
 
 namespace Omnius.Core.RocketPack.Remoting
 {
-    public sealed partial class RocketRemotingAccepter<TError> : IRocketRemotingAccepter<TError>
+    public sealed partial class RocketRemotingListenerFactory<TError> : IRocketRemotingListenerFactory<TError>
         where TError : IRocketMessage<TError>
     {
         private static readonly NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
@@ -15,14 +15,14 @@ namespace Omnius.Core.RocketPack.Remoting
         private readonly IErrorMessageFactory<TError> _errorMessageFactory;
         private readonly IBytesPool _bytesPool;
 
-        public RocketRemotingAccepter(IConnectionAccepter accepter, IErrorMessageFactory<TError> errorMessageFactory, IBytesPool bytesPool)
+        public RocketRemotingListenerFactory(IConnectionAccepter accepter, IErrorMessageFactory<TError> errorMessageFactory, IBytesPool bytesPool)
         {
             _accepter = accepter;
             _errorMessageFactory = errorMessageFactory;
             _bytesPool = bytesPool;
         }
 
-        public async ValueTask<IRocketRemotingListener<TError>> AcceptAsync(CancellationToken cancellationToken = default)
+        public async ValueTask<IRocketRemotingListener<TError>> CreateAsync(CancellationToken cancellationToken = default)
         {
             uint functionId = 0;
 
@@ -34,7 +34,7 @@ namespace Omnius.Core.RocketPack.Remoting
                     Varint.TryGetUInt32(ref sequence, out functionId);
                 }, cancellationToken);
 
-            var listener = new RocketRemoting.Listener<TError>(connection, functionId, _errorMessageFactory, _bytesPool);
+            var listener = new RocketRemotingListener<TError>(connection, functionId, _errorMessageFactory, _bytesPool);
             return listener;
         }
     }

@@ -1,15 +1,15 @@
+using System;
 using System.Threading;
 using System.Threading.Channels;
 using System.Threading.Tasks;
 using Moq;
 using Omnius.Core.Net.Caps;
-using Omnius.Core.RocketPack.Remoting.Tests.Internal;
-using Omnius.Core.Tasks;
+using Omnius.Core.Net.Connections.Bridge;
 using Omnius.Core.Net.Connections.Multiplexer;
 using Omnius.Core.Net.Connections.Multiplexer.V1;
+using Omnius.Core.RocketPack.Remoting.Tests.Internal;
+using Omnius.Core.Tasks;
 using Xunit;
-using System;
-using Omnius.Core.Net.Connections.Bridge;
 
 namespace Omnius.Core.RocketPack.Remoting
 {
@@ -40,8 +40,8 @@ namespace Omnius.Core.RocketPack.Remoting
             var mockTestService = new Mock<ITestService>();
             mockTestService.Setup(n => n.Unary1Async(It.IsAny<TestParam>(), It.IsAny<CancellationToken>())).Returns(new ValueTask<TestResult>(new TestResult(1)));
 
-            var remotingConnector = new RocketRemotingConnector<DefaultErrorMessage>(clientMultiplexer, bytesPool);
-            var remotingAccepter = new RocketRemotingAccepter<DefaultErrorMessage>(serverMultiplexer, DefaultErrorMessageFactory.Default, bytesPool);
+            var remotingConnector = new RocketRemotingCallerFactory<DefaultErrorMessage>(clientMultiplexer, bytesPool);
+            var remotingAccepter = new RocketRemotingListenerFactory<DefaultErrorMessage>(serverMultiplexer, DefaultErrorMessageFactory.Default, bytesPool);
 
             var client = new TestService.Client<DefaultErrorMessage>(remotingConnector, bytesPool);
             var server = new TestService.Server<DefaultErrorMessage>(mockTestService.Object, remotingAccepter, bytesPool);

@@ -8,19 +8,19 @@ namespace Omnius.Core.RocketPack.Remoting.Internal
     internal sealed partial class ThrowHelper
     {
         [DoesNotReturn]
-        public static void ThrowRocketPackRpcProtocolException_UnexpectedProtocol() => throw CreateRocketPackRpcProtocolException_UnexpectedProtocol();
+        public static void ThrowRocketRemotingProtocolException_UnexpectedProtocol() => throw CreateRocketRemotingProtocolException_UnexpectedProtocol();
 
-        public static Exception CreateRocketPackRpcProtocolException_UnexpectedProtocol()
+        public static Exception CreateRocketRemotingProtocolException_UnexpectedProtocol()
         {
-            return new RocketPackRpcProtocolException("Unexpected protocol");
+            return new RocketRemotingProtocolException("Unexpected protocol");
         }
 
         [DoesNotReturn]
-        public static void ThrowRocketPackRpcApplicationException<T>(T errorMessage) => throw CreateRocketPackRpcApplicationException(errorMessage);
+        public static void ThrowRocketRemotingApplicationException<T>(T errorMessage) => throw CreateRocketRemotingApplicationException(errorMessage);
 
-        public static Exception CreateRocketPackRpcApplicationException<T>(T errorMessage)
+        public static Exception CreateRocketRemotingApplicationException<T>(T errorMessage)
         {
-            return new RocketPackRpcApplicationException<T>(errorMessage);
+            return new RocketRemotingApplicationException<T>(errorMessage);
         }
     }
 }

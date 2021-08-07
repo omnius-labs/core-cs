@@ -17,7 +17,7 @@ namespace Omnius.Core.Net.Connections.Bridge
             private readonly IBandwidthLimiter? _receiverBandwidthLimiter;
             private readonly Stopwatch _stopwatch;
 
-            private static readonly TimeSpan _interval = TimeSpan.FromMilliseconds(50);
+            private static readonly TimeSpan _interval = TimeSpan.FromMilliseconds(100);
 
             public BatchAction(ConnectionSender sender, ConnectionReceiver receiver, IBandwidthLimiter? senderBandwidthLimiter, IBandwidthLimiter? receiverBandwidthLimiter)
             {

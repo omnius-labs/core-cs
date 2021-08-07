@@ -4,9 +4,9 @@ using Omnius.Core.Net.Connections;
 
 namespace Omnius.Core.RocketPack.Remoting
 {
-    public interface IRocketRemotingConnector<TError>
+    public interface IRocketRemotingListenerFactory<TError>
         where TError : IRocketMessage<TError>
     {
-        ValueTask<IRocketRemotingCaller<TError>> ConnectAsync(uint functionId, CancellationToken cancellationToken = default);
+        ValueTask<IRocketRemotingListener<TError>> CreateAsync(CancellationToken cancellationToken = default);
     }
 }

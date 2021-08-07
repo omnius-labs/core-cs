@@ -8,7 +8,7 @@ namespace Omnius.Core.Net.Connections.Multiplexer.V1.Internal
 {
     internal partial class StreamConnection
     {
-        public sealed class ConnectionReceiver : IConnectionReceiver
+        public sealed class ConnectionReceiver : DisposableBase, IConnectionReceiver
         {
             private readonly IMessagePipeReader<ArraySegment<byte>> _dataReader;
             private readonly IMessagePipeWriter _dataAcceptedWriter;
@@ -21,6 +21,13 @@ namespace Omnius.Core.Net.Connections.Multiplexer.V1.Internal
                 _dataAcceptedWriter = dataAcceptedWriter;
                 _bytesPool = bytesPool;
                 _cancellationToken = cancellationToken;
+            }
+
+            protected override void OnDispose(bool disposing)
+            {
+                if (disposing)
+                {
+                }
             }
 
             public long TotalBytesReceived => throw new NotImplementedException();

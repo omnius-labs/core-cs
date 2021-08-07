@@ -7,7 +7,7 @@ namespace Omnius.Core.Net.Connections.Internal
     {
         private readonly CancellationTokenRegistration _cancellationTokenRegistration;
         private int _onClosedCalled = 0;
-        private readonly ActionPipe _closedPipe = new ActionPipe();
+        private readonly ActionPipe _closedPipe = new();
 
         public ConnectionEvents(CancellationToken cancellationToken)
         {

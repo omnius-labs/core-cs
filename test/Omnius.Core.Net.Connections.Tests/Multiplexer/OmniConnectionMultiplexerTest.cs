@@ -1,11 +1,11 @@
+using System;
 using System.Threading.Tasks;
 using Omnius.Core.Net.Caps;
-using Omnius.Core.Tasks;
-using Omnius.Core.Net.Connections.Multiplexer.V1;
-using Xunit;
-using System;
-using Omnius.Core.Net.Connections.Internal;
 using Omnius.Core.Net.Connections.Bridge;
+using Omnius.Core.Net.Connections.Internal;
+using Omnius.Core.Net.Connections.Multiplexer.V1;
+using Omnius.Core.Tasks;
+using Xunit;
 
 namespace Omnius.Core.Net.Connections.Multiplexer
 {

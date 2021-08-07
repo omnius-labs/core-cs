@@ -39,7 +39,7 @@ namespace Omnius.Core.Net.Connections.Multiplexer.V1.Internal
             _receiveDataAcceptedActionPipe = new ActionPipe();
 
             _sender = new ConnectionSender(maxSendDataQueueSize, _sendDataMessagePipe.Writer, _receiveDataAcceptedActionPipe.Subscriber, _bytesPool, _cancellationTokenSource.Token).ToAdd(_disposables);
-            _receiver = new ConnectionReceiver(_receiveDataMessagePipe.Reader, _sendDataAcceptedMessagePipe.Writer, _bytesPool, _cancellationTokenSource.Token);
+            _receiver = new ConnectionReceiver(_receiveDataMessagePipe.Reader, _sendDataAcceptedMessagePipe.Writer, _bytesPool, _cancellationTokenSource.Token).ToAdd(_disposables);
             _events = new ConnectionEvents(_cancellationTokenSource.Token);
 
             _sendFinishMessagePipe = new BoundedMessagePipe(1).ToAdd(_disposables);

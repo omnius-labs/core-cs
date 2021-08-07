@@ -27,32 +27,32 @@ namespace Omnius.Core.RocketPack.Remoting
     }
 
     [Serializable]
-    public class RocketPackRpcProtocolException : RocketPackRpcException
+    public class RocketRemotingProtocolException : RocketPackRpcException
     {
-        public RocketPackRpcProtocolException()
+        public RocketRemotingProtocolException()
         {
         }
 
-        public RocketPackRpcProtocolException(string message)
+        public RocketRemotingProtocolException(string message)
             : base(message)
         {
         }
 
-        public RocketPackRpcProtocolException(string message, System.Exception inner)
+        public RocketRemotingProtocolException(string message, System.Exception inner)
             : base(message, inner)
         {
         }
 
-        protected RocketPackRpcProtocolException(SerializationInfo info, StreamingContext context)
+        protected RocketRemotingProtocolException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
         }
     }
 
     [Serializable]
-    public class RocketPackRpcApplicationException<T> : RocketPackRpcException
+    public class RocketRemotingApplicationException<T> : RocketPackRpcException
     {
-        public RocketPackRpcApplicationException(T errorMessage)
+        public RocketRemotingApplicationException(T errorMessage)
         {
             this.ErrorMessage = errorMessage;
         }

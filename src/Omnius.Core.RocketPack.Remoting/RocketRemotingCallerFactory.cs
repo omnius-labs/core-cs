@@ -5,7 +5,7 @@ using Omnius.Core.Net.Connections;
 
 namespace Omnius.Core.RocketPack.Remoting
 {
-    public sealed partial class RocketRemotingConnector<TError> : IRocketRemotingConnector<TError>
+    public sealed partial class RocketRemotingCallerFactory<TError> : IRocketRemotingCallerFactory<TError>
         where TError : IRocketMessage<TError>
     {
         private static readonly NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
@@ -13,13 +13,14 @@ namespace Omnius.Core.RocketPack.Remoting
         private readonly IConnectionConnector _connector;
         private readonly IBytesPool _bytesPool;
 
-        public RocketRemotingConnector(IConnectionConnector connector, IBytesPool bytesPool)
+        public RocketRemotingCallerFactory(IConnectionConnector connector, IBytesPool bytesPool)
         {
             _connector = connector;
+
             _bytesPool = bytesPool;
         }
 
-        public async ValueTask<IRocketRemotingCaller<TError>> ConnectAsync(uint functionId, CancellationToken cancellationToken = default)
+        public async ValueTask<IRocketRemotingCaller<TError>> CreateAsync(uint functionId, CancellationToken cancellationToken = default)
         {
             var connection = await _connector.ConnectAsync(cancellationToken);
 
@@ -29,7 +30,7 @@ namespace Omnius.Core.RocketPack.Remoting
                     Varint.SetUInt32(functionId, bufferWriter);
                 }, cancellationToken);
 
-            var caller = new RocketRemoting.Caller<TError>(connection, functionId, _bytesPool);
+            var caller = new RocketRemotingCaller<TError>(connection, functionId, _bytesPool);
             return caller;
         }
     }

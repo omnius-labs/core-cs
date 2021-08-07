@@ -2,7 +2,7 @@ gen-code:
 	bash ./eng/gen-code.sh
 
 test:
-	dotnet test --no-restore
+	dotnet test
 
 build:
 	dotnet build
