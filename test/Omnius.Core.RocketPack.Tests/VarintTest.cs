@@ -2,6 +2,7 @@ using System;
 using System.Buffers;
 using System.Collections.Generic;
 using System.Linq;
+using Omnius.Core.Pipelines;
 using Xunit;
 
 namespace Omnius.Core.RocketPack
@@ -17,71 +18,71 @@ namespace Omnius.Core.RocketPack
             const byte Int64Code = 0x83;
 
             {
-                using var hub = new BytesHub();
-                hub.Writer.Write(new byte[] { Int8Code });
-                var reader = new SequenceReader<byte>(hub.Reader.GetSequence());
+                using var bytesPipe = new BytesPipe();
+                bytesPipe.Writer.Write(new byte[] { Int8Code });
+                var reader = new SequenceReader<byte>(bytesPipe.Reader.GetSequence());
                 Assert.False(Varint.TryGetUInt8(ref reader, out var result1));
             }
 
             {
                 {
-                    using var hub = new BytesHub();
-                    hub.Writer.Write(new byte[] { Int8Code });
-                    var reader = new SequenceReader<byte>(hub.Reader.GetSequence());
+                    using var bytesPipe = new BytesPipe();
+                    bytesPipe.Writer.Write(new byte[] { Int8Code });
+                    var reader = new SequenceReader<byte>(bytesPipe.Reader.GetSequence());
                     Assert.False(Varint.TryGetUInt16(ref reader, out var result1));
                 }
                 {
-                    using var hub = new BytesHub();
-                    hub.Writer.Write(new byte[] { Int16Code });
-                    var reader = new SequenceReader<byte>(hub.Reader.GetSequence());
+                    using var bytesPipe = new BytesPipe();
+                    bytesPipe.Writer.Write(new byte[] { Int16Code });
+                    var reader = new SequenceReader<byte>(bytesPipe.Reader.GetSequence());
                     Assert.False(Varint.TryGetUInt16(ref reader, out var result1));
                 }
             }
 
             {
                 {
-                    using var hub = new BytesHub();
-                    hub.Writer.Write(new byte[] { Int8Code });
-                    var reader = new SequenceReader<byte>(hub.Reader.GetSequence());
+                    using var bytesPipe = new BytesPipe();
+                    bytesPipe.Writer.Write(new byte[] { Int8Code });
+                    var reader = new SequenceReader<byte>(bytesPipe.Reader.GetSequence());
                     Assert.False(Varint.TryGetUInt32(ref reader, out var result1));
                 }
                 {
-                    using var hub = new BytesHub();
-                    hub.Writer.Write(new byte[] { Int16Code });
-                    var reader = new SequenceReader<byte>(hub.Reader.GetSequence());
+                    using var bytesPipe = new BytesPipe();
+                    bytesPipe.Writer.Write(new byte[] { Int16Code });
+                    var reader = new SequenceReader<byte>(bytesPipe.Reader.GetSequence());
                     Assert.False(Varint.TryGetUInt32(ref reader, out var result1));
                 }
                 {
-                    using var hub = new BytesHub();
-                    hub.Writer.Write(new byte[] { Int32Code });
-                    var reader = new SequenceReader<byte>(hub.Reader.GetSequence());
+                    using var bytesPipe = new BytesPipe();
+                    bytesPipe.Writer.Write(new byte[] { Int32Code });
+                    var reader = new SequenceReader<byte>(bytesPipe.Reader.GetSequence());
                     Assert.False(Varint.TryGetUInt32(ref reader, out var result1));
                 }
             }
 
             {
                 {
-                    using var hub = new BytesHub();
-                    hub.Writer.Write(new byte[] { Int8Code });
-                    var reader = new SequenceReader<byte>(hub.Reader.GetSequence());
+                    using var bytesPipe = new BytesPipe();
+                    bytesPipe.Writer.Write(new byte[] { Int8Code });
+                    var reader = new SequenceReader<byte>(bytesPipe.Reader.GetSequence());
                     Assert.False(Varint.TryGetUInt64(ref reader, out var result1));
                 }
                 {
-                    using var hub = new BytesHub();
-                    hub.Writer.Write(new byte[] { Int16Code });
-                    var reader = new SequenceReader<byte>(hub.Reader.GetSequence());
+                    using var bytesPipe = new BytesPipe();
+                    bytesPipe.Writer.Write(new byte[] { Int16Code });
+                    var reader = new SequenceReader<byte>(bytesPipe.Reader.GetSequence());
                     Assert.False(Varint.TryGetUInt64(ref reader, out var result1));
                 }
                 {
-                    using var hub = new BytesHub();
-                    hub.Writer.Write(new byte[] { Int32Code });
-                    var reader = new SequenceReader<byte>(hub.Reader.GetSequence());
+                    using var bytesPipe = new BytesPipe();
+                    bytesPipe.Writer.Write(new byte[] { Int32Code });
+                    var reader = new SequenceReader<byte>(bytesPipe.Reader.GetSequence());
                     Assert.False(Varint.TryGetUInt64(ref reader, out var result1));
                 }
                 {
-                    using var hub = new BytesHub();
-                    hub.Writer.Write(new byte[] { Int64Code });
-                    var reader = new SequenceReader<byte>(hub.Reader.GetSequence());
+                    using var bytesPipe = new BytesPipe();
+                    bytesPipe.Writer.Write(new byte[] { Int64Code });
+                    var reader = new SequenceReader<byte>(bytesPipe.Reader.GetSequence());
                     Assert.False(Varint.TryGetUInt64(ref reader, out var result1));
                 }
             }
@@ -91,8 +92,8 @@ namespace Omnius.Core.RocketPack
         [Fact]
         public void EmptyDataGetTest()
         {
-            using var hub = new BytesHub();
-            var reader = new SequenceReader<byte>(hub.Reader.GetSequence());
+            using var bytesPipe = new BytesPipe();
+            var reader = new SequenceReader<byte>(bytesPipe.Reader.GetSequence());
             Assert.False(Varint.TryGetUInt8(ref reader, out var result1));
             Assert.False(Varint.TryGetUInt16(ref reader, out var result2));
             Assert.False(Varint.TryGetUInt32(ref reader, out var result3));
@@ -108,146 +109,146 @@ namespace Omnius.Core.RocketPack
         {
             var random = new Random(0);
 
-            using (var hub = new BytesHub())
+            using (var bytesPipe = new BytesPipe())
             {
                 for (int i = 0; i < 32; i++)
                 {
                     foreach (var result1 in GenRandomValue(random, 8).Select(n => (byte)n))
                     {
-                        Varint.SetUInt8(result1, hub.Writer);
+                        Varint.SetUInt8(result1, bytesPipe.Writer);
 
-                        var reader = new SequenceReader<byte>(hub.Reader.GetSequence());
+                        var reader = new SequenceReader<byte>(bytesPipe.Reader.GetSequence());
                         Varint.TryGetUInt8(ref reader, out var result2);
 
                         Assert.Equal(result1, result2);
 
-                        hub.Reset();
+                        bytesPipe.Reset();
                     }
                 }
             }
 
-            using (var hub = new BytesHub())
+            using (var bytesPipe = new BytesPipe())
             {
                 for (int i = 0; i < 32; i++)
                 {
                     foreach (var result1 in GenRandomValue(random, 16).Select(n => (ushort)n))
                     {
-                        Varint.SetUInt16(result1, hub.Writer);
+                        Varint.SetUInt16(result1, bytesPipe.Writer);
 
-                        var reader = new SequenceReader<byte>(hub.Reader.GetSequence());
+                        var reader = new SequenceReader<byte>(bytesPipe.Reader.GetSequence());
                         Varint.TryGetUInt16(ref reader, out var result2);
 
                         Assert.Equal(result1, result2);
 
-                        hub.Reset();
+                        bytesPipe.Reset();
                     }
                 }
             }
 
-            using (var hub = new BytesHub())
+            using (var bytesPipe = new BytesPipe())
             {
                 for (int i = 0; i < 32; i++)
                 {
                     foreach (var result1 in GenRandomValue(random, 32).Select(n => (uint)n))
                     {
-                        Varint.SetUInt32(result1, hub.Writer);
+                        Varint.SetUInt32(result1, bytesPipe.Writer);
 
-                        var reader = new SequenceReader<byte>(hub.Reader.GetSequence());
+                        var reader = new SequenceReader<byte>(bytesPipe.Reader.GetSequence());
                         Varint.TryGetUInt32(ref reader, out var result2);
 
                         Assert.Equal(result1, result2);
 
-                        hub.Reset();
+                        bytesPipe.Reset();
                     }
                 }
             }
 
-            using (var hub = new BytesHub())
+            using (var bytesPipe = new BytesPipe())
             {
                 for (int i = 0; i < 32; i++)
                 {
                     foreach (var result1 in GenRandomValue(random, 64).Select(n => (ulong)n))
                     {
-                        Varint.SetUInt64(result1, hub.Writer);
+                        Varint.SetUInt64(result1, bytesPipe.Writer);
 
-                        var reader = new SequenceReader<byte>(hub.Reader.GetSequence());
+                        var reader = new SequenceReader<byte>(bytesPipe.Reader.GetSequence());
                         Varint.TryGetUInt64(ref reader, out var result2);
 
                         Assert.Equal(result1, result2);
 
-                        hub.Reset();
+                        bytesPipe.Reset();
                     }
                 }
             }
 
-            using (var hub = new BytesHub())
+            using (var bytesPipe = new BytesPipe())
             {
                 for (int i = 0; i < 32; i++)
                 {
                     foreach (var result1 in GenRandomValue(random, 8).Select(n => (sbyte)n))
                     {
-                        Varint.SetInt8(result1, hub.Writer);
+                        Varint.SetInt8(result1, bytesPipe.Writer);
 
-                        var reader = new SequenceReader<byte>(hub.Reader.GetSequence());
+                        var reader = new SequenceReader<byte>(bytesPipe.Reader.GetSequence());
                         Varint.TryGetInt8(ref reader, out var result2);
 
                         Assert.Equal(result1, result2);
 
-                        hub.Reset();
+                        bytesPipe.Reset();
                     }
                 }
             }
 
-            using (var hub = new BytesHub())
+            using (var bytesPipe = new BytesPipe())
             {
                 for (int i = 0; i < 32; i++)
                 {
                     foreach (var result1 in GenRandomValue(random, 16).Select(n => (short)n))
                     {
-                        Varint.SetInt16(result1, hub.Writer);
+                        Varint.SetInt16(result1, bytesPipe.Writer);
 
-                        var reader = new SequenceReader<byte>(hub.Reader.GetSequence());
+                        var reader = new SequenceReader<byte>(bytesPipe.Reader.GetSequence());
                         Varint.TryGetInt16(ref reader, out var result2);
 
                         Assert.Equal(result1, result2);
 
-                        hub.Reset();
+                        bytesPipe.Reset();
                     }
                 }
             }
 
-            using (var hub = new BytesHub())
+            using (var bytesPipe = new BytesPipe())
             {
                 for (int i = 0; i < 32; i++)
                 {
                     foreach (var result1 in GenRandomValue(random, 32).Select(n => (int)n))
                     {
-                        Varint.SetInt32(result1, hub.Writer);
+                        Varint.SetInt32(result1, bytesPipe.Writer);
 
-                        var reader = new SequenceReader<byte>(hub.Reader.GetSequence());
+                        var reader = new SequenceReader<byte>(bytesPipe.Reader.GetSequence());
                         Varint.TryGetInt32(ref reader, out var result2);
 
                         Assert.Equal(result1, result2);
 
-                        hub.Reset();
+                        bytesPipe.Reset();
                     }
                 }
             }
 
-            using (var hub = new BytesHub())
+            using (var bytesPipe = new BytesPipe())
             {
                 for (int i = 0; i < 32; i++)
                 {
                     foreach (var result1 in GenRandomValue(random, 64).Select(n => (long)n))
                     {
-                        Varint.SetInt64(result1, hub.Writer);
+                        Varint.SetInt64(result1, bytesPipe.Writer);
 
-                        var reader = new SequenceReader<byte>(hub.Reader.GetSequence());
+                        var reader = new SequenceReader<byte>(bytesPipe.Reader.GetSequence());
                         Varint.TryGetInt64(ref reader, out var result2);
 
                         Assert.Equal(result1, result2);
 
-                        hub.Reset();
+                        bytesPipe.Reset();
                     }
                 }
             }

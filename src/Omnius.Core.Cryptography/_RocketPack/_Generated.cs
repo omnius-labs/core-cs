@@ -23,15 +23,15 @@ namespace Omnius.Core.Cryptography
         Unknown = 0,
         Sha2_256 = 1,
     }
-    public readonly partial struct OmniHash : global::Omnius.Core.RocketPack.IRocketPackObject<global::Omnius.Core.Cryptography.OmniHash>
+    public readonly partial struct OmniHash : global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.Cryptography.OmniHash>
     {
-        public static global::Omnius.Core.RocketPack.IRocketPackObjectFormatter<global::Omnius.Core.Cryptography.OmniHash> Formatter => global::Omnius.Core.RocketPack.IRocketPackObject<global::Omnius.Core.Cryptography.OmniHash>.Formatter;
-        public static global::Omnius.Core.Cryptography.OmniHash Empty => global::Omnius.Core.RocketPack.IRocketPackObject<global::Omnius.Core.Cryptography.OmniHash>.Empty;
+        public static global::Omnius.Core.RocketPack.IRocketMessageFormatter<global::Omnius.Core.Cryptography.OmniHash> Formatter => global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.Cryptography.OmniHash>.Formatter;
+        public static global::Omnius.Core.Cryptography.OmniHash Empty => global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.Cryptography.OmniHash>.Empty;
 
         static OmniHash()
         {
-            global::Omnius.Core.RocketPack.IRocketPackObject<global::Omnius.Core.Cryptography.OmniHash>.Formatter = new ___CustomFormatter();
-            global::Omnius.Core.RocketPack.IRocketPackObject<global::Omnius.Core.Cryptography.OmniHash>.Empty = new global::Omnius.Core.Cryptography.OmniHash((global::Omnius.Core.Cryptography.OmniHashAlgorithmType)0, global::System.ReadOnlyMemory<byte>.Empty);
+            global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.Cryptography.OmniHash>.Formatter = new ___CustomFormatter();
+            global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.Cryptography.OmniHash>.Empty = new global::Omnius.Core.Cryptography.OmniHash((global::Omnius.Core.Cryptography.OmniHashAlgorithmType)0, global::System.ReadOnlyMemory<byte>.Empty);
         }
 
         private readonly int ___hashCode;
@@ -58,12 +58,12 @@ namespace Omnius.Core.Cryptography
 
         public static global::Omnius.Core.Cryptography.OmniHash Import(global::System.Buffers.ReadOnlySequence<byte> sequence, global::Omnius.Core.IBytesPool bytesPool)
         {
-            var reader = new global::Omnius.Core.RocketPack.RocketPackObjectReader(sequence, bytesPool);
+            var reader = new global::Omnius.Core.RocketPack.RocketMessageReader(sequence, bytesPool);
             return Formatter.Deserialize(ref reader, 0);
         }
         public void Export(global::System.Buffers.IBufferWriter<byte> bufferWriter, global::Omnius.Core.IBytesPool bytesPool)
         {
-            var writer = new global::Omnius.Core.RocketPack.RocketPackObjectWriter(bufferWriter, bytesPool);
+            var writer = new global::Omnius.Core.RocketPack.RocketMessageWriter(bufferWriter, bytesPool);
             Formatter.Serialize(ref writer, this, 0);
         }
 
@@ -89,16 +89,16 @@ namespace Omnius.Core.Cryptography
         }
         public override int GetHashCode() => ___hashCode;
 
-        private sealed class ___CustomFormatter : global::Omnius.Core.RocketPack.IRocketPackObjectFormatter<global::Omnius.Core.Cryptography.OmniHash>
+        private sealed class ___CustomFormatter : global::Omnius.Core.RocketPack.IRocketMessageFormatter<global::Omnius.Core.Cryptography.OmniHash>
         {
-            public void Serialize(ref global::Omnius.Core.RocketPack.RocketPackObjectWriter w, in global::Omnius.Core.Cryptography.OmniHash value, in int rank)
+            public void Serialize(ref global::Omnius.Core.RocketPack.RocketMessageWriter w, in global::Omnius.Core.Cryptography.OmniHash value, in int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
                 w.Write((ulong)value.AlgorithmType);
                 w.Write(value.Value.Span);
             }
-            public global::Omnius.Core.Cryptography.OmniHash Deserialize(ref global::Omnius.Core.RocketPack.RocketPackObjectReader r, in int rank)
+            public global::Omnius.Core.Cryptography.OmniHash Deserialize(ref global::Omnius.Core.RocketPack.RocketMessageReader r, in int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
@@ -115,15 +115,15 @@ namespace Omnius.Core.Cryptography
             }
         }
     }
-    public sealed partial class OmniAgreement : global::Omnius.Core.RocketPack.IRocketPackObject<global::Omnius.Core.Cryptography.OmniAgreement>
+    public sealed partial class OmniAgreement : global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.Cryptography.OmniAgreement>
     {
-        public static global::Omnius.Core.RocketPack.IRocketPackObjectFormatter<global::Omnius.Core.Cryptography.OmniAgreement> Formatter => global::Omnius.Core.RocketPack.IRocketPackObject<global::Omnius.Core.Cryptography.OmniAgreement>.Formatter;
-        public static global::Omnius.Core.Cryptography.OmniAgreement Empty => global::Omnius.Core.RocketPack.IRocketPackObject<global::Omnius.Core.Cryptography.OmniAgreement>.Empty;
+        public static global::Omnius.Core.RocketPack.IRocketMessageFormatter<global::Omnius.Core.Cryptography.OmniAgreement> Formatter => global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.Cryptography.OmniAgreement>.Formatter;
+        public static global::Omnius.Core.Cryptography.OmniAgreement Empty => global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.Cryptography.OmniAgreement>.Empty;
 
         static OmniAgreement()
         {
-            global::Omnius.Core.RocketPack.IRocketPackObject<global::Omnius.Core.Cryptography.OmniAgreement>.Formatter = new ___CustomFormatter();
-            global::Omnius.Core.RocketPack.IRocketPackObject<global::Omnius.Core.Cryptography.OmniAgreement>.Empty = new global::Omnius.Core.Cryptography.OmniAgreement(global::Omnius.Core.RocketPack.Timestamp.Zero, (global::Omnius.Core.Cryptography.OmniAgreementAlgorithmType)0, global::System.ReadOnlyMemory<byte>.Empty, global::System.ReadOnlyMemory<byte>.Empty);
+            global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.Cryptography.OmniAgreement>.Formatter = new ___CustomFormatter();
+            global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.Cryptography.OmniAgreement>.Empty = new global::Omnius.Core.Cryptography.OmniAgreement(global::Omnius.Core.RocketPack.Timestamp.Zero, (global::Omnius.Core.Cryptography.OmniAgreementAlgorithmType)0, global::System.ReadOnlyMemory<byte>.Empty, global::System.ReadOnlyMemory<byte>.Empty);
         }
 
         private readonly global::System.Lazy<int> ___hashCode;
@@ -159,12 +159,12 @@ namespace Omnius.Core.Cryptography
 
         public static global::Omnius.Core.Cryptography.OmniAgreement Import(global::System.Buffers.ReadOnlySequence<byte> sequence, global::Omnius.Core.IBytesPool bytesPool)
         {
-            var reader = new global::Omnius.Core.RocketPack.RocketPackObjectReader(sequence, bytesPool);
+            var reader = new global::Omnius.Core.RocketPack.RocketMessageReader(sequence, bytesPool);
             return Formatter.Deserialize(ref reader, 0);
         }
         public void Export(global::System.Buffers.IBufferWriter<byte> bufferWriter, global::Omnius.Core.IBytesPool bytesPool)
         {
-            var writer = new global::Omnius.Core.RocketPack.RocketPackObjectWriter(bufferWriter, bytesPool);
+            var writer = new global::Omnius.Core.RocketPack.RocketMessageWriter(bufferWriter, bytesPool);
             Formatter.Serialize(ref writer, this, 0);
         }
 
@@ -194,9 +194,9 @@ namespace Omnius.Core.Cryptography
         }
         public override int GetHashCode() => ___hashCode.Value;
 
-        private sealed class ___CustomFormatter : global::Omnius.Core.RocketPack.IRocketPackObjectFormatter<global::Omnius.Core.Cryptography.OmniAgreement>
+        private sealed class ___CustomFormatter : global::Omnius.Core.RocketPack.IRocketMessageFormatter<global::Omnius.Core.Cryptography.OmniAgreement>
         {
-            public void Serialize(ref global::Omnius.Core.RocketPack.RocketPackObjectWriter w, in global::Omnius.Core.Cryptography.OmniAgreement value, in int rank)
+            public void Serialize(ref global::Omnius.Core.RocketPack.RocketMessageWriter w, in global::Omnius.Core.Cryptography.OmniAgreement value, in int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
@@ -222,7 +222,7 @@ namespace Omnius.Core.Cryptography
                 }
                 w.Write((uint)0);
             }
-            public global::Omnius.Core.Cryptography.OmniAgreement Deserialize(ref global::Omnius.Core.RocketPack.RocketPackObjectReader r, in int rank)
+            public global::Omnius.Core.Cryptography.OmniAgreement Deserialize(ref global::Omnius.Core.RocketPack.RocketMessageReader r, in int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
@@ -264,15 +264,15 @@ namespace Omnius.Core.Cryptography
             }
         }
     }
-    public sealed partial class OmniAgreementPublicKey : global::Omnius.Core.RocketPack.IRocketPackObject<global::Omnius.Core.Cryptography.OmniAgreementPublicKey>
+    public sealed partial class OmniAgreementPublicKey : global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.Cryptography.OmniAgreementPublicKey>
     {
-        public static global::Omnius.Core.RocketPack.IRocketPackObjectFormatter<global::Omnius.Core.Cryptography.OmniAgreementPublicKey> Formatter => global::Omnius.Core.RocketPack.IRocketPackObject<global::Omnius.Core.Cryptography.OmniAgreementPublicKey>.Formatter;
-        public static global::Omnius.Core.Cryptography.OmniAgreementPublicKey Empty => global::Omnius.Core.RocketPack.IRocketPackObject<global::Omnius.Core.Cryptography.OmniAgreementPublicKey>.Empty;
+        public static global::Omnius.Core.RocketPack.IRocketMessageFormatter<global::Omnius.Core.Cryptography.OmniAgreementPublicKey> Formatter => global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.Cryptography.OmniAgreementPublicKey>.Formatter;
+        public static global::Omnius.Core.Cryptography.OmniAgreementPublicKey Empty => global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.Cryptography.OmniAgreementPublicKey>.Empty;
 
         static OmniAgreementPublicKey()
         {
-            global::Omnius.Core.RocketPack.IRocketPackObject<global::Omnius.Core.Cryptography.OmniAgreementPublicKey>.Formatter = new ___CustomFormatter();
-            global::Omnius.Core.RocketPack.IRocketPackObject<global::Omnius.Core.Cryptography.OmniAgreementPublicKey>.Empty = new global::Omnius.Core.Cryptography.OmniAgreementPublicKey(global::Omnius.Core.RocketPack.Timestamp.Zero, (global::Omnius.Core.Cryptography.OmniAgreementAlgorithmType)0, global::System.ReadOnlyMemory<byte>.Empty);
+            global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.Cryptography.OmniAgreementPublicKey>.Formatter = new ___CustomFormatter();
+            global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.Cryptography.OmniAgreementPublicKey>.Empty = new global::Omnius.Core.Cryptography.OmniAgreementPublicKey(global::Omnius.Core.RocketPack.Timestamp.Zero, (global::Omnius.Core.Cryptography.OmniAgreementAlgorithmType)0, global::System.ReadOnlyMemory<byte>.Empty);
         }
 
         private readonly global::System.Lazy<int> ___hashCode;
@@ -303,12 +303,12 @@ namespace Omnius.Core.Cryptography
 
         public static global::Omnius.Core.Cryptography.OmniAgreementPublicKey Import(global::System.Buffers.ReadOnlySequence<byte> sequence, global::Omnius.Core.IBytesPool bytesPool)
         {
-            var reader = new global::Omnius.Core.RocketPack.RocketPackObjectReader(sequence, bytesPool);
+            var reader = new global::Omnius.Core.RocketPack.RocketMessageReader(sequence, bytesPool);
             return Formatter.Deserialize(ref reader, 0);
         }
         public void Export(global::System.Buffers.IBufferWriter<byte> bufferWriter, global::Omnius.Core.IBytesPool bytesPool)
         {
-            var writer = new global::Omnius.Core.RocketPack.RocketPackObjectWriter(bufferWriter, bytesPool);
+            var writer = new global::Omnius.Core.RocketPack.RocketMessageWriter(bufferWriter, bytesPool);
             Formatter.Serialize(ref writer, this, 0);
         }
 
@@ -337,9 +337,9 @@ namespace Omnius.Core.Cryptography
         }
         public override int GetHashCode() => ___hashCode.Value;
 
-        private sealed class ___CustomFormatter : global::Omnius.Core.RocketPack.IRocketPackObjectFormatter<global::Omnius.Core.Cryptography.OmniAgreementPublicKey>
+        private sealed class ___CustomFormatter : global::Omnius.Core.RocketPack.IRocketMessageFormatter<global::Omnius.Core.Cryptography.OmniAgreementPublicKey>
         {
-            public void Serialize(ref global::Omnius.Core.RocketPack.RocketPackObjectWriter w, in global::Omnius.Core.Cryptography.OmniAgreementPublicKey value, in int rank)
+            public void Serialize(ref global::Omnius.Core.RocketPack.RocketMessageWriter w, in global::Omnius.Core.Cryptography.OmniAgreementPublicKey value, in int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
@@ -360,7 +360,7 @@ namespace Omnius.Core.Cryptography
                 }
                 w.Write((uint)0);
             }
-            public global::Omnius.Core.Cryptography.OmniAgreementPublicKey Deserialize(ref global::Omnius.Core.RocketPack.RocketPackObjectReader r, in int rank)
+            public global::Omnius.Core.Cryptography.OmniAgreementPublicKey Deserialize(ref global::Omnius.Core.RocketPack.RocketMessageReader r, in int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
@@ -396,15 +396,15 @@ namespace Omnius.Core.Cryptography
             }
         }
     }
-    public sealed partial class OmniAgreementPrivateKey : global::Omnius.Core.RocketPack.IRocketPackObject<global::Omnius.Core.Cryptography.OmniAgreementPrivateKey>
+    public sealed partial class OmniAgreementPrivateKey : global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.Cryptography.OmniAgreementPrivateKey>
     {
-        public static global::Omnius.Core.RocketPack.IRocketPackObjectFormatter<global::Omnius.Core.Cryptography.OmniAgreementPrivateKey> Formatter => global::Omnius.Core.RocketPack.IRocketPackObject<global::Omnius.Core.Cryptography.OmniAgreementPrivateKey>.Formatter;
-        public static global::Omnius.Core.Cryptography.OmniAgreementPrivateKey Empty => global::Omnius.Core.RocketPack.IRocketPackObject<global::Omnius.Core.Cryptography.OmniAgreementPrivateKey>.Empty;
+        public static global::Omnius.Core.RocketPack.IRocketMessageFormatter<global::Omnius.Core.Cryptography.OmniAgreementPrivateKey> Formatter => global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.Cryptography.OmniAgreementPrivateKey>.Formatter;
+        public static global::Omnius.Core.Cryptography.OmniAgreementPrivateKey Empty => global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.Cryptography.OmniAgreementPrivateKey>.Empty;
 
         static OmniAgreementPrivateKey()
         {
-            global::Omnius.Core.RocketPack.IRocketPackObject<global::Omnius.Core.Cryptography.OmniAgreementPrivateKey>.Formatter = new ___CustomFormatter();
-            global::Omnius.Core.RocketPack.IRocketPackObject<global::Omnius.Core.Cryptography.OmniAgreementPrivateKey>.Empty = new global::Omnius.Core.Cryptography.OmniAgreementPrivateKey(global::Omnius.Core.RocketPack.Timestamp.Zero, (global::Omnius.Core.Cryptography.OmniAgreementAlgorithmType)0, global::System.ReadOnlyMemory<byte>.Empty);
+            global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.Cryptography.OmniAgreementPrivateKey>.Formatter = new ___CustomFormatter();
+            global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.Cryptography.OmniAgreementPrivateKey>.Empty = new global::Omnius.Core.Cryptography.OmniAgreementPrivateKey(global::Omnius.Core.RocketPack.Timestamp.Zero, (global::Omnius.Core.Cryptography.OmniAgreementAlgorithmType)0, global::System.ReadOnlyMemory<byte>.Empty);
         }
 
         private readonly global::System.Lazy<int> ___hashCode;
@@ -435,12 +435,12 @@ namespace Omnius.Core.Cryptography
 
         public static global::Omnius.Core.Cryptography.OmniAgreementPrivateKey Import(global::System.Buffers.ReadOnlySequence<byte> sequence, global::Omnius.Core.IBytesPool bytesPool)
         {
-            var reader = new global::Omnius.Core.RocketPack.RocketPackObjectReader(sequence, bytesPool);
+            var reader = new global::Omnius.Core.RocketPack.RocketMessageReader(sequence, bytesPool);
             return Formatter.Deserialize(ref reader, 0);
         }
         public void Export(global::System.Buffers.IBufferWriter<byte> bufferWriter, global::Omnius.Core.IBytesPool bytesPool)
         {
-            var writer = new global::Omnius.Core.RocketPack.RocketPackObjectWriter(bufferWriter, bytesPool);
+            var writer = new global::Omnius.Core.RocketPack.RocketMessageWriter(bufferWriter, bytesPool);
             Formatter.Serialize(ref writer, this, 0);
         }
 
@@ -469,9 +469,9 @@ namespace Omnius.Core.Cryptography
         }
         public override int GetHashCode() => ___hashCode.Value;
 
-        private sealed class ___CustomFormatter : global::Omnius.Core.RocketPack.IRocketPackObjectFormatter<global::Omnius.Core.Cryptography.OmniAgreementPrivateKey>
+        private sealed class ___CustomFormatter : global::Omnius.Core.RocketPack.IRocketMessageFormatter<global::Omnius.Core.Cryptography.OmniAgreementPrivateKey>
         {
-            public void Serialize(ref global::Omnius.Core.RocketPack.RocketPackObjectWriter w, in global::Omnius.Core.Cryptography.OmniAgreementPrivateKey value, in int rank)
+            public void Serialize(ref global::Omnius.Core.RocketPack.RocketMessageWriter w, in global::Omnius.Core.Cryptography.OmniAgreementPrivateKey value, in int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
@@ -492,7 +492,7 @@ namespace Omnius.Core.Cryptography
                 }
                 w.Write((uint)0);
             }
-            public global::Omnius.Core.Cryptography.OmniAgreementPrivateKey Deserialize(ref global::Omnius.Core.RocketPack.RocketPackObjectReader r, in int rank)
+            public global::Omnius.Core.Cryptography.OmniAgreementPrivateKey Deserialize(ref global::Omnius.Core.RocketPack.RocketMessageReader r, in int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
@@ -528,15 +528,15 @@ namespace Omnius.Core.Cryptography
             }
         }
     }
-    public sealed partial class OmniDigitalSignature : global::Omnius.Core.RocketPack.IRocketPackObject<global::Omnius.Core.Cryptography.OmniDigitalSignature>
+    public sealed partial class OmniDigitalSignature : global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.Cryptography.OmniDigitalSignature>
     {
-        public static global::Omnius.Core.RocketPack.IRocketPackObjectFormatter<global::Omnius.Core.Cryptography.OmniDigitalSignature> Formatter => global::Omnius.Core.RocketPack.IRocketPackObject<global::Omnius.Core.Cryptography.OmniDigitalSignature>.Formatter;
-        public static global::Omnius.Core.Cryptography.OmniDigitalSignature Empty => global::Omnius.Core.RocketPack.IRocketPackObject<global::Omnius.Core.Cryptography.OmniDigitalSignature>.Empty;
+        public static global::Omnius.Core.RocketPack.IRocketMessageFormatter<global::Omnius.Core.Cryptography.OmniDigitalSignature> Formatter => global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.Cryptography.OmniDigitalSignature>.Formatter;
+        public static global::Omnius.Core.Cryptography.OmniDigitalSignature Empty => global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.Cryptography.OmniDigitalSignature>.Empty;
 
         static OmniDigitalSignature()
         {
-            global::Omnius.Core.RocketPack.IRocketPackObject<global::Omnius.Core.Cryptography.OmniDigitalSignature>.Formatter = new ___CustomFormatter();
-            global::Omnius.Core.RocketPack.IRocketPackObject<global::Omnius.Core.Cryptography.OmniDigitalSignature>.Empty = new global::Omnius.Core.Cryptography.OmniDigitalSignature(string.Empty, (global::Omnius.Core.Cryptography.OmniDigitalSignatureAlgorithmType)0, global::System.ReadOnlyMemory<byte>.Empty, global::System.ReadOnlyMemory<byte>.Empty);
+            global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.Cryptography.OmniDigitalSignature>.Formatter = new ___CustomFormatter();
+            global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.Cryptography.OmniDigitalSignature>.Empty = new global::Omnius.Core.Cryptography.OmniDigitalSignature(string.Empty, (global::Omnius.Core.Cryptography.OmniDigitalSignatureAlgorithmType)0, global::System.ReadOnlyMemory<byte>.Empty, global::System.ReadOnlyMemory<byte>.Empty);
         }
 
         private readonly global::System.Lazy<int> ___hashCode;
@@ -575,12 +575,12 @@ namespace Omnius.Core.Cryptography
 
         public static global::Omnius.Core.Cryptography.OmniDigitalSignature Import(global::System.Buffers.ReadOnlySequence<byte> sequence, global::Omnius.Core.IBytesPool bytesPool)
         {
-            var reader = new global::Omnius.Core.RocketPack.RocketPackObjectReader(sequence, bytesPool);
+            var reader = new global::Omnius.Core.RocketPack.RocketMessageReader(sequence, bytesPool);
             return Formatter.Deserialize(ref reader, 0);
         }
         public void Export(global::System.Buffers.IBufferWriter<byte> bufferWriter, global::Omnius.Core.IBytesPool bytesPool)
         {
-            var writer = new global::Omnius.Core.RocketPack.RocketPackObjectWriter(bufferWriter, bytesPool);
+            var writer = new global::Omnius.Core.RocketPack.RocketMessageWriter(bufferWriter, bytesPool);
             Formatter.Serialize(ref writer, this, 0);
         }
 
@@ -610,9 +610,9 @@ namespace Omnius.Core.Cryptography
         }
         public override int GetHashCode() => ___hashCode.Value;
 
-        private sealed class ___CustomFormatter : global::Omnius.Core.RocketPack.IRocketPackObjectFormatter<global::Omnius.Core.Cryptography.OmniDigitalSignature>
+        private sealed class ___CustomFormatter : global::Omnius.Core.RocketPack.IRocketMessageFormatter<global::Omnius.Core.Cryptography.OmniDigitalSignature>
         {
-            public void Serialize(ref global::Omnius.Core.RocketPack.RocketPackObjectWriter w, in global::Omnius.Core.Cryptography.OmniDigitalSignature value, in int rank)
+            public void Serialize(ref global::Omnius.Core.RocketPack.RocketMessageWriter w, in global::Omnius.Core.Cryptography.OmniDigitalSignature value, in int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
@@ -638,7 +638,7 @@ namespace Omnius.Core.Cryptography
                 }
                 w.Write((uint)0);
             }
-            public global::Omnius.Core.Cryptography.OmniDigitalSignature Deserialize(ref global::Omnius.Core.RocketPack.RocketPackObjectReader r, in int rank)
+            public global::Omnius.Core.Cryptography.OmniDigitalSignature Deserialize(ref global::Omnius.Core.RocketPack.RocketMessageReader r, in int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
@@ -680,15 +680,15 @@ namespace Omnius.Core.Cryptography
             }
         }
     }
-    public sealed partial class OmniCertificate : global::Omnius.Core.RocketPack.IRocketPackObject<global::Omnius.Core.Cryptography.OmniCertificate>
+    public sealed partial class OmniCertificate : global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.Cryptography.OmniCertificate>
     {
-        public static global::Omnius.Core.RocketPack.IRocketPackObjectFormatter<global::Omnius.Core.Cryptography.OmniCertificate> Formatter => global::Omnius.Core.RocketPack.IRocketPackObject<global::Omnius.Core.Cryptography.OmniCertificate>.Formatter;
-        public static global::Omnius.Core.Cryptography.OmniCertificate Empty => global::Omnius.Core.RocketPack.IRocketPackObject<global::Omnius.Core.Cryptography.OmniCertificate>.Empty;
+        public static global::Omnius.Core.RocketPack.IRocketMessageFormatter<global::Omnius.Core.Cryptography.OmniCertificate> Formatter => global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.Cryptography.OmniCertificate>.Formatter;
+        public static global::Omnius.Core.Cryptography.OmniCertificate Empty => global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.Cryptography.OmniCertificate>.Empty;
 
         static OmniCertificate()
         {
-            global::Omnius.Core.RocketPack.IRocketPackObject<global::Omnius.Core.Cryptography.OmniCertificate>.Formatter = new ___CustomFormatter();
-            global::Omnius.Core.RocketPack.IRocketPackObject<global::Omnius.Core.Cryptography.OmniCertificate>.Empty = new global::Omnius.Core.Cryptography.OmniCertificate(string.Empty, (global::Omnius.Core.Cryptography.OmniDigitalSignatureAlgorithmType)0, global::System.ReadOnlyMemory<byte>.Empty, global::System.ReadOnlyMemory<byte>.Empty);
+            global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.Cryptography.OmniCertificate>.Formatter = new ___CustomFormatter();
+            global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.Cryptography.OmniCertificate>.Empty = new global::Omnius.Core.Cryptography.OmniCertificate(string.Empty, (global::Omnius.Core.Cryptography.OmniDigitalSignatureAlgorithmType)0, global::System.ReadOnlyMemory<byte>.Empty, global::System.ReadOnlyMemory<byte>.Empty);
         }
 
         private readonly global::System.Lazy<int> ___hashCode;
@@ -727,12 +727,12 @@ namespace Omnius.Core.Cryptography
 
         public static global::Omnius.Core.Cryptography.OmniCertificate Import(global::System.Buffers.ReadOnlySequence<byte> sequence, global::Omnius.Core.IBytesPool bytesPool)
         {
-            var reader = new global::Omnius.Core.RocketPack.RocketPackObjectReader(sequence, bytesPool);
+            var reader = new global::Omnius.Core.RocketPack.RocketMessageReader(sequence, bytesPool);
             return Formatter.Deserialize(ref reader, 0);
         }
         public void Export(global::System.Buffers.IBufferWriter<byte> bufferWriter, global::Omnius.Core.IBytesPool bytesPool)
         {
-            var writer = new global::Omnius.Core.RocketPack.RocketPackObjectWriter(bufferWriter, bytesPool);
+            var writer = new global::Omnius.Core.RocketPack.RocketMessageWriter(bufferWriter, bytesPool);
             Formatter.Serialize(ref writer, this, 0);
         }
 
@@ -762,9 +762,9 @@ namespace Omnius.Core.Cryptography
         }
         public override int GetHashCode() => ___hashCode.Value;
 
-        private sealed class ___CustomFormatter : global::Omnius.Core.RocketPack.IRocketPackObjectFormatter<global::Omnius.Core.Cryptography.OmniCertificate>
+        private sealed class ___CustomFormatter : global::Omnius.Core.RocketPack.IRocketMessageFormatter<global::Omnius.Core.Cryptography.OmniCertificate>
         {
-            public void Serialize(ref global::Omnius.Core.RocketPack.RocketPackObjectWriter w, in global::Omnius.Core.Cryptography.OmniCertificate value, in int rank)
+            public void Serialize(ref global::Omnius.Core.RocketPack.RocketMessageWriter w, in global::Omnius.Core.Cryptography.OmniCertificate value, in int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
@@ -790,7 +790,7 @@ namespace Omnius.Core.Cryptography
                 }
                 w.Write((uint)0);
             }
-            public global::Omnius.Core.Cryptography.OmniCertificate Deserialize(ref global::Omnius.Core.RocketPack.RocketPackObjectReader r, in int rank)
+            public global::Omnius.Core.Cryptography.OmniCertificate Deserialize(ref global::Omnius.Core.RocketPack.RocketMessageReader r, in int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
@@ -832,15 +832,15 @@ namespace Omnius.Core.Cryptography
             }
         }
     }
-    public sealed partial class OmniSignature : global::Omnius.Core.RocketPack.IRocketPackObject<global::Omnius.Core.Cryptography.OmniSignature>
+    public sealed partial class OmniSignature : global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.Cryptography.OmniSignature>
     {
-        public static global::Omnius.Core.RocketPack.IRocketPackObjectFormatter<global::Omnius.Core.Cryptography.OmniSignature> Formatter => global::Omnius.Core.RocketPack.IRocketPackObject<global::Omnius.Core.Cryptography.OmniSignature>.Formatter;
-        public static global::Omnius.Core.Cryptography.OmniSignature Empty => global::Omnius.Core.RocketPack.IRocketPackObject<global::Omnius.Core.Cryptography.OmniSignature>.Empty;
+        public static global::Omnius.Core.RocketPack.IRocketMessageFormatter<global::Omnius.Core.Cryptography.OmniSignature> Formatter => global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.Cryptography.OmniSignature>.Formatter;
+        public static global::Omnius.Core.Cryptography.OmniSignature Empty => global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.Cryptography.OmniSignature>.Empty;
 
         static OmniSignature()
         {
-            global::Omnius.Core.RocketPack.IRocketPackObject<global::Omnius.Core.Cryptography.OmniSignature>.Formatter = new ___CustomFormatter();
-            global::Omnius.Core.RocketPack.IRocketPackObject<global::Omnius.Core.Cryptography.OmniSignature>.Empty = new global::Omnius.Core.Cryptography.OmniSignature(string.Empty, global::Omnius.Core.Cryptography.OmniHash.Empty);
+            global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.Cryptography.OmniSignature>.Formatter = new ___CustomFormatter();
+            global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.Cryptography.OmniSignature>.Empty = new global::Omnius.Core.Cryptography.OmniSignature(string.Empty, global::Omnius.Core.Cryptography.OmniHash.Empty);
         }
 
         private readonly global::System.Lazy<int> ___hashCode;
@@ -868,12 +868,12 @@ namespace Omnius.Core.Cryptography
 
         public static global::Omnius.Core.Cryptography.OmniSignature Import(global::System.Buffers.ReadOnlySequence<byte> sequence, global::Omnius.Core.IBytesPool bytesPool)
         {
-            var reader = new global::Omnius.Core.RocketPack.RocketPackObjectReader(sequence, bytesPool);
+            var reader = new global::Omnius.Core.RocketPack.RocketMessageReader(sequence, bytesPool);
             return Formatter.Deserialize(ref reader, 0);
         }
         public void Export(global::System.Buffers.IBufferWriter<byte> bufferWriter, global::Omnius.Core.IBytesPool bytesPool)
         {
-            var writer = new global::Omnius.Core.RocketPack.RocketPackObjectWriter(bufferWriter, bytesPool);
+            var writer = new global::Omnius.Core.RocketPack.RocketMessageWriter(bufferWriter, bytesPool);
             Formatter.Serialize(ref writer, this, 0);
         }
 
@@ -901,9 +901,9 @@ namespace Omnius.Core.Cryptography
         }
         public override int GetHashCode() => ___hashCode.Value;
 
-        private sealed class ___CustomFormatter : global::Omnius.Core.RocketPack.IRocketPackObjectFormatter<global::Omnius.Core.Cryptography.OmniSignature>
+        private sealed class ___CustomFormatter : global::Omnius.Core.RocketPack.IRocketMessageFormatter<global::Omnius.Core.Cryptography.OmniSignature>
         {
-            public void Serialize(ref global::Omnius.Core.RocketPack.RocketPackObjectWriter w, in global::Omnius.Core.Cryptography.OmniSignature value, in int rank)
+            public void Serialize(ref global::Omnius.Core.RocketPack.RocketMessageWriter w, in global::Omnius.Core.Cryptography.OmniSignature value, in int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
@@ -919,7 +919,7 @@ namespace Omnius.Core.Cryptography
                 }
                 w.Write((uint)0);
             }
-            public global::Omnius.Core.Cryptography.OmniSignature Deserialize(ref global::Omnius.Core.RocketPack.RocketPackObjectReader r, in int rank)
+            public global::Omnius.Core.Cryptography.OmniSignature Deserialize(ref global::Omnius.Core.RocketPack.RocketMessageReader r, in int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
@@ -949,15 +949,15 @@ namespace Omnius.Core.Cryptography
             }
         }
     }
-    public sealed partial class OmniHashcash : global::Omnius.Core.RocketPack.IRocketPackObject<global::Omnius.Core.Cryptography.OmniHashcash>
+    public sealed partial class OmniHashcash : global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.Cryptography.OmniHashcash>
     {
-        public static global::Omnius.Core.RocketPack.IRocketPackObjectFormatter<global::Omnius.Core.Cryptography.OmniHashcash> Formatter => global::Omnius.Core.RocketPack.IRocketPackObject<global::Omnius.Core.Cryptography.OmniHashcash>.Formatter;
-        public static global::Omnius.Core.Cryptography.OmniHashcash Empty => global::Omnius.Core.RocketPack.IRocketPackObject<global::Omnius.Core.Cryptography.OmniHashcash>.Empty;
+        public static global::Omnius.Core.RocketPack.IRocketMessageFormatter<global::Omnius.Core.Cryptography.OmniHashcash> Formatter => global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.Cryptography.OmniHashcash>.Formatter;
+        public static global::Omnius.Core.Cryptography.OmniHashcash Empty => global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.Cryptography.OmniHashcash>.Empty;
 
         static OmniHashcash()
         {
-            global::Omnius.Core.RocketPack.IRocketPackObject<global::Omnius.Core.Cryptography.OmniHashcash>.Formatter = new ___CustomFormatter();
-            global::Omnius.Core.RocketPack.IRocketPackObject<global::Omnius.Core.Cryptography.OmniHashcash>.Empty = new global::Omnius.Core.Cryptography.OmniHashcash((global::Omnius.Core.Cryptography.OmniHashcashAlgorithmType)0, global::System.ReadOnlyMemory<byte>.Empty);
+            global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.Cryptography.OmniHashcash>.Formatter = new ___CustomFormatter();
+            global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.Cryptography.OmniHashcash>.Empty = new global::Omnius.Core.Cryptography.OmniHashcash((global::Omnius.Core.Cryptography.OmniHashcashAlgorithmType)0, global::System.ReadOnlyMemory<byte>.Empty);
         }
 
         private readonly global::System.Lazy<int> ___hashCode;
@@ -985,12 +985,12 @@ namespace Omnius.Core.Cryptography
 
         public static global::Omnius.Core.Cryptography.OmniHashcash Import(global::System.Buffers.ReadOnlySequence<byte> sequence, global::Omnius.Core.IBytesPool bytesPool)
         {
-            var reader = new global::Omnius.Core.RocketPack.RocketPackObjectReader(sequence, bytesPool);
+            var reader = new global::Omnius.Core.RocketPack.RocketMessageReader(sequence, bytesPool);
             return Formatter.Deserialize(ref reader, 0);
         }
         public void Export(global::System.Buffers.IBufferWriter<byte> bufferWriter, global::Omnius.Core.IBytesPool bytesPool)
         {
-            var writer = new global::Omnius.Core.RocketPack.RocketPackObjectWriter(bufferWriter, bytesPool);
+            var writer = new global::Omnius.Core.RocketPack.RocketMessageWriter(bufferWriter, bytesPool);
             Formatter.Serialize(ref writer, this, 0);
         }
 
@@ -1018,9 +1018,9 @@ namespace Omnius.Core.Cryptography
         }
         public override int GetHashCode() => ___hashCode.Value;
 
-        private sealed class ___CustomFormatter : global::Omnius.Core.RocketPack.IRocketPackObjectFormatter<global::Omnius.Core.Cryptography.OmniHashcash>
+        private sealed class ___CustomFormatter : global::Omnius.Core.RocketPack.IRocketMessageFormatter<global::Omnius.Core.Cryptography.OmniHashcash>
         {
-            public void Serialize(ref global::Omnius.Core.RocketPack.RocketPackObjectWriter w, in global::Omnius.Core.Cryptography.OmniHashcash value, in int rank)
+            public void Serialize(ref global::Omnius.Core.RocketPack.RocketMessageWriter w, in global::Omnius.Core.Cryptography.OmniHashcash value, in int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 
@@ -1036,7 +1036,7 @@ namespace Omnius.Core.Cryptography
                 }
                 w.Write((uint)0);
             }
-            public global::Omnius.Core.Cryptography.OmniHashcash Deserialize(ref global::Omnius.Core.RocketPack.RocketPackObjectReader r, in int rank)
+            public global::Omnius.Core.Cryptography.OmniHashcash Deserialize(ref global::Omnius.Core.RocketPack.RocketMessageReader r, in int rank)
             {
                 if (rank > 256) throw new global::System.FormatException();
 

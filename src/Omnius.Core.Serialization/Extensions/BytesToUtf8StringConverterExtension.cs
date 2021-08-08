@@ -2,8 +2,9 @@ using System;
 using System.Buffers;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
+using Omnius.Core.Pipelines;
 
-namespace Omnius.Core.Serialization.Extensions
+namespace Omnius.Core.Serialization
 {
     public static class BytesToUtf8StringConverterExtension
     {
@@ -45,22 +46,22 @@ namespace Omnius.Core.Serialization.Extensions
 
         public static byte[] StringToBytes(this IBytesToUtf8StringConverter converter, string text)
         {
-            using var hub = new BytesHub();
-            converter.TryDecode(text, hub.Writer);
+            using var bytesPipe = new BytesPipe();
+            converter.TryDecode(text, bytesPipe.Writer);
 
-            var result = new byte[hub.Writer.WrittenBytes];
-            hub.Reader.GetSequence().CopyTo(result);
+            var result = new byte[bytesPipe.Writer.WrittenBytes];
+            bytesPipe.Reader.GetSequence().CopyTo(result);
 
             return result;
         }
 
         public static byte[] Utf8StringToBytes(this IBytesToUtf8StringConverter converter, ReadOnlySpan<byte> text)
         {
-            using var hub = new BytesHub();
-            converter.TryDecode(text, hub.Writer);
+            using var bytesPipe = new BytesPipe();
+            converter.TryDecode(text, bytesPipe.Writer);
 
-            var result = new byte[hub.Writer.WrittenBytes];
-            hub.Reader.GetSequence().CopyTo(result);
+            var result = new byte[bytesPipe.Writer.WrittenBytes];
+            bytesPipe.Reader.GetSequence().CopyTo(result);
 
             return result;
         }

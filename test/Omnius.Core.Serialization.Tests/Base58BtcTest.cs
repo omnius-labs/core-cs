@@ -1,11 +1,10 @@
 using System;
 using System.Buffers;
-using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
-using Omnius.Core.Serialization.Extensions;
+using Omnius.Core.Pipelines;
 using Xunit;
 
 namespace Omnius.Core.Serialization
@@ -47,10 +46,10 @@ namespace Omnius.Core.Serialization
             result = null;
 
             var base16 = new Base16(ConvertStringCase.Lower);
-            var hub = new BytesHub();
-            if (!base16.TryDecode(text, hub.Writer)) return false;
+            var bytesPipe = new BytesPipe();
+            if (!base16.TryDecode(text, bytesPipe.Writer)) return false;
 
-            result = hub.Reader.GetSequence().ToArray();
+            result = bytesPipe.Reader.GetSequence().ToArray();
             return true;
         }
 
@@ -59,10 +58,10 @@ namespace Omnius.Core.Serialization
             result = null;
 
             var base58Btc = new Base58Btc();
-            var hub = new BytesHub();
-            if (!base58Btc.TryDecode(text, hub.Writer)) return false;
+            var bytesPipe = new BytesPipe();
+            if (!base58Btc.TryDecode(text, bytesPipe.Writer)) return false;
 
-            result = hub.Reader.GetSequence().ToArray();
+            result = bytesPipe.Reader.GetSequence().ToArray();
             return true;
         }
 

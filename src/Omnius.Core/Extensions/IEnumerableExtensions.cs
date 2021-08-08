@@ -6,7 +6,7 @@ using System.Runtime.ExceptionServices;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Omnius.Core.Extensions
+namespace Omnius.Core
 {
     public static class IEnumerableExtensions
     {

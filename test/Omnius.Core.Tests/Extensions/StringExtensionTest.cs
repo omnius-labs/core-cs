@@ -1,7 +1,7 @@
 using System;
 using Xunit;
 
-namespace Omnius.Core.Extensions
+namespace Omnius.Core
 {
     public class StringExtensionTest
     {

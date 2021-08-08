@@ -1,6 +1,5 @@
 using System;
 using System.Buffers;
-using Omnius.Core.Serialization.Extensions;
 
 namespace Omnius.Core.Serialization
 {

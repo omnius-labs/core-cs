@@ -2,7 +2,7 @@ using System;
 
 namespace Omnius.Core.RocketPack
 {
-    // https://github.com/google/protobuf/blob/master/csharp/src/Google.Protobuf/WellKnownTypes/TimestampPartial.cs
+    // https://gitbytesPipe.com/google/protobuf/blob/master/csharp/src/Google.Protobuf/WellKnownTypes/TimestampPartial.cs
 
     public readonly struct Timestamp : IEquatable<Timestamp>, IComparable<Timestamp>
     {

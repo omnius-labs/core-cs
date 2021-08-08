@@ -3,7 +3,7 @@ using System.Buffers;
 
 namespace Omnius.Core.Serialization
 {
-    // https://github.com/bitcoin/bitcoin/blob/master/src/base58.cpp
+    // https://gitbytesPipe.com/bitcoin/bitcoin/blob/master/src/base58.cpp
 
     /// <summary>
     /// Bitcoin形式のBase58コンバーターです。

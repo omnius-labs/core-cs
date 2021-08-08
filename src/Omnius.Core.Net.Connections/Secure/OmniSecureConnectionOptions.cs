@@ -1,13 +1,14 @@
 using System.Collections.Generic;
+using Omnius.Core.Tasks;
 
 namespace Omnius.Core.Net.Connections.Secure
 {
-    public sealed class OmniSecureConnectionOptions
-    {
-        public OmniSecureConnectionType Type { get; set; }
-
-        public IReadOnlyList<string>? Passwords { get; set; }
-
-        public IBytesPool? BufferPool { get; set; }
-    }
+    public record OmniSecureConnectionOptions
+    (
+        int MaxReceiveByteCount,
+        OmniSecureConnectionType Type,
+        IReadOnlyList<string>? Passwords,
+        IBatchActionDispatcher BatchActionDispatcher,
+        IBytesPool BytesPool
+    );
 }

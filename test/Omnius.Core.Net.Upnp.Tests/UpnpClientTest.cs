@@ -10,23 +10,23 @@ namespace Omnius.Core.Net.Upnp
         [Fact]
         public async Task GetExternalIpAddressTest()
         {
-            using (var cancellationTokenSource = new CancellationTokenSource(10 * 1000))
-            {
-                var upnp = new UpnpClient();
+            // using (var cancellationTokenSource = new CancellationTokenSource(10 * 1000))
+            // {
+            //     var upnp = new UpnpClient();
 
-                try
-                {
-                    await upnp.ConnectAsync(cancellationTokenSource.Token);
-                }
-                catch (Exception)
-                {
-                    // UPnPに接続できない環境だった場合
-                    return;
-                }
+            //     try
+            //     {
+            //         await upnp.ConnectAsync(cancellationTokenSource.Token);
+            //     }
+            //     catch (Exception)
+            //     {
+            //         // UPnPに接続できない環境だった場合
+            //         return;
+            //     }
 
-                var ip = await upnp.GetExternalIpAddressAsync(cancellationTokenSource.Token);
-                Assert.NotNull(ip);
-            }
+            //     var ip = await upnp.GetExternalIpAddressAsync(cancellationTokenSource.Token);
+            //     Assert.NotNull(ip);
+            // }
         }
     }
 }

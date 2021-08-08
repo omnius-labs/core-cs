@@ -1,7 +1,7 @@
 using System;
 using System.Threading;
 
-namespace Omnius.Core.Extensions
+namespace Omnius.Core
 {
     public static class TimerExtensions
     {

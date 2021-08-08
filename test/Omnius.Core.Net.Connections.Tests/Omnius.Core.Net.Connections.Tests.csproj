@@ -5,6 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\Omnius.Core.Tasks\Omnius.Core.Tasks.csproj" />
     <ProjectReference Include="..\..\src\Omnius.Core.Net.Connections\Omnius.Core.Net.Connections.csproj" />
   </ItemGroup>
 
