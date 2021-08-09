@@ -100,16 +100,6 @@ namespace Omnius.Core.Net.Connections.Multiplexer.V1.Internal
             _batchActionDispatcher.Register(_batchAction);
         }
 
-        private async ValueTask InternalWaitToSendAsync(CancellationToken cancellationToken = default)
-        {
-            await _connection.Sender.WaitToSendAsync(cancellationToken);
-        }
-
-        private async ValueTask InternalWaitToReceiveAsync(CancellationToken cancellationToken = default)
-        {
-            await _connection.Receiver.WaitToReceiveAsync(cancellationToken);
-        }
-
         private void InternalSend()
         {
             if (_sessionOptions is null) return;

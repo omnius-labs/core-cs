@@ -19,22 +19,9 @@ namespace Omnius.Core.Net.Connections.Secure.V1.Internal
                 _receiver = receiver;
             }
 
-            public async ValueTask WaitAsync(CancellationToken cancellationToken = default)
-            {
-                try
-                {
-                    var tasks = new List<Task>();
-                    tasks.Add(_sender.InternalWaitToSendAsync(cancellationToken).AsTask());
-                    tasks.Add(_receiver.InternalWaitToReceiveAsync(cancellationToken).AsTask());
-                    await Task.WhenAny(tasks);
-                }
-                catch (Exception e)
-                {
-                    _logger.Debug(e);
-                }
-            }
+            public TimeSpan Interval { get; } = TimeSpan.FromMilliseconds(50);
 
-            public void Run()
+            public void Execute()
             {
                 _sender.InternalSend();
                 _receiver.InternalReceive();

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -16,15 +17,9 @@ namespace Omnius.Core.Net.Connections.Multiplexer.V1.Internal
                 _connectionMultiplexer = connectionMultiplexer;
             }
 
-            public async ValueTask WaitAsync(CancellationToken cancellationToken = default)
-            {
-                var tasks = new List<Task>();
-                tasks.Add(_connectionMultiplexer.InternalWaitToSendAsync(cancellationToken).AsTask());
-                tasks.Add(_connectionMultiplexer.InternalWaitToReceiveAsync(cancellationToken).AsTask());
-                await Task.WhenAny(tasks.ToArray());
-            }
+            public TimeSpan Interval { get; } = TimeSpan.FromMilliseconds(100);
 
-            public void Run()
+            public void Execute()
             {
                 _connectionMultiplexer.InternalSend();
                 _connectionMultiplexer.InternalReceive();
