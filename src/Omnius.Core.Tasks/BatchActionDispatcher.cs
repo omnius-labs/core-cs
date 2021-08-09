@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Threading;
@@ -9,6 +10,8 @@ namespace Omnius.Core.Tasks
     {
         private static readonly NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
 
+        private readonly TimeSpan _interval;
+
         private ImmutableHashSet<IBatchAction> _batchActions = ImmutableHashSet<IBatchAction>.Empty;
 
         private readonly Task _eventLoopTask;
@@ -17,8 +20,9 @@ namespace Omnius.Core.Tasks
 
         private readonly object _lockObject = new();
 
-        public BatchActionDispatcher()
+        public BatchActionDispatcher(TimeSpan interval)
         {
+            _interval = interval;
             _eventLoopTask = this.EventLoopAsync();
         }
 
@@ -34,7 +38,7 @@ namespace Omnius.Core.Tasks
         {
             try
             {
-                var tasks = ImmutableDictionary<IBatchAction, Task?>.Empty;
+                var batchActionMap = ImmutableDictionary<IBatchAction, DateTime>.Empty;
 
                 for (; ; )
                 {
@@ -44,38 +48,29 @@ namespace Omnius.Core.Tasks
 
                     foreach (var batchAction in batchActions)
                     {
-                        if (tasks.ContainsKey(batchAction)) continue;
-                        tasks = tasks.Add(batchAction, null);
+                        if (batchActionMap.ContainsKey(batchAction)) continue;
+                        batchActionMap = batchActionMap.Add(batchAction, DateTime.MinValue);
                     }
 
-                    foreach (var (batchAction, task) in tasks)
+                    foreach (var (batchAction, task) in batchActionMap)
                     {
                         if (batchActions.Contains(batchAction)) continue;
-                        tasks = tasks.Remove(batchAction);
+                        batchActionMap = batchActionMap.Remove(batchAction);
                     }
 
-                    if (tasks.Count == 0) continue;
+                    if (batchActionMap.Count == 0) continue;
 
-                    foreach (var (batchAction, task) in tasks)
+                    var now = DateTime.UtcNow;
+
+                    foreach (var (batchAction, lastExecutionTime) in batchActionMap)
                     {
-                        if (task is not null) continue;
-                        tasks = tasks.SetItem(batchAction, batchAction.WaitAsync(_cancellationTokenSource.Token).AsTask());
+                        if ((now - lastExecutionTime) < batchAction.Interval) continue;
+
+                        batchActionMap = batchActionMap.SetItem(batchAction, now);
+                        batchAction.Execute();
                     }
 
-                    await Task.WhenAny(tasks.Values!);
-
-                    foreach (var (batchAction, task) in tasks)
-                    {
-                        if (task!.IsCompleted)
-                        {
-                            tasks = tasks.Remove(batchAction);
-
-                            if (task!.IsCompletedSuccessfully)
-                            {
-                                batchAction.Run();
-                            }
-                        }
-                    }
+                    await Task.Delay(_interval, _cancellationTokenSource.Token);
                 }
             }
             catch (TaskCanceledException e)

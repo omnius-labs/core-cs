@@ -21,7 +21,7 @@ namespace Omnius.Core.RocketPack.Remoting
             var (clientSocket, serverSocket) = SocketHelper.GetSocketPair();
 
             var bytesPool = BytesPool.Shared;
-            var batchActionDispatcher = new BatchActionDispatcher();
+            var batchActionDispatcher = new BatchActionDispatcher(TimeSpan.FromMilliseconds(10));
 
             var bridgeConnectionOptions = new BridgeConnectionOptions(1024 * 1024 * 256, null, null, batchActionDispatcher, bytesPool);
             await using var clientBridgeConnection = new BridgeConnection(new SocketCap(clientSocket), bridgeConnectionOptions);

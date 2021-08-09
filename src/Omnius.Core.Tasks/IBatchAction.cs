@@ -1,3 +1,4 @@
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -5,8 +6,8 @@ namespace Omnius.Core.Tasks
 {
     public interface IBatchAction
     {
-        ValueTask WaitAsync(CancellationToken cancellationToken = default);
+        TimeSpan Interval { get; }
 
-        void Run();
+        void Execute();
     }
 }

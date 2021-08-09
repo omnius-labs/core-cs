@@ -15,9 +15,6 @@ namespace Omnius.Core.Net.Connections.Bridge
             private readonly ConnectionReceiver _receiver;
             private readonly IBandwidthLimiter? _senderBandwidthLimiter;
             private readonly IBandwidthLimiter? _receiverBandwidthLimiter;
-            private readonly Stopwatch _stopwatch;
-
-            private static readonly TimeSpan _interval = TimeSpan.FromMilliseconds(100);
 
             public BatchAction(ConnectionSender sender, ConnectionReceiver receiver, IBandwidthLimiter? senderBandwidthLimiter, IBandwidthLimiter? receiverBandwidthLimiter)
             {
@@ -25,28 +22,12 @@ namespace Omnius.Core.Net.Connections.Bridge
                 _receiver = receiver;
                 _senderBandwidthLimiter = senderBandwidthLimiter;
                 _receiverBandwidthLimiter = receiverBandwidthLimiter;
-                _stopwatch = Stopwatch.StartNew();
             }
 
-            public async ValueTask WaitAsync(CancellationToken cancellationToken = default)
+            public TimeSpan Interval { get; } = TimeSpan.FromMilliseconds(30);
+
+            public void Execute()
             {
-                try
-                {
-                    var delay = _interval - _stopwatch.Elapsed;
-                    if (delay <= TimeSpan.Zero) return;
-
-                    await Task.Delay(delay, cancellationToken).ConfigureAwait(false);
-                }
-                catch (Exception e)
-                {
-                    _logger.Debug(e);
-                }
-            }
-
-            public void Run()
-            {
-                _stopwatch.Restart();
-
                 this.Send();
                 this.Receive();
             }
