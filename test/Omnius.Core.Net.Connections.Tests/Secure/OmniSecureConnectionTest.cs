@@ -1,8 +1,12 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using Omnius.Core.Cryptography;
 using Omnius.Core.Net.Caps;
 using Omnius.Core.Net.Connections.Bridge;
 using Omnius.Core.Net.Connections.Internal;
+using Omnius.Core.Net.Connections.Secure.V1;
 using Omnius.Core.Tasks;
 using Xunit;
 
@@ -10,28 +14,73 @@ namespace Omnius.Core.Net.Connections.Secure
 {
     public class OmniSecureConnectionTest
     {
-        [Fact]
-        public async Task RandomSendAndReceiveTest()
+        public static IEnumerable<object?[]> GetRandomSendAndReceiveTestCases()
+        {
+            var clientDigitalSignature = OmniDigitalSignature.Create("client", OmniDigitalSignatureAlgorithmType.EcDsa_P521_Sha2_256);
+            var serverDigitalSignature = OmniDigitalSignature.Create("server", OmniDigitalSignatureAlgorithmType.EcDsa_P521_Sha2_256);
+
+            var results = new List<(OmniDigitalSignature?, OmniDigitalSignature?)>{
+                (null, null),
+                (clientDigitalSignature, serverDigitalSignature),
+            };
+            return results.Select(n => new object?[] { n.Item1, n.Item2 });
+        }
+
+        [Theory]
+        [MemberData(nameof(GetRandomSendAndReceiveTestCases))]
+        public async Task RandomSendAndReceiveTest(OmniDigitalSignature? clientDigitalSignature, OmniDigitalSignature? serverDigitalSignature)
         {
             var random = new Random();
 
-            var (socket1, socket2) = SocketHelper.GetSocketPair();
+            var (clientSocket, serverSocket) = SocketHelper.GetSocketPair();
 
-            var batchActionDispatcher = new BatchActionDispatcher(TimeSpan.FromMilliseconds(10));
-            var options = new BridgeConnectionOptions(1024 * 1024 * 256, null, null, batchActionDispatcher, BytesPool.Shared);
+            await using var batchActionDispatcher = new BatchActionDispatcher(TimeSpan.FromMilliseconds(10));
 
-            await using var bridgeConnection1 = new BridgeConnection(new SocketCap(socket1), options);
-            await using var bridgeConnection2 = new BridgeConnection(new SocketCap(socket2), options);
-            await using var connection1 = new OmniSecureConnection(bridgeConnection1, new OmniSecureConnectionOptions(1024 * 1024 * 256, OmniSecureConnectionType.Connected, null, batchActionDispatcher, BytesPool.Shared));
-            await using var connection2 = new OmniSecureConnection(bridgeConnection2, new OmniSecureConnectionOptions(1024 * 1024 * 256, OmniSecureConnectionType.Accepted, null, batchActionDispatcher, BytesPool.Shared));
+            var bridgeConnectionOptions = new BridgeConnectionOptions
+            {
+                MaxReceiveByteCount = 1024 * 1024 * 256,
+                BatchActionDispatcher = batchActionDispatcher,
+                BytesPool = BytesPool.Shared,
+            };
+            var clientBridgeConnection = new BridgeConnection(new SocketCap(clientSocket), bridgeConnectionOptions);
+            var serverBridgeConnection = new BridgeConnection(new SocketCap(serverSocket), bridgeConnectionOptions);
+
+            var clientSecureConnectionOptions = new OmniSecureConnectionOptions()
+            {
+                Type = OmniSecureConnectionType.Connected,
+                DigitalSignature = clientDigitalSignature,
+                MaxReceiveByteCount = 1024 * 1024 * 256,
+                BatchActionDispatcher = batchActionDispatcher,
+                BytesPool = BytesPool.Shared,
+            };
+            await using var clientSecureConnection = new OmniSecureConnection(clientBridgeConnection, clientSecureConnectionOptions);
+
+            var serverSecureConnectionOptions = new OmniSecureConnectionOptions()
+            {
+                Type = OmniSecureConnectionType.Accepted,
+                DigitalSignature = serverDigitalSignature,
+                MaxReceiveByteCount = 1024 * 1024 * 256,
+                BatchActionDispatcher = batchActionDispatcher,
+                BytesPool = BytesPool.Shared,
+            };
+            await using var serverSecureConnection = new OmniSecureConnection(serverBridgeConnection, serverSecureConnectionOptions);
 
             // ハンドシェイクを行う
-            var valueTask1 = connection1.HandshakeAsync();
-            var valueTask2 = connection2.HandshakeAsync();
+            var valueTask1 = clientSecureConnection.HandshakeAsync();
+            var valueTask2 = serverSecureConnection.HandshakeAsync();
             await Task.WhenAll(valueTask1.AsTask(), valueTask2.AsTask());
 
-            await TestHelper.RandomSendAndReceive(random, connection1, connection2);
-            await TestHelper.RandomSendAndReceive(random, connection2, connection1);
+            if (clientDigitalSignature != null)
+            {
+                Assert.Equal(serverSecureConnection.Signature, clientDigitalSignature.GetOmniSignature());
+            }
+            if (serverDigitalSignature != null)
+            {
+                Assert.Equal(clientSecureConnection.Signature, serverDigitalSignature.GetOmniSignature());
+            }
+
+            await TestHelper.RandomSendAndReceive(random, clientSecureConnection, serverSecureConnection);
+            await TestHelper.RandomSendAndReceive(random, serverSecureConnection, clientSecureConnection);
         }
     }
 }

@@ -17,10 +17,8 @@ namespace Omnius.Core.Cryptography
 
                 return new OmniAgreement(Timestamp.FromDateTime(creationTime), algorithmType, publicKey, privateKey);
             }
-            else
-            {
-                throw new NotSupportedException(nameof(algorithmType));
-            }
+
+            throw new NotSupportedException(nameof(algorithmType));
         }
 
         public OmniAgreementPublicKey GetOmniAgreementPublicKey()
@@ -33,7 +31,7 @@ namespace Omnius.Core.Cryptography
             return new OmniAgreementPrivateKey(this.CreationTime, this.AlgorithmType, this.PrivateKey);
         }
 
-        public static ReadOnlyMemory<byte> GetSecret(OmniAgreementPublicKey publicKey, OmniAgreementPrivateKey privateKey)
+        public static byte[] GetSecret(OmniAgreementPublicKey publicKey, OmniAgreementPrivateKey privateKey)
         {
             if (publicKey.AlgorithmType == OmniAgreementAlgorithmType.EcDh_P521_Sha2_256
                 && privateKey.AlgorithmType == OmniAgreementAlgorithmType.EcDh_P521_Sha2_256)
@@ -41,7 +39,7 @@ namespace Omnius.Core.Cryptography
                 return EcDh_P521_Sha2_256.GetSecret(publicKey.PublicKey, privateKey.PrivateKey);
             }
 
-            return null;
+            throw new NotSupportedException();
         }
     }
 }

@@ -16,37 +16,52 @@ namespace Omnius.Core.Net.Connections.Multiplexer
         {
             var random = new Random();
 
-            var (clientMultiplexer, serverMultiplexer) = await GetMultiplexerPair();
+            var (clientSocket, serverSocket) = SocketHelper.GetSocketPair();
+
+            await using var batchActionDispatcher = new BatchActionDispatcher(TimeSpan.FromMilliseconds(10));
+
+            var bridgeConnectionOptions = new BridgeConnectionOptions
+            {
+                MaxReceiveByteCount = 1024 * 1024 * 256,
+                BatchActionDispatcher = batchActionDispatcher,
+                BytesPool = BytesPool.Shared,
+            };
+            await using var clientBridgeConnection = new BridgeConnection(new SocketCap(clientSocket), bridgeConnectionOptions);
+            await using var serverBridgeConnection = new BridgeConnection(new SocketCap(serverSocket), bridgeConnectionOptions);
+
+            var clientMultiplexerOption = new OmniConnectionMultiplexerOptions
+            {
+                Type = OmniConnectionMultiplexerType.Connected,
+                PacketReceiveTimeout = TimeSpan.FromMinutes(1),
+                MaxStreamRequestQueueSize = 3,
+                MaxStreamDataSize = 1024 * 1024 * 4,
+                MaxStreamDataQueueSize = 3,
+                BatchActionDispatcher = batchActionDispatcher,
+                BytesPool = BytesPool.Shared,
+            };
+            await using var clientMultiplexer = new OmniConnectionMultiplexer(clientBridgeConnection, clientMultiplexerOption);
+
+            var serverMultiplexerOption = new OmniConnectionMultiplexerOptions
+            {
+                Type = OmniConnectionMultiplexerType.Connected,
+                PacketReceiveTimeout = TimeSpan.FromMinutes(1),
+                MaxStreamRequestQueueSize = 3,
+                MaxStreamDataSize = 1024 * 1024 * 4,
+                MaxStreamDataQueueSize = 3,
+                BatchActionDispatcher = batchActionDispatcher,
+                BytesPool = BytesPool.Shared,
+            };
+            await using var serverMultiplexer = new OmniConnectionMultiplexer(serverBridgeConnection, serverMultiplexerOption);
+
+            var clientMultiplexerHandshakeTask = clientMultiplexer.HandshakeAsync().AsTask();
+            var serverMultiplexerHandshakeTask = serverMultiplexer.HandshakeAsync().AsTask();
+            await Task.WhenAll(clientMultiplexerHandshakeTask, serverMultiplexerHandshakeTask);
 
             var connectTask = clientMultiplexer.ConnectAsync().AsTask();
             var acceptTask = serverMultiplexer.AcceptAsync().AsTask();
 
             await TestHelper.RandomSendAndReceive(random, connectTask.Result, acceptTask.Result);
             await TestHelper.RandomSendAndReceive(random, acceptTask.Result, connectTask.Result);
-        }
-
-        public static async Task<(IMultiplexer, IMultiplexer)> GetMultiplexerPair()
-        {
-            var (clientSocket, serverSocket) = SocketHelper.GetSocketPair();
-
-            var bytesPool = BytesPool.Shared;
-            var batchActionDispatcher = new BatchActionDispatcher(TimeSpan.FromMilliseconds(10));
-
-            var bridgeConnectionOptions = new BridgeConnectionOptions(1024 * 1024 * 256, null, null, batchActionDispatcher, bytesPool);
-            var clientBridgeConnection = new BridgeConnection(new SocketCap(clientSocket), bridgeConnectionOptions);
-            var serverBridgeConnection = new BridgeConnection(new SocketCap(serverSocket), bridgeConnectionOptions);
-
-            var clientMultiplexerOption = new ConnectionMultiplexerOptions(OmniConnectionMultiplexerType.Connected, TimeSpan.FromMinutes(1), 3, 1024 * 1024 * 4, 3);
-            var clientMultiplexer = new OmniConnectionMultiplexer(clientBridgeConnection, batchActionDispatcher, bytesPool, clientMultiplexerOption);
-
-            var serverMultiplexerOption = new ConnectionMultiplexerOptions(OmniConnectionMultiplexerType.Accepted, TimeSpan.FromMinutes(1), 3, 1024 * 1024 * 4, 3);
-            var serverMultiplexer = new OmniConnectionMultiplexer(serverBridgeConnection, batchActionDispatcher, bytesPool, serverMultiplexerOption);
-
-            var clientMultiplexerHandshakeTask = clientMultiplexer.HandshakeAsync().AsTask();
-            var serverMultiplexerHandshakeTask = serverMultiplexer.HandshakeAsync().AsTask();
-            await Task.WhenAll(clientMultiplexerHandshakeTask, serverMultiplexerHandshakeTask);
-
-            return (clientMultiplexer, serverMultiplexer);
         }
     }
 }

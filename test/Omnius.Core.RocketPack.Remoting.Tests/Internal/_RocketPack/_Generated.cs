@@ -206,7 +206,7 @@ namespace Omnius.Core.RocketPack.Remoting.Tests.Internal
         global::System.Threading.Tasks.ValueTask<global::Omnius.Core.RocketPack.Remoting.Tests.Internal.TestResult> Unary3Async(global::System.Threading.CancellationToken cancellationToken = default);
         global::System.Threading.Tasks.ValueTask Unary4Async(global::System.Threading.CancellationToken cancellationToken = default);
     }
-    public class TestService
+    public class TestServiceRemoting
     {
         public class Client<TError> : global::Omnius.Core.RocketPack.Remoting.Tests.Internal.ITestService
             where TError : global::Omnius.Core.RocketPack.IRocketMessage<TError>

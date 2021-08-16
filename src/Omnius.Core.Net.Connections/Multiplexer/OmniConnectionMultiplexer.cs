@@ -8,21 +8,17 @@ using Omnius.Core.Tasks;
 
 namespace Omnius.Core.Net.Connections.Multiplexer
 {
-    public sealed class OmniConnectionMultiplexer : AsyncDisposableBase, IMultiplexer
+    public sealed class OmniConnectionMultiplexer : AsyncDisposableBase, IConnectionMultiplexer
     {
         private readonly IConnection _connection;
-        private readonly BatchActionDispatcher _batchActionDispatcher;
-        private readonly IBytesPool _bytesPool;
-        private readonly V1.ConnectionMultiplexerOptions _options_v1;
+        private readonly V1.OmniConnectionMultiplexerOptions _options_v1;
 
         private OmniConnectionMultiplexerVersion? _version;
         private V1.Internal.ConnectionMultiplexer? _connectionMultiplexer_v1;
 
-        public OmniConnectionMultiplexer(IConnection connection, BatchActionDispatcher batchActionDispatcher, IBytesPool bytesPool, V1.ConnectionMultiplexerOptions options)
+        public OmniConnectionMultiplexer(IConnection connection, V1.OmniConnectionMultiplexerOptions options)
         {
             _connection = connection;
-            _batchActionDispatcher = batchActionDispatcher;
-            _bytesPool = bytesPool;
             _options_v1 = options;
         }
 
@@ -43,8 +39,8 @@ namespace Omnius.Core.Net.Connections.Multiplexer
 
                 if (_version == OmniConnectionMultiplexerVersion.Version1)
                 {
-                    _connectionMultiplexer_v1 = new V1.Internal.ConnectionMultiplexer(_connection, _batchActionDispatcher, _bytesPool, _options_v1);
-                    await _connectionMultiplexer_v1.Handshake(cancellationToken);
+                    _connectionMultiplexer_v1 = new V1.Internal.ConnectionMultiplexer(_connection, _options_v1);
+                    await _connectionMultiplexer_v1.HandshakeAsync(cancellationToken);
                 }
                 else
                 {
@@ -63,19 +59,14 @@ namespace Omnius.Core.Net.Connections.Multiplexer
 
         private async ValueTask HelloAsync(CancellationToken cancellationToken)
         {
-            HelloMessage sendHelloMessage;
-            HelloMessage? receiveHelloMessage;
-            {
-                sendHelloMessage = new HelloMessage(new[] { OmniConnectionMultiplexerVersion.Version1 });
+            var sendHelloMessage = new HelloMessage(new[] { OmniConnectionMultiplexerVersion.Version1 });
 
-                var enqueueTask = _connection.Sender.SendAsync(sendHelloMessage, cancellationToken).AsTask();
-                var dequeueTask = _connection.Receiver.ReceiveAsync<HelloMessage>(cancellationToken).AsTask();
+            var enqueueTask = _connection.Sender.SendAsync(sendHelloMessage, cancellationToken).AsTask();
+            var dequeueTask = _connection.Receiver.ReceiveAsync<HelloMessage>(cancellationToken).AsTask();
 
-                await Task.WhenAll(enqueueTask, dequeueTask);
-                receiveHelloMessage = dequeueTask.Result;
-
-                if (receiveHelloMessage is null) throw new NullReferenceException();
-            }
+            await Task.WhenAll(enqueueTask, dequeueTask);
+            var receiveHelloMessage = dequeueTask.Result;
+            if (receiveHelloMessage is null) throw new NullReferenceException();
 
             _version = EnumHelper.GetOverlappedMaxValue(sendHelloMessage.Versions, receiveHelloMessage.Versions);
         }

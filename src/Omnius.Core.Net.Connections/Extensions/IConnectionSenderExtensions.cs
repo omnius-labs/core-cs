@@ -5,7 +5,7 @@ using Omnius.Core.RocketPack;
 
 namespace Omnius.Core.Net.Connections
 {
-    public static class ConnectionSenderExtensions
+    public static class IConnectionSenderExtensions
     {
         public static bool TrySend<T>(this IConnectionSender connectionSender, T value)
             where T : IRocketMessage<T>

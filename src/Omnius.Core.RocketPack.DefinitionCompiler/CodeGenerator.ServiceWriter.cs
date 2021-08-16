@@ -69,7 +69,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
 
             private void Write_ClientAndServerClass(CodeWriter b, ServiceDefinition serviceDefinition, string accessLevel)
             {
-                var className = serviceDefinition.Name;
+                var className = $"{serviceDefinition.Name}Remoting";
                 b.WriteLine($"{accessLevel} class {className}");
                 b.WriteLine("{");
 
