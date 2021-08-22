@@ -1,17 +1,8 @@
 using System;
-using System.Buffers;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
-using Omnius.Core;
 using Omnius.Core.Cryptography;
-using Omnius.Core.Cryptography.Functions;
-using Omnius.Core.Helpers;
 using Omnius.Core.Net.Connections.Internal;
-using Omnius.Core.Pipelines;
 using Omnius.Core.Tasks;
 
 namespace Omnius.Core.Net.Connections.Secure.V1.Internal
@@ -21,11 +12,9 @@ namespace Omnius.Core.Net.Connections.Secure.V1.Internal
         private static readonly NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
 
         private readonly IConnection _connection;
-        private readonly int _maxReceiveByteCount;
-        private readonly OmniSecureConnectionType _type;
-        private readonly OmniDigitalSignature? _digitalSignature;
         private readonly IBatchActionDispatcher _batchActionDispatcher;
         private readonly IBytesPool _bytesPool;
+        private readonly OmniSecureConnectionOptions _options;
 
         private OmniSignature? _signature;
 
@@ -34,22 +23,17 @@ namespace Omnius.Core.Net.Connections.Secure.V1.Internal
         private ConnectionEvents? _subscribers;
         private BatchAction? _batchAction;
 
-        private readonly Random _random = new Random();
         private readonly CancellationTokenSource _cancellationTokenSource = new();
 
         private const int FrameSize = 32 * 1024;
         private const int TagSize = 16;
 
-        public SecureConnection(IConnection connection, OmniSecureConnectionOptions options)
+        public SecureConnection(IConnection connection, IBatchActionDispatcher batchActionDispatcher, IBytesPool bytesPool, OmniSecureConnectionOptions options)
         {
-            _connection = connection ?? throw new ArgumentNullException(nameof(connection));
-            if (options == null) throw new ArgumentNullException(nameof(options));
-            _maxReceiveByteCount = options.MaxReceiveByteCount;
-            if (!EnumHelper.IsValid(options.Type)) throw new ArgumentException(nameof(options.Type));
-            _type = options.Type;
-            _digitalSignature = options.DigitalSignature;
-            _batchActionDispatcher = options.BatchActionDispatcher ?? throw new ArgumentNullException(nameof(options.BatchActionDispatcher));
-            _bytesPool = options.BytesPool ?? throw new ArgumentNullException(nameof(options.BytesPool));
+            _connection = connection;
+            _batchActionDispatcher = batchActionDispatcher;
+            _bytesPool = bytesPool;
+            _options = options;
         }
 
         protected override async ValueTask OnDisposeAsync()
@@ -76,12 +60,12 @@ namespace Omnius.Core.Net.Connections.Secure.V1.Internal
 
         public async ValueTask HandshakeAsync(CancellationToken cancellationToken = default)
         {
-            var authenticator = new Authenticator(_connection, _type, _digitalSignature, _bytesPool);
+            var authenticator = new Authenticator(_connection, _options.Type, _options.DigitalSignature, _bytesPool);
             var authenticatedResult = await authenticator.AuthenticateAsync(cancellationToken);
 
             _signature = authenticatedResult.Signature;
             _sender = new ConnectionSender(_connection.Sender, authenticatedResult.CryptoAlgorithmType, authenticatedResult.EncryptKey, authenticatedResult.EncryptNonce, _bytesPool, _cancellationTokenSource);
-            _receiver = new ConnectionReceiver(_connection.Receiver, authenticatedResult.CryptoAlgorithmType, _maxReceiveByteCount, authenticatedResult.DecryptKey, authenticatedResult.DecryptNonce, _bytesPool, _cancellationTokenSource);
+            _receiver = new ConnectionReceiver(_connection.Receiver, authenticatedResult.CryptoAlgorithmType, _options.MaxReceiveByteCount, authenticatedResult.DecryptKey, authenticatedResult.DecryptNonce, _bytesPool, _cancellationTokenSource);
             _subscribers = new ConnectionEvents(_cancellationTokenSource.Token);
             _batchAction = new BatchAction(_sender, _receiver);
             _batchActionDispatcher.Register(_batchAction);

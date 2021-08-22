@@ -20,38 +20,15 @@ namespace Omnius.Core.Net.Connections.Multiplexer
 
             await using var batchActionDispatcher = new BatchActionDispatcher(TimeSpan.FromMilliseconds(10));
 
-            var bridgeConnectionOptions = new BridgeConnectionOptions
-            {
-                MaxReceiveByteCount = 1024 * 1024 * 256,
-                BatchActionDispatcher = batchActionDispatcher,
-                BytesPool = BytesPool.Shared,
-            };
-            await using var clientBridgeConnection = new BridgeConnection(new SocketCap(clientSocket), bridgeConnectionOptions);
-            await using var serverBridgeConnection = new BridgeConnection(new SocketCap(serverSocket), bridgeConnectionOptions);
+            var bridgeConnectionOptions = new BridgeConnectionOptions(1024 * 1024 * 256);
+            await using var clientBridgeConnection = new BridgeConnection(new SocketCap(clientSocket), null, null, batchActionDispatcher, BytesPool.Shared, bridgeConnectionOptions);
+            await using var serverBridgeConnection = new BridgeConnection(new SocketCap(serverSocket), null, null, batchActionDispatcher, BytesPool.Shared, bridgeConnectionOptions);
 
-            var clientMultiplexerOption = new OmniConnectionMultiplexerOptions
-            {
-                Type = OmniConnectionMultiplexerType.Connected,
-                PacketReceiveTimeout = TimeSpan.FromMinutes(1),
-                MaxStreamRequestQueueSize = 3,
-                MaxStreamDataSize = 1024 * 1024 * 4,
-                MaxStreamDataQueueSize = 3,
-                BatchActionDispatcher = batchActionDispatcher,
-                BytesPool = BytesPool.Shared,
-            };
-            await using var clientMultiplexer = new OmniConnectionMultiplexer(clientBridgeConnection, clientMultiplexerOption);
+            var clientMultiplexerOption = new OmniConnectionMultiplexerOptions(OmniConnectionMultiplexerType.Connected, TimeSpan.FromMinutes(1), 3, 1024 * 1024 * 4, 3);
+            await using var clientMultiplexer = OmniConnectionMultiplexer.CreateV1(clientBridgeConnection, batchActionDispatcher, BytesPool.Shared, clientMultiplexerOption);
 
-            var serverMultiplexerOption = new OmniConnectionMultiplexerOptions
-            {
-                Type = OmniConnectionMultiplexerType.Connected,
-                PacketReceiveTimeout = TimeSpan.FromMinutes(1),
-                MaxStreamRequestQueueSize = 3,
-                MaxStreamDataSize = 1024 * 1024 * 4,
-                MaxStreamDataQueueSize = 3,
-                BatchActionDispatcher = batchActionDispatcher,
-                BytesPool = BytesPool.Shared,
-            };
-            await using var serverMultiplexer = new OmniConnectionMultiplexer(serverBridgeConnection, serverMultiplexerOption);
+            var serverMultiplexerOption = new OmniConnectionMultiplexerOptions(OmniConnectionMultiplexerType.Accepted, TimeSpan.FromMinutes(1), 3, 1024 * 1024 * 4, 3);
+            await using var serverMultiplexer = OmniConnectionMultiplexer.CreateV1(serverBridgeConnection, batchActionDispatcher, BytesPool.Shared, serverMultiplexerOption);
 
             var clientMultiplexerHandshakeTask = clientMultiplexer.HandshakeAsync().AsTask();
             var serverMultiplexerHandshakeTask = serverMultiplexer.HandshakeAsync().AsTask();

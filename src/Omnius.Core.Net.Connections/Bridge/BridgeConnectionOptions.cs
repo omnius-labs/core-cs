@@ -5,14 +5,11 @@ namespace Omnius.Core.Net.Connections.Bridge
 {
     public record BridgeConnectionOptions
     {
-        public int MaxReceiveByteCount { get; init; }
+        public BridgeConnectionOptions(int maxReceiveByteCount)
+        {
+            this.MaxReceiveByteCount = maxReceiveByteCount;
+        }
 
-        public IBandwidthLimiter? SenderBandwidthLimiter { get; init; }
-
-        public IBandwidthLimiter? ReceiverBandwidthLimiter { get; init; }
-
-        public IBatchActionDispatcher? BatchActionDispatcher { get; init; }
-
-        public IBytesPool? BytesPool { get; init; }
+        public int MaxReceiveByteCount { get; }
     }
 }

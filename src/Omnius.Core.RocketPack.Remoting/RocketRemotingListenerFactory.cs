@@ -11,13 +11,13 @@ namespace Omnius.Core.RocketPack.Remoting
     {
         private static readonly NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
 
-        private readonly IConnectionAccepter _accepter;
+        private readonly IConnectionMultiplexer _multiplexer;
         private readonly IErrorMessageFactory<TError> _errorMessageFactory;
         private readonly IBytesPool _bytesPool;
 
-        public RocketRemotingListenerFactory(IConnectionAccepter accepter, IErrorMessageFactory<TError> errorMessageFactory, IBytesPool bytesPool)
+        public RocketRemotingListenerFactory(IConnectionMultiplexer multiplexer, IErrorMessageFactory<TError> errorMessageFactory, IBytesPool bytesPool)
         {
-            _accepter = accepter;
+            _multiplexer = multiplexer;
             _errorMessageFactory = errorMessageFactory;
             _bytesPool = bytesPool;
         }
@@ -26,7 +26,7 @@ namespace Omnius.Core.RocketPack.Remoting
         {
             uint functionId = 0;
 
-            var connection = await _accepter.AcceptAsync(cancellationToken);
+            var connection = await _multiplexer.AcceptAsync(cancellationToken);
 
             await connection.Receiver.ReceiveAsync(
                 sequence =>

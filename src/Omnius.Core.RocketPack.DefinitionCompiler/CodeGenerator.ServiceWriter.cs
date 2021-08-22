@@ -26,7 +26,8 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
 
             private void Write_Interface(CodeWriter b, ServiceDefinition serviceDefinition, string accessLevel)
             {
-                b.WriteLine($"{accessLevel} interface {serviceDefinition.CSharpInterfaceName}");
+                var interfaceName = $"{serviceDefinition.CSharpInterfaceName}";
+                b.WriteLine($"{accessLevel} interface {interfaceName}");
                 b.WriteLine("{");
 
                 using (b.Indent())

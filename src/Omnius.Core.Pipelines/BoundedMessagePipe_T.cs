@@ -16,8 +16,8 @@ namespace Omnius.Core.Pipelines
             _writerSemaphore = new SemaphoreSlim(capacity, capacity);
             _readerSemaphore = new SemaphoreSlim(0, capacity);
 
-            this.Writer = new QueueWriter(this);
-            this.Reader = new QueueReader(this);
+            this.Writer = new MessagePipeWriter(this);
+            this.Reader = new MessagePipeReader(this);
         }
 
         protected override void OnDispose(bool disposing)
@@ -31,11 +31,11 @@ namespace Omnius.Core.Pipelines
 
         public IMessagePipeReader<T> Reader { get; }
 
-        public sealed class QueueWriter : IMessagePipeWriter<T>
+        public sealed class MessagePipeWriter : IMessagePipeWriter<T>
         {
             private readonly BoundedMessagePipe<T> _pipe;
 
-            public QueueWriter(BoundedMessagePipe<T> pipe)
+            public MessagePipeWriter(BoundedMessagePipe<T> pipe)
             {
                 _pipe = pipe;
             }
@@ -86,11 +86,11 @@ namespace Omnius.Core.Pipelines
             }
         }
 
-        public sealed class QueueReader : IMessagePipeReader<T>
+        public sealed class MessagePipeReader : IMessagePipeReader<T>
         {
             private readonly BoundedMessagePipe<T> _pipe;
 
-            public QueueReader(BoundedMessagePipe<T> pipe)
+            public MessagePipeReader(BoundedMessagePipe<T> pipe)
             {
                 _pipe = pipe;
             }

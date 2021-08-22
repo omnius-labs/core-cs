@@ -6,14 +6,17 @@ namespace Omnius.Core.Net.Connections.Secure.V1
 {
     public record OmniSecureConnectionOptions
     {
-        public int MaxReceiveByteCount { get; init; }
+        public OmniSecureConnectionOptions(OmniSecureConnectionType type, OmniDigitalSignature? digitalSignature, int maxReceiveByteCount)
+        {
+            this.Type = type;
+            this.DigitalSignature = digitalSignature;
+            this.MaxReceiveByteCount = maxReceiveByteCount;
+        }
 
-        public OmniSecureConnectionType Type { get; init; }
+        public OmniSecureConnectionType Type { get; }
 
-        public OmniDigitalSignature? DigitalSignature { get; init; }
+        public OmniDigitalSignature? DigitalSignature { get; }
 
-        public IBatchActionDispatcher? BatchActionDispatcher { get; init; }
-
-        public IBytesPool? BytesPool { get; init; }
+        public int MaxReceiveByteCount { get; }
     }
 }

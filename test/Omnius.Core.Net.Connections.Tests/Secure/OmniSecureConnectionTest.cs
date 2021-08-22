@@ -36,34 +36,15 @@ namespace Omnius.Core.Net.Connections.Secure
 
             await using var batchActionDispatcher = new BatchActionDispatcher(TimeSpan.FromMilliseconds(10));
 
-            var bridgeConnectionOptions = new BridgeConnectionOptions
-            {
-                MaxReceiveByteCount = 1024 * 1024 * 256,
-                BatchActionDispatcher = batchActionDispatcher,
-                BytesPool = BytesPool.Shared,
-            };
-            var clientBridgeConnection = new BridgeConnection(new SocketCap(clientSocket), bridgeConnectionOptions);
-            var serverBridgeConnection = new BridgeConnection(new SocketCap(serverSocket), bridgeConnectionOptions);
+            var bridgeConnectionOptions = new BridgeConnectionOptions(1024 * 1024 * 256);
+            await using var clientBridgeConnection = new BridgeConnection(new SocketCap(clientSocket), null, null, batchActionDispatcher, BytesPool.Shared, bridgeConnectionOptions);
+            await using var serverBridgeConnection = new BridgeConnection(new SocketCap(serverSocket), null, null, batchActionDispatcher, BytesPool.Shared, bridgeConnectionOptions);
 
-            var clientSecureConnectionOptions = new OmniSecureConnectionOptions()
-            {
-                Type = OmniSecureConnectionType.Connected,
-                DigitalSignature = clientDigitalSignature,
-                MaxReceiveByteCount = 1024 * 1024 * 256,
-                BatchActionDispatcher = batchActionDispatcher,
-                BytesPool = BytesPool.Shared,
-            };
-            await using var clientSecureConnection = new OmniSecureConnection(clientBridgeConnection, clientSecureConnectionOptions);
+            var clientSecureConnectionOptions = new OmniSecureConnectionOptions(OmniSecureConnectionType.Connected, clientDigitalSignature, 1024 * 1024 * 256);
+            await using var clientSecureConnection = OmniSecureConnection.CreateV1(clientBridgeConnection, batchActionDispatcher, BytesPool.Shared, clientSecureConnectionOptions);
 
-            var serverSecureConnectionOptions = new OmniSecureConnectionOptions()
-            {
-                Type = OmniSecureConnectionType.Accepted,
-                DigitalSignature = serverDigitalSignature,
-                MaxReceiveByteCount = 1024 * 1024 * 256,
-                BatchActionDispatcher = batchActionDispatcher,
-                BytesPool = BytesPool.Shared,
-            };
-            await using var serverSecureConnection = new OmniSecureConnection(serverBridgeConnection, serverSecureConnectionOptions);
+            var serverSecureConnectionOptions = new OmniSecureConnectionOptions(OmniSecureConnectionType.Accepted, serverDigitalSignature, 1024 * 1024 * 256);
+            await using var serverSecureConnection = OmniSecureConnection.CreateV1(serverBridgeConnection, batchActionDispatcher, BytesPool.Shared, serverSecureConnectionOptions);
 
             // ハンドシェイクを行う
             var valueTask1 = clientSecureConnection.HandshakeAsync();

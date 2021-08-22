@@ -44,13 +44,12 @@ namespace Omnius.Core.Net.Connections.Multiplexer.V1.Internal
 
         private readonly List<IDisposable> _disposables = new();
 
-        public ConnectionMultiplexer(IConnection connection, OmniConnectionMultiplexerOptions options)
+        public ConnectionMultiplexer(IConnection connection, IBatchActionDispatcher batchActionDispatcher, IBytesPool bytesPool, OmniConnectionMultiplexerOptions options)
         {
-            _connection = connection ?? throw new ArgumentNullException(nameof(connection));
-            _options = options ?? throw new ArgumentNullException(nameof(options));
-            if (!EnumHelper.IsValid(options.Type)) throw new ArgumentException(nameof(options.Type));
-            _batchActionDispatcher = options.BatchActionDispatcher ?? throw new ArgumentNullException(nameof(options.BatchActionDispatcher));
-            _bytesPool = options.BytesPool ?? throw new ArgumentNullException(nameof(options.BytesPool));
+            _connection = connection;
+            _batchActionDispatcher = batchActionDispatcher;
+            _bytesPool = bytesPool;
+            _options = options;
 
             _nextStreamId = (uint)((_options.Type == OmniConnectionMultiplexerType.Connected) ? 0 : 1);
         }
@@ -75,6 +74,8 @@ namespace Omnius.Core.Net.Connections.Multiplexer.V1.Internal
         {
             return Interlocked.Add(ref _nextStreamId, 2);
         }
+
+        public bool IsConnected => _connection.IsConnected;
 
         public async ValueTask HandshakeAsync(CancellationToken cancellationToken = default)
         {

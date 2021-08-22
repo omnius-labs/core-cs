@@ -5,18 +5,23 @@ namespace Omnius.Core.Net.Connections.Multiplexer.V1
 {
     public record OmniConnectionMultiplexerOptions
     {
-        public OmniConnectionMultiplexerType Type { get; init; }
+        public OmniConnectionMultiplexerOptions(OmniConnectionMultiplexerType type, TimeSpan packetReceiveTimeout, uint maxStreamRequestQueueSize, uint maxStreamDataSize, uint maxStreamDataQueueSize)
+        {
+            this.Type = type;
+            this.PacketReceiveTimeout = packetReceiveTimeout;
+            this.MaxStreamRequestQueueSize = maxStreamRequestQueueSize;
+            this.MaxStreamDataSize = maxStreamDataSize;
+            this.MaxStreamDataQueueSize = maxStreamDataQueueSize;
+        }
 
-        public TimeSpan PacketReceiveTimeout { get; init; }
+        public OmniConnectionMultiplexerType Type { get; }
 
-        public uint MaxStreamRequestQueueSize { get; init; }
+        public TimeSpan PacketReceiveTimeout { get; }
 
-        public uint MaxStreamDataSize { get; init; }
+        public uint MaxStreamRequestQueueSize { get; }
 
-        public uint MaxStreamDataQueueSize { get; init; }
+        public uint MaxStreamDataSize { get; }
 
-        public IBatchActionDispatcher? BatchActionDispatcher { get; init; }
-
-        public IBytesPool? BytesPool { get; init; }
+        public uint MaxStreamDataQueueSize { get; }
     }
 }

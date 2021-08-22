@@ -14,13 +14,21 @@ namespace Omnius.Core.Pipelines
 
             private readonly List<byte[]> _arrays = new();
             private readonly List<Memory<byte>> _memories = new();
-            private long _totalWrittenCount = 0;
+            private long _totalWrittenBytes = 0;
             private Memory<byte> _currentMemory = Memory<byte>.Empty;
-            private int _currentMemoryWrittenCount = 0;
+            private int _currentMemoryWrittenBytes = 0;
 
             public BytesState(IBytesPool bytesPool)
             {
                 _bytesPool = bytesPool;
+            }
+
+            protected override void OnDispose(bool disposing)
+            {
+                if (disposing)
+                {
+                    this.Reset();
+                }
             }
 
             public void Reset()
@@ -32,37 +40,33 @@ namespace Omnius.Core.Pipelines
 
                 _arrays.Clear();
                 _memories.Clear();
-                _totalWrittenCount = 0;
+                _totalWrittenBytes = 0;
                 _currentMemory = Memory<byte>.Empty;
-                _currentMemoryWrittenCount = 0;
+                _currentMemoryWrittenBytes = 0;
             }
 
-            public long WrittenCount => _totalWrittenCount;
+            public long WrittenBytes => _totalWrittenBytes;
 
             public void Advance(int count)
             {
-                _currentMemoryWrittenCount += count;
-                _totalWrittenCount += count;
+                _currentMemoryWrittenBytes += count;
+                _totalWrittenBytes += count;
             }
 
             public Memory<byte> GetMemory(int sizeHint = 0)
             {
-                if (sizeHint <= 0)
-                {
-                    sizeHint = 1;
-                }
+                if (sizeHint <= 0) sizeHint = 1;
 
-                int length = _currentMemory.Length - _currentMemoryWrittenCount;
+                int length = _currentMemory.Length - _currentMemoryWrittenBytes;
+                if (length >= sizeHint) return _currentMemory[_currentMemoryWrittenBytes..];
 
-                if (length >= sizeHint) return _currentMemory.Slice(_currentMemoryWrittenCount);
-
-                _memories.Add(_currentMemory.Slice(0, _currentMemoryWrittenCount));
+                _memories.Add(_currentMemory.Slice(0, _currentMemoryWrittenBytes));
 
                 var byteArray = _bytesPool.Array.Rent(Math.Max(sizeHint, 1024 * 32));
                 _arrays.Add(byteArray);
 
                 _currentMemory = byteArray;
-                _currentMemoryWrittenCount = 0;
+                _currentMemoryWrittenBytes = 0;
 
                 return _currentMemory;
             }
@@ -82,17 +86,9 @@ namespace Omnius.Core.Pipelines
                     memories.Add(memory);
                 }
 
-                memories.Add(_currentMemory.Slice(0, _currentMemoryWrittenCount));
+                memories.Add(_currentMemory.Slice(0, _currentMemoryWrittenBytes));
 
                 return ReadOnlySequenceHelper.Create(memories);
-            }
-
-            protected override void OnDispose(bool disposing)
-            {
-                if (disposing)
-                {
-                    this.Reset();
-                }
             }
         }
     }
