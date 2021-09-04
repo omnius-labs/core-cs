@@ -19,7 +19,7 @@ namespace Omnius.Core.Pipelines
                 _bufferState.Reset();
             }
 
-            public long WrittenBytes => _bufferState.WrittenCount;
+            public long WrittenBytes => _bufferState.WrittenBytes;
 
             public void Advance(int count)
             {

@@ -3,29 +3,30 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Omnius.Core.Cryptography;
 using Omnius.Core.Helpers;
 using Omnius.Core.Net.Connections.Secure.Internal;
+using Omnius.Core.Tasks;
 
 namespace Omnius.Core.Net.Connections.Secure
 {
     public sealed class OmniSecureConnection : AsyncDisposableBase, IConnection
     {
         private readonly IConnection _connection;
-        private readonly OmniSecureConnectionOptions _options;
-        private readonly IBytesPool _bytesPool;
+        private readonly V1.Internal.SecureConnection? _secureConnection_v1 = null;
 
-        private OmniSecureConnectionVersion _version = OmniSecureConnectionVersion.Version1;
-        private V1.Internal.SecureConnection? _secureConnection_v1;
+        private OmniSecureConnectionVersion _version = OmniSecureConnectionVersion.Unknown;
 
-        public OmniSecureConnection(IConnection connection, OmniSecureConnectionOptions options)
+        public static OmniSecureConnection CreateV1(IConnection connection, IBatchActionDispatcher batchActionDispatcher, IBytesPool bytesPool, V1.OmniSecureConnectionOptions options)
         {
-            if (connection == null) throw new ArgumentNullException(nameof(connection));
-            if (options == null) throw new ArgumentNullException(nameof(options));
-            if (!EnumHelper.IsValid(options.Type)) throw new ArgumentException(nameof(options.Type));
+            var secureConnection = new V1.Internal.SecureConnection(connection, batchActionDispatcher, bytesPool, options);
+            return new OmniSecureConnection(connection, secureConnection);
+        }
 
+        private OmniSecureConnection(IConnection connection, V1.Internal.SecureConnection? secureConnection)
+        {
             _connection = connection;
-            _options = options;
-            _bytesPool = options.BytesPool;
+            _secureConnection_v1 = secureConnection;
         }
 
         protected override async ValueTask OnDisposeAsync()
@@ -33,22 +34,29 @@ namespace Omnius.Core.Net.Connections.Secure
             if (_secureConnection_v1 is not null) await _secureConnection_v1.DisposeAsync();
         }
 
-        public IConnection BridgeConnection => _connection;
-
-        public bool IsConnected => _connection.IsConnected;
-
-        public OmniSecureConnectionType Type => _options.Type;
-
-        public IEnumerable<string> MatchedPasswords
+        public bool IsConnected
         {
             get
             {
                 if (_secureConnection_v1 != null)
                 {
-                    return _secureConnection_v1.MatchedPasswords;
+                    return _secureConnection_v1.IsConnected;
                 }
 
-                return Enumerable.Empty<string>();
+                return false;
+            }
+        }
+
+        public OmniSignature? Signature
+        {
+            get
+            {
+                if (_secureConnection_v1 != null)
+                {
+                    return _secureConnection_v1.Signature;
+                }
+
+                return null;
             }
         }
 
@@ -97,10 +105,9 @@ namespace Omnius.Core.Net.Connections.Secure
             {
                 await this.HelloAsync(cancellationToken);
 
-                if (_version == OmniSecureConnectionVersion.Version1)
+                if (_version == OmniSecureConnectionVersion.Version1 && _secureConnection_v1 is not null)
                 {
-                    _secureConnection_v1 = new V1.Internal.SecureConnection(_connection, _options);
-                    await _secureConnection_v1.Handshake(cancellationToken);
+                    await _secureConnection_v1.HandshakeAsync(cancellationToken);
                 }
                 else
                 {
@@ -119,19 +126,11 @@ namespace Omnius.Core.Net.Connections.Secure
 
         private async ValueTask HelloAsync(CancellationToken cancellationToken)
         {
-            HelloMessage sendHelloMessage;
-            HelloMessage? receiveHelloMessage = null;
-            {
-                sendHelloMessage = new HelloMessage(new[] { _version });
+            var versions = new List<OmniSecureConnectionVersion>();
+            if (_secureConnection_v1 is not null) versions.Add(OmniSecureConnectionVersion.Version1);
 
-                var enqueueTask = _connection.Sender.SendAsync(sendHelloMessage, cancellationToken).AsTask();
-                var dequeueTask = _connection.Receiver.ReceiveAsync<HelloMessage>(cancellationToken).AsTask();
-
-                await Task.WhenAll(enqueueTask, dequeueTask);
-                receiveHelloMessage = dequeueTask.Result;
-
-                if (receiveHelloMessage is null) throw new NullReferenceException();
-            }
+            var sendHelloMessage = new HelloMessage(versions.ToArray());
+            var receiveHelloMessage = await _connection.ExchangeAsync(sendHelloMessage, cancellationToken);
 
             _version = EnumHelper.GetOverlappedMaxValue(sendHelloMessage.Versions, receiveHelloMessage.Versions) ?? OmniSecureConnectionVersion.Unknown;
         }

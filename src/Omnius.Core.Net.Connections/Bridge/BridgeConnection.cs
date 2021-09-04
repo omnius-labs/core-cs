@@ -13,11 +13,11 @@ namespace Omnius.Core.Net.Connections.Bridge
         private static readonly NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
 
         private readonly ICap _cap;
-        private readonly int _maxReceiveByteCount;
         private readonly IBandwidthLimiter? _senderBandwidthLimiter;
         private readonly IBandwidthLimiter? _receiverBandwidthLimiter;
         private readonly IBatchActionDispatcher _batchActionDispatcher;
         private readonly IBytesPool _bytesPool;
+        private readonly BridgeConnectionOptions _options;
 
         private readonly ConnectionSender _sender;
         private readonly ConnectionReceiver _receiver;
@@ -26,17 +26,18 @@ namespace Omnius.Core.Net.Connections.Bridge
 
         private readonly CancellationTokenSource _cancellationTokenSource = new();
 
-        public BridgeConnection(ICap cap, BridgeConnectionOptions options)
+        public BridgeConnection(ICap cap, IBandwidthLimiter? senderBandwidthLimiter, IBandwidthLimiter? receiverBandwidthLimiter, IBatchActionDispatcher batchActionDispatcher,
+            IBytesPool bytesPool, BridgeConnectionOptions options)
         {
             _cap = cap;
-            _maxReceiveByteCount = options.MaxReceiveByteCount;
-            _senderBandwidthLimiter = options.SenderBandwidthLimiter;
-            _receiverBandwidthLimiter = options.ReceiverBandwidthLimiter;
-            _batchActionDispatcher = options.BatchActionDispatcher;
-            _bytesPool = options.BytesPool;
+            _senderBandwidthLimiter = senderBandwidthLimiter;
+            _receiverBandwidthLimiter = receiverBandwidthLimiter;
+            _batchActionDispatcher = batchActionDispatcher;
+            _bytesPool = bytesPool;
+            _options = options;
 
             _sender = new ConnectionSender(_cap, _bytesPool, _cancellationTokenSource);
-            _receiver = new ConnectionReceiver(_cap, _maxReceiveByteCount, _bytesPool, _cancellationTokenSource);
+            _receiver = new ConnectionReceiver(_cap, _options.MaxReceiveByteCount, _bytesPool, _cancellationTokenSource);
             _subscribers = new ConnectionEvents(_cancellationTokenSource.Token);
             _batchAction = new BatchAction(_sender, _receiver, _senderBandwidthLimiter, _receiverBandwidthLimiter);
             _batchActionDispatcher.Register(_batchAction);

@@ -26,10 +26,19 @@ namespace Omnius.Core.Net.Connections.Secure.V1.Internal
 
             private long _sentByteCount;
 
-            public ConnectionSender(IConnectionSender sender, byte[] cryptoKey, byte[] nonce, IBytesPool bytesPool, CancellationTokenSource cancellationTokenSource)
+            public ConnectionSender(IConnectionSender sender, CryptoAlgorithmType cryptoAlgorithmType, byte[] cryptoKey, byte[] nonce, IBytesPool bytesPool, CancellationTokenSource cancellationTokenSource)
             {
                 _sender = sender;
-                _encrypter = new AesGcmEncrypter(cryptoKey, nonce, bytesPool);
+
+                if (cryptoAlgorithmType == CryptoAlgorithmType.Aes_Gcm_256)
+                {
+                    _encrypter = new AesGcmEncrypter(cryptoKey, nonce, bytesPool);
+                }
+                else
+                {
+                    throw new NotSupportedException(nameof(cryptoAlgorithmType));
+                }
+
                 _bytesPool = bytesPool;
                 _cancellationTokenSource = cancellationTokenSource;
 
@@ -85,14 +94,26 @@ namespace Omnius.Core.Net.Connections.Secure.V1.Internal
                 catch (ConnectionException e)
                 {
                     _exception = e;
-                    _cancellationTokenSource.Cancel();
+                    this.Cancel();
                     return;
                 }
                 catch (Exception e)
                 {
                     _exception = new ConnectionException("send error", e);
-                    _cancellationTokenSource.Cancel();
+                    this.Cancel();
                     return;
+                }
+            }
+
+            private void Cancel()
+            {
+                try
+                {
+                    _cancellationTokenSource.Cancel();
+                }
+                catch (ObjectDisposedException e)
+                {
+                    _logger.Debug(e);
                 }
             }
 

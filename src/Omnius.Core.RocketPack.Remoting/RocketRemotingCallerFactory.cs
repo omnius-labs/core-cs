@@ -10,19 +10,18 @@ namespace Omnius.Core.RocketPack.Remoting
     {
         private static readonly NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
 
-        private readonly IConnectionConnector _connector;
+        private readonly IConnectionMultiplexer _multiplexer;
         private readonly IBytesPool _bytesPool;
 
-        public RocketRemotingCallerFactory(IConnectionConnector connector, IBytesPool bytesPool)
+        public RocketRemotingCallerFactory(IConnectionMultiplexer multiplexer, IBytesPool bytesPool)
         {
-            _connector = connector;
-
+            _multiplexer = multiplexer;
             _bytesPool = bytesPool;
         }
 
         public async ValueTask<IRocketRemotingCaller<TError>> CreateAsync(uint functionId, CancellationToken cancellationToken = default)
         {
-            var connection = await _connector.ConnectAsync(cancellationToken);
+            var connection = await _multiplexer.ConnectAsync(cancellationToken);
 
             await connection.Sender.SendAsync(
                 bufferWriter =>

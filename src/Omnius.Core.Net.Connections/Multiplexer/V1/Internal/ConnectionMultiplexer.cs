@@ -16,8 +16,8 @@ namespace Omnius.Core.Net.Connections.Multiplexer.V1.Internal
 
         private readonly IConnection _connection;
         private readonly IBytesPool _bytesPool;
-        private readonly BatchActionDispatcher _batchActionDispatcher;
-        private readonly ConnectionMultiplexerOptions _options;
+        private readonly IBatchActionDispatcher _batchActionDispatcher;
+        private readonly OmniConnectionMultiplexerOptions _options;
 
         private SessionOptions? _sessionOptions;
 
@@ -44,14 +44,11 @@ namespace Omnius.Core.Net.Connections.Multiplexer.V1.Internal
 
         private readonly List<IDisposable> _disposables = new();
 
-        public ConnectionMultiplexer(IConnection connection, BatchActionDispatcher batchActionDispatcher, IBytesPool bytesPool, ConnectionMultiplexerOptions options)
+        public ConnectionMultiplexer(IConnection connection, IBatchActionDispatcher batchActionDispatcher, IBytesPool bytesPool, OmniConnectionMultiplexerOptions options)
         {
-            _connection = connection ?? throw new ArgumentNullException(nameof(connection));
+            _connection = connection;
             _batchActionDispatcher = batchActionDispatcher;
-            _bytesPool = bytesPool ?? throw new ArgumentNullException(nameof(bytesPool));
-
-            if (options == null) throw new ArgumentNullException(nameof(options));
-            if (!EnumHelper.IsValid(options.Type)) throw new ArgumentException(nameof(options.Type));
+            _bytesPool = bytesPool;
             _options = options;
 
             _nextStreamId = (uint)((_options.Type == OmniConnectionMultiplexerType.Connected) ? 0 : 1);
@@ -78,16 +75,17 @@ namespace Omnius.Core.Net.Connections.Multiplexer.V1.Internal
             return Interlocked.Add(ref _nextStreamId, 2);
         }
 
-        public async ValueTask Handshake(CancellationToken cancellationToken = default)
+        public bool IsConnected => _connection.IsConnected;
+
+        public async ValueTask HandshakeAsync(CancellationToken cancellationToken = default)
         {
-            var myProfileMessage = new ProfileMessage((uint)_options.PacketReceiveTimeout.TotalMilliseconds, _options.MaxStreamRequestQueueSize, _options.MaxStreamDataSize, _options.MaxStreamDataQueueSize);
-            var enqueueTask = _connection.Sender.SendAsync(myProfileMessage, cancellationToken).AsTask();
-            var dequeueTask = _connection.Receiver.ReceiveAsync<ProfileMessage>(cancellationToken).AsTask();
+            var otherProfileMessage = await this.ExchangeProfileMessageAsync(cancellationToken);
 
-            await Task.WhenAll(enqueueTask, dequeueTask);
-            var otherProfileMessage = dequeueTask.Result;
-
-            _sessionOptions = new SessionOptions(TimeSpan.FromMilliseconds(otherProfileMessage.PacketReceiveTimeoutMilliseconds), otherProfileMessage.MaxStreamRequestQueueSize, otherProfileMessage.MaxStreamDataSize, otherProfileMessage.MaxStreamDataQueueSize);
+            _sessionOptions = new SessionOptions(
+                PacketReceiveTimeout: TimeSpan.FromMilliseconds(otherProfileMessage.PacketReceiveTimeoutMilliseconds),
+                MaxStreamRequestQueueSize: otherProfileMessage.MaxStreamRequestQueueSize,
+                MaxDataSize: otherProfileMessage.MaxStreamDataSize,
+                MaxDataQueueSize: otherProfileMessage.MaxStreamDataQueueSize);
 
             _sendStreamRequestPipe = new BoundedMessagePipe((int)_sessionOptions.MaxStreamRequestQueueSize);
             _sendStreamRequestAcceptedPipe = new BoundedMessagePipe<uint>((int)_sessionOptions.MaxStreamRequestQueueSize);
@@ -98,6 +96,17 @@ namespace Omnius.Core.Net.Connections.Multiplexer.V1.Internal
 
             _batchAction = new BatchAction(this);
             _batchActionDispatcher.Register(_batchAction);
+        }
+
+        private async ValueTask<ProfileMessage> ExchangeProfileMessageAsync(CancellationToken cancellationToken = default)
+        {
+            var myProfileMessage = new ProfileMessage((uint)_options.PacketReceiveTimeout.TotalMilliseconds, _options.MaxStreamRequestQueueSize, _options.MaxStreamDataSize, _options.MaxStreamDataQueueSize);
+            var enqueueTask = _connection.Sender.SendAsync(myProfileMessage, cancellationToken).AsTask();
+            var dequeueTask = _connection.Receiver.ReceiveAsync<ProfileMessage>(cancellationToken).AsTask();
+
+            await Task.WhenAll(enqueueTask, dequeueTask);
+            var otherProfileMessage = dequeueTask.Result;
+            return otherProfileMessage;
         }
 
         private void InternalSend()
@@ -376,6 +385,10 @@ namespace Omnius.Core.Net.Connections.Multiplexer.V1.Internal
             return connection;
         }
 
-        private record SessionOptions(TimeSpan PacketReceiveTimeout, uint MaxStreamRequestQueueSize, uint MaxDataSize, uint MaxDataQueueSize);
+        private record SessionOptions(
+            TimeSpan PacketReceiveTimeout,
+            uint MaxStreamRequestQueueSize,
+            uint MaxDataSize,
+            uint MaxDataQueueSize);
     }
 }

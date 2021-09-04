@@ -1,5 +1,6 @@
 using System;
 using System.Buffers;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Omnius.Core.Helpers;
@@ -8,32 +9,42 @@ using Omnius.Core.Tasks;
 
 namespace Omnius.Core.Net.Connections.Multiplexer
 {
-    public sealed class OmniConnectionMultiplexer : AsyncDisposableBase, IMultiplexer
+    public sealed class OmniConnectionMultiplexer : AsyncDisposableBase, IConnectionMultiplexer
     {
         private readonly IConnection _connection;
-        private readonly BatchActionDispatcher _batchActionDispatcher;
-        private readonly IBytesPool _bytesPool;
-        private readonly V1.ConnectionMultiplexerOptions _options_v1;
+        private readonly V1.Internal.ConnectionMultiplexer? _multiplexer_v1 = null;
 
         private OmniConnectionMultiplexerVersion? _version;
-        private V1.Internal.ConnectionMultiplexer? _connectionMultiplexer_v1;
 
-        public OmniConnectionMultiplexer(IConnection connection, BatchActionDispatcher batchActionDispatcher, IBytesPool bytesPool, V1.ConnectionMultiplexerOptions options)
+        public static OmniConnectionMultiplexer CreateV1(IConnection connection, IBatchActionDispatcher batchActionDispatcher, IBytesPool bytesPool, V1.OmniConnectionMultiplexerOptions options)
+        {
+            var multiplexer = new V1.Internal.ConnectionMultiplexer(connection, batchActionDispatcher, bytesPool, options);
+            return new OmniConnectionMultiplexer(connection, multiplexer);
+        }
+
+        private OmniConnectionMultiplexer(IConnection connection, V1.Internal.ConnectionMultiplexer? multiplexer)
         {
             _connection = connection;
-            _batchActionDispatcher = batchActionDispatcher;
-            _bytesPool = bytesPool;
-            _options_v1 = options;
+            _multiplexer_v1 = multiplexer;
         }
 
         protected override async ValueTask OnDisposeAsync()
         {
-            if (_connectionMultiplexer_v1 is not null) await _connectionMultiplexer_v1.DisposeAsync();
+            if (_multiplexer_v1 is not null) await _multiplexer_v1.DisposeAsync();
         }
 
-        public IConnection BridgeConnection => _connection;
+        public bool IsConnected
+        {
+            get
+            {
+                if (_multiplexer_v1 != null)
+                {
+                    return _multiplexer_v1.IsConnected;
+                }
 
-        public bool IsConnected => _connection.IsConnected;
+                return false;
+            }
+        }
 
         public async ValueTask HandshakeAsync(CancellationToken cancellationToken = default)
         {
@@ -41,10 +52,9 @@ namespace Omnius.Core.Net.Connections.Multiplexer
             {
                 await this.HelloAsync(cancellationToken);
 
-                if (_version == OmniConnectionMultiplexerVersion.Version1)
+                if (_version == OmniConnectionMultiplexerVersion.Version1 && _multiplexer_v1 is not null)
                 {
-                    _connectionMultiplexer_v1 = new V1.Internal.ConnectionMultiplexer(_connection, _batchActionDispatcher, _bytesPool, _options_v1);
-                    await _connectionMultiplexer_v1.Handshake(cancellationToken);
+                    await _multiplexer_v1.HandshakeAsync(cancellationToken);
                 }
                 else
                 {
@@ -63,28 +73,20 @@ namespace Omnius.Core.Net.Connections.Multiplexer
 
         private async ValueTask HelloAsync(CancellationToken cancellationToken)
         {
-            HelloMessage sendHelloMessage;
-            HelloMessage? receiveHelloMessage;
-            {
-                sendHelloMessage = new HelloMessage(new[] { OmniConnectionMultiplexerVersion.Version1 });
+            var versions = new List<OmniConnectionMultiplexerVersion>();
+            if (_multiplexer_v1 is not null) versions.Add(OmniConnectionMultiplexerVersion.Version1);
 
-                var enqueueTask = _connection.Sender.SendAsync(sendHelloMessage, cancellationToken).AsTask();
-                var dequeueTask = _connection.Receiver.ReceiveAsync<HelloMessage>(cancellationToken).AsTask();
+            var sendHelloMessage = new HelloMessage(versions.ToArray());
+            var receiveHelloMessage = await _connection.ExchangeAsync(sendHelloMessage, cancellationToken);
 
-                await Task.WhenAll(enqueueTask, dequeueTask);
-                receiveHelloMessage = dequeueTask.Result;
-
-                if (receiveHelloMessage is null) throw new NullReferenceException();
-            }
-
-            _version = EnumHelper.GetOverlappedMaxValue(sendHelloMessage.Versions, receiveHelloMessage.Versions);
+            _version = EnumHelper.GetOverlappedMaxValue(sendHelloMessage.Versions, receiveHelloMessage.Versions) ?? OmniConnectionMultiplexerVersion.Unknown;
         }
 
         public async ValueTask<IConnection> ConnectAsync(CancellationToken cancellationToken = default)
         {
-            if (_connectionMultiplexer_v1 is not null)
+            if (_multiplexer_v1 is not null)
             {
-                return await _connectionMultiplexer_v1.ConnectAsync(cancellationToken);
+                return await _multiplexer_v1.ConnectAsync(cancellationToken);
             }
 
             throw new InvalidOperationException();
@@ -92,9 +94,9 @@ namespace Omnius.Core.Net.Connections.Multiplexer
 
         public async ValueTask<IConnection> AcceptAsync(CancellationToken cancellationToken = default)
         {
-            if (_connectionMultiplexer_v1 is not null)
+            if (_multiplexer_v1 is not null)
             {
-                return await _connectionMultiplexer_v1.AcceptAsync(cancellationToken);
+                return await _multiplexer_v1.AcceptAsync(cancellationToken);
             }
 
             throw new InvalidOperationException();

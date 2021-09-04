@@ -23,15 +23,15 @@ namespace Omnius.Core.RocketPack.Remoting
             var bytesPool = BytesPool.Shared;
             var batchActionDispatcher = new BatchActionDispatcher(TimeSpan.FromMilliseconds(10));
 
-            var bridgeConnectionOptions = new BridgeConnectionOptions(1024 * 1024 * 256, null, null, batchActionDispatcher, bytesPool);
-            await using var clientBridgeConnection = new BridgeConnection(new SocketCap(clientSocket), bridgeConnectionOptions);
-            await using var serverBridgeConnection = new BridgeConnection(new SocketCap(serverSocket), bridgeConnectionOptions);
+            var bridgeConnectionOptions = new BridgeConnectionOptions(1024 * 1024 * 256);
+            await using var clientBridgeConnection = new BridgeConnection(new SocketCap(clientSocket), null, null, batchActionDispatcher, BytesPool.Shared, bridgeConnectionOptions);
+            await using var serverBridgeConnection = new BridgeConnection(new SocketCap(serverSocket), null, null, batchActionDispatcher, BytesPool.Shared, bridgeConnectionOptions);
 
-            var clientMultiplexerOption = new ConnectionMultiplexerOptions(OmniConnectionMultiplexerType.Connected, TimeSpan.FromMinutes(1), 3, 1024 * 1024 * 4, 3);
-            await using var clientMultiplexer = new OmniConnectionMultiplexer(clientBridgeConnection, batchActionDispatcher, bytesPool, clientMultiplexerOption);
+            var clientMultiplexerOption = new OmniConnectionMultiplexerOptions(OmniConnectionMultiplexerType.Connected, TimeSpan.FromMinutes(1), 3, 1024 * 1024 * 4, 3);
+            await using var clientMultiplexer = OmniConnectionMultiplexer.CreateV1(clientBridgeConnection, batchActionDispatcher, BytesPool.Shared, clientMultiplexerOption);
 
-            var serverMultiplexerOption = new ConnectionMultiplexerOptions(OmniConnectionMultiplexerType.Accepted, TimeSpan.FromMinutes(1), 3, 1024 * 1024 * 4, 3);
-            await using var serverMultiplexer = new OmniConnectionMultiplexer(serverBridgeConnection, batchActionDispatcher, bytesPool, serverMultiplexerOption);
+            var serverMultiplexerOption = new OmniConnectionMultiplexerOptions(OmniConnectionMultiplexerType.Accepted, TimeSpan.FromMinutes(1), 3, 1024 * 1024 * 4, 3);
+            await using var serverMultiplexer = OmniConnectionMultiplexer.CreateV1(serverBridgeConnection, batchActionDispatcher, BytesPool.Shared, serverMultiplexerOption);
 
             var clientMultiplexerHandshakeTask = clientMultiplexer.HandshakeAsync().AsTask();
             var serverMultiplexerHandshakeTask = serverMultiplexer.HandshakeAsync().AsTask();
@@ -43,8 +43,8 @@ namespace Omnius.Core.RocketPack.Remoting
             var remotingConnector = new RocketRemotingCallerFactory<DefaultErrorMessage>(clientMultiplexer, bytesPool);
             var remotingAccepter = new RocketRemotingListenerFactory<DefaultErrorMessage>(serverMultiplexer, DefaultErrorMessageFactory.Default, bytesPool);
 
-            var client = new TestService.Client<DefaultErrorMessage>(remotingConnector, bytesPool);
-            var server = new TestService.Server<DefaultErrorMessage>(mockTestService.Object, remotingAccepter, bytesPool);
+            var client = new TestServiceRemoting.Client<DefaultErrorMessage>(remotingConnector, bytesPool);
+            var server = new TestServiceRemoting.Server<DefaultErrorMessage>(mockTestService.Object, remotingAccepter, bytesPool);
 
             var cancellationTokenSource = new CancellationTokenSource();
             var eventLoop = server.EventLoopAsync(cancellationTokenSource.Token);

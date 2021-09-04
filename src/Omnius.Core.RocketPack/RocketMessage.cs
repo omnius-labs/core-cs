@@ -1,9 +1,11 @@
+using System;
+using System.Buffers;
 using System.IO;
 using Omnius.Core.Pipelines;
 
-namespace Omnius.Core.RocketPack.Helpers
+namespace Omnius.Core.RocketPack
 {
-    public static class RocketMessageHelper
+    public static class RocketMessage
     {
         public static T FromStream<T>(Stream inStream)
             where T : IRocketMessage<T>
@@ -37,6 +39,25 @@ namespace Omnius.Core.RocketPack.Helpers
             {
                 stream.Write(memory.Span);
             }
+        }
+
+        public static T FromBytes<T>(ReadOnlyMemory<byte> memory)
+            where T : IRocketMessage<T>
+        {
+            return IRocketMessage<T>.Import(new ReadOnlySequence<byte>(memory), BytesPool.Shared);
+        }
+
+        public static IMemoryOwner<byte> ToBytes<T>(T message)
+            where T : IRocketMessage<T>
+        {
+            using var hub = new BytesPipe();
+            message.Export(hub.Writer, BytesPool.Shared);
+
+            var sequence = hub.Reader.GetSequence();
+            var memoryOwner = BytesPool.Shared.Memory.Rent((int)sequence.Length).Shrink((int)sequence.Length);
+            sequence.CopyTo(memoryOwner.Memory.Span);
+
+            return memoryOwner;
         }
     }
 }

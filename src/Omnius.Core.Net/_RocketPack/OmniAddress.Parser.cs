@@ -12,8 +12,9 @@ namespace Omnius.Core.Net
 {
     public partial class OmniAddress
     {
-        public static OmniAddress Parse(string text)
+        public static OmniAddress Parse(string? text)
         {
+            if (text == null) return OmniAddress.Empty;
             return new OmniAddress(text);
         }
 

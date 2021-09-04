@@ -3,11 +3,13 @@ using Omnius.Core.Tasks;
 
 namespace Omnius.Core.Net.Connections.Bridge
 {
-    public record BridgeConnectionOptions(
-        int MaxReceiveByteCount,
-        IBandwidthLimiter? SenderBandwidthLimiter,
-        IBandwidthLimiter? ReceiverBandwidthLimiter,
-        IBatchActionDispatcher BatchActionDispatcher,
-        IBytesPool BytesPool
-    );
+    public record BridgeConnectionOptions
+    {
+        public BridgeConnectionOptions(int maxReceiveByteCount)
+        {
+            this.MaxReceiveByteCount = maxReceiveByteCount;
+        }
+
+        public int MaxReceiveByteCount { get; }
+    }
 }

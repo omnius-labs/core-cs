@@ -3,22 +3,22 @@
 
 namespace Omnius.Core.Net.Connections.Secure.V1.Internal
 {
-    internal enum KeyExchangeAlgorithm : byte
+    internal enum KeyExchangeAlgorithmType : byte
     {
         Unknown = 0,
         EcDh_P521_Sha2_256 = 1,
     }
-    internal enum KeyDerivationAlgorithm : byte
+    internal enum KeyDerivationAlgorithmType : byte
     {
         Unknown = 0,
         Pbkdf2 = 1,
     }
-    internal enum HashAlgorithm : byte
+    internal enum HashAlgorithmType : byte
     {
         Unknown = 0,
         Sha2_256 = 1,
     }
-    internal enum CryptoAlgorithm : byte
+    internal enum CryptoAlgorithmType : byte
     {
         Unknown = 0,
         Aes_Gcm_256 = 1,
@@ -26,7 +26,7 @@ namespace Omnius.Core.Net.Connections.Secure.V1.Internal
     internal enum AuthenticationType : byte
     {
         None = 0,
-        Password = 1,
+        Signature = 1,
     }
     internal sealed partial class ProfileMessage : global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.Net.Connections.Secure.V1.Internal.ProfileMessage>
     {
@@ -36,54 +36,54 @@ namespace Omnius.Core.Net.Connections.Secure.V1.Internal
         static ProfileMessage()
         {
             global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.Net.Connections.Secure.V1.Internal.ProfileMessage>.Formatter = new ___CustomFormatter();
-            global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.Net.Connections.Secure.V1.Internal.ProfileMessage>.Empty = new global::Omnius.Core.Net.Connections.Secure.V1.Internal.ProfileMessage(global::System.ReadOnlyMemory<byte>.Empty, (global::Omnius.Core.Net.Connections.Secure.V1.Internal.AuthenticationType)0, global::System.Array.Empty<global::Omnius.Core.Net.Connections.Secure.V1.Internal.KeyExchangeAlgorithm>(), global::System.Array.Empty<global::Omnius.Core.Net.Connections.Secure.V1.Internal.KeyDerivationAlgorithm>(), global::System.Array.Empty<global::Omnius.Core.Net.Connections.Secure.V1.Internal.CryptoAlgorithm>(), global::System.Array.Empty<global::Omnius.Core.Net.Connections.Secure.V1.Internal.HashAlgorithm>());
+            global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.Net.Connections.Secure.V1.Internal.ProfileMessage>.Empty = new global::Omnius.Core.Net.Connections.Secure.V1.Internal.ProfileMessage(global::System.ReadOnlyMemory<byte>.Empty, (global::Omnius.Core.Net.Connections.Secure.V1.Internal.AuthenticationType)0, global::System.Array.Empty<global::Omnius.Core.Net.Connections.Secure.V1.Internal.KeyExchangeAlgorithmType>(), global::System.Array.Empty<global::Omnius.Core.Net.Connections.Secure.V1.Internal.KeyDerivationAlgorithmType>(), global::System.Array.Empty<global::Omnius.Core.Net.Connections.Secure.V1.Internal.CryptoAlgorithmType>(), global::System.Array.Empty<global::Omnius.Core.Net.Connections.Secure.V1.Internal.HashAlgorithmType>());
         }
 
         private readonly global::System.Lazy<int> ___hashCode;
 
         public static readonly int MaxSessionIdLength = 32;
-        public static readonly int MaxKeyExchangeAlgorithmsCount = 32;
-        public static readonly int MaxKeyDerivationAlgorithmsCount = 32;
-        public static readonly int MaxCryptoAlgorithmsCount = 32;
-        public static readonly int MaxHashAlgorithmsCount = 32;
+        public static readonly int MaxKeyExchangeAlgorithmTypesCount = 32;
+        public static readonly int MaxKeyDerivationAlgorithmTypesCount = 32;
+        public static readonly int MaxCryptoAlgorithmTypesCount = 32;
+        public static readonly int MaxHashAlgorithmTypesCount = 32;
 
-        public ProfileMessage(global::System.ReadOnlyMemory<byte> sessionId, global::Omnius.Core.Net.Connections.Secure.V1.Internal.AuthenticationType authenticationType, global::Omnius.Core.Net.Connections.Secure.V1.Internal.KeyExchangeAlgorithm[] keyExchangeAlgorithms, global::Omnius.Core.Net.Connections.Secure.V1.Internal.KeyDerivationAlgorithm[] keyDerivationAlgorithms, global::Omnius.Core.Net.Connections.Secure.V1.Internal.CryptoAlgorithm[] cryptoAlgorithms, global::Omnius.Core.Net.Connections.Secure.V1.Internal.HashAlgorithm[] hashAlgorithms)
+        public ProfileMessage(global::System.ReadOnlyMemory<byte> sessionId, global::Omnius.Core.Net.Connections.Secure.V1.Internal.AuthenticationType authenticationType, global::Omnius.Core.Net.Connections.Secure.V1.Internal.KeyExchangeAlgorithmType[] keyExchangeAlgorithmTypes, global::Omnius.Core.Net.Connections.Secure.V1.Internal.KeyDerivationAlgorithmType[] keyDerivationAlgorithmTypes, global::Omnius.Core.Net.Connections.Secure.V1.Internal.CryptoAlgorithmType[] cryptoAlgorithmTypes, global::Omnius.Core.Net.Connections.Secure.V1.Internal.HashAlgorithmType[] hashAlgorithmTypes)
         {
             if (sessionId.Length > 32) throw new global::System.ArgumentOutOfRangeException("sessionId");
-            if (keyExchangeAlgorithms is null) throw new global::System.ArgumentNullException("keyExchangeAlgorithms");
-            if (keyExchangeAlgorithms.Length > 32) throw new global::System.ArgumentOutOfRangeException("keyExchangeAlgorithms");
-            if (keyDerivationAlgorithms is null) throw new global::System.ArgumentNullException("keyDerivationAlgorithms");
-            if (keyDerivationAlgorithms.Length > 32) throw new global::System.ArgumentOutOfRangeException("keyDerivationAlgorithms");
-            if (cryptoAlgorithms is null) throw new global::System.ArgumentNullException("cryptoAlgorithms");
-            if (cryptoAlgorithms.Length > 32) throw new global::System.ArgumentOutOfRangeException("cryptoAlgorithms");
-            if (hashAlgorithms is null) throw new global::System.ArgumentNullException("hashAlgorithms");
-            if (hashAlgorithms.Length > 32) throw new global::System.ArgumentOutOfRangeException("hashAlgorithms");
+            if (keyExchangeAlgorithmTypes is null) throw new global::System.ArgumentNullException("keyExchangeAlgorithmTypes");
+            if (keyExchangeAlgorithmTypes.Length > 32) throw new global::System.ArgumentOutOfRangeException("keyExchangeAlgorithmTypes");
+            if (keyDerivationAlgorithmTypes is null) throw new global::System.ArgumentNullException("keyDerivationAlgorithmTypes");
+            if (keyDerivationAlgorithmTypes.Length > 32) throw new global::System.ArgumentOutOfRangeException("keyDerivationAlgorithmTypes");
+            if (cryptoAlgorithmTypes is null) throw new global::System.ArgumentNullException("cryptoAlgorithmTypes");
+            if (cryptoAlgorithmTypes.Length > 32) throw new global::System.ArgumentOutOfRangeException("cryptoAlgorithmTypes");
+            if (hashAlgorithmTypes is null) throw new global::System.ArgumentNullException("hashAlgorithmTypes");
+            if (hashAlgorithmTypes.Length > 32) throw new global::System.ArgumentOutOfRangeException("hashAlgorithmTypes");
 
             this.SessionId = sessionId;
             this.AuthenticationType = authenticationType;
-            this.KeyExchangeAlgorithms = new global::Omnius.Core.Collections.ReadOnlyListSlim<global::Omnius.Core.Net.Connections.Secure.V1.Internal.KeyExchangeAlgorithm>(keyExchangeAlgorithms);
-            this.KeyDerivationAlgorithms = new global::Omnius.Core.Collections.ReadOnlyListSlim<global::Omnius.Core.Net.Connections.Secure.V1.Internal.KeyDerivationAlgorithm>(keyDerivationAlgorithms);
-            this.CryptoAlgorithms = new global::Omnius.Core.Collections.ReadOnlyListSlim<global::Omnius.Core.Net.Connections.Secure.V1.Internal.CryptoAlgorithm>(cryptoAlgorithms);
-            this.HashAlgorithms = new global::Omnius.Core.Collections.ReadOnlyListSlim<global::Omnius.Core.Net.Connections.Secure.V1.Internal.HashAlgorithm>(hashAlgorithms);
+            this.KeyExchangeAlgorithmTypes = new global::Omnius.Core.Collections.ReadOnlyListSlim<global::Omnius.Core.Net.Connections.Secure.V1.Internal.KeyExchangeAlgorithmType>(keyExchangeAlgorithmTypes);
+            this.KeyDerivationAlgorithmTypes = new global::Omnius.Core.Collections.ReadOnlyListSlim<global::Omnius.Core.Net.Connections.Secure.V1.Internal.KeyDerivationAlgorithmType>(keyDerivationAlgorithmTypes);
+            this.CryptoAlgorithmTypes = new global::Omnius.Core.Collections.ReadOnlyListSlim<global::Omnius.Core.Net.Connections.Secure.V1.Internal.CryptoAlgorithmType>(cryptoAlgorithmTypes);
+            this.HashAlgorithmTypes = new global::Omnius.Core.Collections.ReadOnlyListSlim<global::Omnius.Core.Net.Connections.Secure.V1.Internal.HashAlgorithmType>(hashAlgorithmTypes);
 
             ___hashCode = new global::System.Lazy<int>(() =>
             {
                 var ___h = new global::System.HashCode();
                 if (!sessionId.IsEmpty) ___h.Add(global::Omnius.Core.Helpers.ObjectHelper.GetHashCode(sessionId.Span));
                 if (authenticationType != default) ___h.Add(authenticationType.GetHashCode());
-                foreach (var n in keyExchangeAlgorithms)
+                foreach (var n in keyExchangeAlgorithmTypes)
                 {
                     if (n != default) ___h.Add(n.GetHashCode());
                 }
-                foreach (var n in keyDerivationAlgorithms)
+                foreach (var n in keyDerivationAlgorithmTypes)
                 {
                     if (n != default) ___h.Add(n.GetHashCode());
                 }
-                foreach (var n in cryptoAlgorithms)
+                foreach (var n in cryptoAlgorithmTypes)
                 {
                     if (n != default) ___h.Add(n.GetHashCode());
                 }
-                foreach (var n in hashAlgorithms)
+                foreach (var n in hashAlgorithmTypes)
                 {
                     if (n != default) ___h.Add(n.GetHashCode());
                 }
@@ -93,10 +93,10 @@ namespace Omnius.Core.Net.Connections.Secure.V1.Internal
 
         public global::System.ReadOnlyMemory<byte> SessionId { get; }
         public global::Omnius.Core.Net.Connections.Secure.V1.Internal.AuthenticationType AuthenticationType { get; }
-        public global::Omnius.Core.Collections.ReadOnlyListSlim<global::Omnius.Core.Net.Connections.Secure.V1.Internal.KeyExchangeAlgorithm> KeyExchangeAlgorithms { get; }
-        public global::Omnius.Core.Collections.ReadOnlyListSlim<global::Omnius.Core.Net.Connections.Secure.V1.Internal.KeyDerivationAlgorithm> KeyDerivationAlgorithms { get; }
-        public global::Omnius.Core.Collections.ReadOnlyListSlim<global::Omnius.Core.Net.Connections.Secure.V1.Internal.CryptoAlgorithm> CryptoAlgorithms { get; }
-        public global::Omnius.Core.Collections.ReadOnlyListSlim<global::Omnius.Core.Net.Connections.Secure.V1.Internal.HashAlgorithm> HashAlgorithms { get; }
+        public global::Omnius.Core.Collections.ReadOnlyListSlim<global::Omnius.Core.Net.Connections.Secure.V1.Internal.KeyExchangeAlgorithmType> KeyExchangeAlgorithmTypes { get; }
+        public global::Omnius.Core.Collections.ReadOnlyListSlim<global::Omnius.Core.Net.Connections.Secure.V1.Internal.KeyDerivationAlgorithmType> KeyDerivationAlgorithmTypes { get; }
+        public global::Omnius.Core.Collections.ReadOnlyListSlim<global::Omnius.Core.Net.Connections.Secure.V1.Internal.CryptoAlgorithmType> CryptoAlgorithmTypes { get; }
+        public global::Omnius.Core.Collections.ReadOnlyListSlim<global::Omnius.Core.Net.Connections.Secure.V1.Internal.HashAlgorithmType> HashAlgorithmTypes { get; }
 
         public static global::Omnius.Core.Net.Connections.Secure.V1.Internal.ProfileMessage Import(global::System.Buffers.ReadOnlySequence<byte> sequence, global::Omnius.Core.IBytesPool bytesPool)
         {
@@ -128,10 +128,10 @@ namespace Omnius.Core.Net.Connections.Secure.V1.Internal
             if (object.ReferenceEquals(this, target)) return true;
             if (!global::Omnius.Core.BytesOperations.Equals(this.SessionId.Span, target.SessionId.Span)) return false;
             if (this.AuthenticationType != target.AuthenticationType) return false;
-            if (!global::Omnius.Core.Helpers.CollectionHelper.Equals(this.KeyExchangeAlgorithms, target.KeyExchangeAlgorithms)) return false;
-            if (!global::Omnius.Core.Helpers.CollectionHelper.Equals(this.KeyDerivationAlgorithms, target.KeyDerivationAlgorithms)) return false;
-            if (!global::Omnius.Core.Helpers.CollectionHelper.Equals(this.CryptoAlgorithms, target.CryptoAlgorithms)) return false;
-            if (!global::Omnius.Core.Helpers.CollectionHelper.Equals(this.HashAlgorithms, target.HashAlgorithms)) return false;
+            if (!global::Omnius.Core.Helpers.CollectionHelper.Equals(this.KeyExchangeAlgorithmTypes, target.KeyExchangeAlgorithmTypes)) return false;
+            if (!global::Omnius.Core.Helpers.CollectionHelper.Equals(this.KeyDerivationAlgorithmTypes, target.KeyDerivationAlgorithmTypes)) return false;
+            if (!global::Omnius.Core.Helpers.CollectionHelper.Equals(this.CryptoAlgorithmTypes, target.CryptoAlgorithmTypes)) return false;
+            if (!global::Omnius.Core.Helpers.CollectionHelper.Equals(this.HashAlgorithmTypes, target.HashAlgorithmTypes)) return false;
 
             return true;
         }
@@ -153,38 +153,38 @@ namespace Omnius.Core.Net.Connections.Secure.V1.Internal
                     w.Write((uint)2);
                     w.Write((ulong)value.AuthenticationType);
                 }
-                if (value.KeyExchangeAlgorithms.Count != 0)
+                if (value.KeyExchangeAlgorithmTypes.Count != 0)
                 {
                     w.Write((uint)3);
-                    w.Write((uint)value.KeyExchangeAlgorithms.Count);
-                    foreach (var n in value.KeyExchangeAlgorithms)
+                    w.Write((uint)value.KeyExchangeAlgorithmTypes.Count);
+                    foreach (var n in value.KeyExchangeAlgorithmTypes)
                     {
                         w.Write((ulong)n);
                     }
                 }
-                if (value.KeyDerivationAlgorithms.Count != 0)
+                if (value.KeyDerivationAlgorithmTypes.Count != 0)
                 {
                     w.Write((uint)4);
-                    w.Write((uint)value.KeyDerivationAlgorithms.Count);
-                    foreach (var n in value.KeyDerivationAlgorithms)
+                    w.Write((uint)value.KeyDerivationAlgorithmTypes.Count);
+                    foreach (var n in value.KeyDerivationAlgorithmTypes)
                     {
                         w.Write((ulong)n);
                     }
                 }
-                if (value.CryptoAlgorithms.Count != 0)
+                if (value.CryptoAlgorithmTypes.Count != 0)
                 {
                     w.Write((uint)5);
-                    w.Write((uint)value.CryptoAlgorithms.Count);
-                    foreach (var n in value.CryptoAlgorithms)
+                    w.Write((uint)value.CryptoAlgorithmTypes.Count);
+                    foreach (var n in value.CryptoAlgorithmTypes)
                     {
                         w.Write((ulong)n);
                     }
                 }
-                if (value.HashAlgorithms.Count != 0)
+                if (value.HashAlgorithmTypes.Count != 0)
                 {
                     w.Write((uint)6);
-                    w.Write((uint)value.HashAlgorithms.Count);
-                    foreach (var n in value.HashAlgorithms)
+                    w.Write((uint)value.HashAlgorithmTypes.Count);
+                    foreach (var n in value.HashAlgorithmTypes)
                     {
                         w.Write((ulong)n);
                     }
@@ -197,10 +197,10 @@ namespace Omnius.Core.Net.Connections.Secure.V1.Internal
 
                 global::System.ReadOnlyMemory<byte> p_sessionId = global::System.ReadOnlyMemory<byte>.Empty;
                 global::Omnius.Core.Net.Connections.Secure.V1.Internal.AuthenticationType p_authenticationType = (global::Omnius.Core.Net.Connections.Secure.V1.Internal.AuthenticationType)0;
-                global::Omnius.Core.Net.Connections.Secure.V1.Internal.KeyExchangeAlgorithm[] p_keyExchangeAlgorithms = global::System.Array.Empty<global::Omnius.Core.Net.Connections.Secure.V1.Internal.KeyExchangeAlgorithm>();
-                global::Omnius.Core.Net.Connections.Secure.V1.Internal.KeyDerivationAlgorithm[] p_keyDerivationAlgorithms = global::System.Array.Empty<global::Omnius.Core.Net.Connections.Secure.V1.Internal.KeyDerivationAlgorithm>();
-                global::Omnius.Core.Net.Connections.Secure.V1.Internal.CryptoAlgorithm[] p_cryptoAlgorithms = global::System.Array.Empty<global::Omnius.Core.Net.Connections.Secure.V1.Internal.CryptoAlgorithm>();
-                global::Omnius.Core.Net.Connections.Secure.V1.Internal.HashAlgorithm[] p_hashAlgorithms = global::System.Array.Empty<global::Omnius.Core.Net.Connections.Secure.V1.Internal.HashAlgorithm>();
+                global::Omnius.Core.Net.Connections.Secure.V1.Internal.KeyExchangeAlgorithmType[] p_keyExchangeAlgorithmTypes = global::System.Array.Empty<global::Omnius.Core.Net.Connections.Secure.V1.Internal.KeyExchangeAlgorithmType>();
+                global::Omnius.Core.Net.Connections.Secure.V1.Internal.KeyDerivationAlgorithmType[] p_keyDerivationAlgorithmTypes = global::System.Array.Empty<global::Omnius.Core.Net.Connections.Secure.V1.Internal.KeyDerivationAlgorithmType>();
+                global::Omnius.Core.Net.Connections.Secure.V1.Internal.CryptoAlgorithmType[] p_cryptoAlgorithmTypes = global::System.Array.Empty<global::Omnius.Core.Net.Connections.Secure.V1.Internal.CryptoAlgorithmType>();
+                global::Omnius.Core.Net.Connections.Secure.V1.Internal.HashAlgorithmType[] p_hashAlgorithmTypes = global::System.Array.Empty<global::Omnius.Core.Net.Connections.Secure.V1.Internal.HashAlgorithmType>();
 
                 for (; ; )
                 {
@@ -221,47 +221,47 @@ namespace Omnius.Core.Net.Connections.Secure.V1.Internal
                         case 3:
                             {
                                 var length = r.GetUInt32();
-                                p_keyExchangeAlgorithms = new global::Omnius.Core.Net.Connections.Secure.V1.Internal.KeyExchangeAlgorithm[length];
-                                for (int i = 0; i < p_keyExchangeAlgorithms.Length; i++)
+                                p_keyExchangeAlgorithmTypes = new global::Omnius.Core.Net.Connections.Secure.V1.Internal.KeyExchangeAlgorithmType[length];
+                                for (int i = 0; i < p_keyExchangeAlgorithmTypes.Length; i++)
                                 {
-                                    p_keyExchangeAlgorithms[i] = (global::Omnius.Core.Net.Connections.Secure.V1.Internal.KeyExchangeAlgorithm)r.GetUInt64();
+                                    p_keyExchangeAlgorithmTypes[i] = (global::Omnius.Core.Net.Connections.Secure.V1.Internal.KeyExchangeAlgorithmType)r.GetUInt64();
                                 }
                                 break;
                             }
                         case 4:
                             {
                                 var length = r.GetUInt32();
-                                p_keyDerivationAlgorithms = new global::Omnius.Core.Net.Connections.Secure.V1.Internal.KeyDerivationAlgorithm[length];
-                                for (int i = 0; i < p_keyDerivationAlgorithms.Length; i++)
+                                p_keyDerivationAlgorithmTypes = new global::Omnius.Core.Net.Connections.Secure.V1.Internal.KeyDerivationAlgorithmType[length];
+                                for (int i = 0; i < p_keyDerivationAlgorithmTypes.Length; i++)
                                 {
-                                    p_keyDerivationAlgorithms[i] = (global::Omnius.Core.Net.Connections.Secure.V1.Internal.KeyDerivationAlgorithm)r.GetUInt64();
+                                    p_keyDerivationAlgorithmTypes[i] = (global::Omnius.Core.Net.Connections.Secure.V1.Internal.KeyDerivationAlgorithmType)r.GetUInt64();
                                 }
                                 break;
                             }
                         case 5:
                             {
                                 var length = r.GetUInt32();
-                                p_cryptoAlgorithms = new global::Omnius.Core.Net.Connections.Secure.V1.Internal.CryptoAlgorithm[length];
-                                for (int i = 0; i < p_cryptoAlgorithms.Length; i++)
+                                p_cryptoAlgorithmTypes = new global::Omnius.Core.Net.Connections.Secure.V1.Internal.CryptoAlgorithmType[length];
+                                for (int i = 0; i < p_cryptoAlgorithmTypes.Length; i++)
                                 {
-                                    p_cryptoAlgorithms[i] = (global::Omnius.Core.Net.Connections.Secure.V1.Internal.CryptoAlgorithm)r.GetUInt64();
+                                    p_cryptoAlgorithmTypes[i] = (global::Omnius.Core.Net.Connections.Secure.V1.Internal.CryptoAlgorithmType)r.GetUInt64();
                                 }
                                 break;
                             }
                         case 6:
                             {
                                 var length = r.GetUInt32();
-                                p_hashAlgorithms = new global::Omnius.Core.Net.Connections.Secure.V1.Internal.HashAlgorithm[length];
-                                for (int i = 0; i < p_hashAlgorithms.Length; i++)
+                                p_hashAlgorithmTypes = new global::Omnius.Core.Net.Connections.Secure.V1.Internal.HashAlgorithmType[length];
+                                for (int i = 0; i < p_hashAlgorithmTypes.Length; i++)
                                 {
-                                    p_hashAlgorithms[i] = (global::Omnius.Core.Net.Connections.Secure.V1.Internal.HashAlgorithm)r.GetUInt64();
+                                    p_hashAlgorithmTypes[i] = (global::Omnius.Core.Net.Connections.Secure.V1.Internal.HashAlgorithmType)r.GetUInt64();
                                 }
                                 break;
                             }
                     }
                 }
 
-                return new global::Omnius.Core.Net.Connections.Secure.V1.Internal.ProfileMessage(p_sessionId, p_authenticationType, p_keyExchangeAlgorithms, p_keyDerivationAlgorithms, p_cryptoAlgorithms, p_hashAlgorithms);
+                return new global::Omnius.Core.Net.Connections.Secure.V1.Internal.ProfileMessage(p_sessionId, p_authenticationType, p_keyExchangeAlgorithmTypes, p_keyDerivationAlgorithmTypes, p_cryptoAlgorithmTypes, p_hashAlgorithmTypes);
             }
         }
     }
@@ -389,36 +389,33 @@ namespace Omnius.Core.Net.Connections.Secure.V1.Internal
         static AuthenticationMessage()
         {
             global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.Net.Connections.Secure.V1.Internal.AuthenticationMessage>.Formatter = new ___CustomFormatter();
-            global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.Net.Connections.Secure.V1.Internal.AuthenticationMessage>.Empty = new global::Omnius.Core.Net.Connections.Secure.V1.Internal.AuthenticationMessage(global::System.Array.Empty<global::System.ReadOnlyMemory<byte>>());
+            global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.Net.Connections.Secure.V1.Internal.AuthenticationMessage>.Empty = new global::Omnius.Core.Net.Connections.Secure.V1.Internal.AuthenticationMessage(global::Omnius.Core.RocketPack.Timestamp.Zero, global::System.ReadOnlyMemory<byte>.Empty, null);
         }
 
         private readonly global::System.Lazy<int> ___hashCode;
 
-        public static readonly int MaxHashesCount = 32;
+        public static readonly int MaxHashLength = 32;
 
-        public AuthenticationMessage(global::System.ReadOnlyMemory<byte>[] hashes)
+        public AuthenticationMessage(global::Omnius.Core.RocketPack.Timestamp creationTime, global::System.ReadOnlyMemory<byte> hash, global::Omnius.Core.Cryptography.OmniCertificate? certificate)
         {
-            if (hashes is null) throw new global::System.ArgumentNullException("hashes");
-            if (hashes.Length > 32) throw new global::System.ArgumentOutOfRangeException("hashes");
-            foreach (var n in hashes)
-            {
-                if (n.Length > 32) throw new global::System.ArgumentOutOfRangeException("n");
-            }
-
-            this.Hashes = new global::Omnius.Core.Collections.ReadOnlyListSlim<global::System.ReadOnlyMemory<byte>>(hashes);
+            if (hash.Length > 32) throw new global::System.ArgumentOutOfRangeException("hash");
+            this.CreationTime = creationTime;
+            this.Hash = hash;
+            this.Certificate = certificate;
 
             ___hashCode = new global::System.Lazy<int>(() =>
             {
                 var ___h = new global::System.HashCode();
-                foreach (var n in hashes)
-                {
-                    if (!n.IsEmpty) ___h.Add(global::Omnius.Core.Helpers.ObjectHelper.GetHashCode(n.Span));
-                }
+                if (creationTime != default) ___h.Add(creationTime.GetHashCode());
+                if (!hash.IsEmpty) ___h.Add(global::Omnius.Core.Helpers.ObjectHelper.GetHashCode(hash.Span));
+                if (certificate != default) ___h.Add(certificate.GetHashCode());
                 return ___h.ToHashCode();
             });
         }
 
-        public global::Omnius.Core.Collections.ReadOnlyListSlim<global::System.ReadOnlyMemory<byte>> Hashes { get; }
+        public global::Omnius.Core.RocketPack.Timestamp CreationTime { get; }
+        public global::System.ReadOnlyMemory<byte> Hash { get; }
+        public global::Omnius.Core.Cryptography.OmniCertificate? Certificate { get; }
 
         public static global::Omnius.Core.Net.Connections.Secure.V1.Internal.AuthenticationMessage Import(global::System.Buffers.ReadOnlySequence<byte> sequence, global::Omnius.Core.IBytesPool bytesPool)
         {
@@ -448,7 +445,10 @@ namespace Omnius.Core.Net.Connections.Secure.V1.Internal
         {
             if (target is null) return false;
             if (object.ReferenceEquals(this, target)) return true;
-            if (!global::Omnius.Core.Helpers.CollectionHelper.Equals(this.Hashes, target.Hashes)) return false;
+            if (this.CreationTime != target.CreationTime) return false;
+            if (!global::Omnius.Core.BytesOperations.Equals(this.Hash.Span, target.Hash.Span)) return false;
+            if ((this.Certificate is null) != (target.Certificate is null)) return false;
+            if ((this.Certificate is not null) && (target.Certificate is not null) && this.Certificate != target.Certificate) return false;
 
             return true;
         }
@@ -460,14 +460,20 @@ namespace Omnius.Core.Net.Connections.Secure.V1.Internal
             {
                 if (rank > 256) throw new global::System.FormatException();
 
-                if (value.Hashes.Count != 0)
+                if (value.CreationTime != global::Omnius.Core.RocketPack.Timestamp.Zero)
                 {
                     w.Write((uint)1);
-                    w.Write((uint)value.Hashes.Count);
-                    foreach (var n in value.Hashes)
-                    {
-                        w.Write(n.Span);
-                    }
+                    w.Write(value.CreationTime);
+                }
+                if (!value.Hash.IsEmpty)
+                {
+                    w.Write((uint)2);
+                    w.Write(value.Hash.Span);
+                }
+                if (value.Certificate != null)
+                {
+                    w.Write((uint)3);
+                    global::Omnius.Core.Cryptography.OmniCertificate.Formatter.Serialize(ref w, value.Certificate, rank + 1);
                 }
                 w.Write((uint)0);
             }
@@ -475,7 +481,9 @@ namespace Omnius.Core.Net.Connections.Secure.V1.Internal
             {
                 if (rank > 256) throw new global::System.FormatException();
 
-                global::System.ReadOnlyMemory<byte>[] p_hashes = global::System.Array.Empty<global::System.ReadOnlyMemory<byte>>();
+                global::Omnius.Core.RocketPack.Timestamp p_creationTime = global::Omnius.Core.RocketPack.Timestamp.Zero;
+                global::System.ReadOnlyMemory<byte> p_hash = global::System.ReadOnlyMemory<byte>.Empty;
+                global::Omnius.Core.Cryptography.OmniCertificate? p_certificate = null;
 
                 for (; ; )
                 {
@@ -485,18 +493,23 @@ namespace Omnius.Core.Net.Connections.Secure.V1.Internal
                     {
                         case 1:
                             {
-                                var length = r.GetUInt32();
-                                p_hashes = new global::System.ReadOnlyMemory<byte>[length];
-                                for (int i = 0; i < p_hashes.Length; i++)
-                                {
-                                    p_hashes[i] = r.GetMemory(32);
-                                }
+                                p_creationTime = r.GetTimestamp();
+                                break;
+                            }
+                        case 2:
+                            {
+                                p_hash = r.GetMemory(32);
+                                break;
+                            }
+                        case 3:
+                            {
+                                p_certificate = global::Omnius.Core.Cryptography.OmniCertificate.Formatter.Deserialize(ref r, rank + 1);
                                 break;
                             }
                     }
                 }
 
-                return new global::Omnius.Core.Net.Connections.Secure.V1.Internal.AuthenticationMessage(p_hashes);
+                return new global::Omnius.Core.Net.Connections.Secure.V1.Internal.AuthenticationMessage(p_creationTime, p_hash, p_certificate);
             }
         }
     }

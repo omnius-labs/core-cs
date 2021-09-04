@@ -26,11 +26,20 @@ namespace Omnius.Core.Net.Connections.Secure.V1.Internal
 
             private long _receivedByteCount;
 
-            public ConnectionReceiver(IConnectionReceiver receiver, int maxReceiveByteCount, byte[] cryptoKey, byte[] nonce, IBytesPool bytesPool, CancellationTokenSource cancellationTokenSource)
+            public ConnectionReceiver(IConnectionReceiver receiver, CryptoAlgorithmType cryptoAlgorithmType, int maxReceiveByteCount, byte[] cryptoKey, byte[] nonce, IBytesPool bytesPool, CancellationTokenSource cancellationTokenSource)
             {
                 _receiver = receiver;
                 _maxReceiveByteCount = maxReceiveByteCount;
-                _decrypter = new AesGcmDecrypter(cryptoKey, nonce, bytesPool);
+
+                if (cryptoAlgorithmType == CryptoAlgorithmType.Aes_Gcm_256)
+                {
+                    _decrypter = new AesGcmDecrypter(cryptoKey, nonce, bytesPool);
+                }
+                else
+                {
+                    throw new NotSupportedException(nameof(cryptoAlgorithmType));
+                }
+
                 _bytesPool = bytesPool;
                 _cancellationTokenSource = cancellationTokenSource;
 
@@ -85,14 +94,26 @@ namespace Omnius.Core.Net.Connections.Secure.V1.Internal
                 catch (ConnectionException e)
                 {
                     _exception = e;
-                    _cancellationTokenSource.Cancel();
+                    this.Cancel();
                     return;
                 }
                 catch (Exception e)
                 {
                     _exception = new ConnectionException("receive error", e);
-                    _cancellationTokenSource.Cancel();
+                    this.Cancel();
                     return;
+                }
+            }
+
+            private void Cancel()
+            {
+                try
+                {
+                    _cancellationTokenSource.Cancel();
+                }
+                catch (ObjectDisposedException e)
+                {
+                    _logger.Debug(e);
                 }
             }
 
