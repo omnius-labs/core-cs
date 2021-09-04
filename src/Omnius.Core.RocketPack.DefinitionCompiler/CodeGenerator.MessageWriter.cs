@@ -29,25 +29,11 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
             {
                 if (objectDefinition.IsCSharpStruct)
                 {
-                    if (objectDefinition.Elements.Select(n => n.Type).OfType<BytesType>().Any(n => n.IsUseMemoryPool))
-                    {
-                        b.WriteLine($"{accessLevel} readonly partial struct {objectDefinition.Name} : {GenerateTypeFullName("IRocketMessage<>", objectDefinition.CSharpFullName)}, {GenerateTypeFullName("IDisposable")}");
-                    }
-                    else
-                    {
-                        b.WriteLine($"{accessLevel} readonly partial struct {objectDefinition.Name} : {GenerateTypeFullName("IRocketMessage<>", objectDefinition.CSharpFullName)}");
-                    }
+                    b.WriteLine($"{accessLevel} readonly partial struct {objectDefinition.Name} : {GenerateTypeFullName("IRocketMessage<>", objectDefinition.CSharpFullName)}");
                 }
                 else if (objectDefinition.IsCSharpClass)
                 {
-                    if (objectDefinition.Elements.Select(n => n.Type).OfType<BytesType>().Any(n => n.IsUseMemoryPool))
-                    {
-                        b.WriteLine($"{accessLevel} sealed partial class {objectDefinition.Name} : {GenerateTypeFullName("IRocketMessage<>", objectDefinition.CSharpFullName)}, {GenerateTypeFullName("IDisposable")}");
-                    }
-                    else
-                    {
-                        b.WriteLine($"{accessLevel} sealed partial class {objectDefinition.Name} : {GenerateTypeFullName("IRocketMessage<>", objectDefinition.CSharpFullName)}");
-                    }
+                    b.WriteLine($"{accessLevel} sealed partial class {objectDefinition.Name} : {GenerateTypeFullName("IRocketMessage<>", objectDefinition.CSharpFullName)}");
                 }
 
                 b.WriteLine("{");
@@ -68,12 +54,6 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
 
                     this.Write_Equals(b, objectDefinition);
                     b.WriteLine();
-
-                    if (objectDefinition.Elements.Select(n => n.Type).OfType<BytesType>().Any(n => n.IsUseMemoryPool))
-                    {
-                        this.Write_Dispose(b, objectDefinition);
-                        b.WriteLine();
-                    }
 
                     if (objectDefinition.FormatType == MessageFormatType.Message)
                     {
@@ -173,9 +153,6 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                 {
                     switch (element.Type)
                     {
-                        case BytesType type when (type.IsUseMemoryPool):
-                            b.WriteLine($"_{GenerateFieldVariableName(element.Name)} = {GenerateFieldVariableName(element.Name)};");
-                            break;
                         case VectorType type:
                             if (type.IsOptional)
                             {
@@ -738,7 +715,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                             case TimestampType type:
                                 b.WriteLine($"if (this.{element.Name} != target.{element.Name}) return false;");
                                 break;
-                            case BytesType type:
+                            case BytesType type when !type.IsUseMemoryPool:
                                 if (!type.IsOptional)
                                 {
                                     b.WriteLine($"if (!{GenerateTypeFullName("BytesOperations")}.Equals(this.{element.Name}.Span, target.{element.Name}.Span)) return false;");
@@ -747,6 +724,18 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                                 {
                                     b.WriteLine($"if ((this.{element.Name} is null) != (target.{element.Name} is null)) return false;");
                                     b.WriteLine($"if ((this.{element.Name} is not null) && (target.{element.Name} is not null) && !{GenerateTypeFullName("BytesOperations")}.Equals(this.{element.Name}.Value.Span, target.{element.Name}.Value.Span)) return false;");
+                                }
+
+                                break;
+                            case BytesType type when type.IsUseMemoryPool:
+                                if (!type.IsOptional)
+                                {
+                                    b.WriteLine($"if (!{GenerateTypeFullName("BytesOperations")}.Equals(this.{element.Name}.Memory.Span, target.{element.Name}.Memory.Span)) return false;");
+                                }
+                                else
+                                {
+                                    b.WriteLine($"if ((this.{element.Name} is null) != (target.{element.Name} is null)) return false;");
+                                    b.WriteLine($"if ((this.{element.Name} is not null) && (target.{element.Name} is not null) && !{GenerateTypeFullName("BytesOperations")}.Equals(this.{element.Name}.Memory.Span, target.{element.Name}.Memory.Span)) return false;");
                                 }
 
                                 break;
@@ -831,47 +820,8 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
             {
                 foreach (var element in objectDefinition.Elements)
                 {
-                    switch (element.Type)
-                    {
-                        case BytesType type when (type.IsUseMemoryPool):
-                            if (!type.IsOptional)
-                            {
-                                b.WriteLine($"private readonly {this.GenerateParameterTypeFullName(element.Type)} _{GenerateFieldVariableName(element.Name)};");
-                                b.WriteLine($"public {this.GeneratePropertyTypeFullName(element.Type)} {element.Name} => _{GenerateFieldVariableName(element.Name)}.Memory;");
-                            }
-                            else
-                            {
-                                b.WriteLine($"private readonly {this.GenerateParameterTypeFullName(element.Type)} _{GenerateFieldVariableName(element.Name)};");
-                                b.WriteLine($"public {this.GeneratePropertyTypeFullName(element.Type)} {element.Name} => _{GenerateFieldVariableName(element.Name)}?.Memory;");
-                            }
-
-                            break;
-                        default:
-                            b.WriteLine($"public {this.GeneratePropertyTypeFullName(element.Type)} {element.Name} {{ get; }}");
-                            break;
-                    }
+                    b.WriteLine($"public {this.GeneratePropertyTypeFullName(element.Type)} {element.Name} {{ get; }}");
                 }
-            }
-
-            private void Write_Dispose(CodeWriter b, ObjectDefinition objectDefinition)
-            {
-                b.WriteLine("public void Dispose()");
-                b.WriteLine("{");
-
-                using (b.Indent())
-                {
-                    foreach (var element in objectDefinition.Elements)
-                    {
-                        switch (element.Type)
-                        {
-                            case BytesType type when (type.IsUseMemoryPool):
-                                b.WriteLine($"_{GenerateFieldVariableName(element.Name)}?.Dispose();");
-                                break;
-                        }
-                    }
-                }
-
-                b.WriteLine("}");
             }
 
             private void Write_Medium_Formatter(CodeWriter b, ObjectDefinition objectDefinition)
@@ -964,7 +914,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                         }
 
                         break;
-                    case BytesType memoryType when (memoryType.IsUseMemoryPool):
+                    case BytesType memoryType when (!memoryType.IsUseMemoryPool):
                         if (!type.IsOptional)
                         {
                             b.WriteLine($"w.Write({name}.Span);");
@@ -975,14 +925,14 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                         }
 
                         break;
-                    case BytesType memoryType when (!memoryType.IsUseMemoryPool):
+                    case BytesType memoryType when (memoryType.IsUseMemoryPool):
                         if (!type.IsOptional)
                         {
-                            b.WriteLine($"w.Write({name}.Span);");
+                            b.WriteLine($"w.Write({name}.Memory.Span);");
                         }
                         else
                         {
-                            b.WriteLine($"w.Write({name}.Value.Span);");
+                            b.WriteLine($"w.Write({name}.Memory.Span);");
                         }
 
                         break;
@@ -1305,7 +1255,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                         }
 
                         break;
-                    case BytesType memoryType when (memoryType.IsUseMemoryPool):
+                    case BytesType memoryType when (!memoryType.IsUseMemoryPool):
                         if (!type.IsOptional)
                         {
                             b.WriteLine($"w.Write({name}.Span);");
@@ -1316,14 +1266,14 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                         }
 
                         break;
-                    case BytesType memoryType when (!memoryType.IsUseMemoryPool):
+                    case BytesType memoryType when (memoryType.IsUseMemoryPool):
                         if (!type.IsOptional)
                         {
-                            b.WriteLine($"w.Write({name}.Span);");
+                            b.WriteLine($"w.Write({name}.Memory.Span);");
                         }
                         else
                         {
-                            b.WriteLine($"w.Write({name}.Value.Span);");
+                            b.WriteLine($"w.Write({name}.Memory.Span);");
                         }
 
                         break;
@@ -1613,10 +1563,21 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
                         }
 
                         break;
-                    case BytesType type:
+                    case BytesType type when !type.IsUseMemoryPool:
                         if (!type.IsOptional)
                         {
                             sb.Append($"!value.{element.Name}.IsEmpty)");
+                        }
+                        else
+                        {
+                            sb.Append($"value.{element.Name} != null)");
+                        }
+
+                        break;
+                    case BytesType type when type.IsUseMemoryPool:
+                        if (!type.IsOptional)
+                        {
+                            sb.Append($"!value.{element.Name}.Memory.IsEmpty)");
                         }
                         else
                         {
@@ -1768,8 +1729,6 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler
             {
                 return typeBase switch
                 {
-                    BytesType type when (!type.IsUseMemoryPool) => GenerateTypeFullName("ReadOnlyMemory<>", "byte") + (type.IsOptional ? "?" : ""),
-                    BytesType type when (type.IsUseMemoryPool) => GenerateTypeFullName("ReadOnlyMemory<>", "byte") + (type.IsOptional ? "?" : ""),
                     VectorType type => GenerateTypeFullName("ReadOnlyListSlim<>", this.GenerateParameterTypeFullName(type.ElementType)) + (type.IsOptional ? "?" : ""),
                     MapType type => GenerateTypeFullName("ReadOnlyDictionarySlim<,>", this.GenerateParameterTypeFullName(type.KeyType), this.GenerateParameterTypeFullName(type.ValueType)) + (type.IsOptional ? "?" : ""),
                     _ => this.GenerateParameterTypeFullName(typeBase),
