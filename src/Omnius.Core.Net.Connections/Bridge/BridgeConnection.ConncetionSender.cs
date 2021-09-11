@@ -14,7 +14,7 @@ namespace Omnius.Core.Net.Connections.Bridge
         {
             private readonly ICap _cap;
             private readonly IBytesPool _bytesPool;
-            private readonly CancellationTokenSource _cancellationTokenSource;
+            private readonly CancellationToken _cancellationToken;
 
             private readonly byte[] _headerBuffer = new byte[4];
             private int _headerBufferPosition = -1;
@@ -28,11 +28,11 @@ namespace Omnius.Core.Net.Connections.Bridge
 
             private readonly object _lockObject = new();
 
-            public ConnectionSender(ICap cap, IBytesPool bytesPool, CancellationTokenSource cancellationTokenSource)
+            public ConnectionSender(ICap cap, IBytesPool bytesPool, CancellationToken cancellationToken)
             {
                 _cap = cap;
                 _bytesPool = bytesPool;
-                _cancellationTokenSource = cancellationTokenSource;
+                _cancellationToken = cancellationToken;
 
                 _bytesPipe = new BytesPipe(_bytesPool);
                 _semaphoreSlim = new SemaphoreSlim(1, 1);
@@ -51,12 +51,14 @@ namespace Omnius.Core.Net.Connections.Bridge
 
             internal int InternalSend(int maxSize)
             {
-                if (_exception is not null) return 0;
+                if (_exception is not null) throw _exception;
 
                 try
                 {
                     lock (_lockObject)
                     {
+                        if (!_cap.IsConnected) throw new ConnectionException("cap is not connected");
+
                         int total = 0;
                         int loopCount = 0;
 
@@ -118,14 +120,12 @@ namespace Omnius.Core.Net.Connections.Bridge
                 catch (ConnectionException e)
                 {
                     _exception = e;
-                    _cancellationTokenSource.Cancel();
-                    return 0;
+                    throw e;
                 }
                 catch (Exception e)
                 {
                     _exception = new ConnectionException("send error", e);
-                    _cancellationTokenSource.Cancel();
-                    return 0;
+                    throw e;
                 }
             }
 
@@ -139,7 +139,7 @@ namespace Omnius.Core.Net.Connections.Bridge
             {
                 try
                 {
-                    if (!_semaphoreSlim.Wait(0, _cancellationTokenSource.Token)) return false;
+                    if (!_semaphoreSlim.Wait(0, _cancellationToken)) return false;
                 }
                 catch (OperationCanceledException)
                 {
@@ -154,7 +154,7 @@ namespace Omnius.Core.Net.Connections.Bridge
             {
                 try
                 {
-                    using var linkedTokenSource = CancellationTokenSource.CreateLinkedTokenSource(_cancellationTokenSource.Token, cancellationToken);
+                    using var linkedTokenSource = CancellationTokenSource.CreateLinkedTokenSource(_cancellationToken, cancellationToken);
                     await _semaphoreSlim.WaitAsync(linkedTokenSource.Token);
                 }
                 catch (OperationCanceledException)

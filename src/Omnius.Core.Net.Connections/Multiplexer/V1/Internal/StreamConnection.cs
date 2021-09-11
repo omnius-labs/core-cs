@@ -24,14 +24,18 @@ namespace Omnius.Core.Net.Connections.Multiplexer.V1.Internal
         private readonly BoundedMessagePipe _sendFinishMessagePipe;
         private readonly ActionPipe _receiveFinishActionPipe;
 
-        private readonly List<IDisposable> _disposables = new();
-        private readonly CancellationTokenSource _cancellationTokenSource = new();
+        private readonly CancellationTokenSource _cancellationTokenSource;
 
-        public StreamConnection(int maxSendDataQueueSize, int maxReceiveDataQueueSize, IBytesPool bytesPool)
+        private readonly List<IDisposable> _disposables = new();
+
+        public StreamConnection(int maxSendDataQueueSize, int maxReceiveDataQueueSize, IBytesPool bytesPool, CancellationToken cancellationToken)
         {
             _maxSendDataQueueSize = maxSendDataQueueSize;
             _maxReceiveDataQueueSize = maxReceiveDataQueueSize;
             _bytesPool = bytesPool;
+
+            _cancellationTokenSource = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+            _cancellationTokenSource.ToAdd(_disposables);
 
             _sendDataMessagePipe = new BoundedMessagePipe<ArraySegment<byte>>(_maxSendDataQueueSize).ToAdd(_disposables);
             _receiveDataMessagePipe = new BoundedMessagePipe<ArraySegment<byte>>(_maxReceiveDataQueueSize).ToAdd(_disposables);
@@ -45,8 +49,6 @@ namespace Omnius.Core.Net.Connections.Multiplexer.V1.Internal
             _sendFinishMessagePipe = new BoundedMessagePipe(1).ToAdd(_disposables);
             _receiveFinishActionPipe = new ActionPipe();
             _receiveFinishActionPipe.Subscriber.Subscribe(() => this.OnReceiveFinish()).ToAdd(_disposables);
-
-            _cancellationTokenSource.ToAdd(_disposables);
         }
 
         internal void InternalDispose()

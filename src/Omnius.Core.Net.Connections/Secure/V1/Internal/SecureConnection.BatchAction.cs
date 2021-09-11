@@ -1,7 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
 using Omnius.Core.Tasks;
 
 namespace Omnius.Core.Net.Connections.Secure.V1.Internal
@@ -12,19 +9,36 @@ namespace Omnius.Core.Net.Connections.Secure.V1.Internal
         {
             private readonly ConnectionSender _sender;
             private readonly ConnectionReceiver _receiver;
+            private readonly Action<Exception> _exceptionCallback;
 
-            public BatchAction(ConnectionSender sender, ConnectionReceiver receiver)
+            public BatchAction(ConnectionSender sender, ConnectionReceiver receiver, Action<Exception> exceptionCallback)
             {
                 _sender = sender;
                 _receiver = receiver;
+                _exceptionCallback = exceptionCallback;
             }
 
             public TimeSpan Interval { get; } = TimeSpan.FromMilliseconds(50);
 
             public void Execute()
             {
-                _sender.InternalSend();
-                _receiver.InternalReceive();
+                try
+                {
+                    _sender.InternalSend();
+                }
+                catch (Exception e)
+                {
+                    _exceptionCallback.Invoke(e);
+                }
+
+                try
+                {
+                    _receiver.InternalReceive();
+                }
+                catch (Exception e)
+                {
+                    _exceptionCallback.Invoke(e);
+                }
             }
         }
     }

@@ -1,7 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
 using Omnius.Core.Tasks;
 
 namespace Omnius.Core.Net.Connections.Multiplexer.V1.Internal
@@ -11,18 +8,35 @@ namespace Omnius.Core.Net.Connections.Multiplexer.V1.Internal
         private sealed class BatchAction : IBatchAction
         {
             private readonly ConnectionMultiplexer _connectionMultiplexer;
+            private readonly Action<Exception> _exceptionCallback;
 
-            public BatchAction(ConnectionMultiplexer connectionMultiplexer)
+            public BatchAction(ConnectionMultiplexer connectionMultiplexer, Action<Exception> exceptionCallback)
             {
                 _connectionMultiplexer = connectionMultiplexer;
+                _exceptionCallback = exceptionCallback;
             }
 
             public TimeSpan Interval { get; } = TimeSpan.FromMilliseconds(100);
 
             public void Execute()
             {
-                _connectionMultiplexer.InternalSend();
-                _connectionMultiplexer.InternalReceive();
+                try
+                {
+                    _connectionMultiplexer.InternalSend();
+                }
+                catch (Exception e)
+                {
+                    _exceptionCallback.Invoke(e);
+                }
+
+                try
+                {
+                    _connectionMultiplexer.InternalReceive();
+                }
+                catch (Exception e)
+                {
+                    _exceptionCallback.Invoke(e);
+                }
             }
         }
     }

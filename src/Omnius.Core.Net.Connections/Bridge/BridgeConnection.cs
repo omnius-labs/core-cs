@@ -3,7 +3,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Omnius.Core.Net.Caps;
 using Omnius.Core.Net.Connections.Internal;
-using Omnius.Core.Pipelines;
 using Omnius.Core.Tasks;
 
 namespace Omnius.Core.Net.Connections.Bridge
@@ -26,6 +25,9 @@ namespace Omnius.Core.Net.Connections.Bridge
 
         private readonly CancellationTokenSource _cancellationTokenSource = new();
 
+        private readonly object _lockObject = new();
+        private bool _canceled = false;
+
         public BridgeConnection(ICap cap, IBandwidthLimiter? senderBandwidthLimiter, IBandwidthLimiter? receiverBandwidthLimiter, IBatchActionDispatcher batchActionDispatcher,
             IBytesPool bytesPool, BridgeConnectionOptions options)
         {
@@ -36,23 +38,40 @@ namespace Omnius.Core.Net.Connections.Bridge
             _bytesPool = bytesPool;
             _options = options;
 
-            _sender = new ConnectionSender(_cap, _bytesPool, _cancellationTokenSource);
-            _receiver = new ConnectionReceiver(_cap, _options.MaxReceiveByteCount, _bytesPool, _cancellationTokenSource);
+            _sender = new ConnectionSender(_cap, _bytesPool, _cancellationTokenSource.Token);
+            _receiver = new ConnectionReceiver(_cap, _options.MaxReceiveByteCount, _bytesPool, _cancellationTokenSource.Token);
             _subscribers = new ConnectionEvents(_cancellationTokenSource.Token);
-            _batchAction = new BatchAction(_sender, _receiver, _senderBandwidthLimiter, _receiverBandwidthLimiter);
+            _batchAction = new BatchAction(_sender, _receiver, _senderBandwidthLimiter, _receiverBandwidthLimiter, this.HandleException);
             _batchActionDispatcher.Register(_batchAction);
+        }
+
+        private void HandleException(Exception e)
+        {
+            _logger.Debug(e);
+            this.Cancel();
         }
 
         protected override async ValueTask OnDisposeAsync()
         {
-            _batchActionDispatcher.Unregister(_batchAction);
+            this.Cancel();
 
-            _cancellationTokenSource.Cancel();
             _subscribers.Dispose();
             _sender.Dispose();
             _receiver.Dispose();
             _cap.Dispose();
             _cancellationTokenSource.Dispose();
+        }
+
+        private void Cancel()
+        {
+            lock (_lockObject)
+            {
+                if (_canceled) return;
+                _canceled = true;
+
+                _batchActionDispatcher.Unregister(_batchAction);
+                _cancellationTokenSource.Cancel();
+            }
         }
 
         public bool IsConnected => _cap.IsConnected;
