@@ -20,10 +20,13 @@ namespace Omnius.Core.Net.Connections.Secure.V1.Internal
 
         private ConnectionSender? _sender;
         private ConnectionReceiver? _receiver;
-        private ConnectionEvents? _subscribers;
+        private ConnectionEvents? _events;
         private BatchAction? _batchAction;
 
         private readonly CancellationTokenSource _cancellationTokenSource = new();
+
+        private readonly object _lockObject = new();
+        private bool _canceled = false;
 
         private const int FrameSize = 32 * 1024;
         private const int TagSize = 16;
@@ -38,10 +41,9 @@ namespace Omnius.Core.Net.Connections.Secure.V1.Internal
 
         protected override async ValueTask OnDisposeAsync()
         {
-            if (_batchAction is not null) _batchActionDispatcher.Unregister(_batchAction);
+            this.Cancel();
 
-            _cancellationTokenSource.Cancel();
-            _subscribers?.Dispose();
+            _events?.Dispose();
             _sender?.Dispose();
             _receiver?.Dispose();
             await _connection.DisposeAsync();
@@ -54,7 +56,7 @@ namespace Omnius.Core.Net.Connections.Secure.V1.Internal
 
         public IConnectionReceiver Receiver => _receiver ?? throw new InvalidOperationException();
 
-        public IConnectionEvents Subscribers => _subscribers ?? throw new InvalidOperationException();
+        public IConnectionEvents Subscribers => _events ?? throw new InvalidOperationException();
 
         public OmniSignature? Signature => _signature;
 
@@ -64,11 +66,29 @@ namespace Omnius.Core.Net.Connections.Secure.V1.Internal
             var authenticatedResult = await authenticator.AuthenticateAsync(cancellationToken);
 
             _signature = authenticatedResult.Signature;
-            _sender = new ConnectionSender(_connection.Sender, authenticatedResult.CryptoAlgorithmType, authenticatedResult.EncryptKey, authenticatedResult.EncryptNonce, _bytesPool, _cancellationTokenSource);
-            _receiver = new ConnectionReceiver(_connection.Receiver, authenticatedResult.CryptoAlgorithmType, _options.MaxReceiveByteCount, authenticatedResult.DecryptKey, authenticatedResult.DecryptNonce, _bytesPool, _cancellationTokenSource);
-            _subscribers = new ConnectionEvents(_cancellationTokenSource.Token);
-            _batchAction = new BatchAction(_sender, _receiver);
+            _sender = new ConnectionSender(_connection.Sender, authenticatedResult.CryptoAlgorithmType, authenticatedResult.EncryptKey, authenticatedResult.EncryptNonce, _bytesPool, _cancellationTokenSource.Token);
+            _receiver = new ConnectionReceiver(_connection.Receiver, authenticatedResult.CryptoAlgorithmType, _options.MaxReceiveByteCount, authenticatedResult.DecryptKey, authenticatedResult.DecryptNonce, _bytesPool, _cancellationTokenSource.Token);
+            _events = new ConnectionEvents(_cancellationTokenSource.Token);
+            _batchAction = new BatchAction(_sender, _receiver, this.HandleException);
             _batchActionDispatcher.Register(_batchAction);
+        }
+
+        private void HandleException(Exception e)
+        {
+            _logger.Debug(e);
+            this.Cancel();
+        }
+
+        private void Cancel()
+        {
+            lock (_lockObject)
+            {
+                if (_canceled) return;
+                _canceled = true;
+
+                if (_batchAction is not null) _batchActionDispatcher.Unregister(_batchAction);
+                _cancellationTokenSource.Cancel();
+            }
         }
 
         internal static void Increment(in byte[] bytes)

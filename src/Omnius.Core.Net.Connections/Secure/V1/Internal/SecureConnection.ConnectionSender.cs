@@ -17,7 +17,7 @@ namespace Omnius.Core.Net.Connections.Secure.V1.Internal
             private readonly IConnectionSender _sender;
             private readonly IBytesPool _bytesPool;
             private readonly AesGcmEncrypter _encrypter;
-            private readonly CancellationTokenSource _cancellationTokenSource;
+            private readonly CancellationToken _cancellationToken;
 
             private Exception? _exception = null;
 
@@ -26,7 +26,7 @@ namespace Omnius.Core.Net.Connections.Secure.V1.Internal
 
             private long _sentByteCount;
 
-            public ConnectionSender(IConnectionSender sender, CryptoAlgorithmType cryptoAlgorithmType, byte[] cryptoKey, byte[] nonce, IBytesPool bytesPool, CancellationTokenSource cancellationTokenSource)
+            public ConnectionSender(IConnectionSender sender, CryptoAlgorithmType cryptoAlgorithmType, byte[] cryptoKey, byte[] nonce, IBytesPool bytesPool, CancellationToken cancellationToken)
             {
                 _sender = sender;
 
@@ -40,7 +40,7 @@ namespace Omnius.Core.Net.Connections.Secure.V1.Internal
                 }
 
                 _bytesPool = bytesPool;
-                _cancellationTokenSource = cancellationTokenSource;
+                _cancellationToken = cancellationToken;
 
                 _semaphoreSlim = new SemaphoreSlim(1, 1);
                 _resetEvent = new ManualResetEventSlim();
@@ -72,7 +72,7 @@ namespace Omnius.Core.Net.Connections.Secure.V1.Internal
 
             internal void InternalSend()
             {
-                if (_exception is not null) return;
+                if (_exception is not null) throw _exception;
 
                 try
                 {
@@ -94,26 +94,12 @@ namespace Omnius.Core.Net.Connections.Secure.V1.Internal
                 catch (ConnectionException e)
                 {
                     _exception = e;
-                    this.Cancel();
-                    return;
+                    throw e;
                 }
                 catch (Exception e)
                 {
                     _exception = new ConnectionException("send error", e);
-                    this.Cancel();
-                    return;
-                }
-            }
-
-            private void Cancel()
-            {
-                try
-                {
-                    _cancellationTokenSource.Cancel();
-                }
-                catch (ObjectDisposedException e)
-                {
-                    _logger.Debug(e);
+                    throw e;
                 }
             }
 
@@ -127,7 +113,7 @@ namespace Omnius.Core.Net.Connections.Secure.V1.Internal
             {
                 try
                 {
-                    if (!_semaphoreSlim.Wait(0, _cancellationTokenSource.Token)) return false;
+                    if (!_semaphoreSlim.Wait(0, _cancellationToken)) return false;
                 }
                 catch (OperationCanceledException)
                 {
@@ -142,7 +128,7 @@ namespace Omnius.Core.Net.Connections.Secure.V1.Internal
             {
                 try
                 {
-                    using var linkedTokenSource = CancellationTokenSource.CreateLinkedTokenSource(_cancellationTokenSource.Token, cancellationToken);
+                    using var linkedTokenSource = CancellationTokenSource.CreateLinkedTokenSource(_cancellationToken, cancellationToken);
                     await _semaphoreSlim.WaitAsync(linkedTokenSource.Token);
                 }
                 catch (OperationCanceledException)

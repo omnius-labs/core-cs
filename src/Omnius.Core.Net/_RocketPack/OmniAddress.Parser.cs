@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
@@ -44,8 +43,7 @@ namespace Omnius.Core.Net
             ipAddress = IPAddress.None;
             port = 0;
 
-            var rootFunction = this.Deconstruct();
-
+            var rootFunction = Deconstructor.Deconstruct(this.Value);
             if (rootFunction == null) return false;
 
             if (rootFunction.Name == "tcp")
@@ -122,11 +120,6 @@ namespace Omnius.Core.Net
             return true;
         }
 
-        private FunctionElement Deconstruct()
-        {
-            return Deconstructor.Deconstruct(this.Value);
-        }
-
         private static class Deconstructor
         {
             private static readonly Parser<string> _stringLiteralParser =
@@ -152,17 +145,15 @@ namespace Omnius.Core.Net
                 from comma in Sprache.Parse.Char(',').Optional().TokenWithSkipSpace()
                 select new FunctionElement(name, arguments.ToArray());
 
-            public static FunctionElement Deconstruct(string text)
+            public static FunctionElement? Deconstruct(string text)
             {
                 try
                 {
                     return _functionElementParser.End().Parse(text);
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
-                    _logger.Error(e);
-
-                    throw new FormatException("Failed parse.", e);
+                    return null;
                 }
             }
         }

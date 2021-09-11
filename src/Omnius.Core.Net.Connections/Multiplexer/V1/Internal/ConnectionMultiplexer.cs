@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Threading;
 using System.Threading.Tasks;
-using Omnius.Core.Helpers;
 using Omnius.Core.Pipelines;
 using Omnius.Core.Tasks;
 
@@ -42,6 +41,9 @@ namespace Omnius.Core.Net.Connections.Multiplexer.V1.Internal
 
         private BatchAction? _batchAction;
 
+        private readonly object _lockObject = new();
+        private bool _canceled = false;
+
         private readonly List<IDisposable> _disposables = new();
 
         public ConnectionMultiplexer(IConnection connection, IBatchActionDispatcher batchActionDispatcher, IBytesPool bytesPool, OmniConnectionMultiplexerOptions options)
@@ -56,23 +58,18 @@ namespace Omnius.Core.Net.Connections.Multiplexer.V1.Internal
 
         protected override async ValueTask OnDisposeAsync()
         {
+            this.Cancel();
+
             foreach (var connection in _streamConnectionMap.Values)
             {
                 await connection.DisposeAsync();
             }
-
-            _batchActionDispatcher.Unregister(_batchAction!);
 
             _requestingStreamSemaphore!.Dispose();
             _sendStreamRequestPipe!.Dispose();
             _sendStreamRequestAcceptedPipe!.Dispose();
             _receiveStreamRequestPipe!.Dispose();
             _receiveStreamRequestAcceptedPipe!.Dispose();
-        }
-
-        private uint GetNextStreamId()
-        {
-            return Interlocked.Add(ref _nextStreamId, 2);
         }
 
         public bool IsConnected => _connection.IsConnected;
@@ -94,8 +91,26 @@ namespace Omnius.Core.Net.Connections.Multiplexer.V1.Internal
 
             _requestingStreamSemaphore = new SemaphoreSlim(1, (int)_sessionOptions.MaxStreamRequestQueueSize);
 
-            _batchAction = new BatchAction(this);
+            _batchAction = new BatchAction(this, this.HandleException);
             _batchActionDispatcher.Register(_batchAction);
+        }
+
+        private void HandleException(Exception e)
+        {
+            _logger.Debug(e);
+            this.Cancel();
+        }
+
+        private void Cancel()
+        {
+            lock (_lockObject)
+            {
+                if (_canceled) return;
+                _canceled = true;
+
+                if (_batchAction is not null) _batchActionDispatcher.Unregister(_batchAction);
+                _cancellationTokenSource.Cancel();
+            }
         }
 
         private async ValueTask<ProfileMessage> ExchangeProfileMessageAsync(CancellationToken cancellationToken = default)
@@ -196,14 +211,21 @@ namespace Omnius.Core.Net.Connections.Multiplexer.V1.Internal
                         }
                     });
             }
+            catch (ConnectionException e)
+            {
+                throw e;
+            }
             catch (Exception e)
             {
-                _logger.Debug(e);
+                throw e;
             }
         }
 
         private void InternalReceive()
         {
+            if (_receiveStreamRequestPipe is null) return;
+            if (_receiveStreamRequestAcceptedPipe is null) return;
+
             try
             {
                 _connection.Receiver.TryReceive(
@@ -223,7 +245,7 @@ namespace Omnius.Core.Net.Connections.Multiplexer.V1.Internal
                                break;
                            case PacketType.StreamRequest:
                                {
-                                   if (!_receiveStreamRequestPipe!.Writer.TryWrite())
+                                   if (!_receiveStreamRequestPipe.Writer.TryWrite())
                                    {
                                        _sendErrorCode = ErrorCode.StreamRequestQueueOverflow;
                                        return;
@@ -240,7 +262,7 @@ namespace Omnius.Core.Net.Connections.Multiplexer.V1.Internal
                                        return;
                                    }
 
-                                   if (!_receiveStreamRequestAcceptedPipe!.Writer.TryWrite(streamId))
+                                   if (!_receiveStreamRequestAcceptedPipe.Writer.TryWrite(streamId))
                                    {
                                        _sendErrorCode = ErrorCode.StreamRequestAcceptedQueueOverflow;
                                        return;
@@ -341,9 +363,13 @@ namespace Omnius.Core.Net.Connections.Multiplexer.V1.Internal
                        }
                    });
             }
+            catch (ConnectionException e)
+            {
+                throw e;
+            }
             catch (Exception e)
             {
-                _logger.Debug(e);
+                throw e;
             }
         }
 
@@ -378,17 +404,16 @@ namespace Omnius.Core.Net.Connections.Multiplexer.V1.Internal
             return connection;
         }
 
+        private uint GetNextStreamId()
+        {
+            return Interlocked.Add(ref _nextStreamId, 2);
+        }
+
         private StreamConnection AddConnection(uint streamId)
         {
-            var connection = new StreamConnection((int)_sessionOptions!.MaxDataQueueSize, (int)_options.MaxStreamDataQueueSize, _bytesPool);
+            var connection = new StreamConnection((int)_sessionOptions!.MaxDataQueueSize, (int)_options.MaxStreamDataQueueSize, _bytesPool, _cancellationTokenSource.Token);
             _streamConnectionMap = _streamConnectionMap.Add(streamId, connection);
             return connection;
         }
-
-        private record SessionOptions(
-            TimeSpan PacketReceiveTimeout,
-            uint MaxStreamRequestQueueSize,
-            uint MaxDataSize,
-            uint MaxDataQueueSize);
     }
 }
