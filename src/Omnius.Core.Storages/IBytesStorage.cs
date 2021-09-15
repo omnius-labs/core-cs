@@ -9,11 +9,11 @@ namespace Omnius.Core.Storages
     public interface IBytesStorageFactory
     {
         IBytesStorage<TKey> Create<TKey>(string path, IBytesPool bytesPool)
-            where TKey : notnull, IEquatable<TKey>;
+            where TKey : notnull;
     }
 
     public interface IBytesStorage<TKey> : IDisposable
-        where TKey : notnull, IEquatable<TKey>
+        where TKey : notnull
     {
         ValueTask MigrateAsync(CancellationToken cancellationToken = default);
 

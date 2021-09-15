@@ -26,3 +26,5 @@
       Output: ./test/Omnius.Core.RocketPack.Tests/Internal/_RocketPack/_Generated.cs
     - Input: ./rpfs/Omnius.Core.RocketPack.Remoting.Tests/Omnius.Core.RocketPack.Remoting.Tests.Internal.rpf
       Output: ./test/Omnius.Core.RocketPack.Remoting.Tests/Internal/_RocketPack/_Generated.cs
+    - Input: ./rpfs/Omnius.Core.Storages.Tests/Omnius.Core.Storages.Tests.Internal.rpf
+      Output: ./test/Omnius.Core.Storages.Tests/Internal/_RocketPack/_Generated.cs

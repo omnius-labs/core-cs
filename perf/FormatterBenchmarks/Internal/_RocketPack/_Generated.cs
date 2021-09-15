@@ -122,7 +122,7 @@ namespace FormatterBenchmarks.Internal
             }
         }
     }
-    internal sealed partial class RocketPack_BytesElements : global::Omnius.Core.RocketPack.IRocketMessage<global::FormatterBenchmarks.Internal.RocketPack_BytesElements>, global::System.IDisposable
+    internal sealed partial class RocketPack_BytesElements : global::Omnius.Core.RocketPack.IRocketMessage<global::FormatterBenchmarks.Internal.RocketPack_BytesElements>
     {
         public static global::Omnius.Core.RocketPack.IRocketMessageFormatter<global::FormatterBenchmarks.Internal.RocketPack_BytesElements> Formatter => global::Omnius.Core.RocketPack.IRocketMessage<global::FormatterBenchmarks.Internal.RocketPack_BytesElements>.Formatter;
         public static global::FormatterBenchmarks.Internal.RocketPack_BytesElements Empty => global::Omnius.Core.RocketPack.IRocketMessage<global::FormatterBenchmarks.Internal.RocketPack_BytesElements>.Empty;
@@ -169,16 +169,16 @@ namespace FormatterBenchmarks.Internal
             if (x9 is null) throw new global::System.ArgumentNullException("x9");
             if (x9.Memory.Length > 1048576) throw new global::System.ArgumentOutOfRangeException("x9");
 
-            _x0 = x0;
-            _x1 = x1;
-            _x2 = x2;
-            _x3 = x3;
-            _x4 = x4;
-            _x5 = x5;
-            _x6 = x6;
-            _x7 = x7;
-            _x8 = x8;
-            _x9 = x9;
+            this.X0 = x0;
+            this.X1 = x1;
+            this.X2 = x2;
+            this.X3 = x3;
+            this.X4 = x4;
+            this.X5 = x5;
+            this.X6 = x6;
+            this.X7 = x7;
+            this.X8 = x8;
+            this.X9 = x9;
 
             ___hashCode = new global::System.Lazy<int>(() =>
             {
@@ -197,26 +197,16 @@ namespace FormatterBenchmarks.Internal
             });
         }
 
-        private readonly global::System.Buffers.IMemoryOwner<byte> _x0;
-        public global::System.ReadOnlyMemory<byte> X0 => _x0.Memory;
-        private readonly global::System.Buffers.IMemoryOwner<byte> _x1;
-        public global::System.ReadOnlyMemory<byte> X1 => _x1.Memory;
-        private readonly global::System.Buffers.IMemoryOwner<byte> _x2;
-        public global::System.ReadOnlyMemory<byte> X2 => _x2.Memory;
-        private readonly global::System.Buffers.IMemoryOwner<byte> _x3;
-        public global::System.ReadOnlyMemory<byte> X3 => _x3.Memory;
-        private readonly global::System.Buffers.IMemoryOwner<byte> _x4;
-        public global::System.ReadOnlyMemory<byte> X4 => _x4.Memory;
-        private readonly global::System.Buffers.IMemoryOwner<byte> _x5;
-        public global::System.ReadOnlyMemory<byte> X5 => _x5.Memory;
-        private readonly global::System.Buffers.IMemoryOwner<byte> _x6;
-        public global::System.ReadOnlyMemory<byte> X6 => _x6.Memory;
-        private readonly global::System.Buffers.IMemoryOwner<byte> _x7;
-        public global::System.ReadOnlyMemory<byte> X7 => _x7.Memory;
-        private readonly global::System.Buffers.IMemoryOwner<byte> _x8;
-        public global::System.ReadOnlyMemory<byte> X8 => _x8.Memory;
-        private readonly global::System.Buffers.IMemoryOwner<byte> _x9;
-        public global::System.ReadOnlyMemory<byte> X9 => _x9.Memory;
+        public global::System.Buffers.IMemoryOwner<byte> X0 { get; }
+        public global::System.Buffers.IMemoryOwner<byte> X1 { get; }
+        public global::System.Buffers.IMemoryOwner<byte> X2 { get; }
+        public global::System.Buffers.IMemoryOwner<byte> X3 { get; }
+        public global::System.Buffers.IMemoryOwner<byte> X4 { get; }
+        public global::System.Buffers.IMemoryOwner<byte> X5 { get; }
+        public global::System.Buffers.IMemoryOwner<byte> X6 { get; }
+        public global::System.Buffers.IMemoryOwner<byte> X7 { get; }
+        public global::System.Buffers.IMemoryOwner<byte> X8 { get; }
+        public global::System.Buffers.IMemoryOwner<byte> X9 { get; }
 
         public static global::FormatterBenchmarks.Internal.RocketPack_BytesElements Import(global::System.Buffers.ReadOnlySequence<byte> sequence, global::Omnius.Core.IBytesPool bytesPool)
         {
@@ -246,34 +236,20 @@ namespace FormatterBenchmarks.Internal
         {
             if (target is null) return false;
             if (object.ReferenceEquals(this, target)) return true;
-            if (!global::Omnius.Core.BytesOperations.Equals(this.X0.Span, target.X0.Span)) return false;
-            if (!global::Omnius.Core.BytesOperations.Equals(this.X1.Span, target.X1.Span)) return false;
-            if (!global::Omnius.Core.BytesOperations.Equals(this.X2.Span, target.X2.Span)) return false;
-            if (!global::Omnius.Core.BytesOperations.Equals(this.X3.Span, target.X3.Span)) return false;
-            if (!global::Omnius.Core.BytesOperations.Equals(this.X4.Span, target.X4.Span)) return false;
-            if (!global::Omnius.Core.BytesOperations.Equals(this.X5.Span, target.X5.Span)) return false;
-            if (!global::Omnius.Core.BytesOperations.Equals(this.X6.Span, target.X6.Span)) return false;
-            if (!global::Omnius.Core.BytesOperations.Equals(this.X7.Span, target.X7.Span)) return false;
-            if (!global::Omnius.Core.BytesOperations.Equals(this.X8.Span, target.X8.Span)) return false;
-            if (!global::Omnius.Core.BytesOperations.Equals(this.X9.Span, target.X9.Span)) return false;
+            if (!global::Omnius.Core.BytesOperations.Equals(this.X0.Memory.Span, target.X0.Memory.Span)) return false;
+            if (!global::Omnius.Core.BytesOperations.Equals(this.X1.Memory.Span, target.X1.Memory.Span)) return false;
+            if (!global::Omnius.Core.BytesOperations.Equals(this.X2.Memory.Span, target.X2.Memory.Span)) return false;
+            if (!global::Omnius.Core.BytesOperations.Equals(this.X3.Memory.Span, target.X3.Memory.Span)) return false;
+            if (!global::Omnius.Core.BytesOperations.Equals(this.X4.Memory.Span, target.X4.Memory.Span)) return false;
+            if (!global::Omnius.Core.BytesOperations.Equals(this.X5.Memory.Span, target.X5.Memory.Span)) return false;
+            if (!global::Omnius.Core.BytesOperations.Equals(this.X6.Memory.Span, target.X6.Memory.Span)) return false;
+            if (!global::Omnius.Core.BytesOperations.Equals(this.X7.Memory.Span, target.X7.Memory.Span)) return false;
+            if (!global::Omnius.Core.BytesOperations.Equals(this.X8.Memory.Span, target.X8.Memory.Span)) return false;
+            if (!global::Omnius.Core.BytesOperations.Equals(this.X9.Memory.Span, target.X9.Memory.Span)) return false;
 
             return true;
         }
         public override int GetHashCode() => ___hashCode.Value;
-
-        public void Dispose()
-        {
-            _x0?.Dispose();
-            _x1?.Dispose();
-            _x2?.Dispose();
-            _x3?.Dispose();
-            _x4?.Dispose();
-            _x5?.Dispose();
-            _x6?.Dispose();
-            _x7?.Dispose();
-            _x8?.Dispose();
-            _x9?.Dispose();
-        }
 
         private sealed class ___CustomFormatter : global::Omnius.Core.RocketPack.IRocketMessageFormatter<global::FormatterBenchmarks.Internal.RocketPack_BytesElements>
         {
@@ -281,16 +257,16 @@ namespace FormatterBenchmarks.Internal
             {
                 if (rank > 256) throw new global::System.FormatException();
 
-                w.Write(value.X0.Span);
-                w.Write(value.X1.Span);
-                w.Write(value.X2.Span);
-                w.Write(value.X3.Span);
-                w.Write(value.X4.Span);
-                w.Write(value.X5.Span);
-                w.Write(value.X6.Span);
-                w.Write(value.X7.Span);
-                w.Write(value.X8.Span);
-                w.Write(value.X9.Span);
+                w.Write(value.X0.Memory.Span);
+                w.Write(value.X1.Memory.Span);
+                w.Write(value.X2.Memory.Span);
+                w.Write(value.X3.Memory.Span);
+                w.Write(value.X4.Memory.Span);
+                w.Write(value.X5.Memory.Span);
+                w.Write(value.X6.Memory.Span);
+                w.Write(value.X7.Memory.Span);
+                w.Write(value.X8.Memory.Span);
+                w.Write(value.X9.Memory.Span);
             }
             public global::FormatterBenchmarks.Internal.RocketPack_BytesElements Deserialize(ref global::Omnius.Core.RocketPack.RocketMessageReader r, in int rank)
             {

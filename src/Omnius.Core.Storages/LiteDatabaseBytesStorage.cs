@@ -17,7 +17,7 @@ namespace Omnius.Core.Storages
         internal sealed class BytesStorageFactory : IBytesStorageFactory
         {
             public IBytesStorage<TKey> Create<TKey>(string path, IBytesPool bytesPool)
-                where TKey : notnull, IEquatable<TKey>
+                where TKey : notnull
             {
                 var result = new LiteDatabaseBytesStorage<TKey>(path, bytesPool);
                 return result;
@@ -28,7 +28,7 @@ namespace Omnius.Core.Storages
     }
 
     public sealed class LiteDatabaseBytesStorage<TKey> : DisposableBase, IBytesStorage<TKey>
-        where TKey : notnull, IEquatable<TKey>
+        where TKey : notnull
     {
         private readonly IBytesPool _bytesPool;
         private readonly LiteDatabase _database;
@@ -40,6 +40,8 @@ namespace Omnius.Core.Storages
             DirectoryHelper.CreateDirectory(dirPath);
 
             _database = new LiteDatabase(Path.Combine(dirPath, "lite.db"));
+            _database.UtcDate = true;
+
             _bytesPool = bytesPool;
         }
 
@@ -87,9 +89,9 @@ namespace Omnius.Core.Storages
             using (await _asyncLock.WriterLockAsync(cancellationToken))
             {
                 var col = this.GetCollection();
-                if (col.Exists(n => n.Key.Equals(newKey))) throw new DuplicateKeyException();
+                if (col.Exists(Query.EQ("Key", new BsonValue(newKey)))) throw new DuplicateKeyException();
 
-                var meta = col.FindOne(n => n.Key.Equals(oldKey));
+                var meta = col.FindOne(Query.EQ("Key", new BsonValue(oldKey)));
                 if (meta is null) throw new KeyNotFoundException();
 
                 meta.Key = newKey;
@@ -103,7 +105,7 @@ namespace Omnius.Core.Storages
             using (await _asyncLock.ReaderLockAsync(cancellationToken))
             {
                 var col = this.GetCollection();
-                return col.Exists(n => n.Key.Equals(key));
+                return col.Exists(Query.EQ("Key", new BsonValue(key)));
             }
         }
 
@@ -125,7 +127,7 @@ namespace Omnius.Core.Storages
             using (await _asyncLock.WriterLockAsync(cancellationToken))
             {
                 var col = this.GetCollection();
-                if (col.Exists(n => n.Key.Equals(key))) throw new DuplicateKeyException();
+                if (col.Exists(Query.EQ("Key", new BsonValue(key)))) throw new DuplicateKeyException();
 
                 var id = col.Insert(new BlockLink() { Key = key }).AsInt64;
 
@@ -149,7 +151,7 @@ namespace Omnius.Core.Storages
             using (await _asyncLock.ReaderLockAsync(cancellationToken))
             {
                 var col = this.GetCollection();
-                var meta = col.FindOne(n => n.Key.Equals(key));
+                var meta = col.FindOne(Query.EQ("Key", new BsonValue(key)));
                 if (meta is null) return null;
 
                 var storage = this.GetStorage();
@@ -171,7 +173,7 @@ namespace Omnius.Core.Storages
             using (await _asyncLock.ReaderLockAsync(cancellationToken))
             {
                 var col = this.GetCollection();
-                var meta = col.FindOne(n => n.Key.Equals(key));
+                var meta = col.FindOne(Query.EQ("Key", new BsonValue(key)));
                 if (meta is null) return false;
 
                 var storage = this.GetStorage();
@@ -192,7 +194,7 @@ namespace Omnius.Core.Storages
             using (await _asyncLock.WriterLockAsync(cancellationToken))
             {
                 var col = this.GetCollection();
-                var meta = col.FindOne(n => n.Key.Equals(key));
+                var meta = col.FindOne(Query.EQ("Key", new BsonValue(key)));
                 if (meta is null) return false;
 
                 var storage = this.GetStorage();

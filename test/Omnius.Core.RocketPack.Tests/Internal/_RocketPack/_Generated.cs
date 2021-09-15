@@ -397,7 +397,7 @@ namespace Omnius.Core.RocketPack.Tests.Internal
             }
         }
     }
-    internal readonly partial struct Struct_Struct : global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.RocketPack.Tests.Internal.Struct_Struct>, global::System.IDisposable
+    internal readonly partial struct Struct_Struct : global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.RocketPack.Tests.Internal.Struct_Struct>
     {
         public static global::Omnius.Core.RocketPack.IRocketMessageFormatter<global::Omnius.Core.RocketPack.Tests.Internal.Struct_Struct> Formatter => global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.RocketPack.Tests.Internal.Struct_Struct>.Formatter;
         public static global::Omnius.Core.RocketPack.Tests.Internal.Struct_Struct Empty => global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.RocketPack.Tests.Internal.Struct_Struct>.Empty;
@@ -462,7 +462,7 @@ namespace Omnius.Core.RocketPack.Tests.Internal
             this.X19 = x19;
             this.X20 = x20;
             this.X21 = x21;
-            _x22 = x22;
+            this.X22 = x22;
             this.X23 = new global::Omnius.Core.Collections.ReadOnlyListSlim<string>(x23);
             this.X24 = new global::Omnius.Core.Collections.ReadOnlyDictionarySlim<byte, string>(x24);
             this.X25 = x25;
@@ -534,8 +534,7 @@ namespace Omnius.Core.RocketPack.Tests.Internal
         public string X19 { get; }
         public global::Omnius.Core.RocketPack.Timestamp X20 { get; }
         public global::System.ReadOnlyMemory<byte> X21 { get; }
-        private readonly global::System.Buffers.IMemoryOwner<byte> _x22;
-        public global::System.ReadOnlyMemory<byte> X22 => _x22.Memory;
+        public global::System.Buffers.IMemoryOwner<byte> X22 { get; }
         public global::Omnius.Core.Collections.ReadOnlyListSlim<string> X23 { get; }
         public global::Omnius.Core.Collections.ReadOnlyDictionarySlim<byte, string> X24 { get; }
         public global::Omnius.Core.RocketPack.Tests.Internal.StructElement_Struct X25 { get; }
@@ -590,7 +589,7 @@ namespace Omnius.Core.RocketPack.Tests.Internal
             if (this.X19 != target.X19) return false;
             if (this.X20 != target.X20) return false;
             if (!global::Omnius.Core.BytesOperations.Equals(this.X21.Span, target.X21.Span)) return false;
-            if (!global::Omnius.Core.BytesOperations.Equals(this.X22.Span, target.X22.Span)) return false;
+            if (!global::Omnius.Core.BytesOperations.Equals(this.X22.Memory.Span, target.X22.Memory.Span)) return false;
             if (!global::Omnius.Core.Helpers.CollectionHelper.Equals(this.X23, target.X23)) return false;
             if (!global::Omnius.Core.Helpers.CollectionHelper.Equals(this.X24, target.X24)) return false;
             if (this.X25 != target.X25) return false;
@@ -601,11 +600,6 @@ namespace Omnius.Core.RocketPack.Tests.Internal
             return true;
         }
         public override int GetHashCode() => ___hashCode;
-
-        public void Dispose()
-        {
-            _x22?.Dispose();
-        }
 
         private sealed class ___CustomFormatter : global::Omnius.Core.RocketPack.IRocketMessageFormatter<global::Omnius.Core.RocketPack.Tests.Internal.Struct_Struct>
         {
@@ -635,7 +629,7 @@ namespace Omnius.Core.RocketPack.Tests.Internal
                 w.Write(value.X19);
                 w.Write(value.X20);
                 w.Write(value.X21.Span);
-                w.Write(value.X22.Span);
+                w.Write(value.X22.Memory.Span);
                 w.Write((uint)value.X23.Count);
                 foreach (var n in value.X23)
                 {
@@ -791,7 +785,7 @@ namespace Omnius.Core.RocketPack.Tests.Internal
             }
         }
     }
-    internal readonly partial struct Message_Struct : global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.RocketPack.Tests.Internal.Message_Struct>, global::System.IDisposable
+    internal readonly partial struct Message_Struct : global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.RocketPack.Tests.Internal.Message_Struct>
     {
         public static global::Omnius.Core.RocketPack.IRocketMessageFormatter<global::Omnius.Core.RocketPack.Tests.Internal.Message_Struct> Formatter => global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.RocketPack.Tests.Internal.Message_Struct>.Formatter;
         public static global::Omnius.Core.RocketPack.Tests.Internal.Message_Struct Empty => global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.RocketPack.Tests.Internal.Message_Struct>.Empty;
@@ -856,7 +850,7 @@ namespace Omnius.Core.RocketPack.Tests.Internal
             this.X19 = x19;
             this.X20 = x20;
             this.X21 = x21;
-            _x22 = x22;
+            this.X22 = x22;
             this.X23 = new global::Omnius.Core.Collections.ReadOnlyListSlim<string>(x23);
             this.X24 = new global::Omnius.Core.Collections.ReadOnlyDictionarySlim<byte, string>(x24);
             this.X25 = x25;
@@ -928,8 +922,7 @@ namespace Omnius.Core.RocketPack.Tests.Internal
         public string X19 { get; }
         public global::Omnius.Core.RocketPack.Timestamp X20 { get; }
         public global::System.ReadOnlyMemory<byte> X21 { get; }
-        private readonly global::System.Buffers.IMemoryOwner<byte> _x22;
-        public global::System.ReadOnlyMemory<byte> X22 => _x22.Memory;
+        public global::System.Buffers.IMemoryOwner<byte> X22 { get; }
         public global::Omnius.Core.Collections.ReadOnlyListSlim<string> X23 { get; }
         public global::Omnius.Core.Collections.ReadOnlyDictionarySlim<byte, string> X24 { get; }
         public global::Omnius.Core.RocketPack.Tests.Internal.StructElement_Struct X25 { get; }
@@ -984,7 +977,7 @@ namespace Omnius.Core.RocketPack.Tests.Internal
             if (this.X19 != target.X19) return false;
             if (this.X20 != target.X20) return false;
             if (!global::Omnius.Core.BytesOperations.Equals(this.X21.Span, target.X21.Span)) return false;
-            if (!global::Omnius.Core.BytesOperations.Equals(this.X22.Span, target.X22.Span)) return false;
+            if (!global::Omnius.Core.BytesOperations.Equals(this.X22.Memory.Span, target.X22.Memory.Span)) return false;
             if (!global::Omnius.Core.Helpers.CollectionHelper.Equals(this.X23, target.X23)) return false;
             if (!global::Omnius.Core.Helpers.CollectionHelper.Equals(this.X24, target.X24)) return false;
             if (this.X25 != target.X25) return false;
@@ -995,11 +988,6 @@ namespace Omnius.Core.RocketPack.Tests.Internal
             return true;
         }
         public override int GetHashCode() => ___hashCode;
-
-        public void Dispose()
-        {
-            _x22?.Dispose();
-        }
 
         private sealed class ___CustomFormatter : global::Omnius.Core.RocketPack.IRocketMessageFormatter<global::Omnius.Core.RocketPack.Tests.Internal.Message_Struct>
         {
@@ -1117,10 +1105,10 @@ namespace Omnius.Core.RocketPack.Tests.Internal
                     w.Write((uint)22);
                     w.Write(value.X21.Span);
                 }
-                if (!value.X22.IsEmpty)
+                if (!value.X22.Memory.IsEmpty)
                 {
                     w.Write((uint)23);
-                    w.Write(value.X22.Span);
+                    w.Write(value.X22.Memory.Span);
                 }
                 if (value.X23.Count != 0)
                 {
@@ -1369,7 +1357,7 @@ namespace Omnius.Core.RocketPack.Tests.Internal
             }
         }
     }
-    internal readonly partial struct NullableMessage_Struct : global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.RocketPack.Tests.Internal.NullableMessage_Struct>, global::System.IDisposable
+    internal readonly partial struct NullableMessage_Struct : global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.RocketPack.Tests.Internal.NullableMessage_Struct>
     {
         public static global::Omnius.Core.RocketPack.IRocketMessageFormatter<global::Omnius.Core.RocketPack.Tests.Internal.NullableMessage_Struct> Formatter => global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.RocketPack.Tests.Internal.NullableMessage_Struct>.Formatter;
         public static global::Omnius.Core.RocketPack.Tests.Internal.NullableMessage_Struct Empty => global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.RocketPack.Tests.Internal.NullableMessage_Struct>.Empty;
@@ -1433,7 +1421,7 @@ namespace Omnius.Core.RocketPack.Tests.Internal
             this.X19 = x19;
             this.X20 = x20;
             this.X21 = x21;
-            _x22 = x22;
+            this.X22 = x22;
             if (x23 != null)
             {
                 this.X23 = new global::Omnius.Core.Collections.ReadOnlyListSlim<string>(x23);
@@ -1525,8 +1513,7 @@ namespace Omnius.Core.RocketPack.Tests.Internal
         public string? X19 { get; }
         public global::Omnius.Core.RocketPack.Timestamp? X20 { get; }
         public global::System.ReadOnlyMemory<byte>? X21 { get; }
-        private readonly global::System.Buffers.IMemoryOwner<byte>? _x22;
-        public global::System.ReadOnlyMemory<byte>? X22 => _x22?.Memory;
+        public global::System.Buffers.IMemoryOwner<byte>? X22 { get; }
         public global::Omnius.Core.Collections.ReadOnlyListSlim<string>? X23 { get; }
         public global::Omnius.Core.Collections.ReadOnlyDictionarySlim<byte, string>? X24 { get; }
         public global::Omnius.Core.RocketPack.Tests.Internal.StructElement_Struct? X25 { get; }
@@ -1583,7 +1570,7 @@ namespace Omnius.Core.RocketPack.Tests.Internal
             if ((this.X21 is null) != (target.X21 is null)) return false;
             if ((this.X21 is not null) && (target.X21 is not null) && !global::Omnius.Core.BytesOperations.Equals(this.X21.Value.Span, target.X21.Value.Span)) return false;
             if ((this.X22 is null) != (target.X22 is null)) return false;
-            if ((this.X22 is not null) && (target.X22 is not null) && !global::Omnius.Core.BytesOperations.Equals(this.X22.Value.Span, target.X22.Value.Span)) return false;
+            if ((this.X22 is not null) && (target.X22 is not null) && !global::Omnius.Core.BytesOperations.Equals(this.X22.Memory.Span, target.X22.Memory.Span)) return false;
             if ((this.X23 is null) != (target.X23 is null)) return false;
             if ((this.X23 is not null) && (target.X23 is not null) && !global::Omnius.Core.Helpers.CollectionHelper.Equals(this.X23, target.X23)) return false;
             if ((this.X24 is null) != (target.X24 is null)) return false;
@@ -1600,11 +1587,6 @@ namespace Omnius.Core.RocketPack.Tests.Internal
             return true;
         }
         public override int GetHashCode() => ___hashCode;
-
-        public void Dispose()
-        {
-            _x22?.Dispose();
-        }
 
         private sealed class ___CustomFormatter : global::Omnius.Core.RocketPack.IRocketMessageFormatter<global::Omnius.Core.RocketPack.Tests.Internal.NullableMessage_Struct>
         {
@@ -1725,7 +1707,7 @@ namespace Omnius.Core.RocketPack.Tests.Internal
                 if (value.X22 != null)
                 {
                     w.Write((uint)23);
-                    w.Write(value.X22.Value.Span);
+                    w.Write(value.X22.Memory.Span);
                 }
                 if (value.X23 != null)
                 {
@@ -1974,7 +1956,7 @@ namespace Omnius.Core.RocketPack.Tests.Internal
             }
         }
     }
-    internal sealed partial class Struct_Class : global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.RocketPack.Tests.Internal.Struct_Class>, global::System.IDisposable
+    internal sealed partial class Struct_Class : global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.RocketPack.Tests.Internal.Struct_Class>
     {
         public static global::Omnius.Core.RocketPack.IRocketMessageFormatter<global::Omnius.Core.RocketPack.Tests.Internal.Struct_Class> Formatter => global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.RocketPack.Tests.Internal.Struct_Class>.Formatter;
         public static global::Omnius.Core.RocketPack.Tests.Internal.Struct_Class Empty => global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.RocketPack.Tests.Internal.Struct_Class>.Empty;
@@ -2039,7 +2021,7 @@ namespace Omnius.Core.RocketPack.Tests.Internal
             this.X19 = x19;
             this.X20 = x20;
             this.X21 = x21;
-            _x22 = x22;
+            this.X22 = x22;
             this.X23 = new global::Omnius.Core.Collections.ReadOnlyListSlim<string>(x23);
             this.X24 = new global::Omnius.Core.Collections.ReadOnlyDictionarySlim<byte, string>(x24);
             this.X25 = x25;
@@ -2112,8 +2094,7 @@ namespace Omnius.Core.RocketPack.Tests.Internal
         public string X19 { get; }
         public global::Omnius.Core.RocketPack.Timestamp X20 { get; }
         public global::System.ReadOnlyMemory<byte> X21 { get; }
-        private readonly global::System.Buffers.IMemoryOwner<byte> _x22;
-        public global::System.ReadOnlyMemory<byte> X22 => _x22.Memory;
+        public global::System.Buffers.IMemoryOwner<byte> X22 { get; }
         public global::Omnius.Core.Collections.ReadOnlyListSlim<string> X23 { get; }
         public global::Omnius.Core.Collections.ReadOnlyDictionarySlim<byte, string> X24 { get; }
         public global::Omnius.Core.RocketPack.Tests.Internal.StructElement_Struct X25 { get; }
@@ -2170,7 +2151,7 @@ namespace Omnius.Core.RocketPack.Tests.Internal
             if (this.X19 != target.X19) return false;
             if (this.X20 != target.X20) return false;
             if (!global::Omnius.Core.BytesOperations.Equals(this.X21.Span, target.X21.Span)) return false;
-            if (!global::Omnius.Core.BytesOperations.Equals(this.X22.Span, target.X22.Span)) return false;
+            if (!global::Omnius.Core.BytesOperations.Equals(this.X22.Memory.Span, target.X22.Memory.Span)) return false;
             if (!global::Omnius.Core.Helpers.CollectionHelper.Equals(this.X23, target.X23)) return false;
             if (!global::Omnius.Core.Helpers.CollectionHelper.Equals(this.X24, target.X24)) return false;
             if (this.X25 != target.X25) return false;
@@ -2181,11 +2162,6 @@ namespace Omnius.Core.RocketPack.Tests.Internal
             return true;
         }
         public override int GetHashCode() => ___hashCode.Value;
-
-        public void Dispose()
-        {
-            _x22?.Dispose();
-        }
 
         private sealed class ___CustomFormatter : global::Omnius.Core.RocketPack.IRocketMessageFormatter<global::Omnius.Core.RocketPack.Tests.Internal.Struct_Class>
         {
@@ -2215,7 +2191,7 @@ namespace Omnius.Core.RocketPack.Tests.Internal
                 w.Write(value.X19);
                 w.Write(value.X20);
                 w.Write(value.X21.Span);
-                w.Write(value.X22.Span);
+                w.Write(value.X22.Memory.Span);
                 w.Write((uint)value.X23.Count);
                 foreach (var n in value.X23)
                 {
@@ -2371,7 +2347,7 @@ namespace Omnius.Core.RocketPack.Tests.Internal
             }
         }
     }
-    internal sealed partial class Message_Class : global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.RocketPack.Tests.Internal.Message_Class>, global::System.IDisposable
+    internal sealed partial class Message_Class : global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.RocketPack.Tests.Internal.Message_Class>
     {
         public static global::Omnius.Core.RocketPack.IRocketMessageFormatter<global::Omnius.Core.RocketPack.Tests.Internal.Message_Class> Formatter => global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.RocketPack.Tests.Internal.Message_Class>.Formatter;
         public static global::Omnius.Core.RocketPack.Tests.Internal.Message_Class Empty => global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.RocketPack.Tests.Internal.Message_Class>.Empty;
@@ -2436,7 +2412,7 @@ namespace Omnius.Core.RocketPack.Tests.Internal
             this.X19 = x19;
             this.X20 = x20;
             this.X21 = x21;
-            _x22 = x22;
+            this.X22 = x22;
             this.X23 = new global::Omnius.Core.Collections.ReadOnlyListSlim<string>(x23);
             this.X24 = new global::Omnius.Core.Collections.ReadOnlyDictionarySlim<byte, string>(x24);
             this.X25 = x25;
@@ -2509,8 +2485,7 @@ namespace Omnius.Core.RocketPack.Tests.Internal
         public string X19 { get; }
         public global::Omnius.Core.RocketPack.Timestamp X20 { get; }
         public global::System.ReadOnlyMemory<byte> X21 { get; }
-        private readonly global::System.Buffers.IMemoryOwner<byte> _x22;
-        public global::System.ReadOnlyMemory<byte> X22 => _x22.Memory;
+        public global::System.Buffers.IMemoryOwner<byte> X22 { get; }
         public global::Omnius.Core.Collections.ReadOnlyListSlim<string> X23 { get; }
         public global::Omnius.Core.Collections.ReadOnlyDictionarySlim<byte, string> X24 { get; }
         public global::Omnius.Core.RocketPack.Tests.Internal.StructElement_Struct X25 { get; }
@@ -2567,7 +2542,7 @@ namespace Omnius.Core.RocketPack.Tests.Internal
             if (this.X19 != target.X19) return false;
             if (this.X20 != target.X20) return false;
             if (!global::Omnius.Core.BytesOperations.Equals(this.X21.Span, target.X21.Span)) return false;
-            if (!global::Omnius.Core.BytesOperations.Equals(this.X22.Span, target.X22.Span)) return false;
+            if (!global::Omnius.Core.BytesOperations.Equals(this.X22.Memory.Span, target.X22.Memory.Span)) return false;
             if (!global::Omnius.Core.Helpers.CollectionHelper.Equals(this.X23, target.X23)) return false;
             if (!global::Omnius.Core.Helpers.CollectionHelper.Equals(this.X24, target.X24)) return false;
             if (this.X25 != target.X25) return false;
@@ -2578,11 +2553,6 @@ namespace Omnius.Core.RocketPack.Tests.Internal
             return true;
         }
         public override int GetHashCode() => ___hashCode.Value;
-
-        public void Dispose()
-        {
-            _x22?.Dispose();
-        }
 
         private sealed class ___CustomFormatter : global::Omnius.Core.RocketPack.IRocketMessageFormatter<global::Omnius.Core.RocketPack.Tests.Internal.Message_Class>
         {
@@ -2700,10 +2670,10 @@ namespace Omnius.Core.RocketPack.Tests.Internal
                     w.Write((uint)22);
                     w.Write(value.X21.Span);
                 }
-                if (!value.X22.IsEmpty)
+                if (!value.X22.Memory.IsEmpty)
                 {
                     w.Write((uint)23);
-                    w.Write(value.X22.Span);
+                    w.Write(value.X22.Memory.Span);
                 }
                 if (value.X23.Count != 0)
                 {
@@ -2952,7 +2922,7 @@ namespace Omnius.Core.RocketPack.Tests.Internal
             }
         }
     }
-    internal sealed partial class NullableMessage_Class : global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.RocketPack.Tests.Internal.NullableMessage_Class>, global::System.IDisposable
+    internal sealed partial class NullableMessage_Class : global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.RocketPack.Tests.Internal.NullableMessage_Class>
     {
         public static global::Omnius.Core.RocketPack.IRocketMessageFormatter<global::Omnius.Core.RocketPack.Tests.Internal.NullableMessage_Class> Formatter => global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.RocketPack.Tests.Internal.NullableMessage_Class>.Formatter;
         public static global::Omnius.Core.RocketPack.Tests.Internal.NullableMessage_Class Empty => global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.RocketPack.Tests.Internal.NullableMessage_Class>.Empty;
@@ -3016,7 +2986,7 @@ namespace Omnius.Core.RocketPack.Tests.Internal
             this.X19 = x19;
             this.X20 = x20;
             this.X21 = x21;
-            _x22 = x22;
+            this.X22 = x22;
             if (x23 != null)
             {
                 this.X23 = new global::Omnius.Core.Collections.ReadOnlyListSlim<string>(x23);
@@ -3109,8 +3079,7 @@ namespace Omnius.Core.RocketPack.Tests.Internal
         public string? X19 { get; }
         public global::Omnius.Core.RocketPack.Timestamp? X20 { get; }
         public global::System.ReadOnlyMemory<byte>? X21 { get; }
-        private readonly global::System.Buffers.IMemoryOwner<byte>? _x22;
-        public global::System.ReadOnlyMemory<byte>? X22 => _x22?.Memory;
+        public global::System.Buffers.IMemoryOwner<byte>? X22 { get; }
         public global::Omnius.Core.Collections.ReadOnlyListSlim<string>? X23 { get; }
         public global::Omnius.Core.Collections.ReadOnlyDictionarySlim<byte, string>? X24 { get; }
         public global::Omnius.Core.RocketPack.Tests.Internal.StructElement_Struct? X25 { get; }
@@ -3169,7 +3138,7 @@ namespace Omnius.Core.RocketPack.Tests.Internal
             if ((this.X21 is null) != (target.X21 is null)) return false;
             if ((this.X21 is not null) && (target.X21 is not null) && !global::Omnius.Core.BytesOperations.Equals(this.X21.Value.Span, target.X21.Value.Span)) return false;
             if ((this.X22 is null) != (target.X22 is null)) return false;
-            if ((this.X22 is not null) && (target.X22 is not null) && !global::Omnius.Core.BytesOperations.Equals(this.X22.Value.Span, target.X22.Value.Span)) return false;
+            if ((this.X22 is not null) && (target.X22 is not null) && !global::Omnius.Core.BytesOperations.Equals(this.X22.Memory.Span, target.X22.Memory.Span)) return false;
             if ((this.X23 is null) != (target.X23 is null)) return false;
             if ((this.X23 is not null) && (target.X23 is not null) && !global::Omnius.Core.Helpers.CollectionHelper.Equals(this.X23, target.X23)) return false;
             if ((this.X24 is null) != (target.X24 is null)) return false;
@@ -3186,11 +3155,6 @@ namespace Omnius.Core.RocketPack.Tests.Internal
             return true;
         }
         public override int GetHashCode() => ___hashCode.Value;
-
-        public void Dispose()
-        {
-            _x22?.Dispose();
-        }
 
         private sealed class ___CustomFormatter : global::Omnius.Core.RocketPack.IRocketMessageFormatter<global::Omnius.Core.RocketPack.Tests.Internal.NullableMessage_Class>
         {
@@ -3311,7 +3275,7 @@ namespace Omnius.Core.RocketPack.Tests.Internal
                 if (value.X22 != null)
                 {
                     w.Write((uint)23);
-                    w.Write(value.X22.Value.Span);
+                    w.Write(value.X22.Memory.Span);
                 }
                 if (value.X23 != null)
                 {
