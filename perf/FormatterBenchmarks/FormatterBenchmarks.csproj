@@ -6,7 +6,6 @@
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
 
-
   <ItemGroup>
     <PackageReference Include="BenchmarkDotNet" Version="0.12.1" />
     <PackageReference Include="MessagePack" Version="2.2.85" />
