@@ -41,7 +41,7 @@ namespace Omnius.Core.RocketPack.Remoting
             await _connection.Receiver.ReceiveAsync(
                 sequence =>
                 {
-                    _ = PacketParser.TryParse(ref sequence, out result, _bytesPool);
+                    PacketParser.TryParse(ref sequence, out result, _bytesPool);
                 }, cancellationToken);
 
             if (result.IsCompleted)
@@ -64,7 +64,7 @@ namespace Omnius.Core.RocketPack.Remoting
             await _connection.Receiver.ReceiveAsync(
                 sequence =>
                 {
-                    _ = PacketParser.TryParse(ref sequence, out result, _bytesPool);
+                    PacketParser.TryParse(ref sequence, out result, _bytesPool);
                 }, cancellationToken);
 
             if (result.IsCompleted)
@@ -94,7 +94,7 @@ namespace Omnius.Core.RocketPack.Remoting
             await _connection.Receiver.ReceiveAsync(
                 sequence =>
                 {
-                    _ = PacketParser.TryParse(ref sequence, out result, _bytesPool);
+                    PacketParser.TryParse(ref sequence, out result, _bytesPool);
                 }, cancellationToken);
 
             if (result.IsCompleted)
@@ -116,7 +116,7 @@ namespace Omnius.Core.RocketPack.Remoting
             await _connection.Receiver.ReceiveAsync(
                 sequence =>
                 {
-                    _ = PacketParser.TryParse(ref sequence, out result, _bytesPool);
+                    PacketParser.TryParse(ref sequence, out result, _bytesPool);
                 }, cancellationToken);
 
             if (result.IsCompleted)

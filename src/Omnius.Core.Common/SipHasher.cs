@@ -7,7 +7,7 @@ using System.Runtime.CompilerServices;
 
 namespace Omnius.Core.Common
 {
-    internal class SipHasher
+    internal struct SipHasher
     {
         private ulong _v0;
         private ulong _v1;
@@ -64,7 +64,7 @@ namespace Omnius.Core.Common
             }
         }
 
-        public void Write(ReadOnlySpan<byte> data)
+        private void Write(ReadOnlySpan<byte> data)
         {
             ulong v0 = _v0, v1 = _v1, v2 = _v2, v3 = _v3;
             var size = data.Length;
@@ -96,7 +96,7 @@ namespace Omnius.Core.Common
             return;
         }
 
-        public ulong Finalize()
+        private ulong Finalize()
         {
             ulong v0 = _v0, v1 = _v1, v2 = _v2, v3 = _v3;
 
@@ -114,12 +114,24 @@ namespace Omnius.Core.Common
             return v0 ^ v1 ^ v2 ^ v3;
         }
 
-        public static ulong Hash(byte[] key, byte[] data)
+        public static ulong ComputeHash(ReadOnlySpan<byte> key, ReadOnlySpan<byte> data)
         {
-            var k0 = BitConverter.ToUInt64(key, 0);
-            var k1 = BitConverter.ToUInt64(key, 8);
+            var k0 = System.Buffers.Binary.BinaryPrimitives.ReadUInt64BigEndian(key);
+            var k1 = System.Buffers.Binary.BinaryPrimitives.ReadUInt64BigEndian(key.Slice(8));
 
             var hasher = new SipHasher(k0, k1);
+
+            hasher.Write(data);
+            return hasher.Finalize();
+        }
+
+        public static ulong ComputeHash(ReadOnlySpan<byte> key, ReadOnlySequence<byte> data)
+        {
+            var k0 = System.Buffers.Binary.BinaryPrimitives.ReadUInt64BigEndian(key);
+            var k1 = System.Buffers.Binary.BinaryPrimitives.ReadUInt64BigEndian(key.Slice(8));
+
+            var hasher = new SipHasher(k0, k1);
+
             hasher.Write(data);
             return hasher.Finalize();
         }

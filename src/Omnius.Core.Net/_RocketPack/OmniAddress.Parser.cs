@@ -147,6 +147,8 @@ namespace Omnius.Core.Net
 
             public static FunctionElement? Deconstruct(string text)
             {
+                if (string.IsNullOrEmpty(text)) return null;
+
                 try
                 {
                     return _functionElementParser.End().Parse(text);

@@ -9,6 +9,11 @@ namespace Omnius.Core.Serialization
         private static readonly Lazy<Base16> _base16_Upper = new(() => new Base16(ConvertStringCase.Upper));
         private static readonly Lazy<Base58Btc> _base58Btc = new(() => new Base58Btc());
 
+        public static string? Encode(ReadOnlyMemory<byte> memory, ConvertStringType convertStringType, ConvertStringCase convertStringCase = ConvertStringCase.Lower)
+        {
+            return Encode(new ReadOnlySequence<byte>(memory), convertStringType, convertStringCase);
+        }
+
         public static string? Encode(ReadOnlySequence<byte> sequence, ConvertStringType convertStringType, ConvertStringCase convertStringCase = ConvertStringCase.Lower)
         {
             if (convertStringType == ConvertStringType.Base16)

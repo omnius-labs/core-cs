@@ -40,7 +40,7 @@ namespace Omnius.Core.RocketPack.Remoting
             await _connection.Receiver.ReceiveAsync(
                 sequence =>
                 {
-                    _ = PacketParser.TryParse(ref sequence, out param, _bytesPool);
+                    PacketParser.TryParse(ref sequence, out param, _bytesPool);
                 }, cancellationTokenSource.Token);
 
             if (param.IsCompleted)
@@ -127,7 +127,7 @@ namespace Omnius.Core.RocketPack.Remoting
             await _connection.Receiver.ReceiveAsync(
                 sequence =>
                 {
-                    _ = PacketParser.TryParse(ref sequence, out param, _bytesPool);
+                    PacketParser.TryParse(ref sequence, out param, _bytesPool);
                 }, cancellationTokenSource.Token);
 
             if (param.IsCompleted)

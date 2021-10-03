@@ -7,30 +7,23 @@ namespace Omnius.Core.Helpers
 {
     public static partial class ObjectHelper
     {
-        private static readonly SipHasher _hashFunction;
+        private static readonly byte[] _key = new byte[16];
 
         static ObjectHelper()
         {
             using var random = RandomNumberGenerator.Create();
-            var buffer = new byte[16];
-            random.GetBytes(buffer);
-
-            _hashFunction = new SipHasher(buffer);
+            random.GetBytes(_key);
         }
 
         public static int GetHashCode(ReadOnlySpan<byte> value)
         {
-            _hashFunction.Write(value);
-            ulong v = _hashFunction.Finalize();
-
+            ulong v = SipHasher.ComputeHash(_key, value);
             return (int)(v & 0xFFFFFFFF) | (int)(v >> 32);
         }
 
         public static int GetHashCode(ReadOnlySequence<byte> sequence)
         {
-            _hashFunction.Write(sequence);
-            ulong v = _hashFunction.Finalize();
-
+            ulong v = SipHasher.ComputeHash(_key, sequence);
             return (int)(v & 0xFFFFFFFF) | (int)(v >> 32);
         }
     }
