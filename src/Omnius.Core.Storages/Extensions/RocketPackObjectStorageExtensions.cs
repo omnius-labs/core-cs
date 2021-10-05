@@ -8,10 +8,9 @@ using Omnius.Core.RocketPack;
 
 namespace Omnius.Core.Storages
 {
-    public static class RocketMessageStorageExtensions
+    public static class BytesStorageForStringKeyExtensions
     {
-        public static async IAsyncEnumerable<TValue> GetValuesAsync<TKey, TValue>(this IBytesStorage<TKey> bytesStorage, [EnumeratorCancellation] CancellationToken cancellationToken = default)
-            where TKey : notnull
+        public static async IAsyncEnumerable<TValue> GetValuesAsync<TValue>(this IBytesStorage<string> bytesStorage, [EnumeratorCancellation] CancellationToken cancellationToken = default)
             where TValue : IRocketMessage<TValue>
         {
             var bytesPool = BytesPool.Shared;
@@ -28,8 +27,7 @@ namespace Omnius.Core.Storages
             }
         }
 
-        public static async ValueTask<TValue?> TryGetValueAsync<TKey, TValue>(this IBytesStorage<TKey> bytesStorage, TKey key, CancellationToken cancellationToken = default)
-            where TKey : notnull
+        public static async ValueTask<TValue?> TryGetValueAsync<TValue>(this IBytesStorage<string> bytesStorage, string key, CancellationToken cancellationToken = default)
             where TValue : IRocketMessage<TValue>
         {
             var bytesPool = BytesPool.Shared;
@@ -41,8 +39,7 @@ namespace Omnius.Core.Storages
             return value;
         }
 
-        public static async ValueTask SetValueAsync<TKey, TValue>(this IBytesStorage<TKey> bytesStorage, TKey key, TValue value, CancellationToken cancellationToken = default)
-            where TKey : notnull
+        public static async ValueTask SetValueAsync<TValue>(this IBytesStorage<string> bytesStorage, string key, TValue value, CancellationToken cancellationToken = default)
             where TValue : IRocketMessage<TValue>
         {
             var bytesPool = BytesPool.Shared;

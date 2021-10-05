@@ -114,9 +114,8 @@ namespace Omnius.Core.Storages
             using (await _asyncLock.ReaderLockAsync(cancellationToken))
             {
                 var col = this.GetCollection();
-                foreach (var key in col.FindAll().Select(n => n.Key))
+                foreach (var key in col.FindAll().Select(n => n.Key).ToArray())
                 {
-                    cancellationToken.ThrowIfCancellationRequested();
                     yield return key;
                 }
             }
