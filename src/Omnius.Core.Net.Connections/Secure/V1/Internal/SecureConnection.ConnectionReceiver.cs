@@ -93,12 +93,12 @@ namespace Omnius.Core.Net.Connections.Secure.V1.Internal
                 catch (ConnectionException e)
                 {
                     _exception = e;
-                    throw e;
+                    throw;
                 }
                 catch (Exception e)
                 {
                     _exception = new ConnectionException("receive error", e);
-                    throw e;
+                    throw;
                 }
             }
 

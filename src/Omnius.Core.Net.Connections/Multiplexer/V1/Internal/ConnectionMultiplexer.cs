@@ -211,13 +211,13 @@ namespace Omnius.Core.Net.Connections.Multiplexer.V1.Internal
                         }
                     });
             }
-            catch (ConnectionException e)
+            catch (ConnectionException)
             {
-                throw e;
+                throw;
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                throw e;
+                throw;
             }
         }
 
@@ -363,13 +363,13 @@ namespace Omnius.Core.Net.Connections.Multiplexer.V1.Internal
                        }
                    });
             }
-            catch (ConnectionException e)
+            catch (ConnectionException)
             {
-                throw e;
+                throw;
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                throw e;
+                throw;
             }
         }
 

@@ -120,12 +120,12 @@ namespace Omnius.Core.Net.Connections.Bridge
                 catch (ConnectionException e)
                 {
                     _exception = e;
-                    throw e;
+                    throw;
                 }
                 catch (Exception e)
                 {
                     _exception = new ConnectionException("send error", e);
-                    throw e;
+                    throw;
                 }
             }
 
