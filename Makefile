@@ -10,7 +10,7 @@ build:
 format:
 	dotnet tool run dotnet-format
 
-update-nugut:
+update-nuget:
 	dotnet tool run nukeeper update
 
 update-dotnet-tool:
