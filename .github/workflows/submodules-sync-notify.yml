@@ -18,8 +18,8 @@ jobs:
         CI_TOKEN: ${{ secrets.PAT }}
         PARENT_REPO: omnius-labs/xeus
       run: |
-        curl --request POST 'https://api.github.com/repos/${{ secrets.PARENT_REPO }}/dispatches' \
-        --header 'Authorization: token ${{ secrets.CI_TOKEN }}' \
+        curl --request POST 'https://api.github.com/repos/${{ env.PARENT_REPO }}/dispatches' \
+        --header 'Authorization: token ${{ env.GITHUB_TOKEN }}' \
         --header 'Content-Type: application/json' \
         --data-raw '{
           "event_type": "core-repo-updated"
