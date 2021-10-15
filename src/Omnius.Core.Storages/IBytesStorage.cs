@@ -19,7 +19,7 @@ namespace Omnius.Core.Storages
 
         ValueTask RebuildAsync(CancellationToken cancellationToken = default);
 
-        ValueTask ChangeKeyAsync(TKey oldKey, TKey newKey, CancellationToken cancellationToken = default);
+        ValueTask<bool> TryChangeKeyAsync(TKey oldKey, TKey newKey, CancellationToken cancellationToken = default);
 
         ValueTask<bool> ContainsKeyAsync(TKey key, CancellationToken cancellationToken = default);
 
@@ -29,28 +29,10 @@ namespace Omnius.Core.Storages
 
         ValueTask<bool> TryReadAsync(TKey key, IBufferWriter<byte> bufferWriter, CancellationToken cancellationToken = default);
 
-        ValueTask WriteAsync(TKey key, ReadOnlySequence<byte> sequence, CancellationToken cancellationToken = default);
+        ValueTask<bool> TryWriteAsync(TKey key, ReadOnlySequence<byte> sequence, CancellationToken cancellationToken = default);
 
-        ValueTask WriteAsync(TKey key, ReadOnlyMemory<byte> memory, CancellationToken cancellationToken = default);
+        ValueTask<bool> TryWriteAsync(TKey key, ReadOnlyMemory<byte> memory, CancellationToken cancellationToken = default);
 
         ValueTask<bool> TryDeleteAsync(TKey key, CancellationToken cancellationToken = default);
-    }
-
-    public class DuplicateKeyException : Exception
-    {
-        public DuplicateKeyException()
-            : base()
-        {
-        }
-
-        public DuplicateKeyException(string message)
-            : base(message)
-        {
-        }
-
-        public DuplicateKeyException(string message, Exception innerException)
-            : base(message, innerException)
-        {
-        }
     }
 }

@@ -15,7 +15,7 @@ namespace Omnius.Core.Net.Connections.Internal
         {
             var caseList = new List<int>();
             caseList.AddRange(Enumerable.Range(1, 4));
-            caseList.AddRange(new int[] { 100, 1000, 10000, 1024 * 1024 });
+            caseList.AddRange(new int[] { 100, 1000, 10000, 1024 * 1024, 1024 * 1024 * 8 });
 
             foreach (var bufferSize in caseList)
             {
@@ -26,6 +26,8 @@ namespace Omnius.Core.Net.Connections.Internal
 
                 using var cancellationTokenSource = new CancellationTokenSource();
                 cancellationTokenSource.CancelAfter(TimeSpan.FromSeconds(60));
+
+                var sb = Stopwatch.StartNew();
 
                 var valueTask1 = connection1.Sender.SendAsync((bufferWriter) =>
                 {
@@ -40,7 +42,8 @@ namespace Omnius.Core.Net.Connections.Internal
                 await Task.WhenAll(valueTask1.AsTask(), valueTask2.AsTask());
 
                 Assert.Equal(buffer1, buffer2);
-                Debug.WriteLine($"RandomSendAndReceiveTest ({bufferSize})");
+
+                Debug.WriteLine($"RandomSendAndReceiveTest ({bufferSize}), time: {sb.ElapsedMilliseconds}/ms");
             }
         }
     }

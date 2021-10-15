@@ -9,7 +9,7 @@ namespace Omnius.Core
 
         private BytesPool()
         {
-            _arrayPool = ArrayPool<byte>.Shared;
+            _arrayPool = ArrayPool<byte>.Create(1024 * 1024 * 256, 32);
             _memoryPool = MemoryPool<byte>.Shared;
         }
 

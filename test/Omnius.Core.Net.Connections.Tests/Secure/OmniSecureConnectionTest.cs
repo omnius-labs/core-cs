@@ -41,10 +41,10 @@ namespace Omnius.Core.Net.Connections.Secure
             await using var serverBridgeConnection = new BridgeConnection(new SocketCap(serverSocket), null, null, batchActionDispatcher, BytesPool.Shared, bridgeConnectionOptions);
 
             var clientSecureConnectionOptions = new OmniSecureConnectionOptions(OmniSecureConnectionType.Connected, clientDigitalSignature, 1024 * 1024 * 256);
-            await using var clientSecureConnection = OmniSecureConnection.CreateV1(clientBridgeConnection, batchActionDispatcher, BytesPool.Shared, clientSecureConnectionOptions);
+            await using var clientSecureConnection = OmniSecureConnection.CreateV1(clientBridgeConnection, BytesPool.Shared, clientSecureConnectionOptions);
 
             var serverSecureConnectionOptions = new OmniSecureConnectionOptions(OmniSecureConnectionType.Accepted, serverDigitalSignature, 1024 * 1024 * 256);
-            await using var serverSecureConnection = OmniSecureConnection.CreateV1(serverBridgeConnection, batchActionDispatcher, BytesPool.Shared, serverSecureConnectionOptions);
+            await using var serverSecureConnection = OmniSecureConnection.CreateV1(serverBridgeConnection, BytesPool.Shared, serverSecureConnectionOptions);
 
             // ハンドシェイクを行う
             var valueTask1 = clientSecureConnection.HandshakeAsync();

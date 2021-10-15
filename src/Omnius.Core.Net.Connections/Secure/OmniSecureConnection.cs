@@ -1,12 +1,10 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Omnius.Core.Cryptography;
 using Omnius.Core.Helpers;
 using Omnius.Core.Net.Connections.Secure.Internal;
-using Omnius.Core.Tasks;
 
 namespace Omnius.Core.Net.Connections.Secure
 {
@@ -17,9 +15,9 @@ namespace Omnius.Core.Net.Connections.Secure
 
         private OmniSecureConnectionVersion _version = OmniSecureConnectionVersion.Unknown;
 
-        public static OmniSecureConnection CreateV1(IConnection connection, IBatchActionDispatcher batchActionDispatcher, IBytesPool bytesPool, V1.OmniSecureConnectionOptions options)
+        public static OmniSecureConnection CreateV1(IConnection connection, IBytesPool bytesPool, V1.OmniSecureConnectionOptions options)
         {
-            var secureConnection = new V1.Internal.SecureConnection(connection, batchActionDispatcher, bytesPool, options);
+            var secureConnection = new V1.Internal.SecureConnection(connection, bytesPool, options);
             return new OmniSecureConnection(connection, secureConnection);
         }
 

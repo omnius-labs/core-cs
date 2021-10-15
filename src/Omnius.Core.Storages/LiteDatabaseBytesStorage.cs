@@ -84,19 +84,22 @@ namespace Omnius.Core.Storages
             return col;
         }
 
-        public async ValueTask ChangeKeyAsync(TKey oldKey, TKey newKey, CancellationToken cancellationToken = default)
+        public async ValueTask<bool> TryChangeKeyAsync(TKey oldKey, TKey newKey, CancellationToken cancellationToken = default)
         {
             using (await _asyncLock.WriterLockAsync(cancellationToken))
             {
                 var col = this.GetCollection();
-                if (col.Exists(Query.EQ("Key", new BsonValue(newKey)))) throw new DuplicateKeyException();
+
+                if (col.Exists(Query.EQ("Key", new BsonValue(newKey)))) return false;
 
                 var meta = col.FindOne(Query.EQ("Key", new BsonValue(oldKey)));
-                if (meta is null) throw new KeyNotFoundException();
+                if (meta is null) return false;
 
                 meta.Key = newKey;
 
                 col.Update(meta);
+
+                return true;
             }
         }
 
@@ -121,12 +124,12 @@ namespace Omnius.Core.Storages
             }
         }
 
-        public async ValueTask WriteAsync(TKey key, ReadOnlySequence<byte> sequence, CancellationToken cancellationToken = default)
+        public async ValueTask<bool> TryWriteAsync(TKey key, ReadOnlySequence<byte> sequence, CancellationToken cancellationToken = default)
         {
             using (await _asyncLock.WriterLockAsync(cancellationToken))
             {
                 var col = this.GetCollection();
-                if (col.Exists(Query.EQ("Key", new BsonValue(key)))) throw new DuplicateKeyException();
+                if (col.Exists(Query.EQ("Key", new BsonValue(key)))) return false;
 
                 var id = col.Insert(new BlockLink() { Key = key }).AsInt64;
 
@@ -137,12 +140,14 @@ namespace Omnius.Core.Storages
                 {
                     await liteFileStream.WriteAsync(memory, cancellationToken);
                 }
+
+                return true;
             }
         }
 
-        public async ValueTask WriteAsync(TKey key, ReadOnlyMemory<byte> memory, CancellationToken cancellationToken = default)
+        public async ValueTask<bool> TryWriteAsync(TKey key, ReadOnlyMemory<byte> memory, CancellationToken cancellationToken = default)
         {
-            await this.WriteAsync(key, new ReadOnlySequence<byte>(memory), cancellationToken);
+            return await this.TryWriteAsync(key, new ReadOnlySequence<byte>(memory), cancellationToken);
         }
 
         public async ValueTask<IMemoryOwner<byte>?> TryReadAsync(TKey key, CancellationToken cancellationToken = default)
@@ -156,7 +161,7 @@ namespace Omnius.Core.Storages
                 var storage = this.GetStorage();
                 await using var liteFileStream = storage.OpenRead(meta.Id);
 
-                var memoryOwner = _bytesPool.Memory.Rent((int)liteFileStream.Length);
+                var memoryOwner = _bytesPool.Memory.Rent((int)liteFileStream.Length).Shrink((int)liteFileStream.Length);
 
                 while (liteFileStream.Position < liteFileStream.Length)
                 {

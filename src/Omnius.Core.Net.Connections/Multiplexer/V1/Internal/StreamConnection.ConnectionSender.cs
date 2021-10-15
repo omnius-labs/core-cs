@@ -55,7 +55,8 @@ namespace Omnius.Core.Net.Connections.Multiplexer.V1.Internal
                 }
                 catch (OperationCanceledException)
                 {
-                    if (_cancellationToken.IsCancellationRequested) throw new Exception(); // FIXME
+                    // FIXME: new Exception()
+                    if (_cancellationToken.IsCancellationRequested) throw new Exception();
                 }
             }
 
@@ -78,7 +79,8 @@ namespace Omnius.Core.Net.Connections.Multiplexer.V1.Internal
                 }
                 catch (OperationCanceledException)
                 {
-                    if (_cancellationToken.IsCancellationRequested) throw new Exception(); // FIXME
+                    // FIXME: new Exception()
+                    if (_cancellationToken.IsCancellationRequested) throw new Exception();
                 }
             }
 

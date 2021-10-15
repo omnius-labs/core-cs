@@ -3,7 +3,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Omnius.Core.Cryptography;
 using Omnius.Core.Net.Connections.Internal;
-using Omnius.Core.Tasks;
 
 namespace Omnius.Core.Net.Connections.Secure.V1.Internal
 {
@@ -12,7 +11,6 @@ namespace Omnius.Core.Net.Connections.Secure.V1.Internal
         private static readonly NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
 
         private readonly IConnection _connection;
-        private readonly IBatchActionDispatcher _batchActionDispatcher;
         private readonly IBytesPool _bytesPool;
         private readonly OmniSecureConnectionOptions _options;
 
@@ -21,20 +19,18 @@ namespace Omnius.Core.Net.Connections.Secure.V1.Internal
         private ConnectionSender? _sender;
         private ConnectionReceiver? _receiver;
         private ConnectionEvents? _events;
-        private BatchAction? _batchAction;
 
         private readonly CancellationTokenSource _cancellationTokenSource = new();
 
         private readonly object _lockObject = new();
         private bool _canceled = false;
 
-        private const int FrameSize = 32 * 1024;
-        private const int TagSize = 16;
+        private const int MaxPayloadLength = 1024 * 1024 * 8;
+        private const int TagLength = 16;
 
-        public SecureConnection(IConnection connection, IBatchActionDispatcher batchActionDispatcher, IBytesPool bytesPool, OmniSecureConnectionOptions options)
+        public SecureConnection(IConnection connection, IBytesPool bytesPool, OmniSecureConnectionOptions options)
         {
             _connection = connection;
-            _batchActionDispatcher = batchActionDispatcher;
             _bytesPool = bytesPool;
             _options = options;
         }
@@ -66,17 +62,9 @@ namespace Omnius.Core.Net.Connections.Secure.V1.Internal
             var authenticatedResult = await authenticator.AuthenticateAsync(cancellationToken);
 
             _signature = authenticatedResult.Signature;
-            _sender = new ConnectionSender(_connection.Sender, authenticatedResult.CryptoAlgorithmType, authenticatedResult.EncryptKey, authenticatedResult.EncryptNonce, _bytesPool, _cancellationTokenSource.Token);
-            _receiver = new ConnectionReceiver(_connection.Receiver, authenticatedResult.CryptoAlgorithmType, _options.MaxReceiveByteCount, authenticatedResult.DecryptKey, authenticatedResult.DecryptNonce, _bytesPool, _cancellationTokenSource.Token);
+            _sender = new ConnectionSender(_connection.Sender, authenticatedResult.CryptoAlgorithmType, authenticatedResult.EncryptKey, authenticatedResult.EncryptNonce, _bytesPool);
+            _receiver = new ConnectionReceiver(_connection.Receiver, authenticatedResult.CryptoAlgorithmType, _options.MaxReceiveByteCount, authenticatedResult.DecryptKey, authenticatedResult.DecryptNonce, _bytesPool);
             _events = new ConnectionEvents(_cancellationTokenSource.Token);
-            _batchAction = new BatchAction(_sender, _receiver, this.HandleException);
-            _batchActionDispatcher.Register(_batchAction);
-        }
-
-        private void HandleException(Exception e)
-        {
-            _logger.Debug(e);
-            this.Cancel();
         }
 
         private void Cancel()
@@ -86,7 +74,6 @@ namespace Omnius.Core.Net.Connections.Secure.V1.Internal
                 if (_canceled) return;
                 _canceled = true;
 
-                if (_batchAction is not null) _batchActionDispatcher.Unregister(_batchAction);
                 _cancellationTokenSource.Cancel();
             }
         }

@@ -39,7 +39,7 @@ namespace Omnius.Core.Storages
             return value;
         }
 
-        public static async ValueTask SetValueAsync<TValue>(this IBytesStorage<string> bytesStorage, string key, TValue value, CancellationToken cancellationToken = default)
+        public static async ValueTask<bool> TrySetValueAsync<TValue>(this IBytesStorage<string> bytesStorage, string key, TValue value, CancellationToken cancellationToken = default)
             where TValue : IRocketMessage<TValue>
         {
             var bytesPool = BytesPool.Shared;
@@ -48,7 +48,7 @@ namespace Omnius.Core.Storages
             if (value is not IRocketMessage<TValue> rocketPackObject) throw new NotSupportedException();
             rocketPackObject.Export(bytesPipe.Writer, bytesPool);
 
-            await bytesStorage.WriteAsync(key, bytesPipe.Reader.GetSequence(), cancellationToken);
+            return await bytesStorage.TryWriteAsync(key, bytesPipe.Reader.GetSequence(), cancellationToken);
         }
     }
 }
