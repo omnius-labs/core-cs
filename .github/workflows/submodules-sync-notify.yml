@@ -19,7 +19,7 @@ jobs:
         PARENT_REPO: omnius-labs/xeus
       run: |
         curl --request POST 'https://api.github.com/repos/${{ env.PARENT_REPO }}/dispatches' \
-        --header 'Authorization: token ${{ env.GITHUB_TOKEN }}' \
+        --header 'Authorization: token ${{ env.CI_TOKEN }}' \
         --header 'Content-Type: application/json' \
         --data-raw '{
           "event_type": "core-repo-updated"
