@@ -5,6 +5,8 @@ on: [push]
 jobs:
   linux:
     runs-on: ubuntu-latest
+    env:
+      ContinuousIntegrationBuild: true
     steps:
       - name: Checkout branch
         uses: actions/checkout@v2
@@ -24,6 +26,8 @@ jobs:
         run: dotnet test --no-restore --verbosity normal
   windows:
     runs-on: windows-latest
+    env:
+      ContinuousIntegrationBuild: true
     steps:
       - name: Checkout branch
         uses: actions/checkout@v2
