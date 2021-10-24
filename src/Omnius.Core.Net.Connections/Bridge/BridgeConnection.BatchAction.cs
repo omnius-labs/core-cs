@@ -22,7 +22,7 @@ namespace Omnius.Core.Net.Connections.Bridge
                 _exceptionCallback = exceptionCallback;
             }
 
-            public TimeSpan Interval { get; } = TimeSpan.FromMilliseconds(30);
+            public TimeSpan Interval { get; } = TimeSpan.FromMilliseconds(10);
 
             public void Execute()
             {

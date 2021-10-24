@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Omnius.Core\Omnius.Core.csproj" />
+    <ProjectReference Include="..\Omnius.Core.Tasks\Omnius.Core.Tasks.csproj" />
   </ItemGroup>
 
 </Project>

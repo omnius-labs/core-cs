@@ -15,10 +15,7 @@ namespace Omnius.Core.Avalonia
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
 
-        public DynamicState()
-        {
-
-        }
+        public DynamicState() { }
 
         public Dictionary<string, object?> Properties { get; } = new();
 

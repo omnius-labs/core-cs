@@ -4,11 +4,6 @@ using Avalonia.Controls.ApplicationLifetimes;
 
 namespace Omnius.Core.Avalonia
 {
-    public interface IMainWindowProvider
-    {
-        Window GetMainWindow();
-    }
-
     public class MainWindowProvider : IMainWindowProvider
     {
         public Window GetMainWindow()

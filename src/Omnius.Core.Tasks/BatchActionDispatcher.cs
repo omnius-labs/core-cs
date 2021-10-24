@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Immutable;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -12,7 +11,7 @@ namespace Omnius.Core.Tasks
 
         private readonly TimeSpan _interval;
 
-        private ImmutableHashSet<IBatchAction> _batchActions = ImmutableHashSet<IBatchAction>.Empty;
+        private ImmutableDictionary<IBatchAction, BatchActionState> _batchActions = ImmutableDictionary<IBatchAction, BatchActionState>.Empty;
 
         private readonly Task _eventLoopTask;
         private readonly ManualResetEvent _resetEvent = new(false);
@@ -38,35 +37,20 @@ namespace Omnius.Core.Tasks
         {
             try
             {
-                var batchActionMap = ImmutableDictionary<IBatchAction, DateTime>.Empty;
-
                 for (; ; )
                 {
                     await _resetEvent.WaitAsync(_cancellationTokenSource.Token);
 
                     var batchActions = _batchActions;
-
-                    foreach (var batchAction in batchActions)
-                    {
-                        if (batchActionMap.ContainsKey(batchAction)) continue;
-                        batchActionMap = batchActionMap.Add(batchAction, DateTime.MinValue);
-                    }
-
-                    foreach (var (batchAction, task) in batchActionMap)
-                    {
-                        if (batchActions.Contains(batchAction)) continue;
-                        batchActionMap = batchActionMap.Remove(batchAction);
-                    }
-
-                    if (batchActionMap.Count == 0) continue;
+                    if (batchActions.Count == 0) continue;
 
                     var now = DateTime.UtcNow;
 
-                    foreach (var (batchAction, lastExecutionTime) in batchActionMap)
+                    foreach (var (batchAction, state) in batchActions)
                     {
-                        if ((now - lastExecutionTime) < batchAction.Interval) continue;
+                        if ((now - state.LastExecutionTime) < batchAction.Interval) continue;
 
-                        batchActionMap = batchActionMap.SetItem(batchAction, now);
+                        state.LastExecutionTime = now;
                         batchAction.Execute();
                     }
 
@@ -83,7 +67,7 @@ namespace Omnius.Core.Tasks
         {
             lock (_lockObject)
             {
-                _batchActions = _batchActions.Add(batchAction);
+                _batchActions = _batchActions.Add(batchAction, new BatchActionState() { LastExecutionTime = DateTime.MinValue });
                 _resetEvent.Set();
             }
         }
@@ -95,6 +79,11 @@ namespace Omnius.Core.Tasks
                 _batchActions = _batchActions.Remove(batchAction);
                 if (_batchActions.Count == 0) _resetEvent.Reset();
             }
+        }
+
+        private record BatchActionState
+        {
+            public DateTime LastExecutionTime { get; set; }
         }
     }
 }

@@ -16,7 +16,7 @@ namespace Omnius.Core.Net.Connections.Multiplexer.V1.Internal
                 _exceptionCallback = exceptionCallback;
             }
 
-            public TimeSpan Interval { get; } = TimeSpan.FromMilliseconds(100);
+            public TimeSpan Interval { get; } = TimeSpan.FromMilliseconds(10);
 
             public void Execute()
             {
