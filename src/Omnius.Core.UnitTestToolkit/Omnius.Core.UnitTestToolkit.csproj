@@ -7,7 +7,7 @@
 
   <ItemGroup>
     <PackageReference Include="DiffPlex" Version="1.7.0" />
-    <PackageReference Include="NLog" Version="4.7.11" />
+    <PackageReference Include="NLog" Version="4.7.12" />
     <PackageReference Include="System.Text.Json" Version="5.0.2" />
   </ItemGroup>
 
