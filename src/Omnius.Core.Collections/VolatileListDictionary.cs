@@ -77,7 +77,6 @@ namespace Omnius.Core.Collections
             _map.TrimExcess();
         }
 
-
         public TimeSpan SurvivalTime => _survivalTime;
 
         public KeyValuePair<TKey, IReadOnlyList<TValue>>[] ToArray()

@@ -11,7 +11,7 @@ using Newtonsoft.Json.Serialization;
 
 namespace Omnius.Core.Utils
 {
-    sealed class TypedJsonHelper
+    internal sealed class TypedJsonHelper
     {
         public static async ValueTask<T?> ReadFileAsync<T>(string path)
         {
@@ -60,18 +60,18 @@ namespace Omnius.Core.Utils
             }
         }
 
-        sealed class CustomContractResolver : DefaultContractResolver
+        private sealed class CustomContractResolver : DefaultContractResolver
         {
             protected override JsonContract CreateContract(Type objectType)
             {
                 if (objectType.GetTypeInfo().GetInterfaces().Any(type => type.IsConstructedGenericType && type.GetGenericTypeDefinition() == typeof(IDictionary<,>)))
                 {
-                    return base.CreateArrayContract(objectType);
+                    return this.CreateArrayContract(objectType);
                 }
 
                 if (objectType.GetTypeInfo().CustomAttributes.Any(n => n.AttributeType == typeof(DataContractAttribute)))
                 {
-                    var objectContract = base.CreateObjectContract(objectType);
+                    var objectContract = this.CreateObjectContract(objectType);
                     objectContract.DefaultCreatorNonPublic = false;
                     objectContract.DefaultCreator = () => FormatterServices.GetUninitializedObject(objectType);
 
@@ -83,7 +83,7 @@ namespace Omnius.Core.Utils
         }
 
         // https://stackoverflow.com/questions/25007001/json-net-does-not-preserve-primitive-type-information-in-lists-or-dictionaries-o
-        sealed class PrimitiveJsonConverter : JsonConverter
+        private sealed class PrimitiveJsonConverter : JsonConverter
         {
             public PrimitiveJsonConverter() { }
 
