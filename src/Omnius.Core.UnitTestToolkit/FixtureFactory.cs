@@ -38,9 +38,7 @@ namespace Omnius.Core.UnitTestToolkit
 
         public static string GetRandomString(int size)
         {
-            byte[] data = new byte[4 * size];
-            using var crypto = new RNGCryptoServiceProvider();
-            crypto.GetBytes(data);
+            byte[] data = RandomNumberGenerator.GetBytes(4 * size);
 
             var result = new StringBuilder(size);
             for (int i = 0; i < size; i++)

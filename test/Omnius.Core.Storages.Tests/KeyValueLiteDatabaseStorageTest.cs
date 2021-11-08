@@ -6,13 +6,13 @@ using Xunit;
 
 namespace Omnius.Core.Storages
 {
-    public class LiteDatabaseBytesStorageTest
+    public class KeyValueLiteDatabaseStorageTest
     {
         [Fact]
-        public async Task TestName()
+        public async Task SimpleTest()
         {
             using var deleter = FixtureFactory.GenTempDirectory(out var tempDirectoryPath);
-            using var storage = LiteDatabaseBytesStorage.Factory.Create<string>(Path.Combine(tempDirectoryPath, "test.db"), BytesPool.Shared);
+            using var storage = KeyValueLiteDatabaseStorage.Factory.Create<string>(Path.Combine(tempDirectoryPath, "test.db"), BytesPool.Shared);
             await storage.MigrateAsync();
             await storage.RebuildAsync();
 

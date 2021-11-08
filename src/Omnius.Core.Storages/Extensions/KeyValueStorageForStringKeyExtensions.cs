@@ -8,17 +8,17 @@ using Omnius.Core.RocketPack;
 
 namespace Omnius.Core.Storages
 {
-    public static class BytesStorageForStringKeyExtensions
+    public static class KeyValueStorageForStringKeyExtensions
     {
-        public static async IAsyncEnumerable<TValue> GetValuesAsync<TValue>(this IBytesStorage<string> bytesStorage, [EnumeratorCancellation] CancellationToken cancellationToken = default)
+        public static async IAsyncEnumerable<TValue> GetValuesAsync<TValue>(this IKeyValueStorage<string> storage, [EnumeratorCancellation] CancellationToken cancellationToken = default)
             where TValue : IRocketMessage<TValue>
         {
             var bytesPool = BytesPool.Shared;
             using var bytesPipe = new BytesPipe(bytesPool);
 
-            await foreach (var key in bytesStorage.GetKeysAsync(cancellationToken))
+            await foreach (var key in storage.GetKeysAsync(cancellationToken))
             {
-                if (!await bytesStorage.TryReadAsync(key, bytesPipe.Writer, cancellationToken)) continue;
+                if (!await storage.TryReadAsync(key, bytesPipe.Writer, cancellationToken)) continue;
 
                 var value = IRocketMessage<TValue>.Import(bytesPipe.Reader.GetSequence(), bytesPool);
                 yield return value;
@@ -27,19 +27,19 @@ namespace Omnius.Core.Storages
             }
         }
 
-        public static async ValueTask<TValue?> TryGetValueAsync<TValue>(this IBytesStorage<string> bytesStorage, string key, CancellationToken cancellationToken = default)
+        public static async ValueTask<TValue?> TryGetValueAsync<TValue>(this IKeyValueStorage<string> storage, string key, CancellationToken cancellationToken = default)
             where TValue : IRocketMessage<TValue>
         {
             var bytesPool = BytesPool.Shared;
             using var bytesPipe = new BytesPipe(bytesPool);
 
-            if (!await bytesStorage.TryReadAsync(key, bytesPipe.Writer, cancellationToken)) return default;
+            if (!await storage.TryReadAsync(key, bytesPipe.Writer, cancellationToken)) return default;
 
             var value = IRocketMessage<TValue>.Import(bytesPipe.Reader.GetSequence(), bytesPool);
             return value;
         }
 
-        public static async ValueTask<bool> TrySetValueAsync<TValue>(this IBytesStorage<string> bytesStorage, string key, TValue value, CancellationToken cancellationToken = default)
+        public static async ValueTask<bool> TrySetValueAsync<TValue>(this IKeyValueStorage<string> storage, string key, TValue value, CancellationToken cancellationToken = default)
             where TValue : IRocketMessage<TValue>
         {
             var bytesPool = BytesPool.Shared;
@@ -48,7 +48,7 @@ namespace Omnius.Core.Storages
             if (value is not IRocketMessage<TValue> rocketPackObject) throw new NotSupportedException();
             rocketPackObject.Export(bytesPipe.Writer, bytesPool);
 
-            return await bytesStorage.TryWriteAsync(key, bytesPipe.Reader.GetSequence(), cancellationToken);
+            return await storage.TryWriteAsync(key, bytesPipe.Reader.GetSequence(), cancellationToken);
         }
     }
 }

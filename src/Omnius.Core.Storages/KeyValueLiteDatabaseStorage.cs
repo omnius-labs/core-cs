@@ -12,22 +12,22 @@ using Omnius.Core.Helpers;
 
 namespace Omnius.Core.Storages
 {
-    public static class LiteDatabaseBytesStorage
+    public static class KeyValueLiteDatabaseStorage
     {
-        internal sealed class BytesStorageFactory : IBytesStorageFactory
+        internal sealed class KeyValueStorageFactory : IKeyValueStorageFactory
         {
-            public IBytesStorage<TKey> Create<TKey>(string path, IBytesPool bytesPool)
+            public IKeyValueStorage<TKey> Create<TKey>(string path, IBytesPool bytesPool)
                 where TKey : notnull
             {
-                var result = new LiteDatabaseBytesStorage<TKey>(path, bytesPool);
+                var result = new KeyValueLiteDatabaseStorage<TKey>(path, bytesPool);
                 return result;
             }
         }
 
-        public static IBytesStorageFactory Factory { get; } = new BytesStorageFactory();
+        public static IKeyValueStorageFactory Factory { get; } = new KeyValueStorageFactory();
     }
 
-    public sealed class LiteDatabaseBytesStorage<TKey> : DisposableBase, IBytesStorage<TKey>
+    public sealed class KeyValueLiteDatabaseStorage<TKey> : DisposableBase, IKeyValueStorage<TKey>
         where TKey : notnull
     {
         private readonly IBytesPool _bytesPool;
@@ -35,7 +35,7 @@ namespace Omnius.Core.Storages
 
         private readonly AsyncReaderWriterLock _asyncLock = new();
 
-        internal LiteDatabaseBytesStorage(string dirPath, IBytesPool bytesPool)
+        internal KeyValueLiteDatabaseStorage(string dirPath, IBytesPool bytesPool)
         {
             DirectoryHelper.CreateDirectory(dirPath);
 
@@ -124,32 +124,6 @@ namespace Omnius.Core.Storages
             }
         }
 
-        public async ValueTask<bool> TryWriteAsync(TKey key, ReadOnlySequence<byte> sequence, CancellationToken cancellationToken = default)
-        {
-            using (await _asyncLock.WriterLockAsync(cancellationToken))
-            {
-                var col = this.GetCollection();
-                if (col.Exists(Query.EQ("Key", new BsonValue(key)))) return false;
-
-                var id = col.Insert(new BlockLink() { Key = key }).AsInt64;
-
-                var storage = this.GetStorage();
-                await using var liteFileStream = storage.OpenWrite(id, "-");
-
-                foreach (var memory in sequence)
-                {
-                    await liteFileStream.WriteAsync(memory, cancellationToken);
-                }
-
-                return true;
-            }
-        }
-
-        public async ValueTask<bool> TryWriteAsync(TKey key, ReadOnlyMemory<byte> memory, CancellationToken cancellationToken = default)
-        {
-            return await this.TryWriteAsync(key, new ReadOnlySequence<byte>(memory), cancellationToken);
-        }
-
         public async ValueTask<IMemoryOwner<byte>?> TryReadAsync(TKey key, CancellationToken cancellationToken = default)
         {
             using (await _asyncLock.ReaderLockAsync(cancellationToken))
@@ -191,6 +165,32 @@ namespace Omnius.Core.Storages
 
                 return true;
             }
+        }
+
+        public async ValueTask<bool> TryWriteAsync(TKey key, ReadOnlySequence<byte> sequence, CancellationToken cancellationToken = default)
+        {
+            using (await _asyncLock.WriterLockAsync(cancellationToken))
+            {
+                var col = this.GetCollection();
+                if (col.Exists(Query.EQ("Key", new BsonValue(key)))) return false;
+
+                var id = col.Insert(new BlockLink() { Key = key }).AsInt64;
+
+                var storage = this.GetStorage();
+                await using var liteFileStream = storage.OpenWrite(id, "-");
+
+                foreach (var memory in sequence)
+                {
+                    await liteFileStream.WriteAsync(memory, cancellationToken);
+                }
+
+                return true;
+            }
+        }
+
+        public async ValueTask<bool> TryWriteAsync(TKey key, ReadOnlyMemory<byte> memory, CancellationToken cancellationToken = default)
+        {
+            return await this.TryWriteAsync(key, new ReadOnlySequence<byte>(memory), cancellationToken);
         }
 
         public async ValueTask<bool> TryDeleteAsync(TKey key, CancellationToken cancellationToken = default)

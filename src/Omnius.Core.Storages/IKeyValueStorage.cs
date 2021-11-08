@@ -6,13 +6,7 @@ using System.Threading.Tasks;
 
 namespace Omnius.Core.Storages
 {
-    public interface IBytesStorageFactory
-    {
-        IBytesStorage<TKey> Create<TKey>(string path, IBytesPool bytesPool)
-            where TKey : notnull;
-    }
-
-    public interface IBytesStorage<TKey> : IDisposable
+    public interface IKeyValueStorage<TKey> : IDisposable
         where TKey : notnull
     {
         ValueTask MigrateAsync(CancellationToken cancellationToken = default);
