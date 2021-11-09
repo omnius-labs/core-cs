@@ -1,9 +1,8 @@
 using System.Collections.Generic;
 
-namespace Omnius.Core.Pipelines
+namespace Omnius.Core.Pipelines;
+
+public interface IEventPublicher<TParam, TResult>
 {
-    public interface IEventPublicher<TParam, TResult>
-    {
-        IEnumerable<TResult> Publish(TParam param);
-    }
+    IEnumerable<TResult> Publish(TParam param);
 }

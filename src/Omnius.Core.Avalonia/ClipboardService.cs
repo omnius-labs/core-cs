@@ -3,32 +3,31 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 
-namespace Omnius.Core.Avalonia
+namespace Omnius.Core.Avalonia;
+
+public interface IClipboardService
 {
-    public interface IClipboardService
+    Task ClearAsync();
+
+    Task<string> GetTextAsync();
+
+    Task SetTextAsync(string text);
+}
+
+public class ClipboardService : IClipboardService
+{
+    public async Task ClearAsync()
     {
-        Task ClearAsync();
-
-        Task<string> GetTextAsync();
-
-        Task SetTextAsync(string text);
+        await Application.Current.Clipboard.ClearAsync();
     }
 
-    public class ClipboardService : IClipboardService
+    public async Task<string> GetTextAsync()
     {
-        public async Task ClearAsync()
-        {
-            await Application.Current.Clipboard.ClearAsync();
-        }
+        return await Application.Current.Clipboard.GetTextAsync();
+    }
 
-        public async Task<string> GetTextAsync()
-        {
-            return await Application.Current.Clipboard.GetTextAsync();
-        }
-
-        public async Task SetTextAsync(string text)
-        {
-            await Application.Current.Clipboard.SetTextAsync(text);
-        }
+    public async Task SetTextAsync(string text)
+    {
+        await Application.Current.Clipboard.SetTextAsync(text);
     }
 }

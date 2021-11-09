@@ -1,13 +1,12 @@
 using System.IO;
 
-namespace Omnius.Core.UnitTestToolkit
+namespace Omnius.Core.UnitTestToolkit;
+
+public class TestEnvironment
 {
-    public class TestEnvironment
+    public static string GetBasePath()
     {
-        public static string GetBasePath()
-        {
-            var basePath = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly()!.Location)!;
-            return basePath;
-        }
+        var basePath = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly()!.Location)!;
+        return basePath;
     }
 }

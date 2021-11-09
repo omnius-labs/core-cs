@@ -2,14 +2,13 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Omnius.Core.Pipelines
+namespace Omnius.Core.Pipelines;
+
+public interface IMessagePipeWriter
 {
-    public interface IMessagePipeWriter
-    {
-        ValueTask WaitToWriteAsync(CancellationToken cancellationToken = default);
+    ValueTask WaitToWriteAsync(CancellationToken cancellationToken = default);
 
-        ValueTask WriteAsync(CancellationToken cancellationToken = default);
+    ValueTask WriteAsync(CancellationToken cancellationToken = default);
 
-        bool TryWrite();
-    }
+    bool TryWrite();
 }

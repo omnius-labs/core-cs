@@ -1,89 +1,88 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Omnius.Core.Pipelines
+namespace Omnius.Core.Pipelines;
+
+public sealed partial class BoundedMessagePipe : DisposableBase
 {
-    public sealed partial class BoundedMessagePipe : DisposableBase
+    private readonly SemaphoreSlim _writerSemaphore;
+    private readonly SemaphoreSlim _readerSemaphore;
+
+    public BoundedMessagePipe(int capacity)
     {
-        private readonly SemaphoreSlim _writerSemaphore;
-        private readonly SemaphoreSlim _readerSemaphore;
+        _writerSemaphore = new SemaphoreSlim(capacity, capacity);
+        _readerSemaphore = new SemaphoreSlim(0, capacity);
 
-        public BoundedMessagePipe(int capacity)
+        this.Writer = new MessagePipeWriter(this);
+        this.Reader = new MessagePipeReader(this);
+    }
+
+    protected override void OnDispose(bool disposing)
+    {
+        if (!disposing) return;
+        _writerSemaphore.Dispose();
+        _readerSemaphore.Dispose();
+    }
+
+    public IMessagePipeWriter Writer { get; }
+
+    public IMessagePipeReader Reader { get; }
+
+    public sealed class MessagePipeWriter : IMessagePipeWriter
+    {
+        private readonly BoundedMessagePipe _pipe;
+
+        public MessagePipeWriter(BoundedMessagePipe pipe)
         {
-            _writerSemaphore = new SemaphoreSlim(capacity, capacity);
-            _readerSemaphore = new SemaphoreSlim(0, capacity);
-
-            this.Writer = new MessagePipeWriter(this);
-            this.Reader = new MessagePipeReader(this);
+            _pipe = pipe;
         }
 
-        protected override void OnDispose(bool disposing)
+        public async ValueTask WaitToWriteAsync(CancellationToken cancellationToken = default)
         {
-            if (!disposing) return;
-            _writerSemaphore.Dispose();
-            _readerSemaphore.Dispose();
+            await _pipe._writerSemaphore.WaitAsync(cancellationToken);
+            _pipe._writerSemaphore.Release();
         }
 
-        public IMessagePipeWriter Writer { get; }
-
-        public IMessagePipeReader Reader { get; }
-
-        public sealed class MessagePipeWriter : IMessagePipeWriter
+        public async ValueTask WriteAsync(CancellationToken cancellationToken = default)
         {
-            private readonly BoundedMessagePipe _pipe;
-
-            public MessagePipeWriter(BoundedMessagePipe pipe)
-            {
-                _pipe = pipe;
-            }
-
-            public async ValueTask WaitToWriteAsync(CancellationToken cancellationToken = default)
-            {
-                await _pipe._writerSemaphore.WaitAsync(cancellationToken);
-                _pipe._writerSemaphore.Release();
-            }
-
-            public async ValueTask WriteAsync(CancellationToken cancellationToken = default)
-            {
-                await _pipe._writerSemaphore.WaitAsync(cancellationToken);
-                _pipe._readerSemaphore.Release();
-            }
-
-            public bool TryWrite()
-            {
-                if (!_pipe._writerSemaphore.Wait(0)) return false;
-                _pipe._readerSemaphore.Release();
-                return true;
-            }
+            await _pipe._writerSemaphore.WaitAsync(cancellationToken);
+            _pipe._readerSemaphore.Release();
         }
 
-        public sealed class MessagePipeReader : IMessagePipeReader
+        public bool TryWrite()
         {
-            private readonly BoundedMessagePipe _pipe;
+            if (!_pipe._writerSemaphore.Wait(0)) return false;
+            _pipe._readerSemaphore.Release();
+            return true;
+        }
+    }
 
-            public MessagePipeReader(BoundedMessagePipe pipe)
-            {
-                _pipe = pipe;
-            }
+    public sealed class MessagePipeReader : IMessagePipeReader
+    {
+        private readonly BoundedMessagePipe _pipe;
 
-            public async ValueTask WaitToReadAsync(CancellationToken cancellationToken = default)
-            {
-                await _pipe._readerSemaphore.WaitAsync(cancellationToken);
-                _pipe._readerSemaphore.Release();
-            }
+        public MessagePipeReader(BoundedMessagePipe pipe)
+        {
+            _pipe = pipe;
+        }
 
-            public async ValueTask ReadAsync(CancellationToken cancellationToken = default)
-            {
-                await _pipe._readerSemaphore.WaitAsync(cancellationToken);
-                _pipe._writerSemaphore.Release();
-            }
+        public async ValueTask WaitToReadAsync(CancellationToken cancellationToken = default)
+        {
+            await _pipe._readerSemaphore.WaitAsync(cancellationToken);
+            _pipe._readerSemaphore.Release();
+        }
 
-            public bool TryRead()
-            {
-                if (!_pipe._readerSemaphore.Wait(0)) return false;
-                _pipe._writerSemaphore.Release();
-                return true;
-            }
+        public async ValueTask ReadAsync(CancellationToken cancellationToken = default)
+        {
+            await _pipe._readerSemaphore.WaitAsync(cancellationToken);
+            _pipe._writerSemaphore.Release();
+        }
+
+        public bool TryRead()
+        {
+            if (!_pipe._readerSemaphore.Wait(0)) return false;
+            _pipe._writerSemaphore.Release();
+            return true;
         }
     }
 }

@@ -7,44 +7,43 @@ using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace Omnius.Core.Net.Connections.Internal
+namespace Omnius.Core.Net.Connections.Internal;
+
+internal static class TestHelper
 {
-    internal static class TestHelper
+    public static async Task RandomSendAndReceive(Random random, IConnection connection1, IConnection connection2)
     {
-        public static async Task RandomSendAndReceive(Random random, IConnection connection1, IConnection connection2)
+        var caseList = new List<int>();
+        caseList.AddRange(Enumerable.Range(1, 4));
+        caseList.AddRange(new int[] { 100, 1000, 10000, 1024 * 1024, 1024 * 1024 * 8 });
+
+        foreach (var bufferSize in caseList)
         {
-            var caseList = new List<int>();
-            caseList.AddRange(Enumerable.Range(1, 4));
-            caseList.AddRange(new int[] { 100, 1000, 10000, 1024 * 1024, 1024 * 1024 * 8 });
+            var buffer1 = new byte[bufferSize];
+            var buffer2 = new byte[bufferSize];
 
-            foreach (var bufferSize in caseList)
+            random.NextBytes(buffer1);
+
+            using var cancellationTokenSource = new CancellationTokenSource();
+            cancellationTokenSource.CancelAfter(TimeSpan.FromSeconds(60));
+
+            var sb = Stopwatch.StartNew();
+
+            var valueTask1 = connection1.Sender.SendAsync((bufferWriter) =>
             {
-                var buffer1 = new byte[bufferSize];
-                var buffer2 = new byte[bufferSize];
+                bufferWriter.Write(buffer1);
+            }, cancellationTokenSource.Token);
 
-                random.NextBytes(buffer1);
+            var valueTask2 = connection2.Receiver.ReceiveAsync((sequence) =>
+            {
+                sequence.CopyTo(buffer2);
+            }, cancellationTokenSource.Token);
 
-                using var cancellationTokenSource = new CancellationTokenSource();
-                cancellationTokenSource.CancelAfter(TimeSpan.FromSeconds(60));
+            await Task.WhenAll(valueTask1.AsTask(), valueTask2.AsTask());
 
-                var sb = Stopwatch.StartNew();
+            Assert.Equal(buffer1, buffer2);
 
-                var valueTask1 = connection1.Sender.SendAsync((bufferWriter) =>
-                {
-                    bufferWriter.Write(buffer1);
-                }, cancellationTokenSource.Token);
-
-                var valueTask2 = connection2.Receiver.ReceiveAsync((sequence) =>
-                {
-                    sequence.CopyTo(buffer2);
-                }, cancellationTokenSource.Token);
-
-                await Task.WhenAll(valueTask1.AsTask(), valueTask2.AsTask());
-
-                Assert.Equal(buffer1, buffer2);
-
-                Debug.WriteLine($"RandomSendAndReceiveTest ({bufferSize}), time: {sb.ElapsedMilliseconds}/ms");
-            }
+            Debug.WriteLine($"RandomSendAndReceiveTest ({bufferSize}), time: {sb.ElapsedMilliseconds}/ms");
         }
     }
 }

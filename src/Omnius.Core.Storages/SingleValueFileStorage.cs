@@ -6,105 +6,104 @@ using System.Threading.Tasks;
 using Nito.AsyncEx;
 using Omnius.Core.Helpers;
 
-namespace Omnius.Core.Storages
+namespace Omnius.Core.Storages;
+
+public sealed class SingleValueFileStorage : DisposableBase, ISingleValueStorage
 {
-    public sealed class SingleValueFileStorage : DisposableBase, ISingleValueStorage
+    private readonly string _filePath;
+    private readonly IBytesPool _bytesPool;
+
+    private readonly AsyncReaderWriterLock _asyncLock = new();
+
+    internal sealed class SingleValueStorageFactory : ISingleValueStorageFactory
     {
-        private readonly string _filePath;
-        private readonly IBytesPool _bytesPool;
-
-        private readonly AsyncReaderWriterLock _asyncLock = new();
-
-        internal sealed class SingleValueStorageFactory : ISingleValueStorageFactory
+        public ISingleValueStorage Create(string path, IBytesPool bytesPool)
         {
-            public ISingleValueStorage Create(string path, IBytesPool bytesPool)
+            var result = new SingleValueFileStorage(path, bytesPool);
+            return result;
+        }
+    }
+
+    public static ISingleValueStorageFactory Factory { get; } = new SingleValueStorageFactory();
+
+    internal SingleValueFileStorage(string filePath, IBytesPool bytesPool)
+    {
+        _filePath = filePath;
+        _bytesPool = bytesPool;
+
+        DirectoryHelper.CreateDirectory(Path.GetDirectoryName(filePath)!);
+    }
+
+    protected override void OnDispose(bool disposing)
+    {
+    }
+
+    public async ValueTask<IMemoryOwner<byte>?> TryReadAsync(CancellationToken cancellationToken = default)
+    {
+        using (await _asyncLock.ReaderLockAsync(cancellationToken))
+        {
+            if (!File.Exists(_filePath)) return null;
+
+            await using var fileStream = new FileStream(_filePath, FileMode.Open);
+
+            var memoryOwner = _bytesPool.Memory.Rent((int)fileStream.Length).Shrink((int)fileStream.Length);
+
+            while (fileStream.Position < fileStream.Length)
             {
-                var result = new SingleValueFileStorage(path, bytesPool);
-                return result;
+                await fileStream.ReadAsync(memoryOwner.Memory[(int)fileStream.Position..], cancellationToken);
             }
+
+            return memoryOwner;
         }
+    }
 
-        public static ISingleValueStorageFactory Factory { get; } = new SingleValueStorageFactory();
-
-        internal SingleValueFileStorage(string filePath, IBytesPool bytesPool)
+    public async ValueTask<bool> TryReadAsync(IBufferWriter<byte> bufferWriter, CancellationToken cancellationToken = default)
+    {
+        using (await _asyncLock.ReaderLockAsync(cancellationToken))
         {
-            _filePath = filePath;
-            _bytesPool = bytesPool;
+            if (!File.Exists(_filePath)) return false;
 
-            DirectoryHelper.CreateDirectory(Path.GetDirectoryName(filePath)!);
-        }
+            await using var fileStream = new FileStream(_filePath, FileMode.Open);
 
-        protected override void OnDispose(bool disposing)
-        {
-        }
-
-        public async ValueTask<IMemoryOwner<byte>?> TryReadAsync(CancellationToken cancellationToken = default)
-        {
-            using (await _asyncLock.ReaderLockAsync(cancellationToken))
+            while (fileStream.Position < fileStream.Length)
             {
-                if (!File.Exists(_filePath)) return null;
-
-                await using var fileStream = new FileStream(_filePath, FileMode.Open);
-
-                var memoryOwner = _bytesPool.Memory.Rent((int)fileStream.Length).Shrink((int)fileStream.Length);
-
-                while (fileStream.Position < fileStream.Length)
-                {
-                    await fileStream.ReadAsync(memoryOwner.Memory[(int)fileStream.Position..], cancellationToken);
-                }
-
-                return memoryOwner;
+                int readLength = await fileStream.ReadAsync(bufferWriter.GetMemory(), cancellationToken);
+                bufferWriter.Advance(readLength);
             }
-        }
 
-        public async ValueTask<bool> TryReadAsync(IBufferWriter<byte> bufferWriter, CancellationToken cancellationToken = default)
+            return true;
+        }
+    }
+
+    public async ValueTask<bool> TryWriteAsync(ReadOnlySequence<byte> sequence, CancellationToken cancellationToken = default)
+    {
+        using (await _asyncLock.WriterLockAsync(cancellationToken))
         {
-            using (await _asyncLock.ReaderLockAsync(cancellationToken))
+            await using var fileStream = new FileStream(_filePath, FileMode.Create);
+
+            foreach (var memory in sequence)
             {
-                if (!File.Exists(_filePath)) return false;
-
-                await using var fileStream = new FileStream(_filePath, FileMode.Open);
-
-                while (fileStream.Position < fileStream.Length)
-                {
-                    int readLength = await fileStream.ReadAsync(bufferWriter.GetMemory(), cancellationToken);
-                    bufferWriter.Advance(readLength);
-                }
-
-                return true;
+                await fileStream.WriteAsync(memory, cancellationToken);
             }
+
+            return true;
         }
+    }
 
-        public async ValueTask<bool> TryWriteAsync(ReadOnlySequence<byte> sequence, CancellationToken cancellationToken = default)
+    public async ValueTask<bool> TryWriteAsync(ReadOnlyMemory<byte> memory, CancellationToken cancellationToken = default)
+    {
+        return await this.TryWriteAsync(new ReadOnlySequence<byte>(memory), cancellationToken);
+    }
+
+    public async ValueTask<bool> TryDeleteAsync(CancellationToken cancellationToken = default)
+    {
+        using (await _asyncLock.WriterLockAsync(cancellationToken))
         {
-            using (await _asyncLock.WriterLockAsync(cancellationToken))
-            {
-                await using var fileStream = new FileStream(_filePath, FileMode.Create);
+            if (!File.Exists(_filePath)) return false;
 
-                foreach (var memory in sequence)
-                {
-                    await fileStream.WriteAsync(memory, cancellationToken);
-                }
+            File.Delete(_filePath);
 
-                return true;
-            }
-        }
-
-        public async ValueTask<bool> TryWriteAsync(ReadOnlyMemory<byte> memory, CancellationToken cancellationToken = default)
-        {
-            return await this.TryWriteAsync(new ReadOnlySequence<byte>(memory), cancellationToken);
-        }
-
-        public async ValueTask<bool> TryDeleteAsync(CancellationToken cancellationToken = default)
-        {
-            using (await _asyncLock.WriterLockAsync(cancellationToken))
-            {
-                if (!File.Exists(_filePath)) return false;
-
-                File.Delete(_filePath);
-
-                return true;
-            }
+            return true;
         }
     }
 }

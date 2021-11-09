@@ -1,10 +1,9 @@
-namespace Omnius.Core.Serialization
+namespace Omnius.Core.Serialization;
+
+public enum ConvertStringType
 {
-    public enum ConvertStringType
-    {
-        Base16,
-        Base32,
-        Base58,
-        Base64,
-    }
+    Base16,
+    Base32,
+    Base58,
+    Base64,
 }

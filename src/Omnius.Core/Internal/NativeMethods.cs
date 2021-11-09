@@ -1,49 +1,48 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace Omnius.Core.Internal
-{
-    internal unsafe sealed partial class NativeMethods
-    {
-        private static readonly NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
+namespace Omnius.Core.Internal;
 
-        static NativeMethods()
+internal unsafe sealed partial class NativeMethods
+{
+    private static readonly NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
+
+    static NativeMethods()
+    {
+        try
         {
-            try
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
-                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                if (RuntimeInformation.ProcessArchitecture == Architecture.X64)
                 {
-                    if (RuntimeInformation.ProcessArchitecture == Architecture.X64)
-                    {
-                        NativeLibraryManager = new NativeLibraryManager("omnius-core.x64.dll");
-                    }
-                    else
-                    {
-                        throw new NotSupportedException();
-                    }
-                }
-                else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-                {
-                    if (RuntimeInformation.ProcessArchitecture == Architecture.X64)
-                    {
-                        NativeLibraryManager = new NativeLibraryManager("omnius-core.x64.so");
-                    }
-                    else
-                    {
-                        throw new NotSupportedException();
-                    }
+                    NativeLibraryManager = new NativeLibraryManager("omnius-core.x64.dll");
                 }
                 else
                 {
                     throw new NotSupportedException();
                 }
             }
-            catch (Exception e)
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
             {
-                _logger.Error(e);
+                if (RuntimeInformation.ProcessArchitecture == Architecture.X64)
+                {
+                    NativeLibraryManager = new NativeLibraryManager("omnius-core.x64.so");
+                }
+                else
+                {
+                    throw new NotSupportedException();
+                }
+            }
+            else
+            {
+                throw new NotSupportedException();
             }
         }
-
-        internal static NativeLibraryManager? NativeLibraryManager { get; private set; }
+        catch (Exception e)
+        {
+            _logger.Error(e);
+        }
     }
+
+    internal static NativeLibraryManager? NativeLibraryManager { get; private set; }
 }

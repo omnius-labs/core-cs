@@ -1,11 +1,10 @@
 using System.Buffers;
 
-namespace Omnius.Core
-{
-    public interface IBytesPool
-    {
-        ArrayPool<byte> Array { get; }
+namespace Omnius.Core;
 
-        MemoryPool<byte> Memory { get; }
-    }
+public interface IBytesPool
+{
+    ArrayPool<byte> Array { get; }
+
+    MemoryPool<byte> Memory { get; }
 }

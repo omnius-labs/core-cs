@@ -1,9 +1,8 @@
 using System;
 
-namespace Omnius.Core.Pipelines
+namespace Omnius.Core.Pipelines;
+
+public interface IEventSubscriber<TResult>
 {
-    public interface IEventSubscriber<TResult>
-    {
-        IDisposable Subscribe(Func<TResult> func);
-    }
+    IDisposable Subscribe(Func<TResult> func);
 }

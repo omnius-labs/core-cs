@@ -5,30 +5,29 @@ using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Omnius.Core
+namespace Omnius.Core;
+
+public static class SocketExtensions
 {
-    public static class SocketExtensions
+    public static async ValueTask ConnectAsync(this Socket socket, IPEndPoint remoteEndPoint, TimeSpan timeout, CancellationToken cancellationToken = default)
     {
-        public static async ValueTask ConnectAsync(this Socket socket, IPEndPoint remoteEndPoint, TimeSpan timeout, CancellationToken cancellationToken = default)
+        await Task.Delay(1, cancellationToken).ConfigureAwait(false);
+
+        using var linkedCancellationTokenSource = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+        linkedCancellationTokenSource.CancelAfter(timeout);
+
+        var asyncResult = socket.BeginConnect(remoteEndPoint, null, null);
+
+        try
         {
-            await Task.Delay(1, cancellationToken).ConfigureAwait(false);
-
-            using var linkedCancellationTokenSource = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
-            linkedCancellationTokenSource.CancelAfter(timeout);
-
-            var asyncResult = socket.BeginConnect(remoteEndPoint, null, null);
-
-            try
+            if (!asyncResult.IsCompleted && !asyncResult.CompletedSynchronously)
             {
-                if (!asyncResult.IsCompleted && !asyncResult.CompletedSynchronously)
-                {
-                    await asyncResult.AsyncWaitHandle.WaitAsync(linkedCancellationTokenSource.Token);
-                }
+                await asyncResult.AsyncWaitHandle.WaitAsync(linkedCancellationTokenSource.Token);
             }
-            finally
-            {
-                socket.EndConnect(asyncResult);
-            }
+        }
+        finally
+        {
+            socket.EndConnect(asyncResult);
         }
     }
 }

@@ -1,34 +1,33 @@
 using System.Collections.Generic;
 
-namespace Omnius.Core.Avalonia
+namespace Omnius.Core.Avalonia;
+
+public abstract class TreeViewModelBase : DisposableBase, IDropable
 {
-    public abstract class TreeViewModelBase : DisposableBase, IDropable
+    public TreeViewModelBase(TreeViewModelBase? parent)
     {
-        public TreeViewModelBase(TreeViewModelBase? parent)
-        {
-            this.Parent = parent;
-        }
-
-        public TreeViewModelBase? Parent { get; private set; }
-
-        public IEnumerable<TreeViewModelBase> GetAncestors()
-        {
-            var list = new LinkedList<TreeViewModelBase>();
-            list.AddFirst(this);
-
-            for (; ; )
-            {
-                var parent = list.First?.Value?.Parent;
-                if (parent == null) break;
-
-                list.AddFirst(parent);
-            }
-
-            return list;
-        }
-
-        public abstract bool TryAdd(object value);
-
-        public abstract bool TryRemove(object value);
+        this.Parent = parent;
     }
+
+    public TreeViewModelBase? Parent { get; private set; }
+
+    public IEnumerable<TreeViewModelBase> GetAncestors()
+    {
+        var list = new LinkedList<TreeViewModelBase>();
+        list.AddFirst(this);
+
+        for (; ; )
+        {
+            var parent = list.First?.Value?.Parent;
+            if (parent == null) break;
+
+            list.AddFirst(parent);
+        }
+
+        return list;
+    }
+
+    public abstract bool TryAdd(object value);
+
+    public abstract bool TryRemove(object value);
 }

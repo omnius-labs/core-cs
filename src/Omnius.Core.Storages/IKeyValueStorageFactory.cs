@@ -1,8 +1,7 @@
-namespace Omnius.Core.Storages
+namespace Omnius.Core.Storages;
+
+public interface IKeyValueStorageFactory
 {
-    public interface IKeyValueStorageFactory
-    {
-        IKeyValueStorage<TKey> Create<TKey>(string path, IBytesPool bytesPool)
-            where TKey : notnull;
-    }
+    IKeyValueStorage<TKey> Create<TKey>(string path, IBytesPool bytesPool)
+        where TKey : notnull;
 }

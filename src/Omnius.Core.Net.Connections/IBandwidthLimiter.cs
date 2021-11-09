@@ -1,9 +1,8 @@
-namespace Omnius.Core.Net.Connections
-{
-    public interface IBandwidthLimiter : ISynchronized
-    {
-        int ComputeFreeBytes();
+namespace Omnius.Core.Net.Connections;
 
-        void AddConsumedBytes(int size);
-    }
+public interface IBandwidthLimiter : ISynchronized
+{
+    int ComputeFreeBytes();
+
+    void AddConsumedBytes(int size);
 }

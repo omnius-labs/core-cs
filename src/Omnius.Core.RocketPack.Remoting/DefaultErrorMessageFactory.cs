@@ -1,14 +1,13 @@
 using System;
 
-namespace Omnius.Core.RocketPack.Remoting
-{
-    public class DefaultErrorMessageFactory : IErrorMessageFactory<DefaultErrorMessage>
-    {
-        public static DefaultErrorMessageFactory Default { get; } = new();
+namespace Omnius.Core.RocketPack.Remoting;
 
-        public DefaultErrorMessage Create(Exception e)
-        {
-            return new DefaultErrorMessage(e.GetType()?.FullName ?? string.Empty, e.Message, e.StackTrace);
-        }
+public class DefaultErrorMessageFactory : IErrorMessageFactory<DefaultErrorMessage>
+{
+    public static DefaultErrorMessageFactory Default { get; } = new();
+
+    public DefaultErrorMessage Create(Exception e)
+    {
+        return new DefaultErrorMessage(e.GetType()?.FullName ?? string.Empty, e.Message, e.StackTrace);
     }
 }

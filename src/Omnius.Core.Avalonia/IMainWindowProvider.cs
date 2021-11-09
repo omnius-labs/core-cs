@@ -1,9 +1,8 @@
 using Avalonia.Controls;
 
-namespace Omnius.Core.Avalonia
+namespace Omnius.Core.Avalonia;
+
+public interface IMainWindowProvider
 {
-    public interface IMainWindowProvider
-    {
-        Window GetMainWindow();
-    }
+    Window GetMainWindow();
 }

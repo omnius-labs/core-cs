@@ -3,35 +3,34 @@ using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Omnius.Core
+namespace Omnius.Core;
+
+public static class ProcessExtensions
 {
-    public static class ProcessExtensions
+    public static async Task WaitForExitAsync(this Process process, CancellationToken cancellationToken = default)
     {
-        public static async Task WaitForExitAsync(this Process process, CancellationToken cancellationToken = default)
+        var tcs = new TaskCompletionSource<object?>(TaskCreationOptions.RunContinuationsAsynchronously);
+
+        void Process_Exited(object? sender, EventArgs e)
         {
-            var tcs = new TaskCompletionSource<object?>(TaskCreationOptions.RunContinuationsAsynchronously);
+            tcs.TrySetResult(null);
+        }
 
-            void Process_Exited(object? sender, EventArgs e)
+        process.EnableRaisingEvents = true;
+        process.Exited += Process_Exited;
+
+        try
+        {
+            if (process.HasExited) return;
+
+            using (cancellationToken.Register(() => tcs.TrySetCanceled()))
             {
-                tcs.TrySetResult(null);
+                await tcs.Task.ConfigureAwait(false);
             }
-
-            process.EnableRaisingEvents = true;
-            process.Exited += Process_Exited;
-
-            try
-            {
-                if (process.HasExited) return;
-
-                using (cancellationToken.Register(() => tcs.TrySetCanceled()))
-                {
-                    await tcs.Task.ConfigureAwait(false);
-                }
-            }
-            finally
-            {
-                process.Exited -= Process_Exited;
-            }
+        }
+        finally
+        {
+            process.Exited -= Process_Exited;
         }
     }
 }

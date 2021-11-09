@@ -4,93 +4,92 @@ using System.Threading.Tasks;
 using Omnius.Core.Cryptography;
 using Omnius.Core.Net.Connections.Internal;
 
-namespace Omnius.Core.Net.Connections.Secure.V1.Internal
+namespace Omnius.Core.Net.Connections.Secure.V1.Internal;
+
+public sealed partial class SecureConnection : AsyncDisposableBase
 {
-    public sealed partial class SecureConnection : AsyncDisposableBase
+    private static readonly NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
+
+    private readonly IConnection _connection;
+    private readonly IBytesPool _bytesPool;
+    private readonly OmniSecureConnectionOptions _options;
+
+    private OmniSignature? _signature;
+
+    private ConnectionSender? _sender;
+    private ConnectionReceiver? _receiver;
+    private ConnectionEvents? _events;
+
+    private readonly CancellationTokenSource _cancellationTokenSource = new();
+
+    private readonly object _lockObject = new();
+    private bool _canceled = false;
+
+    private const int MaxPayloadLength = 1024 * 1024 * 8;
+    private const int TagLength = 16;
+
+    public SecureConnection(IConnection connection, IBytesPool bytesPool, OmniSecureConnectionOptions options)
     {
-        private static readonly NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
+        _connection = connection;
+        _bytesPool = bytesPool;
+        _options = options;
+    }
 
-        private readonly IConnection _connection;
-        private readonly IBytesPool _bytesPool;
-        private readonly OmniSecureConnectionOptions _options;
+    protected override async ValueTask OnDisposeAsync()
+    {
+        this.Cancel();
 
-        private OmniSignature? _signature;
+        _events?.Dispose();
+        _sender?.Dispose();
+        _receiver?.Dispose();
+        await _connection.DisposeAsync();
+        _cancellationTokenSource.Dispose();
+    }
 
-        private ConnectionSender? _sender;
-        private ConnectionReceiver? _receiver;
-        private ConnectionEvents? _events;
+    public bool IsConnected => _connection.IsConnected;
 
-        private readonly CancellationTokenSource _cancellationTokenSource = new();
+    public IConnectionSender Sender => _sender ?? throw new InvalidOperationException();
 
-        private readonly object _lockObject = new();
-        private bool _canceled = false;
+    public IConnectionReceiver Receiver => _receiver ?? throw new InvalidOperationException();
 
-        private const int MaxPayloadLength = 1024 * 1024 * 8;
-        private const int TagLength = 16;
+    public IConnectionEvents Subscribers => _events ?? throw new InvalidOperationException();
 
-        public SecureConnection(IConnection connection, IBytesPool bytesPool, OmniSecureConnectionOptions options)
+    public OmniSignature? Signature => _signature;
+
+    public async ValueTask HandshakeAsync(CancellationToken cancellationToken = default)
+    {
+        var authenticator = new Authenticator(_connection, _options.Type, _options.DigitalSignature, _bytesPool);
+        var authenticatedResult = await authenticator.AuthenticateAsync(cancellationToken);
+
+        _signature = authenticatedResult.Signature;
+        _sender = new ConnectionSender(_connection.Sender, authenticatedResult.CryptoAlgorithmType, authenticatedResult.EncryptKey, authenticatedResult.EncryptNonce, _bytesPool);
+        _receiver = new ConnectionReceiver(_connection.Receiver, authenticatedResult.CryptoAlgorithmType, _options.MaxReceiveByteCount, authenticatedResult.DecryptKey, authenticatedResult.DecryptNonce, _bytesPool);
+        _events = new ConnectionEvents(_cancellationTokenSource.Token);
+    }
+
+    private void Cancel()
+    {
+        lock (_lockObject)
         {
-            _connection = connection;
-            _bytesPool = bytesPool;
-            _options = options;
+            if (_canceled) return;
+            _canceled = true;
+
+            _cancellationTokenSource.Cancel();
         }
+    }
 
-        protected override async ValueTask OnDisposeAsync()
+    internal static void Increment(in byte[] bytes)
+    {
+        for (int i = 0; i < bytes.Length; i++)
         {
-            this.Cancel();
-
-            _events?.Dispose();
-            _sender?.Dispose();
-            _receiver?.Dispose();
-            await _connection.DisposeAsync();
-            _cancellationTokenSource.Dispose();
-        }
-
-        public bool IsConnected => _connection.IsConnected;
-
-        public IConnectionSender Sender => _sender ?? throw new InvalidOperationException();
-
-        public IConnectionReceiver Receiver => _receiver ?? throw new InvalidOperationException();
-
-        public IConnectionEvents Subscribers => _events ?? throw new InvalidOperationException();
-
-        public OmniSignature? Signature => _signature;
-
-        public async ValueTask HandshakeAsync(CancellationToken cancellationToken = default)
-        {
-            var authenticator = new Authenticator(_connection, _options.Type, _options.DigitalSignature, _bytesPool);
-            var authenticatedResult = await authenticator.AuthenticateAsync(cancellationToken);
-
-            _signature = authenticatedResult.Signature;
-            _sender = new ConnectionSender(_connection.Sender, authenticatedResult.CryptoAlgorithmType, authenticatedResult.EncryptKey, authenticatedResult.EncryptNonce, _bytesPool);
-            _receiver = new ConnectionReceiver(_connection.Receiver, authenticatedResult.CryptoAlgorithmType, _options.MaxReceiveByteCount, authenticatedResult.DecryptKey, authenticatedResult.DecryptNonce, _bytesPool);
-            _events = new ConnectionEvents(_cancellationTokenSource.Token);
-        }
-
-        private void Cancel()
-        {
-            lock (_lockObject)
+            if (bytes[i] == 0xff)
             {
-                if (_canceled) return;
-                _canceled = true;
-
-                _cancellationTokenSource.Cancel();
+                bytes[i] = 0x00;
             }
-        }
-
-        internal static void Increment(in byte[] bytes)
-        {
-            for (int i = 0; i < bytes.Length; i++)
+            else
             {
-                if (bytes[i] == 0xff)
-                {
-                    bytes[i] = 0x00;
-                }
-                else
-                {
-                    bytes[i]++;
-                    break;
-                }
+                bytes[i]++;
+                break;
             }
         }
     }

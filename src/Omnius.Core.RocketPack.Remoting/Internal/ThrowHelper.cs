@@ -3,24 +3,23 @@ using System.Diagnostics.CodeAnalysis;
 using System.Runtime.Serialization;
 using System.Text;
 
-namespace Omnius.Core.RocketPack.Remoting.Internal
+namespace Omnius.Core.RocketPack.Remoting.Internal;
+
+internal sealed partial class ThrowHelper
 {
-    internal sealed partial class ThrowHelper
+    [DoesNotReturn]
+    public static void ThrowRocketRemotingProtocolException_UnexpectedProtocol() => throw CreateRocketRemotingProtocolException_UnexpectedProtocol();
+
+    public static Exception CreateRocketRemotingProtocolException_UnexpectedProtocol()
     {
-        [DoesNotReturn]
-        public static void ThrowRocketRemotingProtocolException_UnexpectedProtocol() => throw CreateRocketRemotingProtocolException_UnexpectedProtocol();
+        return new RocketRemotingProtocolException("Unexpected protocol");
+    }
 
-        public static Exception CreateRocketRemotingProtocolException_UnexpectedProtocol()
-        {
-            return new RocketRemotingProtocolException("Unexpected protocol");
-        }
+    [DoesNotReturn]
+    public static void ThrowRocketRemotingApplicationException<T>(T errorMessage) => throw CreateRocketRemotingApplicationException(errorMessage);
 
-        [DoesNotReturn]
-        public static void ThrowRocketRemotingApplicationException<T>(T errorMessage) => throw CreateRocketRemotingApplicationException(errorMessage);
-
-        public static Exception CreateRocketRemotingApplicationException<T>(T errorMessage)
-        {
-            return new RocketRemotingApplicationException<T>(errorMessage);
-        }
+    public static Exception CreateRocketRemotingApplicationException<T>(T errorMessage)
+    {
+        return new RocketRemotingApplicationException<T>(errorMessage);
     }
 }

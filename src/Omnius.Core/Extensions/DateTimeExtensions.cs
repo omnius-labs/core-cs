@@ -1,15 +1,14 @@
 using System;
 
-namespace Omnius.Core
-{
-    public static class DateTimeExtensions
-    {
-        public static DateTime Truncate(this DateTime dateTime, TimeSpan timeSpan)
-        {
-            if (timeSpan == TimeSpan.Zero) return dateTime;
-            if (dateTime == DateTime.MinValue || dateTime == DateTime.MaxValue) return dateTime;
+namespace Omnius.Core;
 
-            return dateTime.AddTicks(-(dateTime.Ticks % timeSpan.Ticks));
-        }
+public static class DateTimeExtensions
+{
+    public static DateTime Truncate(this DateTime dateTime, TimeSpan timeSpan)
+    {
+        if (timeSpan == TimeSpan.Zero) return dateTime;
+        if (dateTime == DateTime.MinValue || dateTime == DateTime.MaxValue) return dateTime;
+
+        return dateTime.AddTicks(-(dateTime.Ticks % timeSpan.Ticks));
     }
 }

@@ -1,9 +1,8 @@
-namespace Omnius.Core.Serialization
+namespace Omnius.Core.Serialization;
+
+public enum ConvertStringCase
 {
-    public enum ConvertStringCase
-    {
-        None,
-        Upper,
-        Lower,
-    }
+    None,
+    Upper,
+    Lower,
 }

@@ -1,80 +1,79 @@
 using System;
 using Omnius.Core.Tasks;
 
-namespace Omnius.Core.Net.Connections.Bridge
+namespace Omnius.Core.Net.Connections.Bridge;
+
+public partial class BridgeConnection
 {
-    public partial class BridgeConnection
+    internal class BatchAction : IBatchAction
     {
-        internal class BatchAction : IBatchAction
+        private readonly ConnectionSender _sender;
+        private readonly ConnectionReceiver _receiver;
+        private readonly IBandwidthLimiter? _senderBandwidthLimiter;
+        private readonly IBandwidthLimiter? _receiverBandwidthLimiter;
+        private readonly Action<Exception> _exceptionCallback;
+
+        public BatchAction(ConnectionSender sender, ConnectionReceiver receiver, IBandwidthLimiter? senderBandwidthLimiter, IBandwidthLimiter? receiverBandwidthLimiter, Action<Exception> exceptionCallback)
         {
-            private readonly ConnectionSender _sender;
-            private readonly ConnectionReceiver _receiver;
-            private readonly IBandwidthLimiter? _senderBandwidthLimiter;
-            private readonly IBandwidthLimiter? _receiverBandwidthLimiter;
-            private readonly Action<Exception> _exceptionCallback;
+            _sender = sender;
+            _receiver = receiver;
+            _senderBandwidthLimiter = senderBandwidthLimiter;
+            _receiverBandwidthLimiter = receiverBandwidthLimiter;
+            _exceptionCallback = exceptionCallback;
+        }
 
-            public BatchAction(ConnectionSender sender, ConnectionReceiver receiver, IBandwidthLimiter? senderBandwidthLimiter, IBandwidthLimiter? receiverBandwidthLimiter, Action<Exception> exceptionCallback)
+        public TimeSpan Interval { get; } = TimeSpan.FromMilliseconds(10);
+
+        public void Execute()
+        {
+            try
             {
-                _sender = sender;
-                _receiver = receiver;
-                _senderBandwidthLimiter = senderBandwidthLimiter;
-                _receiverBandwidthLimiter = receiverBandwidthLimiter;
-                _exceptionCallback = exceptionCallback;
+                this.Send();
+            }
+            catch (Exception e)
+            {
+                _exceptionCallback.Invoke(e);
             }
 
-            public TimeSpan Interval { get; } = TimeSpan.FromMilliseconds(10);
-
-            public void Execute()
+            try
             {
-                try
-                {
-                    this.Send();
-                }
-                catch (Exception e)
-                {
-                    _exceptionCallback.Invoke(e);
-                }
+                this.Receive();
+            }
+            catch (Exception e)
+            {
+                _exceptionCallback.Invoke(e);
+            }
+        }
 
-                try
-                {
-                    this.Receive();
-                }
-                catch (Exception e)
-                {
-                    _exceptionCallback.Invoke(e);
-                }
+        private void Send()
+        {
+            if (_senderBandwidthLimiter is null)
+            {
+                _sender.InternalSend(int.MaxValue);
+                return;
             }
 
-            private void Send()
+            lock (_senderBandwidthLimiter.LockObject)
             {
-                if (_senderBandwidthLimiter is null)
-                {
-                    _sender.InternalSend(int.MaxValue);
-                    return;
-                }
+                var freeBytes = _senderBandwidthLimiter.ComputeFreeBytes();
+                var consumedBytes = _sender.InternalSend(freeBytes);
+                _senderBandwidthLimiter.AddConsumedBytes(consumedBytes);
+            }
+        }
 
-                lock (_senderBandwidthLimiter.LockObject)
-                {
-                    var freeBytes = _senderBandwidthLimiter.ComputeFreeBytes();
-                    var consumedBytes = _sender.InternalSend(freeBytes);
-                    _senderBandwidthLimiter.AddConsumedBytes(consumedBytes);
-                }
+        private void Receive()
+        {
+            if (_receiverBandwidthLimiter is null)
+            {
+                _receiver.InternalReceive(int.MaxValue);
+                return;
             }
 
-            private void Receive()
+            lock (_receiverBandwidthLimiter.LockObject)
             {
-                if (_receiverBandwidthLimiter is null)
-                {
-                    _receiver.InternalReceive(int.MaxValue);
-                    return;
-                }
-
-                lock (_receiverBandwidthLimiter.LockObject)
-                {
-                    var freeBytes = _receiverBandwidthLimiter.ComputeFreeBytes();
-                    var consumedBytes = _receiver.InternalReceive(freeBytes);
-                    _receiverBandwidthLimiter.AddConsumedBytes(consumedBytes);
-                }
+                var freeBytes = _receiverBandwidthLimiter.ComputeFreeBytes();
+                var consumedBytes = _receiver.InternalReceive(freeBytes);
+                _receiverBandwidthLimiter.AddConsumedBytes(consumedBytes);
             }
         }
     }

@@ -1,33 +1,32 @@
 using System;
 using System.Collections.Generic;
 
-namespace Omnius.Core
+namespace Omnius.Core;
+
+public static class LinkedListExtensions
 {
-    public static class LinkedListExtensions
+    // http://stackoverflow.com/questions/8195242/removing-from-a-linkedlist
+    public static int RemoveAll<T>(this LinkedList<T> list, Predicate<T> match)
     {
-        // http://stackoverflow.com/questions/8195242/removing-from-a-linkedlist
-        public static int RemoveAll<T>(this LinkedList<T> list, Predicate<T> match)
+        if (list == null) throw new ArgumentNullException(nameof(list));
+        if (match == null) throw new ArgumentNullException(nameof(match));
+
+        int count = 0;
+        var node = list.First;
+
+        while (node != null)
         {
-            if (list == null) throw new ArgumentNullException(nameof(list));
-            if (match == null) throw new ArgumentNullException(nameof(match));
+            var next = node.Next;
 
-            int count = 0;
-            var node = list.First;
-
-            while (node != null)
+            if (match(node.Value))
             {
-                var next = node.Next;
-
-                if (match(node.Value))
-                {
-                    list.Remove(node);
-                    count++;
-                }
-
-                node = next;
+                list.Remove(node);
+                count++;
             }
 
-            return count;
+            node = next;
         }
+
+        return count;
     }
 }

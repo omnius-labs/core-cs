@@ -1,44 +1,43 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Omnius.Core.Helpers
-{
-    public class StringHelper
-    {
-        public static string Normalize(string value)
-        {
-            var sb = new StringBuilder(value.Length);
+namespace Omnius.Core.Helpers;
 
-            foreach (string element in ToTextElements(value))
+public class StringHelper
+{
+    public static string Normalize(string value)
+    {
+        var sb = new StringBuilder(value.Length);
+
+        foreach (string element in ToTextElements(value))
+        {
+            for (int i = 0; i < element.Length; i++)
             {
-                for (int i = 0; i < element.Length; i++)
+                if (!char.IsControl(element[i]) && element[i] != '\uFFFD')
                 {
-                    if (!char.IsControl(element[i]) && element[i] != '\uFFFD')
-                    {
-                        sb.Append(element[i]);
-                    }
+                    sb.Append(element[i]);
                 }
             }
-
-            return sb.ToString();
         }
 
-        private static IEnumerable<string> ToTextElements(string text)
+        return sb.ToString();
+    }
+
+    private static IEnumerable<string> ToTextElements(string text)
+    {
+        var iterator = System.Globalization.StringInfo.GetTextElementEnumerator(text);
+
+        while (iterator.MoveNext())
         {
-            var iterator = System.Globalization.StringInfo.GetTextElementEnumerator(text);
+            string item = iterator.GetTextElement();
 
-            while (iterator.MoveNext())
+            if (Encoding.UTF8.GetByteCount(item) > 16)
             {
-                string item = iterator.GetTextElement();
-
-                if (Encoding.UTF8.GetByteCount(item) > 16)
-                {
-                    yield return " ";
-                }
-                else
-                {
-                    yield return item;
-                }
+                yield return " ";
+            }
+            else
+            {
+                yield return item;
             }
         }
     }

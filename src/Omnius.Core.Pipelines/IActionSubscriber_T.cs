@@ -1,9 +1,8 @@
 using System;
 
-namespace Omnius.Core.Pipelines
+namespace Omnius.Core.Pipelines;
+
+public interface IActionSubscriber<T>
 {
-    public interface IActionSubscriber<T>
-    {
-        IDisposable Subscribe(Action<T> action);
-    }
+    IDisposable Subscribe(Action<T> action);
 }

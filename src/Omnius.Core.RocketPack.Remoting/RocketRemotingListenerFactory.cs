@@ -4,38 +4,37 @@ using System.Threading;
 using System.Threading.Tasks;
 using Omnius.Core.Net.Connections;
 
-namespace Omnius.Core.RocketPack.Remoting
+namespace Omnius.Core.RocketPack.Remoting;
+
+public sealed partial class RocketRemotingListenerFactory<TError> : IRocketRemotingListenerFactory<TError>
+    where TError : IRocketMessage<TError>
 {
-    public sealed partial class RocketRemotingListenerFactory<TError> : IRocketRemotingListenerFactory<TError>
-        where TError : IRocketMessage<TError>
+    private static readonly NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
+
+    private readonly IConnectionMultiplexer _multiplexer;
+    private readonly IErrorMessageFactory<TError> _errorMessageFactory;
+    private readonly IBytesPool _bytesPool;
+
+    public RocketRemotingListenerFactory(IConnectionMultiplexer multiplexer, IErrorMessageFactory<TError> errorMessageFactory, IBytesPool bytesPool)
     {
-        private static readonly NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
+        _multiplexer = multiplexer;
+        _errorMessageFactory = errorMessageFactory;
+        _bytesPool = bytesPool;
+    }
 
-        private readonly IConnectionMultiplexer _multiplexer;
-        private readonly IErrorMessageFactory<TError> _errorMessageFactory;
-        private readonly IBytesPool _bytesPool;
+    public async ValueTask<IRocketRemotingListener<TError>> CreateAsync(CancellationToken cancellationToken = default)
+    {
+        uint functionId = 0;
 
-        public RocketRemotingListenerFactory(IConnectionMultiplexer multiplexer, IErrorMessageFactory<TError> errorMessageFactory, IBytesPool bytesPool)
-        {
-            _multiplexer = multiplexer;
-            _errorMessageFactory = errorMessageFactory;
-            _bytesPool = bytesPool;
-        }
+        var connection = await _multiplexer.AcceptAsync(cancellationToken);
 
-        public async ValueTask<IRocketRemotingListener<TError>> CreateAsync(CancellationToken cancellationToken = default)
-        {
-            uint functionId = 0;
+        await connection.Receiver.ReceiveAsync(
+            sequence =>
+            {
+                Varint.TryGetUInt32(ref sequence, out functionId);
+            }, cancellationToken);
 
-            var connection = await _multiplexer.AcceptAsync(cancellationToken);
-
-            await connection.Receiver.ReceiveAsync(
-                sequence =>
-                {
-                    Varint.TryGetUInt32(ref sequence, out functionId);
-                }, cancellationToken);
-
-            var listener = new RocketRemotingListener<TError>(connection, functionId, _errorMessageFactory, _bytesPool);
-            return listener;
-        }
+        var listener = new RocketRemotingListener<TError>(connection, functionId, _errorMessageFactory, _bytesPool);
+        return listener;
     }
 }

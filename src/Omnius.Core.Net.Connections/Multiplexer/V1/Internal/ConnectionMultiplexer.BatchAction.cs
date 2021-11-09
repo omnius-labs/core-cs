@@ -1,42 +1,41 @@
 using System;
 using Omnius.Core.Tasks;
 
-namespace Omnius.Core.Net.Connections.Multiplexer.V1.Internal
-{
-    internal sealed partial class ConnectionMultiplexer
-    {
-        private sealed class BatchAction : IBatchAction
-        {
-            private readonly ConnectionMultiplexer _connectionMultiplexer;
-            private readonly Action<Exception> _exceptionCallback;
+namespace Omnius.Core.Net.Connections.Multiplexer.V1.Internal;
 
-            public BatchAction(ConnectionMultiplexer connectionMultiplexer, Action<Exception> exceptionCallback)
+internal sealed partial class ConnectionMultiplexer
+{
+    private sealed class BatchAction : IBatchAction
+    {
+        private readonly ConnectionMultiplexer _connectionMultiplexer;
+        private readonly Action<Exception> _exceptionCallback;
+
+        public BatchAction(ConnectionMultiplexer connectionMultiplexer, Action<Exception> exceptionCallback)
+        {
+            _connectionMultiplexer = connectionMultiplexer;
+            _exceptionCallback = exceptionCallback;
+        }
+
+        public TimeSpan Interval { get; } = TimeSpan.FromMilliseconds(10);
+
+        public void Execute()
+        {
+            try
             {
-                _connectionMultiplexer = connectionMultiplexer;
-                _exceptionCallback = exceptionCallback;
+                _connectionMultiplexer.InternalSend();
+            }
+            catch (Exception e)
+            {
+                _exceptionCallback.Invoke(e);
             }
 
-            public TimeSpan Interval { get; } = TimeSpan.FromMilliseconds(10);
-
-            public void Execute()
+            try
             {
-                try
-                {
-                    _connectionMultiplexer.InternalSend();
-                }
-                catch (Exception e)
-                {
-                    _exceptionCallback.Invoke(e);
-                }
-
-                try
-                {
-                    _connectionMultiplexer.InternalReceive();
-                }
-                catch (Exception e)
-                {
-                    _exceptionCallback.Invoke(e);
-                }
+                _connectionMultiplexer.InternalReceive();
+            }
+            catch (Exception e)
+            {
+                _exceptionCallback.Invoke(e);
             }
         }
     }

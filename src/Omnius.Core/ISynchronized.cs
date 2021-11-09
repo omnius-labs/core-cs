@@ -1,7 +1,6 @@
-namespace Omnius.Core
+namespace Omnius.Core;
+
+public interface ISynchronized
 {
-    public interface ISynchronized
-    {
-        object LockObject { get; }
-    }
+    object LockObject { get; }
 }

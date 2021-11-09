@@ -3,27 +3,26 @@ using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Omnius.Core.Net.Proxies
+namespace Omnius.Core.Net.Proxies;
+
+public interface IProxyClient
 {
-    public interface IProxyClient
+    ValueTask ConnectAsync(Socket socket, CancellationToken cancellationToken = default);
+}
+
+public class ProxyClientException : Exception
+{
+    public ProxyClientException()
     {
-        ValueTask ConnectAsync(Socket socket, CancellationToken cancellationToken = default);
     }
 
-    public class ProxyClientException : Exception
+    public ProxyClientException(string message)
+        : base(message)
     {
-        public ProxyClientException()
-        {
-        }
+    }
 
-        public ProxyClientException(string message)
-            : base(message)
-        {
-        }
-
-        public ProxyClientException(string message, Exception innerException)
-            : base(message, innerException)
-        {
-        }
+    public ProxyClientException(string message, Exception innerException)
+        : base(message, innerException)
+    {
     }
 }

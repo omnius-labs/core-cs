@@ -1,9 +1,8 @@
 using System.Buffers;
 
-namespace Omnius.Core.Pipelines
+namespace Omnius.Core.Pipelines;
+
+public interface IBytesWriter : IBufferWriter<byte>
 {
-    public interface IBytesWriter : IBufferWriter<byte>
-    {
-        long WrittenBytes { get; }
-    }
+    long WrittenBytes { get; }
 }

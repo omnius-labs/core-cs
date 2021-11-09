@@ -3,43 +3,42 @@ using Omnius.Core.Cryptography.Functions;
 using Omnius.Core.Cryptography.Internal;
 using Omnius.Core.RocketPack;
 
-namespace Omnius.Core.Cryptography
+namespace Omnius.Core.Cryptography;
+
+public sealed partial class OmniAgreement
 {
-    public sealed partial class OmniAgreement
+    public static OmniAgreement Create(OmniAgreementAlgorithmType algorithmType)
     {
-        public static OmniAgreement Create(OmniAgreementAlgorithmType algorithmType)
+        var creationTime = DateTime.UtcNow;
+
+        if (algorithmType == OmniAgreementAlgorithmType.EcDh_P521_Sha2_256)
         {
-            var creationTime = DateTime.UtcNow;
+            var (publicKey, privateKey) = EcDh_P521_Sha2_256.CreateKeys();
 
-            if (algorithmType == OmniAgreementAlgorithmType.EcDh_P521_Sha2_256)
-            {
-                var (publicKey, privateKey) = EcDh_P521_Sha2_256.CreateKeys();
-
-                return new OmniAgreement(Timestamp.FromDateTime(creationTime), algorithmType, publicKey, privateKey);
-            }
-
-            throw new NotSupportedException(nameof(algorithmType));
+            return new OmniAgreement(Timestamp.FromDateTime(creationTime), algorithmType, publicKey, privateKey);
         }
 
-        public OmniAgreementPublicKey GetOmniAgreementPublicKey()
+        throw new NotSupportedException(nameof(algorithmType));
+    }
+
+    public OmniAgreementPublicKey GetOmniAgreementPublicKey()
+    {
+        return new OmniAgreementPublicKey(this.CreationTime, this.AlgorithmType, this.PublicKey);
+    }
+
+    public OmniAgreementPrivateKey GetOmniAgreementPrivateKey()
+    {
+        return new OmniAgreementPrivateKey(this.CreationTime, this.AlgorithmType, this.PrivateKey);
+    }
+
+    public static byte[] GetSecret(OmniAgreementPublicKey publicKey, OmniAgreementPrivateKey privateKey)
+    {
+        if (publicKey.AlgorithmType == OmniAgreementAlgorithmType.EcDh_P521_Sha2_256
+            && privateKey.AlgorithmType == OmniAgreementAlgorithmType.EcDh_P521_Sha2_256)
         {
-            return new OmniAgreementPublicKey(this.CreationTime, this.AlgorithmType, this.PublicKey);
+            return EcDh_P521_Sha2_256.GetSecret(publicKey.PublicKey, privateKey.PrivateKey);
         }
 
-        public OmniAgreementPrivateKey GetOmniAgreementPrivateKey()
-        {
-            return new OmniAgreementPrivateKey(this.CreationTime, this.AlgorithmType, this.PrivateKey);
-        }
-
-        public static byte[] GetSecret(OmniAgreementPublicKey publicKey, OmniAgreementPrivateKey privateKey)
-        {
-            if (publicKey.AlgorithmType == OmniAgreementAlgorithmType.EcDh_P521_Sha2_256
-                && privateKey.AlgorithmType == OmniAgreementAlgorithmType.EcDh_P521_Sha2_256)
-            {
-                return EcDh_P521_Sha2_256.GetSecret(publicKey.PublicKey, privateKey.PrivateKey);
-            }
-
-            throw new NotSupportedException();
-        }
+        throw new NotSupportedException();
     }
 }

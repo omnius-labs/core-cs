@@ -1,7 +1,6 @@
-namespace Omnius.Core.Pipelines
+namespace Omnius.Core.Pipelines;
+
+public interface IActionPublicher
 {
-    public interface IActionPublicher
-    {
-        void Publish();
-    }
+    void Publish();
 }

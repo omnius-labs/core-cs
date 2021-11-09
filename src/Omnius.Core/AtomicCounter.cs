@@ -1,118 +1,117 @@
 using System;
 using System.Threading;
 
-namespace Omnius.Core
+namespace Omnius.Core;
+
+/// <summary>
+/// <see cref="Interlocked"/>を利用したStatefulなカウンターです。
+/// </summary>
+public sealed class AtomicCounter : IEquatable<AtomicCounter>
 {
-    /// <summary>
-    /// <see cref="Interlocked"/>を利用したStatefulなカウンターです。
-    /// </summary>
-    public sealed class AtomicCounter : IEquatable<AtomicCounter>
+    private long _value;
+
+    public AtomicCounter()
     {
-        private long _value;
+        _value = 0;
+    }
 
-        public AtomicCounter()
+    public AtomicCounter(long value)
+    {
+        _value = value;
+    }
+
+    private long Value
+    {
+        get
         {
-            _value = 0;
+            return Interlocked.Read(ref _value);
         }
+    }
 
-        public AtomicCounter(long value)
-        {
-            _value = value;
-        }
+    public override int GetHashCode()
+    {
+        return this.Value.GetHashCode();
+    }
 
-        private long Value
-        {
-            get
-            {
-                return Interlocked.Read(ref _value);
-            }
-        }
+    public override bool Equals(object? obj)
+    {
+        if (!(obj is AtomicCounter)) return false;
 
-        public override int GetHashCode()
-        {
-            return this.Value.GetHashCode();
-        }
+        return this.Equals((AtomicCounter)obj);
+    }
 
-        public override bool Equals(object? obj)
-        {
-            if (!(obj is AtomicCounter)) return false;
+    public bool Equals(AtomicCounter? other)
+    {
+        if (other is null) return false;
+        if (object.ReferenceEquals(this, other)) return true;
 
-            return this.Equals((AtomicCounter)obj);
-        }
+        return this.Value == other.Value;
+    }
 
-        public bool Equals(AtomicCounter? other)
-        {
-            if (other is null) return false;
-            if (object.ReferenceEquals(this, other)) return true;
+    // ==
+    public static bool operator ==(in AtomicCounter x, in AtomicCounter y)
+    {
+        return x.Value == y.Value;
+    }
 
-            return this.Value == other.Value;
-        }
+    // !=
+    public static bool operator !=(in AtomicCounter x, in AtomicCounter y)
+    {
+        return x.Value != y.Value;
+    }
 
-        // ==
-        public static bool operator ==(in AtomicCounter x, in AtomicCounter y)
-        {
-            return x.Value == y.Value;
-        }
+    // <
+    public static bool operator <(in AtomicCounter x, in AtomicCounter y)
+    {
+        return x.Value < y.Value;
+    }
 
-        // !=
-        public static bool operator !=(in AtomicCounter x, in AtomicCounter y)
-        {
-            return x.Value != y.Value;
-        }
+    // >
+    public static bool operator >(in AtomicCounter x, in AtomicCounter y)
+    {
+        return x.Value > y.Value;
+    }
 
-        // <
-        public static bool operator <(in AtomicCounter x, in AtomicCounter y)
-        {
-            return x.Value < y.Value;
-        }
+    // <=
+    public static bool operator <=(in AtomicCounter x, in AtomicCounter y)
+    {
+        return x.Value <= y.Value;
+    }
 
-        // >
-        public static bool operator >(in AtomicCounter x, in AtomicCounter y)
-        {
-            return x.Value > y.Value;
-        }
+    // >=
+    public static bool operator >=(in AtomicCounter x, in AtomicCounter y)
+    {
+        return x.Value >= y.Value;
+    }
 
-        // <=
-        public static bool operator <=(in AtomicCounter x, in AtomicCounter y)
-        {
-            return x.Value <= y.Value;
-        }
+    // implicit
+    public static implicit operator long(in AtomicCounter safeInteger)
+    {
+        return safeInteger.Value;
+    }
 
-        // >=
-        public static bool operator >=(in AtomicCounter x, in AtomicCounter y)
-        {
-            return x.Value >= y.Value;
-        }
+    public long Increment()
+    {
+        return Interlocked.Increment(ref _value);
+    }
 
-        // implicit
-        public static implicit operator long(in AtomicCounter safeInteger)
-        {
-            return safeInteger.Value;
-        }
+    public long Decrement()
+    {
+        return Interlocked.Decrement(ref _value);
+    }
 
-        public long Increment()
-        {
-            return Interlocked.Increment(ref _value);
-        }
+    public long Add(in long value)
+    {
+        return Interlocked.Add(ref _value, value);
+    }
 
-        public long Decrement()
-        {
-            return Interlocked.Decrement(ref _value);
-        }
+    public long Subtract(in long value)
+    {
+        return Interlocked.Add(ref _value, -value);
+    }
 
-        public long Add(in long value)
-        {
-            return Interlocked.Add(ref _value, value);
-        }
-
-        public long Subtract(in long value)
-        {
-            return Interlocked.Add(ref _value, -value);
-        }
-
-        public long Exchange(in long value)
-        {
-            return Interlocked.Exchange(ref _value, value);
-        }
+    public long Exchange(in long value)
+    {
+        return Interlocked.Exchange(ref _value, value);
     }
 }

@@ -1,15 +1,14 @@
 using System;
 
-namespace Omnius.Core.Net.Connections
+namespace Omnius.Core.Net.Connections;
+
+public interface IConnection : IAsyncDisposable
 {
-    public interface IConnection : IAsyncDisposable
-    {
-        bool IsConnected { get; }
+    bool IsConnected { get; }
 
-        IConnectionSender Sender { get; }
+    IConnectionSender Sender { get; }
 
-        IConnectionReceiver Receiver { get; }
+    IConnectionReceiver Receiver { get; }
 
-        IConnectionEvents Events { get; }
-    }
+    IConnectionEvents Events { get; }
 }

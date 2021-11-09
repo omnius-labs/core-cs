@@ -2,37 +2,36 @@ using System;
 using System.Collections;
 using Xunit;
 
-namespace Omnius.Core
+namespace Omnius.Core;
+
+public class BitArrayExtensionTest
 {
-    public class BitArrayExtensionTest
+    [Fact]
+    public void GetCardinalityTest()
     {
-        [Fact]
-        public void GetCardinalityTest()
+        var random = new Random(0);
+
+        const int maxLength = 1024 * 8;
+
+        var bitArray = new BitArray(maxLength);
+
+        for (int k = 0; k < 32; k++)
         {
-            var random = new Random(0);
+            int limit = random.Next(0, 100);
+            int count = 0;
 
-            const int maxLength = 1024 * 8;
-
-            var bitArray = new BitArray(maxLength);
-
-            for (int k = 0; k < 32; k++)
+            for (int i = 0; i < maxLength; i++)
             {
-                int limit = random.Next(0, 100);
-                int count = 0;
-
-                for (int i = 0; i < maxLength; i++)
+                if (random.Next(0, 100) < limit)
                 {
-                    if (random.Next(0, 100) < limit)
-                    {
-                        count++;
-                        bitArray.Set(i, true);
-                    }
+                    count++;
+                    bitArray.Set(i, true);
                 }
-
-                Assert.Equal(count, bitArray.GetCardinality());
-
-                bitArray.SetAll(false);
             }
+
+            Assert.Equal(count, bitArray.GetCardinality());
+
+            bitArray.SetAll(false);
         }
     }
 }

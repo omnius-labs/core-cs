@@ -1,9 +1,8 @@
-namespace Omnius.Core.Tasks
-{
-    public interface IBatchActionDispatcher
-    {
-        void Register(IBatchAction batchAction);
+namespace Omnius.Core.Tasks;
 
-        void Unregister(IBatchAction batchAction);
-    }
+public interface IBatchActionDispatcher
+{
+    void Register(IBatchAction batchAction);
+
+    void Unregister(IBatchAction batchAction);
 }

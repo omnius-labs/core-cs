@@ -1,9 +1,8 @@
-namespace Omnius.Core.Avalonia
-{
-    public interface IDropable
-    {
-        bool TryAdd(object value);
+namespace Omnius.Core.Avalonia;
 
-        bool TryRemove(object value);
-    }
+public interface IDropable
+{
+    bool TryAdd(object value);
+
+    bool TryRemove(object value);
 }

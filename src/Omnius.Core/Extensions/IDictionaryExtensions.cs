@@ -1,121 +1,120 @@
 using System;
 using System.Collections.Generic;
 
-namespace Omnius.Core
+namespace Omnius.Core;
+
+public static class IDictionaryExtensions
 {
-    public static class IDictionaryExtensions
+    public static TValue AddOrUpdate<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key, Func<TKey, TValue> addValueFactory, Func<TKey, TValue, TValue> updateValueFactory)
+        where TKey : notnull
     {
-        public static TValue AddOrUpdate<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key, Func<TKey, TValue> addValueFactory, Func<TKey, TValue, TValue> updateValueFactory)
-            where TKey : notnull
+        if (dictionary == null) throw new ArgumentNullException(nameof(dictionary));
+        if (key == null) throw new ArgumentNullException(nameof(key));
+        if (addValueFactory == null) throw new ArgumentNullException(nameof(addValueFactory));
+        if (updateValueFactory == null) throw new ArgumentNullException(nameof(updateValueFactory));
+
+        if (!dictionary.TryGetValue(key, out var result))
         {
-            if (dictionary == null) throw new ArgumentNullException(nameof(dictionary));
-            if (key == null) throw new ArgumentNullException(nameof(key));
-            if (addValueFactory == null) throw new ArgumentNullException(nameof(addValueFactory));
-            if (updateValueFactory == null) throw new ArgumentNullException(nameof(updateValueFactory));
-
-            if (!dictionary.TryGetValue(key, out var result))
-            {
-                result = addValueFactory(key);
-                dictionary.Add(key, result);
-            }
-            else
-            {
-                result = updateValueFactory(key, result);
-                dictionary[key] = result;
-            }
-
-            return result;
+            result = addValueFactory(key);
+            dictionary.Add(key, result);
+        }
+        else
+        {
+            result = updateValueFactory(key, result);
+            dictionary[key] = result;
         }
 
-        public static TValue AddOrUpdate<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key, TValue addValue, Func<TKey, TValue, TValue> updateValueFactory)
-            where TKey : notnull
+        return result;
+    }
+
+    public static TValue AddOrUpdate<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key, TValue addValue, Func<TKey, TValue, TValue> updateValueFactory)
+        where TKey : notnull
+    {
+        if (dictionary == null) throw new ArgumentNullException(nameof(dictionary));
+        if (key == null) throw new ArgumentNullException(nameof(key));
+        if (updateValueFactory == null) throw new ArgumentNullException(nameof(updateValueFactory));
+
+        if (!dictionary.TryGetValue(key, out var result))
         {
-            if (dictionary == null) throw new ArgumentNullException(nameof(dictionary));
-            if (key == null) throw new ArgumentNullException(nameof(key));
-            if (updateValueFactory == null) throw new ArgumentNullException(nameof(updateValueFactory));
-
-            if (!dictionary.TryGetValue(key, out var result))
-            {
-                result = addValue;
-                dictionary.Add(key, result);
-            }
-            else
-            {
-                result = updateValueFactory(key, result);
-                dictionary[key] = result;
-            }
-
-            return result;
+            result = addValue;
+            dictionary.Add(key, result);
+        }
+        else
+        {
+            result = updateValueFactory(key, result);
+            dictionary[key] = result;
         }
 
-        public static bool TryUpdate<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key, TValue newValue, Predicate<TValue> match)
-            where TKey : notnull
+        return result;
+    }
+
+    public static bool TryUpdate<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key, TValue newValue, Predicate<TValue> match)
+        where TKey : notnull
+    {
+        if (dictionary == null) throw new ArgumentNullException(nameof(dictionary));
+        if (key == null) throw new ArgumentNullException(nameof(key));
+        if (match == null) throw new ArgumentNullException(nameof(match));
+
+        if (dictionary.TryGetValue(key, out var result) && match(result))
         {
-            if (dictionary == null) throw new ArgumentNullException(nameof(dictionary));
-            if (key == null) throw new ArgumentNullException(nameof(key));
-            if (match == null) throw new ArgumentNullException(nameof(match));
+            dictionary[key] = newValue;
 
-            if (dictionary.TryGetValue(key, out var result) && match(result))
-            {
-                dictionary[key] = newValue;
-
-                return true;
-            }
-
-            return false;
+            return true;
         }
 
-        public static bool TryRemove<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key, out TValue? value)
-            where TKey : notnull
-        {
-            if (dictionary == null) throw new ArgumentNullException(nameof(dictionary));
-            if (key == null) throw new ArgumentNullException(nameof(key));
+        return false;
+    }
 
-            dictionary.TryGetValue(key, out value);
+    public static bool TryRemove<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key, out TValue? value)
+        where TKey : notnull
+    {
+        if (dictionary == null) throw new ArgumentNullException(nameof(dictionary));
+        if (key == null) throw new ArgumentNullException(nameof(key));
 
-            return dictionary.Remove(key);
-        }
+        dictionary.TryGetValue(key, out value);
 
-        public static bool TryAdd<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key, TValue value)
-            where TKey : notnull
-        {
-            if (dictionary == null) throw new ArgumentNullException(nameof(dictionary));
-            if (key == null) throw new ArgumentNullException(nameof(key));
-            if (value == null) throw new ArgumentNullException(nameof(value));
+        return dictionary.Remove(key);
+    }
 
-            int count = dictionary.Count;
-            dictionary[key] = value;
+    public static bool TryAdd<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key, TValue value)
+        where TKey : notnull
+    {
+        if (dictionary == null) throw new ArgumentNullException(nameof(dictionary));
+        if (key == null) throw new ArgumentNullException(nameof(key));
+        if (value == null) throw new ArgumentNullException(nameof(value));
 
-            return (count != dictionary.Count);
-        }
+        int count = dictionary.Count;
+        dictionary[key] = value;
 
-        public static TValue GetOrAdd<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key, Func<TKey, TValue> valueFactory)
-            where TKey : notnull
-        {
-            if (dictionary == null) throw new ArgumentNullException(nameof(dictionary));
-            if (key == null) throw new ArgumentNullException(nameof(key));
-            if (valueFactory == null) throw new ArgumentNullException(nameof(valueFactory));
+        return (count != dictionary.Count);
+    }
 
-            if (dictionary.TryGetValue(key, out var result)) return result;
+    public static TValue GetOrAdd<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key, Func<TKey, TValue> valueFactory)
+        where TKey : notnull
+    {
+        if (dictionary == null) throw new ArgumentNullException(nameof(dictionary));
+        if (key == null) throw new ArgumentNullException(nameof(key));
+        if (valueFactory == null) throw new ArgumentNullException(nameof(valueFactory));
 
-            var value = valueFactory(key);
-            dictionary.Add(key, value);
+        if (dictionary.TryGetValue(key, out var result)) return result;
 
-            return value;
-        }
+        var value = valueFactory(key);
+        dictionary.Add(key, value);
 
-        public static TValue GetOrAdd<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key, TValue value)
-            where TKey : notnull
-        {
-            if (dictionary == null) throw new ArgumentNullException(nameof(dictionary));
-            if (key == null) throw new ArgumentNullException(nameof(key));
-            if (value == null) throw new ArgumentNullException(nameof(value));
+        return value;
+    }
 
-            if (dictionary.TryGetValue(key, out var result)) return result;
+    public static TValue GetOrAdd<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key, TValue value)
+        where TKey : notnull
+    {
+        if (dictionary == null) throw new ArgumentNullException(nameof(dictionary));
+        if (key == null) throw new ArgumentNullException(nameof(key));
+        if (value == null) throw new ArgumentNullException(nameof(value));
 
-            dictionary.Add(key, value);
+        if (dictionary.TryGetValue(key, out var result)) return result;
 
-            return value;
-        }
+        dictionary.Add(key, value);
+
+        return value;
     }
 }

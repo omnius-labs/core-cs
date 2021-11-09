@@ -2,11 +2,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using Omnius.Core.Net.Connections;
 
-namespace Omnius.Core.RocketPack.Remoting
+namespace Omnius.Core.RocketPack.Remoting;
+
+public interface IRocketRemotingListenerFactory<TError>
+    where TError : IRocketMessage<TError>
 {
-    public interface IRocketRemotingListenerFactory<TError>
-        where TError : IRocketMessage<TError>
-    {
-        ValueTask<IRocketRemotingListener<TError>> CreateAsync(CancellationToken cancellationToken = default);
-    }
+    ValueTask<IRocketRemotingListener<TError>> CreateAsync(CancellationToken cancellationToken = default);
 }

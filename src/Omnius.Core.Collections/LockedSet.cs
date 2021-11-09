@@ -1,200 +1,199 @@
 using System.Collections;
 using System.Collections.Generic;
 
-namespace Omnius.Core.Collections
+namespace Omnius.Core.Collections;
+
+public class LockedSet<TItem> : ISet<TItem>, ICollection<TItem>, IEnumerable<TItem>, ISynchronized
 {
-    public class LockedSet<TItem> : ISet<TItem>, ICollection<TItem>, IEnumerable<TItem>, ISynchronized
+    private readonly ISet<TItem> _set;
+
+    public LockedSet(ISet<TItem> set)
     {
-        private readonly ISet<TItem> _set;
+        _set = set;
+    }
 
-        public LockedSet(ISet<TItem> set)
-        {
-            _set = set;
-        }
+    public object LockObject { get; } = new object();
 
-        public object LockObject { get; } = new object();
-
-        public int Count
-        {
-            get
-            {
-                lock (this.LockObject)
-                {
-                    return _set.Count;
-                }
-            }
-        }
-
-        public bool IsReadOnly
-        {
-            get
-            {
-                lock (this.LockObject)
-                {
-                    return _set.IsReadOnly;
-                }
-            }
-        }
-
-        public TItem[] ToArray()
+    public int Count
+    {
+        get
         {
             lock (this.LockObject)
             {
-                var array = new TItem[_set.Count];
-                _set.CopyTo(array, 0);
-
-                return array;
+                return _set.Count;
             }
         }
+    }
 
-        public bool Add(TItem item)
+    public bool IsReadOnly
+    {
+        get
         {
             lock (this.LockObject)
             {
-                return _set.Add(item);
+                return _set.IsReadOnly;
             }
         }
+    }
 
-        public void ExceptWith(IEnumerable<TItem> other)
+    public TItem[] ToArray()
+    {
+        lock (this.LockObject)
         {
-            lock (this.LockObject)
-            {
-                _set.ExceptWith(other);
-            }
+            var array = new TItem[_set.Count];
+            _set.CopyTo(array, 0);
+
+            return array;
         }
+    }
 
-        public void IntersectWith(IEnumerable<TItem> other)
+    public bool Add(TItem item)
+    {
+        lock (this.LockObject)
         {
-            lock (this.LockObject)
-            {
-                _set.IntersectWith(other);
-            }
+            return _set.Add(item);
         }
+    }
 
-        public bool IsProperSubsetOf(IEnumerable<TItem> other)
+    public void ExceptWith(IEnumerable<TItem> other)
+    {
+        lock (this.LockObject)
         {
-            lock (this.LockObject)
-            {
-                return _set.IsProperSubsetOf(other);
-            }
+            _set.ExceptWith(other);
         }
+    }
 
-        public bool IsProperSupersetOf(IEnumerable<TItem> other)
+    public void IntersectWith(IEnumerable<TItem> other)
+    {
+        lock (this.LockObject)
         {
-            lock (this.LockObject)
-            {
-                return _set.IsProperSupersetOf(other);
-            }
+            _set.IntersectWith(other);
         }
+    }
 
-        public bool IsSubsetOf(IEnumerable<TItem> other)
+    public bool IsProperSubsetOf(IEnumerable<TItem> other)
+    {
+        lock (this.LockObject)
         {
-            lock (this.LockObject)
-            {
-                return _set.IsSubsetOf(other);
-            }
+            return _set.IsProperSubsetOf(other);
         }
+    }
 
-        public bool IsSupersetOf(IEnumerable<TItem> other)
+    public bool IsProperSupersetOf(IEnumerable<TItem> other)
+    {
+        lock (this.LockObject)
         {
-            lock (this.LockObject)
-            {
-                return _set.IsSupersetOf(other);
-            }
+            return _set.IsProperSupersetOf(other);
         }
+    }
 
-        public bool Overlaps(IEnumerable<TItem> other)
+    public bool IsSubsetOf(IEnumerable<TItem> other)
+    {
+        lock (this.LockObject)
         {
-            lock (this.LockObject)
-            {
-                return _set.Overlaps(other);
-            }
+            return _set.IsSubsetOf(other);
         }
+    }
 
-        public bool SetEquals(IEnumerable<TItem> other)
+    public bool IsSupersetOf(IEnumerable<TItem> other)
+    {
+        lock (this.LockObject)
         {
-            lock (this.LockObject)
-            {
-                return _set.SetEquals(other);
-            }
+            return _set.IsSupersetOf(other);
         }
+    }
 
-        public void SymmetricExceptWith(IEnumerable<TItem> other)
+    public bool Overlaps(IEnumerable<TItem> other)
+    {
+        lock (this.LockObject)
         {
-            lock (this.LockObject)
-            {
-                _set.SymmetricExceptWith(other);
-            }
+            return _set.Overlaps(other);
         }
+    }
 
-        public void UnionWith(IEnumerable<TItem> other)
+    public bool SetEquals(IEnumerable<TItem> other)
+    {
+        lock (this.LockObject)
         {
-            lock (this.LockObject)
-            {
-                foreach (var item in other)
-                {
-                    this.Add(item);
-                }
-            }
+            return _set.SetEquals(other);
         }
+    }
 
-        public void Clear()
+    public void SymmetricExceptWith(IEnumerable<TItem> other)
+    {
+        lock (this.LockObject)
         {
-            lock (this.LockObject)
-            {
-                _set.Clear();
-            }
+            _set.SymmetricExceptWith(other);
         }
+    }
 
-        public bool Contains(TItem item)
+    public void UnionWith(IEnumerable<TItem> other)
+    {
+        lock (this.LockObject)
         {
-            lock (this.LockObject)
-            {
-                return _set.Contains(item);
-            }
-        }
-
-        public void CopyTo(TItem[] array, int arrayIndex)
-        {
-            lock (this.LockObject)
-            {
-                _set.CopyTo(array, arrayIndex);
-            }
-        }
-
-        public bool Remove(TItem item)
-        {
-            lock (this.LockObject)
-            {
-                return _set.Remove(item);
-            }
-        }
-
-        void ICollection<TItem>.Add(TItem item)
-        {
-            lock (this.LockObject)
+            foreach (var item in other)
             {
                 this.Add(item);
             }
         }
+    }
 
-        public IEnumerator<TItem> GetEnumerator()
+    public void Clear()
+    {
+        lock (this.LockObject)
         {
-            lock (this.LockObject)
+            _set.Clear();
+        }
+    }
+
+    public bool Contains(TItem item)
+    {
+        lock (this.LockObject)
+        {
+            return _set.Contains(item);
+        }
+    }
+
+    public void CopyTo(TItem[] array, int arrayIndex)
+    {
+        lock (this.LockObject)
+        {
+            _set.CopyTo(array, arrayIndex);
+        }
+    }
+
+    public bool Remove(TItem item)
+    {
+        lock (this.LockObject)
+        {
+            return _set.Remove(item);
+        }
+    }
+
+    void ICollection<TItem>.Add(TItem item)
+    {
+        lock (this.LockObject)
+        {
+            this.Add(item);
+        }
+    }
+
+    public IEnumerator<TItem> GetEnumerator()
+    {
+        lock (this.LockObject)
+        {
+            foreach (var item in _set)
             {
-                foreach (var item in _set)
-                {
-                    yield return item;
-                }
+                yield return item;
             }
         }
+    }
 
-        IEnumerator IEnumerable.GetEnumerator()
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+        lock (this.LockObject)
         {
-            lock (this.LockObject)
-            {
-                return this.GetEnumerator();
-            }
+            return this.GetEnumerator();
         }
     }
 }

@@ -1,7 +1,6 @@
-namespace Omnius.Core.Storages
+namespace Omnius.Core.Storages;
+
+public interface ISingleValueStorageFactory
 {
-    public interface ISingleValueStorageFactory
-    {
-        ISingleValueStorage Create(string path, IBytesPool bytesPool);
-    }
+    ISingleValueStorage Create(string path, IBytesPool bytesPool);
 }

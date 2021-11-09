@@ -1,8 +1,7 @@
-namespace Omnius.Core.Net.Upnp
+namespace Omnius.Core.Net.Upnp;
+
+public enum UpnpProtocolType
 {
-    public enum UpnpProtocolType
-    {
-        Tcp,
-        Udp,
-    }
+    Tcp,
+    Udp,
 }

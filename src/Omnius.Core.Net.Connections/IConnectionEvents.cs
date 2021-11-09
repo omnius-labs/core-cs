@@ -1,9 +1,8 @@
 using Omnius.Core.Pipelines;
 
-namespace Omnius.Core.Net.Connections
+namespace Omnius.Core.Net.Connections;
+
+public interface IConnectionEvents
 {
-    public interface IConnectionEvents
-    {
-        IActionSubscriber OnClosed { get; }
-    }
+    IActionSubscriber OnClosed { get; }
 }

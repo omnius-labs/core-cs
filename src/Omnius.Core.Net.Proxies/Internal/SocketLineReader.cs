@@ -4,48 +4,47 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 
-namespace Omnius.Core.Net.Proxies.Internal
+namespace Omnius.Core.Net.Proxies.Internal;
+
+internal class SocketLineReader : DisposableBase
 {
-    internal class SocketLineReader : DisposableBase
+    private readonly Socket _socket;
+    private readonly Encoding _encoding;
+
+    public SocketLineReader(Socket socket, Encoding encoding)
     {
-        private readonly Socket _socket;
-        private readonly Encoding _encoding;
+        _socket = socket;
+        _encoding = encoding;
+    }
 
-        public SocketLineReader(Socket socket, Encoding encoding)
+    public string ReadLineAsync(CancellationToken cancellationToken = default)
+    {
+        using (var stream = new MemoryStream())
         {
-            _socket = socket;
-            _encoding = encoding;
-        }
+            Span<byte> buffer = stackalloc byte[1];
 
-        public string ReadLineAsync(CancellationToken cancellationToken = default)
-        {
-            using (var stream = new MemoryStream())
+            for (; ; )
             {
-                Span<byte> buffer = stackalloc byte[1];
+                cancellationToken.ThrowIfCancellationRequested();
 
-                for (; ; )
-                {
-                    cancellationToken.ThrowIfCancellationRequested();
+                int receiveLength = _socket.Receive(buffer);
+                if (receiveLength < 1) break;
 
-                    int receiveLength = _socket.Receive(buffer);
-                    if (receiveLength < 1) break;
+                stream.Write(buffer);
 
-                    stream.Write(buffer);
+                if (buffer[0] == '\n') break;
+            }
 
-                    if (buffer[0] == '\n') break;
-                }
+            stream.Seek(0, SeekOrigin.Begin);
 
-                stream.Seek(0, SeekOrigin.Begin);
-
-                using (var reader = new StreamReader(stream, _encoding))
-                {
-                    return reader.ReadToEnd().TrimEnd('\r', '\n');
-                }
+            using (var reader = new StreamReader(stream, _encoding))
+            {
+                return reader.ReadToEnd().TrimEnd('\r', '\n');
             }
         }
+    }
 
-        protected override void OnDispose(bool isDisposing)
-        {
-        }
+    protected override void OnDispose(bool isDisposing)
+    {
     }
 }

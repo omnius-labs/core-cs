@@ -1,40 +1,39 @@
 using System;
 using System.Buffers;
 
-namespace Omnius.Core.Pipelines
+namespace Omnius.Core.Pipelines;
+
+public partial class BytesPipe
 {
-    public partial class BytesPipe
+    public sealed class BytesWriter : IBytesWriter
     {
-        public sealed class BytesWriter : IBytesWriter
+        private readonly BytesState _bufferState;
+
+        internal BytesWriter(BytesState bufferState)
         {
-            private readonly BytesState _bufferState;
+            _bufferState = bufferState;
+        }
 
-            internal BytesWriter(BytesState bufferState)
-            {
-                _bufferState = bufferState;
-            }
+        internal void Reset()
+        {
+            _bufferState.Reset();
+        }
 
-            internal void Reset()
-            {
-                _bufferState.Reset();
-            }
+        public long WrittenBytes => _bufferState.WrittenBytes;
 
-            public long WrittenBytes => _bufferState.WrittenBytes;
+        public void Advance(int count)
+        {
+            _bufferState.Advance(count);
+        }
 
-            public void Advance(int count)
-            {
-                _bufferState.Advance(count);
-            }
+        public Memory<byte> GetMemory(int sizeHint = 0)
+        {
+            return _bufferState.GetMemory(sizeHint);
+        }
 
-            public Memory<byte> GetMemory(int sizeHint = 0)
-            {
-                return _bufferState.GetMemory(sizeHint);
-            }
-
-            public Span<byte> GetSpan(int sizeHint = 0)
-            {
-                return _bufferState.GetSpan(sizeHint);
-            }
+        public Span<byte> GetSpan(int sizeHint = 0)
+        {
+            return _bufferState.GetSpan(sizeHint);
         }
     }
 }

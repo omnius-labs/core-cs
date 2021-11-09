@@ -1,17 +1,16 @@
 using System;
 
-namespace Omnius.Core.Net.Caps
+namespace Omnius.Core.Net.Caps;
+
+public interface ICap : IDisposable
 {
-    public interface ICap : IDisposable
-    {
-        bool IsConnected { get; }
+    bool IsConnected { get; }
 
-        bool CanSend();
+    bool CanSend();
 
-        bool CanReceive();
+    bool CanReceive();
 
-        int Send(ReadOnlySpan<byte> buffer);
+    int Send(ReadOnlySpan<byte> buffer);
 
-        int Receive(Span<byte> buffer);
-    }
+    int Receive(Span<byte> buffer);
 }

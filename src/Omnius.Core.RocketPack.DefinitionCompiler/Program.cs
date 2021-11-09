@@ -8,100 +8,99 @@ using Cocona;
 using Omnius.Core.RocketPack.DefinitionCompiler.Configuration;
 using Omnius.Core.RocketPack.DefinitionCompiler.Internal;
 
-namespace Omnius.Core.RocketPack.DefinitionCompiler
+namespace Omnius.Core.RocketPack.DefinitionCompiler;
+
+public class Program
 {
-    public class Program
+    private static readonly NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
+
+    public static void Main(string[] args)
     {
-        private static readonly NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
+        CoconaLiteApp.Run<Program>(args);
+    }
 
-        public static void Main(string[] args)
+    public void Compile([Option("config", new[] { 'c' })][FilePathExists] string configPath)
+    {
+        var configs = YamlHelper.ReadFile<AppConfig[]>(configPath);
+
+        foreach (var config in configs)
         {
-            CoconaLiteApp.Run<Program>(args);
-        }
+            var includeFiles = GlobFiles(config.Includes);
 
-        public void Compile([Option("config", new[] { 'c' })][FilePathExists] string configPath)
-        {
-            var configs = YamlHelper.ReadFile<AppConfig[]>(configPath);
-
-            foreach (var config in configs)
+            foreach (var target in config.CompileTargets ?? throw new NullReferenceException(nameof(config.CompileTargets)))
             {
-                var includeFiles = GlobFiles(config.Includes);
-
-                foreach (var target in config.CompileTargets ?? throw new NullReferenceException(nameof(config.CompileTargets)))
+                try
                 {
-                    try
-                    {
-                        var input = target.Input ?? throw new NullReferenceException(nameof(target.Input));
-                        var output = target.Output ?? throw new NullReferenceException(nameof(target.Output));
+                    var input = target.Input ?? throw new NullReferenceException(nameof(target.Input));
+                    var output = target.Output ?? throw new NullReferenceException(nameof(target.Output));
 
-                        // 読み込み
-                        var (rootDefinition, includedDefinitions) = DefinitionLoader.Load(input, includeFiles);
+                    // 読み込み
+                    var (rootDefinition, includedDefinitions) = DefinitionLoader.Load(input, includeFiles);
 
-                        // 出力先フォルダが存在しない場合は作成する
-                        CreateParentDirectory(output);
+                    // 出力先フォルダが存在しない場合は作成する
+                    CreateParentDirectory(output);
 
-                        // 書き込み
-                        using var writer = new StreamWriter(output, false, new UTF8Encoding(false));
-                        var codeGenerator = new CodeGenerator(rootDefinition, includedDefinitions);
-                        writer.Write(codeGenerator.Generate());
-                    }
-                    catch (Exception e)
-                    {
-                        _logger.Error(e);
+                    // 書き込み
+                    using var writer = new StreamWriter(output, false, new UTF8Encoding(false));
+                    var codeGenerator = new CodeGenerator(rootDefinition, includedDefinitions);
+                    writer.Write(codeGenerator.Generate());
+                }
+                catch (Exception e)
+                {
+                    _logger.Error(e);
 
-                        var sb = new StringBuilder();
-                        sb.AppendLine($"input: {target.Input}");
-                        sb.AppendLine($"output: {target.Output}");
+                    var sb = new StringBuilder();
+                    sb.AppendLine($"input: {target.Input}");
+                    sb.AppendLine($"output: {target.Output}");
 
-                        _logger.Error(sb.ToString());
+                    _logger.Error(sb.ToString());
 
-                        throw;
-                    }
+                    throw;
                 }
             }
         }
+    }
 
-        private static void CreateParentDirectory(string output)
+    private static void CreateParentDirectory(string output)
+    {
+        var dirPath = Path.GetDirectoryName(output);
+
+        if (dirPath is not null && !Directory.Exists(dirPath))
         {
-            var dirPath = Path.GetDirectoryName(output);
+            Directory.CreateDirectory(dirPath);
+        }
+    }
 
-            if (dirPath is not null && !Directory.Exists(dirPath))
+    private static IEnumerable<string> GlobFiles(IEnumerable<string>? include)
+    {
+        var includeFiles = new List<string>();
+
+        if (include != null)
+        {
+            foreach (var path in include)
             {
-                Directory.CreateDirectory(dirPath);
+                var result = Ganss.IO.Glob.Expand(path)
+                    .Where(n => !n.Attributes.HasFlag(FileAttributes.Directory))
+                    .Select(n => n.FullName)
+                    .OrderBy(n => n)
+                    .ToArray();
+                includeFiles.AddRange(result);
             }
         }
 
-        private static IEnumerable<string> GlobFiles(IEnumerable<string>? include)
-        {
-            var includeFiles = new List<string>();
+        return includeFiles;
+    }
 
-            if (include != null)
+    private class FilePathExistsAttribute : ValidationAttribute
+    {
+        protected override ValidationResult IsValid(object? value, ValidationContext validationContext)
+        {
+            if (value is string path && (File.Exists(path) || File.Exists(path)))
             {
-                foreach (var path in include)
-                {
-                    var result = Ganss.IO.Glob.Expand(path)
-                        .Where(n => !n.Attributes.HasFlag(FileAttributes.Directory))
-                        .Select(n => n.FullName)
-                        .OrderBy(n => n)
-                        .ToArray();
-                    includeFiles.AddRange(result);
-                }
+                return ValidationResult.Success!;
             }
 
-            return includeFiles;
-        }
-
-        private class FilePathExistsAttribute : ValidationAttribute
-        {
-            protected override ValidationResult IsValid(object? value, ValidationContext validationContext)
-            {
-                if (value is string path && (File.Exists(path) || File.Exists(path)))
-                {
-                    return ValidationResult.Success!;
-                }
-
-                return new ValidationResult($"The path '{value}' is not found.");
-            }
+            return new ValidationResult($"The path '{value}' is not found.");
         }
     }
 }

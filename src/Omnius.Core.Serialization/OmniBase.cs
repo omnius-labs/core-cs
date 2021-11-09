@@ -1,73 +1,72 @@
 using System;
 using System.Buffers;
 
-namespace Omnius.Core.Serialization
+namespace Omnius.Core.Serialization;
+
+public static class OmniBase
 {
-    public static class OmniBase
+    private static readonly Lazy<Base16> _base16_Lower = new(() => new Base16(ConvertStringCase.Lower));
+    private static readonly Lazy<Base16> _base16_Upper = new(() => new Base16(ConvertStringCase.Upper));
+    private static readonly Lazy<Base58Btc> _base58Btc = new(() => new Base58Btc());
+
+    public static string? Encode(ReadOnlyMemory<byte> memory, ConvertStringType convertStringType, ConvertStringCase convertStringCase = ConvertStringCase.Lower)
     {
-        private static readonly Lazy<Base16> _base16_Lower = new(() => new Base16(ConvertStringCase.Lower));
-        private static readonly Lazy<Base16> _base16_Upper = new(() => new Base16(ConvertStringCase.Upper));
-        private static readonly Lazy<Base58Btc> _base58Btc = new(() => new Base58Btc());
+        return Encode(new ReadOnlySequence<byte>(memory), convertStringType, convertStringCase);
+    }
 
-        public static string? Encode(ReadOnlyMemory<byte> memory, ConvertStringType convertStringType, ConvertStringCase convertStringCase = ConvertStringCase.Lower)
+    public static string? Encode(ReadOnlySequence<byte> sequence, ConvertStringType convertStringType, ConvertStringCase convertStringCase = ConvertStringCase.Lower)
+    {
+        if (convertStringType == ConvertStringType.Base16)
         {
-            return Encode(new ReadOnlySequence<byte>(memory), convertStringType, convertStringCase);
-        }
-
-        public static string? Encode(ReadOnlySequence<byte> sequence, ConvertStringType convertStringType, ConvertStringCase convertStringCase = ConvertStringCase.Lower)
-        {
-            if (convertStringType == ConvertStringType.Base16)
+            switch (convertStringCase)
             {
-                switch (convertStringCase)
+                case ConvertStringCase.Lower:
                 {
-                    case ConvertStringCase.Lower:
-                        {
-                            _base16_Lower.Value.TryEncode(sequence, out string? text, true);
-                            return text;
-                        }
-
-                    case ConvertStringCase.Upper:
-                        {
-                            _base16_Upper.Value.TryEncode(sequence, out string? text, true);
-                            return text;
-                        }
-
-                    default:
-                        throw new NotSupportedException(nameof(convertStringCase));
+                    _base16_Lower.Value.TryEncode(sequence, out string? text, true);
+                    return text;
                 }
-            }
-            else if (convertStringType == ConvertStringType.Base58)
-            {
-                _base58Btc.Value.TryEncode(sequence, out string? text, true);
-                return text;
-            }
-            else
-            {
-                throw new NotSupportedException(nameof(convertStringType));
+
+                case ConvertStringCase.Upper:
+                {
+                    _base16_Upper.Value.TryEncode(sequence, out string? text, true);
+                    return text;
+                }
+
+                default:
+                    throw new NotSupportedException(nameof(convertStringCase));
             }
         }
-
-        // TODO Utf8String版を実装したい
-        public static bool TryDecode(string text, IBufferWriter<byte> bufferWriter)
+        else if (convertStringType == ConvertStringType.Base58)
         {
-            if (text == null) throw new ArgumentNullException(nameof(text));
+            _base58Btc.Value.TryEncode(sequence, out string? text, true);
+            return text;
+        }
+        else
+        {
+            throw new NotSupportedException(nameof(convertStringType));
+        }
+    }
 
-            if (string.IsNullOrEmpty(text)) return true;
+    // TODO Utf8String版を実装したい
+    public static bool TryDecode(string text, IBufferWriter<byte> bufferWriter)
+    {
+        if (text == null) throw new ArgumentNullException(nameof(text));
 
-            switch (text[0])
-            {
-                case 'f':
-                    _base16_Lower.Value.TryDecode(text[1..], bufferWriter);
-                    return true;
-                case 'F':
-                    _base16_Upper.Value.TryDecode(text[1..], bufferWriter);
-                    return true;
-                case 'z':
-                    _base58Btc.Value.TryDecode(text[1..], bufferWriter);
-                    return true;
-                default:
-                    return false;
-            }
+        if (string.IsNullOrEmpty(text)) return true;
+
+        switch (text[0])
+        {
+            case 'f':
+                _base16_Lower.Value.TryDecode(text[1..], bufferWriter);
+                return true;
+            case 'F':
+                _base16_Upper.Value.TryDecode(text[1..], bufferWriter);
+                return true;
+            case 'z':
+                _base58Btc.Value.TryDecode(text[1..], bufferWriter);
+                return true;
+            default:
+                return false;
         }
     }
 }

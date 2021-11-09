@@ -1,13 +1,12 @@
 using System.Buffers;
 
-namespace Omnius.Core.Pipelines
+namespace Omnius.Core.Pipelines;
+
+public interface IBytesReader
 {
-    public interface IBytesReader
-    {
-        long RemainBytes { get; }
+    long RemainBytes { get; }
 
-        void Advance(int count);
+    void Advance(int count);
 
-        ReadOnlySequence<byte> GetSequence();
-    }
+    ReadOnlySequence<byte> GetSequence();
 }
