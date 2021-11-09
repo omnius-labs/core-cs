@@ -1,7 +1,5 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using Omnius.Core.RocketPack.DefinitionCompiler.Configuration;
 using Omnius.Core.RocketPack.DefinitionCompiler.Models;
 
 namespace Omnius.Core.RocketPack.DefinitionCompiler;
@@ -30,33 +28,27 @@ internal partial class CodeGenerator
 
         // namespaceの宣言を行う。
         {
-            b.WriteLine($"namespace {_rootDefinition.CSharpNamespace}");
-            b.WriteLine("{");
+            b.WriteLine($"namespace {_rootDefinition.CSharpNamespace};");
 
-            using (b.Indent())
+            var accessLevel = this.GetAccessLevel();
+
+            var enumWriter = new EnumWriter();
+            foreach (var enumDefinition in _rootDefinition.Enums)
             {
-                var accessLevel = this.GetAccessLevel();
-
-                var enumWriter = new EnumWriter();
-                foreach (var enumDefinition in _rootDefinition.Enums)
-                {
-                    enumWriter.Write(b, enumDefinition, accessLevel);
-                }
-
-                var objectWriter = new MessageWriter(_rootDefinition, _externalDefinitions);
-                foreach (var objectDefinition in _rootDefinition.Objects)
-                {
-                    objectWriter.Write(b, objectDefinition, accessLevel);
-                }
-
-                var serviceWriter = new ServiceWriter(_rootDefinition, _externalDefinitions);
-                foreach (var serviceDefinition in _rootDefinition.Services)
-                {
-                    serviceWriter.Write(b, serviceDefinition, accessLevel);
-                }
+                enumWriter.Write(b, enumDefinition, accessLevel);
             }
 
-            b.WriteLine("}");
+            var objectWriter = new MessageWriter(_rootDefinition, _externalDefinitions);
+            foreach (var objectDefinition in _rootDefinition.Objects)
+            {
+                objectWriter.Write(b, objectDefinition, accessLevel);
+            }
+
+            var serviceWriter = new ServiceWriter(_rootDefinition, _externalDefinitions);
+            foreach (var serviceDefinition in _rootDefinition.Services)
+            {
+                serviceWriter.Write(b, serviceDefinition, accessLevel);
+            }
         }
 
         return b.ToString();
