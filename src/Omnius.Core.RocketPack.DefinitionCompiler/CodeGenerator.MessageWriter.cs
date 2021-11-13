@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using Omnius.Core.RocketPack.DefinitionCompiler.Internal;
 using Omnius.Core.RocketPack.DefinitionCompiler.Models;
@@ -1107,41 +1104,41 @@ internal partial class CodeGenerator
                     b.WriteLine($"{name} = r.GetMemory({memoryType.MaxLength});");
                     break;
                 case VectorType listType:
-                {
-                    b.WriteLine("var length = r.GetUInt32();");
-                    b.WriteLine($"{name} = new {this.GenerateParameterTypeFullName(listType.ElementType)}[length];");
-
-                    b.WriteLine($"for (int i = 0; i < {name}.Length; i++)");
-                    b.WriteLine("{");
-
-                    using (b.Indent())
                     {
-                        this.Write_Medium_Formatter_Deserialize_PropertyDef(b, $"{name}[i]", listType.ElementType, rank + 1);
-                    }
+                        b.WriteLine("var length = r.GetUInt32();");
+                        b.WriteLine($"{name} = new {this.GenerateParameterTypeFullName(listType.ElementType)}[length];");
 
-                    b.WriteLine("}");
-                }
+                        b.WriteLine($"for (int i = 0; i < {name}.Length; i++)");
+                        b.WriteLine("{");
+
+                        using (b.Indent())
+                        {
+                            this.Write_Medium_Formatter_Deserialize_PropertyDef(b, $"{name}[i]", listType.ElementType, rank + 1);
+                        }
+
+                        b.WriteLine("}");
+                    }
 
                     break;
                 case MapType mapType:
-                {
-                    b.WriteLine("var length = r.GetUInt32();");
-                    b.WriteLine($"{name} = new {GenerateTypeFullName("Dictionary<,>", this.GenerateParameterTypeFullName(mapType.KeyType), this.GenerateParameterTypeFullName(mapType.ValueType))}();");
-                    b.WriteLine($"{this.GenerateParameterTypeFullName(mapType.KeyType)} t_key = {this.GetDefaultValueString(mapType.KeyType)};");
-                    b.WriteLine($"{this.GenerateParameterTypeFullName(mapType.ValueType)} t_value = {this.GetDefaultValueString(mapType.ValueType)};");
-
-                    b.WriteLine("for (int i = 0; i < length; i++)");
-                    b.WriteLine("{");
-
-                    using (b.Indent())
                     {
-                        this.Write_Medium_Formatter_Deserialize_PropertyDef(b, "t_key", mapType.KeyType, rank + 1);
-                        this.Write_Medium_Formatter_Deserialize_PropertyDef(b, "t_value", mapType.ValueType, rank + 1);
-                        b.WriteLine($"{name}[t_key] = t_value;");
-                    }
+                        b.WriteLine("var length = r.GetUInt32();");
+                        b.WriteLine($"{name} = new {GenerateTypeFullName("Dictionary<,>", this.GenerateParameterTypeFullName(mapType.KeyType), this.GenerateParameterTypeFullName(mapType.ValueType))}();");
+                        b.WriteLine($"{this.GenerateParameterTypeFullName(mapType.KeyType)} t_key = {this.GetDefaultValueString(mapType.KeyType)};");
+                        b.WriteLine($"{this.GenerateParameterTypeFullName(mapType.ValueType)} t_value = {this.GetDefaultValueString(mapType.ValueType)};");
 
-                    b.WriteLine("}");
-                }
+                        b.WriteLine("for (int i = 0; i < length; i++)");
+                        b.WriteLine("{");
+
+                        using (b.Indent())
+                        {
+                            this.Write_Medium_Formatter_Deserialize_PropertyDef(b, "t_key", mapType.KeyType, rank + 1);
+                            this.Write_Medium_Formatter_Deserialize_PropertyDef(b, "t_value", mapType.ValueType, rank + 1);
+                            b.WriteLine($"{name}[t_key] = t_value;");
+                        }
+
+                        b.WriteLine("}");
+                    }
 
                     break;
                 case CustomType customType:
@@ -1278,34 +1275,34 @@ internal partial class CodeGenerator
 
                     break;
                 case VectorType listType:
-                {
-                    b.WriteLine($"w.Write((uint){name}.Count);");
-                    b.WriteLine($"foreach (var n in {name})");
-                    b.WriteLine("{");
-
-                    using (b.Indent())
                     {
-                        this.Write_Small_Formatter_Serialize_PropertyDef(b, "n", listType.ElementType, rank + 1);
-                    }
+                        b.WriteLine($"w.Write((uint){name}.Count);");
+                        b.WriteLine($"foreach (var n in {name})");
+                        b.WriteLine("{");
 
-                    b.WriteLine("}");
-                }
+                        using (b.Indent())
+                        {
+                            this.Write_Small_Formatter_Serialize_PropertyDef(b, "n", listType.ElementType, rank + 1);
+                        }
+
+                        b.WriteLine("}");
+                    }
 
                     break;
                 case MapType mapType:
-                {
-                    b.WriteLine($"w.Write((uint){name}.Count);");
-                    b.WriteLine($"foreach (var n in {name})");
-                    b.WriteLine("{");
-
-                    using (b.Indent())
                     {
-                        this.Write_Small_Formatter_Serialize_PropertyDef(b, "n.Key", mapType.KeyType, rank + 1);
-                        this.Write_Small_Formatter_Serialize_PropertyDef(b, "n.Value", mapType.ValueType, rank + 1);
-                    }
+                        b.WriteLine($"w.Write((uint){name}.Count);");
+                        b.WriteLine($"foreach (var n in {name})");
+                        b.WriteLine("{");
 
-                    b.WriteLine("}");
-                }
+                        using (b.Indent())
+                        {
+                            this.Write_Small_Formatter_Serialize_PropertyDef(b, "n.Key", mapType.KeyType, rank + 1);
+                            this.Write_Small_Formatter_Serialize_PropertyDef(b, "n.Value", mapType.ValueType, rank + 1);
+                        }
+
+                        b.WriteLine("}");
+                    }
 
                     break;
                 case CustomType customType:
@@ -1426,41 +1423,41 @@ internal partial class CodeGenerator
                     b.WriteLine($"{name} = r.GetMemory({memoryType.MaxLength});");
                     break;
                 case VectorType listType:
-                {
-                    b.WriteLine("var length = r.GetUInt32();");
-                    b.WriteLine($"{name} = new {this.GenerateParameterTypeFullName(listType.ElementType)}[length];");
-
-                    b.WriteLine($"for (int i = 0; i < {name}.Length; i++)");
-                    b.WriteLine("{");
-
-                    using (b.Indent())
                     {
-                        this.Write_Small_Formatter_Deserialize_PropertyDef(b, $"{name}[i]", listType.ElementType, rank + 1);
-                    }
+                        b.WriteLine("var length = r.GetUInt32();");
+                        b.WriteLine($"{name} = new {this.GenerateParameterTypeFullName(listType.ElementType)}[length];");
 
-                    b.WriteLine("}");
-                }
+                        b.WriteLine($"for (int i = 0; i < {name}.Length; i++)");
+                        b.WriteLine("{");
+
+                        using (b.Indent())
+                        {
+                            this.Write_Small_Formatter_Deserialize_PropertyDef(b, $"{name}[i]", listType.ElementType, rank + 1);
+                        }
+
+                        b.WriteLine("}");
+                    }
 
                     break;
                 case MapType mapType:
-                {
-                    b.WriteLine("var length = r.GetUInt32();");
-                    b.WriteLine($"{name} = new {GenerateTypeFullName("Dictionary<,>", this.GenerateParameterTypeFullName(mapType.KeyType), this.GenerateParameterTypeFullName(mapType.ValueType))}();");
-                    b.WriteLine($"{this.GenerateParameterTypeFullName(mapType.KeyType)} t_key = {this.GetDefaultValueString(mapType.KeyType)};");
-                    b.WriteLine($"{this.GenerateParameterTypeFullName(mapType.ValueType)} t_value = {this.GetDefaultValueString(mapType.ValueType)};");
-
-                    b.WriteLine("for (int i = 0; i < length; i++)");
-                    b.WriteLine("{");
-
-                    using (b.Indent())
                     {
-                        this.Write_Small_Formatter_Deserialize_PropertyDef(b, "t_key", mapType.KeyType, rank + 1);
-                        this.Write_Small_Formatter_Deserialize_PropertyDef(b, "t_value", mapType.ValueType, rank + 1);
-                        b.WriteLine($"{name}[t_key] = t_value;");
-                    }
+                        b.WriteLine("var length = r.GetUInt32();");
+                        b.WriteLine($"{name} = new {GenerateTypeFullName("Dictionary<,>", this.GenerateParameterTypeFullName(mapType.KeyType), this.GenerateParameterTypeFullName(mapType.ValueType))}();");
+                        b.WriteLine($"{this.GenerateParameterTypeFullName(mapType.KeyType)} t_key = {this.GetDefaultValueString(mapType.KeyType)};");
+                        b.WriteLine($"{this.GenerateParameterTypeFullName(mapType.ValueType)} t_value = {this.GetDefaultValueString(mapType.ValueType)};");
 
-                    b.WriteLine("}");
-                }
+                        b.WriteLine("for (int i = 0; i < length; i++)");
+                        b.WriteLine("{");
+
+                        using (b.Indent())
+                        {
+                            this.Write_Small_Formatter_Deserialize_PropertyDef(b, "t_key", mapType.KeyType, rank + 1);
+                            this.Write_Small_Formatter_Deserialize_PropertyDef(b, "t_value", mapType.ValueType, rank + 1);
+                            b.WriteLine($"{name}[t_key] = t_value;");
+                        }
+
+                        b.WriteLine("}");
+                    }
 
                     break;
                 case CustomType customType:

@@ -1,5 +1,3 @@
-using System;
-
 namespace Omnius.Core;
 
 public static class DateTimeExtensions

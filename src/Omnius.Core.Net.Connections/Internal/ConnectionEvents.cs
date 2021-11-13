@@ -1,4 +1,3 @@
-using System.Threading;
 using Omnius.Core.Pipelines;
 
 namespace Omnius.Core.Net.Connections.Internal;

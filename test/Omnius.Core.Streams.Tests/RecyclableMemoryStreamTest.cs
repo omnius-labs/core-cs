@@ -1,8 +1,3 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using Xunit;
 
 namespace Omnius.Core.Streams;
@@ -36,7 +31,7 @@ public class RecyclableMemoryStreamTest
         foreach (var i in Enumerable.Range(0, loopCount))
         {
             random.NextBytes(buffer1.Memory.Span);
-            var s = buffer1.Memory.Span.Slice(0, random.Next(0, buffer1.Memory.Length));
+            var s = buffer1.Memory.Span[..random.Next(0, buffer1.Memory.Length)];
             recyclableMemoryStream.Write(s);
             memoryStream.Write(s);
         }
@@ -51,8 +46,8 @@ public class RecyclableMemoryStreamTest
         while (memoryStream.Position < memoryStream.Length)
         {
             var length = random.Next(0, buffer1.Memory.Length);
-            var s1 = buffer1.Memory.Span.Slice(0, length);
-            var s2 = buffer1.Memory.Span.Slice(0, length);
+            var s1 = buffer1.Memory.Span[..length];
+            var s2 = buffer1.Memory.Span[..length];
 
             recyclableMemoryStream.Read(s1);
             memoryStream.Read(s2);

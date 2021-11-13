@@ -1,4 +1,3 @@
-using System;
 using System.Buffers;
 
 namespace Omnius.Core;
@@ -21,7 +20,7 @@ public static class IMemoryOwnerExtensions
         public CustomMemoryOwner(IMemoryOwner<T> memoryOwner, int length)
         {
             _memoryOwner = memoryOwner;
-            this.Memory = _memoryOwner.Memory.Slice(0, length);
+            this.Memory = _memoryOwner.Memory[..length];
         }
 
         public Memory<T> Memory { get; }

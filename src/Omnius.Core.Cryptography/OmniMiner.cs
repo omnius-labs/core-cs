@@ -1,11 +1,7 @@
-using System;
 using System.Buffers;
 using System.Diagnostics;
-using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using Omnius.Core.Cryptography.Functions;
 using Omnius.Core.Helpers;
 
@@ -171,7 +167,7 @@ public static class OmniMiner
             byte[] hash;
             {
                 BytesOperations.Copy(key, buffer, key.Length);
-                BytesOperations.Copy(value, buffer.Slice(key.Length), value.Length);
+                BytesOperations.Copy(value, buffer[key.Length..], value.Length);
                 hash = Sha2_256.ComputeHash(buffer);
             }
 
@@ -192,7 +188,7 @@ public static class OmniMiner
                 }
             }
 
-            End:
+        End:
             return count;
         }
     }

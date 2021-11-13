@@ -1,7 +1,3 @@
-using System.IO;
-using System.Net;
-using Omnius.Core.RocketPack.DefinitionCompiler.Internal;
-
 namespace Omnius.Core.RocketPack.DefinitionCompiler.Configuration;
 
 public class AppConfig

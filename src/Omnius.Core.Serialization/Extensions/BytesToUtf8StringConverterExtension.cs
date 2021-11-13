@@ -1,4 +1,3 @@
-using System;
 using System.Buffers;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
@@ -26,7 +25,7 @@ public static class BytesToUtf8StringConverterExtension
         {
             var length = _utf8Encoding.Value.GetBytes(text, recyclableMemory.Memory.Span);
 
-            if (!converter.TryDecode(recyclableMemory.Memory.Span.Slice(0, length), bufferWriter)) return false;
+            if (!converter.TryDecode(recyclableMemory.Memory.Span[..length], bufferWriter)) return false;
         }
 
         return true;

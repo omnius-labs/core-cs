@@ -1,9 +1,6 @@
-using System;
 using System.Buffers;
 using System.Buffers.Binary;
 using System.Security.Cryptography;
-using System.Threading;
-using System.Threading.Tasks;
 using Omnius.Core.Pipelines;
 
 namespace Omnius.Core.Net.Connections.Secure.V1.Internal;
@@ -97,17 +94,17 @@ public partial class SecureConnection
                 {
                     int payloadLength = (int)Math.Min(sequence.Length, MaxPayloadLength);
 
-                    var payloadLengthBytes = bufferWriter.GetSpan(4).Slice(0, 4);
+                    var payloadLengthBytes = bufferWriter.GetSpan(4)[..4];
                     BinaryPrimitives.WriteInt32BigEndian(payloadLengthBytes, payloadLength);
                     bufferWriter.Advance(payloadLengthBytes.Length);
 
-                    var plaintext = buffer.AsSpan().Slice(0, payloadLength);
+                    var plaintext = buffer.AsSpan()[..payloadLength];
                     sequence.Slice(0, payloadLength).CopyTo(plaintext);
                     sequence = sequence.Slice(payloadLength);
 
-                    var tagAndCiphertextBytes = bufferWriter.GetSpan(TagLength + payloadLength).Slice(0, TagLength + payloadLength);
-                    var tag = tagAndCiphertextBytes.Slice(0, TagLength);
-                    var ciphertext = tagAndCiphertextBytes.Slice(TagLength);
+                    var tagAndCiphertextBytes = bufferWriter.GetSpan(TagLength + payloadLength)[..(TagLength + payloadLength)];
+                    var tag = tagAndCiphertextBytes[..TagLength];
+                    var ciphertext = tagAndCiphertextBytes[TagLength..];
                     _aes.Encrypt(_nonce, plaintext, ciphertext, tag);
                     bufferWriter.Advance(tagAndCiphertextBytes.Length);
 

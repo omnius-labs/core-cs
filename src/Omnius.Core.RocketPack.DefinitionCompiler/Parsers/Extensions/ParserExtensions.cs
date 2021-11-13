@@ -1,4 +1,3 @@
-using System.Linq;
 using Sprache;
 
 namespace Omnius.Core.RocketPack.DefinitionCompiler.Parsers.Extensions;
@@ -24,8 +23,8 @@ internal static class ParserExtensions
     public static Parser<T> TokenWithSkipComment<T>(this Parser<T> parser)
     {
         return from leading in CommentParser.Or(Parse.WhiteSpace.Return("")).XMany()
-            from item in parser
-            from trailing in CommentParser.Or(Parse.WhiteSpace.Return("")).XMany()
-            select item;
+               from item in parser
+               from trailing in CommentParser.Or(Parse.WhiteSpace.Return("")).XMany()
+               select item;
     }
 }

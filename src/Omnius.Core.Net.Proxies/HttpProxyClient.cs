@@ -1,9 +1,6 @@
-using System;
 using System.Globalization;
 using System.Net.Sockets;
 using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using Omnius.Core.Net.Proxies.Internal;
 
 namespace Omnius.Core.Net.Proxies;

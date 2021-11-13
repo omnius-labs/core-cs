@@ -1,7 +1,6 @@
 // https://gitbytesPipe.com/lontivero/gcs/blob/master/src/SipHash.cs
 // MIT License
 
-using System;
 using System.Buffers;
 using System.Runtime.CompilerServices;
 
@@ -17,7 +16,7 @@ internal struct SipHasher
     private ulong _tmp;
 
     public SipHasher(ReadOnlySpan<byte> key)
-        : this(BitConverter.ToUInt64(key), BitConverter.ToUInt64(key.Slice(8)))
+        : this(BitConverter.ToUInt64(key), BitConverter.ToUInt64(key[8..]))
     {
     }
 
@@ -117,7 +116,7 @@ internal struct SipHasher
     public static ulong ComputeHash(ReadOnlySpan<byte> key, ReadOnlySpan<byte> data)
     {
         var k0 = System.Buffers.Binary.BinaryPrimitives.ReadUInt64BigEndian(key);
-        var k1 = System.Buffers.Binary.BinaryPrimitives.ReadUInt64BigEndian(key.Slice(8));
+        var k1 = System.Buffers.Binary.BinaryPrimitives.ReadUInt64BigEndian(key[8..]);
 
         var hasher = new SipHasher(k0, k1);
 
@@ -128,7 +127,7 @@ internal struct SipHasher
     public static ulong ComputeHash(ReadOnlySpan<byte> key, ReadOnlySequence<byte> data)
     {
         var k0 = System.Buffers.Binary.BinaryPrimitives.ReadUInt64BigEndian(key);
-        var k1 = System.Buffers.Binary.BinaryPrimitives.ReadUInt64BigEndian(key.Slice(8));
+        var k1 = System.Buffers.Binary.BinaryPrimitives.ReadUInt64BigEndian(key[8..]);
 
         var hasher = new SipHasher(k0, k1);
 

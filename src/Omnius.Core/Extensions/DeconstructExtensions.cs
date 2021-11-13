@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-
 namespace Omnius.Core;
 
 public static class DeconstructExtensions

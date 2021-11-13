@@ -1,9 +1,5 @@
-using System;
 using System.Buffers;
-using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Threading;
-using System.Threading.Tasks;
 using Omnius.Core.Pipelines;
 using Omnius.Core.Tasks;
 
@@ -244,122 +240,122 @@ internal sealed partial class ConnectionMultiplexer : AsyncDisposableBase
                         case PacketType.KeepAlive:
                             break;
                         case PacketType.StreamRequest:
-                        {
-                            if (!_receiveStreamRequestPipe.Writer.TryWrite())
                             {
-                                _sendErrorCode = ErrorCode.StreamRequestQueueOverflow;
-                                return;
-                            }
+                                if (!_receiveStreamRequestPipe.Writer.TryWrite())
+                                {
+                                    _sendErrorCode = ErrorCode.StreamRequestQueueOverflow;
+                                    return;
+                                }
 
-                            break;
-                        }
+                                break;
+                            }
 
                         case PacketType.StreamRequestAccepted:
-                        {
-                            if (!PacketParser.TryParseStreamId(ref sequence, out var streamId))
                             {
-                                _sendErrorCode = ErrorCode.InvalidStreamId;
-                                return;
-                            }
+                                if (!PacketParser.TryParseStreamId(ref sequence, out var streamId))
+                                {
+                                    _sendErrorCode = ErrorCode.InvalidStreamId;
+                                    return;
+                                }
 
-                            if (!_receiveStreamRequestAcceptedPipe.Writer.TryWrite(streamId))
-                            {
-                                _sendErrorCode = ErrorCode.StreamRequestAcceptedQueueOverflow;
-                                return;
-                            }
+                                if (!_receiveStreamRequestAcceptedPipe.Writer.TryWrite(streamId))
+                                {
+                                    _sendErrorCode = ErrorCode.StreamRequestAcceptedQueueOverflow;
+                                    return;
+                                }
 
-                            break;
-                        }
+                                break;
+                            }
 
                         case PacketType.StreamData:
-                        {
-                            if (!PacketParser.TryParseStreamId(ref sequence, out var streamId))
                             {
-                                _sendErrorCode = ErrorCode.InvalidStreamId;
-                                return;
+                                if (!PacketParser.TryParseStreamId(ref sequence, out var streamId))
+                                {
+                                    _sendErrorCode = ErrorCode.InvalidStreamId;
+                                    return;
+                                }
+
+                                if (!_streamConnectionMap.TryGetValue(streamId, out var connection))
+                                {
+                                    _sendErrorCode = ErrorCode.InvalidStreamId;
+                                    return;
+                                }
+
+                                if (sequence.Length == 0) return;
+
+                                if (sequence.Length > _options.MaxStreamDataSize)
+                                {
+                                    _sendErrorCode = ErrorCode.StreamDataSizeTooLarge;
+                                    return;
+                                }
+
+                                var buffer = _bytesPool.Array.Rent((int)sequence.Length);
+                                sequence.CopyTo(buffer.AsSpan());
+                                if (!connection.ReceiveDataWriter.TryWrite(new ArraySegment<byte>(buffer, 0, (int)sequence.Length)))
+                                {
+                                    _sendErrorCode = ErrorCode.StreamDataQueueOverflow;
+                                    return;
+                                }
+
+                                break;
                             }
-
-                            if (!_streamConnectionMap.TryGetValue(streamId, out var connection))
-                            {
-                                _sendErrorCode = ErrorCode.InvalidStreamId;
-                                return;
-                            }
-
-                            if (sequence.Length == 0) return;
-
-                            if (sequence.Length > _options.MaxStreamDataSize)
-                            {
-                                _sendErrorCode = ErrorCode.StreamDataSizeTooLarge;
-                                return;
-                            }
-
-                            var buffer = _bytesPool.Array.Rent((int)sequence.Length);
-                            sequence.CopyTo(buffer.AsSpan());
-                            if (!connection.ReceiveDataWriter.TryWrite(new ArraySegment<byte>(buffer, 0, (int)sequence.Length)))
-                            {
-                                _sendErrorCode = ErrorCode.StreamDataQueueOverflow;
-                                return;
-                            }
-
-                            break;
-                        }
 
                         case PacketType.StreamDataAccepted:
-                        {
-                            if (!PacketParser.TryParseStreamId(ref sequence, out var streamId))
                             {
-                                _sendErrorCode = ErrorCode.InvalidStreamId;
-                                return;
+                                if (!PacketParser.TryParseStreamId(ref sequence, out var streamId))
+                                {
+                                    _sendErrorCode = ErrorCode.InvalidStreamId;
+                                    return;
+                                }
+
+                                if (!_streamConnectionMap.TryGetValue(streamId, out var connection))
+                                {
+                                    _sendErrorCode = ErrorCode.InvalidStreamId;
+                                    return;
+                                }
+
+                                connection.ReceiveDataAcceptedPublicher.Publish();
+
+                                break;
                             }
-
-                            if (!_streamConnectionMap.TryGetValue(streamId, out var connection))
-                            {
-                                _sendErrorCode = ErrorCode.InvalidStreamId;
-                                return;
-                            }
-
-                            connection.ReceiveDataAcceptedPublicher.Publish();
-
-                            break;
-                        }
 
                         case PacketType.StreamFinish:
-                        {
-                            if (!PacketParser.TryParseStreamId(ref sequence, out var streamId))
                             {
-                                _sendErrorCode = ErrorCode.InvalidStreamId;
-                                return;
+                                if (!PacketParser.TryParseStreamId(ref sequence, out var streamId))
+                                {
+                                    _sendErrorCode = ErrorCode.InvalidStreamId;
+                                    return;
+                                }
+
+                                if (!_streamConnectionMap.TryGetValue(streamId, out var connection))
+                                {
+                                    _sendErrorCode = ErrorCode.InvalidStreamId;
+                                    return;
+                                }
+
+                                connection.ReceiveFinishPublicher.Publish();
+
+                                break;
                             }
-
-                            if (!_streamConnectionMap.TryGetValue(streamId, out var connection))
-                            {
-                                _sendErrorCode = ErrorCode.InvalidStreamId;
-                                return;
-                            }
-
-                            connection.ReceiveFinishPublicher.Publish();
-
-                            break;
-                        }
 
                         case PacketType.SessionError:
-                        {
-                            if (!PacketParser.TryParseErrorCode(ref sequence, out var errorCode))
                             {
-                                return;
+                                if (!PacketParser.TryParseErrorCode(ref sequence, out var errorCode))
+                                {
+                                    return;
+                                }
+
+                                _receiveErrorCode = errorCode;
+
+                                break;
                             }
 
-                            _receiveErrorCode = errorCode;
-
-                            break;
-                        }
-
                         case PacketType.SessionFinish:
-                        {
-                            _cancellationTokenSource.Cancel();
+                            {
+                                _cancellationTokenSource.Cancel();
 
-                            break;
-                        }
+                                break;
+                            }
                     }
                 });
         }

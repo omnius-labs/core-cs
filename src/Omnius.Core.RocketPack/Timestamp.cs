@@ -1,5 +1,3 @@
-using System;
-
 namespace Omnius.Core.RocketPack;
 // https://gitbytesPipe.com/google/protobuf/blob/master/csharp/src/Google.Protobuf/WellKnownTypes/TimestampPartial.cs
 

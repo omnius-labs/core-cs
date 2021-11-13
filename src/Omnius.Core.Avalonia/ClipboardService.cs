@@ -1,7 +1,4 @@
-using System.Threading.Tasks;
 using Avalonia;
-using Avalonia.Controls;
-using Avalonia.Controls.ApplicationLifetimes;
 
 namespace Omnius.Core.Avalonia;
 

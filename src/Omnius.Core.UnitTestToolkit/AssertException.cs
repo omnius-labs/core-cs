@@ -1,5 +1,3 @@
-using System;
-
 namespace Omnius.Core.UnitTestToolkit;
 
 public class AssertException : Exception

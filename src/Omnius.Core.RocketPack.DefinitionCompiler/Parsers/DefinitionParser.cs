@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using Omnius.Core.RocketPack.DefinitionCompiler.Models;
 using Omnius.Core.RocketPack.DefinitionCompiler.Parsers.Extensions;
 using Sprache;
@@ -165,14 +161,14 @@ internal static class DefinitionParser
 
     private static readonly Parser<EnumDefinition> _enumDefinitionParser =
         (from attributes in _attributeParser.XMany().TokenWithSkipComment()
-            from keyword in Parse.String("enum").TokenWithSkipComment()
-            from name in _nameParser.TokenWithSkipComment()
-            from colon in Parse.Char(':').TokenWithSkipComment()
-            from type in _intTypeParser
-            from beginTag in Parse.Char('{').TokenWithSkipComment()
-            from enumProperties in _enumElementParser.Except(Parse.Char('}')).XMany().TokenWithSkipComment()
-            from endTag in Parse.Char('}').TokenWithSkipComment()
-            select new EnumDefinition(attributes.ToList(), name, type, enumProperties.ToList())).Named("enum");
+         from keyword in Parse.String("enum").TokenWithSkipComment()
+         from name in _nameParser.TokenWithSkipComment()
+         from colon in Parse.Char(':').TokenWithSkipComment()
+         from type in _intTypeParser
+         from beginTag in Parse.Char('{').TokenWithSkipComment()
+         from enumProperties in _enumElementParser.Except(Parse.Char('}')).XMany().TokenWithSkipComment()
+         from endTag in Parse.Char('}').TokenWithSkipComment()
+         select new EnumDefinition(attributes.ToList(), name, type, enumProperties.ToList())).Named("enum");
 
     private static readonly Parser<ObjectElement> _objectElementParser =
         from attributes in _attributeParser.XMany().TokenWithSkipComment()

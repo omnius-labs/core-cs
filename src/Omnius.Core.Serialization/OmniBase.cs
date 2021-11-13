@@ -1,4 +1,3 @@
-using System;
 using System.Buffers;
 
 namespace Omnius.Core.Serialization;
@@ -21,16 +20,16 @@ public static class OmniBase
             switch (convertStringCase)
             {
                 case ConvertStringCase.Lower:
-                {
-                    _base16_Lower.Value.TryEncode(sequence, out string? text, true);
-                    return text;
-                }
+                    {
+                        _base16_Lower.Value.TryEncode(sequence, out string? text, true);
+                        return text;
+                    }
 
                 case ConvertStringCase.Upper:
-                {
-                    _base16_Upper.Value.TryEncode(sequence, out string? text, true);
-                    return text;
-                }
+                    {
+                        _base16_Upper.Value.TryEncode(sequence, out string? text, true);
+                        return text;
+                    }
 
                 default:
                     throw new NotSupportedException(nameof(convertStringCase));

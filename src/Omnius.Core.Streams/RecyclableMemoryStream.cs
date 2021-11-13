@@ -1,7 +1,4 @@
-using System;
 using System.Buffers;
-using System.Collections.Generic;
-using System.IO;
 
 namespace Omnius.Core.Streams;
 
@@ -160,7 +157,7 @@ public class RecyclableMemoryStream : Stream
         {
             int length = Math.Min(_buffers[_currentBufferIndex].Length - _currentBufferPosition, count);
 
-            BytesOperations.Copy(_buffers[_currentBufferIndex].AsSpan(_currentBufferPosition), buffer.Slice(offset), length);
+            BytesOperations.Copy(_buffers[_currentBufferIndex].AsSpan(_currentBufferPosition), buffer[offset..], length);
             _currentBufferPosition += length;
 
             offset += length;
@@ -214,7 +211,7 @@ public class RecyclableMemoryStream : Stream
 
             int length = Math.Min(_buffers[_currentBufferIndex].Length - _currentBufferPosition, count);
 
-            BytesOperations.Copy(buffer.Slice(offset), _buffers[_currentBufferIndex].AsSpan(_currentBufferPosition), length);
+            BytesOperations.Copy(buffer[offset..], _buffers[_currentBufferIndex].AsSpan(_currentBufferPosition), length);
             _currentBufferPosition += length;
 
             offset += length;
@@ -282,14 +279,14 @@ public class RecyclableMemoryStream : Stream
         try
         {
             this.Seek(0, SeekOrigin.Begin);
-            this.Read(buffer.AsSpan().Slice(0, bufferLength));
+            this.Read(buffer.AsSpan()[..bufferLength]);
         }
         finally
         {
             this.Position = position;
         }
 
-        var memoryOwner = new MemoryOwner<byte>(buffer.AsMemory().Slice(0, bufferLength), () => _bytesPool.Array.Return(buffer));
+        var memoryOwner = new MemoryOwner<byte>(buffer.AsMemory()[..bufferLength], () => _bytesPool.Array.Return(buffer));
         return memoryOwner;
     }
 }

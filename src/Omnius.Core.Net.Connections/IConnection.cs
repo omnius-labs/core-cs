@@ -1,5 +1,3 @@
-using System;
-
 namespace Omnius.Core.Net.Connections;
 
 public interface IConnection : IAsyncDisposable

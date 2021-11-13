@@ -1,5 +1,3 @@
-using System.IO;
-using System.Threading.Tasks;
 using Omnius.Core.Storages.Tests.Internal;
 using Omnius.Core.UnitTestToolkit;
 using Xunit;

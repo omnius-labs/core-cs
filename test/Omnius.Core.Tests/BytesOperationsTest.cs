@@ -1,5 +1,3 @@
-using System;
-using System.Linq;
 using Omnius.Core.Internal;
 using Xunit;
 
@@ -37,8 +35,8 @@ public class BytesOperationsTest
     {
         Assert.True(BytesOperations.Equals(new byte[] { 0, 1, 2, 3, 4 }, (ReadOnlySpan<byte>)(new byte[] { 0, 1, 2, 3, 4 })));
         Assert.False(BytesOperations.Equals(new byte[] { 0, 1, 2, 3, 4 }, (ReadOnlySpan<byte>)(new byte[] { 0, 1, 2, 3, 4, 5 })));
-        Assert.True(BytesOperations.Equals(new byte[] { 0, 1, 2, 3, 4 }.AsSpan().Slice(2), new byte[] { 0, 1, 2, 3, 4 }.AsSpan().Slice(2)));
-        Assert.False(BytesOperations.Equals(new byte[] { 0, 1, 2, 3, 4 }.AsSpan().Slice(1), new byte[] { 0, 1, 2, 3, 4 }.AsSpan().Slice(2)));
+        Assert.True(BytesOperations.Equals(new byte[] { 0, 1, 2, 3, 4 }.AsSpan()[2..], new byte[] { 0, 1, 2, 3, 4 }.AsSpan()[2..]));
+        Assert.False(BytesOperations.Equals(new byte[] { 0, 1, 2, 3, 4 }.AsSpan()[1..], new byte[] { 0, 1, 2, 3, 4 }.AsSpan()[2..]));
     }
 
     [Fact]

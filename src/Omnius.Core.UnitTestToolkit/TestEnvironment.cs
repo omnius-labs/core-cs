@@ -1,5 +1,3 @@
-using System.IO;
-
 namespace Omnius.Core.UnitTestToolkit;
 
 public class TestEnvironment

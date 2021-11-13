@@ -1,5 +1,3 @@
-using System;
-
 namespace Omnius.Core.Net.Connections.Secure;
 
 public sealed class OmniSecureConnectionException : Exception

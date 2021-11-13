@@ -1,6 +1,3 @@
-using System;
-using System.Threading;
-using System.Threading.Tasks;
 using Moq;
 using Omnius.Core.Net.Caps;
 using Omnius.Core.Net.Connections.Bridge;

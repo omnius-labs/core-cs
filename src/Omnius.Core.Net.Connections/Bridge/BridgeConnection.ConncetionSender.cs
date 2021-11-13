@@ -1,8 +1,5 @@
-using System;
 using System.Buffers;
 using System.Buffers.Binary;
-using System.Threading;
-using System.Threading.Tasks;
 using Omnius.Core.Net.Caps;
 using Omnius.Core.Pipelines;
 
@@ -89,7 +86,7 @@ public partial class BridgeConnection
 
                                     int readLength = Math.Min(maxSize - total, memory.Length);
 
-                                    int sendLength = _cap.Send(memory.Span.Slice(0, readLength));
+                                    int sendLength = _cap.Send(memory.Span[..readLength]);
                                     if (sendLength <= 0) break;
 
                                     position = sequence.GetPosition(sendLength, position);

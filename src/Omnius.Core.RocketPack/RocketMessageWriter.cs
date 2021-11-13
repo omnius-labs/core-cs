@@ -1,4 +1,3 @@
-using System;
 using System.Buffers;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -30,7 +29,7 @@ public ref struct RocketMessageWriter
             int length = _encoding.Value.GetBytes(value.AsSpan(), memoryOwner.Memory.Span);
             Varint.SetUInt32((uint)length, _bufferWriter);
 
-            _bufferWriter.Write(memoryOwner.Memory.Span.Slice(0, length));
+            _bufferWriter.Write(memoryOwner.Memory.Span[..length]);
         }
     }
 

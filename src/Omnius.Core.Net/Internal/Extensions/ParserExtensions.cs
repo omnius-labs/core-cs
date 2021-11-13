@@ -8,8 +8,8 @@ internal static class ParserExtensions
     public static Parser<T> TokenWithSkipSpace<T>(this Parser<T> parser)
     {
         return from leading in Parse.WhiteSpace.Many()
-            from item in parser
-            from trailing in Parse.WhiteSpace.Many()
-            select item;
+               from item in parser
+               from trailing in Parse.WhiteSpace.Many()
+               select item;
     }
 }

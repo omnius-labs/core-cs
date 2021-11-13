@@ -1,5 +1,3 @@
-using System;
-
 namespace Omnius.Core.RocketPack.Remoting;
 
 public class DefaultErrorMessageFactory : IErrorMessageFactory<DefaultErrorMessage>

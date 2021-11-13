@@ -1,9 +1,6 @@
-using System;
 using System.Buffers;
 using System.Buffers.Binary;
 using System.Security.Cryptography;
-using System.Threading;
-using System.Threading.Tasks;
 using Omnius.Core.Pipelines;
 
 namespace Omnius.Core.Net.Connections.Secure.V1.Internal;
@@ -106,11 +103,11 @@ public partial class SecureConnection
                     sequence.Slice(0, tag.Length).CopyTo(tag);
                     sequence = sequence.Slice(tag.Length);
 
-                    var ciphertext = buffer.AsSpan().Slice(0, payloadLength);
+                    var ciphertext = buffer.AsSpan()[..payloadLength];
                     sequence.Slice(0, ciphertext.Length).CopyTo(ciphertext);
                     sequence = sequence.Slice(ciphertext.Length);
 
-                    var plaintext = bytesPipe.Writer.GetSpan(payloadLength).Slice(0, payloadLength);
+                    var plaintext = bytesPipe.Writer.GetSpan(payloadLength)[..payloadLength];
                     _aes.Decrypt(_nonce, ciphertext, tag, plaintext);
                     bytesPipe.Writer.Advance(plaintext.Length);
 

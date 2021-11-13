@@ -1,14 +1,8 @@
-using System;
-using System.Collections.Generic;
 using System.Dynamic;
-using System.IO;
 using System.Net;
-using System.Net.Http;
 using System.Net.Sockets;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Xml;
 
 namespace Omnius.Core.Net.Upnp;
@@ -179,7 +173,7 @@ public class UpnpClient : DisposableBase, IUpnpClient
 
         try
         {
-            contents = contents.Substring(contents.IndexOf(serviceType));
+            contents = contents[contents.IndexOf(serviceType)..];
 
             string controlUrl = _controlUrlRegex.Match(contents).Groups["url"].Value.Trim();
             string soapBody =
@@ -214,7 +208,7 @@ public class UpnpClient : DisposableBase, IUpnpClient
 
         try
         {
-            contents = contents.Substring(contents.IndexOf(serviceType));
+            contents = contents[contents.IndexOf(serviceType)..];
 
             string controlUrl = _controlUrlRegex.Match(contents).Groups["url"].Value.Trim();
             string protocolString = "";
@@ -269,7 +263,7 @@ public class UpnpClient : DisposableBase, IUpnpClient
 
         try
         {
-            services = services.Substring(services.IndexOf(serviceType));
+            services = services[services.IndexOf(serviceType)..];
 
             string controlUrl = _controlUrlRegex.Match(services).Groups["url"].Value.Trim();
             string protocolString = "";
@@ -319,7 +313,7 @@ public class UpnpClient : DisposableBase, IUpnpClient
 
         try
         {
-            services = services.Substring(services.IndexOf(serviceType));
+            services = services[services.IndexOf(serviceType)..];
 
             string controlUrl = _controlUrlRegex.Match(services).Groups["url"].Value.Trim();
             string soapBody =

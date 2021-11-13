@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-using System.Linq;
 using Omnius.Core.RocketPack.DefinitionCompiler.Models;
 using Omnius.Core.RocketPack.DefinitionCompiler.Parsers;
 

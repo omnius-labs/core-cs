@@ -1,5 +1,3 @@
-using System;
-
 namespace Omnius.Core.Pipelines;
 
 public sealed class ActionPipe<T>

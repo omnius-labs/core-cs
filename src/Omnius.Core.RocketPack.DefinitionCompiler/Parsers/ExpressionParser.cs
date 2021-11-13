@@ -1,5 +1,3 @@
-using System;
-using System.Linq;
 using System.Linq.Expressions;
 using Sprache;
 
@@ -53,24 +51,24 @@ internal static class ExpressionParser
 
     private static readonly Parser<Expression> _numberConstant =
         (from value in Parse.Number.Token()
-            select Expression.Constant(long.Parse(value), typeof(long))).Named("number");
+         select Expression.Constant(long.Parse(value), typeof(long))).Named("number");
 
     private static readonly Parser<Expression> _floatConstant =
         (from integerPart in Parse.Number.Text()
-            from point in Parse.Char('.').Token()
-            from decimalPart in Parse.Number.Text()
-            select Expression.Constant(double.Parse($"{integerPart}.{decimalPart}"), typeof(double))).Named("float");
+         from point in Parse.Char('.').Token()
+         from decimalPart in Parse.Number.Text()
+         select Expression.Constant(double.Parse($"{integerPart}.{decimalPart}"), typeof(double))).Named("float");
 
     private static readonly Parser<Expression> _factor =
         (from lparen in Parse.Char('(').Token()
-            from expr in Parse.Ref(() => _expr).Token()
-            from rparen in Parse.Char(')').Token()
-            select expr).Named("expression").Or(_floatConstant).Or(_numberConstant);
+         from expr in Parse.Ref(() => _expr).Token()
+         from rparen in Parse.Char(')').Token()
+         select expr).Named("expression").Or(_floatConstant).Or(_numberConstant);
 
     private static readonly Parser<Expression> _operand =
         (from sign in Parse.Char('-').Token()
-            from factor in _factor.Token()
-            select Expression.Negate(factor)).XOr(_factor).Token();
+         from factor in _factor.Token()
+         select Expression.Negate(factor)).XOr(_factor).Token();
 
     private static readonly Parser<Expression> _term = Parse.ChainOperator(_multiply.XOr(_divide).XOr(_modulo), _operand, MakeBinary);
 
@@ -78,13 +76,13 @@ internal static class ExpressionParser
 
     private static readonly Parser<Expression> _boolLiteral =
         (from value in Parse.String("true").XOr(Parse.String("false")).Text().Token()
-            select Expression.Constant(
-                value switch
-                {
-                    "true" => true,
-                    "false" => false,
-                    _ => throw new NotImplementedException(),
-                }, typeof(object))).Named("boolean");
+         select Expression.Constant(
+             value switch
+             {
+                 "true" => true,
+                 "false" => false,
+                 _ => throw new NotImplementedException(),
+             }, typeof(object))).Named("boolean");
 
     private static readonly Parser<Expression> _stringLiteral =
         from leading in Parse.WhiteSpace.XMany()

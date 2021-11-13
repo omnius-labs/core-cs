@@ -1,5 +1,3 @@
-using System;
-
 namespace Omnius.Core.Cryptography.Functions;
 
 public unsafe class Pbkdf2_Sha2_256
@@ -51,7 +49,7 @@ public unsafe class Pbkdf2_Sha2_256
             int position = i * hashLength;
             int remain = Math.Min(hashLength, destination.Length - position);
 
-            BytesOperations.Copy(f, destination.Slice(position), remain);
+            BytesOperations.Copy(f, destination[position..], remain);
         }
 
         return true;

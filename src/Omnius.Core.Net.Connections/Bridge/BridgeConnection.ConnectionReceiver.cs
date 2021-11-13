@@ -1,8 +1,5 @@
-using System;
 using System.Buffers;
 using System.Buffers.Binary;
-using System.Threading;
-using System.Threading.Tasks;
 using Omnius.Core.Net.Caps;
 using Omnius.Core.Pipelines;
 
@@ -75,7 +72,7 @@ public partial class BridgeConnection
                             {
                                 if (!_cap.CanReceive()) break;
 
-                                int receiveLength = _cap.Receive(_headerBuffer.AsSpan().Slice(_headerBufferPosition));
+                                int receiveLength = _cap.Receive(_headerBuffer.AsSpan()[_headerBufferPosition..]);
                                 if (receiveLength <= 0) break;
 
                                 _headerBufferPosition += receiveLength;
@@ -96,7 +93,7 @@ public partial class BridgeConnection
                         {
                             if (!_cap.CanReceive()) break;
 
-                            int receiveLength = _cap.Receive(_bytesPipe.Writer.GetSpan(_remainBytes).Slice(0, _remainBytes));
+                            int receiveLength = _cap.Receive(_bytesPipe.Writer.GetSpan(_remainBytes)[.._remainBytes]);
                             if (receiveLength <= 0) break;
 
                             _bytesPipe.Writer.Advance(receiveLength);

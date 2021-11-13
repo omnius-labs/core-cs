@@ -1,7 +1,4 @@
-using System;
 using System.Buffers;
-using System.Collections.Generic;
-using System.Linq;
 using Omnius.Core.Helpers;
 
 namespace Omnius.Core.Pipelines;
@@ -60,7 +57,7 @@ public partial class BytesPipe
             int length = _currentMemory.Length - _currentMemoryWrittenBytes;
             if (length >= sizeHint) return _currentMemory[_currentMemoryWrittenBytes..];
 
-            _memories.Add(_currentMemory.Slice(0, _currentMemoryWrittenBytes));
+            _memories.Add(_currentMemory[.._currentMemoryWrittenBytes]);
 
             var byteArray = _bytesPool.Array.Rent(Math.Max(sizeHint, 1024 * 32));
             _arrays.Add(byteArray);
@@ -86,7 +83,7 @@ public partial class BytesPipe
                 memories.Add(memory);
             }
 
-            memories.Add(_currentMemory.Slice(0, _currentMemoryWrittenBytes));
+            memories.Add(_currentMemory[.._currentMemoryWrittenBytes]);
 
             return ReadOnlySequenceHelper.Create(memories);
         }

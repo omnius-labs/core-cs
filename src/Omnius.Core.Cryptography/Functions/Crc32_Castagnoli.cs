@@ -1,7 +1,5 @@
-using System;
 using System.Buffers;
 using System.Text;
-using System.Threading;
 
 namespace Omnius.Core.Cryptography.Functions;
 
@@ -73,7 +71,7 @@ public static unsafe class Crc32_Castagnoli
         {
             var length = _utf8Encoding.Value!.GetBytes(value, recyclableMemory.Memory.Span);
 
-            return ComputeHash(recyclableMemory.Memory.Span.Slice(0, length));
+            return ComputeHash(recyclableMemory.Memory.Span[..length]);
         }
     }
 

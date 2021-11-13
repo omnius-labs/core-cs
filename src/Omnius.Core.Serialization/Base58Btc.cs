@@ -1,4 +1,3 @@
-using System;
 using System.Buffers;
 
 namespace Omnius.Core.Serialization;
@@ -217,7 +216,7 @@ public unsafe class Base58Btc : IBytesToUtf8StringConverter
                     if (zeroCount != 0)
                     {
                         var buffer = bufferWriter.GetSpan(zeroCount);
-                        BytesOperations.Zero(buffer.Slice(0, zeroCount));
+                        BytesOperations.Zero(buffer[..zeroCount]);
                         bufferWriter.Advance(zeroCount);
                     }
 

@@ -1,5 +1,3 @@
-using System;
-using System.IO;
 using System.Runtime.InteropServices;
 
 namespace Omnius.Core.Streams;
@@ -270,20 +268,20 @@ public class UnbufferedFileStream : Stream
                 {
                     _stream.Seek(_blockPosition, SeekOrigin.Begin);
 
-                    int readLength = _stream.Read(memoryOwner.Memory.Span.Slice(0, SectorSize));
+                    int readLength = _stream.Read(memoryOwner.Memory.Span[..SectorSize]);
                     readLength = (int)Math.Min(_length - _blockPosition, readLength);
 
-                    BytesOperations.Zero(memoryOwner.Memory.Span.Slice(readLength, SectorSize - readLength));
-                    BytesOperations.Copy(_blockBuffer.AsSpan(_blockOffset), memoryOwner.Memory.Span.Slice(_blockOffset), _blockCount);
+                    BytesOperations.Zero(memoryOwner.Memory.Span[readLength..SectorSize]);
+                    BytesOperations.Copy(_blockBuffer.AsSpan(_blockOffset), memoryOwner.Memory.Span[_blockOffset..], _blockCount);
 
                     _stream.Seek(_blockPosition, SeekOrigin.Begin);
-                    _stream.Write(memoryOwner.Memory.Span.Slice(0, SectorSize));
+                    _stream.Write(memoryOwner.Memory.Span[..SectorSize]);
                 }
             }
             else
             {
                 _stream.Seek(_blockPosition, SeekOrigin.Begin);
-                _stream.Write(_blockBuffer.AsSpan().Slice(0, _blockCount));
+                _stream.Write(_blockBuffer.AsSpan()[.._blockCount]);
             }
         }
 

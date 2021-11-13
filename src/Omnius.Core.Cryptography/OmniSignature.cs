@@ -1,4 +1,3 @@
-using System;
 using Omnius.Core.Helpers;
 using Omnius.Core.Pipelines;
 using Omnius.Core.Serialization;
@@ -19,14 +18,14 @@ public sealed partial class OmniSignature
             if (index == -1) return false;
 
             // @より前の文字列を取得
-            string name = item.Substring(0, index);
+            string name = item[..index];
 
             OmniHash omniHash;
 
             using (var bytesPipe = new BytesPipe())
             {
                 // @以降の文字列をデコードし、bytesPipeへ書き込む。
-                OmniBase.TryDecode(item.Substring(index + 1), bytesPipe.Writer);
+                OmniBase.TryDecode(item[(index + 1)..], bytesPipe.Writer);
 
                 // bytesPipeからHash情報を読み取る。
                 omniHash = OmniHash.Import(bytesPipe.Reader.GetSequence(), BytesPool.Shared);

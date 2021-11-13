@@ -1,8 +1,6 @@
-using System;
 using System.Buffers;
 using System.Security.Cryptography;
 using System.Text;
-using System.Threading;
 
 namespace Omnius.Core.Cryptography.Functions;
 
@@ -52,7 +50,7 @@ public static class Sha2_256
         {
             var length = _utf8Encoding.Value!.GetBytes(value, recyclableMemory.Memory.Span);
 
-            return TryComputeHash(recyclableMemory.Memory.Span.Slice(0, length), destination);
+            return TryComputeHash(recyclableMemory.Memory.Span[..length], destination);
         }
     }
 

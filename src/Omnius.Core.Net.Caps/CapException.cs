@@ -1,5 +1,3 @@
-using System;
-
 namespace Omnius.Core.Net.Caps;
 
 public class CapException : Exception

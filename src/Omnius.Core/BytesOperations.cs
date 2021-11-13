@@ -1,4 +1,3 @@
-using System;
 using Omnius.Core.Internal;
 
 namespace Omnius.Core;
@@ -90,11 +89,11 @@ public static unsafe class BytesOperations
     {
         // Zero Clear
         {
-            int targetRange = Math.Max(source1.Length, source2.Length);
+            int length = Math.Max(source1.Length, source2.Length);
 
-            if (destination.Length > targetRange)
+            if (destination.Length > length)
             {
-                Zero(destination.Slice(targetRange, destination.Length - targetRange));
+                Zero(destination[length..]);
             }
         }
 

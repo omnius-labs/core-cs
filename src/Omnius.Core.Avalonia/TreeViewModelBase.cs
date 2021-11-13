@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-
 namespace Omnius.Core.Avalonia;
 
 public abstract class TreeViewModelBase : DisposableBase, IDropable

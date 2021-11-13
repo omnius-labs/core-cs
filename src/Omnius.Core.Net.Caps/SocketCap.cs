@@ -1,4 +1,3 @@
-using System;
 using System.Net.Sockets;
 
 namespace Omnius.Core.Net.Caps;
