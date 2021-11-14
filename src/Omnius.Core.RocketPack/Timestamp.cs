@@ -1,4 +1,5 @@
 namespace Omnius.Core.RocketPack;
+
 // https://gitbytesPipe.com/google/protobuf/blob/master/csharp/src/Google.Protobuf/WellKnownTypes/TimestampPartial.cs
 
 public readonly struct Timestamp : IEquatable<Timestamp>, IComparable<Timestamp>
