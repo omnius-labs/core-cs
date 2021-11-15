@@ -102,7 +102,7 @@ public partial class SecureConnection
                     sequence.Slice(0, payloadLength).CopyTo(plaintext);
                     sequence = sequence.Slice(payloadLength);
 
-                    var tagAndCiphertextBytes = bufferWriter.GetSpan(TagLength + payloadLength)[.. (TagLength + payloadLength)];
+                    var tagAndCiphertextBytes = bufferWriter.GetSpan(TagLength + payloadLength)[..(TagLength + payloadLength)];
                     var tag = tagAndCiphertextBytes[..TagLength];
                     var ciphertext = tagAndCiphertextBytes[TagLength..];
                     _aes.Encrypt(_nonce, plaintext, ciphertext, tag);
