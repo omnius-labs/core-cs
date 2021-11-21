@@ -11,6 +11,7 @@ public class CollectionViewUpdater<TViewModel, TModel> : AsyncDisposableBase
     private readonly IApplicationDispatcher _applicationDispatcher;
     private readonly Func<ValueTask<IEnumerable<TModel>>> _callback;
     private readonly TimeSpan _refreshSpan;
+    private readonly IEqualityComparer<TModel> _equalityComparer;
 
     private readonly ObservableDictionary<TModel, TViewModel> _observableDictionary;
 
@@ -27,8 +28,9 @@ public class CollectionViewUpdater<TViewModel, TModel> : AsyncDisposableBase
         _applicationDispatcher = applicationDispatcher;
         _callback = callback;
         _refreshSpan = refreshSpan;
+        _equalityComparer = equalityComparer;
 
-        _observableDictionary = new(equalityComparer);
+        _observableDictionary = new(_equalityComparer);
 
         _refreshTask = this.RefreshAsync(_cancellationTokenSource.Token);
     }
@@ -50,13 +52,13 @@ public class CollectionViewUpdater<TViewModel, TModel> : AsyncDisposableBase
             {
                 await Task.Delay(_refreshSpan, cancellationToken);
 
-                var models = await _callback.Invoke();
+                var models = new HashSet<TModel>(await _callback.Invoke(), _equalityComparer);
 
                 await _applicationDispatcher.InvokeAsync(() =>
                 {
-                    foreach (var model in models)
+                    foreach (var model in _observableDictionary.Keys)
                     {
-                        if (_observableDictionary.ContainsKey(model)) continue;
+                        if (models.Contains(model)) continue;
                         _observableDictionary.Remove(model);
                     }
 

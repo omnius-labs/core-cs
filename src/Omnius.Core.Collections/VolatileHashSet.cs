@@ -7,19 +7,23 @@ public class VolatileHashSet<T> : DisposableBase, ISet<T>, ICollection<T>, IEnum
     where T : notnull
 {
     private readonly Dictionary<T, DateTime> _map;
-    private readonly TimeSpan _survivalTime;
+    private readonly TimeSpan _survivalInterval;
+    private readonly TimeSpan _trimInterval;
     private readonly IBatchActionDispatcher _batchActionDispatcher;
     private readonly IBatchAction _batchAction;
 
-    public VolatileHashSet(TimeSpan survivalTime, IBatchActionDispatcher batchActionDispatcher)
-        : this(survivalTime, EqualityComparer<T>.Default, batchActionDispatcher)
+    private object _lockObject = new();
+
+    public VolatileHashSet(TimeSpan survivalInterval, TimeSpan trimInterval, IBatchActionDispatcher batchActionDispatcher)
+        : this(survivalInterval, trimInterval, EqualityComparer<T>.Default, batchActionDispatcher)
     {
     }
 
-    public VolatileHashSet(TimeSpan survivalTime, IEqualityComparer<T> comparer, IBatchActionDispatcher batchActionDispatcher)
+    public VolatileHashSet(TimeSpan survivalInterval, TimeSpan trimInterval, IEqualityComparer<T> comparer, IBatchActionDispatcher batchActionDispatcher)
     {
         _map = new Dictionary<T, DateTime>(comparer);
-        _survivalTime = survivalTime;
+        _survivalInterval = survivalInterval;
+        _trimInterval = trimInterval;
         _batchActionDispatcher = batchActionDispatcher;
         _batchAction = new BatchAction(this);
         _batchActionDispatcher.Register(_batchAction);
@@ -39,7 +43,7 @@ public class VolatileHashSet<T> : DisposableBase, ISet<T>, ICollection<T>, IEnum
             _volatileHashSet = volatileHashSet;
         }
 
-        public TimeSpan Interval => TimeSpan.FromSeconds(3);
+        public TimeSpan Interval => _volatileHashSet._trimInterval;
 
         public void Execute()
         {
@@ -49,46 +53,60 @@ public class VolatileHashSet<T> : DisposableBase, ISet<T>, ICollection<T>, IEnum
 
     private void Refresh()
     {
-        var now = DateTime.UtcNow;
-
-        var removingKeys = new List<T>();
-
-        foreach (var (key, value) in _map)
+        lock (_lockObject)
         {
-            if ((now - value) > _survivalTime)
+            var now = DateTime.UtcNow;
+
+            var removingKeys = new List<T>();
+
+            foreach (var (key, value) in _map)
             {
-                removingKeys.Add(key);
+                if ((now - value) > _survivalInterval)
+                {
+                    removingKeys.Add(key);
+                }
             }
-        }
 
-        foreach (var key in removingKeys)
-        {
-            _map.Remove(key);
-        }
+            if (removingKeys.Count == 0) return;
 
-        _map.TrimExcess();
+            foreach (var key in removingKeys)
+            {
+                _map.Remove(key);
+            }
+
+            _map.TrimExcess();
+        }
     }
 
-    public TimeSpan SurvivalTime => _survivalTime;
+    public TimeSpan SurvivalTime => _survivalInterval;
 
     public T[] ToArray()
     {
-        return _map.Keys.ToArray();
+        lock (_lockObject)
+        {
+            return _map.Keys.ToArray();
+        }
     }
 
     public TimeSpan GetElapsedTime(T item)
     {
-        if (!_map.TryGetValue(item, out var updateTime)) return _survivalTime;
+        lock (_lockObject)
+        {
+            if (!_map.TryGetValue(item, out var updateTime)) return _survivalInterval;
 
-        var now = DateTime.UtcNow;
-        return (now - updateTime);
+            var now = DateTime.UtcNow;
+            return (now - updateTime);
+        }
     }
 
     public IEqualityComparer<T> Comparer
     {
         get
         {
-            return _map.Comparer;
+            lock (_lockObject)
+            {
+                return _map.Comparer;
+            }
         }
     }
 
@@ -96,36 +114,54 @@ public class VolatileHashSet<T> : DisposableBase, ISet<T>, ICollection<T>, IEnum
     {
         get
         {
-            return _map.Count;
+            lock (_lockObject)
+            {
+                return _map.Count;
+            }
         }
     }
 
     public bool Add(T item)
     {
-        int count = _map.Count;
-        _map[item] = DateTime.UtcNow;
+        lock (_lockObject)
+        {
+            int count = _map.Count;
+            _map[item] = DateTime.UtcNow;
 
-        return (count != _map.Count);
+            return (count != _map.Count);
+        }
     }
 
     public void Clear()
     {
-        _map.Clear();
+        lock (_lockObject)
+        {
+            _map.Clear();
+        }
     }
 
     public bool Contains(T item)
     {
-        return _map.ContainsKey(item);
+        lock (_lockObject)
+        {
+            return _map.ContainsKey(item);
+        }
     }
 
     public void CopyTo(T[] array, int arrayIndex)
     {
-        _map.Keys.CopyTo(array, arrayIndex);
+        lock (_lockObject)
+        {
+            _map.Keys.CopyTo(array, arrayIndex);
+        }
     }
 
     public bool Remove(T item)
     {
-        return _map.Remove(item);
+        lock (_lockObject)
+        {
+            return _map.Remove(item);
+        }
     }
 
     bool ICollection<T>.IsReadOnly => false;
@@ -137,7 +173,14 @@ public class VolatileHashSet<T> : DisposableBase, ISet<T>, ICollection<T>, IEnum
 
     public IEnumerator<T> GetEnumerator()
     {
-        foreach (var item in _map.Keys)
+        var items = new List<T>();
+
+        lock (_lockObject)
+        {
+            items.AddRange(_map.Keys);
+        }
+
+        foreach (var item in items)
         {
             yield return item;
         }
@@ -150,36 +193,45 @@ public class VolatileHashSet<T> : DisposableBase, ISet<T>, ICollection<T>, IEnum
 
     public void UnionWith(IEnumerable<T> other)
     {
-        var now = DateTime.UtcNow;
-
-        foreach (var value in other)
+        lock (_lockObject)
         {
-            _map[value] = now;
+            var now = DateTime.UtcNow;
+
+            foreach (var value in other)
+            {
+                _map[value] = now;
+            }
         }
     }
 
     public void ExceptWith(IEnumerable<T> other)
     {
-        foreach (var value in other)
+        lock (_lockObject)
         {
-            _map.Remove(value);
+            foreach (var value in other)
+            {
+                _map.Remove(value);
+            }
         }
     }
 
     public void IntersectWith(IEnumerable<T> other)
     {
-        var tempList = new List<T>();
-
-        foreach (var value in other)
+        lock (_lockObject)
         {
-            if (_map.ContainsKey(value)) continue;
+            var tempList = new List<T>();
 
-            tempList.Add(value);
-        }
+            foreach (var value in other)
+            {
+                if (_map.ContainsKey(value)) continue;
 
-        foreach (var key in tempList)
-        {
-            _map.Remove(key);
+                tempList.Add(value);
+            }
+
+            foreach (var key in tempList)
+            {
+                _map.Remove(key);
+            }
         }
     }
 

@@ -1,8 +1,9 @@
+using System.Runtime.CompilerServices;
 using NLog.Fluent;
 
 namespace Omnius.Core;
 
-public sealed class DeadLockMonitor
+public sealed class AsyncLockMonitor
 {
     private static readonly NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
 
@@ -10,17 +11,21 @@ public sealed class DeadLockMonitor
 
     private readonly Guid _guid = Guid.NewGuid();
 
-    public DeadLockMonitor()
+    public AsyncLockMonitor()
     {
     }
 
-    public async Task<IDisposable> LockAsync(CancellationToken cancellationToken = default)
+    public async Task<IDisposable> LockAsync(
+        CancellationToken cancellationToken = default,
+        [CallerMemberName] string? member = null, [CallerFilePath] string? file = null, [CallerLineNumber] int line = 0)
     {
         await _semaphore.WaitAsync();
 
-        _logger.Debug()
+        _logger.Info()
             .Message($"---- Lock Start: {_guid} ----")
-            .Property("StackTrace", Environment.StackTrace)
+            .Property("MemberName", member)
+            .Property("FilePath", file)
+            .Property("LineNumber", line)
             .Write();
 
         return new Releaser(this, _guid);
@@ -28,11 +33,11 @@ public sealed class DeadLockMonitor
 
     private sealed class Releaser : IDisposable
     {
-        private readonly DeadLockMonitor _toRelease;
+        private readonly AsyncLockMonitor _toRelease;
 
         private readonly Guid _guid;
 
-        internal Releaser(DeadLockMonitor toRelease, Guid guid)
+        internal Releaser(AsyncLockMonitor toRelease, Guid guid)
         {
             _toRelease = toRelease;
             _guid = guid;

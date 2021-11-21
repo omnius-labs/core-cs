@@ -1,5 +1,4 @@
 using System.Buffers;
-using Nito.AsyncEx;
 using Omnius.Core.Helpers;
 
 namespace Omnius.Core.Storages;
@@ -9,7 +8,7 @@ public sealed class SingleValueFileStorage : DisposableBase, ISingleValueStorage
     private readonly string _filePath;
     private readonly IBytesPool _bytesPool;
 
-    private readonly AsyncReaderWriterLock _asyncLock = new();
+    private readonly AsyncLock _asyncLock = new();
 
     internal sealed class SingleValueStorageFactory : ISingleValueStorageFactory
     {
@@ -36,7 +35,7 @@ public sealed class SingleValueFileStorage : DisposableBase, ISingleValueStorage
 
     public async ValueTask<IMemoryOwner<byte>?> TryReadAsync(CancellationToken cancellationToken = default)
     {
-        using (await _asyncLock.ReaderLockAsync(cancellationToken))
+        using (await _asyncLock.LockAsync(cancellationToken))
         {
             if (!File.Exists(_filePath)) return null;
 
@@ -55,7 +54,7 @@ public sealed class SingleValueFileStorage : DisposableBase, ISingleValueStorage
 
     public async ValueTask<bool> TryReadAsync(IBufferWriter<byte> bufferWriter, CancellationToken cancellationToken = default)
     {
-        using (await _asyncLock.ReaderLockAsync(cancellationToken))
+        using (await _asyncLock.LockAsync(cancellationToken))
         {
             if (!File.Exists(_filePath)) return false;
 
@@ -73,7 +72,7 @@ public sealed class SingleValueFileStorage : DisposableBase, ISingleValueStorage
 
     public async ValueTask<bool> TryWriteAsync(ReadOnlySequence<byte> sequence, CancellationToken cancellationToken = default)
     {
-        using (await _asyncLock.WriterLockAsync(cancellationToken))
+        using (await _asyncLock.LockAsync(cancellationToken))
         {
             await using var fileStream = new FileStream(_filePath, FileMode.Create);
 
@@ -93,7 +92,7 @@ public sealed class SingleValueFileStorage : DisposableBase, ISingleValueStorage
 
     public async ValueTask<bool> TryDeleteAsync(CancellationToken cancellationToken = default)
     {
-        using (await _asyncLock.WriterLockAsync(cancellationToken))
+        using (await _asyncLock.LockAsync(cancellationToken))
         {
             if (!File.Exists(_filePath)) return false;
 

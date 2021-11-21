@@ -7,22 +7,23 @@ public partial class VolatileListDictionary<TKey, TValue> : DisposableBase, IEnu
     where TKey : notnull
 {
     private readonly Dictionary<TKey, List<Entry<TValue>>> _map;
-    private readonly TimeSpan _survivalTime;
+    private readonly TimeSpan _survivalInterval;
+    private readonly TimeSpan _trimInterval;
     private readonly IBatchActionDispatcher _batchActionDispatcher;
     private readonly IBatchAction _batchAction;
 
-    private KeyCollection? _keys;
-    private ValueCollection? _values;
+    private object _lockObject = new();
 
-    public VolatileListDictionary(TimeSpan survivalTime, IBatchActionDispatcher batchActionDispatcher)
-        : this(survivalTime, EqualityComparer<TKey>.Default, batchActionDispatcher)
+    public VolatileListDictionary(TimeSpan survivalInterval, TimeSpan trimInterval, IBatchActionDispatcher batchActionDispatcher)
+        : this(survivalInterval, trimInterval, EqualityComparer<TKey>.Default, batchActionDispatcher)
     {
     }
 
-    public VolatileListDictionary(TimeSpan survivalTime, IEqualityComparer<TKey> comparer, IBatchActionDispatcher batchActionDispatcher)
+    public VolatileListDictionary(TimeSpan survivalInterval, TimeSpan trimInterval, IEqualityComparer<TKey> comparer, IBatchActionDispatcher batchActionDispatcher)
     {
         _map = new Dictionary<TKey, List<Entry<TValue>>>(comparer);
-        _survivalTime = survivalTime;
+        _survivalInterval = survivalInterval;
+        _trimInterval = trimInterval;
         _batchActionDispatcher = batchActionDispatcher;
         _batchAction = new BatchAction(this);
         _batchActionDispatcher.Register(_batchAction);
@@ -42,7 +43,7 @@ public partial class VolatileListDictionary<TKey, TValue> : DisposableBase, IEnu
             _volatileListDictionary = volatileListDictionary;
         }
 
-        public TimeSpan Interval => TimeSpan.FromSeconds(3);
+        public TimeSpan Interval => _volatileListDictionary._trimInterval;
 
         public void Execute()
         {
@@ -52,55 +53,69 @@ public partial class VolatileListDictionary<TKey, TValue> : DisposableBase, IEnu
 
     private void Refresh()
     {
-        var now = DateTime.UtcNow;
-
-        var removingKeys = new List<TKey>();
-
-        foreach (var (key, entries) in _map)
+        lock (_lockObject)
         {
-            entries.RemoveAll(n => (now - n.UpdateTime) > _survivalTime);
+            var now = DateTime.UtcNow;
 
-            if (entries.Count == 0)
+            var removingKeys = new List<TKey>();
+
+            foreach (var (key, entries) in _map)
             {
-                removingKeys.Add(key);
+                entries.RemoveAll(n => (now - n.UpdateTime) > _survivalInterval);
+
+                if (entries.Count == 0)
+                {
+                    removingKeys.Add(key);
+                }
             }
-        }
 
-        foreach (var key in removingKeys)
-        {
-            _map.Remove(key);
-        }
+            if (removingKeys.Count == 0) return;
 
-        _map.TrimExcess();
+            foreach (var key in removingKeys)
+            {
+                _map.Remove(key);
+            }
+
+            _map.TrimExcess();
+        }
     }
 
-    public TimeSpan SurvivalTime => _survivalTime;
+    public TimeSpan SurvivalTime => _survivalInterval;
 
     public KeyValuePair<TKey, IReadOnlyList<TValue>>[] ToArray()
     {
-        var list = new List<KeyValuePair<TKey, IReadOnlyList<TValue>>>(_map.Count);
-
-        foreach (var (key, entries) in _map)
+        lock (_lockObject)
         {
-            list.Add(new KeyValuePair<TKey, IReadOnlyList<TValue>>(key, new ReadOnlyListSlim<TValue>(entries.Select(n => n.Value).ToArray())));
-        }
+            var list = new List<KeyValuePair<TKey, IReadOnlyList<TValue>>>(_map.Count);
 
-        return list.ToArray();
-    }
+            foreach (var (key, entries) in _map)
+            {
+                list.Add(new KeyValuePair<TKey, IReadOnlyList<TValue>>(key, new ReadOnlyListSlim<TValue>(entries.Select(n => n.Value).ToArray())));
+            }
 
-    public KeyCollection Keys
-    {
-        get
-        {
-            return _keys ?? (_keys = new KeyCollection(_map.Keys));
+            return list.ToArray();
         }
     }
 
-    public ValueCollection Values
+    public ICollection<TKey> Keys
     {
         get
         {
-            return _values ?? (_values = new ValueCollection(_map.Values));
+            lock (_lockObject)
+            {
+                return _map.Keys.ToArray();
+            }
+        }
+    }
+
+    public ICollection<IReadOnlyList<TValue>> Values
+    {
+        get
+        {
+            lock (_lockObject)
+            {
+                return _map.Values.Select(entries => new ReadOnlyListSlim<TValue>(entries.Select(n => n.Value).ToArray())).ToArray();
+            }
         }
     }
 
@@ -108,7 +123,10 @@ public partial class VolatileListDictionary<TKey, TValue> : DisposableBase, IEnu
     {
         get
         {
-            return _map.Comparer;
+            lock (_lockObject)
+            {
+                return _map.Comparer;
+            }
         }
     }
 
@@ -116,70 +134,101 @@ public partial class VolatileListDictionary<TKey, TValue> : DisposableBase, IEnu
     {
         get
         {
-            return _map.Count;
+            lock (_lockObject)
+            {
+                return _map.Count;
+            }
         }
     }
 
     public void Add(TKey key, TValue value)
     {
-        if (!_map.TryGetValue(key, out var list))
+        lock (_lockObject)
         {
-            list = new List<Entry<TValue>>();
-            _map.Add(key, list);
-        }
+            if (!_map.TryGetValue(key, out var list))
+            {
+                list = new List<Entry<TValue>>();
+                _map.Add(key, list);
+            }
 
-        list.Add(new Entry<TValue>(value, DateTime.UtcNow));
+            list.Add(new Entry<TValue>(value, DateTime.UtcNow));
+        }
     }
 
     public void AddRange(TKey key, IEnumerable<TValue> collection)
     {
-        if (!_map.TryGetValue(key, out var list))
+        lock (_lockObject)
         {
-            list = new List<Entry<TValue>>();
-            _map.Add(key, list);
-        }
+            if (!_map.TryGetValue(key, out var list))
+            {
+                list = new List<Entry<TValue>>();
+                _map.Add(key, list);
+            }
 
-        foreach (var value in collection)
-        {
-            list.Add(new Entry<TValue>(value, DateTime.UtcNow));
+            foreach (var value in collection)
+            {
+                list.Add(new Entry<TValue>(value, DateTime.UtcNow));
+            }
         }
     }
 
     public void Clear()
     {
-        _map.Clear();
+        lock (_lockObject)
+        {
+            _map.Clear();
+        }
     }
 
     public bool ContainsKey(TKey key)
     {
-        return _map.ContainsKey(key);
+        lock (_lockObject)
+        {
+            return _map.ContainsKey(key);
+        }
     }
 
     public bool Remove(TKey key)
     {
-        return _map.Remove(key);
+        lock (_lockObject)
+        {
+            return _map.Remove(key);
+        }
     }
 
     public bool TryGetValue(TKey key, out IReadOnlyList<TValue> value)
     {
-        if (_map.TryGetValue(key, out var entries))
+        lock (_lockObject)
         {
-            value = new ReadOnlyListSlim<TValue>(entries.Select(m => m.Value).ToArray());
-            return true;
-        }
-        else
-        {
-            value = default!;
-            return false;
+            if (_map.TryGetValue(key, out var entries))
+            {
+                value = new ReadOnlyListSlim<TValue>(entries.Select(m => m.Value).ToArray());
+                return true;
+            }
+            else
+            {
+                value = default!;
+                return false;
+            }
         }
     }
 
     public IEnumerator<KeyValuePair<TKey, IReadOnlyList<TValue>>> GetEnumerator()
     {
-        foreach (var (key, entries) in _map)
+        var items = new List<KeyValuePair<TKey, IReadOnlyList<TValue>>>();
+
+        lock (_lockObject)
         {
-            var value = new ReadOnlyListSlim<TValue>(entries.Select(m => m.Value).ToArray());
-            yield return new KeyValuePair<TKey, IReadOnlyList<TValue>>(key, value);
+            foreach (var (key, entries) in _map)
+            {
+                var value = new ReadOnlyListSlim<TValue>(entries.Select(m => m.Value).ToArray());
+                items.Add(new KeyValuePair<TKey, IReadOnlyList<TValue>>(key, value));
+            }
+        }
+
+        foreach (var item in items)
+        {
+            yield return item;
         }
     }
 

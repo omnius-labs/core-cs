@@ -1,7 +1,6 @@
 using System.Buffers;
 using System.Runtime.CompilerServices;
 using LiteDB;
-using Nito.AsyncEx;
 using Omnius.Core.Helpers;
 
 namespace Omnius.Core.Storages;
@@ -27,7 +26,7 @@ public sealed class KeyValueLiteDatabaseStorage<TKey> : DisposableBase, IKeyValu
     private readonly IBytesPool _bytesPool;
     private readonly LiteDatabase _database;
 
-    private readonly AsyncReaderWriterLock _asyncLock = new();
+    private readonly AsyncLock _asyncLock = new();
 
     internal KeyValueLiteDatabaseStorage(string dirPath, IBytesPool bytesPool)
     {
@@ -46,7 +45,7 @@ public sealed class KeyValueLiteDatabaseStorage<TKey> : DisposableBase, IKeyValu
 
     public async ValueTask MigrateAsync(CancellationToken cancellationToken = default)
     {
-        using (await _asyncLock.WriterLockAsync(cancellationToken))
+        using (await _asyncLock.LockAsync(cancellationToken))
         {
             if (_database.UserVersion <= 0)
             {
@@ -60,7 +59,7 @@ public sealed class KeyValueLiteDatabaseStorage<TKey> : DisposableBase, IKeyValu
 
     public async ValueTask RebuildAsync(CancellationToken cancellationToken = default)
     {
-        using (await _asyncLock.WriterLockAsync(cancellationToken))
+        using (await _asyncLock.LockAsync(cancellationToken))
         {
             _database.Rebuild();
         }
@@ -80,7 +79,7 @@ public sealed class KeyValueLiteDatabaseStorage<TKey> : DisposableBase, IKeyValu
 
     public async ValueTask<bool> TryChangeKeyAsync(TKey oldKey, TKey newKey, CancellationToken cancellationToken = default)
     {
-        using (await _asyncLock.WriterLockAsync(cancellationToken))
+        using (await _asyncLock.LockAsync(cancellationToken))
         {
             var col = this.GetCollection();
 
@@ -99,7 +98,7 @@ public sealed class KeyValueLiteDatabaseStorage<TKey> : DisposableBase, IKeyValu
 
     public async ValueTask<bool> ContainsKeyAsync(TKey key, CancellationToken cancellationToken = default)
     {
-        using (await _asyncLock.ReaderLockAsync(cancellationToken))
+        using (await _asyncLock.LockAsync(cancellationToken))
         {
             var col = this.GetCollection();
             return col.Exists(Query.EQ("Key", new BsonValue(key)));
@@ -108,7 +107,7 @@ public sealed class KeyValueLiteDatabaseStorage<TKey> : DisposableBase, IKeyValu
 
     public async IAsyncEnumerable<TKey> GetKeysAsync([EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
-        using (await _asyncLock.ReaderLockAsync(cancellationToken))
+        using (await _asyncLock.LockAsync(cancellationToken))
         {
             var col = this.GetCollection();
             foreach (var key in col.FindAll().Select(n => n.Key).ToArray())
@@ -120,7 +119,7 @@ public sealed class KeyValueLiteDatabaseStorage<TKey> : DisposableBase, IKeyValu
 
     public async ValueTask<IMemoryOwner<byte>?> TryReadAsync(TKey key, CancellationToken cancellationToken = default)
     {
-        using (await _asyncLock.ReaderLockAsync(cancellationToken))
+        using (await _asyncLock.LockAsync(cancellationToken))
         {
             var col = this.GetCollection();
             var meta = col.FindOne(Query.EQ("Key", new BsonValue(key)));
@@ -142,7 +141,7 @@ public sealed class KeyValueLiteDatabaseStorage<TKey> : DisposableBase, IKeyValu
 
     public async ValueTask<bool> TryReadAsync(TKey key, IBufferWriter<byte> bufferWriter, CancellationToken cancellationToken = default)
     {
-        using (await _asyncLock.ReaderLockAsync(cancellationToken))
+        using (await _asyncLock.LockAsync(cancellationToken))
         {
             var col = this.GetCollection();
             var meta = col.FindOne(Query.EQ("Key", new BsonValue(key)));
@@ -163,7 +162,7 @@ public sealed class KeyValueLiteDatabaseStorage<TKey> : DisposableBase, IKeyValu
 
     public async ValueTask<bool> TryWriteAsync(TKey key, ReadOnlySequence<byte> sequence, CancellationToken cancellationToken = default)
     {
-        using (await _asyncLock.WriterLockAsync(cancellationToken))
+        using (await _asyncLock.LockAsync(cancellationToken))
         {
             var col = this.GetCollection();
             if (col.Exists(Query.EQ("Key", new BsonValue(key)))) return false;
@@ -189,7 +188,7 @@ public sealed class KeyValueLiteDatabaseStorage<TKey> : DisposableBase, IKeyValu
 
     public async ValueTask<bool> TryDeleteAsync(TKey key, CancellationToken cancellationToken = default)
     {
-        using (await _asyncLock.WriterLockAsync(cancellationToken))
+        using (await _asyncLock.LockAsync(cancellationToken))
         {
             var col = this.GetCollection();
             var meta = col.FindOne(Query.EQ("Key", new BsonValue(key)));
