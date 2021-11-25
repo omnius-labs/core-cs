@@ -93,7 +93,6 @@ internal sealed partial class ConnectionMultiplexer : AsyncDisposableBase
 
     private void HandleException(Exception e)
     {
-        _logger.Debug(e);
         this.Cancel();
     }
 

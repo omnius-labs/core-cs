@@ -1,49 +1,21 @@
-namespace Omnius.Core
+namespace Omnius.Core;
+
+public sealed class AsyncLock
 {
-    public sealed class AsyncLock : DisposableBase
+    private readonly NeoSmart.AsyncLock.AsyncLock _lock; // Recursiveなロックが可能
+
+    public AsyncLock()
     {
-        private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1);
-        private readonly IDisposable _releaser;
+        _lock = new NeoSmart.AsyncLock.AsyncLock();
+    }
 
-        public AsyncLock()
-        {
-            _releaser = new Releaser(this);
-        }
+    public Task<IDisposable> LockAsync(CancellationToken cancellationToken = default)
+    {
+        return _lock.LockAsync(cancellationToken);
+    }
 
-        public async ValueTask<IDisposable> LockAsync(CancellationToken cancellationToken = default)
-        {
-            var wait = _semaphore.WaitAsync();
-            if (wait.IsCompleted) return _releaser;
-
-            return await wait.ContinueWith(
-                (_, state) => (IDisposable)state!,
-                _releaser,
-                cancellationToken,
-                TaskContinuationOptions.ExecuteSynchronously,
-                TaskScheduler.Default);
-        }
-
-        protected override void OnDispose(bool disposing)
-        {
-            if (disposing)
-            {
-                _semaphore.Dispose();
-            }
-        }
-
-        private readonly struct Releaser : IDisposable
-        {
-            private readonly AsyncLock _asyncLock;
-
-            public Releaser(AsyncLock asyncLock)
-            {
-                _asyncLock = asyncLock;
-            }
-
-            public void Dispose()
-            {
-                _asyncLock._semaphore.Release();
-            }
-        }
+    public IDisposable Lock(CancellationToken cancellationToken = default)
+    {
+        return _lock.Lock();
     }
 }

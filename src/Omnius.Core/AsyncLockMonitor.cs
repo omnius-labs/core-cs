@@ -1,5 +1,5 @@
 using System.Runtime.CompilerServices;
-using NLog.Fluent;
+using System.Text;
 
 namespace Omnius.Core;
 
@@ -7,47 +7,28 @@ public sealed class AsyncLockMonitor
 {
     private static readonly NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
 
-    private readonly SemaphoreSlim _semaphore = new(1, 1);
+    private readonly NeoSmart.AsyncLock.AsyncLock _lock; // Recursiveなロックが可能
 
     private readonly Guid _guid = Guid.NewGuid();
 
     public AsyncLockMonitor()
     {
+        _lock = new NeoSmart.AsyncLock.AsyncLock();
     }
 
     public async Task<IDisposable> LockAsync(
         CancellationToken cancellationToken = default,
         [CallerMemberName] string? member = null, [CallerFilePath] string? file = null, [CallerLineNumber] int line = 0)
     {
-        await _semaphore.WaitAsync();
+        var disposable = await _lock.LockAsync(cancellationToken);
 
-        _logger.Info()
-            .Message($"---- Lock Start: {_guid} ----")
-            .Property("MemberName", member)
-            .Property("FilePath", file)
-            .Property("LineNumber", line)
-            .Write();
+        var sb = new StringBuilder();
+        sb.AppendLine($"LockAsync UUID: {_guid}");
+        sb.AppendLine($"LockAsync MemberName: {member}");
+        sb.AppendLine($"LockAsync FilePath: {file}");
+        sb.AppendLine($"LockAsync LineNumber: {line}");
+        _logger.Trace(sb.ToString());
 
-        return new Releaser(this, _guid);
-    }
-
-    private sealed class Releaser : IDisposable
-    {
-        private readonly AsyncLockMonitor _toRelease;
-
-        private readonly Guid _guid;
-
-        internal Releaser(AsyncLockMonitor toRelease, Guid guid)
-        {
-            _toRelease = toRelease;
-            _guid = guid;
-        }
-
-        public void Dispose()
-        {
-            _logger.Info($"---- Lock End: {_guid} ----");
-
-            _toRelease._semaphore.Release();
-        }
+        return disposable;
     }
 }

@@ -126,6 +126,12 @@ public sealed class KeyValueLiteDatabaseStorage<TKey> : DisposableBase, IKeyValu
             if (meta is null) return null;
 
             var storage = this.GetStorage();
+            if (!storage.Exists(meta.Id))
+            {
+                col.Delete(meta.Id);
+                return null;
+            }
+
             await using var liteFileStream = storage.OpenRead(meta.Id);
 
             var memoryOwner = _bytesPool.Memory.Rent((int)liteFileStream.Length).Shrink((int)liteFileStream.Length);
@@ -148,6 +154,12 @@ public sealed class KeyValueLiteDatabaseStorage<TKey> : DisposableBase, IKeyValu
             if (meta is null) return false;
 
             var storage = this.GetStorage();
+            if (!storage.Exists(meta.Id))
+            {
+                col.Delete(meta.Id);
+                return false;
+            }
+
             await using var liteFileStream = storage.OpenRead(meta.Id);
 
             while (liteFileStream.Position < liteFileStream.Length)

@@ -14,6 +14,11 @@
         "resolved": "1.1.118",
         "contentHash": "Onx6ovGSqXSK07n/0eM3ZusiNdB6cIlJdabQhWGgJp3Vooy9AaLS/tigeybOJAobqbtggTamoWndz72JscZBvw=="
       },
+      "NeoSmart.AsyncLock": {
+        "type": "Transitive",
+        "resolved": "3.1.0",
+        "contentHash": "EYNPz9ZIHdoLSL4hK/86zjBZzHhvZoRdsSWhifEgCoBmKnVa7G+O5iAFbPFkxs1ZXD8d2dzewMs6x2jyxBdU4Q=="
+      },
       "System.IO.Pipelines": {
         "type": "Transitive",
         "resolved": "5.0.1",
@@ -23,6 +28,7 @@
         "type": "Project",
         "dependencies": {
           "NLog": "4.7.11",
+          "NeoSmart.AsyncLock": "3.1.0",
           "System.IO.Pipelines": "5.0.1"
         }
       },

@@ -44,7 +44,6 @@ public sealed partial class BridgeConnection : AsyncDisposableBase, IConnection
 
     private void HandleException(Exception e)
     {
-        _logger.Debug(e);
         this.Cancel();
     }
 

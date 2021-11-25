@@ -50,7 +50,7 @@ public class CollectionViewUpdater<TViewModel, TModel> : AsyncDisposableBase
         {
             for (; ; )
             {
-                await Task.Delay(_refreshSpan, cancellationToken);
+                await Task.Delay(_refreshSpan, cancellationToken).ConfigureAwait(false);
 
                 var models = new HashSet<TModel>(await _callback.Invoke(), _equalityComparer);
 
@@ -81,6 +81,10 @@ public class CollectionViewUpdater<TViewModel, TModel> : AsyncDisposableBase
         catch (OperationCanceledException e)
         {
             _logger.Debug(e);
+        }
+        catch (Exception e)
+        {
+            _logger.Error(e);
         }
     }
 }

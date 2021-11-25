@@ -43,12 +43,12 @@ public class DataGridBindSelectedItemsBehavior : Behavior<DataGrid>
 
     private void SelectionChanged(object? sender, SelectionChangedEventArgs e)
     {
-        foreach (var addedItem in e.AddedItems)
+        foreach (var addedItem in e.AddedItems ?? Array.Empty<object>())
         {
             SelectedItems.Add(addedItem);
         }
 
-        foreach (var removedItem in e.RemovedItems)
+        foreach (var removedItem in e.RemovedItems ?? Array.Empty<object>())
         {
             SelectedItems.Remove(removedItem);
         }

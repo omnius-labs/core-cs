@@ -187,6 +187,11 @@
           "Microsoft.NETCore.Platforms": "2.0.0"
         }
       },
+      "NeoSmart.AsyncLock": {
+        "type": "Transitive",
+        "resolved": "3.1.0",
+        "contentHash": "EYNPz9ZIHdoLSL4hK/86zjBZzHhvZoRdsSWhifEgCoBmKnVa7G+O5iAFbPFkxs1ZXD8d2dzewMs6x2jyxBdU4Q=="
+      },
       "SkiaSharp": {
         "type": "Transitive",
         "resolved": "2.80.2",
@@ -279,6 +284,7 @@
         "type": "Project",
         "dependencies": {
           "NLog": "4.7.11",
+          "NeoSmart.AsyncLock": "3.1.0",
           "System.IO.Pipelines": "5.0.1"
         }
       }
