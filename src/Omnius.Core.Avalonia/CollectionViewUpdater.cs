@@ -9,7 +9,7 @@ public class CollectionViewUpdater<TViewModel, TModel> : AsyncDisposableBase
     private static readonly NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
 
     private readonly IApplicationDispatcher _applicationDispatcher;
-    private readonly Func<ValueTask<IEnumerable<TModel>>> _callback;
+    private readonly Func<CancellationToken, ValueTask<IEnumerable<TModel>>> _callback;
     private readonly TimeSpan _refreshSpan;
     private readonly IEqualityComparer<TModel> _equalityComparer;
 
@@ -18,12 +18,12 @@ public class CollectionViewUpdater<TViewModel, TModel> : AsyncDisposableBase
     private readonly Task _refreshTask;
     private readonly CancellationTokenSource _cancellationTokenSource = new();
 
-    public CollectionViewUpdater(IApplicationDispatcher applicationDispatcher, Func<ValueTask<IEnumerable<TModel>>> callback, TimeSpan refreshSpan)
+    public CollectionViewUpdater(IApplicationDispatcher applicationDispatcher, Func<CancellationToken, ValueTask<IEnumerable<TModel>>> callback, TimeSpan refreshSpan)
         : this(applicationDispatcher, callback, refreshSpan, EqualityComparer<TModel>.Default)
     {
     }
 
-    public CollectionViewUpdater(IApplicationDispatcher applicationDispatcher, Func<ValueTask<IEnumerable<TModel>>> callback, TimeSpan refreshSpan, IEqualityComparer<TModel> equalityComparer)
+    public CollectionViewUpdater(IApplicationDispatcher applicationDispatcher, Func<CancellationToken, ValueTask<IEnumerable<TModel>>> callback, TimeSpan refreshSpan, IEqualityComparer<TModel> equalityComparer)
     {
         _applicationDispatcher = applicationDispatcher;
         _callback = callback;
@@ -52,7 +52,7 @@ public class CollectionViewUpdater<TViewModel, TModel> : AsyncDisposableBase
             {
                 await Task.Delay(_refreshSpan, cancellationToken).ConfigureAwait(false);
 
-                var models = new HashSet<TModel>(await _callback.Invoke(), _equalityComparer);
+                var models = new HashSet<TModel>(await _callback.Invoke(cancellationToken), _equalityComparer);
 
                 await _applicationDispatcher.InvokeAsync(() =>
                 {

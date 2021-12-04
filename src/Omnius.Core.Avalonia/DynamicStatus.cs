@@ -4,7 +4,7 @@ using System.Dynamic;
 namespace Omnius.Core.Avalonia;
 
 // http://blog.okazuki.jp/entry/20100702/1278056325
-public class DynamicState : DynamicObject, INotifyPropertyChanged
+public class DynamicStatus : DynamicObject, INotifyPropertyChanged
 {
     public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -13,7 +13,7 @@ public class DynamicState : DynamicObject, INotifyPropertyChanged
         this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
     }
 
-    public DynamicState() { }
+    public DynamicStatus() { }
 
     public Dictionary<string, object?> Properties { get; } = new();
 
