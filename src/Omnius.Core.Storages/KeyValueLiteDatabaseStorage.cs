@@ -110,6 +110,7 @@ public sealed class KeyValueLiteDatabaseStorage<TKey> : DisposableBase, IKeyValu
         using (await _asyncLock.LockAsync(cancellationToken))
         {
             var col = this.GetCollection();
+
             foreach (var key in col.FindAll().Select(n => n.Key).ToArray())
             {
                 yield return key;
@@ -132,13 +133,13 @@ public sealed class KeyValueLiteDatabaseStorage<TKey> : DisposableBase, IKeyValu
                 return null;
             }
 
-            await using var liteFileStream = storage.OpenRead(meta.Id);
+            using var liteFileStream = storage.OpenRead(meta.Id);
 
             var memoryOwner = _bytesPool.Memory.Rent((int)liteFileStream.Length).Shrink((int)liteFileStream.Length);
 
             while (liteFileStream.Position < liteFileStream.Length)
             {
-                await liteFileStream.ReadAsync(memoryOwner.Memory[(int)liteFileStream.Position..], cancellationToken);
+                liteFileStream.Read(memoryOwner.Memory[(int)liteFileStream.Position..].Span);
             }
 
             return memoryOwner;
@@ -160,11 +161,11 @@ public sealed class KeyValueLiteDatabaseStorage<TKey> : DisposableBase, IKeyValu
                 return false;
             }
 
-            await using var liteFileStream = storage.OpenRead(meta.Id);
+            using var liteFileStream = storage.OpenRead(meta.Id);
 
             while (liteFileStream.Position < liteFileStream.Length)
             {
-                int readLength = await liteFileStream.ReadAsync(bufferWriter.GetMemory(), cancellationToken);
+                int readLength = liteFileStream.Read(bufferWriter.GetMemory().Span);
                 bufferWriter.Advance(readLength);
             }
 
@@ -182,11 +183,11 @@ public sealed class KeyValueLiteDatabaseStorage<TKey> : DisposableBase, IKeyValu
             var id = col.Insert(new BlockLink() { Key = key }).AsInt64;
 
             var storage = this.GetStorage();
-            await using var liteFileStream = storage.OpenWrite(id, "-");
+            using var liteFileStream = storage.OpenWrite(id, "-");
 
             foreach (var memory in sequence)
             {
-                await liteFileStream.WriteAsync(memory, cancellationToken);
+                liteFileStream.Write(memory.Span);
             }
 
             return true;
