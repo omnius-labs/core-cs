@@ -1,9 +1,8 @@
 using System.ComponentModel;
 using Avalonia;
 using Avalonia.Controls;
-using Models = Omnius.Core.Avalonia.Models;
 
-namespace Omnius.Xeus.Ui.Desktop.Windows.Primitives;
+namespace Omnius.Core.Avalonia;
 
 public abstract class StatefulWindowBase : Window
 {
@@ -65,11 +64,11 @@ public abstract class StatefulWindowBase : Window
         if (status.Size is not null) this.ClientSize = new Size(status.Size.Width, status.Size.Height);
         this.WindowState = status.State switch
         {
-            Models.WindowState.Normal => Avalonia.Controls.WindowState.Normal,
-            Models.WindowState.Minimized => Avalonia.Controls.WindowState.Minimized,
-            Models.WindowState.Maximized => Avalonia.Controls.WindowState.Maximized,
-            Models.WindowState.FullScreen => Avalonia.Controls.WindowState.FullScreen,
-            _ => Avalonia.Controls.WindowState.Normal,
+            Models.WindowState.Normal => WindowState.Normal,
+            Models.WindowState.Minimized => WindowState.Minimized,
+            Models.WindowState.Maximized => WindowState.Maximized,
+            Models.WindowState.FullScreen => WindowState.FullScreen,
+            _ => WindowState.Normal,
         };
     }
 
@@ -79,10 +78,10 @@ public abstract class StatefulWindowBase : Window
         var size = new Models.WindowSize() { Width = this.ClientSize.Width, Height = this.ClientSize.Height };
         var state = this.WindowState switch
         {
-            Avalonia.Controls.WindowState.Normal => Models.WindowState.Normal,
-            Avalonia.Controls.WindowState.Minimized => Models.WindowState.Minimized,
-            Avalonia.Controls.WindowState.Maximized => Models.WindowState.Maximized,
-            Avalonia.Controls.WindowState.FullScreen => Models.WindowState.FullScreen,
+            WindowState.Normal => Models.WindowState.Normal,
+            WindowState.Minimized => Models.WindowState.Minimized,
+            WindowState.Maximized => Models.WindowState.Maximized,
+            WindowState.FullScreen => Models.WindowState.FullScreen,
             _ => Models.WindowState.Normal,
         };
 

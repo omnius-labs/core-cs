@@ -1,4 +1,4 @@
-# Core - Libraries for Xeus, Lxna and others
+# Core - Libraries for Axis, Lxna and others
 
 [![Test](https://github.com/omnius-labs/core/actions/workflows/test.yml/badge.svg)](https://github.com/omnius-labs/core/actions/workflows/test.yml)
 
