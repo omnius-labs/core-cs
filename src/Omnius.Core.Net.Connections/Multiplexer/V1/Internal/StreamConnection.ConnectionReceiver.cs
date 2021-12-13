@@ -31,50 +31,24 @@ internal partial class StreamConnection
 
         public async ValueTask WaitToReceiveAsync(CancellationToken cancellationToken = default)
         {
-            try
-            {
-                using var linkedTokenSource = CancellationTokenSource.CreateLinkedTokenSource(_cancellationToken, cancellationToken);
+            using var linkedTokenSource = CancellationTokenSource.CreateLinkedTokenSource(_cancellationToken, cancellationToken);
 
-                await _dataReader.WaitToReadAsync(linkedTokenSource.Token);
-            }
-            catch (OperationCanceledException)
-            {
-                // FIXME: new Exception()
-                if (_cancellationToken.IsCancellationRequested) throw new Exception();
-            }
+            await _dataReader.WaitToReadAsync(linkedTokenSource.Token);
         }
 
         public async ValueTask ReceiveAsync(Action<ReadOnlySequence<byte>> action, CancellationToken cancellationToken = default)
         {
-            try
-            {
-                using var linkedTokenSource = CancellationTokenSource.CreateLinkedTokenSource(_cancellationToken, cancellationToken);
+            using var linkedTokenSource = CancellationTokenSource.CreateLinkedTokenSource(_cancellationToken, cancellationToken);
 
-                var payload = await _dataReader.ReadAsync(linkedTokenSource.Token);
-                this.InternalReceive(action, payload);
-            }
-            catch (OperationCanceledException)
-            {
-                // FIXME: new Exception()
-                if (_cancellationToken.IsCancellationRequested) throw new Exception();
-            }
+            var payload = await _dataReader.ReadAsync(linkedTokenSource.Token);
+            this.InternalReceive(action, payload);
         }
 
         public bool TryReceive(Action<ReadOnlySequence<byte>> action)
         {
-            try
-            {
-                if (!_dataReader.TryRead(out var payload)) return false;
-                this.InternalReceive(action, payload);
-                return true;
-            }
-            catch (OperationCanceledException)
-            {
-                // FIXME: new Exception()
-                if (_cancellationToken.IsCancellationRequested) throw new Exception();
-            }
-
-            return false;
+            if (!_dataReader.TryRead(out var payload)) return false;
+            this.InternalReceive(action, payload);
+            return true;
         }
 
         private void InternalReceive(Action<ReadOnlySequence<byte>> action, ArraySegment<byte> buffer)

@@ -40,44 +40,28 @@ internal partial class StreamConnection
 
         public async ValueTask WaitToSendAsync(CancellationToken cancellationToken)
         {
-            try
-            {
-                using var linkedTokenSource = CancellationTokenSource.CreateLinkedTokenSource(_cancellationToken, cancellationToken);
+            using var linkedTokenSource = CancellationTokenSource.CreateLinkedTokenSource(_cancellationToken, cancellationToken);
 
-                await _semaphoreSlim.WaitAsync(linkedTokenSource.Token);
-                _semaphoreSlim.Release();
+            await _semaphoreSlim.WaitAsync(linkedTokenSource.Token);
+            _semaphoreSlim.Release();
 
-                await _dataWriter.WaitToWriteAsync(linkedTokenSource.Token);
-            }
-            catch (OperationCanceledException)
-            {
-                // FIXME: new Exception()
-                if (_cancellationToken.IsCancellationRequested) throw new Exception();
-            }
+            await _dataWriter.WaitToWriteAsync(linkedTokenSource.Token);
         }
 
         public async ValueTask SendAsync(Action<IBufferWriter<byte>> action, CancellationToken cancellationToken = default)
         {
-            try
+            using var linkedTokenSource = CancellationTokenSource.CreateLinkedTokenSource(_cancellationToken, cancellationToken);
+
+            await _semaphoreSlim.WaitAsync(linkedTokenSource.Token);
+
+            var payload = this.GetPayload(action);
+            if (payload.Count == 0)
             {
-                using var linkedTokenSource = CancellationTokenSource.CreateLinkedTokenSource(_cancellationToken, cancellationToken);
-
-                await _semaphoreSlim.WaitAsync(linkedTokenSource.Token);
-
-                var payload = this.GetPayload(action);
-                if (payload.Count == 0)
-                {
-                    _semaphoreSlim.Release();
-                    return;
-                }
-
-                await _dataWriter.WriteAsync(() => payload, linkedTokenSource.Token);
+                _semaphoreSlim.Release();
+                return;
             }
-            catch (OperationCanceledException)
-            {
-                // FIXME: new Exception()
-                if (_cancellationToken.IsCancellationRequested) throw new Exception();
-            }
+
+            await _dataWriter.WriteAsync(() => payload, linkedTokenSource.Token);
         }
 
         public bool TrySend(Action<IBufferWriter<byte>> action)
