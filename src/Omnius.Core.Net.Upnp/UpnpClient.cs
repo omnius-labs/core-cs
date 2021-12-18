@@ -116,7 +116,7 @@ public class UpnpClient : DisposableBase, IUpnpClient
                 }
             }
 
-            for (int i = 0; i < 32; i++)
+            for (int i = 0; i < 3; i++)
             {
                 cancellationToken.ThrowIfCancellationRequested();
 

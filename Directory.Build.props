@@ -70,7 +70,7 @@
   <PropertyGroup>
     <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
     <DisableImplicitNuGetFallbackFolder>true</DisableImplicitNuGetFallbackFolder>
-    <NuGetLockFilePath>$(MSBuildThisFileDirectory)\lock\$(MSBuildProjectName).json</NuGetLockFilePath>
+    <NuGetLockFilePath>$(MSBuildThisFileDirectory)\lock\$(RuntimeIdentifier)\$(MSBuildProjectName).json</NuGetLockFilePath>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(ContinuousIntegrationBuild)' == 'true' ">
     <RestoreLockedMode>true</RestoreLockedMode>
