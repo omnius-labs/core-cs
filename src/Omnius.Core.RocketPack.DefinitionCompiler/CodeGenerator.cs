@@ -27,6 +27,7 @@ internal partial class CodeGenerator
         // namespaceの宣言を行う。
         {
             b.WriteLine($"namespace {_rootDefinition.CSharpNamespace};");
+            b.WriteLine();
 
             var accessLevel = this.GetAccessLevel();
 
