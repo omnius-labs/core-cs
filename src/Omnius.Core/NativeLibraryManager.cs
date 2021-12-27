@@ -8,16 +8,20 @@ public sealed class NativeLibraryManager : DisposableBase
 
     public NativeLibraryManager(string path)
     {
-        var basePath = AppDomain.CurrentDomain.BaseDirectory;
-        string fullPath = Path.Combine(Path.GetDirectoryName(basePath)!, path);
-        NativeLibrary.TryLoad(fullPath, out _moduleHandle);
+        var basePath = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly()?.Location);
+        basePath ??= Directory.GetCurrentDirectory();
+
+        string fullPath = Path.Combine(basePath, path);
+        if (!NativeLibrary.TryLoad(fullPath, out _moduleHandle))
+        {
+            throw new DllNotFoundException(fullPath);
+        };
     }
 
     public T GetMethod<T>(string method)
         where T : Delegate
     {
         var methodHandle = NativeLibrary.GetExport(_moduleHandle, method);
-
         if (methodHandle == IntPtr.Zero) throw new NotSupportedException();
 
         return Marshal.GetDelegateForFunctionPointer<T>(methodHandle);
@@ -33,6 +37,7 @@ public sealed class NativeLibraryManager : DisposableBase
             }
             catch (Exception)
             {
+
             }
 
             _moduleHandle = IntPtr.Zero;

@@ -2,7 +2,6 @@
 tmp/
 pub/
 patch.txt
-demo/.state/*
 
 # Environment
 .env
