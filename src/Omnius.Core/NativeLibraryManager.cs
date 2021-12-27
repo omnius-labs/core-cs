@@ -15,7 +15,7 @@ public sealed class NativeLibraryManager : DisposableBase
         if (!NativeLibrary.TryLoad(fullPath, out _moduleHandle))
         {
             throw new DllNotFoundException(fullPath);
-        };
+        }
     }
 
     public T GetMethod<T>(string method)
@@ -37,7 +37,6 @@ public sealed class NativeLibraryManager : DisposableBase
             }
             catch (Exception)
             {
-
             }
 
             _moduleHandle = IntPtr.Zero;
