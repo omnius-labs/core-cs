@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Omnius.Core.Helpers;
 using Omnius.Core.Pipelines;
 using Omnius.Core.Serialization;
@@ -6,7 +7,7 @@ namespace Omnius.Core.Cryptography;
 
 public sealed partial class OmniSignature
 {
-    public static bool TryParse(string item, out OmniSignature? signature)
+    public static bool TryParse(string item, [NotNullWhen(true)] out OmniSignature? signature)
     {
         if (item == null) throw new ArgumentNullException(nameof(item));
 
