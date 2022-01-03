@@ -28,6 +28,7 @@ public class VarintTest
                 var reader = new SequenceReader<byte>(bytesPipe.Reader.GetSequence());
                 Assert.False(Varint.TryGetUInt16(ref reader, out var result1));
             }
+
             {
                 using var bytesPipe = new BytesPipe();
                 bytesPipe.Writer.Write(new byte[] { Int16Code });
@@ -43,12 +44,14 @@ public class VarintTest
                 var reader = new SequenceReader<byte>(bytesPipe.Reader.GetSequence());
                 Assert.False(Varint.TryGetUInt32(ref reader, out var result1));
             }
+
             {
                 using var bytesPipe = new BytesPipe();
                 bytesPipe.Writer.Write(new byte[] { Int16Code });
                 var reader = new SequenceReader<byte>(bytesPipe.Reader.GetSequence());
                 Assert.False(Varint.TryGetUInt32(ref reader, out var result1));
             }
+
             {
                 using var bytesPipe = new BytesPipe();
                 bytesPipe.Writer.Write(new byte[] { Int32Code });
@@ -64,18 +67,21 @@ public class VarintTest
                 var reader = new SequenceReader<byte>(bytesPipe.Reader.GetSequence());
                 Assert.False(Varint.TryGetUInt64(ref reader, out var result1));
             }
+
             {
                 using var bytesPipe = new BytesPipe();
                 bytesPipe.Writer.Write(new byte[] { Int16Code });
                 var reader = new SequenceReader<byte>(bytesPipe.Reader.GetSequence());
                 Assert.False(Varint.TryGetUInt64(ref reader, out var result1));
             }
+
             {
                 using var bytesPipe = new BytesPipe();
                 bytesPipe.Writer.Write(new byte[] { Int32Code });
                 var reader = new SequenceReader<byte>(bytesPipe.Reader.GetSequence());
                 Assert.False(Varint.TryGetUInt64(ref reader, out var result1));
             }
+
             {
                 using var bytesPipe = new BytesPipe();
                 bytesPipe.Writer.Write(new byte[] { Int64Code });
@@ -84,7 +90,6 @@ public class VarintTest
             }
         }
     }
-
 
     [Fact]
     public void EmptyDataGetTest()

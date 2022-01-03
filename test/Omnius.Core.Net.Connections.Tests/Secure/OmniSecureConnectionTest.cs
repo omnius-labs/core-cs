@@ -51,6 +51,7 @@ public class OmniSecureConnectionTest
         {
             Assert.Equal(serverSecureConnection.Signature, clientDigitalSignature.GetOmniSignature());
         }
+
         if (serverDigitalSignature != null)
         {
             Assert.Equal(clientSecureConnection.Signature, serverDigitalSignature.GetOmniSignature());
