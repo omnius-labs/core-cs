@@ -1,4 +1,5 @@
 using System.Buffers;
+using System.Buffers.Binary;
 using System.IO.Compression;
 using Omnius.Core.RocketPack;
 
@@ -8,64 +9,20 @@ public static class OmniMessageConverter
 {
     private static readonly NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
 
-    private enum ConvertCompressionAlgorithm : uint
+    public static bool TryWrite(ReadOnlySequence<byte> sequence, IBufferWriter<byte> writer)
     {
-        None = 0,
-        Brotli = 1,
-    }
+        Varint.SetUInt32((uint)FormatType.Version1, writer);
+        Varint.SetUInt32((uint)CompressionAlgorithm.Brotli, writer);
 
-    public static bool TryRead(ReadOnlySequence<byte> sequence, out uint version, IBufferWriter<byte> writer)
-    {
         var reader = new SequenceReader<byte>(sequence);
-
-        if (!Varint.TryGetUInt32(ref reader, out version)) return false;
-        if (!Varint.TryGetUInt32(ref reader, out var convertCompressionAlgorithmValue)) return false;
-        var convertCompressionAlgorithm = (ConvertCompressionAlgorithm)convertCompressionAlgorithmValue;
-
-        if (convertCompressionAlgorithm == ConvertCompressionAlgorithm.Brotli)
-        {
-            using var decoder = default(BrotliDecoder);
-
-            for (; ; )
-            {
-                var status = decoder.Decompress(reader.UnreadSpan, writer.GetSpan(), out var bytesConsumed, out var bytesWritten);
-
-                if (status == OperationStatus.InvalidData)
-                {
-                    _logger.Warn("invalid data");
-                    return false;
-                }
-
-                reader.Advance(bytesConsumed);
-                writer.Advance(bytesWritten);
-
-                if (status == OperationStatus.Done || (bytesConsumed == 0 && bytesWritten == 0))
-                {
-                    break;
-                }
-            }
-
-            return true;
-        }
-        else
-        {
-            _logger.Warn("not supported format");
-            return false;
-        }
-    }
-
-    public static bool TryWrite(uint version, ReadOnlySequence<byte> sequence, IBufferWriter<byte> writer)
-    {
-        Varint.SetUInt32(version, writer);
-        Varint.SetUInt32((uint)ConvertCompressionAlgorithm.Brotli, writer);
-
         using var encoder = new BrotliEncoder(0, 10);
-
-        var reader = new SequenceReader<byte>(sequence);
+        var crc32 = new Crc32_Castagnoli();
 
         for (; ; )
         {
-            var status = encoder.Compress(reader.UnreadSpan, writer.GetSpan(), out var bytesConsumed, out var bytesWritten, false);
+            var source = reader.UnreadSpan;
+            var destination = writer.GetSpan();
+            var status = encoder.Compress(source, destination, out var bytesConsumed, out var bytesWritten, false);
 
             if (status == OperationStatus.InvalidData)
             {
@@ -74,13 +31,88 @@ public static class OmniMessageConverter
             }
 
             reader.Advance(bytesConsumed);
+
+            crc32.Compute(destination.Slice(0, bytesWritten));
             writer.Advance(bytesWritten);
 
             if (status == OperationStatus.Done)
             {
-                return true;
+                break;
             }
         }
+
+        BinaryPrimitives.WriteUInt32BigEndian(writer.GetSpan(4), crc32.GetResult());
+        writer.Advance(4);
+
+        return true;
+    }
+
+    public static bool TryRead(ReadOnlySequence<byte> sequence, IBufferWriter<byte> writer)
+    {
+        var reader = new SequenceReader<byte>(sequence);
+
+        if (!Varint.TryGetUInt32(ref reader, out var formatTypeValue)) return false;
+        var formatType = (FormatType)formatTypeValue;
+
+        if (formatType == FormatType.Version1)
+        {
+            if (!Varint.TryGetUInt32(ref reader, out var compressionAlgorithmValue)) return false;
+            var compressionAlgorithm = (CompressionAlgorithm)compressionAlgorithmValue;
+
+            // Check CRC32
+            var unreadSequence = reader.UnreadSequence;
+            var crc32 = new Crc32_Castagnoli();
+            foreach (var buffer in unreadSequence.Slice(0, unreadSequence.Length - 4))
+            {
+                crc32.Compute(buffer.Span);
+            }
+            var decodedCrc32 = BinaryPrimitives.ReadUInt32BigEndian(unreadSequence.Slice(unreadSequence.Length - 4).ToArray());
+            var computedCrc32 = crc32.GetResult();
+            if (decodedCrc32 != computedCrc32) return false;
+
+            reader = new SequenceReader<byte>(unreadSequence.Slice(0, unreadSequence.Length - 4));
+
+            if (compressionAlgorithm == CompressionAlgorithm.Brotli)
+            {
+                using var decoder = default(BrotliDecoder);
+
+                for (; ; )
+                {
+                    var source = reader.UnreadSpan;
+                    var destination = writer.GetSpan();
+                    var status = decoder.Decompress(source, destination, out var bytesConsumed, out var bytesWritten);
+
+                    if (status == OperationStatus.InvalidData)
+                    {
+                        _logger.Warn("invalid data");
+                        return false;
+                    }
+
+                    reader.Advance(bytesConsumed);
+                    writer.Advance(bytesWritten);
+
+                    if (status == OperationStatus.Done || (bytesConsumed == 0 && bytesWritten == 0))
+                    {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        _logger.Warn("not supported format");
+        return false;
+    }
+
+    private enum FormatType : uint
+    {
+        None = 0,
+        Version1 = 1,
+    }
+
+    private enum CompressionAlgorithm : uint
+    {
+        None = 0,
+        Brotli = 1,
     }
 }
 

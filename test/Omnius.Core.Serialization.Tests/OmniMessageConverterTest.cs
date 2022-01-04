@@ -10,35 +10,45 @@ public class OmniMessageConverterTest
     public void WriteAndReadTest()
     {
         var random = new Random(0);
-        using var inPipe = new BytesPipe();
-        using var outPipe = new BytesPipe();
 
-        var inVersion = (uint)random.Next();
-        var inBody = new byte[random.Next(0, 1024 * 64)];
-        random.NextBytes(inBody);
+        var cases = new int[] {
+            0,
+            1,
+            10,
+            100,
+            random.Next(0, 1024 * 64),
+            random.Next(0, 1024 * 64),
+            random.Next(0, 1024 * 64),
+            random.Next(0, 1024 * 64),
+        };
 
-        Assert.True(TryEncode(inVersion, inBody, out var message));
-        Assert.True(TryDecode(message!, out var outVersion, out var outBody));
+        foreach (var length in cases)
+        {
+            var inBody = new byte[length];
+            random.NextBytes(inBody);
 
-        Assert.Equal(inVersion, outVersion);
-        Assert.True(BytesOperations.Equals(inBody.AsSpan(), outBody.AsSpan()));
+            Assert.True(TryEncode(inBody, out var message));
+            Assert.True(TryDecode(message!, out var outBody));
+
+            Assert.True(BytesOperations.Equals(inBody.AsSpan(), outBody.AsSpan()));
+        }
     }
 
-    private static bool TryEncode(uint version, byte[] body, out byte[]? message)
+    private static bool TryEncode(byte[] body, out byte[]? message)
     {
         message = null;
         using var bytesPipe = new BytesPipe();
-        if (!OmniMessageConverter.TryWrite(version, new ReadOnlySequence<byte>(body), bytesPipe.Writer)) return false;
+        if (!OmniMessageConverter.TryWrite(new ReadOnlySequence<byte>(body), bytesPipe.Writer)) return false;
 
         message = bytesPipe.Reader.GetSequence().ToArray();
         return true;
     }
 
-    private static bool TryDecode(byte[] message, out uint version, out byte[]? body)
+    private static bool TryDecode(byte[] message, out byte[]? body)
     {
         body = null;
         using var bytesPipe = new BytesPipe();
-        if (!OmniMessageConverter.TryRead(new ReadOnlySequence<byte>(message), out version, bytesPipe.Writer)) return false;
+        if (!OmniMessageConverter.TryRead(new ReadOnlySequence<byte>(message), bytesPipe.Writer)) return false;
 
         body = bytesPipe.Reader.GetSequence().ToArray();
         return true;
