@@ -1,4 +1,5 @@
-#!/bin/bash
+#!/usr/env bash
+set -euo pipefail
 
 dotnet new sln --force -n core
 dotnet sln add ./src/**/*.csproj
