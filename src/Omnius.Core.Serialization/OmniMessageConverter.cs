@@ -16,7 +16,7 @@ public static class OmniMessageConverter
 
         var reader = new SequenceReader<byte>(sequence);
         using var encoder = new BrotliEncoder(0, 10);
-        var crc32 = new Crc32_Castagnoli();
+        var crc32 = default(Crc32_Castagnoli);
 
         for (; ; )
         {
@@ -61,11 +61,12 @@ public static class OmniMessageConverter
 
             // Check CRC32
             var unreadSequence = reader.UnreadSequence;
-            var crc32 = new Crc32_Castagnoli();
+            var crc32 = default(Crc32_Castagnoli);
             foreach (var buffer in unreadSequence.Slice(0, unreadSequence.Length - 4))
             {
                 crc32.Compute(buffer.Span);
             }
+
             var decodedCrc32 = BinaryPrimitives.ReadUInt32BigEndian(unreadSequence.Slice(unreadSequence.Length - 4).ToArray());
             var computedCrc32 = crc32.GetResult();
             if (decodedCrc32 != computedCrc32) return false;
