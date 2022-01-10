@@ -46,6 +46,8 @@ public class CollectionViewUpdater<TViewModel, TModel> : AsyncDisposableBase
 
     private async Task RefreshAsync(CancellationToken cancellationToken = default)
     {
+        await Task.Delay(1).ConfigureAwait(false);
+
         try
         {
             for (; ; )

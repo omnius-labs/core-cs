@@ -1,60 +1,50 @@
-using System.ComponentModel;
 using Avalonia;
 using Avalonia.Controls;
 
 namespace Omnius.Core.Avalonia;
 
-public abstract class StatefulWindowBase : Window
+public abstract class StatefulWindowBase<TViewModel> : Window
+    where TViewModel : class, IDisposable
 {
-    private bool _isInitialized = false;
-    private bool _isActivated = false;
-    private bool _isDisposing = false;
-    private bool _isDisposed = false;
-
     public StatefulWindowBase()
     {
-        this.Initialized += (_, _) => this.OnInitialized();
-        this.Activated += (_, _) => this.OnActivated();
+        this.GetObservable(DataContextProperty).Subscribe(this.OnDataContextChanged);
+        this.GetObservable(ViewModelProperty).Subscribe(this.OnViewModelChanged);
     }
 
-    private new async void OnInitialized()
+    public static readonly StyledProperty<TViewModel?> ViewModelProperty =
+        AvaloniaProperty.Register<StatefulWindowBase<TViewModel>, TViewModel?>(nameof(ViewModel));
+
+    public TViewModel? ViewModel
     {
-        if (_isInitialized) return;
-        _isInitialized = true;
-
-        await this.OnInitializeAsync();
+        get => GetValue(ViewModelProperty);
+        set => SetValue(ViewModelProperty, value);
     }
 
-    private async void OnActivated()
+    private void OnDataContextChanged(object? v)
     {
-        if (_isActivated) return;
-        _isActivated = true;
-
-        await this.OnActivatedAsync();
+        this.ViewModel = v as TViewModel;
     }
 
-    protected override async void OnClosing(CancelEventArgs e)
+    private void OnViewModelChanged(TViewModel? v)
     {
-        if (_isDisposed) return;
-
-        e.Cancel = true;
-
-        if (_isDisposing) return;
-
-        _isDisposing = true;
-
-        await this.OnDisposeAsync();
-
-        _isDisposed = true;
-
-        this.Close();
+        if (v == null)
+        {
+            ClearValue(DataContextProperty);
+        }
+        else if (v != this.DataContext)
+        {
+            this.DataContext = v;
+        }
     }
 
-    protected abstract ValueTask OnInitializeAsync();
-
-    protected abstract ValueTask OnActivatedAsync();
-
-    protected abstract ValueTask OnDisposeAsync();
+    protected override void OnClosed(EventArgs e)
+    {
+        if (this.ViewModel is TViewModel viewModel)
+        {
+            viewModel.Dispose();
+        }
+    }
 
     public void SetWindowStatus(Models.WindowStatus? status)
     {
