@@ -4,7 +4,7 @@ using Avalonia.Controls;
 namespace Omnius.Core.Avalonia;
 
 public abstract class StatefulWindowBase<TViewModel> : Window
-    where TViewModel : class, IDisposable
+    where TViewModel : class
 {
     public StatefulWindowBase()
     {
@@ -35,14 +35,6 @@ public abstract class StatefulWindowBase<TViewModel> : Window
         else if (v != this.DataContext)
         {
             this.DataContext = v;
-        }
-    }
-
-    protected override void OnClosed(EventArgs e)
-    {
-        if (this.ViewModel is TViewModel viewModel)
-        {
-            viewModel.Dispose();
         }
     }
 

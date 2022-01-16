@@ -3,8 +3,8 @@ using Avalonia.Controls;
 
 namespace Omnius.Core.Avalonia;
 
-public abstract class StatefulUserControl<TViewModel> : Window
-    where TViewModel : class, IDisposable
+public abstract class StatefulUserControl<TViewModel> : UserControl
+    where TViewModel : class
 {
     public StatefulUserControl()
     {
@@ -35,14 +35,6 @@ public abstract class StatefulUserControl<TViewModel> : Window
         else if (v != this.DataContext)
         {
             this.DataContext = v;
-        }
-    }
-
-    protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
-    {
-        if (this.ViewModel is TViewModel viewModel)
-        {
-            viewModel.Dispose();
         }
     }
 }

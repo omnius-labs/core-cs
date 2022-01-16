@@ -20,7 +20,7 @@ internal partial class StreamConnection
             _semaphoreSlim = new SemaphoreSlim(maxDataQueueSize, maxDataQueueSize);
             _dataWriter = dataWriter;
             _dataAcceptedSubscriber = dataAcceptedSubscriber;
-            _dataAcceptedSubscriber.Subscribe(() => _semaphoreSlim.Release()).ToAdd(_disposables);
+            _dataAcceptedSubscriber.Subscribe(() => _semaphoreSlim.Release()).AddTo(_disposables);
             _bytesPool = bytesPool;
             _cancellationToken = cancellationToken;
         }

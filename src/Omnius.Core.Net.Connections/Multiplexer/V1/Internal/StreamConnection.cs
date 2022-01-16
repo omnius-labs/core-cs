@@ -31,20 +31,20 @@ internal sealed partial class StreamConnection : AsyncDisposableBase, IConnectio
         _bytesPool = bytesPool;
 
         _cancellationTokenSource = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
-        _cancellationTokenSource.ToAdd(_disposables);
+        _cancellationTokenSource.AddTo(_disposables);
 
-        _sendDataMessagePipe = new BoundedMessagePipe<ArraySegment<byte>>(_maxSendDataQueueSize).ToAdd(_disposables);
-        _receiveDataMessagePipe = new BoundedMessagePipe<ArraySegment<byte>>(_maxReceiveDataQueueSize).ToAdd(_disposables);
-        _sendDataAcceptedMessagePipe = new BoundedMessagePipe(_maxReceiveDataQueueSize).ToAdd(_disposables);
+        _sendDataMessagePipe = new BoundedMessagePipe<ArraySegment<byte>>(_maxSendDataQueueSize).AddTo(_disposables);
+        _receiveDataMessagePipe = new BoundedMessagePipe<ArraySegment<byte>>(_maxReceiveDataQueueSize).AddTo(_disposables);
+        _sendDataAcceptedMessagePipe = new BoundedMessagePipe(_maxReceiveDataQueueSize).AddTo(_disposables);
         _receiveDataAcceptedActionPipe = new ActionPipe();
 
-        _sender = new ConnectionSender(maxSendDataQueueSize, _sendDataMessagePipe.Writer, _receiveDataAcceptedActionPipe.Subscriber, _bytesPool, _cancellationTokenSource.Token).ToAdd(_disposables);
-        _receiver = new ConnectionReceiver(_receiveDataMessagePipe.Reader, _sendDataAcceptedMessagePipe.Writer, _bytesPool, _cancellationTokenSource.Token).ToAdd(_disposables);
+        _sender = new ConnectionSender(maxSendDataQueueSize, _sendDataMessagePipe.Writer, _receiveDataAcceptedActionPipe.Subscriber, _bytesPool, _cancellationTokenSource.Token).AddTo(_disposables);
+        _receiver = new ConnectionReceiver(_receiveDataMessagePipe.Reader, _sendDataAcceptedMessagePipe.Writer, _bytesPool, _cancellationTokenSource.Token).AddTo(_disposables);
         _events = new ConnectionEvents(_cancellationTokenSource.Token);
 
-        _sendFinishMessagePipe = new BoundedMessagePipe(1).ToAdd(_disposables);
+        _sendFinishMessagePipe = new BoundedMessagePipe(1).AddTo(_disposables);
         _receiveFinishActionPipe = new ActionPipe();
-        _receiveFinishActionPipe.Subscriber.Subscribe(() => this.OnReceiveFinish()).ToAdd(_disposables);
+        _receiveFinishActionPipe.Subscriber.Subscribe(() => this.OnReceiveFinish()).AddTo(_disposables);
     }
 
     internal void InternalDispose()
