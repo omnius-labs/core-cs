@@ -77,6 +77,11 @@
           "System.Threading.Tasks": "4.3.0"
         }
       },
+      "System.IO.Pipelines": {
+        "type": "Transitive",
+        "resolved": "6.0.1",
+        "contentHash": "1j1pZX1ICzEyjafyssU3BzWVxUsaN3zq0wEmGKj3bxINC6NkmS30eEVuZ7k/QX2UKYNCaUch6g46taYKxcpFtw=="
+      },
       "System.Linq": {
         "type": "Transitive",
         "resolved": "4.3.0",
@@ -183,7 +188,8 @@
         "type": "Project",
         "dependencies": {
           "NLog": "4.7.13",
-          "NeoSmart.AsyncLock": "3.2.1"
+          "NeoSmart.AsyncLock": "3.2.1",
+          "System.IO.Pipelines": "6.0.1"
         }
       },
       "omnius.core.collections": {
