@@ -4,11 +4,11 @@
     "net6.0": {
       "Cocona.Lite": {
         "type": "Direct",
-        "requested": "[1.6.0, )",
-        "resolved": "1.6.0",
-        "contentHash": "pj69oszG1lUy1PJSdS+VxwnfMmKaSF5ogrX4nJyD02ZF+WWEfmaUGV/8swpVCtsGR0NMiCTMFAptjCUaArB9Xg==",
+        "requested": "[2.0.2, )",
+        "resolved": "2.0.2",
+        "contentHash": "V3QPCUpJFYRDTYIn88Z+cU/yD19eZix6i/NRQPjMjwV0gEB7AJ9Cn/K//9p+XA5kudpovNL4sVas82u5snr/GA==",
         "dependencies": {
-          "Cocona.Core": "1.6.0"
+          "Cocona.Core": "2.0.2"
         }
       },
       "Glob.cs": {
@@ -23,18 +23,18 @@
       },
       "NLog": {
         "type": "Direct",
-        "requested": "[4.7.11, )",
-        "resolved": "4.7.11",
-        "contentHash": "A7EpoOjWesV5BPx1cOiBndazZq1VGdagIs6oK8ttcRDl5adCMtHiTqnsD5yYaOrMxOQeCjHBf/w3nKzCmhGbgw=="
+        "requested": "[4.7.13, )",
+        "resolved": "4.7.13",
+        "contentHash": "AvoGpCuq36B+0wY313XA6gC+YeMvk24rqF8P+HS9fInBGOjCzPjpXp2ln9ATZjPOJtXgHfc8zNmTjyswFGLxvg=="
       },
       "NLog.Config": {
         "type": "Direct",
-        "requested": "[4.7.11, )",
-        "resolved": "4.7.11",
-        "contentHash": "p9N8dsMVdyXNN+KU2BsBFZ1aR+usL8JWPKe1YuXlKjPEQsltYO43tajlkX2Kilai+PAE1zw9UC8AaBq5r78x3A==",
+        "requested": "[4.7.13, )",
+        "resolved": "4.7.13",
+        "contentHash": "A7i8bS0SLd7A1y9BkyOBpIdfC91aqzJfOfHXi9xXs12s6rb9f2xYRQde2Pcpso+YrcybCR2lqczNdb/pKSqoEg==",
         "dependencies": {
-          "NLog": "4.7.11",
-          "NLog.Schema": "4.7.11"
+          "NLog": "4.7.13",
+          "NLog.Schema": "4.7.13"
         }
       },
       "Sprache": {
@@ -58,8 +58,8 @@
       },
       "Cocona.Core": {
         "type": "Transitive",
-        "resolved": "1.6.0",
-        "contentHash": "670iboE7wIUZe/pOb1dsyZhYi61OrHGci7ZzR/IiW/lqiaVhE4addW1+zAGZhylsOLnACUrXDjbjsPdgfA4CPw=="
+        "resolved": "2.0.2",
+        "contentHash": "wQrVzh0dJFM5FB0hkQse23bmyUtScZSPQeCrSPKzY3z3PTu8+lNmZ95vzF9h+ANTtdYv10qs8K9LbOopfSGcmA=="
       },
       "Microsoft.NETCore.Platforms": {
         "type": "Transitive",
@@ -73,8 +73,8 @@
       },
       "NLog.Schema": {
         "type": "Transitive",
-        "resolved": "4.7.11",
-        "contentHash": "9mmj/hApaSmX9jP2PxLyqywesdEI1nIT2TVWgsdoqb1yIpxvUM+1b6aMD2zJkpGN8y71jmVO2d/FKTwQXIfpSw=="
+        "resolved": "4.7.13",
+        "contentHash": "IlbHsTRzA1YeAbrJTVETZRWkYXqo5YnaF/ppJBdE6kKD4/IjuA0CUaZMSQKbOLzwxGARMx3An1V38zjGEjRekA=="
       },
       "System.Collections": {
         "type": "Transitive",

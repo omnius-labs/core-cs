@@ -35,25 +35,24 @@ public class UpnpClient : DisposableBase, IUpnpClient
 
     public async ValueTask ConnectAsync(CancellationToken cancellationToken = default)
     {
-        try
+        var hostEntry = await Dns.GetHostEntryAsync(Dns.GetHostName());
+
+        foreach (var machineIp in hostEntry.AddressList)
         {
-            var hostEntry = await Dns.GetHostEntryAsync(Dns.GetHostName());
+            if (machineIp.AddressFamily != AddressFamily.InterNetwork) continue;
 
-            foreach (var machineIp in hostEntry.AddressList)
+            try
             {
-                if (machineIp.AddressFamily != AddressFamily.InterNetwork) continue;
-
                 (_contents, _location) = await GetContentsAndLocationFromDeviceAsync(IPAddress.Parse("239.255.255.250"), machineIp, cancellationToken);
+                return;
+            }
+            catch (Exception e)
+            {
+                _logger.Debug(e);
             }
         }
-        catch (UpnpClientException)
-        {
-            throw;
-        }
-        catch (Exception e)
-        {
-            throw new UpnpClientException("Failed to connect.", e);
-        }
+
+        throw new UpnpClientException("Failed to connect.");
     }
 
     private static async ValueTask<(string contents, Uri location)> GetContentsAndLocationFromDeviceAsync(IPAddress targetIp, IPAddress localIp, CancellationToken cancellationToken = default)
@@ -125,7 +124,7 @@ public class UpnpClient : DisposableBase, IUpnpClient
                 try
                 {
                     var data = new byte[1024 * 64];
-                    int dataLength = socket.Receive(data.AsSpan(), SocketFlags.None);
+                    int dataLength = await socket.ReceiveAsync(data, SocketFlags.None);
 
                     queryResponse = Encoding.ASCII.GetString(data, 0, dataLength);
                     if (string.IsNullOrWhiteSpace(queryResponse)) continue;
