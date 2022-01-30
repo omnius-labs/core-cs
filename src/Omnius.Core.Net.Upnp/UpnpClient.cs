@@ -124,7 +124,7 @@ public class UpnpClient : DisposableBase, IUpnpClient
                 try
                 {
                     var data = new byte[1024 * 64];
-                    int dataLength = await socket.ReceiveAsync(data, SocketFlags.None);
+                    int dataLength = socket.Receive(data, SocketFlags.None);
 
                     queryResponse = Encoding.ASCII.GetString(data, 0, dataLength);
                     if (string.IsNullOrWhiteSpace(queryResponse)) continue;
@@ -147,7 +147,7 @@ public class UpnpClient : DisposableBase, IUpnpClient
 
                     using (var client = new HttpClient())
                     {
-                        contexts = await client.GetStringAsync(location);
+                        contexts = await client.GetStringAsync(location, cancellationToken);
                     }
 
                     if (string.IsNullOrWhiteSpace(contexts)) continue;
