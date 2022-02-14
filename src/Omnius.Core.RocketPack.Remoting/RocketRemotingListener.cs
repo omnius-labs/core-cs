@@ -202,7 +202,6 @@ internal sealed class RocketRemotingListener<TError> : AsyncDisposableBase, IRoc
     private CancellationTokenSource CreateCancellationTokenSource(CancellationToken cancellationToken)
     {
         var linkedTokenSource = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
-        using var onCloseSubscriber = _connection.Events.OnClosed.Subscribe(() => linkedTokenSource.Cancel());
         return linkedTokenSource;
     }
 
@@ -210,7 +209,7 @@ internal sealed class RocketRemotingListener<TError> : AsyncDisposableBase, IRoc
     {
         var tcs = new TaskCompletionSource();
         using var register = cancellationToken.Register(() => tcs.TrySetCanceled());
-        using var onCloseSubscriber = _connection.Events.OnClosed.Subscribe(() => tcs.SetResult());
+        using var onCloseListener = _connection.Events.OnClosed.Listen(() => tcs.SetResult());
         await tcs.Task;
     }
 }

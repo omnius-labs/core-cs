@@ -313,7 +313,7 @@ internal sealed partial class ConnectionMultiplexer : AsyncDisposableBase
                                     return;
                                 }
 
-                                connection.ReceiveDataAcceptedPublicher.Publish();
+                                connection.ReceiveDataAcceptedCaller.Call();
 
                                 break;
                             }
@@ -332,7 +332,7 @@ internal sealed partial class ConnectionMultiplexer : AsyncDisposableBase
                                     return;
                                 }
 
-                                connection.ReceiveFinishPublicher.Publish();
+                                connection.ReceiveFinishCaller.Call();
 
                                 break;
                             }

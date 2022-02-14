@@ -9,18 +9,18 @@ internal partial class StreamConnection
     {
         private readonly SemaphoreSlim _semaphoreSlim;
         private readonly IMessagePipeWriter<ArraySegment<byte>> _dataWriter;
-        private readonly IActionSubscriber _dataAcceptedSubscriber;
+        private readonly IActionListener _dataAcceptedListener;
         private readonly IBytesPool _bytesPool;
         private readonly CancellationToken _cancellationToken;
 
         private readonly List<IDisposable> _disposables = new();
 
-        public ConnectionSender(int maxDataQueueSize, IMessagePipeWriter<ArraySegment<byte>> dataWriter, IActionSubscriber dataAcceptedSubscriber, IBytesPool bytesPool, CancellationToken cancellationToken)
+        public ConnectionSender(int maxDataQueueSize, IMessagePipeWriter<ArraySegment<byte>> dataWriter, IActionListener dataAcceptedListener, IBytesPool bytesPool, CancellationToken cancellationToken)
         {
             _semaphoreSlim = new SemaphoreSlim(maxDataQueueSize, maxDataQueueSize);
             _dataWriter = dataWriter;
-            _dataAcceptedSubscriber = dataAcceptedSubscriber;
-            _dataAcceptedSubscriber.Subscribe(() => _semaphoreSlim.Release()).AddTo(_disposables);
+            _dataAcceptedListener = dataAcceptedListener;
+            _dataAcceptedListener.Listen(() => _semaphoreSlim.Release()).AddTo(_disposables);
             _bytesPool = bytesPool;
             _cancellationToken = cancellationToken;
         }

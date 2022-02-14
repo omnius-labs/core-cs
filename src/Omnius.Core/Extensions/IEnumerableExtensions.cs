@@ -113,4 +113,15 @@ public static class IEnumerableExtensions
         _random.Value.Shuffle(array);
         return array;
     }
+
+    public static IEnumerable<T> Flatten<T>(this IEnumerable<IEnumerable<T>> items)
+    {
+        foreach (var collection in items)
+        {
+            foreach (var result in collection)
+            {
+                yield return result;
+            }
+        }
+    }
 }

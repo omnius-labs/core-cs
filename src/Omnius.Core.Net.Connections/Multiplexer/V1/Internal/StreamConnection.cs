@@ -38,13 +38,13 @@ internal sealed partial class StreamConnection : AsyncDisposableBase, IConnectio
         _sendDataAcceptedMessagePipe = new BoundedMessagePipe(_maxReceiveDataQueueSize).AddTo(_disposables);
         _receiveDataAcceptedActionPipe = new ActionPipe();
 
-        _sender = new ConnectionSender(maxSendDataQueueSize, _sendDataMessagePipe.Writer, _receiveDataAcceptedActionPipe.Subscriber, _bytesPool, _cancellationTokenSource.Token).AddTo(_disposables);
+        _sender = new ConnectionSender(maxSendDataQueueSize, _sendDataMessagePipe.Writer, _receiveDataAcceptedActionPipe.Listener, _bytesPool, _cancellationTokenSource.Token).AddTo(_disposables);
         _receiver = new ConnectionReceiver(_receiveDataMessagePipe.Reader, _sendDataAcceptedMessagePipe.Writer, _bytesPool, _cancellationTokenSource.Token).AddTo(_disposables);
         _events = new ConnectionEvents(_cancellationTokenSource.Token);
 
         _sendFinishMessagePipe = new BoundedMessagePipe(1).AddTo(_disposables);
         _receiveFinishActionPipe = new ActionPipe();
-        _receiveFinishActionPipe.Subscriber.Subscribe(() => this.OnReceiveFinish()).AddTo(_disposables);
+        _receiveFinishActionPipe.Listener.Listen(() => this.OnReceiveFinish()).AddTo(_disposables);
     }
 
     internal void InternalDispose()
@@ -85,9 +85,9 @@ internal sealed partial class StreamConnection : AsyncDisposableBase, IConnectio
 
     internal IMessagePipeReader SendDataAcceptedReader => _sendDataAcceptedMessagePipe.Reader;
 
-    internal IActionPublicher ReceiveDataAcceptedPublicher => _receiveDataAcceptedActionPipe.Publicher;
+    internal IActionCaller ReceiveDataAcceptedCaller => _receiveDataAcceptedActionPipe.Caller;
 
     internal IMessagePipeReader SendFinishReader => _sendFinishMessagePipe.Reader;
 
-    internal IActionPublicher ReceiveFinishPublicher => _receiveFinishActionPipe.Publicher;
+    internal IActionCaller ReceiveFinishCaller => _receiveFinishActionPipe.Caller;
 }

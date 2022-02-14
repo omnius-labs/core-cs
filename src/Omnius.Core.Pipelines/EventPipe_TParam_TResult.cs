@@ -8,24 +8,24 @@ public sealed class EventPipe<TParam, TResult>
 
     public EventPipe()
     {
-        this.Publicher = new EventPublicher(this);
-        this.Subscriber = new EventSubscriber(this);
+        this.Caller = new EventCaller(this);
+        this.Listener = new EventListener(this);
     }
 
-    public IEventPublicher<TParam, TResult> Publicher { get; }
+    public IEventCaller<TParam, TResult> Caller { get; }
 
-    public IEventSubscriber<TParam, TResult> Subscriber { get; }
+    public IEventListener<TParam, TResult> Listener { get; }
 
-    public sealed class EventPublicher : IEventPublicher<TParam, TResult>
+    public sealed class EventCaller : IEventCaller<TParam, TResult>
     {
         private readonly EventPipe<TParam, TResult> _pipe;
 
-        public EventPublicher(EventPipe<TParam, TResult> pipe)
+        public EventCaller(EventPipe<TParam, TResult> pipe)
         {
             _pipe = pipe;
         }
 
-        public IEnumerable<TResult> Publish(TParam param)
+        public IEnumerable<TResult> Call(TParam param)
         {
             foreach (var func in _pipe._funcs)
             {
@@ -34,16 +34,16 @@ public sealed class EventPipe<TParam, TResult>
         }
     }
 
-    public sealed class EventSubscriber : IEventSubscriber<TParam, TResult>
+    public sealed class EventListener : IEventListener<TParam, TResult>
     {
         private readonly EventPipe<TParam, TResult> _pipe;
 
-        public EventSubscriber(EventPipe<TParam, TResult> pipe)
+        public EventListener(EventPipe<TParam, TResult> pipe)
         {
             _pipe = pipe;
         }
 
-        public IDisposable Subscribe(Func<TParam, TResult> func)
+        public IDisposable Listen(Func<TParam, TResult> func)
         {
             return new Cookie(_pipe, func);
         }

@@ -17,7 +17,7 @@ internal sealed class ConnectionEvents : DisposableBase, IConnectionEvents
     {
         if (Interlocked.CompareExchange(ref _onClosedCalled, 1, 0) == 0)
         {
-            _closedPipe.Publicher.Publish();
+            _closedPipe.Caller.Call();
         }
     }
 
@@ -29,5 +29,5 @@ internal sealed class ConnectionEvents : DisposableBase, IConnectionEvents
         }
     }
 
-    public IActionSubscriber OnClosed => _closedPipe.Subscriber;
+    public IActionListener OnClosed => _closedPipe.Listener;
 }

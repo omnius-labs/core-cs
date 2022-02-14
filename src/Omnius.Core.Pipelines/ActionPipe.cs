@@ -6,39 +6,39 @@ public sealed class ActionPipe
 
     public ActionPipe()
     {
-        this.Publicher = new ActionPublicher(this);
-        this.Subscriber = new ActionSubscriber(this);
+        this.Caller = new ActionCaller(this);
+        this.Listener = new ActionListener(this);
     }
 
-    public IActionPublicher Publicher { get; }
+    public IActionCaller Caller { get; }
 
-    public IActionSubscriber Subscriber { get; }
+    public IActionListener Listener { get; }
 
-    public sealed class ActionPublicher : IActionPublicher
+    public sealed class ActionCaller : IActionCaller
     {
         private readonly ActionPipe _pipe;
 
-        public ActionPublicher(ActionPipe pipe)
+        public ActionCaller(ActionPipe pipe)
         {
             _pipe = pipe;
         }
 
-        public void Publish()
+        public void Call()
         {
             _pipe.Action.Invoke();
         }
     }
 
-    public sealed class ActionSubscriber : IActionSubscriber
+    public sealed class ActionListener : IActionListener
     {
         private readonly ActionPipe _pipe;
 
-        public ActionSubscriber(ActionPipe pipe)
+        public ActionListener(ActionPipe pipe)
         {
             _pipe = pipe;
         }
 
-        public IDisposable Subscribe(Action action)
+        public IDisposable Listen(Action action)
         {
             return new Cookie(_pipe, action);
         }
