@@ -1,6 +1,6 @@
 namespace Omnius.Core.Avalonia;
 
-public abstract class TreeViewModelBase : DisposableBase, IDropable
+public abstract class TreeViewModelBase : BindableBase, IDropable
 {
     public TreeViewModelBase(TreeViewModelBase? parent)
     {
