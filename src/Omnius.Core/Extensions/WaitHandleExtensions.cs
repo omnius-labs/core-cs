@@ -42,11 +42,11 @@ public static class WaitHandleExtensions
 
     public static async Task WaitAsync(this WaitHandle handle, TimeSpan timeout, CancellationToken cancellationToken = default)
     {
-        var tcs = new TaskCompletionSource<object?>();
+        var tcs = new TaskCompletionSource();
 
         var registration = ThreadPool.RegisterWaitForSingleObject(handle, (state, localTimeout) =>
         {
-            var localTcs = (TaskCompletionSource<object?>)state!;
+            var localTcs = (TaskCompletionSource)state!;
 
             if (localTimeout)
             {
@@ -54,7 +54,7 @@ public static class WaitHandleExtensions
             }
             else
             {
-                localTcs.TrySetResult(null);
+                localTcs.TrySetResult();
             }
         }, tcs, timeout, executeOnlyOnce: true);
 
