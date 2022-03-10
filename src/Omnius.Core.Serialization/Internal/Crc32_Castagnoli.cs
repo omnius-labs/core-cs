@@ -30,6 +30,10 @@ public unsafe ref struct Crc32_Castagnoli
         }
     }
 
+    public Crc32_Castagnoli()
+    {
+    }
+
     private uint _result = 0xFFFFFFFF;
 
     public void Compute(ReadOnlySpan<byte> memory)

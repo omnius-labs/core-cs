@@ -2,25 +2,25 @@ using System.Collections.Immutable;
 
 namespace Omnius.Core.Pipelines;
 
-public sealed class EventPipe<TResult>
+public sealed class FuncPipe<TResult>
 {
     private ImmutableList<Func<TResult>> _funcs = ImmutableList<Func<TResult>>.Empty;
 
-    public EventPipe()
+    public FuncPipe()
     {
         this.Caller = new EventCaller(this);
         this.Listener = new EventListener(this);
     }
 
-    public IEventCaller<TResult> Caller { get; }
+    public IFuncCaller<TResult> Caller { get; }
 
-    public IEventListener<TResult> Listener { get; }
+    public IFuncListener<TResult> Listener { get; }
 
-    public sealed class EventCaller : IEventCaller<TResult>
+    public sealed class EventCaller : IFuncCaller<TResult>
     {
-        private readonly EventPipe<TResult> _pipe;
+        private readonly FuncPipe<TResult> _pipe;
 
-        public EventCaller(EventPipe<TResult> pipe)
+        public EventCaller(FuncPipe<TResult> pipe)
         {
             _pipe = pipe;
         }
@@ -34,11 +34,11 @@ public sealed class EventPipe<TResult>
         }
     }
 
-    public sealed class EventListener : IEventListener<TResult>
+    public sealed class EventListener : IFuncListener<TResult>
     {
-        private readonly EventPipe<TResult> _pipe;
+        private readonly FuncPipe<TResult> _pipe;
 
-        public EventListener(EventPipe<TResult> pipe)
+        public EventListener(FuncPipe<TResult> pipe)
         {
             _pipe = pipe;
         }
@@ -50,10 +50,10 @@ public sealed class EventPipe<TResult>
 
         private sealed class Cookie : DisposableBase, IDisposable
         {
-            private readonly EventPipe<TResult> _pipe;
+            private readonly FuncPipe<TResult> _pipe;
             private readonly Func<TResult> _func;
 
-            public Cookie(EventPipe<TResult> pipe, Func<TResult> func)
+            public Cookie(FuncPipe<TResult> pipe, Func<TResult> func)
             {
                 _pipe = pipe;
                 _func = func;

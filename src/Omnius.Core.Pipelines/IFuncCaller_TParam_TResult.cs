@@ -1,6 +1,6 @@
 namespace Omnius.Core.Pipelines;
 
-public interface IEventCaller<TParam, TResult>
+public interface IFuncCaller<TParam, TResult>
 {
     IEnumerable<TResult> Call(TParam param);
 }

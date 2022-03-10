@@ -1,6 +1,6 @@
 namespace Omnius.Core.Pipelines;
 
-public interface IEventListener<TResult>
+public interface IFuncListener<TResult>
 {
     IDisposable Listen(Func<TResult> func);
 }

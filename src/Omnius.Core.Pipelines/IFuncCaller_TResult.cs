@@ -1,6 +1,6 @@
 namespace Omnius.Core.Pipelines;
 
-public interface IEventCaller<TResult>
+public interface IFuncCaller<TResult>
 {
     IEnumerable<TResult> Call();
 }
