@@ -8,7 +8,9 @@ public class MainWindowProvider : IMainWindowProvider
 {
     public Window GetMainWindow()
     {
-        var lifetime = (IClassicDesktopStyleApplicationLifetime)Application.Current.ApplicationLifetime;
+        if (Application.Current is null) throw new NotSupportedException();
+        var lifetime = Application.Current.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime;
+        if (lifetime is null) throw new NotSupportedException();
         return lifetime.MainWindow;
     }
 }
