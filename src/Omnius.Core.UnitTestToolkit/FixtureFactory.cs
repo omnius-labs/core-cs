@@ -9,9 +9,8 @@ public class FixtureFactory
 
     public static IDisposable GenTempDirectory(out string path)
     {
-        var result = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
-        Directory.CreateDirectory(result);
-        path = result;
+        path = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N"));
+        if (!Directory.Exists(path)) Directory.CreateDirectory(path);
         return new DirectoryDeleter(path);
     }
 
@@ -22,6 +21,30 @@ public class FixtureFactory
         public void Dispose() => Directory.Delete(this.Path, true);
 
         private string Path { get; }
+    }
+
+    public static FileStream GenTempFileStream(string tempDirectoryPath)
+    {
+        var buffer = new byte[32];
+
+        int count = 0;
+
+        for (; ; )
+        {
+            var randomText = Guid.NewGuid().ToString("N");
+            var tempFilePath = Path.Combine(tempDirectoryPath, randomText);
+
+            try
+            {
+                var stream = new FileStream(tempFilePath, FileMode.CreateNew, FileAccess.ReadWrite, FileShare.ReadWrite, 1);
+                return stream;
+            }
+            catch (IOException)
+            {
+                if (count++ < 1000) continue;
+                throw;
+            }
+        }
     }
 
     public static byte[] GetRandomBytes(int length)
