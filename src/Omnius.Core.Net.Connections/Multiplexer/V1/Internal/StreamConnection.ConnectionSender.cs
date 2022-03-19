@@ -1,4 +1,5 @@
 using System.Buffers;
+using Omnius.Core.Helpers;
 using Omnius.Core.Pipelines;
 
 namespace Omnius.Core.Net.Connections.Multiplexer.V1.Internal;
@@ -23,7 +24,7 @@ internal partial class StreamConnection
             _semaphoreSlim = new SemaphoreSlim(maxDataQueueSize, maxDataQueueSize);
             _dataWriter = dataWriter;
             _dataAcceptedListener = dataAcceptedListener;
-            _dataAcceptedListenerRegister = _dataAcceptedListener.Listen(() => _logger.TryCatch<ObjectDisposedException>(() => _semaphoreSlim.Release()));
+            _dataAcceptedListenerRegister = _dataAcceptedListener.Listen(() => ExceptionHelper.TryCatch<ObjectDisposedException>(() => _semaphoreSlim.Release()));
             _bytesPool = bytesPool;
             _cancellationToken = cancellationToken;
         }

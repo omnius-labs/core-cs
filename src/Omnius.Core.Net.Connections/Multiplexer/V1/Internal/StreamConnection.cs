@@ -1,3 +1,4 @@
+using Omnius.Core.Helpers;
 using Omnius.Core.Net.Connections.Internal;
 using Omnius.Core.Pipelines;
 
@@ -46,7 +47,7 @@ internal sealed partial class StreamConnection : AsyncDisposableBase, IConnectio
 
         _sendFinishMessagePipe = new BoundedMessagePipe(1);
         _receiveFinishActionPipe = new ActionPipe();
-        _receiveFinishActionPipeListenerRegister = _receiveFinishActionPipe.Listener.Listen(() => _logger.TryCatch<ObjectDisposedException>(() => this.OnReceiveFinish()));
+        _receiveFinishActionPipeListenerRegister = _receiveFinishActionPipe.Listener.Listen(() => ExceptionHelper.TryCatch<ObjectDisposedException>(() => this.OnReceiveFinish()));
     }
 
     internal void InternalDispose()
