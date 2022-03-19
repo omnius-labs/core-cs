@@ -5,6 +5,8 @@ namespace Omnius.Core.Net.Connections.Multiplexer.V1.Internal;
 
 internal sealed partial class StreamConnection : AsyncDisposableBase, IConnection
 {
+    private static readonly NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
+
     private readonly int _maxSendDataQueueSize;
     private readonly int _maxReceiveDataQueueSize;
     private readonly IBytesPool _bytesPool;
@@ -19,6 +21,7 @@ internal sealed partial class StreamConnection : AsyncDisposableBase, IConnectio
 
     private readonly BoundedMessagePipe _sendFinishMessagePipe;
     private readonly ActionPipe _receiveFinishActionPipe;
+    private readonly IDisposable _receiveFinishActionPipeListenerRegister;
 
     private readonly CancellationTokenSource _cancellationTokenSource;
 
@@ -31,28 +34,34 @@ internal sealed partial class StreamConnection : AsyncDisposableBase, IConnectio
         _bytesPool = bytesPool;
 
         _cancellationTokenSource = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
-        _cancellationTokenSource.AddTo(_disposables);
 
-        _sendDataMessagePipe = new BoundedMessagePipe<ArraySegment<byte>>(_maxSendDataQueueSize).AddTo(_disposables);
-        _receiveDataMessagePipe = new BoundedMessagePipe<ArraySegment<byte>>(_maxReceiveDataQueueSize).AddTo(_disposables);
-        _sendDataAcceptedMessagePipe = new BoundedMessagePipe(_maxReceiveDataQueueSize).AddTo(_disposables);
+        _sendDataMessagePipe = new BoundedMessagePipe<ArraySegment<byte>>(_maxSendDataQueueSize);
+        _receiveDataMessagePipe = new BoundedMessagePipe<ArraySegment<byte>>(_maxReceiveDataQueueSize);
+        _sendDataAcceptedMessagePipe = new BoundedMessagePipe(_maxReceiveDataQueueSize);
         _receiveDataAcceptedActionPipe = new ActionPipe();
 
-        _sender = new ConnectionSender(maxSendDataQueueSize, _sendDataMessagePipe.Writer, _receiveDataAcceptedActionPipe.Listener, _bytesPool, _cancellationTokenSource.Token).AddTo(_disposables);
-        _receiver = new ConnectionReceiver(_receiveDataMessagePipe.Reader, _sendDataAcceptedMessagePipe.Writer, _bytesPool, _cancellationTokenSource.Token).AddTo(_disposables);
+        _sender = new ConnectionSender(maxSendDataQueueSize, _sendDataMessagePipe.Writer, _receiveDataAcceptedActionPipe.Listener, _bytesPool, _cancellationTokenSource.Token);
+        _receiver = new ConnectionReceiver(_receiveDataMessagePipe.Reader, _sendDataAcceptedMessagePipe.Writer, _bytesPool, _cancellationTokenSource.Token);
         _events = new ConnectionEvents(_cancellationTokenSource.Token);
 
-        _sendFinishMessagePipe = new BoundedMessagePipe(1).AddTo(_disposables);
+        _sendFinishMessagePipe = new BoundedMessagePipe(1);
         _receiveFinishActionPipe = new ActionPipe();
-        _receiveFinishActionPipe.Listener.Listen(() => this.OnReceiveFinish()).AddTo(_disposables);
+        _receiveFinishActionPipeListenerRegister = _receiveFinishActionPipe.Listener.Listen(() => _logger.TryCatch<ObjectDisposedException>(() => this.OnReceiveFinish()));
     }
 
     internal void InternalDispose()
     {
-        foreach (var disposable in _disposables)
-        {
-            disposable.Dispose();
-        }
+        _cancellationTokenSource.Dispose();
+        _sendDataMessagePipe.Dispose();
+        _receiveDataMessagePipe.Dispose();
+        _sendDataAcceptedMessagePipe.Dispose();
+
+        _sender.Dispose();
+        _receiver.Dispose();
+        _events.Dispose();
+
+        _sendFinishMessagePipe.Dispose();
+        _receiveFinishActionPipeListenerRegister.Dispose();
     }
 
     protected override async ValueTask OnDisposeAsync()

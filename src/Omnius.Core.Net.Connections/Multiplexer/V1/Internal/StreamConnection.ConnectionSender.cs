@@ -7,9 +7,12 @@ internal partial class StreamConnection
 {
     public sealed class ConnectionSender : DisposableBase, IConnectionSender
     {
+        private static readonly NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
+
         private readonly SemaphoreSlim _semaphoreSlim;
         private readonly IMessagePipeWriter<ArraySegment<byte>> _dataWriter;
         private readonly IActionListener _dataAcceptedListener;
+        private readonly IDisposable _dataAcceptedListenerRegister;
         private readonly IBytesPool _bytesPool;
         private readonly CancellationToken _cancellationToken;
 
@@ -20,7 +23,7 @@ internal partial class StreamConnection
             _semaphoreSlim = new SemaphoreSlim(maxDataQueueSize, maxDataQueueSize);
             _dataWriter = dataWriter;
             _dataAcceptedListener = dataAcceptedListener;
-            _dataAcceptedListener.Listen(() => _semaphoreSlim.Release()).AddTo(_disposables);
+            _dataAcceptedListenerRegister = _dataAcceptedListener.Listen(() => _logger.TryCatch<ObjectDisposedException>(() => _semaphoreSlim.Release()));
             _bytesPool = bytesPool;
             _cancellationToken = cancellationToken;
         }
@@ -29,10 +32,7 @@ internal partial class StreamConnection
         {
             if (disposing)
             {
-                foreach (var disposable in _disposables)
-                {
-                    disposable.Dispose();
-                }
+                _dataAcceptedListenerRegister.Dispose();
             }
         }
 

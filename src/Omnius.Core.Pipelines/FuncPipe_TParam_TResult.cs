@@ -8,19 +8,19 @@ public sealed class FuncPipe<TParam, TResult>
 
     public FuncPipe()
     {
-        this.Caller = new EventCaller(this);
-        this.Listener = new EventListener(this);
+        this.Caller = new FuncCaller(this);
+        this.Listener = new FuncListener(this);
     }
 
     public IFuncCaller<TParam, TResult> Caller { get; }
 
     public IFuncListener<TParam, TResult> Listener { get; }
 
-    public sealed class EventCaller : IFuncCaller<TParam, TResult>
+    public sealed class FuncCaller : IFuncCaller<TParam, TResult>
     {
         private readonly FuncPipe<TParam, TResult> _pipe;
 
-        public EventCaller(FuncPipe<TParam, TResult> pipe)
+        public FuncCaller(FuncPipe<TParam, TResult> pipe)
         {
             _pipe = pipe;
         }
@@ -34,11 +34,11 @@ public sealed class FuncPipe<TParam, TResult>
         }
     }
 
-    public sealed class EventListener : IFuncListener<TParam, TResult>
+    public sealed class FuncListener : IFuncListener<TParam, TResult>
     {
         private readonly FuncPipe<TParam, TResult> _pipe;
 
-        public EventListener(FuncPipe<TParam, TResult> pipe)
+        public FuncListener(FuncPipe<TParam, TResult> pipe)
         {
             _pipe = pipe;
         }
