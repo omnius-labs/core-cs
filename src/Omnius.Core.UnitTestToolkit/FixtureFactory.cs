@@ -9,21 +9,35 @@ public class FixtureFactory
 
     public static IDisposable GenTempDirectory(out string path)
     {
-        path = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N"));
+        path = Path.Combine(Path.GetTempPath(), "_Omnius_Test_", DateTime.Now.ToString("yyyy-MM-ddTHH-mm-ssZ") + "_" + Guid.NewGuid().ToString("N"));
         if (!Directory.Exists(path)) Directory.CreateDirectory(path);
         return new DirectoryDeleter(path);
     }
 
     private sealed class DirectoryDeleter : IDisposable
     {
-        public DirectoryDeleter(string path) => this.Path = path;
+        private readonly string _path;
+        public DirectoryDeleter(string path) => _path = path;
 
-        public void Dispose() => Directory.Delete(this.Path, true);
-
-        private string Path { get; }
+        public void Dispose() => Directory.Delete(_path, true);
     }
 
-    public static FileStream GenTempFileStream(string tempDirectoryPath)
+    public static string GenRandomFile(string directoryPath, int size)
+    {
+        using var stream = GenRandomFileStream(directoryPath);
+
+        var buffer = new byte[1024 * 8];
+
+        for (int remain = size; remain > 0; remain -= buffer.Length)
+        {
+            _random.NextBytes(buffer);
+            stream.Write(buffer, 0, Math.Min(buffer.Length, remain));
+        }
+
+        return stream.Name;
+    }
+
+    public static FileStream GenRandomFileStream(string directoryPath)
     {
         var buffer = new byte[32];
 
@@ -32,7 +46,7 @@ public class FixtureFactory
         for (; ; )
         {
             var randomText = Guid.NewGuid().ToString("N");
-            var tempFilePath = Path.Combine(tempDirectoryPath, randomText);
+            var tempFilePath = Path.Combine(directoryPath, randomText);
 
             try
             {

@@ -1,3 +1,4 @@
+using Omnius.Core.Helpers;
 using Omnius.Core.Net.Connections;
 using Omnius.Core.RocketPack.Remoting.Internal;
 
@@ -209,7 +210,7 @@ internal sealed class RocketRemotingListener<TError> : AsyncDisposableBase, IRoc
     {
         var tcs = new TaskCompletionSource();
         using var register = cancellationToken.Register(() => tcs.TrySetCanceled());
-        using var onCloseListener = _connection.Events.OnClosed.Listen(() => tcs.SetResult());
+        using var onCloseListenerRegister = _connection.Events.OnClosed.Listen(() => ExceptionHelper.TryCatch<ObjectDisposedException>(() => tcs.SetResult()));
         await tcs.Task;
     }
 }
