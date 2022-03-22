@@ -37,13 +37,6 @@ public class BridgeConnectionTest
         var connection1 = new BridgeConnection(new SocketCap(socket1), null, null, batchActionDispatcher, BytesPool.Shared, options);
         var connection2 = new BridgeConnection(new SocketCap(socket2), null, null, batchActionDispatcher, BytesPool.Shared, options);
 
-        socket1.Dispose();
-
-        await Assert.ThrowsAsync<ConnectionException>(async () => { await connection1.Sender.SendAsync(_ => { }); });
-        Assert.Throws<ConnectionException>(() => { connection1.Sender.TrySend(_ => { }); });
-        await Assert.ThrowsAsync<ConnectionException>(async () => { await connection1.Receiver.ReceiveAsync(_ => { }); });
-        Assert.Throws<ConnectionException>(() => { connection1.Receiver.TryReceive(_ => { }); });
-
         await connection1.DisposeAsync();
 
         await Assert.ThrowsAsync<ObjectDisposedException>(async () => { await connection1.Sender.SendAsync(_ => { }); });
