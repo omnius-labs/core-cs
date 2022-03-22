@@ -1,4 +1,5 @@
 using System.Buffers;
+using System.IO.Pipelines;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -64,6 +65,42 @@ public static class Sha2_256
             }
 
             return incrementalHash.TryGetHashAndReset(destination, out _);
+        }
+    }
+
+    public static async ValueTask<byte[]> ComputeHashAsync(Stream stream)
+    {
+        var reader = PipeReader.Create(stream);
+        return await ComputeHashAsync(reader);
+    }
+
+    public static async ValueTask<byte[]> ComputeHashAsync(PipeReader reader)
+    {
+        using (var incrementalHash = IncrementalHash.CreateHash(HashAlgorithmName.SHA256))
+        {
+            for (; ; )
+            {
+                var readResult = await reader.ReadAsync();
+
+                if (!readResult.Buffer.IsEmpty)
+                {
+                    foreach (var segment in readResult.Buffer)
+                    {
+                        incrementalHash.AppendData(segment.Span);
+                    }
+
+                    reader.AdvanceTo(readResult.Buffer.End);
+                }
+                else if (readResult.IsCompleted)
+                {
+                    await reader.CompleteAsync();
+                    return incrementalHash.GetHashAndReset();
+                }
+                else if (readResult.IsCanceled)
+                {
+                    throw new OperationCanceledException();
+                }
+            }
         }
     }
 }

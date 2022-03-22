@@ -102,7 +102,7 @@ public partial class OmniAddress
                 }
                 catch (Exception e)
                 {
-                    _logger.Error(e);
+                    _logger.Error(e, "Failed to DNS Resolve");
                     return false;
                 }
             }

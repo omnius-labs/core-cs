@@ -80,13 +80,9 @@ public class CollectionViewUpdater<TViewModel, TModel> : AsyncDisposableBase
                 });
             }
         }
-        catch (OperationCanceledException e)
+        catch (OperationCanceledException)
         {
-            _logger.Debug(e);
-        }
-        catch (Exception e)
-        {
-            _logger.Error(e);
+            _logger.Debug("Operation Canceled");
         }
     }
 }

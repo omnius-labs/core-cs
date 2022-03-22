@@ -9,7 +9,9 @@ namespace Omnius.Core.Cryptography;
 
 public static class OmniMiner
 {
-    public static async ValueTask<OmniHashcash> Create(ReadOnlySequence<byte> sequence, ReadOnlyMemory<byte> key, OmniHashcashAlgorithmType hashcashAlgorithmType, int limit, TimeSpan timeout, CancellationToken cancellationToken)
+    private static readonly NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
+
+    public static async ValueTask<OmniHashcash> ComputeAsync(ReadOnlySequence<byte> sequence, ReadOnlyMemory<byte> key, OmniHashcashAlgorithmType hashcashAlgorithmType, int limit, TimeSpan timeout, CancellationToken cancellationToken = default)
     {
         if (!EnumHelper.IsValid(hashcashAlgorithmType)) throw new ArgumentException(nameof(OmniHashcashAlgorithmType));
 
@@ -17,35 +19,20 @@ public static class OmniMiner
 
         if (hashcashAlgorithmType == OmniHashcashAlgorithmType.Sha2_256)
         {
-            var target = Hmac_Sha2_256.ComputeHash(sequence, key.Span);
-            var hashcashKey = MinerHelper.Compute_Simple_Sha2_256(target, limit, timeout, cancellationToken);
+            var value = Hmac_Sha2_256.ComputeHash(sequence, key.Span);
+            var result = await Computer.ComputeAsync(value, limit, timeout, cancellationToken);
 
-            return new OmniHashcash(OmniHashcashAlgorithmType.Sha2_256, hashcashKey);
+            return new OmniHashcash(OmniHashcashAlgorithmType.Sha2_256, result);
         }
 
         throw new NotSupportedException(nameof(hashcashAlgorithmType));
     }
 
-    public static uint Verify(OmniHashcash hashcash, ReadOnlySequence<byte> sequence, ReadOnlyMemory<byte> key)
+    private static class Computer
     {
-        if (hashcash is null) throw new ArgumentNullException(nameof(hashcash));
-
-        if (hashcash.AlgorithmType == OmniHashcashAlgorithmType.Sha2_256)
-        {
-            var target = Hmac_Sha2_256.ComputeHash(sequence, key.Span);
-
-            return MinerHelper.Verify_Simple_Sha2_256(hashcash.Key.Span, target);
-        }
-
-        return 0;
-    }
-
-    private static class MinerHelper
-    {
-        private static readonly NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
         private static readonly string _path;
 
-        static MinerHelper()
+        static Computer()
         {
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
@@ -75,17 +62,11 @@ public static class OmniMiner
             }
         }
 
-        public static byte[] Compute_Simple_Sha2_256(ReadOnlySpan<byte> value, int limit, TimeSpan timeout, CancellationToken cancellationToken)
+        public static async ValueTask<byte[]> ComputeAsync(ReadOnlyMemory<byte> value, int limit, TimeSpan timeout, CancellationToken cancellationToken = default)
         {
-            if (value == null) throw new ArgumentNullException(nameof(value));
             if (value.Length != 32) throw new ArgumentOutOfRangeException(nameof(value));
 
-            if (limit < 0)
-            {
-                limit = 256;
-            }
-
-            var sw = Stopwatch.StartNew();
+            if (limit < 0) limit = 256;
 
             var info = new ProcessStartInfo(_path)
             {
@@ -93,84 +74,165 @@ public static class OmniMiner
                 UseShellExecute = false,
                 RedirectStandardInput = true,
                 RedirectStandardOutput = true,
-                Arguments = $"--type=simple_sha2_256 --value={Convert.ToBase64String(value)}",
+                Arguments = $"--type=simple_sha2_256 --value={Convert.ToBase64String(value.Span)}",
             };
 
-            int difficulty = 0;
-            byte[] key = new byte[32];
+            var status = new Status();
 
             using (var process = Process.Start(info))
             {
-                if (process is null) throw new Exception("Failed to Process.Start()");
-
+                if (process is null) throw new Exception("Failed to Process Start");
                 process.PriorityClass = ProcessPriorityClass.Idle;
 
-                var readTask = Task.Run(
-                    () =>
-                    {
-                        try
-                        {
-                            while (!process.HasExited)
-                            {
-                                var line = process.StandardOutput.ReadLine();
-                                if (line is null) return;
+                var readTask = ReadAsync(process, status, cancellationToken);
+                var writeTask = WriteAsync(process, status, limit, timeout, cancellationToken);
 
-                                var result = line.Split(" ");
-                                difficulty = int.Parse(result[0]);
-                                key = Convert.FromBase64String(result[1]);
-                            }
-                        }
-                        catch (Exception e)
-                        {
-                            _logger.Debug(e);
-                        }
-                    }, cancellationToken);
-
-                var writeTask = Task.Run(
-                    () =>
-                    {
-                        try
-                        {
-                            using var w = new StreamWriter(process.StandardInput.BaseStream, new UTF8Encoding(false));
-                            w.NewLine = "\n";
-
-                            while (!process.HasExited && !cancellationToken.WaitHandle.WaitOne(1000) && sw.Elapsed < timeout && difficulty < limit)
-                            {
-                                w.WriteLine("a");
-                                w.Flush();
-                            }
-
-                            w.WriteLine("e");
-                            w.Flush();
-                        }
-                        catch (Exception e)
-                        {
-                            _logger.Debug(e);
-                        }
-                    }, cancellationToken);
-
-                Task.WaitAll(readTask, writeTask);
+                await Task.WhenAll(readTask, writeTask);
             }
 
-            return key;
+            return status.GetResult();
         }
 
-        public static uint Verify_Simple_Sha2_256(ReadOnlySpan<byte> key, ReadOnlySpan<byte> value)
+        private static Task ReadAsync(Process process, Status status, CancellationToken cancellationToken = default)
         {
-            if (key == null) throw new ArgumentNullException(nameof(key));
-            if (key.Length != 32) throw new ArgumentOutOfRangeException(nameof(key));
+            return Task.Run(() =>
+            {
+                try
+                {
+                    while (!process.HasExited)
+                    {
+                        var line = process.StandardOutput.ReadLine();
+                        if (line is null) return;
+                        if (line.Length <= 3) return;
+
+                        var pair = line.Split(" ");
+                        if (pair.Length != 2) return;
+
+                        var difficulty = int.Parse(pair[0]);
+                        var result = Convert.FromBase64String(pair[1]);
+
+                        status.SetDifficultyAndResult(difficulty, result);
+                    }
+                }
+                catch (IOException e)
+                {
+                    _logger.Debug(e);
+                }
+            });
+        }
+
+        private static Task WriteAsync(Process process, Status status, int limit, TimeSpan timeout, CancellationToken cancellationToken = default)
+        {
+            return Task.Run(() =>
+            {
+                var sw = Stopwatch.StartNew();
+
+                try
+                {
+                    var writer = new StreamWriter(process.StandardInput.BaseStream, new UTF8Encoding(false));
+                    writer.NewLine = "\n";
+
+                    for (; ; )
+                    {
+                        if (process.HasExited) return;
+                        if (sw.Elapsed > timeout || status.GetDifficulty() >= limit) break;
+
+                        // keep alive command
+                        writer.WriteLine("a");
+                        writer.Flush();
+
+                        if (cancellationToken.WaitHandle.WaitOne(1000)) break;
+                    }
+
+                    // stop command
+                    writer.WriteLine("e");
+                    writer.Flush();
+                }
+                catch (IOException e)
+                {
+                    _logger.Debug(e);
+                }
+            });
+        }
+
+        private sealed class Status
+        {
+            private int _difficulty;
+            private byte[] _result = Array.Empty<byte>();
+            private object _lockObject = new();
+
+            public int GetDifficulty()
+            {
+                lock (_lockObject)
+                {
+                    return _difficulty;
+                }
+            }
+
+            public byte[] GetResult()
+            {
+                lock (_lockObject)
+                {
+                    return _result;
+                }
+            }
+
+            public void SetDifficultyAndResult(int difficulty, byte[] result)
+            {
+                lock (_lockObject)
+                {
+                    _difficulty = difficulty;
+                    _result = result;
+                }
+            }
+        }
+    }
+
+    public static uint Verify(OmniHashcash hashcash, ReadOnlySequence<byte> sequence, ReadOnlyMemory<byte> key)
+    {
+        if (hashcash is null) throw new ArgumentNullException(nameof(hashcash));
+
+        if (hashcash.AlgorithmType == OmniHashcashAlgorithmType.Sha2_256)
+        {
+            var value = Hmac_Sha2_256.ComputeHash(sequence, key.Span);
+            return Verifier.Verify(hashcash.Result.Span, value);
+        }
+
+        return 0;
+    }
+
+
+    private static class Verifier
+    {
+        public static uint Verify(ReadOnlySpan<byte> result, ReadOnlySpan<byte> value)
+        {
+            if (result == null) throw new ArgumentNullException(nameof(result));
+            if (result.Length != 32) throw new ArgumentOutOfRangeException(nameof(result));
             if (value == null) throw new ArgumentNullException(nameof(value));
             if (value.Length != 32) throw new ArgumentOutOfRangeException(nameof(value));
 
+            var hash = ComputeHash(result, value);
+            var difficulty = CalculateDifficulty(hash);
+
+            return difficulty;
+        }
+
+        private static byte[] ComputeHash(ReadOnlySpan<byte> result, ReadOnlySpan<byte> value)
+        {
             Span<byte> buffer = stackalloc byte[64];
 
             byte[] hash;
             {
-                BytesOperations.Copy(key, buffer, key.Length);
-                BytesOperations.Copy(value, buffer[key.Length..], value.Length);
+                BytesOperations.Copy(result, buffer, result.Length);
+                BytesOperations.Copy(value, buffer[result.Length..], value.Length);
                 hash = Sha2_256.ComputeHash(buffer);
             }
 
+            return hash;
+        }
+
+        private static uint CalculateDifficulty(ReadOnlySpan<byte> hash)
+        {
             uint count = 0;
 
             for (int i = 0; i < 32; i++)

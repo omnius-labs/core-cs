@@ -42,7 +42,6 @@ public class OmniSecureConnectionTest
         var serverSecureConnectionOptions = new OmniSecureConnectionOptions(OmniSecureConnectionType.Accepted, serverDigitalSignature, 1024 * 1024 * 256);
         await using var serverSecureConnection = OmniSecureConnection.CreateV1(serverBridgeConnection, BytesPool.Shared, serverSecureConnectionOptions);
 
-        // ハンドシェイクを行う
         var valueTask1 = clientSecureConnection.HandshakeAsync();
         var valueTask2 = serverSecureConnection.HandshakeAsync();
         await Task.WhenAll(valueTask1.AsTask(), valueTask2.AsTask());
@@ -57,7 +56,7 @@ public class OmniSecureConnectionTest
             Assert.Equal(clientSecureConnection.Signature, serverDigitalSignature.GetOmniSignature());
         }
 
-        await TestHelper.RandomSendAndReceive(random, clientSecureConnection, serverSecureConnection);
-        await TestHelper.RandomSendAndReceive(random, serverSecureConnection, clientSecureConnection);
+        await ConnectionTestHelper.RandomSendAndReceive(random, clientSecureConnection, serverSecureConnection);
+        await ConnectionTestHelper.RandomSendAndReceive(random, serverSecureConnection, clientSecureConnection);
     }
 }

@@ -20,12 +20,12 @@ public class BridgeConnectionTest
         await using var connection1 = new BridgeConnection(new SocketCap(socket1), null, null, batchActionDispatcher, BytesPool.Shared, options);
         await using var connection2 = new BridgeConnection(new SocketCap(socket2), null, null, batchActionDispatcher, BytesPool.Shared, options);
 
-        await TestHelper.RandomSendAndReceive(random, connection1, connection2);
-        await TestHelper.RandomSendAndReceive(random, connection2, connection1);
+        await ConnectionTestHelper.RandomSendAndReceive(random, connection1, connection2);
+        await ConnectionTestHelper.RandomSendAndReceive(random, connection2, connection1);
     }
 
     [Fact]
-    public async Task CloseTest()
+    public async Task DisconnectTest()
     {
         var random = new Random();
 
@@ -37,6 +37,13 @@ public class BridgeConnectionTest
         var connection1 = new BridgeConnection(new SocketCap(socket1), null, null, batchActionDispatcher, BytesPool.Shared, options);
         var connection2 = new BridgeConnection(new SocketCap(socket2), null, null, batchActionDispatcher, BytesPool.Shared, options);
 
+        socket1.Dispose();
+
+        await Assert.ThrowsAsync<ConnectionException>(async () => { await connection1.Sender.SendAsync(_ => { }); });
+        Assert.Throws<ConnectionException>(() => { connection1.Sender.TrySend(_ => { }); });
+        await Assert.ThrowsAsync<ConnectionException>(async () => { await connection1.Receiver.ReceiveAsync(_ => { }); });
+        Assert.Throws<ConnectionException>(() => { connection1.Receiver.TryReceive(_ => { }); });
+
         await connection1.DisposeAsync();
 
         await Assert.ThrowsAsync<ObjectDisposedException>(async () => { await connection1.Sender.SendAsync(_ => { }); });
@@ -45,8 +52,6 @@ public class BridgeConnectionTest
         Assert.Throws<ObjectDisposedException>(() => { connection1.Receiver.TryReceive(_ => { }); });
 
         socket2.Dispose();
-
-        await Task.Delay(1000);
 
         await Assert.ThrowsAsync<ConnectionException>(async () => { await connection2.Sender.SendAsync(_ => { }); });
         Assert.Throws<ConnectionException>(() => { connection2.Sender.TrySend(_ => { }); });

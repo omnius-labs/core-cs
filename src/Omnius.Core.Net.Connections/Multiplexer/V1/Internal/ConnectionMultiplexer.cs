@@ -30,8 +30,8 @@ internal sealed partial class ConnectionMultiplexer : AsyncDisposableBase
     private DateTime _lastReceivedTime = DateTime.MinValue;
     private DateTime _lastSentTime = DateTime.MinValue;
 
-    private ErrorCode? _sendErrorCode = null;
-    private ErrorCode? _receiveErrorCode = null;
+    private ErrorCode _sendErrorCode = ErrorCode.Normal;
+    private ErrorCode _receiveErrorCode = ErrorCode.Normal;
 
     private readonly CancellationTokenSource _cancellationTokenSource = new();
 
@@ -61,6 +61,8 @@ internal sealed partial class ConnectionMultiplexer : AsyncDisposableBase
             await connection.DisposeAsync();
         }
 
+        _streamConnectionMap = _streamConnectionMap.Clear();
+
         _requestingStreamSemaphore!.Dispose();
         _sendStreamRequestPipe!.Dispose();
         _sendStreamRequestAcceptedPipe!.Dispose();
@@ -85,7 +87,7 @@ internal sealed partial class ConnectionMultiplexer : AsyncDisposableBase
         _receiveStreamRequestPipe = new BoundedMessagePipe((int)_options.MaxStreamRequestQueueSize);
         _receiveStreamRequestAcceptedPipe = new BoundedMessagePipe<uint>((int)_options.MaxStreamRequestQueueSize);
 
-        _requestingStreamSemaphore = new SemaphoreSlim(1, (int)_sessionOptions.MaxStreamRequestQueueSize);
+        _requestingStreamSemaphore = new SemaphoreSlim((int)_sessionOptions.MaxStreamRequestQueueSize, (int)_sessionOptions.MaxStreamRequestQueueSize);
 
         _batchAction = new BatchAction(this, this.HandleException);
         _batchActionDispatcher.Register(_batchAction);
@@ -94,6 +96,8 @@ internal sealed partial class ConnectionMultiplexer : AsyncDisposableBase
     private void HandleException(Exception e)
     {
         this.Cancel();
+
+        _logger.Debug(e, "ConnectionMultiplexer Exception");
     }
 
     private void Cancel()
@@ -121,90 +125,104 @@ internal sealed partial class ConnectionMultiplexer : AsyncDisposableBase
 
     private void InternalSend()
     {
+        if (_canceled) return;
+
         if (_sessionOptions is null) return;
         if (_sendStreamRequestPipe is null) return;
         if (_sendStreamRequestAcceptedPipe is null) return;
 
         try
         {
-            _connection.Sender.TrySend(
-                bufferWriter =>
+            _connection.Sender.TrySend(bufferWriter =>
+            {
+                bool written = false;
+
+                try
                 {
-                    bool written = false;
-
-                    try
+                    if (_sendErrorCode != ErrorCode.Normal)
                     {
-                        if (_sendStreamRequestPipe.Reader.TryRead())
+                        var builder = new PacketBuilder(bufferWriter);
+                        builder.WriteSessionError(_sendErrorCode);
+
+                        this.Cancel();
+
+                        written = true;
+                        return;
+                    }
+
+                    if (_sendStreamRequestPipe.Reader.TryRead())
+                    {
+                        var builder = new PacketBuilder(bufferWriter);
+                        builder.WriteStreamRequest();
+
+                        written = true;
+                        return;
+                    }
+
+                    if (_sendStreamRequestAcceptedPipe.Reader.TryRead(out var streamRequestAcceptedStreamId))
+                    {
+                        var builder = new PacketBuilder(bufferWriter);
+                        builder.WriteStreamRequestAccepted(streamRequestAcceptedStreamId);
+
+                        written = true;
+                        return;
+                    }
+
+                    foreach (var (streamId, connection) in _streamConnectionMap)
+                    {
+                        try
                         {
-                            var builder = new PacketBuilder(bufferWriter);
-                            builder.WriteStreamRequest();
-                            written = true;
-                        }
-
-                        if (written) return;
-
-                        if (_sendStreamRequestAcceptedPipe.Reader.TryRead(out var streamRequestAcceptedStreamId))
-                        {
-                            var builder = new PacketBuilder(bufferWriter);
-                            builder.WriteStreamRequestAccepted(streamRequestAcceptedStreamId);
-                            written = true;
-                        }
-
-                        if (written) return;
-
-                        foreach (var (streamId, connection) in _streamConnectionMap)
-                        {
-                            try
+                            if (connection.SendDataReader.TryRead(out var data))
                             {
-                                if (connection.SendDataReader.TryRead(out var data))
-                                {
-                                    var builder = new PacketBuilder(bufferWriter);
-                                    builder.WriteStreamData(streamId, data);
-                                    _bytesPool.Array.Return(data.Array!);
-                                    written = true;
-                                }
+                                var builder = new PacketBuilder(bufferWriter);
+                                builder.WriteStreamData(streamId, data);
+                                _bytesPool.Array.Return(data.Array!);
 
-                                if (written) return;
-
-                                if (connection.SendDataAcceptedReader.TryRead())
-                                {
-                                    var builder = new PacketBuilder(bufferWriter);
-                                    builder.WriteStreamDataAccepted(streamId);
-                                    written = true;
-                                }
-
-                                if (written) return;
-
-                                if (connection.SendFinishReader.TryRead())
-                                {
-                                    var builder = new PacketBuilder(bufferWriter);
-                                    builder.WriteStreamFinish(streamId);
-                                    written = true;
-
-                                    _streamConnectionMap = _streamConnectionMap.Remove(streamId);
-                                    connection.InternalDispose();
-                                }
-
-                                if (written) return;
+                                written = true;
+                                return;
                             }
-                            catch (ObjectDisposedException e)
+
+                            if (connection.SendDataAcceptedReader.TryRead())
                             {
-                                _logger.Debug(e);
+                                var builder = new PacketBuilder(bufferWriter);
+                                builder.WriteStreamDataAccepted(streamId);
+
+                                written = true;
+                                return;
+                            }
+
+                            if (connection.SendFinishReader.TryRead())
+                            {
+                                var builder = new PacketBuilder(bufferWriter);
+                                builder.WriteStreamFinish(streamId);
+
+                                _streamConnectionMap = _streamConnectionMap.Remove(streamId);
+                                connection.InternalFinish();
+
+                                written = true;
+                                return;
                             }
                         }
-
-                        if ((DateTime.UtcNow - _lastSentTime) > (_sessionOptions.PacketReceiveTimeout / 2))
+                        catch (ObjectDisposedException e)
                         {
-                            var builder = new PacketBuilder(bufferWriter);
-                            builder.WriteKeepAlive();
-                            written = true;
+                            _logger.Debug(e);
                         }
                     }
-                    finally
+
+                    if ((DateTime.UtcNow - _lastSentTime) > (_sessionOptions.PacketReceiveTimeout / 2))
                     {
-                        if (written) _lastSentTime = DateTime.UtcNow;
+                        var builder = new PacketBuilder(bufferWriter);
+                        builder.WriteKeepAlive();
+
+                        written = true;
+                        return;
                     }
-                });
+                }
+                finally
+                {
+                    if (written) _lastSentTime = DateTime.UtcNow;
+                }
+            });
         }
         catch (ConnectionException)
         {
@@ -218,145 +236,148 @@ internal sealed partial class ConnectionMultiplexer : AsyncDisposableBase
 
     private void InternalReceive()
     {
+        if (_canceled) return;
+
         if (_receiveStreamRequestPipe is null) return;
         if (_receiveStreamRequestAcceptedPipe is null) return;
 
         try
         {
-            _connection.Receiver.TryReceive(
-                sequence =>
+            _connection.Receiver.TryReceive(sequence =>
+            {
+                if (!PacketParser.TryParsePacketType(ref sequence, out var packetType))
                 {
-                    if (!PacketParser.TryParsePacketType(ref sequence, out var packetType))
-                    {
-                        _sendErrorCode = ErrorCode.InvalidPacketType;
-                        return;
-                    }
+                    _sendErrorCode = ErrorCode.PacketTypeInvalid;
+                    return;
+                }
 
-                    _lastReceivedTime = DateTime.UtcNow;
+                _lastReceivedTime = DateTime.UtcNow;
 
-                    switch (packetType)
-                    {
-                        case PacketType.KeepAlive:
+                switch (packetType)
+                {
+                    case PacketType.KeepAlive:
+                        break;
+                    case PacketType.StreamRequest:
+                        {
+                            if (!_receiveStreamRequestPipe.Writer.TryWrite())
+                            {
+                                _sendErrorCode = ErrorCode.StreamRequestQueueOverflow;
+                                return;
+                            }
+
                             break;
-                        case PacketType.StreamRequest:
-                            {
-                                if (!_receiveStreamRequestPipe.Writer.TryWrite())
-                                {
-                                    _sendErrorCode = ErrorCode.StreamRequestQueueOverflow;
-                                    return;
-                                }
+                        }
 
-                                break;
+                    case PacketType.StreamRequestAccepted:
+                        {
+                            if (!PacketParser.TryParseStreamId(ref sequence, out var streamId))
+                            {
+                                _sendErrorCode = ErrorCode.StreamIdInvalid;
+                                return;
                             }
 
-                        case PacketType.StreamRequestAccepted:
+                            if (!_receiveStreamRequestAcceptedPipe.Writer.TryWrite(streamId))
                             {
-                                if (!PacketParser.TryParseStreamId(ref sequence, out var streamId))
-                                {
-                                    _sendErrorCode = ErrorCode.InvalidStreamId;
-                                    return;
-                                }
-
-                                if (!_receiveStreamRequestAcceptedPipe.Writer.TryWrite(streamId))
-                                {
-                                    _sendErrorCode = ErrorCode.StreamRequestAcceptedQueueOverflow;
-                                    return;
-                                }
-
-                                break;
+                                _sendErrorCode = ErrorCode.StreamRequestAcceptedQueueOverflow;
+                                return;
                             }
 
-                        case PacketType.StreamData:
+                            break;
+                        }
+
+                    case PacketType.StreamData:
+                        {
+                            if (!PacketParser.TryParseStreamId(ref sequence, out var streamId))
                             {
-                                if (!PacketParser.TryParseStreamId(ref sequence, out var streamId))
-                                {
-                                    _sendErrorCode = ErrorCode.InvalidStreamId;
-                                    return;
-                                }
-
-                                if (!_streamConnectionMap.TryGetValue(streamId, out var connection))
-                                {
-                                    _sendErrorCode = ErrorCode.InvalidStreamId;
-                                    return;
-                                }
-
-                                if (sequence.Length == 0) return;
-
-                                if (sequence.Length > _options.MaxStreamDataSize)
-                                {
-                                    _sendErrorCode = ErrorCode.StreamDataSizeTooLarge;
-                                    return;
-                                }
-
-                                var buffer = _bytesPool.Array.Rent((int)sequence.Length);
-                                sequence.CopyTo(buffer.AsSpan());
-                                if (!connection.ReceiveDataWriter.TryWrite(new ArraySegment<byte>(buffer, 0, (int)sequence.Length)))
-                                {
-                                    _sendErrorCode = ErrorCode.StreamDataQueueOverflow;
-                                    return;
-                                }
-
-                                break;
+                                _sendErrorCode = ErrorCode.StreamIdInvalid;
+                                return;
                             }
 
-                        case PacketType.StreamDataAccepted:
+                            if (!_streamConnectionMap.TryGetValue(streamId, out var connection))
                             {
-                                if (!PacketParser.TryParseStreamId(ref sequence, out var streamId))
-                                {
-                                    _sendErrorCode = ErrorCode.InvalidStreamId;
-                                    return;
-                                }
-
-                                if (!_streamConnectionMap.TryGetValue(streamId, out var connection))
-                                {
-                                    _sendErrorCode = ErrorCode.InvalidStreamId;
-                                    return;
-                                }
-
-                                connection.ReceiveDataAcceptedCaller.Call();
-
-                                break;
+                                _sendErrorCode = ErrorCode.StreamIdNotFound;
+                                return;
                             }
 
-                        case PacketType.StreamFinish:
+                            if (sequence.Length == 0) return;
+
+                            if (sequence.Length > _options.MaxStreamDataSize)
                             {
-                                if (!PacketParser.TryParseStreamId(ref sequence, out var streamId))
-                                {
-                                    _sendErrorCode = ErrorCode.InvalidStreamId;
-                                    return;
-                                }
-
-                                if (!_streamConnectionMap.TryGetValue(streamId, out var connection))
-                                {
-                                    _sendErrorCode = ErrorCode.InvalidStreamId;
-                                    return;
-                                }
-
-                                connection.ReceiveFinishCaller.Call();
-
-                                break;
+                                _sendErrorCode = ErrorCode.StreamDataSizeTooLarge;
+                                return;
                             }
 
-                        case PacketType.SessionError:
+                            var buffer = _bytesPool.Array.Rent((int)sequence.Length);
+                            sequence.CopyTo(buffer.AsSpan());
+                            if (!connection.ReceiveDataWriter.TryWrite(new ArraySegment<byte>(buffer, 0, (int)sequence.Length)))
                             {
-                                if (!PacketParser.TryParseErrorCode(ref sequence, out var errorCode))
-                                {
-                                    return;
-                                }
-
-                                _receiveErrorCode = errorCode;
-
-                                break;
+                                _sendErrorCode = ErrorCode.StreamDataQueueOverflow;
+                                return;
                             }
 
-                        case PacketType.SessionFinish:
-                            {
-                                _cancellationTokenSource.Cancel();
+                            break;
+                        }
 
-                                break;
+                    case PacketType.StreamDataAccepted:
+                        {
+                            if (!PacketParser.TryParseStreamId(ref sequence, out var streamId))
+                            {
+                                _sendErrorCode = ErrorCode.StreamIdInvalid;
+                                return;
                             }
-                    }
-                });
+
+                            if (!_streamConnectionMap.TryGetValue(streamId, out var connection))
+                            {
+                                _sendErrorCode = ErrorCode.StreamIdNotFound;
+                                return;
+                            }
+
+                            connection.ReceiveDataAcceptedCaller.Call();
+
+                            break;
+                        }
+
+                    case PacketType.StreamFinish:
+                        {
+                            if (!PacketParser.TryParseStreamId(ref sequence, out var streamId))
+                            {
+                                _sendErrorCode = ErrorCode.StreamIdInvalid;
+                                return;
+                            }
+
+                            if (!_streamConnectionMap.TryGetValue(streamId, out var connection))
+                            {
+                                _sendErrorCode = ErrorCode.StreamIdNotFound;
+                                return;
+                            }
+
+                            connection.ReceiveFinishCaller.Call();
+
+                            break;
+                        }
+
+                    case PacketType.SessionError:
+                        {
+                            if (!PacketParser.TryParseErrorCode(ref sequence, out var errorCode))
+                            {
+                                return;
+                            }
+
+                            _receiveErrorCode = errorCode;
+
+                            this.Cancel();
+
+                            break;
+                        }
+
+                    case PacketType.SessionFinish:
+                        {
+                            this.Cancel();
+
+                            break;
+                        }
+                }
+            });
         }
         catch (ConnectionException)
         {

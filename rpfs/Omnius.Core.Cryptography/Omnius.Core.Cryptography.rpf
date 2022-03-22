@@ -69,5 +69,5 @@ message OmniSignature {
 
 message OmniHashcash {
     AlgorithmType: OmniHashcashAlgorithmType,
-    Key: bytes(capacity: 32),
+    Result: bytes(capacity: 32),
 }
