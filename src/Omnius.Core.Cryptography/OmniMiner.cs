@@ -201,7 +201,6 @@ public static class OmniMiner
         return 0;
     }
 
-
     private static class Verifier
     {
         public static uint Verify(ReadOnlySpan<byte> result, ReadOnlySpan<byte> value)
