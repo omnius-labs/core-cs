@@ -46,6 +46,8 @@ public class BridgeConnectionTest
 
         socket2.Dispose();
 
+        await Task.Delay(TimeSpan.FromSeconds(3));
+
         await Assert.ThrowsAsync<ConnectionException>(async () => { await connection2.Sender.SendAsync(_ => { }); });
         Assert.Throws<ConnectionException>(() => { connection2.Sender.TrySend(_ => { }); });
         await Assert.ThrowsAsync<ConnectionException>(async () => { await connection2.Receiver.ReceiveAsync(_ => { }); });
