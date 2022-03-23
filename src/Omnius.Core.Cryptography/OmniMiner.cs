@@ -66,6 +66,8 @@ public static class OmniMiner
         {
             if (value.Length != 32) throw new ArgumentOutOfRangeException(nameof(value));
 
+            var stopwatch = Stopwatch.StartNew();
+
             if (limit < 0) limit = 256;
 
             var info = new ProcessStartInfo(_path)
@@ -85,7 +87,7 @@ public static class OmniMiner
                 process.PriorityClass = ProcessPriorityClass.Idle;
 
                 var readTask = ReadAsync(process, status, cancellationToken);
-                var writeTask = WriteAsync(process, status, limit, timeout, cancellationToken);
+                var writeTask = WriteAsync(process, status, limit, timeout, stopwatch, cancellationToken);
 
                 await Task.WhenAll(readTask, writeTask);
             }
@@ -93,66 +95,59 @@ public static class OmniMiner
             return status.GetResult();
         }
 
-        private static Task ReadAsync(Process process, Status status, CancellationToken cancellationToken = default)
+        private static async Task ReadAsync(Process process, Status status, CancellationToken cancellationToken = default)
         {
-            return Task.Run(() =>
+            await Task.Delay(1).ConfigureAwait(false);
+
+            try
             {
-                try
+                while (!process.HasExited)
                 {
-                    while (!process.HasExited)
-                    {
-                        var line = process.StandardOutput.ReadLine();
-                        if (line is null) return;
-                        if (line.Length <= 3) return;
+                    var line = process.StandardOutput.ReadLine();
+                    if (line is null) return;
 
-                        var pair = line.Split(" ");
-                        if (pair.Length != 2) return;
+                    var pair = line.Split(" ");
+                    var difficulty = int.Parse(pair[0]);
+                    var result = Convert.FromBase64String(pair[1]);
 
-                        var difficulty = int.Parse(pair[0]);
-                        var result = Convert.FromBase64String(pair[1]);
-
-                        status.SetDifficultyAndResult(difficulty, result);
-                    }
+                    status.SetDifficultyAndResult(difficulty, result);
                 }
-                catch (IOException e)
-                {
-                    _logger.Debug(e);
-                }
-            });
+            }
+            catch (IOException e)
+            {
+                _logger.Debug(e);
+            }
         }
 
-        private static Task WriteAsync(Process process, Status status, int limit, TimeSpan timeout, CancellationToken cancellationToken = default)
+        private static async Task WriteAsync(Process process, Status status, int limit, TimeSpan timeout, Stopwatch stopwatch, CancellationToken cancellationToken = default)
         {
-            return Task.Run(() =>
+            await Task.Delay(1).ConfigureAwait(false);
+
+            try
             {
-                var sw = Stopwatch.StartNew();
+                var writer = new StreamWriter(process.StandardInput.BaseStream, new UTF8Encoding(false));
+                writer.NewLine = "\n";
 
-                try
+                for (; ; )
                 {
-                    var writer = new StreamWriter(process.StandardInput.BaseStream, new UTF8Encoding(false));
-                    writer.NewLine = "\n";
+                    if (process.HasExited) return;
+                    if (stopwatch.Elapsed > timeout || status.GetDifficulty() >= limit) break;
 
-                    for (; ; )
-                    {
-                        if (process.HasExited) return;
-                        if (sw.Elapsed > timeout || status.GetDifficulty() >= limit) break;
-
-                        // keep alive command
-                        writer.WriteLine("a");
-                        writer.Flush();
-
-                        if (cancellationToken.WaitHandle.WaitOne(1000)) break;
-                    }
-
-                    // stop command
-                    writer.WriteLine("e");
+                    // keep alive command
+                    writer.WriteLine("a");
                     writer.Flush();
+
+                    if (cancellationToken.WaitHandle.WaitOne(1000)) break;
                 }
-                catch (IOException e)
-                {
-                    _logger.Debug(e);
-                }
-            });
+
+                // stop command
+                writer.WriteLine("e");
+                writer.Flush();
+            }
+            catch (IOException e)
+            {
+                _logger.Debug(e);
+            }
         }
 
         private sealed class Status

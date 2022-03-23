@@ -17,13 +17,13 @@ public class OmniMinerTest
         random.NextBytes(key);
 
         var sw = Stopwatch.StartNew();
-        var hashcash = await OmniMiner.ComputeAsync(new ReadOnlySequence<byte>(value), key, OmniHashcashAlgorithmType.Sha2_256, 2, TimeSpan.FromSeconds(30));
+        var hashcash = await OmniMiner.ComputeAsync(new ReadOnlySequence<byte>(value), key, OmniHashcashAlgorithmType.Sha2_256, 1, TimeSpan.FromSeconds(10));
         sw.Stop();
 
         var cost = OmniMiner.Verify(hashcash, new ReadOnlySequence<byte>(value), key);
 
-        // コストは最低でも2以上になっているはず。
-        Assert.NotInRange((int)cost, 0, 1);
+        // コストは最低でも1以上になっているはず。
+        Assert.True(cost > 0);
 
         // 計算時間はそこまでかからないはずなので10秒以内に完了するはず。
         Assert.InRange((int)sw.Elapsed.TotalSeconds, 0, 10);
@@ -45,8 +45,8 @@ public class OmniMinerTest
 
         var cost = OmniMiner.Verify(hashcash, new ReadOnlySequence<byte>(value), key);
 
-        // コストは最低でも2以上になっているはず。
-        Assert.NotInRange((int)cost, 0, 1);
+        // コストは最低でも1以上になっているはず。
+        Assert.True(cost > 0);
 
         // 計算時間は10秒以上のはず。
         Assert.NotInRange((int)sw.Elapsed.TotalSeconds, 0, 9);

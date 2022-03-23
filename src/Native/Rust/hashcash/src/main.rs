@@ -102,7 +102,6 @@ fn main() {
                 if input == "a" {
                     let mut time_to_receive_alive = time_to_receive_alive.lock().unwrap();
                     *time_to_receive_alive = Instant::now();
-                    println!("{}", input);
                 } else if input == "e" {
                     process::exit(1);
                 }
