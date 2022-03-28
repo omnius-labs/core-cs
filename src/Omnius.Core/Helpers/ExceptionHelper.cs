@@ -13,7 +13,7 @@ public static class ExceptionHelper
         }
         catch (TException e)
         {
-            _logger.Trace("Caught", e);
+            _logger.Trace(e, "Caught");
         }
     }
 
@@ -26,7 +26,7 @@ public static class ExceptionHelper
         }
         catch (TException e)
         {
-            _logger.Trace("Caught", e);
+            _logger.Trace(e, "Caught");
         }
 
         return default;

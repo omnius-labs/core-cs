@@ -205,7 +205,7 @@ internal sealed partial class ConnectionMultiplexer : AsyncDisposableBase
                         }
                         catch (ObjectDisposedException e)
                         {
-                            _logger.Debug(e);
+                            _logger.Debug(e, "streamConnection Disposed");
                         }
                     }
 
