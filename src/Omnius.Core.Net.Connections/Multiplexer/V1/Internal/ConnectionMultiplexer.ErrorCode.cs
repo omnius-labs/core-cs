@@ -8,18 +8,20 @@ internal partial class ConnectionMultiplexer
 
         PacketReceiveTimeout = 1,
 
-        InvalidPacketType = 2,
+        PacketTypeInvalid = 2,
 
-        InvalidStreamId = 3,
+        StreamIdInvalid = 3,
 
-        StreamRequestQueueOverflow = 4,
+        StreamIdNotFound = 4,
 
-        StreamRequestAcceptedQueueOverflow = 5,
+        StreamRequestQueueOverflow = 5,
 
-        StreamDataSizeTooLarge = 6,
+        StreamRequestAcceptedQueueOverflow = 6,
 
-        StreamDataQueueOverflow = 7,
+        StreamDataSizeTooLarge = 7,
 
-        StreamDataAcceptedQueueOverflow = 8,
+        StreamDataQueueOverflow = 8,
+
+        StreamDataAcceptedQueueOverflow = 9,
     }
 }

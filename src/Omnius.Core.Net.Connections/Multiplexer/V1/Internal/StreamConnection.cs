@@ -26,8 +26,6 @@ internal sealed partial class StreamConnection : AsyncDisposableBase, IConnectio
 
     private readonly CancellationTokenSource _cancellationTokenSource;
 
-    private readonly List<IDisposable> _disposables = new();
-
     public StreamConnection(int maxSendDataQueueSize, int maxReceiveDataQueueSize, IBytesPool bytesPool, CancellationToken cancellationToken)
     {
         _maxSendDataQueueSize = maxSendDataQueueSize;
@@ -50,7 +48,7 @@ internal sealed partial class StreamConnection : AsyncDisposableBase, IConnectio
         _receiveFinishActionPipeListenerRegister = _receiveFinishActionPipe.Listener.Listen(() => ExceptionHelper.TryCatch<ObjectDisposedException>(() => this.OnReceiveFinish()));
     }
 
-    internal void InternalDispose()
+    internal void InternalFinish()
     {
         _cancellationTokenSource.Dispose();
         _sendDataMessagePipe.Dispose();

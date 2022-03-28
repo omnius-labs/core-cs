@@ -22,16 +22,16 @@ public class FixtureFactory
         public void Dispose() => Directory.Delete(_path, true);
     }
 
-    public static string GenRandomFile(string directoryPath, int size)
+    public static string GenRandomFile(string directoryPath, long size)
     {
         using var stream = GenRandomFileStream(directoryPath);
 
         var buffer = new byte[1024 * 8];
 
-        for (int remain = size; remain > 0; remain -= buffer.Length)
+        for (long remain = size; remain > 0; remain -= buffer.Length)
         {
             _random.NextBytes(buffer);
-            stream.Write(buffer, 0, Math.Min(buffer.Length, remain));
+            stream.Write(buffer, 0, (int)Math.Min(buffer.Length, remain));
         }
 
         return stream.Name;

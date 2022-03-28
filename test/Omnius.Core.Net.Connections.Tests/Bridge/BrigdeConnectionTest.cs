@@ -20,12 +20,12 @@ public class BridgeConnectionTest
         await using var connection1 = new BridgeConnection(new SocketCap(socket1), null, null, batchActionDispatcher, BytesPool.Shared, options);
         await using var connection2 = new BridgeConnection(new SocketCap(socket2), null, null, batchActionDispatcher, BytesPool.Shared, options);
 
-        await TestHelper.RandomSendAndReceive(random, connection1, connection2);
-        await TestHelper.RandomSendAndReceive(random, connection2, connection1);
+        await ConnectionTestHelper.RandomSendAndReceive(random, connection1, connection2);
+        await ConnectionTestHelper.RandomSendAndReceive(random, connection2, connection1);
     }
 
     [Fact]
-    public async Task CloseTest()
+    public async Task DisconnectTest()
     {
         var random = new Random();
 
@@ -46,7 +46,7 @@ public class BridgeConnectionTest
 
         socket2.Dispose();
 
-        await Task.Delay(1000);
+        await Task.Delay(TimeSpan.FromSeconds(3));
 
         await Assert.ThrowsAsync<ConnectionException>(async () => { await connection2.Sender.SendAsync(_ => { }); });
         Assert.Throws<ConnectionException>(() => { connection2.Sender.TrySend(_ => { }); });

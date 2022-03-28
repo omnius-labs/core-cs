@@ -69,7 +69,7 @@ internal partial class NativeMethods
                 }
                 catch (Exception e)
                 {
-                    _logger.Error(e);
+                    _logger.Error(e, "Failed to load native library");
                 }
             }
 

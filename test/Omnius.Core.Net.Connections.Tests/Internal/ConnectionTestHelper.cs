@@ -4,7 +4,7 @@ using Xunit;
 
 namespace Omnius.Core.Net.Connections.Internal;
 
-internal static class TestHelper
+internal static class ConnectionTestHelper
 {
     public static async Task RandomSendAndReceive(Random random, IConnection connection1, IConnection connection2)
     {

@@ -12,6 +12,8 @@ internal partial class StreamConnection
         private readonly IBytesPool _bytesPool;
         private readonly CancellationToken _cancellationToken;
 
+        private long _totalBytesReceived;
+
         public ConnectionReceiver(IMessagePipeReader<ArraySegment<byte>> dataReader, IMessagePipeWriter dataAcceptedWriter, IBytesPool bytesPool, CancellationToken cancellationToken)
         {
             _dataReader = dataReader;
@@ -27,7 +29,7 @@ internal partial class StreamConnection
             }
         }
 
-        public long TotalBytesReceived => throw new NotImplementedException();
+        public long TotalBytesReceived => _totalBytesReceived;
 
         public async ValueTask WaitToReceiveAsync(CancellationToken cancellationToken = default)
         {
@@ -54,6 +56,7 @@ internal partial class StreamConnection
         private void InternalReceive(Action<ReadOnlySequence<byte>> action, ArraySegment<byte> buffer)
         {
             action.Invoke(new ReadOnlySequence<byte>(buffer.Array!, buffer.Offset, buffer.Count));
+            Interlocked.Add(ref _totalBytesReceived, buffer.Count);
             _bytesPool.Array.Return(buffer.Array!);
             _dataAcceptedWriter.TryWrite();
         }

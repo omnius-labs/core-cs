@@ -8,8 +8,6 @@ internal partial class StreamConnection
 {
     public sealed class ConnectionSender : DisposableBase, IConnectionSender
     {
-        private static readonly NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
-
         private readonly SemaphoreSlim _semaphoreSlim;
         private readonly IMessagePipeWriter<ArraySegment<byte>> _dataWriter;
         private readonly IActionListener _dataAcceptedListener;
@@ -17,7 +15,7 @@ internal partial class StreamConnection
         private readonly IBytesPool _bytesPool;
         private readonly CancellationToken _cancellationToken;
 
-        private readonly List<IDisposable> _disposables = new();
+        private long _totalBytesSent;
 
         public ConnectionSender(int maxDataQueueSize, IMessagePipeWriter<ArraySegment<byte>> dataWriter, IActionListener dataAcceptedListener, IBytesPool bytesPool, CancellationToken cancellationToken)
         {
@@ -37,7 +35,7 @@ internal partial class StreamConnection
             }
         }
 
-        public long TotalBytesSent => throw new NotImplementedException();
+        public long TotalBytesSent => _totalBytesSent;
 
         public async ValueTask WaitToSendAsync(CancellationToken cancellationToken)
         {
@@ -62,6 +60,7 @@ internal partial class StreamConnection
                 return;
             }
 
+            Interlocked.Add(ref _totalBytesSent, payload.Count);
             await _dataWriter.WriteAsync(() => payload, linkedTokenSource.Token);
         }
 
@@ -76,6 +75,7 @@ internal partial class StreamConnection
                 return false;
             }
 
+            Interlocked.Add(ref _totalBytesSent, payload.Count);
             return _dataWriter.TryWrite(() => payload);
         }
 
