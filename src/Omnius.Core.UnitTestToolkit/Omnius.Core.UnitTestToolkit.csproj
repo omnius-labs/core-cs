@@ -6,9 +6,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="DiffPlex" Version="1.7.0" />
-    <PackageReference Include="NLog" Version="4.7.13" />
-    <PackageReference Include="System.Text.Json" Version="6.0.1" />
+    <PackageReference Include="NLog" />
+    <PackageReference Include="DiffPlex" />
+    <PackageReference Include="System.Text.Json" />
   </ItemGroup>
 
 </Project>

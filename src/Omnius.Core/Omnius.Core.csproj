@@ -30,9 +30,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="NeoSmart.AsyncLock" Version="3.2.1" />
-    <PackageReference Include="NLog" Version="4.7.13" />
-    <PackageReference Include="System.IO.Pipelines" Version="6.0.1" />
+    <PackageReference Include="NLog" />
+    <PackageReference Include="NeoSmart.AsyncLock" />
+    <PackageReference Include="System.IO.Pipelines" />
   </ItemGroup>
 
 </Project>
