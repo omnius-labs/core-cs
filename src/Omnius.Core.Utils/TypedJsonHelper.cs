@@ -6,15 +6,15 @@ using Newtonsoft.Json.Serialization;
 
 namespace Omnius.Core.Utils;
 
-internal sealed class TypedJsonHelper
+public sealed class TypedJsonHelper
 {
-    public static async ValueTask<T?> ReadFileAsync<T>(string path)
+    public static T? ReadFile<T>(string path)
     {
         using var stream = new FileStream(path, FileMode.Open);
-        return await ReadStreamAsync<T>(stream);
+        return ReadStream<T>(stream);
     }
 
-    public static async ValueTask<T?> ReadStreamAsync<T>(Stream stream)
+    public static T? ReadStream<T>(Stream stream)
     {
         using (var streamReader = new StreamReader(stream, new UTF8Encoding(false)))
         using (var jsonTextReader = new JsonTextReader(streamReader))
@@ -31,13 +31,13 @@ internal sealed class TypedJsonHelper
         }
     }
 
-    public static async ValueTask WriteFileAsync<T>(string path, T value, bool writeIndented = false)
+    public static void WriteFile<T>(string path, T value, bool writeIndented = false)
     {
         using var stream = new FileStream(path, FileMode.Create);
-        await WriteStreamAsync<T>(stream, value, writeIndented);
+        WriteStream<T>(stream, value, writeIndented);
     }
 
-    public static async ValueTask WriteStreamAsync<T>(Stream stream, T value, bool writeIndented = false)
+    public static void WriteStream<T>(Stream stream, T value, bool writeIndented = false)
     {
         using (var streamWriter = new StreamWriter(stream, new UTF8Encoding(false)))
         using (var jsonTextWriter = new JsonTextWriter(streamWriter))

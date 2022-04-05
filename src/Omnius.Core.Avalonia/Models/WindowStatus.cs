@@ -1,12 +1,41 @@
+using Omnius.Core.Helpers;
+using Omnius.Core.Utils;
+
 namespace Omnius.Core.Avalonia.Models;
 
 public sealed class WindowStatus
 {
+    private static readonly NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
+
     public WindowPosition? Position { get; set; }
 
     public WindowSize? Size { get; set; }
 
     public WindowState State { get; set; }
+
+    public static WindowStatus Load(string configPath)
+    {
+        WindowStatus? result = null;
+
+        try
+        {
+            result = JsonHelper.ReadFile<WindowStatus>(configPath);
+        }
+        catch (Exception e)
+        {
+            _logger.Debug(e);
+        }
+
+        result ??= new WindowStatus();
+
+        return result;
+    }
+
+    public void Save(string configPath)
+    {
+        DirectoryHelper.CreateDirectory(Path.GetDirectoryName(configPath)!);
+        JsonHelper.WriteFile(configPath, this, true);
+    }
 }
 
 public sealed class WindowPosition

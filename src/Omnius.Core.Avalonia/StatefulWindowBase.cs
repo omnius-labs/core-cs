@@ -1,15 +1,41 @@
+using System.ComponentModel;
 using Avalonia;
 using Avalonia.Controls;
+using Omnius.Core.Helpers;
 
 namespace Omnius.Core.Avalonia;
 
 public abstract class StatefulWindowBase<TViewModel> : Window
     where TViewModel : class
 {
+    private readonly string? _configDirectoryPath;
+
+    private PixelPoint _positionBeforeResizing;
+    private Size _clientSizeBeforeResizing;
+
+    private const string WindowStatesFileName = "window_status.json";
+
     public StatefulWindowBase()
     {
         this.GetObservable(DataContextProperty).Subscribe(this.OnDataContextChanged);
         this.GetObservable(ViewModelProperty).Subscribe(this.OnViewModelChanged);
+
+        this.PositionChanged += (sender, e) => this.OnPositionChanged(e.Point);
+        this.GetObservable(ClientSizeProperty).Subscribe(this.OnClientSizeChanged);
+    }
+
+    public StatefulWindowBase(string configDirectoryPath) : this()
+    {
+        _configDirectoryPath = configDirectoryPath;
+
+        this.LoadWindowStatus();
+    }
+
+    protected override void OnClosing(CancelEventArgs e)
+    {
+        this.SaveWindowStatus();
+
+        base.OnClosing(e);
     }
 
     public static readonly StyledProperty<TViewModel?> ViewModelProperty =
@@ -38,26 +64,53 @@ public abstract class StatefulWindowBase<TViewModel> : Window
         }
     }
 
-    public void SetWindowStatus(Models.WindowStatus? status)
+    private void LoadWindowStatus()
     {
-        if (status is null) return;
-
-        if (status.Position is not null) this.Position = new PixelPoint(status.Position.X, status.Position.Y);
-        if (status.Size is not null) this.ClientSize = new Size(status.Size.Width, status.Size.Height);
-        this.WindowState = status.State switch
+        if (_configDirectoryPath is not null)
         {
-            Models.WindowState.Normal => WindowState.Normal,
-            Models.WindowState.Minimized => WindowState.Minimized,
-            Models.WindowState.Maximized => WindowState.Maximized,
-            Models.WindowState.FullScreen => WindowState.FullScreen,
-            _ => WindowState.Normal,
-        };
+            DirectoryHelper.CreateDirectory(_configDirectoryPath!);
+
+            var filePath = Path.Combine(_configDirectoryPath!, WindowStatesFileName);
+
+            if (File.Exists(filePath))
+            {
+                var windowStatus = Models.WindowStatus.Load(filePath);
+                this.SetWindowStatus(windowStatus);
+            }
+        }
     }
 
-    public Models.WindowStatus GetWindowStatus()
+    private void SaveWindowStatus()
     {
-        var position = new Models.WindowPosition() { X = this.Position.X, Y = this.Position.Y };
-        var size = new Models.WindowSize() { Width = this.ClientSize.Width, Height = this.ClientSize.Height };
+        if (_configDirectoryPath is not null)
+        {
+            var filePath = Path.Combine(_configDirectoryPath, WindowStatesFileName);
+            var status = this.GetWindowStatus();
+            status.Save(filePath);
+        }
+    }
+
+    private void OnPositionChanged(PixelPoint position)
+    {
+
+        if (this.WindowState == WindowState.Normal)
+        {
+            _positionBeforeResizing = position;
+        }
+    }
+
+    private void OnClientSizeChanged(Size size)
+    {
+        if (this.WindowState == WindowState.Normal)
+        {
+            _clientSizeBeforeResizing = size;
+        }
+    }
+
+    private Models.WindowStatus GetWindowStatus()
+    {
+        var position = new Models.WindowPosition() { X = _positionBeforeResizing.X, Y = _positionBeforeResizing.Y };
+        var size = new Models.WindowSize() { Width = _clientSizeBeforeResizing.Width, Height = _clientSizeBeforeResizing.Height };
         var state = this.WindowState switch
         {
             WindowState.Normal => Models.WindowState.Normal,
@@ -72,6 +125,22 @@ public abstract class StatefulWindowBase<TViewModel> : Window
             Position = position,
             Size = size,
             State = state,
+        };
+    }
+
+    private void SetWindowStatus(Models.WindowStatus? status)
+    {
+        if (status is null) return;
+
+        if (status.Position is not null) this.Position = new PixelPoint(status.Position.X, status.Position.Y);
+        if (status.Size is not null) this.ClientSize = new Size(status.Size.Width, status.Size.Height);
+        this.WindowState = status.State switch
+        {
+            Models.WindowState.Normal => WindowState.Normal,
+            Models.WindowState.Minimized => WindowState.Minimized,
+            Models.WindowState.Maximized => WindowState.Maximized,
+            Models.WindowState.FullScreen => WindowState.FullScreen,
+            _ => WindowState.Normal,
         };
     }
 }

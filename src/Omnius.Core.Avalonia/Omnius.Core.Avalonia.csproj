@@ -18,6 +18,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Omnius.Core\Omnius.Core.csproj" />
+    <ProjectReference Include="..\Omnius.Core.Utils\Omnius.Core.Utils.csproj" />
   </ItemGroup>
 
 </Project>
