@@ -7,12 +7,12 @@ public sealed class OmniSecureConnectionException : Exception
     {
     }
 
-    public OmniSecureConnectionException(string message)
+    public OmniSecureConnectionException(string? message)
         : base(message)
     {
     }
 
-    public OmniSecureConnectionException(string message, Exception innerException)
+    public OmniSecureConnectionException(string? message, Exception? innerException)
         : base(message, innerException)
     {
     }

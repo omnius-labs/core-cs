@@ -13,12 +13,12 @@ public class ProxyClientException : Exception
     {
     }
 
-    public ProxyClientException(string message)
+    public ProxyClientException(string? message)
         : base(message)
     {
     }
 
-    public ProxyClientException(string message, Exception innerException)
+    public ProxyClientException(string? message, Exception? innerException)
         : base(message, innerException)
     {
     }

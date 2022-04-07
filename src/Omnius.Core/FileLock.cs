@@ -23,7 +23,7 @@ public sealed class FileLock
             }
             catch (Exception e)
             {
-                _logger.Info(e, "FileLock Waiting...");
+                _logger.Info(e, "FileLock waiting...");
             }
 
             await Task.Delay(1000).ConfigureAwait(false);
@@ -42,7 +42,7 @@ public sealed class FileLock
             }
             catch (Exception e)
             {
-                _logger.Info(e, "FileLock Waiting...");
+                _logger.Info(e, "FileLock waiting...");
             }
 
             Thread.Sleep(1000);

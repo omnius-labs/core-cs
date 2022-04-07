@@ -115,7 +115,7 @@ public static class OmniMiner
             }
             catch (IOException e)
             {
-                _logger.Debug(e);
+                _logger.Debug(e, "OmniMiner stdout error");
             }
         }
 
@@ -146,7 +146,7 @@ public static class OmniMiner
             }
             catch (IOException e)
             {
-                _logger.Debug(e);
+                _logger.Debug(e, "OmniMiner stdin error");
             }
         }
 
@@ -257,12 +257,12 @@ public class MinerException : Exception
     {
     }
 
-    public MinerException(string message)
+    public MinerException(string? message)
         : base(message)
     {
     }
 
-    public MinerException(string message, Exception innerException)
+    public MinerException(string? message, Exception? innerException)
         : base(message, innerException)
     {
     }

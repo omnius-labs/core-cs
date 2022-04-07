@@ -54,9 +54,9 @@ public sealed partial class BatchActionDispatcher : AsyncDisposableBase, IBatchA
                 await Task.Delay(_interval, _cancellationTokenSource.Token);
             }
         }
-        catch (TaskCanceledException e)
+        catch (OperationCanceledException)
         {
-            _logger.Debug(e);
+            _logger.Debug("Operation Canceled");
         }
     }
 

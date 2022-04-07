@@ -43,13 +43,11 @@ public class Program
                 }
                 catch (Exception e)
                 {
-                    _logger.Error(e);
-
                     var sb = new StringBuilder();
                     sb.AppendLine($"input: {target.Input}");
                     sb.AppendLine($"output: {target.Output}");
 
-                    _logger.Error(sb.ToString());
+                    _logger.Error(e, sb.ToString());
 
                     throw;
                 }

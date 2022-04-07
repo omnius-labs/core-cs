@@ -7,12 +7,12 @@ public sealed class OmniConnectionMultiplexerException : Exception
     {
     }
 
-    public OmniConnectionMultiplexerException(string message)
+    public OmniConnectionMultiplexerException(string? message)
         : base(message)
     {
     }
 
-    public OmniConnectionMultiplexerException(string message, Exception innerException)
+    public OmniConnectionMultiplexerException(string? message, Exception? innerException)
         : base(message, innerException)
     {
     }

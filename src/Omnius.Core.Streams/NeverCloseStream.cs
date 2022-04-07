@@ -109,7 +109,7 @@ public class NeverCloseStream : Stream
         }
         catch (Exception e)
         {
-            _logger.Debug(e);
+            _logger.Debug(e, "NeverCloseStream Failed to Flush");
         }
     }
 

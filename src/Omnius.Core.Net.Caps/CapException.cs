@@ -7,12 +7,12 @@ public class CapException : Exception
     {
     }
 
-    public CapException(string message)
+    public CapException(string? message)
         : base(message)
     {
     }
 
-    public CapException(string message, Exception innerException)
+    public CapException(string? message, Exception? innerException)
         : base(message, innerException)
     {
     }

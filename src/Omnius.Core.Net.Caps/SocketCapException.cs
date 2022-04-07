@@ -7,12 +7,12 @@ public class SocketCapException : CapException
     {
     }
 
-    public SocketCapException(string message)
+    public SocketCapException(string? message)
         : base(message)
     {
     }
 
-    public SocketCapException(string message, Exception innerException)
+    public SocketCapException(string? message, Exception? innerException)
         : base(message, innerException)
     {
     }

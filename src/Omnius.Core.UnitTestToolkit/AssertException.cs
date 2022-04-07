@@ -2,12 +2,12 @@ namespace Omnius.Core.UnitTestToolkit;
 
 public class AssertException : Exception
 {
-    public AssertException(string message)
+    public AssertException(string? message)
         : base(message)
     {
     }
 
-    public AssertException(string message, Exception innerException)
+    public AssertException(string? message, Exception? innerException)
         : base(message, innerException)
     {
     }

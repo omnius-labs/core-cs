@@ -23,7 +23,7 @@ public sealed class WindowStatus
         }
         catch (Exception e)
         {
-            _logger.Debug(e);
+            _logger.Debug(e, "Failed to Load file");
         }
 
         result ??= new WindowStatus();

@@ -9,7 +9,7 @@ public class RocketPackRpcException : Exception
     {
     }
 
-    public RocketPackRpcException(string message)
+    public RocketPackRpcException(string? message)
         : base(message)
     {
     }
@@ -32,7 +32,7 @@ public class RocketRemotingProtocolException : RocketPackRpcException
     {
     }
 
-    public RocketRemotingProtocolException(string message)
+    public RocketRemotingProtocolException(string? message)
         : base(message)
     {
     }

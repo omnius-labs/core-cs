@@ -9,7 +9,7 @@ public class RocketPackDefinitionCompilerException : Exception
     {
     }
 
-    public RocketPackDefinitionCompilerException(string message)
+    public RocketPackDefinitionCompilerException(string? message)
         : base(message)
     {
     }

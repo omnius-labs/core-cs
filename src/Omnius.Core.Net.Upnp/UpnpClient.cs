@@ -35,6 +35,8 @@ public class UpnpClient : DisposableBase, IUpnpClient
 
     public async ValueTask ConnectAsync(CancellationToken cancellationToken = default)
     {
+        Exception? lastException = null;
+
         var hostEntry = await Dns.GetHostEntryAsync(Dns.GetHostName());
 
         foreach (var machineIp in hostEntry.AddressList)
@@ -48,11 +50,12 @@ public class UpnpClient : DisposableBase, IUpnpClient
             }
             catch (Exception e)
             {
-                _logger.Debug(e);
+                lastException = e;
+                _logger.Debug(e, "UPnP error");
             }
         }
 
-        throw new UpnpClientException("Failed to connect.");
+        throw new UpnpClientException("Failed to connect.", lastException);
     }
 
     private static async ValueTask<(string contents, Uri location)> GetContentsAndLocationFromDeviceAsync(IPAddress targetIp, IPAddress localIp, CancellationToken cancellationToken = default)
@@ -140,8 +143,10 @@ public class UpnpClient : DisposableBase, IUpnpClient
                     string location = Regex.Match(queryResponse, "^location.*?:(.*)", RegexOptions.Multiline | RegexOptions.IgnoreCase).Groups[1].Value.Trim();
                     if (string.IsNullOrWhiteSpace(location)) continue;
 
-                    _logger.Debug("UPnP Router: " + targetIp.ToString());
-                    _logger.Debug("UPnP Location: " + location);
+                    var sb = new StringBuilder();
+                    sb.AppendLine("UPnP Router: " + targetIp.ToString());
+                    sb.AppendLine("UPnP Location: " + location);
+                    _logger.Debug(sb.ToString());
 
                     string contexts;
 
@@ -460,12 +465,12 @@ public class UpnpClientException : Exception
     {
     }
 
-    public UpnpClientException(string message)
+    public UpnpClientException(string? message)
         : base(message)
     {
     }
 
-    public UpnpClientException(string message, Exception innerException)
+    public UpnpClientException(string? message, Exception? innerException)
         : base(message, innerException)
     {
     }

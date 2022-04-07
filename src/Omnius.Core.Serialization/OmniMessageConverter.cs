@@ -124,12 +124,12 @@ public class OmniMessageConverterException : Exception
     {
     }
 
-    public OmniMessageConverterException(string message)
+    public OmniMessageConverterException(string? message)
         : base(message)
     {
     }
 
-    public OmniMessageConverterException(string message, Exception innerException)
+    public OmniMessageConverterException(string? message, Exception? innerException)
         : base(message, innerException)
     {
     }
