@@ -35,7 +35,7 @@ internal partial class ConnectionMultiplexer
 
         public static bool TryParseErrorCode(ref ReadOnlySequence<byte> sequence, out ErrorCode errorCode)
         {
-            errorCode = ErrorCode.Normal;
+            errorCode = ErrorCode.None;
             if (sequence.Length < 4) return false;
 
             Span<byte> messageTypeBytes = stackalloc byte[4];

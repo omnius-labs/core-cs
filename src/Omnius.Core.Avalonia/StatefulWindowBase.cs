@@ -1,6 +1,7 @@
 using System.ComponentModel;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Threading;
 using Omnius.Core.Helpers;
 
 namespace Omnius.Core.Avalonia;
@@ -92,19 +93,24 @@ public abstract class StatefulWindowBase<TViewModel> : Window
 
     private void OnPositionChanged(PixelPoint position)
     {
-
-        if (this.WindowState == WindowState.Normal)
+        Dispatcher.UIThread.Post(() =>
         {
-            _positionBeforeResizing = position;
-        }
+            if (this.WindowState == WindowState.Normal)
+            {
+                _positionBeforeResizing = position;
+            }
+        }, DispatcherPriority.Background);
     }
 
     private void OnClientSizeChanged(Size size)
     {
-        if (this.WindowState == WindowState.Normal)
+        Dispatcher.UIThread.Post(() =>
         {
-            _clientSizeBeforeResizing = size;
-        }
+            if (this.WindowState == WindowState.Normal)
+            {
+                _clientSizeBeforeResizing = size;
+            }
+        }, DispatcherPriority.Background);
     }
 
     private Models.WindowStatus GetWindowStatus()

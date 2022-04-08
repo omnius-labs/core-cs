@@ -30,8 +30,8 @@ internal sealed partial class ConnectionMultiplexer : AsyncDisposableBase
     private DateTime _lastReceivedTime = DateTime.MinValue;
     private DateTime _lastSentTime = DateTime.MinValue;
 
-    private ErrorCode _sendErrorCode = ErrorCode.Normal;
-    private ErrorCode _receiveErrorCode = ErrorCode.Normal;
+    private ErrorCode _sendErrorCode = ErrorCode.None;
+    private ErrorCode _receiveErrorCode = ErrorCode.None;
 
     private readonly CancellationTokenSource _cancellationTokenSource = new();
 
@@ -87,7 +87,7 @@ internal sealed partial class ConnectionMultiplexer : AsyncDisposableBase
         _receiveStreamRequestPipe = new BoundedMessagePipe((int)_options.MaxStreamRequestQueueSize);
         _receiveStreamRequestAcceptedPipe = new BoundedMessagePipe<uint>((int)_options.MaxStreamRequestQueueSize);
 
-        _requestingStreamSemaphore = new SemaphoreSlim((int)_sessionOptions.MaxStreamRequestQueueSize, (int)_sessionOptions.MaxStreamRequestQueueSize);
+        _requestingStreamSemaphore = new SemaphoreSlim(1, (int)_sessionOptions.MaxStreamRequestQueueSize);
 
         _batchAction = new BatchAction(this, this.HandleException);
         _batchActionDispatcher.Register(_batchAction);
@@ -139,7 +139,7 @@ internal sealed partial class ConnectionMultiplexer : AsyncDisposableBase
 
                 try
                 {
-                    if (_sendErrorCode != ErrorCode.Normal)
+                    if (_sendErrorCode != ErrorCode.None)
                     {
                         var builder = new PacketBuilder(bufferWriter);
                         builder.WriteSessionError(_sendErrorCode);
@@ -197,7 +197,7 @@ internal sealed partial class ConnectionMultiplexer : AsyncDisposableBase
                                 builder.WriteStreamFinish(streamId);
 
                                 _streamConnectionMap = _streamConnectionMap.Remove(streamId);
-                                connection.InternalFinish();
+                                connection.InternalDispose();
 
                                 written = true;
                                 return;
@@ -267,7 +267,6 @@ internal sealed partial class ConnectionMultiplexer : AsyncDisposableBase
 
                             break;
                         }
-
                     case PacketType.StreamRequestAccepted:
                         {
                             if (!PacketParser.TryParseStreamId(ref sequence, out var streamId))
@@ -284,7 +283,6 @@ internal sealed partial class ConnectionMultiplexer : AsyncDisposableBase
 
                             break;
                         }
-
                     case PacketType.StreamData:
                         {
                             if (!PacketParser.TryParseStreamId(ref sequence, out var streamId))
@@ -295,7 +293,6 @@ internal sealed partial class ConnectionMultiplexer : AsyncDisposableBase
 
                             if (!_streamConnectionMap.TryGetValue(streamId, out var connection))
                             {
-                                _sendErrorCode = ErrorCode.StreamIdNotFound;
                                 return;
                             }
 
@@ -317,7 +314,6 @@ internal sealed partial class ConnectionMultiplexer : AsyncDisposableBase
 
                             break;
                         }
-
                     case PacketType.StreamDataAccepted:
                         {
                             if (!PacketParser.TryParseStreamId(ref sequence, out var streamId))
@@ -328,7 +324,6 @@ internal sealed partial class ConnectionMultiplexer : AsyncDisposableBase
 
                             if (!_streamConnectionMap.TryGetValue(streamId, out var connection))
                             {
-                                _sendErrorCode = ErrorCode.StreamIdNotFound;
                                 return;
                             }
 
@@ -336,7 +331,6 @@ internal sealed partial class ConnectionMultiplexer : AsyncDisposableBase
 
                             break;
                         }
-
                     case PacketType.StreamFinish:
                         {
                             if (!PacketParser.TryParseStreamId(ref sequence, out var streamId))
@@ -347,15 +341,13 @@ internal sealed partial class ConnectionMultiplexer : AsyncDisposableBase
 
                             if (!_streamConnectionMap.TryGetValue(streamId, out var connection))
                             {
-                                _sendErrorCode = ErrorCode.StreamIdNotFound;
                                 return;
                             }
 
-                            connection.ReceiveFinishCaller.Call();
+                            connection.InternalStop();
 
                             break;
                         }
-
                     case PacketType.SessionError:
                         {
                             if (!PacketParser.TryParseErrorCode(ref sequence, out var errorCode))
@@ -369,7 +361,6 @@ internal sealed partial class ConnectionMultiplexer : AsyncDisposableBase
 
                             break;
                         }
-
                     case PacketType.SessionFinish:
                         {
                             this.Cancel();

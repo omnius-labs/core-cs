@@ -1,10 +1,9 @@
-using Omnius.Core.Helpers;
 using Omnius.Core.Net.Connections.Internal;
 using Omnius.Core.Pipelines;
 
 namespace Omnius.Core.Net.Connections.Multiplexer.V1.Internal;
 
-internal sealed partial class StreamConnection : AsyncDisposableBase, IConnection
+internal sealed partial class StreamConnection : IConnection
 {
     private static readonly NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
 
@@ -21,10 +20,11 @@ internal sealed partial class StreamConnection : AsyncDisposableBase, IConnectio
     private readonly ConnectionEvents _events;
 
     private readonly BoundedMessagePipe _sendFinishMessagePipe;
-    private readonly ActionPipe _receiveFinishActionPipe;
-    private readonly IDisposable _receiveFinishActionPipeListenerRegister;
 
     private readonly CancellationTokenSource _cancellationTokenSource;
+    private bool _disposed = false;
+
+    private readonly object _lockObject = new();
 
     public StreamConnection(int maxSendDataQueueSize, int maxReceiveDataQueueSize, IBytesPool bytesPool, CancellationToken cancellationToken)
     {
@@ -44,42 +44,48 @@ internal sealed partial class StreamConnection : AsyncDisposableBase, IConnectio
         _events = new ConnectionEvents(_cancellationTokenSource.Token);
 
         _sendFinishMessagePipe = new BoundedMessagePipe(1);
-        _receiveFinishActionPipe = new ActionPipe();
-        _receiveFinishActionPipeListenerRegister = _receiveFinishActionPipe.Listener.Listen(() => ExceptionHelper.TryCatch<ObjectDisposedException>(() => this.OnReceiveFinish()));
     }
 
-    internal void InternalFinish()
+    public async ValueTask DisposeAsync()
     {
-        _cancellationTokenSource.Dispose();
-        _sendDataMessagePipe.Dispose();
-        _receiveDataMessagePipe.Dispose();
-        _sendDataAcceptedMessagePipe.Dispose();
-
-        _sender.Dispose();
-        _receiver.Dispose();
-        _events.Dispose();
-
-        _sendFinishMessagePipe.Dispose();
-        _receiveFinishActionPipeListenerRegister.Dispose();
+        this.InternalStop();
     }
 
-    protected override async ValueTask OnDisposeAsync()
+    internal void InternalStop()
     {
-        this.OnSendFinish();
+        lock (_lockObject)
+        {
+            if (_disposed) return;
+
+            _sendFinishMessagePipe.Writer.TryWrite();
+
+            if (!_cancellationTokenSource.IsCancellationRequested) _cancellationTokenSource.Cancel();
+        }
     }
 
-    private void OnSendFinish()
+    internal void InternalDispose()
     {
-        _cancellationTokenSource.Cancel();
-        _sendFinishMessagePipe.Writer.TryWrite();
+        lock (_lockObject)
+        {
+            if (_disposed) return;
+            _disposed = true;
+
+            if (!_cancellationTokenSource.IsCancellationRequested) _cancellationTokenSource.Cancel();
+
+            _cancellationTokenSource.Dispose();
+            _sendDataMessagePipe.Dispose();
+            _receiveDataMessagePipe.Dispose();
+            _sendDataAcceptedMessagePipe.Dispose();
+
+            _sender.Dispose();
+            _receiver.Dispose();
+            _events.Dispose();
+
+            _sendFinishMessagePipe.Dispose();
+        }
     }
 
-    private void OnReceiveFinish()
-    {
-        _cancellationTokenSource.Cancel();
-    }
-
-    public bool IsConnected => !this.IsDisposed;
+    public bool IsConnected => !_disposed;
 
     public IConnectionSender Sender => _sender;
 
@@ -96,6 +102,4 @@ internal sealed partial class StreamConnection : AsyncDisposableBase, IConnectio
     internal IActionCaller ReceiveDataAcceptedCaller => _receiveDataAcceptedActionPipe.Caller;
 
     internal IMessagePipeReader SendFinishReader => _sendFinishMessagePipe.Reader;
-
-    internal IActionCaller ReceiveFinishCaller => _receiveFinishActionPipe.Caller;
 }

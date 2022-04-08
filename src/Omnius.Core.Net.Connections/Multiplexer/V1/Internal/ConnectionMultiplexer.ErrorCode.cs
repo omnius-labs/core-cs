@@ -4,7 +4,7 @@ internal partial class ConnectionMultiplexer
 {
     internal enum ErrorCode : byte
     {
-        Normal = 0,
+        None = 0,
 
         PacketReceiveTimeout = 1,
 
@@ -12,16 +12,14 @@ internal partial class ConnectionMultiplexer
 
         StreamIdInvalid = 3,
 
-        StreamIdNotFound = 4,
+        StreamRequestQueueOverflow = 4,
 
-        StreamRequestQueueOverflow = 5,
+        StreamRequestAcceptedQueueOverflow = 5,
 
-        StreamRequestAcceptedQueueOverflow = 6,
+        StreamDataSizeTooLarge = 6,
 
-        StreamDataSizeTooLarge = 7,
+        StreamDataQueueOverflow = 7,
 
-        StreamDataQueueOverflow = 8,
-
-        StreamDataAcceptedQueueOverflow = 9,
+        StreamDataAcceptedQueueOverflow = 8,
     }
 }
