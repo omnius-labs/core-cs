@@ -5,10 +5,6 @@ namespace Omnius.Core.Net.Connections.Multiplexer.V1.Internal;
 
 internal partial class StreamConnection
 {
-    public StreamConnection()
-    {
-    }
-
     public sealed class ConnectionReceiver : DisposableBase, IConnectionReceiver
     {
         private readonly IMessagePipeReader<ArraySegment<byte>> _dataReader;
