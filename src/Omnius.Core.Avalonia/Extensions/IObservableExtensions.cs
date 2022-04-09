@@ -22,8 +22,7 @@ public static class IObservableExtensions
                     if (!t.Value.WithDelay)
                         //value isn't delayed, current delay status irrelevant, emit immediately, and cancel previous delay.
                         return (DateTimeOffset.MinValue, Observable.Return(t.Value.Item));
-                    else
-                        if (state.delayOverTime > t.Timestamp)
+                    else if (state.delayOverTime > t.Timestamp)
                         //value should be delayed, but current delay already in progress. Ignore value.
                         return (state.delayOverTime, Observable.Empty<T>());
                     else
