@@ -9,10 +9,7 @@ build:
 	dotnet build
 
 format:
-	dotnet tool run dotnet-format
-
-update-nuget:
-	dotnet tool run nukeeper update
+	dotnet format
 
 update-dotnet-tool:
 	bash ./eng/update-dotnet-tool.sh
