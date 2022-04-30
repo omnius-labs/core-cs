@@ -11,13 +11,12 @@ public sealed partial class SamBridge : AsyncDisposableBase
 {
     private static readonly NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
 
-    private readonly string _host;
+    private readonly IPAddress _ipAddress;
     private readonly int _port;
     private readonly string _caption;
     private readonly BoundedMessagePipe<SamBridgeAcceptResult> _acceptResultPipe = new(3);
     private string _sessionId;
 
-    private IPAddress? _ipAddress;
     private string? _base32Address;
     private Socket? _sessionSocket;
     private string? _lastPingMessage;
@@ -28,16 +27,16 @@ public sealed partial class SamBridge : AsyncDisposableBase
 
     private readonly CancellationTokenSource _cancellationTokenSource = new();
 
-    public static async ValueTask<SamBridge> CreateAsync(string host, int port, string caption, CancellationToken cancellationToken = default)
+    public static async ValueTask<SamBridge> CreateAsync(IPAddress ipAddress, int port, string caption, CancellationToken cancellationToken = default)
     {
-        var result = new SamBridge(host, port, caption);
+        var result = new SamBridge(ipAddress, port, caption);
         await result.InitAsync(cancellationToken);
         return result;
     }
 
-    private SamBridge(string host, int port, string caption)
+    private SamBridge(IPAddress ipAddress, int port, string caption)
     {
-        _host = host;
+        _ipAddress = ipAddress;
         _port = port;
         _caption = caption;
         _sessionId = GenSessionId();
@@ -61,9 +60,6 @@ public sealed partial class SamBridge : AsyncDisposableBase
 
         try
         {
-            _ipAddress = await GetIpAddressAsync(_host, cancellationToken);
-            if (_ipAddress is null) throw new SamBridgeException($"Failed to convert {_host}");
-
             socket = await SocketConnectAsync(new IPEndPoint(_ipAddress, _port));
             if (socket is null) throw new SamBridgeException($"Failed to connect {_ipAddress}");
 
@@ -77,6 +73,10 @@ public sealed partial class SamBridge : AsyncDisposableBase
 
             _base32Address = await this.HandshakeAsync(socket, timeoutTokenSource.Token);
             _sessionSocket = socket;
+
+            _sendLoopTask = this.SendLoopAsync();
+            _receiveLoopTask = this.ReceiveLoopAsync();
+            _acceptLoopTask = this.AcceptLoopAsync();
         }
         catch (Exception)
         {
@@ -92,7 +92,7 @@ public sealed partial class SamBridge : AsyncDisposableBase
 
         await mediator.SessionCreateAsync(_sessionId, _caption, cancellationToken);
         var destinationBase64 = await mediator.NamingLookupAsync("ME", cancellationToken);
-        if (destinationBase64 is null) throw new SamBridgeException($"Failed to Naming Lookup {_host}");
+        if (destinationBase64 is null) throw new SamBridgeException($"Failed to Naming Lookup {_ipAddress}");
 
         var destinationBytes = I2pConverter.Base64.FromString(destinationBase64);
         return I2pConverter.Base32Address.FromDestination(destinationBytes);
@@ -223,7 +223,7 @@ public sealed partial class SamBridge : AsyncDisposableBase
         await mediator.HandshakeAsync(cancellationToken);
 
         var destinationBase64 = await mediator.StreamAcceptAsync(_sessionId, cancellationToken);
-        if (destinationBase64 is null) throw new SamBridgeException($"Failed to Stream Accept {_host}");
+        if (destinationBase64 is null) throw new SamBridgeException($"Failed to Stream Accept {_ipAddress}");
 
         var destinationBytes = I2pConverter.Base64.FromString(destinationBase64);
         return I2pConverter.Base32Address.FromDestination(destinationBytes);
@@ -283,7 +283,7 @@ public sealed partial class SamBridge : AsyncDisposableBase
         await mediator.HandshakeAsync(cancellationToken);
 
         var destinationBase64 = await mediator.NamingLookupAsync(destination, cancellationToken);
-        if (destinationBase64 is null) throw new SamBridgeException($"Failed to Stream Accept {_host}");
+        if (destinationBase64 is null) throw new SamBridgeException($"Failed to Stream Accept {_ipAddress}");
         await mediator.StreamConnectAsync(_sessionId, destinationBase64, cancellationToken);
 
         var destinationBytes = I2pConverter.Base64.FromString(destinationBase64);

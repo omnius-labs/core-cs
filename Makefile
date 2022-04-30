@@ -8,9 +8,6 @@ test:
 build:
 	dotnet build
 
-format:
-	dotnet format
-
 update-dotnet-tool:
 	bash ./eng/update-dotnet-tool.sh
 

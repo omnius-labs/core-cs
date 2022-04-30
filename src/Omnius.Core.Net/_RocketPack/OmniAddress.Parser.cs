@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using System.Net.Sockets;
 using Omnius.Core.Collections;
@@ -12,6 +13,11 @@ public partial class OmniAddress
     {
         if (text == null) return OmniAddress.Empty;
         return new OmniAddress(text);
+    }
+
+    public static OmniAddress CreateI2pEndpoint(string address)
+    {
+        return new OmniAddress($"i2p({address})");
     }
 
     public static OmniAddress CreateTcpEndpoint(string host, ushort port)
@@ -35,86 +41,134 @@ public partial class OmniAddress
         }
     }
 
-    public bool TryGetTcpEndpoint(out IPAddress ipAddress, out ushort port, bool nameResolving = false)
+    public bool TryParseI2pEndpoint([NotNullWhen(true)] out string? address)
     {
-        ipAddress = IPAddress.None;
-        port = 0;
+        address = null;
 
-        var rootFunction = Deconstructor.Deconstruct(this.Value);
-        if (rootFunction == null) return false;
+        var element = Deconstructor.Deconstruct(this.Value);
+        if (element is null) return false;
 
-        if (rootFunction.Name == "tcp")
+        if (!Parser.TryParseI2p(element, out address))
         {
-            if (!(rootFunction.Arguments.Count == 2
-                  && rootFunction.Arguments[0] is FunctionElement hostFunction
-                  && rootFunction.Arguments[1] is ConstantElement portConstant))
-            {
-                return false;
-            }
-
-            if (hostFunction.Name == "ip4")
-            {
-                if (!(hostFunction.Arguments.Count == 1
-                      && hostFunction.Arguments[0] is ConstantElement ipAddressConstant))
-                {
-                    return false;
-                }
-
-                if (!IPAddress.TryParse(ipAddressConstant.Text, out var temp)
-                    || temp.AddressFamily != AddressFamily.InterNetwork)
-                {
-                    return false;
-                }
-
-                ipAddress = temp;
-            }
-            else if (hostFunction.Name == "ip6")
-            {
-                if (!(hostFunction.Arguments.Count == 1
-                      && hostFunction.Arguments[0] is ConstantElement ipAddressConstant))
-                {
-                    return false;
-                }
-
-                if (!IPAddress.TryParse(ipAddressConstant.Text, out var temp)
-                    || temp.AddressFamily != AddressFamily.InterNetworkV6)
-                {
-                    return false;
-                }
-
-                ipAddress = temp;
-            }
-            else if (nameResolving && hostFunction.Name == "dns")
-            {
-                if (!(hostFunction.Arguments.Count == 1
-                      && hostFunction.Arguments[0] is ConstantElement hostnameConstant))
-                {
-                    return false;
-                }
-
-                try
-                {
-                    var hostEntry = Dns.GetHostEntry(hostnameConstant.Text);
-
-                    if (hostEntry.AddressList.Length == 0) return false;
-
-                    ipAddress = hostEntry.AddressList[0];
-                }
-                catch (Exception e)
-                {
-                    _logger.Error(e, "Failed to DNS Resolve");
-                    return false;
-                }
-            }
-            else
-            {
-                return false;
-            }
-
-            if (!ushort.TryParse(portConstant.Text, out port)) return false;
+            return false;
         }
 
         return true;
+    }
+
+    public bool TryParseTcpEndpoint([NotNullWhen(true)] out IPAddress? ipAddress, out ushort port, bool nameResolving = false)
+    {
+        ipAddress = null;
+        port = 0;
+
+        var element = Deconstructor.Deconstruct(this.Value);
+        if (element is null) return false;
+
+        if (!Parser.TryParseTcp(element, out ipAddress, out port, nameResolving))
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+    private static class Parser
+    {
+        public static bool TryParseI2p(FunctionElement rootFunction, [NotNullWhen(true)] out string? address)
+        {
+            address = null;
+
+            if (rootFunction is not { Name: "i2p", Arguments: [ConstantElement hostConstant] })
+            {
+                return false;
+            }
+
+            address = hostConstant.Text;
+            return false;
+        }
+
+        public static bool TryParseTcp(FunctionElement rootFunction, [NotNullWhen(true)] out IPAddress? ipAddress, out ushort port, bool nameResolving = false)
+        {
+            ipAddress = null;
+            port = 0;
+
+            if (rootFunction is not { Name: "tcp", Arguments: [FunctionElement hostFunction, ConstantElement portConstant] })
+            {
+                return false;
+            }
+
+            if (!TryParseIp4(hostFunction, out ipAddress)
+                && !TryParseIp6(hostFunction, out ipAddress)
+                && !TryParseDns(hostFunction, out ipAddress, nameResolving))
+            {
+                return false;
+            }
+
+            if (!ushort.TryParse(portConstant.Text, out port))
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        public static bool TryParseIp4(FunctionElement rootFunction, [NotNullWhen(true)] out IPAddress? ipAddress)
+        {
+            ipAddress = null;
+
+            if (rootFunction is not { Name: "ip4", Arguments: [ConstantElement ip4Constant] })
+            {
+                return false;
+            }
+
+            if (!IPAddress.TryParse(ip4Constant.Text, out ipAddress) || ipAddress.AddressFamily != AddressFamily.InterNetwork)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        public static bool TryParseIp6(FunctionElement rootFunction, [NotNullWhen(true)] out IPAddress? ipAddress)
+        {
+            ipAddress = null;
+
+            if (rootFunction is not { Name: "ip6", Arguments: [ConstantElement ip6Constant] })
+            {
+                return false;
+            }
+
+            if (!IPAddress.TryParse(ip6Constant.Text, out ipAddress) || ipAddress.AddressFamily != AddressFamily.InterNetworkV6)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        public static bool TryParseDns(FunctionElement rootFunction, [NotNullWhen(true)] out IPAddress? ipAddress, bool nameResolving = false)
+        {
+            ipAddress = null;
+
+            if (rootFunction is not { Name: "dns", Arguments: [ConstantElement hostnameConstant] })
+            {
+                return false;
+            }
+
+            try
+            {
+                var hostEntry = Dns.GetHostEntry(hostnameConstant.Text);
+                if (hostEntry.AddressList.Length == 0) return false;
+
+                ipAddress = hostEntry.AddressList[0];
+                return true;
+            }
+            catch (Exception e)
+            {
+                _logger.Error(e, "Failed to DNS Resolve");
+                return false;
+            }
+        }
     }
 
     private static class Deconstructor
