@@ -120,7 +120,6 @@ public sealed partial class SamBridge : AsyncDisposableBase
             stream.ReadTimeout = 60 * 1000;
             stream.WriteTimeout = 60 * 1000;
 
-            using var reader = new StreamReader(stream, new UTF8Encoding(false), false, 1024 * 32);
             using var writer = new StreamWriter(stream, new UTF8Encoding(false), 1024 * 32);
             writer.NewLine = "\n";
 
@@ -147,11 +146,12 @@ public sealed partial class SamBridge : AsyncDisposableBase
     {
         try
         {
+            var reader = new SocketLineReader(_sessionSocket!, new UTF8Encoding(false));
+
             using var stream = new NetworkStream(_sessionSocket!);
             stream.ReadTimeout = 60 * 1000;
             stream.WriteTimeout = 60 * 1000;
 
-            using var reader = new StreamReader(stream, new UTF8Encoding(false), false, 1024 * 32);
             using var writer = new StreamWriter(stream, new UTF8Encoding(false), 1024 * 32);
             writer.NewLine = "\n";
 
@@ -159,7 +159,7 @@ public sealed partial class SamBridge : AsyncDisposableBase
             {
                 await Task.Delay(1000, cancellationToken);
 
-                var line = await reader.ReadLineAsync();
+                var line = await reader.ReadLineAsync(cancellationToken);
                 if (line == null) break;
 
                 if (line.StartsWith("PING"))
