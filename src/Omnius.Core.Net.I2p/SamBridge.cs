@@ -290,8 +290,9 @@ public sealed partial class SamBridge : AsyncDisposableBase
         return I2pConverter.Base32Address.FromDestination(destinationBytes);
     }
 
-    public async ValueTask<SamBridgeAcceptResult> AcceptAsync(CancellationToken cancellationToken = default)
+    public async ValueTask<SamBridgeAcceptResult?> AcceptAsync(CancellationToken cancellationToken = default)
     {
-        return await _acceptResultPipe.Reader.ReadAsync(cancellationToken);
+        if (!_acceptResultPipe.Reader.TryRead(out var result)) return null;
+        return result;
     }
 }
