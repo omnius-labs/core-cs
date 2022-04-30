@@ -74,9 +74,9 @@ public sealed partial class SamBridge : AsyncDisposableBase
             _base32Address = await this.HandshakeAsync(socket, timeoutTokenSource.Token);
             _sessionSocket = socket;
 
-            _sendLoopTask = this.SendLoopAsync();
-            _receiveLoopTask = this.ReceiveLoopAsync();
-            _acceptLoopTask = this.AcceptLoopAsync();
+            _sendLoopTask = this.SendLoopAsync(_cancellationTokenSource.Token);
+            _receiveLoopTask = this.ReceiveLoopAsync(_cancellationTokenSource.Token);
+            _acceptLoopTask = this.AcceptLoopAsync(_cancellationTokenSource.Token);
         }
         catch (Exception)
         {
@@ -105,6 +105,7 @@ public sealed partial class SamBridge : AsyncDisposableBase
         _cancellationTokenSource.Dispose();
 
         _sessionSocket?.Dispose();
+        _acceptResultPipe.Dispose();
     }
 
     public bool IsConnected { get { return (_sessionSocket != null && _sessionSocket.Connected); } }
