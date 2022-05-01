@@ -84,7 +84,7 @@ public partial class OmniAddress
             }
 
             address = hostConstant.Text;
-            return false;
+            return true;
         }
 
         public static bool TryParseTcp(FunctionElement rootFunction, [NotNullWhen(true)] out IPAddress? ipAddress, out ushort port, bool nameResolving = false)
