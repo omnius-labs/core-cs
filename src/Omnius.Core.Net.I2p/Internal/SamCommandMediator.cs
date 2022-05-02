@@ -155,7 +155,7 @@ internal sealed class SamCommandMediator : DisposableBase
             }
         }
 
-        var line = await _reader.ReadLineAsync();
+        var line = await _reader.ReadLineAsync(cancellationToken);
         if (line is null || line.Length <= 2) return null;
 
         return line.Split(' ')[0];
