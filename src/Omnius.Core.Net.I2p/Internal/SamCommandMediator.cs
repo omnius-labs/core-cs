@@ -33,8 +33,8 @@ internal sealed class SamCommandMediator : DisposableBase
             commands.Add("VERSION");
 
             var parameters = new Dictionary<string, string?>();
-            parameters.Add("MIN", "3.0");
-            parameters.Add("MAX", "3.0");
+            parameters.Add("MIN", "3.2");
+            parameters.Add("MAX", "3.2");
 
             var samCommand = new SamCommand(commands, parameters);
             await this.SendAsync(samCommand, cancellationToken);
@@ -97,7 +97,7 @@ internal sealed class SamCommandMediator : DisposableBase
         {
             var (commands, parameters) = await this.ReceiveAsync(cancellationToken);
 
-            if (commands[0] != "NAMING" || commands[1] != "REPLY")
+            if (commands[0] != "NAMING" || commands[1] != "REPLY" || parameters["RESULT"] != "OK")
             {
                 throw new SamBridgeException($"Naming Lookup failed because of {parameters["RESULT"]}");
             }

@@ -31,6 +31,7 @@ public partial class BridgeConnection
             }
             catch (Exception e)
             {
+                _logger.Debug(e, "Send Exception");
                 _exceptionCallback.Invoke(e);
             }
 
@@ -40,6 +41,7 @@ public partial class BridgeConnection
             }
             catch (Exception e)
             {
+                _logger.Debug(e, "Receive Exception");
                 _exceptionCallback.Invoke(e);
             }
         }

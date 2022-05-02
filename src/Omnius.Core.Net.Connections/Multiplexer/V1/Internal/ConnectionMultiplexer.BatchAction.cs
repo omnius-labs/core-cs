@@ -25,6 +25,7 @@ internal sealed partial class ConnectionMultiplexer
             }
             catch (Exception e)
             {
+                _logger.Debug(e, "Send Exception");
                 _exceptionCallback.Invoke(e);
             }
 
@@ -34,6 +35,7 @@ internal sealed partial class ConnectionMultiplexer
             }
             catch (Exception e)
             {
+                _logger.Debug(e, "Receive Exception");
                 _exceptionCallback.Invoke(e);
             }
         }

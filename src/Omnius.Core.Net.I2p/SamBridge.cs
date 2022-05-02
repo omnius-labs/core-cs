@@ -284,7 +284,7 @@ public sealed partial class SamBridge : AsyncDisposableBase
         await mediator.HandshakeAsync(cancellationToken);
 
         var destinationBase64 = await mediator.NamingLookupAsync(destination, cancellationToken);
-        if (destinationBase64 is null) throw new SamBridgeException($"Failed to Stream Accept {_ipAddress}");
+        if (destinationBase64 is null) throw new SamBridgeException($"Failed to Naming Lookup {_ipAddress}");
         await mediator.StreamConnectAsync(_sessionId, destinationBase64, cancellationToken);
 
         var destinationBytes = I2pConverter.Base64.FromString(destinationBase64);
