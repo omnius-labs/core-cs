@@ -23,7 +23,6 @@ public sealed partial class SamBridge : AsyncDisposableBase
 
     private Task? _sendLoopTask;
     private Task? _receiveLoopTask;
-    private Task? _acceptLoopTask;
 
     private readonly CancellationTokenSource _cancellationTokenSource = new();
 
@@ -76,7 +75,6 @@ public sealed partial class SamBridge : AsyncDisposableBase
 
             _sendLoopTask = this.SendLoopAsync(_cancellationTokenSource.Token);
             _receiveLoopTask = this.ReceiveLoopAsync(_cancellationTokenSource.Token);
-            _acceptLoopTask = this.AcceptLoopAsync(_cancellationTokenSource.Token);
         }
         catch (Exception)
         {
@@ -101,7 +99,7 @@ public sealed partial class SamBridge : AsyncDisposableBase
     protected override async ValueTask OnDisposeAsync()
     {
         _cancellationTokenSource.Cancel();
-        await Task.WhenAll(_sendLoopTask!, _receiveLoopTask!, _acceptLoopTask!);
+        await Task.WhenAll(_sendLoopTask!, _receiveLoopTask!);
         _cancellationTokenSource.Dispose();
 
         _sessionSocket?.Dispose();
@@ -184,52 +182,6 @@ public sealed partial class SamBridge : AsyncDisposableBase
         }
     }
 
-    private async Task AcceptLoopAsync(CancellationToken cancellationToken = default)
-    {
-        try
-        {
-            for (; ; )
-            {
-                await _acceptResultPipe.Writer.WaitToWriteAsync(cancellationToken);
-
-                Socket? socket = null;
-
-                try
-                {
-                    socket = await SocketConnectAsync(new IPEndPoint(_ipAddress!, _port));
-                    if (socket is null) throw new SamBridgeException($"Failed to connect {_ipAddress}");
-
-                    string destination = await this.InternalAcceptAsync(socket, cancellationToken);
-                    _acceptResultPipe.Writer.TryWrite(new SamBridgeAcceptResult(socket, destination));
-                }
-                catch (Exception)
-                {
-                    if (socket != null) socket.Dispose();
-                }
-            }
-        }
-        catch (OperationCanceledException e)
-        {
-            _logger.Debug(e, "Operation Canceled");
-        }
-        catch (Exception e)
-        {
-            _logger.Error(e, "Unexpected Exception");
-        }
-    }
-
-    private async ValueTask<string> InternalAcceptAsync(Socket socket, CancellationToken cancellationToken = default)
-    {
-        using var mediator = new SamCommandMediator(socket!);
-        await mediator.HandshakeAsync(cancellationToken);
-
-        var destinationBase64 = await mediator.StreamAcceptAsync(_sessionId, cancellationToken);
-        if (destinationBase64 is null) throw new SamBridgeException($"Failed to Stream Accept {_ipAddress}");
-
-        var destinationBytes = I2pConverter.Base64.FromString(destinationBase64);
-        return I2pConverter.Base32Address.FromDestination(destinationBytes);
-    }
-
     private static async ValueTask<IPAddress?> GetIpAddressAsync(string host, CancellationToken cancellationToken = default)
     {
         if (IPAddress.TryParse(host, out var ipAddress)) return ipAddress;
@@ -284,16 +236,41 @@ public sealed partial class SamBridge : AsyncDisposableBase
         await mediator.HandshakeAsync(cancellationToken);
 
         var destinationBase64 = await mediator.NamingLookupAsync(destination, cancellationToken);
-        if (destinationBase64 is null) throw new SamBridgeException($"Failed to Stream Accept {_ipAddress}");
+        if (destinationBase64 is null) throw new SamBridgeException($"Failed to Stream Connect {_ipAddress}");
         await mediator.StreamConnectAsync(_sessionId, destinationBase64, cancellationToken);
 
         var destinationBytes = I2pConverter.Base64.FromString(destinationBase64);
         return I2pConverter.Base32Address.FromDestination(destinationBytes);
     }
 
-    public async ValueTask<SamBridgeAcceptResult?> AcceptAsync(CancellationToken cancellationToken = default)
+    public async ValueTask<SamBridgeAcceptResult> AcceptAsync(CancellationToken cancellationToken = default)
     {
-        if (!_acceptResultPipe.Reader.TryRead(out var result)) return null;
-        return result;
+        Socket? socket = null;
+
+        try
+        {
+            socket = await SocketConnectAsync(new IPEndPoint(_ipAddress!, _port));
+            if (socket is null) throw new SamBridgeException($"Failed to accept {_ipAddress}");
+
+            string destination = await this.InternalAcceptAsync(socket, cancellationToken);
+            return new SamBridgeAcceptResult(socket, destination);
+        }
+        catch (Exception)
+        {
+            if (socket != null) socket.Dispose();
+            throw;
+        }
+    }
+
+    private async ValueTask<string> InternalAcceptAsync(Socket socket, CancellationToken cancellationToken = default)
+    {
+        using var mediator = new SamCommandMediator(socket!);
+        await mediator.HandshakeAsync(cancellationToken);
+
+        var destinationBase64 = await mediator.StreamAcceptAsync(_sessionId, cancellationToken);
+        if (destinationBase64 is null) throw new SamBridgeException($"Failed to Stream Accept {_ipAddress}");
+
+        var destinationBytes = I2pConverter.Base64.FromString(destinationBase64);
+        return I2pConverter.Base32Address.FromDestination(destinationBytes);
     }
 }
