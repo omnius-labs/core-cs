@@ -3,13 +3,13 @@ using System.Text;
 
 namespace Omnius.Core.Net.I2p.Internal;
 
-internal sealed class SamCommandMediator : DisposableBase
+internal sealed class SamConnection : DisposableBase
 {
     private SocketLineReader _reader;
     private Stream _stream;
     private StreamWriter _writer;
 
-    public SamCommandMediator(Socket socket)
+    public SamConnection(Socket socket)
     {
         _reader = new SocketLineReader(socket, new UTF8Encoding(false));
 
@@ -50,7 +50,7 @@ internal sealed class SamCommandMediator : DisposableBase
         }
     }
 
-    public async ValueTask<string?> SessionCreateAsync(string sessionId, string caption, CancellationToken cancellationToken = default)
+    public async ValueTask SessionCreateAsync(string sessionId, string privateKey, string caption, CancellationToken cancellationToken = default)
     {
         {
             var commands = new List<string>();
@@ -60,7 +60,7 @@ internal sealed class SamCommandMediator : DisposableBase
             var parameters = new Dictionary<string, string>();
             parameters.Add("STYLE", "STREAM");
             parameters.Add("ID", sessionId);
-            parameters.Add("DESTINATION", "TRANSIENT");
+            parameters.Add("DESTINATION", privateKey);
             parameters.Add("inbound.nickname", caption);
             parameters.Add("outbound.nickname", caption);
 
@@ -74,7 +74,7 @@ internal sealed class SamCommandMediator : DisposableBase
 
             if (commands[0] == "SESSION" && commands[1] == "STATUS" && parameters["RESULT"] == "OK")
             {
-                return parameters["DESTINATION"];
+                return;
             }
             else if (commands[0] == "PING")
             {
@@ -87,7 +87,40 @@ internal sealed class SamCommandMediator : DisposableBase
         }
     }
 
-    public async ValueTask<string?> NamingLookupAsync(string name, CancellationToken cancellationToken = default)
+    public async ValueTask<(string destination, string privateKey)> DestinationGenerateAsync(CancellationToken cancellationToken = default)
+    {
+        {
+            var commands = new List<string>();
+            commands.Add("DEST");
+            commands.Add("GENERATE");
+
+            var parameters = new Dictionary<string, string>();
+            parameters.Add("SIGNATURE_TYPE", "EdDSA_SHA512_Ed25519");
+
+            var samCommand = new SamCommand(commands, parameters);
+            await this.SendCommandAsync(samCommand, cancellationToken);
+        }
+
+        for (; ; )
+        {
+            var (commands, parameters) = await this.ReceiveCommandAsync(cancellationToken);
+
+            if (commands[0] == "DEST" && commands[1] == "REPLY")
+            {
+                return (parameters["PUB"], parameters["PRIV"]);
+            }
+            else if (commands[0] == "PING")
+            {
+                await this.SendCommandAsync(new SamCommand(new[] { "PONG", commands[1] }), cancellationToken);
+            }
+            else
+            {
+                throw new SamBridgeException($"Naming Lookup failed because of {parameters["RESULT"]}");
+            }
+        }
+    }
+
+    public async ValueTask<string> NamingLookupAsync(string name, CancellationToken cancellationToken = default)
     {
         {
             var commands = new List<string>();
@@ -167,6 +200,7 @@ internal sealed class SamCommandMediator : DisposableBase
             parameters.Add("SILENCE", "false");
 
             var samCommand = new SamCommand(commands, parameters);
+            await this.SendCommandAsync(samCommand, cancellationToken);
         }
 
         for (; ; )

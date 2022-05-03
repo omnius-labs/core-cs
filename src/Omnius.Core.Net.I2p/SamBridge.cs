@@ -1,6 +1,5 @@
 using System.Net;
 using System.Net.Sockets;
-using System.Security.Cryptography;
 using Omnius.Core.Helpers;
 using Omnius.Core.Net.I2p.Internal;
 using Omnius.Core.Pipelines;
@@ -44,14 +43,7 @@ public sealed partial class SamBridge : AsyncDisposableBase
 
     private static string GenSessionId()
     {
-        var buffer = new byte[32];
-
-        using (var random = RandomNumberGenerator.Create())
-        {
-            random.GetBytes(buffer);
-        }
-
-        return I2pConverter.Base64.ToString(buffer);
+        return Guid.NewGuid().ToString("N");
     }
 
     public async ValueTask InitAsync(CancellationToken cancellationToken = default)
@@ -83,14 +75,15 @@ public sealed partial class SamBridge : AsyncDisposableBase
 
     private async ValueTask<string> HandshakeAsync(Socket socket, CancellationToken cancellationToken = default)
     {
-        using var mediator = new SamCommandMediator(socket);
-        await mediator.HandshakeAsync(cancellationToken);
+        using var connection = new SamConnection(socket);
 
-        await mediator.SessionCreateAsync(_sessionId, _caption, cancellationToken);
-        var destinationBase64 = await mediator.NamingLookupAsync("ME", cancellationToken);
-        if (destinationBase64 is null) throw new SamBridgeException($"Failed to Naming Lookup {_ipAddress}");
+        await connection.HandshakeAsync(cancellationToken);
 
-        var destinationBytes = I2pConverter.Base64.FromString(destinationBase64);
+        (string destination, string privateKey) = await connection.DestinationGenerateAsync(cancellationToken);
+
+        await connection.SessionCreateAsync(_sessionId, privateKey, _caption, cancellationToken);
+
+        var destinationBytes = I2pConverter.Base64.FromString(destination);
         return I2pConverter.Base32Address.FromDestination(destinationBytes);
     }
 
@@ -112,14 +105,14 @@ public sealed partial class SamBridge : AsyncDisposableBase
     {
         try
         {
-            using var mediator = new SamCommandMediator(_sessionSocket!);
+            using var connection = new SamConnection(_sessionSocket!);
 
             for (; ; )
             {
                 await Task.Delay(1000 * 30, cancellationToken);
 
-                _lastPingMessage = I2pConverter.Base64.ToString(Random.Shared.GetBytes(32));
-                await mediator.SendCommandAsync(new SamCommand(new[] { "PING", _lastPingMessage }), cancellationToken);
+                _lastPingMessage = Guid.NewGuid().ToString("N");
+                await connection.SendCommandAsync(new SamCommand(new[] { "PING", _lastPingMessage }), cancellationToken);
             }
         }
         catch (OperationCanceledException e)
@@ -136,17 +129,17 @@ public sealed partial class SamBridge : AsyncDisposableBase
     {
         try
         {
-            using var mediator = new SamCommandMediator(_sessionSocket!);
+            using var connection = new SamConnection(_sessionSocket!);
 
             for (; ; )
             {
                 await Task.Delay(1000, cancellationToken);
 
-                var samCommand = await mediator.ReceiveCommandAsync(cancellationToken);
+                var samCommand = await connection.ReceiveCommandAsync(cancellationToken);
 
                 if (samCommand.Commands[0] == "PING")
                 {
-                    await mediator.SendCommandAsync(new SamCommand(new[] { "PONG", samCommand.Commands[1] }), cancellationToken);
+                    await connection.SendCommandAsync(new SamCommand(new[] { "PONG", samCommand.Commands[1] }), cancellationToken);
                 }
                 else if (samCommand.Commands[0] == "PONG")
                 {
@@ -182,7 +175,6 @@ public sealed partial class SamBridge : AsyncDisposableBase
                 try
                 {
                     socket = await SocketConnectAsync(new IPEndPoint(_ipAddress!, _port));
-                    if (socket is null) throw new SamBridgeException($"Failed to connect {_ipAddress}");
 
                     string destination = await this.InternalAcceptAsync(socket, cancellationToken);
                     _acceptResultPipe.Writer.TryWrite(new SamBridgeAcceptResult(socket, destination));
@@ -205,13 +197,13 @@ public sealed partial class SamBridge : AsyncDisposableBase
 
     private async ValueTask<string> InternalAcceptAsync(Socket socket, CancellationToken cancellationToken = default)
     {
-        using var mediator = new SamCommandMediator(socket!);
-        await mediator.HandshakeAsync(cancellationToken);
+        using var connection = new SamConnection(socket!);
+        await connection.HandshakeAsync(cancellationToken);
 
-        var destinationBase64 = await mediator.StreamAcceptAsync(_sessionId, cancellationToken);
-        if (destinationBase64 is null) throw new SamBridgeException($"Failed to Stream Accept {_ipAddress}");
+        var destination = await connection.StreamAcceptAsync(_sessionId, cancellationToken);
+        if (destination is null) throw new SamBridgeException($"Failed to Stream Accept {_ipAddress}");
 
-        var destinationBytes = I2pConverter.Base64.FromString(destinationBase64);
+        var destinationBytes = I2pConverter.Base64.FromString(destination);
         return I2pConverter.Base32Address.FromDestination(destinationBytes);
     }
 
@@ -230,21 +222,21 @@ public sealed partial class SamBridge : AsyncDisposableBase
         try
         {
             socket = new Socket(remoteEndPoint.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
-            socket.SendTimeout = 1000 * 10;
-            socket.ReceiveTimeout = 1000 * 10;
+            socket.SendTimeout = 60 * 1000;
+            socket.ReceiveTimeout = 60 * 1000;
             await socket.ConnectAsync(remoteEndPoint, cancellationToken);
 
             return socket;
         }
         catch (SocketException)
         {
-            if (socket != null) socket.Dispose();
+            socket?.Dispose();
 
             throw;
         }
     }
 
-    public async ValueTask<Socket> ConnectAsync(string destination, CancellationToken cancellationToken = default)
+    public async ValueTask<Socket> ConnectAsync(string base32Address, CancellationToken cancellationToken = default)
     {
         Socket? socket = null;
 
@@ -253,7 +245,7 @@ public sealed partial class SamBridge : AsyncDisposableBase
             socket = await SocketConnectAsync(new IPEndPoint(_ipAddress!, _port));
             if (socket is null) throw new SamBridgeException($"Failed to connect {_ipAddress}");
 
-            await this.InternalConnectAsync(socket, destination, cancellationToken);
+            await this.InternalConnectAsync(socket, base32Address, cancellationToken);
             return socket;
         }
         catch (Exception)
@@ -263,16 +255,17 @@ public sealed partial class SamBridge : AsyncDisposableBase
         }
     }
 
-    private async ValueTask<string> InternalConnectAsync(Socket socket, string destination, CancellationToken cancellationToken = default)
+    private async ValueTask<string> InternalConnectAsync(Socket socket, string base32Address, CancellationToken cancellationToken = default)
     {
-        using var mediator = new SamCommandMediator(socket);
-        await mediator.HandshakeAsync(cancellationToken);
+        using var connection = new SamConnection(socket);
 
-        var destinationBase64 = await mediator.NamingLookupAsync(destination, cancellationToken);
-        if (destinationBase64 is null) throw new SamBridgeException($"Failed to Naming Lookup {_ipAddress}");
-        await mediator.StreamConnectAsync(_sessionId, destinationBase64, cancellationToken);
+        await connection.HandshakeAsync(cancellationToken);
 
-        var destinationBytes = I2pConverter.Base64.FromString(destinationBase64);
+        var destination = await connection.NamingLookupAsync(base32Address, cancellationToken);
+
+        await connection.StreamConnectAsync(_sessionId, destination, cancellationToken);
+
+        var destinationBytes = I2pConverter.Base64.FromString(destination);
         return I2pConverter.Base32Address.FromDestination(destinationBytes);
     }
 
