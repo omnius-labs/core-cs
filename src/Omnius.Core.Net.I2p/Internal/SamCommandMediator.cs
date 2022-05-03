@@ -32,16 +32,16 @@ internal sealed class SamCommandMediator : DisposableBase
             commands.Add("HELLO");
             commands.Add("VERSION");
 
-            var parameters = new Dictionary<string, string?>();
+            var parameters = new Dictionary<string, string>();
             parameters.Add("MIN", "3.2");
             parameters.Add("MAX", "3.2");
 
             var samCommand = new SamCommand(commands, parameters);
-            await this.SendAsync(samCommand, cancellationToken);
+            await this.SendCommandAsync(samCommand, cancellationToken);
         }
 
         {
-            var (commands, parameters) = await this.ReceiveAsync(cancellationToken);
+            var (commands, parameters) = await this.ReceiveCommandAsync(cancellationToken);
 
             if (commands[0] != "HELLO" || commands[1] != "REPLY" || parameters["RESULT"] != "OK")
             {
@@ -57,7 +57,7 @@ internal sealed class SamCommandMediator : DisposableBase
             commands.Add("SESSION");
             commands.Add("CREATE");
 
-            var parameters = new Dictionary<string, string?>();
+            var parameters = new Dictionary<string, string>();
             parameters.Add("STYLE", "STREAM");
             parameters.Add("ID", sessionId);
             parameters.Add("DESTINATION", "TRANSIENT");
@@ -65,18 +65,25 @@ internal sealed class SamCommandMediator : DisposableBase
             parameters.Add("outbound.nickname", caption);
 
             var samCommand = new SamCommand(commands, parameters);
-            await this.SendAsync(samCommand, cancellationToken);
+            await this.SendCommandAsync(samCommand, cancellationToken);
         }
 
+        for (; ; )
         {
-            var (commands, parameters) = await this.ReceiveAsync(cancellationToken);
+            var (commands, parameters) = await this.ReceiveCommandAsync(cancellationToken);
 
-            if (commands[0] != "SESSION" || commands[1] != "STATUS")
+            if (commands[0] == "SESSION" && commands[1] == "STATUS" && parameters["RESULT"] == "OK")
+            {
+                return parameters["DESTINATION"];
+            }
+            else if (commands[0] == "PING")
+            {
+                await this.SendCommandAsync(new SamCommand(new[] { "PONG", commands[1] }), cancellationToken);
+            }
+            else
             {
                 throw new SamBridgeException($"Session Create failed because of {parameters["RESULT"]}");
             }
-
-            return parameters["DESTINATION"];
         }
     }
 
@@ -87,22 +94,29 @@ internal sealed class SamCommandMediator : DisposableBase
             commands.Add("NAMING");
             commands.Add("LOOKUP");
 
-            var parameters = new Dictionary<string, string?>();
+            var parameters = new Dictionary<string, string>();
             parameters.Add("NAME", name);
 
             var samCommand = new SamCommand(commands, parameters);
-            await this.SendAsync(samCommand, cancellationToken);
+            await this.SendCommandAsync(samCommand, cancellationToken);
         }
 
+        for (; ; )
         {
-            var (commands, parameters) = await this.ReceiveAsync(cancellationToken);
+            var (commands, parameters) = await this.ReceiveCommandAsync(cancellationToken);
 
-            if (commands[0] != "NAMING" || commands[1] != "REPLY" || parameters["RESULT"] != "OK")
+            if (commands[0] == "NAMING" && commands[1] == "REPLY" && parameters["RESULT"] == "OK")
+            {
+                return parameters["VALUE"];
+            }
+            else if (commands[0] == "PING")
+            {
+                await this.SendCommandAsync(new SamCommand(new[] { "PONG", commands[1] }), cancellationToken);
+            }
+            else
             {
                 throw new SamBridgeException($"Naming Lookup failed because of {parameters["RESULT"]}");
             }
-
-            return parameters["VALUE"];
         }
     }
 
@@ -113,19 +127,28 @@ internal sealed class SamCommandMediator : DisposableBase
             commands.Add("STREAM");
             commands.Add("CONNECT");
 
-            var parameters = new Dictionary<string, string?>();
+            var parameters = new Dictionary<string, string>();
             parameters.Add("ID", sessionId);
             parameters.Add("DESTINATION", destination);
             parameters.Add("SILENCE", "false");
 
             var samCommand = new SamCommand(commands, parameters);
-            await this.SendAsync(samCommand, cancellationToken);
+            await this.SendCommandAsync(samCommand, cancellationToken);
         }
 
+        for (; ; )
         {
-            var (commands, parameters) = await this.ReceiveAsync(cancellationToken);
+            var (commands, parameters) = await this.ReceiveCommandAsync(cancellationToken);
 
-            if (commands[0] != "STREAM" || commands[1] != "STATUS" || parameters["RESULT"] != "OK")
+            if (commands[0] == "STREAM" && commands[1] == "STATUS" && parameters["RESULT"] == "OK")
+            {
+                return;
+            }
+            else if (commands[0] == "PING")
+            {
+                await this.SendCommandAsync(new SamCommand(new[] { "PONG", commands[1] }), cancellationToken);
+            }
+            else
             {
                 throw new SamBridgeException($"Stream Connect failed because of {parameters["RESULT"]}");
             }
@@ -139,35 +162,42 @@ internal sealed class SamCommandMediator : DisposableBase
             commands.Add("STREAM");
             commands.Add("ACCEPT");
 
-            var parameters = new Dictionary<string, string?>();
+            var parameters = new Dictionary<string, string>();
             parameters.Add("ID", sessionId);
             parameters.Add("SILENCE", "false");
 
             var samCommand = new SamCommand(commands, parameters);
         }
 
+        for (; ; )
         {
-            var (commands, parameters) = await this.ReceiveAsync(cancellationToken);
+            var (commands, parameters) = await this.ReceiveCommandAsync(cancellationToken);
 
-            if (commands[0] != "STREAM" || commands[1] != "STATUS" || parameters["RESULT"] != "OK")
+            if (commands[0] == "STREAM" && commands[1] == "STATUS" && parameters["RESULT"] == "OK")
+            {
+                var line = await _reader.ReadLineAsync(cancellationToken);
+                if (line is null || line.Length <= 2) return null;
+
+                return line.Split(' ')[0];
+            }
+            else if (commands[0] == "PING")
+            {
+                await this.SendCommandAsync(new SamCommand(new[] { "PONG", commands[1] }), cancellationToken);
+            }
+            else
             {
                 throw new SamBridgeException($"Stream Accept failed because of {parameters["RESULT"]}");
             }
         }
-
-        var line = await _reader.ReadLineAsync(cancellationToken);
-        if (line is null || line.Length <= 2) return null;
-
-        return line.Split(' ')[0];
     }
 
-    private async ValueTask SendAsync(SamCommand samCommand, CancellationToken cancellationToken = default)
+    public async ValueTask SendCommandAsync(SamCommand samCommand, CancellationToken cancellationToken = default)
     {
         await _writer.WriteLineAsync(samCommand.ToString().ToCharArray(), cancellationToken);
-        _writer.Flush();
+        await _writer.FlushAsync();
     }
 
-    private async ValueTask<SamCommand> ReceiveAsync(CancellationToken cancellationToken = default)
+    public async ValueTask<SamCommand> ReceiveCommandAsync(CancellationToken cancellationToken = default)
     {
         var line = await _reader.ReadLineAsync(cancellationToken);
         if (line == null) return SamCommand.Empty;

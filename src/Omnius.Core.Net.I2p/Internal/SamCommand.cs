@@ -1,67 +1,109 @@
 using System.Collections.Immutable;
 using System.Text;
+using Omnius.Core.Helpers;
 
 namespace Omnius.Core.Net.I2p.Internal;
 
-internal sealed class SamCommand
+internal sealed class SamCommand : IEquatable<SamCommand>
 {
     private readonly ImmutableList<string> _commands;
-    private readonly ImmutableDictionary<string, string?> _parameters;
+    private readonly ImmutableDictionary<string, string> _parameters;
+    private readonly int _hashCode;
 
-    public static SamCommand Empty { get; } = new SamCommand(new string[] { }, new KeyValuePair<string, string?>[] { });
+    public static SamCommand Empty { get; } = new SamCommand(new string[] { }, new KeyValuePair<string, string>[] { });
 
-    public SamCommand(IEnumerable<string> commands, IEnumerable<KeyValuePair<string, string?>> parameters)
+    public SamCommand(IEnumerable<string> commands, IEnumerable<KeyValuePair<string, string>> parameters)
     {
         _commands = commands.ToImmutableList();
         _parameters = parameters.ToImmutableDictionary();
+
+        var hashCode = new HashCode();
+        foreach (var command in _commands)
+        {
+            hashCode.Add(command);
+        }
+        foreach (var parameter in _parameters)
+        {
+            hashCode.Add(parameter);
+        }
+        _hashCode = hashCode.ToHashCode();
     }
 
-    public void Deconstruct(out IReadOnlyList<string> commands, out IReadOnlyDictionary<string, string?> parameters)
+    public SamCommand(IEnumerable<string> commands, IEnumerable<ValueTuple<string, string>> parameters) : this(commands, parameters.Select(n => new KeyValuePair<string, string>(n.Item1, n.Item2)))
+    {
+    }
+
+    public SamCommand(IEnumerable<string> commands) : this(commands, Enumerable.Empty<KeyValuePair<string, string>>())
+    {
+    }
+
+    public void Deconstruct(out IReadOnlyList<string> commands, out IReadOnlyDictionary<string, string> parameters)
     {
         commands = this.Commands;
         parameters = this.Parameters;
     }
 
+    public override int GetHashCode() => _hashCode;
+
+    public override bool Equals(object? other) => this.Equals(other as SamCommand);
+
+    public bool Equals(SamCommand? other)
+    {
+        if (other is null) return false;
+        if (object.ReferenceEquals(this, other)) return true;
+        return CollectionHelper.Equals(this.Commands, other.Commands) && CollectionHelper.Equals(this.Parameters, other.Parameters);
+    }
+
     public IReadOnlyList<string> Commands => _commands;
 
-    public IReadOnlyDictionary<string, string?> Parameters => _parameters;
+    public IReadOnlyDictionary<string, string> Parameters => _parameters;
 
     public static SamCommand Parse(string input)
     {
-        var commands = new List<string>();
-        var parameters = new Dictionary<string, string?>();
-
         var lines = Decode(input);
-        commands.Add(lines[0]);
-        commands.Add(lines[1]);
 
-        foreach (string pair in lines.Skip(2))
+        if (lines.Length == 0)
         {
-            int equalsPosition = pair.IndexOf('=');
+            return SamCommand.Empty;
+        }
+        else if (lines.Length == 1)
+        {
+            return new SamCommand(new[] { lines[0] });
+        }
+        else if (lines.Length == 2)
+        {
+            return new SamCommand(new[] { lines[0], lines[1] });
+        }
+        else if (lines.Length >= 3)
+        {
+            var commands = new[] { lines[0], lines[1] };
+            var parameters = new Dictionary<string, string>();
 
-            string? key;
-            string? value;
-
-            if (equalsPosition == -1)
+            foreach (string pair in lines.Skip(2))
             {
-                key = pair;
-                value = null;
+                int equalsPosition = pair.IndexOf('=');
+
+                string key;
+                string value;
+
+                if (equalsPosition == -1)
+                {
+                    key = pair;
+                    value = string.Empty;
+                }
+                else
+                {
+                    key = pair.Substring(0, equalsPosition);
+                    value = pair.Substring(equalsPosition + 1);
+                }
+
+                parameters.Add(key, value);
             }
-            else
-            {
-                key = pair.Substring(0, equalsPosition);
-                value = pair.Substring(equalsPosition + 1);
-            }
 
-            key = !(string.IsNullOrWhiteSpace(key)) ? key : null;
-            value = !(string.IsNullOrWhiteSpace(value)) ? value : null;
-
-            if (key is null) continue;
-
-            parameters.Add(key, value);
+            return new SamCommand(commands, parameters);
         }
 
-        return new SamCommand(commands, parameters);
+        throw new FormatException();
     }
 
     private static string[] Decode(string input)

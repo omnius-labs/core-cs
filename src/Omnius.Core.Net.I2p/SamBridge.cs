@@ -1,7 +1,7 @@
 using System.Net;
 using System.Net.Sockets;
 using System.Security.Cryptography;
-using System.Text;
+using Omnius.Core.Helpers;
 using Omnius.Core.Net.I2p.Internal;
 using Omnius.Core.Pipelines;
 
@@ -64,11 +64,7 @@ public sealed partial class SamBridge : AsyncDisposableBase
             if (socket is null) throw new SamBridgeException($"Failed to connect {_ipAddress}");
 
             using var timeoutTokenSource = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
-            using var callbackRegister = timeoutTokenSource.Token.Register(() =>
-            {
-                socket.Shutdown(SocketShutdown.Both);
-                socket.Dispose();
-            });
+            using var callbackRegister = timeoutTokenSource.Token.Register(() => ExceptionHelper.TryCatch<ObjectDisposedException>(() => socket.Dispose()));
             timeoutTokenSource.CancelAfter(60 * 1000);
 
             _base32Address = await this.HandshakeAsync(socket, timeoutTokenSource.Token);
@@ -116,20 +112,14 @@ public sealed partial class SamBridge : AsyncDisposableBase
     {
         try
         {
-            using var stream = new NetworkStream(_sessionSocket!);
-            stream.ReadTimeout = 60 * 1000;
-            stream.WriteTimeout = 60 * 1000;
-
-            using var writer = new StreamWriter(stream, new UTF8Encoding(false), 1024 * 32);
-            writer.NewLine = "\n";
+            using var mediator = new SamCommandMediator(_sessionSocket!);
 
             for (; ; )
             {
                 await Task.Delay(1000 * 30, cancellationToken);
 
                 _lastPingMessage = I2pConverter.Base64.ToString(Random.Shared.GetBytes(32));
-                writer.WriteLine(string.Format("PING {0}", _lastPingMessage));
-                writer.Flush();
+                await mediator.SendCommandAsync(new SamCommand(new[] { "PING", _lastPingMessage }), cancellationToken);
             }
         }
         catch (OperationCanceledException e)
@@ -146,30 +136,25 @@ public sealed partial class SamBridge : AsyncDisposableBase
     {
         try
         {
-            var reader = new SocketLineReader(_sessionSocket!, new UTF8Encoding(false));
-
-            using var stream = new NetworkStream(_sessionSocket!);
-            stream.ReadTimeout = 60 * 1000;
-            stream.WriteTimeout = 60 * 1000;
-
-            using var writer = new StreamWriter(stream, new UTF8Encoding(false), 1024 * 32);
-            writer.NewLine = "\n";
+            using var mediator = new SamCommandMediator(_sessionSocket!);
 
             for (; ; )
             {
                 await Task.Delay(1000, cancellationToken);
 
-                var line = await reader.ReadLineAsync(cancellationToken);
-                if (line == null) break;
+                var samCommand = await mediator.ReceiveCommandAsync(cancellationToken);
 
-                if (line.StartsWith("PING"))
+                if (samCommand.Commands[0] == "PING")
                 {
-                    writer.WriteLine(string.Format("PONG {0}", line.Substring(5)));
-                    writer.Flush();
+                    await mediator.SendCommandAsync(new SamCommand(new[] { "PONG", samCommand.Commands[1] }), cancellationToken);
                 }
-                else if (line.StartsWith("PONG"))
+                else if (samCommand.Commands[0] == "PONG")
                 {
-                    if (_lastPingMessage != line.Substring(5)) break;
+                    if (samCommand.Commands[1] != _lastPingMessage)
+                    {
+                        _logger.Debug("Invalid PONG");
+                    }
+
                     _lastPingMessage = null;
                 }
             }
