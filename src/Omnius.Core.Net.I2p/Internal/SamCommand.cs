@@ -18,14 +18,17 @@ internal sealed class SamCommand : IEquatable<SamCommand>
         _parameters = parameters.ToImmutableDictionary();
 
         var hashCode = new HashCode();
+
         foreach (var command in _commands)
         {
             hashCode.Add(command);
         }
+
         foreach (var parameter in _parameters)
         {
             hashCode.Add(parameter);
         }
+
         _hashCode = hashCode.ToHashCode();
     }
 
