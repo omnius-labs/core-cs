@@ -8,8 +8,8 @@ namespace Omnius.Core.Net.I2p;
 
 public class SamBridgeTest
 {
-    //[Fact(Skip = "I2p is required")]
-    [Fact]
+    // [Fact]
+    [Fact(Skip = "I2p is required")]
     public async Task ConnectTest()
     {
         var random = new Random(0);
