@@ -92,10 +92,10 @@ public class VolatileHashSet<T> : DisposableBase, ISet<T>, ICollection<T>, IEnum
     {
         lock (_lockObject)
         {
-            if (!_map.TryGetValue(item, out var updateTime)) return _survivalInterval;
+            if (!_map.TryGetValue(item, out var updatedTime)) return _survivalInterval;
 
             var now = DateTime.UtcNow;
-            return (now - updateTime);
+            return (now - updatedTime);
         }
     }
 

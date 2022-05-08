@@ -61,7 +61,7 @@ public partial class VolatileListDictionary<TKey, TValue> : DisposableBase, IEnu
 
             foreach (var (key, entries) in _map)
             {
-                entries.RemoveAll(n => (now - n.UpdateTime) > _survivalInterval);
+                entries.RemoveAll(n => (now - n.UpdatedTime) > _survivalInterval);
 
                 if (entries.Count == 0)
                 {
@@ -240,12 +240,12 @@ public partial class VolatileListDictionary<TKey, TValue> : DisposableBase, IEnu
     internal readonly struct Entry<T>
     {
         public readonly T Value;
-        public readonly DateTime UpdateTime;
+        public readonly DateTime UpdatedTime;
 
-        public Entry(T value, DateTime updateTime)
+        public Entry(T value, DateTime updatedTime)
         {
             this.Value = value;
-            this.UpdateTime = updateTime;
+            this.UpdatedTime = updatedTime;
         }
     }
 }
