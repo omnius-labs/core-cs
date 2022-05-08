@@ -30,20 +30,20 @@ struct OmniHash {
 }
 
 message OmniAgreement {
-    CreationTime: timestamp,
+    CreatedTime: timestamp,
     AlgorithmType: OmniAgreementAlgorithmType,
     PublicKey: bytes(capacity: 8192),
     PrivateKey: bytes(capacity: 8192),
 }
 
 message OmniAgreementPublicKey {
-    CreationTime: timestamp,
+    CreatedTime: timestamp,
     AlgorithmType: OmniAgreementAlgorithmType,
     PublicKey: bytes(capacity: 8192),
 }
 
 message OmniAgreementPrivateKey {
-    CreationTime: timestamp,
+    CreatedTime: timestamp,
     AlgorithmType: OmniAgreementAlgorithmType,
     PrivateKey: bytes(capacity: 8192),
 }

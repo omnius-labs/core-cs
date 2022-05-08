@@ -7,13 +7,13 @@ public sealed partial class OmniAgreement
 {
     public static OmniAgreement Create(OmniAgreementAlgorithmType algorithmType)
     {
-        var creationTime = DateTime.UtcNow;
+        var createdTime = DateTime.UtcNow;
 
         if (algorithmType == OmniAgreementAlgorithmType.EcDh_P521_Sha2_256)
         {
             var (publicKey, privateKey) = EcDh_P521_Sha2_256.CreateKeys();
 
-            return new OmniAgreement(Timestamp.FromDateTime(creationTime), algorithmType, publicKey, privateKey);
+            return new OmniAgreement(Timestamp.FromDateTime(createdTime), algorithmType, publicKey, privateKey);
         }
 
         throw new NotSupportedException(nameof(algorithmType));
@@ -21,12 +21,12 @@ public sealed partial class OmniAgreement
 
     public OmniAgreementPublicKey GetOmniAgreementPublicKey()
     {
-        return new OmniAgreementPublicKey(this.CreationTime, this.AlgorithmType, this.PublicKey);
+        return new OmniAgreementPublicKey(this.CreatedTime, this.AlgorithmType, this.PublicKey);
     }
 
     public OmniAgreementPrivateKey GetOmniAgreementPrivateKey()
     {
-        return new OmniAgreementPrivateKey(this.CreationTime, this.AlgorithmType, this.PrivateKey);
+        return new OmniAgreementPrivateKey(this.CreatedTime, this.AlgorithmType, this.PrivateKey);
     }
 
     public static byte[] GetSecret(OmniAgreementPublicKey publicKey, OmniAgreementPrivateKey privateKey)

@@ -396,24 +396,24 @@ internal sealed partial class AuthenticationMessage : global::Omnius.Core.Rocket
 
     public static readonly int MaxHashLength = 32;
 
-    public AuthenticationMessage(global::Omnius.Core.RocketPack.Timestamp creationTime, global::System.ReadOnlyMemory<byte> hash, global::Omnius.Core.Cryptography.OmniCertificate? certificate)
+    public AuthenticationMessage(global::Omnius.Core.RocketPack.Timestamp createdTime, global::System.ReadOnlyMemory<byte> hash, global::Omnius.Core.Cryptography.OmniCertificate? certificate)
     {
         if (hash.Length > 32) throw new global::System.ArgumentOutOfRangeException("hash");
-        this.CreationTime = creationTime;
+        this.CreatedTime = createdTime;
         this.Hash = hash;
         this.Certificate = certificate;
 
         ___hashCode = new global::System.Lazy<int>(() =>
         {
             var ___h = new global::System.HashCode();
-            if (creationTime != default) ___h.Add(creationTime.GetHashCode());
+            if (createdTime != default) ___h.Add(createdTime.GetHashCode());
             if (!hash.IsEmpty) ___h.Add(global::Omnius.Core.Helpers.ObjectHelper.GetHashCode(hash.Span));
             if (certificate != default) ___h.Add(certificate.GetHashCode());
             return ___h.ToHashCode();
         });
     }
 
-    public global::Omnius.Core.RocketPack.Timestamp CreationTime { get; }
+    public global::Omnius.Core.RocketPack.Timestamp CreatedTime { get; }
     public global::System.ReadOnlyMemory<byte> Hash { get; }
     public global::Omnius.Core.Cryptography.OmniCertificate? Certificate { get; }
 
@@ -445,7 +445,7 @@ internal sealed partial class AuthenticationMessage : global::Omnius.Core.Rocket
     {
         if (target is null) return false;
         if (object.ReferenceEquals(this, target)) return true;
-        if (this.CreationTime != target.CreationTime) return false;
+        if (this.CreatedTime != target.CreatedTime) return false;
         if (!global::Omnius.Core.BytesOperations.Equals(this.Hash.Span, target.Hash.Span)) return false;
         if ((this.Certificate is null) != (target.Certificate is null)) return false;
         if ((this.Certificate is not null) && (target.Certificate is not null) && this.Certificate != target.Certificate) return false;
@@ -460,10 +460,10 @@ internal sealed partial class AuthenticationMessage : global::Omnius.Core.Rocket
         {
             if (rank > 256) throw new global::System.FormatException();
 
-            if (value.CreationTime != global::Omnius.Core.RocketPack.Timestamp.Zero)
+            if (value.CreatedTime != global::Omnius.Core.RocketPack.Timestamp.Zero)
             {
                 w.Write((uint)1);
-                w.Write(value.CreationTime);
+                w.Write(value.CreatedTime);
             }
             if (!value.Hash.IsEmpty)
             {
@@ -481,7 +481,7 @@ internal sealed partial class AuthenticationMessage : global::Omnius.Core.Rocket
         {
             if (rank > 256) throw new global::System.FormatException();
 
-            global::Omnius.Core.RocketPack.Timestamp p_creationTime = global::Omnius.Core.RocketPack.Timestamp.Zero;
+            global::Omnius.Core.RocketPack.Timestamp p_createdTime = global::Omnius.Core.RocketPack.Timestamp.Zero;
             global::System.ReadOnlyMemory<byte> p_hash = global::System.ReadOnlyMemory<byte>.Empty;
             global::Omnius.Core.Cryptography.OmniCertificate? p_certificate = null;
 
@@ -493,7 +493,7 @@ internal sealed partial class AuthenticationMessage : global::Omnius.Core.Rocket
                 {
                     case 1:
                         {
-                            p_creationTime = r.GetTimestamp();
+                            p_createdTime = r.GetTimestamp();
                             break;
                         }
                     case 2:
@@ -509,7 +509,7 @@ internal sealed partial class AuthenticationMessage : global::Omnius.Core.Rocket
                 }
             }
 
-            return new global::Omnius.Core.Net.Connections.Secure.V1.Internal.AuthenticationMessage(p_creationTime, p_hash, p_certificate);
+            return new global::Omnius.Core.Net.Connections.Secure.V1.Internal.AuthenticationMessage(p_createdTime, p_hash, p_certificate);
         }
     }
 }

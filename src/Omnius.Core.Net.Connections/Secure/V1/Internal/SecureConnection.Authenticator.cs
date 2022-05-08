@@ -64,7 +64,7 @@ public partial class SecureConnection
 
                 var myAuthenticationMessage = AuthenticationMessage.Create(DateTime.UtcNow, myHash, _digitalSignature);
                 var otherAuthenticationMessage = await this.ExchangeAuthenticationMessageAsync(myAuthenticationMessage, cancellationToken);
-                if ((DateTime.UtcNow - otherAuthenticationMessage.CreationTime.ToDateTime()) > TimeSpan.FromMinutes(30)) throw new NotSupportedException();
+                if ((DateTime.UtcNow - otherAuthenticationMessage.CreatedTime.ToDateTime()) > TimeSpan.FromMinutes(30)) throw new NotSupportedException();
                 if (!BytesOperations.Equals(otherAuthenticationMessage.Hash.Span, otherHash)) throw new NotSupportedException();
 
                 signature = otherAuthenticationMessage.Certificate?.GetOmniSignature();
@@ -179,7 +179,7 @@ public partial class SecureConnection
             await Task.WhenAll(enqueueTask, dequeueTask);
             var otherAgreementPublicKey = dequeueTask.Result;
             if (otherAgreementPublicKey is null) throw new NullReferenceException();
-            if ((DateTime.UtcNow - otherAgreementPublicKey.CreationTime.ToDateTime()).TotalMinutes > 30) throw new OmniSecureConnectionException("Agreement public key has Expired.");
+            if ((DateTime.UtcNow - otherAgreementPublicKey.CreatedTime.ToDateTime()).TotalMinutes > 30) throw new OmniSecureConnectionException("Agreement public key has Expired.");
 
             return otherAgreementPublicKey;
         }
