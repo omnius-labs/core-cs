@@ -26,6 +26,6 @@ public static class SingleValueStorageExtensions
         if (value is not IRocketMessage<TValue> rocketPackObject) throw new NotSupportedException();
         rocketPackObject.Export(bytesPipe.Writer, bytesPool);
 
-        return await storage.TryWriteAsync(bytesPipe.Reader.GetSequence(), cancellationToken);
+        return await storage.WriteAsync(bytesPipe.Reader.GetSequence(), cancellationToken);
     }
 }

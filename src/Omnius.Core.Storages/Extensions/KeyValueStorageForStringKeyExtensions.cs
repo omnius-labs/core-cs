@@ -1,4 +1,3 @@
-using System.Runtime.CompilerServices;
 using Omnius.Core.Pipelines;
 using Omnius.Core.RocketPack;
 
@@ -6,24 +5,7 @@ namespace Omnius.Core.Storages;
 
 public static class KeyValueStorageForStringKeyExtensions
 {
-    public static async IAsyncEnumerable<TValue> GetValuesAsync<TValue>(this IKeyValueStorage<string> storage, [EnumeratorCancellation] CancellationToken cancellationToken = default)
-        where TValue : IRocketMessage<TValue>
-    {
-        var bytesPool = BytesPool.Shared;
-        using var bytesPipe = new BytesPipe(bytesPool);
-
-        await foreach (var key in storage.GetKeysAsync(cancellationToken))
-        {
-            if (!await storage.TryReadAsync(key, bytesPipe.Writer, cancellationToken)) continue;
-
-            var value = IRocketMessage<TValue>.Import(bytesPipe.Reader.GetSequence(), bytesPool);
-            yield return value;
-
-            bytesPipe.Reset();
-        }
-    }
-
-    public static async ValueTask<TValue?> TryGetValueAsync<TValue>(this IKeyValueStorage<string> storage, string key, CancellationToken cancellationToken = default)
+    public static async ValueTask<TValue?> TryReadAsync<TValue>(this IKeyValueStorage<string> storage, string key, CancellationToken cancellationToken = default)
         where TValue : IRocketMessage<TValue>
     {
         var bytesPool = BytesPool.Shared;
@@ -35,7 +17,7 @@ public static class KeyValueStorageForStringKeyExtensions
         return value;
     }
 
-    public static async ValueTask<bool> TrySetValueAsync<TValue>(this IKeyValueStorage<string> storage, string key, TValue value, CancellationToken cancellationToken = default)
+    public static async ValueTask WriteAsync<TValue>(this IKeyValueStorage<string> storage, string key, TValue value, CancellationToken cancellationToken = default)
         where TValue : IRocketMessage<TValue>
     {
         var bytesPool = BytesPool.Shared;
@@ -44,6 +26,6 @@ public static class KeyValueStorageForStringKeyExtensions
         if (value is not IRocketMessage<TValue> rocketPackObject) throw new NotSupportedException();
         rocketPackObject.Export(bytesPipe.Writer, bytesPool);
 
-        return await storage.TryWriteAsync(key, bytesPipe.Reader.GetSequence(), cancellationToken);
+        await storage.WriteAsync(key, bytesPipe.Reader.GetSequence(), cancellationToken);
     }
 }

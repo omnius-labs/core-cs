@@ -26,7 +26,7 @@ public sealed class KeyValueLiteDatabaseStorage<TKey> : DisposableBase, IKeyValu
     private readonly IBytesPool _bytesPool;
     private readonly LiteDatabase _database;
 
-    private readonly AsyncLock _asyncLock = new();
+    private readonly Nito.AsyncEx.AsyncReaderWriterLock _asyncLock = new();
 
     internal KeyValueLiteDatabaseStorage(string dirPath, IBytesPool bytesPool)
     {
@@ -45,11 +45,11 @@ public sealed class KeyValueLiteDatabaseStorage<TKey> : DisposableBase, IKeyValu
 
     public async ValueTask MigrateAsync(CancellationToken cancellationToken = default)
     {
-        using (await _asyncLock.LockAsync(cancellationToken))
+        using (await _asyncLock.WriterLockAsync(cancellationToken))
         {
             if (_database.UserVersion <= 0)
             {
-                var col = this.GetCollection();
+                var col = this.GetLinkCollection();
                 col.EnsureIndex(n => n.Key, true);
 
                 _database.UserVersion = 1;
@@ -59,7 +59,7 @@ public sealed class KeyValueLiteDatabaseStorage<TKey> : DisposableBase, IKeyValu
 
     public async ValueTask RebuildAsync(CancellationToken cancellationToken = default)
     {
-        using (await _asyncLock.LockAsync(cancellationToken))
+        using (await _asyncLock.WriterLockAsync(cancellationToken))
         {
             _database.Rebuild();
         }
@@ -71,26 +71,25 @@ public sealed class KeyValueLiteDatabaseStorage<TKey> : DisposableBase, IKeyValu
         return storage;
     }
 
-    private ILiteCollection<BlockLink> GetCollection()
+    private ILiteCollection<Link> GetLinkCollection()
     {
-        var col = _database.GetCollection<BlockLink>("block_links");
+        var col = _database.GetCollection<Link>("links");
         return col;
     }
 
     public async ValueTask<bool> TryChangeKeyAsync(TKey oldKey, TKey newKey, CancellationToken cancellationToken = default)
     {
-        using (await _asyncLock.LockAsync(cancellationToken))
+        using (await _asyncLock.WriterLockAsync(cancellationToken))
         {
-            var col = this.GetCollection();
+            var links = this.GetLinkCollection();
+            if (links.Exists(Query.EQ("Key", new BsonValue(newKey)))) return false;
 
-            if (col.Exists(Query.EQ("Key", new BsonValue(newKey)))) return false;
+            var link = links.FindOne(Query.EQ("Key", new BsonValue(oldKey)));
+            if (link is null) return false;
 
-            var meta = col.FindOne(Query.EQ("Key", new BsonValue(oldKey)));
-            if (meta is null) return false;
+            link.Key = newKey;
 
-            meta.Key = newKey;
-
-            col.Update(meta);
+            links.Update(link);
 
             return true;
         }
@@ -98,20 +97,20 @@ public sealed class KeyValueLiteDatabaseStorage<TKey> : DisposableBase, IKeyValu
 
     public async ValueTask<bool> ContainsKeyAsync(TKey key, CancellationToken cancellationToken = default)
     {
-        using (await _asyncLock.LockAsync(cancellationToken))
+        using (await _asyncLock.ReaderLockAsync(cancellationToken))
         {
-            var col = this.GetCollection();
-            return col.Exists(Query.EQ("Key", new BsonValue(key)));
+            var links = this.GetLinkCollection();
+            return links.Exists(Query.EQ("Key", new BsonValue(key)));
         }
     }
 
     public async IAsyncEnumerable<TKey> GetKeysAsync([EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
-        using (await _asyncLock.LockAsync(cancellationToken))
+        using (await _asyncLock.ReaderLockAsync(cancellationToken))
         {
-            var col = this.GetCollection();
+            var links = this.GetLinkCollection();
 
-            foreach (var key in col.FindAll().Select(n => n.Key).ToArray())
+            foreach (var key in links.FindAll().Select(n => n.Key))
             {
                 yield return key;
             }
@@ -120,20 +119,20 @@ public sealed class KeyValueLiteDatabaseStorage<TKey> : DisposableBase, IKeyValu
 
     public async ValueTask<IMemoryOwner<byte>?> TryReadAsync(TKey key, CancellationToken cancellationToken = default)
     {
-        using (await _asyncLock.LockAsync(cancellationToken))
+        using (await _asyncLock.ReaderLockAsync(cancellationToken))
         {
-            var col = this.GetCollection();
-            var meta = col.FindOne(Query.EQ("Key", new BsonValue(key)));
-            if (meta is null) return null;
+            var links = this.GetLinkCollection();
+            var link = links.FindOne(Query.EQ("Key", new BsonValue(key)));
+            if (link is null) return null;
 
             var storage = this.GetStorage();
-            if (!storage.Exists(meta.Id))
+            if (!storage.Exists(link.Id))
             {
-                col.Delete(meta.Id);
+                links.Delete(link.Id);
                 return null;
             }
 
-            using var liteFileStream = storage.OpenRead(meta.Id);
+            using var liteFileStream = storage.OpenRead(link.Id);
 
             var memoryOwner = _bytesPool.Memory.Rent((int)liteFileStream.Length).Shrink((int)liteFileStream.Length);
 
@@ -148,20 +147,20 @@ public sealed class KeyValueLiteDatabaseStorage<TKey> : DisposableBase, IKeyValu
 
     public async ValueTask<bool> TryReadAsync(TKey key, IBufferWriter<byte> bufferWriter, CancellationToken cancellationToken = default)
     {
-        using (await _asyncLock.LockAsync(cancellationToken))
+        using (await _asyncLock.ReaderLockAsync(cancellationToken))
         {
-            var col = this.GetCollection();
-            var meta = col.FindOne(Query.EQ("Key", new BsonValue(key)));
-            if (meta is null) return false;
+            var links = this.GetLinkCollection();
+            var link = links.FindOne(Query.EQ("Key", new BsonValue(key)));
+            if (link is null) return false;
 
             var storage = this.GetStorage();
-            if (!storage.Exists(meta.Id))
+            if (!storage.Exists(link.Id))
             {
-                col.Delete(meta.Id);
+                links.Delete(link.Id);
                 return false;
             }
 
-            using var liteFileStream = storage.OpenRead(meta.Id);
+            using var liteFileStream = storage.OpenRead(link.Id);
 
             while (liteFileStream.Position < liteFileStream.Length)
             {
@@ -173,14 +172,14 @@ public sealed class KeyValueLiteDatabaseStorage<TKey> : DisposableBase, IKeyValu
         }
     }
 
-    public async ValueTask<bool> TryWriteAsync(TKey key, ReadOnlySequence<byte> sequence, CancellationToken cancellationToken = default)
+    public async ValueTask WriteAsync(TKey key, ReadOnlySequence<byte> sequence, CancellationToken cancellationToken = default)
     {
-        using (await _asyncLock.LockAsync(cancellationToken))
+        using (await _asyncLock.ReaderLockAsync(cancellationToken))
         {
-            var col = this.GetCollection();
-            if (col.Exists(Query.EQ("Key", new BsonValue(key)))) return false;
+            var links = this.GetLinkCollection();
+            if (links.Exists(Query.EQ("Key", new BsonValue(key)))) return;
 
-            var id = col.Insert(new BlockLink() { Key = key }).AsInt64;
+            var id = links.Insert(new Link() { Key = key }).AsInt64;
 
             var storage = this.GetStorage();
             using var liteFileStream = storage.OpenWrite(id, "-");
@@ -189,32 +188,30 @@ public sealed class KeyValueLiteDatabaseStorage<TKey> : DisposableBase, IKeyValu
             {
                 liteFileStream.Write(memory.Span);
             }
-
-            return true;
         }
     }
 
-    public async ValueTask<bool> TryWriteAsync(TKey key, ReadOnlyMemory<byte> memory, CancellationToken cancellationToken = default)
+    public async ValueTask WriteAsync(TKey key, ReadOnlyMemory<byte> memory, CancellationToken cancellationToken = default)
     {
-        return await this.TryWriteAsync(key, new ReadOnlySequence<byte>(memory), cancellationToken);
+        await this.WriteAsync(key, new ReadOnlySequence<byte>(memory), cancellationToken);
     }
 
     public async ValueTask<bool> TryDeleteAsync(TKey key, CancellationToken cancellationToken = default)
     {
-        using (await _asyncLock.LockAsync(cancellationToken))
+        using (await _asyncLock.ReaderLockAsync(cancellationToken))
         {
-            var col = this.GetCollection();
-            var meta = col.FindOne(Query.EQ("Key", new BsonValue(key)));
-            if (meta is null) return false;
+            var links = this.GetLinkCollection();
+            var link = links.FindOne(Query.EQ("Key", new BsonValue(key)));
+            if (link is null) return false;
 
             var storage = this.GetStorage();
-            storage.Delete(meta.Id);
+            storage.Delete(link.Id);
 
-            return col.Delete(meta.Id);
+            return links.Delete(link.Id);
         }
     }
 
-    private sealed class BlockLink
+    private sealed class Link
     {
         public long Id { get; set; }
 

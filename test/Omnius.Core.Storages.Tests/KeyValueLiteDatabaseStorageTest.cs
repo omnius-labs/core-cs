@@ -15,15 +15,15 @@ public class KeyValueLiteDatabaseStorageTest
         await storage.RebuildAsync();
 
         var m1 = new TestMessage("aaa");
-        await storage.TrySetValueAsync("a", m1);
+        await storage.WriteAsync("a", m1);
 
-        var m2 = await storage.TryGetValueAsync<TestMessage>("a");
+        var m2 = await storage.TryReadAsync<TestMessage>("a");
 
         Assert.Equal(m1, m2);
 
         await storage.TryChangeKeyAsync("a", "b");
 
-        var m3 = await storage.TryGetValueAsync<TestMessage>("b");
+        var m3 = await storage.TryReadAsync<TestMessage>("b");
 
         Assert.Equal(m1, m3);
     }
