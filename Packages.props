@@ -22,6 +22,7 @@
     <PackageReference Update="YamlDotNet" Version="11.2.1" />
     <PackageReference Update="YamlDotNet" Version="11.2.1" />
     <PackageReference Update="Nito.AsyncEx" Version="5.1.2" />
+    <PackageReference Update="Avalonia.AvaloniaEdit" Version="0.10.12.2" />
   </ItemGroup>
 
   <ItemGroup>
