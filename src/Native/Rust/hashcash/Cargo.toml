@@ -2,11 +2,14 @@
 name = "hashcash"
 version = "0.1.0"
 authors = ["lyrise"]
-edition = "2018"
+edition = "2021"
 
 [dependencies]
-base64 = "0.10.1"
-clap = "2.33.0"
-xorshift = "0.1.3"
-time = "0.1.42"
-ring = "0.16.9"
+base64 = "0.13.0"
+clap = "3.2.6"
+rand_xoshiro = "0.6.0"
+time = "0.3.11"
+ring = "0.16.20"
+rand = "0.8.5"
+anyhow = "1.0.58"
+sha2 = "0.10.2"

@@ -1,15 +1,15 @@
 use clap::{App, Arg};
-use ring::digest::*;
+use rand::RngCore;
+use rand_xoshiro::rand_core::SeedableRng;
+use rand_xoshiro::Xoshiro256StarStar;
+use sha2::{Digest, Sha256};
 use std::process;
 use std::sync::{Arc, Mutex};
 use std::thread;
 use std::time::{Duration, Instant};
-use time;
-use xorshift::{Rand, Rng, SeedableRng, SplitMix64, Xorshift1024};
 
-fn simple_sha2_256(value: &[u8]) {
-    let mut sm: SplitMix64 = SeedableRng::from_seed(time::precise_time_ns());
-    let mut rng: Xorshift1024 = Rand::rand(&mut sm);
+fn simple_sha2_256(value: &[u8]) -> anyhow::Result<()> {
+    let mut rng = Xoshiro256StarStar::from_rng(rand::thread_rng())?;
 
     let buffer: &mut [u8] = &mut [0; 64];
     buffer[32..].copy_from_slice(value);
@@ -22,11 +22,13 @@ fn simple_sha2_256(value: &[u8]) {
         buffer[16..24].copy_from_slice(&rng.next_u64().to_ne_bytes());
         buffer[24..32].copy_from_slice(&rng.next_u64().to_ne_bytes());
 
-        let result = digest(&SHA256, &buffer);
+        let mut hasher = Sha256::new();
+        hasher.update(&buffer);
+        let result = hasher.finalize();
 
         let mut current_difficulty: u32 = 0;
 
-        for element in result.as_ref() {
+        for element in result {
             let zeros = element.leading_zeros();
             current_difficulty += zeros;
 
@@ -42,7 +44,7 @@ fn simple_sha2_256(value: &[u8]) {
     }
 }
 
-fn main() {
+fn main() -> anyhow::Result<()> {
     {
         let matches = App::new("Hashcash")
             .version("1.0")
@@ -66,9 +68,7 @@ fn main() {
         let value = base64::decode(matches.value_of("value").unwrap()).unwrap();
 
         if hashcash_type == "simple_sha2_256" {
-            thread::spawn(move || {
-                simple_sha2_256(value.as_slice());
-            });
+            thread::spawn(move || simple_sha2_256(value.as_slice()));
         } else {
             println!("Incorrect type <{}>", hashcash_type);
             process::exit(1);
@@ -110,4 +110,6 @@ fn main() {
             .unwrap();
         }
     }
+
+    Ok(())
 }
