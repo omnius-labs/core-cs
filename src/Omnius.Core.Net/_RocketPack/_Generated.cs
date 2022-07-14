@@ -11,14 +11,14 @@ public sealed partial class OmniAddress : global::Omnius.Core.RocketPack.IRocket
     static OmniAddress()
     {
         global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.Net.OmniAddress>.Formatter = new ___CustomFormatter();
-        global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.Net.OmniAddress>.Empty = new global::Omnius.Core.Net.OmniAddress(string.Empty);
+        global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.Net.OmniAddress>.Empty = new global::Omnius.Core.Net.OmniAddress(global::Omnius.Core.RocketPack.Utf8Array.Empty);
     }
 
     private readonly global::System.Lazy<int> ___hashCode;
 
     public static readonly int MaxValueLength = 8192;
 
-    public OmniAddress(string value)
+    public OmniAddress(global::Omnius.Core.RocketPack.Utf8Array value)
     {
         if (value is null) throw new global::System.ArgumentNullException("value");
         if (value.Length > 8192) throw new global::System.ArgumentOutOfRangeException("value");
@@ -28,12 +28,12 @@ public sealed partial class OmniAddress : global::Omnius.Core.RocketPack.IRocket
         ___hashCode = new global::System.Lazy<int>(() =>
         {
             var ___h = new global::System.HashCode();
-            if (value != default) ___h.Add(value.GetHashCode());
+            if (!value.IsEmpty) ___h.Add(value.GetHashCode());
             return ___h.ToHashCode();
         });
     }
 
-    public string Value { get; }
+    public global::Omnius.Core.RocketPack.Utf8Array Value { get; }
 
     public static global::Omnius.Core.Net.OmniAddress Import(global::System.Buffers.ReadOnlySequence<byte> sequence, global::Omnius.Core.IBytesPool bytesPool)
     {
@@ -75,7 +75,7 @@ public sealed partial class OmniAddress : global::Omnius.Core.RocketPack.IRocket
         {
             if (rank > 256) throw new global::System.FormatException();
 
-            if (value.Value != string.Empty)
+            if (value.Value != global::Omnius.Core.RocketPack.Utf8Array.Empty)
             {
                 w.Write((uint)1);
                 w.Write(value.Value);
@@ -86,7 +86,7 @@ public sealed partial class OmniAddress : global::Omnius.Core.RocketPack.IRocket
         {
             if (rank > 256) throw new global::System.FormatException();
 
-            string p_value = string.Empty;
+            global::Omnius.Core.RocketPack.Utf8Array p_value = global::Omnius.Core.RocketPack.Utf8Array.Empty;
 
             for (; ; )
             {

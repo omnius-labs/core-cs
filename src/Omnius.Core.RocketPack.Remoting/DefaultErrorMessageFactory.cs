@@ -6,6 +6,6 @@ public class DefaultErrorMessageFactory : IErrorMessageFactory<DefaultErrorMessa
 
     public DefaultErrorMessage Create(Exception e)
     {
-        return new DefaultErrorMessage(e.GetType()?.FullName ?? string.Empty, e.Message, e.StackTrace);
+        return new DefaultErrorMessage(e.GetType()?.FullName ?? string.Empty, e.Message, e.StackTrace ?? string.Empty);
     }
 }

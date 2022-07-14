@@ -486,8 +486,16 @@ internal partial class CodeGenerator
                 case FloatType:
                     b.WriteLine($"if ({parameterName} != default) {hashCodeName}.Add({parameterName}.GetHashCode());");
                     break;
-                case StringType:
-                    b.WriteLine($"if ({parameterName} != default) {hashCodeName}.Add({parameterName}.GetHashCode());");
+                case StringType stringType:
+                    if (!stringType.IsOptional)
+                    {
+                        b.WriteLine($"if (!{parameterName}.IsEmpty) {hashCodeName}.Add({parameterName}.GetHashCode());");
+                    }
+                    else
+                    {
+                        b.WriteLine($"if ({parameterName} is not null && !{parameterName}.IsEmpty) {hashCodeName}.Add({parameterName}.GetHashCode());");
+                    }
+
                     break;
                 case TimestampType:
                     b.WriteLine($"if ({parameterName} != default) {hashCodeName}.Add({parameterName}.GetHashCode());");
@@ -1079,11 +1087,11 @@ internal partial class CodeGenerator
                 case BoolType:
                     b.WriteLine($"{name} = r.GetBoolean();");
                     break;
-                case IntType inttype when (!inttype.IsSigned):
-                    b.WriteLine($"{name} = r.GetUInt{inttype.Size}();");
+                case IntType intType when (!intType.IsSigned):
+                    b.WriteLine($"{name} = r.GetUInt{intType.Size}();");
                     break;
-                case IntType inttype when (inttype.IsSigned):
-                    b.WriteLine($"{name} = r.GetInt{inttype.Size}();");
+                case IntType intType when (intType.IsSigned):
+                    b.WriteLine($"{name} = r.GetInt{intType.Size}();");
                     break;
                 case FloatType floatType when (floatType.Size == 32):
                     b.WriteLine($"{name} = r.GetFloat32();");
@@ -1147,10 +1155,10 @@ internal partial class CodeGenerator
                         case EnumDefinition enumInfo:
                             switch (enumInfo.Type)
                             {
-                                case IntType inttype when (inttype.IsSigned):
+                                case IntType intType when (intType.IsSigned):
                                     b.WriteLine($"{name} = ({enumInfo.CSharpFullName})r.GetInt64();");
                                     break;
-                                case IntType inttype when (!inttype.IsSigned):
+                                case IntType intType when (!intType.IsSigned):
                                     b.WriteLine($"{name} = ({enumInfo.CSharpFullName})r.GetUInt64();");
                                     break;
                             }
@@ -1398,11 +1406,11 @@ internal partial class CodeGenerator
                 case BoolType:
                     b.WriteLine($"{name} = r.GetBoolean();");
                     break;
-                case IntType inttype when (!inttype.IsSigned):
-                    b.WriteLine($"{name} = r.GetUInt{inttype.Size}();");
+                case IntType intType when (!intType.IsSigned):
+                    b.WriteLine($"{name} = r.GetUInt{intType.Size}();");
                     break;
-                case IntType inttype when (inttype.IsSigned):
-                    b.WriteLine($"{name} = r.GetInt{inttype.Size}();");
+                case IntType intType when (intType.IsSigned):
+                    b.WriteLine($"{name} = r.GetInt{intType.Size}();");
                     break;
                 case FloatType floatType when (floatType.Size == 32):
                     b.WriteLine($"{name} = r.GetFloat32();");
@@ -1466,10 +1474,10 @@ internal partial class CodeGenerator
                         case EnumDefinition enumInfo:
                             switch (enumInfo.Type)
                             {
-                                case IntType inttype when (inttype.IsSigned):
+                                case IntType intType when (intType.IsSigned):
                                     b.WriteLine($"{name} = ({enumInfo.CSharpFullName})r.GetInt64();");
                                     break;
-                                case IntType inttype when (!inttype.IsSigned):
+                                case IntType intType when (!intType.IsSigned):
                                     b.WriteLine($"{name} = ({enumInfo.CSharpFullName})r.GetUInt64();");
                                     break;
                             }
@@ -1541,7 +1549,7 @@ internal partial class CodeGenerator
                 case StringType type:
                     if (!type.IsOptional)
                     {
-                        sb.Append($"value.{element.Name} != string.Empty)");
+                        sb.Append($"value.{element.Name} != {GenerateTypeFullName("Utf8Array")}.Empty)");
                     }
                     else
                     {
@@ -1747,7 +1755,7 @@ internal partial class CodeGenerator
                 IntType type when (type.IsSigned && type.Size == 64) => "long" + (type.IsOptional ? "?" : ""),
                 FloatType type when (type.Size == 32) => "float" + (type.IsOptional ? "?" : ""),
                 FloatType type when (type.Size == 64) => "double" + (type.IsOptional ? "?" : ""),
-                StringType type => "string" + (type.IsOptional ? "?" : ""),
+                StringType type => GenerateTypeFullName("Utf8Array") + (type.IsOptional ? "?" : ""),
                 TimestampType type => GenerateTypeFullName("Timestamp") + (type.IsOptional ? "?" : ""),
                 BytesType type when (type.IsUseMemoryPool) => GenerateTypeFullName("IMemoryOwner<>", "byte") + (type.IsOptional ? "?" : ""),
                 BytesType type when (!type.IsUseMemoryPool) => GenerateTypeFullName("ReadOnlyMemory<>", "byte") + (type.IsOptional ? "?" : ""),
@@ -1772,7 +1780,7 @@ internal partial class CodeGenerator
                 IntType type => type.IsOptional ? "null" : "0",
                 FloatType type when (type.Size == 32) => type.IsOptional ? "null" : "0.0F",
                 FloatType type when (type.Size == 64) => type.IsOptional ? "null" : "0.0D",
-                StringType type => type.IsOptional ? "null" : "string.Empty",
+                StringType type => type.IsOptional ? "null" : GenerateTypeFullName("Utf8Array") + ".Empty",
                 TimestampType type => type.IsOptional ? "null" : GenerateTypeFullName("Timestamp") + ".Zero",
                 BytesType type when (!type.IsUseMemoryPool) => type.IsOptional ? "null" : GenerateTypeFullName("ReadOnlyMemory<>", "byte") + ".Empty",
                 BytesType type when (type.IsUseMemoryPool) => type.IsOptional ? "null" : GenerateTypeFullName("MemoryOwner<>", "byte") + ".Empty",

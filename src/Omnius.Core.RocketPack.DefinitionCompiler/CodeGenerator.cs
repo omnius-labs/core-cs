@@ -63,6 +63,7 @@ internal partial class CodeGenerator
     {
         var result = name switch
         {
+            "Utf8Array" => "Omnius.Core.RocketPack.Utf8Array",
             "ArgumentNullException" => "System.ArgumentNullException",
             "ArgumentOutOfRangeException" => "System.ArgumentOutOfRangeException",
             "Array" => "System.Array",

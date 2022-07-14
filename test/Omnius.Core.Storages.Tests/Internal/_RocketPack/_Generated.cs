@@ -11,14 +11,14 @@ internal readonly partial struct TestMessage : global::Omnius.Core.RocketPack.IR
     static TestMessage()
     {
         global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.Storages.Tests.Internal.TestMessage>.Formatter = new ___CustomFormatter();
-        global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.Storages.Tests.Internal.TestMessage>.Empty = new global::Omnius.Core.Storages.Tests.Internal.TestMessage(string.Empty);
+        global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.Storages.Tests.Internal.TestMessage>.Empty = new global::Omnius.Core.Storages.Tests.Internal.TestMessage(global::Omnius.Core.RocketPack.Utf8Array.Empty);
     }
 
     private readonly int ___hashCode;
 
     public static readonly int MaxCommentLength = 2147483647;
 
-    public TestMessage(string comment)
+    public TestMessage(global::Omnius.Core.RocketPack.Utf8Array comment)
     {
         if (comment is null) throw new global::System.ArgumentNullException("comment");
         if (comment.Length > 2147483647) throw new global::System.ArgumentOutOfRangeException("comment");
@@ -27,12 +27,12 @@ internal readonly partial struct TestMessage : global::Omnius.Core.RocketPack.IR
 
         {
             var ___h = new global::System.HashCode();
-            if (comment != default) ___h.Add(comment.GetHashCode());
+            if (!comment.IsEmpty) ___h.Add(comment.GetHashCode());
             ___hashCode = ___h.ToHashCode();
         }
     }
 
-    public string Comment { get; }
+    public global::Omnius.Core.RocketPack.Utf8Array Comment { get; }
 
     public static global::Omnius.Core.Storages.Tests.Internal.TestMessage Import(global::System.Buffers.ReadOnlySequence<byte> sequence, global::Omnius.Core.IBytesPool bytesPool)
     {
@@ -78,7 +78,7 @@ internal readonly partial struct TestMessage : global::Omnius.Core.RocketPack.IR
         {
             if (rank > 256) throw new global::System.FormatException();
 
-            string p_comment = string.Empty;
+            global::Omnius.Core.RocketPack.Utf8Array p_comment = global::Omnius.Core.RocketPack.Utf8Array.Empty;
 
             {
                 p_comment = r.GetString(2147483647);

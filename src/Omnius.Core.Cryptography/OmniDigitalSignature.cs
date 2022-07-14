@@ -1,6 +1,7 @@
 using System.Buffers;
 using Omnius.Core.Cryptography.Functions;
 using Omnius.Core.Cryptography.Internal;
+using Omnius.Core.RocketPack;
 
 namespace Omnius.Core.Cryptography;
 
@@ -8,7 +9,7 @@ public sealed partial class OmniDigitalSignature
 {
     private OmniSignature? _signature;
 
-    public static OmniDigitalSignature Create(string name, OmniDigitalSignatureAlgorithmType algorithmType)
+    public static OmniDigitalSignature Create(Utf8Array name, OmniDigitalSignatureAlgorithmType algorithmType)
     {
         if (algorithmType == OmniDigitalSignatureAlgorithmType.EcDsa_P521_Sha2_256)
         {

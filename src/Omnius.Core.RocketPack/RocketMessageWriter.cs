@@ -22,15 +22,10 @@ public ref struct RocketMessageWriter
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void Write(in string value)
+    public void Write(in Utf8Array value)
     {
-        using (var memoryOwner = _bytesPool.Memory.Rent(_encoding.Value.GetMaxByteCount(value.Length)))
-        {
-            int length = _encoding.Value.GetBytes(value.AsSpan(), memoryOwner.Memory.Span);
-            Varint.SetUInt32((uint)length, _bufferWriter);
-
-            _bufferWriter.Write(memoryOwner.Memory.Span[..length]);
-        }
+        Varint.SetUInt32((uint)value.Length, _bufferWriter);
+        _bufferWriter.Write(value.Span);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]

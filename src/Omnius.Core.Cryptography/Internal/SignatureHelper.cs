@@ -9,10 +9,8 @@ internal static class SignatureHelper
 {
     private static readonly ThreadLocal<Encoding> _encoding = new ThreadLocal<Encoding>(() => new UTF8Encoding(false));
 
-    private static OmniHash CreateOmniHash(string name, ReadOnlySpan<byte> publicKey, OmniHashAlgorithmType hashAlgorithmType)
+    private static OmniHash CreateOmniHash(Utf8Array name, ReadOnlySpan<byte> publicKey, OmniHashAlgorithmType hashAlgorithmType)
     {
-        if (name == null) throw new ArgumentNullException(nameof(name));
-
         using var bytesPipe = new BytesPipe();
         {
             var writer = new RocketMessageWriter(bytesPipe.Writer, BytesPool.Shared);
@@ -36,7 +34,6 @@ internal static class SignatureHelper
     public static OmniSignature GetOmniSignature(OmniDigitalSignature digitalSignature)
     {
         if (digitalSignature is null) throw new ArgumentNullException(nameof(digitalSignature));
-        if (digitalSignature.Name == null) throw new ArgumentNullException(nameof(digitalSignature.Name));
 
         if (digitalSignature.AlgorithmType == OmniDigitalSignatureAlgorithmType.EcDsa_P521_Sha2_256)
         {
@@ -51,7 +48,6 @@ internal static class SignatureHelper
     public static OmniSignature GetOmniSignature(OmniCertificate certificate)
     {
         if (certificate is null) throw new ArgumentNullException(nameof(certificate));
-        if (certificate.Name == null) throw new ArgumentNullException(nameof(certificate.Name));
 
         if (certificate.AlgorithmType == OmniDigitalSignatureAlgorithmType.EcDsa_P521_Sha2_256)
         {
