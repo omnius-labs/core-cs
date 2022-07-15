@@ -22,7 +22,7 @@ public ref struct RocketMessageWriter
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void Write(in Utf8Array value)
+    public void Write(in Utf8String value)
     {
         Varint.SetUInt32((uint)value.Length, _bufferWriter);
         _bufferWriter.Write(value.Span);

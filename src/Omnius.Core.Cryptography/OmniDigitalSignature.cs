@@ -9,7 +9,7 @@ public sealed partial class OmniDigitalSignature
 {
     private OmniSignature? _signature;
 
-    public static OmniDigitalSignature Create(Utf8Array name, OmniDigitalSignatureAlgorithmType algorithmType)
+    public static OmniDigitalSignature Create(Utf8String name, OmniDigitalSignatureAlgorithmType algorithmType)
     {
         if (algorithmType == OmniDigitalSignatureAlgorithmType.EcDsa_P521_Sha2_256)
         {

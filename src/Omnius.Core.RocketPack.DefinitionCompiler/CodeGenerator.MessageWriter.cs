@@ -1549,7 +1549,7 @@ internal partial class CodeGenerator
                 case StringType type:
                     if (!type.IsOptional)
                     {
-                        sb.Append($"value.{element.Name} != {GenerateTypeFullName("Utf8Array")}.Empty)");
+                        sb.Append($"value.{element.Name} != {GenerateTypeFullName("Utf8String")}.Empty)");
                     }
                     else
                     {
@@ -1755,7 +1755,7 @@ internal partial class CodeGenerator
                 IntType type when (type.IsSigned && type.Size == 64) => "long" + (type.IsOptional ? "?" : ""),
                 FloatType type when (type.Size == 32) => "float" + (type.IsOptional ? "?" : ""),
                 FloatType type when (type.Size == 64) => "double" + (type.IsOptional ? "?" : ""),
-                StringType type => GenerateTypeFullName("Utf8Array") + (type.IsOptional ? "?" : ""),
+                StringType type => GenerateTypeFullName("Utf8String") + (type.IsOptional ? "?" : ""),
                 TimestampType type => GenerateTypeFullName("Timestamp") + (type.IsOptional ? "?" : ""),
                 BytesType type when (type.IsUseMemoryPool) => GenerateTypeFullName("IMemoryOwner<>", "byte") + (type.IsOptional ? "?" : ""),
                 BytesType type when (!type.IsUseMemoryPool) => GenerateTypeFullName("ReadOnlyMemory<>", "byte") + (type.IsOptional ? "?" : ""),
@@ -1780,7 +1780,7 @@ internal partial class CodeGenerator
                 IntType type => type.IsOptional ? "null" : "0",
                 FloatType type when (type.Size == 32) => type.IsOptional ? "null" : "0.0F",
                 FloatType type when (type.Size == 64) => type.IsOptional ? "null" : "0.0D",
-                StringType type => type.IsOptional ? "null" : GenerateTypeFullName("Utf8Array") + ".Empty",
+                StringType type => type.IsOptional ? "null" : GenerateTypeFullName("Utf8String") + ".Empty",
                 TimestampType type => type.IsOptional ? "null" : GenerateTypeFullName("Timestamp") + ".Zero",
                 BytesType type when (!type.IsUseMemoryPool) => type.IsOptional ? "null" : GenerateTypeFullName("ReadOnlyMemory<>", "byte") + ".Empty",
                 BytesType type when (type.IsUseMemoryPool) => type.IsOptional ? "null" : GenerateTypeFullName("MemoryOwner<>", "byte") + ".Empty",

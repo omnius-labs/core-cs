@@ -4,31 +4,31 @@ using Omnius.Core.Helpers;
 
 namespace Omnius.Core.RocketPack;
 
-public class Utf8Array : IEquatable<Utf8Array>
+public class Utf8String : IEquatable<Utf8String>
 {
     private static Encoding _utf8Encoding = new UTF8Encoding(false);
 
     private readonly byte[] _buffer;
     private readonly int _hashCode;
 
-    public Utf8Array(string text) : this(_utf8Encoding.GetBytes(text))
+    public static Utf8String Empty { get; } = new Utf8String(Array.Empty<byte>());
+
+    public Utf8String(string text) : this(_utf8Encoding.GetBytes(text))
     {
     }
 
-    public Utf8Array(byte[] encodedBytes)
+    public Utf8String(byte[] encodedBytes)
     {
         _buffer = encodedBytes;
         _hashCode = ObjectHelper.GetHashCode(_buffer);
     }
 
-    public static Utf8Array Empty { get; } = new Utf8Array(Array.Empty<byte>());
-
-    public static bool operator ==(Utf8Array? right, Utf8Array? left)
+    public static bool operator ==(Utf8String? right, Utf8String? left)
     {
         return (right is null) ? (left is null) : right.Equals(left);
     }
 
-    public static bool operator !=(Utf8Array? right, Utf8Array? left)
+    public static bool operator !=(Utf8String? right, Utf8String? left)
     {
         return !(left == right);
     }
@@ -40,27 +40,27 @@ public class Utf8Array : IEquatable<Utf8Array>
 
     public override bool Equals(object? obj)
     {
-        if (obj is not Utf8Array) return false;
+        if (obj is not Utf8String) return false;
 
-        return this.Equals((Utf8Array)obj);
+        return this.Equals((Utf8String)obj);
     }
 
-    public bool Equals(Utf8Array? other)
+    public bool Equals(Utf8String? other)
     {
         if (other is null) return false;
         return BytesOperations.Equals(_buffer, other.Span);
     }
 
-    [return: NotNullIfNotNull("utf8Array")]
-    public static implicit operator string?(Utf8Array? utf8Array)
+    [return: NotNullIfNotNull("utf8String")]
+    public static implicit operator string?(Utf8String? utf8String)
     {
-        return utf8Array?.ToString() ?? null;
+        return utf8String?.ToString() ?? null;
     }
 
     [return: NotNullIfNotNull("value")]
-    public static implicit operator Utf8Array?(string? value)
+    public static implicit operator Utf8String?(string? value)
     {
-        return value is null ? null : new Utf8Array(value);
+        return value is null ? null : new Utf8String(value);
     }
 
     public ReadOnlySpan<byte> Span => _buffer;

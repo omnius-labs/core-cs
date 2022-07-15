@@ -9,7 +9,7 @@ internal static class SignatureHelper
 {
     private static readonly ThreadLocal<Encoding> _encoding = new ThreadLocal<Encoding>(() => new UTF8Encoding(false));
 
-    private static OmniHash CreateOmniHash(Utf8Array name, ReadOnlySpan<byte> publicKey, OmniHashAlgorithmType hashAlgorithmType)
+    private static OmniHash CreateOmniHash(Utf8String name, ReadOnlySpan<byte> publicKey, OmniHashAlgorithmType hashAlgorithmType)
     {
         using var bytesPipe = new BytesPipe();
         {

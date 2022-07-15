@@ -11,14 +11,14 @@ public sealed partial class OmniAddress : global::Omnius.Core.RocketPack.IRocket
     static OmniAddress()
     {
         global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.Net.OmniAddress>.Formatter = new ___CustomFormatter();
-        global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.Net.OmniAddress>.Empty = new global::Omnius.Core.Net.OmniAddress(global::Omnius.Core.RocketPack.Utf8Array.Empty);
+        global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.Net.OmniAddress>.Empty = new global::Omnius.Core.Net.OmniAddress(global::Omnius.Core.RocketPack.Utf8String.Empty);
     }
 
     private readonly global::System.Lazy<int> ___hashCode;
 
     public static readonly int MaxValueLength = 8192;
 
-    public OmniAddress(global::Omnius.Core.RocketPack.Utf8Array value)
+    public OmniAddress(global::Omnius.Core.RocketPack.Utf8String value)
     {
         if (value is null) throw new global::System.ArgumentNullException("value");
         if (value.Length > 8192) throw new global::System.ArgumentOutOfRangeException("value");
@@ -33,7 +33,7 @@ public sealed partial class OmniAddress : global::Omnius.Core.RocketPack.IRocket
         });
     }
 
-    public global::Omnius.Core.RocketPack.Utf8Array Value { get; }
+    public global::Omnius.Core.RocketPack.Utf8String Value { get; }
 
     public static global::Omnius.Core.Net.OmniAddress Import(global::System.Buffers.ReadOnlySequence<byte> sequence, global::Omnius.Core.IBytesPool bytesPool)
     {
@@ -75,7 +75,7 @@ public sealed partial class OmniAddress : global::Omnius.Core.RocketPack.IRocket
         {
             if (rank > 256) throw new global::System.FormatException();
 
-            if (value.Value != global::Omnius.Core.RocketPack.Utf8Array.Empty)
+            if (value.Value != global::Omnius.Core.RocketPack.Utf8String.Empty)
             {
                 w.Write((uint)1);
                 w.Write(value.Value);
@@ -86,7 +86,7 @@ public sealed partial class OmniAddress : global::Omnius.Core.RocketPack.IRocket
         {
             if (rank > 256) throw new global::System.FormatException();
 
-            global::Omnius.Core.RocketPack.Utf8Array p_value = global::Omnius.Core.RocketPack.Utf8Array.Empty;
+            global::Omnius.Core.RocketPack.Utf8String p_value = global::Omnius.Core.RocketPack.Utf8String.Empty;
 
             for (; ; )
             {

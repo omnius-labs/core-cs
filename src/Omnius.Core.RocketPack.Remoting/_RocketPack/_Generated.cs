@@ -11,7 +11,7 @@ public sealed partial class DefaultErrorMessage : global::Omnius.Core.RocketPack
     static DefaultErrorMessage()
     {
         global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.RocketPack.Remoting.DefaultErrorMessage>.Formatter = new ___CustomFormatter();
-        global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.RocketPack.Remoting.DefaultErrorMessage>.Empty = new global::Omnius.Core.RocketPack.Remoting.DefaultErrorMessage(global::Omnius.Core.RocketPack.Utf8Array.Empty, global::Omnius.Core.RocketPack.Utf8Array.Empty, global::Omnius.Core.RocketPack.Utf8Array.Empty);
+        global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.RocketPack.Remoting.DefaultErrorMessage>.Empty = new global::Omnius.Core.RocketPack.Remoting.DefaultErrorMessage(global::Omnius.Core.RocketPack.Utf8String.Empty, global::Omnius.Core.RocketPack.Utf8String.Empty, global::Omnius.Core.RocketPack.Utf8String.Empty);
     }
 
     private readonly global::System.Lazy<int> ___hashCode;
@@ -20,7 +20,7 @@ public sealed partial class DefaultErrorMessage : global::Omnius.Core.RocketPack
     public static readonly int MaxMessageLength = 8192;
     public static readonly int MaxStackTraceLength = 8192;
 
-    public DefaultErrorMessage(global::Omnius.Core.RocketPack.Utf8Array type, global::Omnius.Core.RocketPack.Utf8Array message, global::Omnius.Core.RocketPack.Utf8Array stackTrace)
+    public DefaultErrorMessage(global::Omnius.Core.RocketPack.Utf8String type, global::Omnius.Core.RocketPack.Utf8String message, global::Omnius.Core.RocketPack.Utf8String stackTrace)
     {
         if (type is null) throw new global::System.ArgumentNullException("type");
         if (type.Length > 8192) throw new global::System.ArgumentOutOfRangeException("type");
@@ -43,9 +43,9 @@ public sealed partial class DefaultErrorMessage : global::Omnius.Core.RocketPack
         });
     }
 
-    public global::Omnius.Core.RocketPack.Utf8Array Type { get; }
-    public global::Omnius.Core.RocketPack.Utf8Array Message { get; }
-    public global::Omnius.Core.RocketPack.Utf8Array StackTrace { get; }
+    public global::Omnius.Core.RocketPack.Utf8String Type { get; }
+    public global::Omnius.Core.RocketPack.Utf8String Message { get; }
+    public global::Omnius.Core.RocketPack.Utf8String StackTrace { get; }
 
     public static global::Omnius.Core.RocketPack.Remoting.DefaultErrorMessage Import(global::System.Buffers.ReadOnlySequence<byte> sequence, global::Omnius.Core.IBytesPool bytesPool)
     {
@@ -89,17 +89,17 @@ public sealed partial class DefaultErrorMessage : global::Omnius.Core.RocketPack
         {
             if (rank > 256) throw new global::System.FormatException();
 
-            if (value.Type != global::Omnius.Core.RocketPack.Utf8Array.Empty)
+            if (value.Type != global::Omnius.Core.RocketPack.Utf8String.Empty)
             {
                 w.Write((uint)1);
                 w.Write(value.Type);
             }
-            if (value.Message != global::Omnius.Core.RocketPack.Utf8Array.Empty)
+            if (value.Message != global::Omnius.Core.RocketPack.Utf8String.Empty)
             {
                 w.Write((uint)2);
                 w.Write(value.Message);
             }
-            if (value.StackTrace != global::Omnius.Core.RocketPack.Utf8Array.Empty)
+            if (value.StackTrace != global::Omnius.Core.RocketPack.Utf8String.Empty)
             {
                 w.Write((uint)3);
                 w.Write(value.StackTrace);
@@ -110,9 +110,9 @@ public sealed partial class DefaultErrorMessage : global::Omnius.Core.RocketPack
         {
             if (rank > 256) throw new global::System.FormatException();
 
-            global::Omnius.Core.RocketPack.Utf8Array p_type = global::Omnius.Core.RocketPack.Utf8Array.Empty;
-            global::Omnius.Core.RocketPack.Utf8Array p_message = global::Omnius.Core.RocketPack.Utf8Array.Empty;
-            global::Omnius.Core.RocketPack.Utf8Array p_stackTrace = global::Omnius.Core.RocketPack.Utf8Array.Empty;
+            global::Omnius.Core.RocketPack.Utf8String p_type = global::Omnius.Core.RocketPack.Utf8String.Empty;
+            global::Omnius.Core.RocketPack.Utf8String p_message = global::Omnius.Core.RocketPack.Utf8String.Empty;
+            global::Omnius.Core.RocketPack.Utf8String p_stackTrace = global::Omnius.Core.RocketPack.Utf8String.Empty;
 
             for (; ; )
             {

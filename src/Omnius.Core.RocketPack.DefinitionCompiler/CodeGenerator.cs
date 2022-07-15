@@ -63,7 +63,6 @@ internal partial class CodeGenerator
     {
         var result = name switch
         {
-            "Utf8Array" => "Omnius.Core.RocketPack.Utf8Array",
             "ArgumentNullException" => "System.ArgumentNullException",
             "ArgumentOutOfRangeException" => "System.ArgumentOutOfRangeException",
             "Array" => "System.Array",
@@ -99,6 +98,7 @@ internal partial class CodeGenerator
             "Task" => $"System.Threading.Tasks.Task",
             "Task<>" => $"System.Threading.Tasks.Task<{@params[0]}>",
             "Timestamp" => "Omnius.Core.RocketPack.Timestamp",
+            "Utf8String" => "Omnius.Core.RocketPack.Utf8String",
             "ValueTask" => $"System.Threading.Tasks.ValueTask",
             "ValueTask<>" => $"System.Threading.Tasks.ValueTask<{@params[0]}>",
             _ => throw new KeyNotFoundException(name)

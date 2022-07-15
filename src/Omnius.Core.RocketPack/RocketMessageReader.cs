@@ -54,19 +54,19 @@ public unsafe ref struct RocketMessageReader
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public Utf8Array GetString(in int limit)
+    public Utf8String GetString(in int limit)
     {
         if (!Varint.TryGetUInt32(ref _reader, out uint length)) throw new FormatException();
         if (length > limit) throw new FormatException();
 
-        if (length == 0) return Utf8Array.Empty;
+        if (length == 0) return Utf8String.Empty;
 
         var result = new byte[(int)length];
 
         _reader.TryCopyTo(result.AsSpan());
         _reader.Advance(length);
 
-        return new Utf8Array(result);
+        return new Utf8String(result);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]

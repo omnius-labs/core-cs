@@ -18,6 +18,9 @@ public static class OmniMessageConverter
         using var encoder = new BrotliEncoder(0, 10);
         var crc32 = default(Crc32_Castagnoli);
 
+        var crc32Buffer = writer.GetSpan(4).Slice(0, 4);
+        writer.Advance(crc32Buffer.Length);
+
         for (; ; )
         {
             var source = reader.UnreadSpan;
@@ -41,8 +44,7 @@ public static class OmniMessageConverter
             }
         }
 
-        BinaryPrimitives.WriteUInt32BigEndian(writer.GetSpan(4), crc32.GetResult());
-        writer.Advance(4);
+        BinaryPrimitives.WriteUInt32BigEndian(crc32Buffer, crc32.GetResult());
 
         return true;
     }
@@ -59,19 +61,19 @@ public static class OmniMessageConverter
             if (!Varint.TryGetUInt32(ref reader, out var compressionAlgorithmValue)) return false;
             var compressionAlgorithm = (CompressionAlgorithm)compressionAlgorithmValue;
 
-            // Check CRC32
             var unreadSequence = reader.UnreadSequence;
+
+            // Check CRC32
+            var decodedCrc32 = BinaryPrimitives.ReadUInt32BigEndian(unreadSequence.Slice(0, 4).ToArray());
             var crc32 = default(Crc32_Castagnoli);
-            foreach (var buffer in unreadSequence.Slice(0, unreadSequence.Length - 4))
+            foreach (var buffer in unreadSequence.Slice(4, unreadSequence.Length - 4))
             {
                 crc32.Compute(buffer.Span);
             }
-
-            var decodedCrc32 = BinaryPrimitives.ReadUInt32BigEndian(unreadSequence.Slice(unreadSequence.Length - 4).ToArray());
             var computedCrc32 = crc32.GetResult();
             if (decodedCrc32 != computedCrc32) return false;
 
-            reader = new SequenceReader<byte>(unreadSequence.Slice(0, unreadSequence.Length - 4));
+            reader = new SequenceReader<byte>(unreadSequence.Slice(4, unreadSequence.Length - 4));
 
             if (compressionAlgorithm == CompressionAlgorithm.Brotli)
             {
@@ -119,18 +121,7 @@ public static class OmniMessageConverter
 
 public class OmniMessageConverterException : Exception
 {
-    public OmniMessageConverterException()
-        : base()
-    {
-    }
-
-    public OmniMessageConverterException(string? message)
-        : base(message)
-    {
-    }
-
-    public OmniMessageConverterException(string? message, Exception? innerException)
-        : base(message, innerException)
-    {
-    }
+    public OmniMessageConverterException() : base() { }
+    public OmniMessageConverterException(string? message) : base(message) { }
+    public OmniMessageConverterException(string? message, Exception? innerException) : base(message, innerException) { }
 }

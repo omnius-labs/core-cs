@@ -726,7 +726,7 @@ internal sealed partial class RocketPack_StringElements : global::Omnius.Core.Ro
     static RocketPack_StringElements()
     {
         global::Omnius.Core.RocketPack.IRocketMessage<global::FormatterBenchmarks.Internal.RocketPack_StringElements>.Formatter = new ___CustomFormatter();
-        global::Omnius.Core.RocketPack.IRocketMessage<global::FormatterBenchmarks.Internal.RocketPack_StringElements>.Empty = new global::FormatterBenchmarks.Internal.RocketPack_StringElements(global::Omnius.Core.RocketPack.Utf8Array.Empty, global::Omnius.Core.RocketPack.Utf8Array.Empty, global::Omnius.Core.RocketPack.Utf8Array.Empty, global::Omnius.Core.RocketPack.Utf8Array.Empty, global::Omnius.Core.RocketPack.Utf8Array.Empty, global::Omnius.Core.RocketPack.Utf8Array.Empty, global::Omnius.Core.RocketPack.Utf8Array.Empty, global::Omnius.Core.RocketPack.Utf8Array.Empty, global::Omnius.Core.RocketPack.Utf8Array.Empty, global::Omnius.Core.RocketPack.Utf8Array.Empty);
+        global::Omnius.Core.RocketPack.IRocketMessage<global::FormatterBenchmarks.Internal.RocketPack_StringElements>.Empty = new global::FormatterBenchmarks.Internal.RocketPack_StringElements(global::Omnius.Core.RocketPack.Utf8String.Empty, global::Omnius.Core.RocketPack.Utf8String.Empty, global::Omnius.Core.RocketPack.Utf8String.Empty, global::Omnius.Core.RocketPack.Utf8String.Empty, global::Omnius.Core.RocketPack.Utf8String.Empty, global::Omnius.Core.RocketPack.Utf8String.Empty, global::Omnius.Core.RocketPack.Utf8String.Empty, global::Omnius.Core.RocketPack.Utf8String.Empty, global::Omnius.Core.RocketPack.Utf8String.Empty, global::Omnius.Core.RocketPack.Utf8String.Empty);
     }
 
     private readonly global::System.Lazy<int> ___hashCode;
@@ -742,7 +742,7 @@ internal sealed partial class RocketPack_StringElements : global::Omnius.Core.Ro
     public static readonly int MaxX8Length = 8192;
     public static readonly int MaxX9Length = 8192;
 
-    public RocketPack_StringElements(global::Omnius.Core.RocketPack.Utf8Array x0, global::Omnius.Core.RocketPack.Utf8Array x1, global::Omnius.Core.RocketPack.Utf8Array x2, global::Omnius.Core.RocketPack.Utf8Array x3, global::Omnius.Core.RocketPack.Utf8Array x4, global::Omnius.Core.RocketPack.Utf8Array x5, global::Omnius.Core.RocketPack.Utf8Array x6, global::Omnius.Core.RocketPack.Utf8Array x7, global::Omnius.Core.RocketPack.Utf8Array x8, global::Omnius.Core.RocketPack.Utf8Array x9)
+    public RocketPack_StringElements(global::Omnius.Core.RocketPack.Utf8String x0, global::Omnius.Core.RocketPack.Utf8String x1, global::Omnius.Core.RocketPack.Utf8String x2, global::Omnius.Core.RocketPack.Utf8String x3, global::Omnius.Core.RocketPack.Utf8String x4, global::Omnius.Core.RocketPack.Utf8String x5, global::Omnius.Core.RocketPack.Utf8String x6, global::Omnius.Core.RocketPack.Utf8String x7, global::Omnius.Core.RocketPack.Utf8String x8, global::Omnius.Core.RocketPack.Utf8String x9)
     {
         if (x0 is null) throw new global::System.ArgumentNullException("x0");
         if (x0.Length > 8192) throw new global::System.ArgumentOutOfRangeException("x0");
@@ -793,16 +793,16 @@ internal sealed partial class RocketPack_StringElements : global::Omnius.Core.Ro
         });
     }
 
-    public global::Omnius.Core.RocketPack.Utf8Array X0 { get; }
-    public global::Omnius.Core.RocketPack.Utf8Array X1 { get; }
-    public global::Omnius.Core.RocketPack.Utf8Array X2 { get; }
-    public global::Omnius.Core.RocketPack.Utf8Array X3 { get; }
-    public global::Omnius.Core.RocketPack.Utf8Array X4 { get; }
-    public global::Omnius.Core.RocketPack.Utf8Array X5 { get; }
-    public global::Omnius.Core.RocketPack.Utf8Array X6 { get; }
-    public global::Omnius.Core.RocketPack.Utf8Array X7 { get; }
-    public global::Omnius.Core.RocketPack.Utf8Array X8 { get; }
-    public global::Omnius.Core.RocketPack.Utf8Array X9 { get; }
+    public global::Omnius.Core.RocketPack.Utf8String X0 { get; }
+    public global::Omnius.Core.RocketPack.Utf8String X1 { get; }
+    public global::Omnius.Core.RocketPack.Utf8String X2 { get; }
+    public global::Omnius.Core.RocketPack.Utf8String X3 { get; }
+    public global::Omnius.Core.RocketPack.Utf8String X4 { get; }
+    public global::Omnius.Core.RocketPack.Utf8String X5 { get; }
+    public global::Omnius.Core.RocketPack.Utf8String X6 { get; }
+    public global::Omnius.Core.RocketPack.Utf8String X7 { get; }
+    public global::Omnius.Core.RocketPack.Utf8String X8 { get; }
+    public global::Omnius.Core.RocketPack.Utf8String X9 { get; }
 
     public static global::FormatterBenchmarks.Internal.RocketPack_StringElements Import(global::System.Buffers.ReadOnlySequence<byte> sequence, global::Omnius.Core.IBytesPool bytesPool)
     {
@@ -868,16 +868,16 @@ internal sealed partial class RocketPack_StringElements : global::Omnius.Core.Ro
         {
             if (rank > 256) throw new global::System.FormatException();
 
-            global::Omnius.Core.RocketPack.Utf8Array p_x0 = global::Omnius.Core.RocketPack.Utf8Array.Empty;
-            global::Omnius.Core.RocketPack.Utf8Array p_x1 = global::Omnius.Core.RocketPack.Utf8Array.Empty;
-            global::Omnius.Core.RocketPack.Utf8Array p_x2 = global::Omnius.Core.RocketPack.Utf8Array.Empty;
-            global::Omnius.Core.RocketPack.Utf8Array p_x3 = global::Omnius.Core.RocketPack.Utf8Array.Empty;
-            global::Omnius.Core.RocketPack.Utf8Array p_x4 = global::Omnius.Core.RocketPack.Utf8Array.Empty;
-            global::Omnius.Core.RocketPack.Utf8Array p_x5 = global::Omnius.Core.RocketPack.Utf8Array.Empty;
-            global::Omnius.Core.RocketPack.Utf8Array p_x6 = global::Omnius.Core.RocketPack.Utf8Array.Empty;
-            global::Omnius.Core.RocketPack.Utf8Array p_x7 = global::Omnius.Core.RocketPack.Utf8Array.Empty;
-            global::Omnius.Core.RocketPack.Utf8Array p_x8 = global::Omnius.Core.RocketPack.Utf8Array.Empty;
-            global::Omnius.Core.RocketPack.Utf8Array p_x9 = global::Omnius.Core.RocketPack.Utf8Array.Empty;
+            global::Omnius.Core.RocketPack.Utf8String p_x0 = global::Omnius.Core.RocketPack.Utf8String.Empty;
+            global::Omnius.Core.RocketPack.Utf8String p_x1 = global::Omnius.Core.RocketPack.Utf8String.Empty;
+            global::Omnius.Core.RocketPack.Utf8String p_x2 = global::Omnius.Core.RocketPack.Utf8String.Empty;
+            global::Omnius.Core.RocketPack.Utf8String p_x3 = global::Omnius.Core.RocketPack.Utf8String.Empty;
+            global::Omnius.Core.RocketPack.Utf8String p_x4 = global::Omnius.Core.RocketPack.Utf8String.Empty;
+            global::Omnius.Core.RocketPack.Utf8String p_x5 = global::Omnius.Core.RocketPack.Utf8String.Empty;
+            global::Omnius.Core.RocketPack.Utf8String p_x6 = global::Omnius.Core.RocketPack.Utf8String.Empty;
+            global::Omnius.Core.RocketPack.Utf8String p_x7 = global::Omnius.Core.RocketPack.Utf8String.Empty;
+            global::Omnius.Core.RocketPack.Utf8String p_x8 = global::Omnius.Core.RocketPack.Utf8String.Empty;
+            global::Omnius.Core.RocketPack.Utf8String p_x9 = global::Omnius.Core.RocketPack.Utf8String.Empty;
 
             {
                 p_x0 = r.GetString(8192);

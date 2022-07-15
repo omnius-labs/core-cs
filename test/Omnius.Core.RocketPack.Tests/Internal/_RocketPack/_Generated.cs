@@ -405,7 +405,7 @@ internal readonly partial struct Struct_Struct : global::Omnius.Core.RocketPack.
     static Struct_Struct()
     {
         global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.RocketPack.Tests.Internal.Struct_Struct>.Formatter = new ___CustomFormatter();
-        global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.RocketPack.Tests.Internal.Struct_Struct>.Empty = new global::Omnius.Core.RocketPack.Tests.Internal.Struct_Struct(false, 0, 0, 0, 0, 0, 0, 0, 0, (global::Omnius.Core.RocketPack.Tests.Internal.Enum1)0, (global::Omnius.Core.RocketPack.Tests.Internal.Enum2)0, (global::Omnius.Core.RocketPack.Tests.Internal.Enum3)0, (global::Omnius.Core.RocketPack.Tests.Internal.Enum4)0, (global::Omnius.Core.RocketPack.Tests.Internal.Enum5)0, (global::Omnius.Core.RocketPack.Tests.Internal.Enum6)0, (global::Omnius.Core.RocketPack.Tests.Internal.Enum7)0, (global::Omnius.Core.RocketPack.Tests.Internal.Enum8)0, 0.0F, 0.0D, global::Omnius.Core.RocketPack.Utf8Array.Empty, global::Omnius.Core.RocketPack.Timestamp.Zero, global::System.ReadOnlyMemory<byte>.Empty, global::Omnius.Core.MemoryOwner<byte>.Empty, global::System.Array.Empty<global::Omnius.Core.RocketPack.Utf8Array>(), new global::System.Collections.Generic.Dictionary<byte, global::Omnius.Core.RocketPack.Utf8Array>(), global::Omnius.Core.RocketPack.Tests.Internal.StructElement_Struct.Empty, global::Omnius.Core.RocketPack.Tests.Internal.MessageElement_Struct.Empty, global::Omnius.Core.RocketPack.Tests.Internal.StructElement_Class.Empty, global::Omnius.Core.RocketPack.Tests.Internal.MessageElement_Class.Empty);
+        global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.RocketPack.Tests.Internal.Struct_Struct>.Empty = new global::Omnius.Core.RocketPack.Tests.Internal.Struct_Struct(false, 0, 0, 0, 0, 0, 0, 0, 0, (global::Omnius.Core.RocketPack.Tests.Internal.Enum1)0, (global::Omnius.Core.RocketPack.Tests.Internal.Enum2)0, (global::Omnius.Core.RocketPack.Tests.Internal.Enum3)0, (global::Omnius.Core.RocketPack.Tests.Internal.Enum4)0, (global::Omnius.Core.RocketPack.Tests.Internal.Enum5)0, (global::Omnius.Core.RocketPack.Tests.Internal.Enum6)0, (global::Omnius.Core.RocketPack.Tests.Internal.Enum7)0, (global::Omnius.Core.RocketPack.Tests.Internal.Enum8)0, 0.0F, 0.0D, global::Omnius.Core.RocketPack.Utf8String.Empty, global::Omnius.Core.RocketPack.Timestamp.Zero, global::System.ReadOnlyMemory<byte>.Empty, global::Omnius.Core.MemoryOwner<byte>.Empty, global::System.Array.Empty<global::Omnius.Core.RocketPack.Utf8String>(), new global::System.Collections.Generic.Dictionary<byte, global::Omnius.Core.RocketPack.Utf8String>(), global::Omnius.Core.RocketPack.Tests.Internal.StructElement_Struct.Empty, global::Omnius.Core.RocketPack.Tests.Internal.MessageElement_Struct.Empty, global::Omnius.Core.RocketPack.Tests.Internal.StructElement_Class.Empty, global::Omnius.Core.RocketPack.Tests.Internal.MessageElement_Class.Empty);
     }
 
     private readonly int ___hashCode;
@@ -416,7 +416,7 @@ internal readonly partial struct Struct_Struct : global::Omnius.Core.RocketPack.
     public static readonly int MaxX23Count = 16;
     public static readonly int MaxX24Count = 32;
 
-    public Struct_Struct(bool x0, sbyte x1, short x2, int x3, long x4, byte x5, ushort x6, uint x7, ulong x8, global::Omnius.Core.RocketPack.Tests.Internal.Enum1 x9, global::Omnius.Core.RocketPack.Tests.Internal.Enum2 x10, global::Omnius.Core.RocketPack.Tests.Internal.Enum3 x11, global::Omnius.Core.RocketPack.Tests.Internal.Enum4 x12, global::Omnius.Core.RocketPack.Tests.Internal.Enum5 x13, global::Omnius.Core.RocketPack.Tests.Internal.Enum6 x14, global::Omnius.Core.RocketPack.Tests.Internal.Enum7 x15, global::Omnius.Core.RocketPack.Tests.Internal.Enum8 x16, float x17, double x18, global::Omnius.Core.RocketPack.Utf8Array x19, global::Omnius.Core.RocketPack.Timestamp x20, global::System.ReadOnlyMemory<byte> x21, global::System.Buffers.IMemoryOwner<byte> x22, global::Omnius.Core.RocketPack.Utf8Array[] x23, global::System.Collections.Generic.Dictionary<byte, global::Omnius.Core.RocketPack.Utf8Array> x24, global::Omnius.Core.RocketPack.Tests.Internal.StructElement_Struct x25, global::Omnius.Core.RocketPack.Tests.Internal.MessageElement_Struct x26, global::Omnius.Core.RocketPack.Tests.Internal.StructElement_Class x27, global::Omnius.Core.RocketPack.Tests.Internal.MessageElement_Class x28)
+    public Struct_Struct(bool x0, sbyte x1, short x2, int x3, long x4, byte x5, ushort x6, uint x7, ulong x8, global::Omnius.Core.RocketPack.Tests.Internal.Enum1 x9, global::Omnius.Core.RocketPack.Tests.Internal.Enum2 x10, global::Omnius.Core.RocketPack.Tests.Internal.Enum3 x11, global::Omnius.Core.RocketPack.Tests.Internal.Enum4 x12, global::Omnius.Core.RocketPack.Tests.Internal.Enum5 x13, global::Omnius.Core.RocketPack.Tests.Internal.Enum6 x14, global::Omnius.Core.RocketPack.Tests.Internal.Enum7 x15, global::Omnius.Core.RocketPack.Tests.Internal.Enum8 x16, float x17, double x18, global::Omnius.Core.RocketPack.Utf8String x19, global::Omnius.Core.RocketPack.Timestamp x20, global::System.ReadOnlyMemory<byte> x21, global::System.Buffers.IMemoryOwner<byte> x22, global::Omnius.Core.RocketPack.Utf8String[] x23, global::System.Collections.Generic.Dictionary<byte, global::Omnius.Core.RocketPack.Utf8String> x24, global::Omnius.Core.RocketPack.Tests.Internal.StructElement_Struct x25, global::Omnius.Core.RocketPack.Tests.Internal.MessageElement_Struct x26, global::Omnius.Core.RocketPack.Tests.Internal.StructElement_Class x27, global::Omnius.Core.RocketPack.Tests.Internal.MessageElement_Class x28)
     {
         if (x19 is null) throw new global::System.ArgumentNullException("x19");
         if (x19.Length > 128) throw new global::System.ArgumentOutOfRangeException("x19");
@@ -463,8 +463,8 @@ internal readonly partial struct Struct_Struct : global::Omnius.Core.RocketPack.
         this.X20 = x20;
         this.X21 = x21;
         this.X22 = x22;
-        this.X23 = new global::Omnius.Core.Collections.ReadOnlyListSlim<global::Omnius.Core.RocketPack.Utf8Array>(x23);
-        this.X24 = new global::Omnius.Core.Collections.ReadOnlyDictionarySlim<byte, global::Omnius.Core.RocketPack.Utf8Array>(x24);
+        this.X23 = new global::Omnius.Core.Collections.ReadOnlyListSlim<global::Omnius.Core.RocketPack.Utf8String>(x23);
+        this.X24 = new global::Omnius.Core.Collections.ReadOnlyDictionarySlim<byte, global::Omnius.Core.RocketPack.Utf8String>(x24);
         this.X25 = x25;
         this.X26 = x26;
         this.X27 = x27;
@@ -531,12 +531,12 @@ internal readonly partial struct Struct_Struct : global::Omnius.Core.RocketPack.
     public global::Omnius.Core.RocketPack.Tests.Internal.Enum8 X16 { get; }
     public float X17 { get; }
     public double X18 { get; }
-    public global::Omnius.Core.RocketPack.Utf8Array X19 { get; }
+    public global::Omnius.Core.RocketPack.Utf8String X19 { get; }
     public global::Omnius.Core.RocketPack.Timestamp X20 { get; }
     public global::System.ReadOnlyMemory<byte> X21 { get; }
     public global::System.Buffers.IMemoryOwner<byte> X22 { get; }
-    public global::Omnius.Core.Collections.ReadOnlyListSlim<global::Omnius.Core.RocketPack.Utf8Array> X23 { get; }
-    public global::Omnius.Core.Collections.ReadOnlyDictionarySlim<byte, global::Omnius.Core.RocketPack.Utf8Array> X24 { get; }
+    public global::Omnius.Core.Collections.ReadOnlyListSlim<global::Omnius.Core.RocketPack.Utf8String> X23 { get; }
+    public global::Omnius.Core.Collections.ReadOnlyDictionarySlim<byte, global::Omnius.Core.RocketPack.Utf8String> X24 { get; }
     public global::Omnius.Core.RocketPack.Tests.Internal.StructElement_Struct X25 { get; }
     public global::Omnius.Core.RocketPack.Tests.Internal.MessageElement_Struct X26 { get; }
     public global::Omnius.Core.RocketPack.Tests.Internal.StructElement_Class X27 { get; }
@@ -669,12 +669,12 @@ internal readonly partial struct Struct_Struct : global::Omnius.Core.RocketPack.
             global::Omnius.Core.RocketPack.Tests.Internal.Enum8 p_x16 = (global::Omnius.Core.RocketPack.Tests.Internal.Enum8)0;
             float p_x17 = 0.0F;
             double p_x18 = 0.0D;
-            global::Omnius.Core.RocketPack.Utf8Array p_x19 = global::Omnius.Core.RocketPack.Utf8Array.Empty;
+            global::Omnius.Core.RocketPack.Utf8String p_x19 = global::Omnius.Core.RocketPack.Utf8String.Empty;
             global::Omnius.Core.RocketPack.Timestamp p_x20 = global::Omnius.Core.RocketPack.Timestamp.Zero;
             global::System.ReadOnlyMemory<byte> p_x21 = global::System.ReadOnlyMemory<byte>.Empty;
             global::System.Buffers.IMemoryOwner<byte> p_x22 = global::Omnius.Core.MemoryOwner<byte>.Empty;
-            global::Omnius.Core.RocketPack.Utf8Array[] p_x23 = global::System.Array.Empty<global::Omnius.Core.RocketPack.Utf8Array>();
-            global::System.Collections.Generic.Dictionary<byte, global::Omnius.Core.RocketPack.Utf8Array> p_x24 = new global::System.Collections.Generic.Dictionary<byte, global::Omnius.Core.RocketPack.Utf8Array>();
+            global::Omnius.Core.RocketPack.Utf8String[] p_x23 = global::System.Array.Empty<global::Omnius.Core.RocketPack.Utf8String>();
+            global::System.Collections.Generic.Dictionary<byte, global::Omnius.Core.RocketPack.Utf8String> p_x24 = new global::System.Collections.Generic.Dictionary<byte, global::Omnius.Core.RocketPack.Utf8String>();
             global::Omnius.Core.RocketPack.Tests.Internal.StructElement_Struct p_x25 = global::Omnius.Core.RocketPack.Tests.Internal.StructElement_Struct.Empty;
             global::Omnius.Core.RocketPack.Tests.Internal.MessageElement_Struct p_x26 = global::Omnius.Core.RocketPack.Tests.Internal.MessageElement_Struct.Empty;
             global::Omnius.Core.RocketPack.Tests.Internal.StructElement_Class p_x27 = global::Omnius.Core.RocketPack.Tests.Internal.StructElement_Class.Empty;
@@ -751,7 +751,7 @@ internal readonly partial struct Struct_Struct : global::Omnius.Core.RocketPack.
             }
             {
                 var length = r.GetUInt32();
-                p_x23 = new global::Omnius.Core.RocketPack.Utf8Array[length];
+                p_x23 = new global::Omnius.Core.RocketPack.Utf8String[length];
                 for (int i = 0; i < p_x23.Length; i++)
                 {
                     p_x23[i] = r.GetString(128);
@@ -759,9 +759,9 @@ internal readonly partial struct Struct_Struct : global::Omnius.Core.RocketPack.
             }
             {
                 var length = r.GetUInt32();
-                p_x24 = new global::System.Collections.Generic.Dictionary<byte, global::Omnius.Core.RocketPack.Utf8Array>();
+                p_x24 = new global::System.Collections.Generic.Dictionary<byte, global::Omnius.Core.RocketPack.Utf8String>();
                 byte t_key = 0;
-                global::Omnius.Core.RocketPack.Utf8Array t_value = global::Omnius.Core.RocketPack.Utf8Array.Empty;
+                global::Omnius.Core.RocketPack.Utf8String t_value = global::Omnius.Core.RocketPack.Utf8String.Empty;
                 for (int i = 0; i < length; i++)
                 {
                     t_key = r.GetUInt8();
@@ -793,7 +793,7 @@ internal readonly partial struct Message_Struct : global::Omnius.Core.RocketPack
     static Message_Struct()
     {
         global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.RocketPack.Tests.Internal.Message_Struct>.Formatter = new ___CustomFormatter();
-        global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.RocketPack.Tests.Internal.Message_Struct>.Empty = new global::Omnius.Core.RocketPack.Tests.Internal.Message_Struct(false, 0, 0, 0, 0, 0, 0, 0, 0, (global::Omnius.Core.RocketPack.Tests.Internal.Enum1)0, (global::Omnius.Core.RocketPack.Tests.Internal.Enum2)0, (global::Omnius.Core.RocketPack.Tests.Internal.Enum3)0, (global::Omnius.Core.RocketPack.Tests.Internal.Enum4)0, (global::Omnius.Core.RocketPack.Tests.Internal.Enum5)0, (global::Omnius.Core.RocketPack.Tests.Internal.Enum6)0, (global::Omnius.Core.RocketPack.Tests.Internal.Enum7)0, (global::Omnius.Core.RocketPack.Tests.Internal.Enum8)0, 0.0F, 0.0D, global::Omnius.Core.RocketPack.Utf8Array.Empty, global::Omnius.Core.RocketPack.Timestamp.Zero, global::System.ReadOnlyMemory<byte>.Empty, global::Omnius.Core.MemoryOwner<byte>.Empty, global::System.Array.Empty<global::Omnius.Core.RocketPack.Utf8Array>(), new global::System.Collections.Generic.Dictionary<byte, global::Omnius.Core.RocketPack.Utf8Array>(), global::Omnius.Core.RocketPack.Tests.Internal.StructElement_Struct.Empty, global::Omnius.Core.RocketPack.Tests.Internal.MessageElement_Struct.Empty, global::Omnius.Core.RocketPack.Tests.Internal.StructElement_Class.Empty, global::Omnius.Core.RocketPack.Tests.Internal.MessageElement_Class.Empty);
+        global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.RocketPack.Tests.Internal.Message_Struct>.Empty = new global::Omnius.Core.RocketPack.Tests.Internal.Message_Struct(false, 0, 0, 0, 0, 0, 0, 0, 0, (global::Omnius.Core.RocketPack.Tests.Internal.Enum1)0, (global::Omnius.Core.RocketPack.Tests.Internal.Enum2)0, (global::Omnius.Core.RocketPack.Tests.Internal.Enum3)0, (global::Omnius.Core.RocketPack.Tests.Internal.Enum4)0, (global::Omnius.Core.RocketPack.Tests.Internal.Enum5)0, (global::Omnius.Core.RocketPack.Tests.Internal.Enum6)0, (global::Omnius.Core.RocketPack.Tests.Internal.Enum7)0, (global::Omnius.Core.RocketPack.Tests.Internal.Enum8)0, 0.0F, 0.0D, global::Omnius.Core.RocketPack.Utf8String.Empty, global::Omnius.Core.RocketPack.Timestamp.Zero, global::System.ReadOnlyMemory<byte>.Empty, global::Omnius.Core.MemoryOwner<byte>.Empty, global::System.Array.Empty<global::Omnius.Core.RocketPack.Utf8String>(), new global::System.Collections.Generic.Dictionary<byte, global::Omnius.Core.RocketPack.Utf8String>(), global::Omnius.Core.RocketPack.Tests.Internal.StructElement_Struct.Empty, global::Omnius.Core.RocketPack.Tests.Internal.MessageElement_Struct.Empty, global::Omnius.Core.RocketPack.Tests.Internal.StructElement_Class.Empty, global::Omnius.Core.RocketPack.Tests.Internal.MessageElement_Class.Empty);
     }
 
     private readonly int ___hashCode;
@@ -804,7 +804,7 @@ internal readonly partial struct Message_Struct : global::Omnius.Core.RocketPack
     public static readonly int MaxX23Count = 16;
     public static readonly int MaxX24Count = 32;
 
-    public Message_Struct(bool x0, sbyte x1, short x2, int x3, long x4, byte x5, ushort x6, uint x7, ulong x8, global::Omnius.Core.RocketPack.Tests.Internal.Enum1 x9, global::Omnius.Core.RocketPack.Tests.Internal.Enum2 x10, global::Omnius.Core.RocketPack.Tests.Internal.Enum3 x11, global::Omnius.Core.RocketPack.Tests.Internal.Enum4 x12, global::Omnius.Core.RocketPack.Tests.Internal.Enum5 x13, global::Omnius.Core.RocketPack.Tests.Internal.Enum6 x14, global::Omnius.Core.RocketPack.Tests.Internal.Enum7 x15, global::Omnius.Core.RocketPack.Tests.Internal.Enum8 x16, float x17, double x18, global::Omnius.Core.RocketPack.Utf8Array x19, global::Omnius.Core.RocketPack.Timestamp x20, global::System.ReadOnlyMemory<byte> x21, global::System.Buffers.IMemoryOwner<byte> x22, global::Omnius.Core.RocketPack.Utf8Array[] x23, global::System.Collections.Generic.Dictionary<byte, global::Omnius.Core.RocketPack.Utf8Array> x24, global::Omnius.Core.RocketPack.Tests.Internal.StructElement_Struct x25, global::Omnius.Core.RocketPack.Tests.Internal.MessageElement_Struct x26, global::Omnius.Core.RocketPack.Tests.Internal.StructElement_Class x27, global::Omnius.Core.RocketPack.Tests.Internal.MessageElement_Class x28)
+    public Message_Struct(bool x0, sbyte x1, short x2, int x3, long x4, byte x5, ushort x6, uint x7, ulong x8, global::Omnius.Core.RocketPack.Tests.Internal.Enum1 x9, global::Omnius.Core.RocketPack.Tests.Internal.Enum2 x10, global::Omnius.Core.RocketPack.Tests.Internal.Enum3 x11, global::Omnius.Core.RocketPack.Tests.Internal.Enum4 x12, global::Omnius.Core.RocketPack.Tests.Internal.Enum5 x13, global::Omnius.Core.RocketPack.Tests.Internal.Enum6 x14, global::Omnius.Core.RocketPack.Tests.Internal.Enum7 x15, global::Omnius.Core.RocketPack.Tests.Internal.Enum8 x16, float x17, double x18, global::Omnius.Core.RocketPack.Utf8String x19, global::Omnius.Core.RocketPack.Timestamp x20, global::System.ReadOnlyMemory<byte> x21, global::System.Buffers.IMemoryOwner<byte> x22, global::Omnius.Core.RocketPack.Utf8String[] x23, global::System.Collections.Generic.Dictionary<byte, global::Omnius.Core.RocketPack.Utf8String> x24, global::Omnius.Core.RocketPack.Tests.Internal.StructElement_Struct x25, global::Omnius.Core.RocketPack.Tests.Internal.MessageElement_Struct x26, global::Omnius.Core.RocketPack.Tests.Internal.StructElement_Class x27, global::Omnius.Core.RocketPack.Tests.Internal.MessageElement_Class x28)
     {
         if (x19 is null) throw new global::System.ArgumentNullException("x19");
         if (x19.Length > 128) throw new global::System.ArgumentOutOfRangeException("x19");
@@ -851,8 +851,8 @@ internal readonly partial struct Message_Struct : global::Omnius.Core.RocketPack
         this.X20 = x20;
         this.X21 = x21;
         this.X22 = x22;
-        this.X23 = new global::Omnius.Core.Collections.ReadOnlyListSlim<global::Omnius.Core.RocketPack.Utf8Array>(x23);
-        this.X24 = new global::Omnius.Core.Collections.ReadOnlyDictionarySlim<byte, global::Omnius.Core.RocketPack.Utf8Array>(x24);
+        this.X23 = new global::Omnius.Core.Collections.ReadOnlyListSlim<global::Omnius.Core.RocketPack.Utf8String>(x23);
+        this.X24 = new global::Omnius.Core.Collections.ReadOnlyDictionarySlim<byte, global::Omnius.Core.RocketPack.Utf8String>(x24);
         this.X25 = x25;
         this.X26 = x26;
         this.X27 = x27;
@@ -919,12 +919,12 @@ internal readonly partial struct Message_Struct : global::Omnius.Core.RocketPack
     public global::Omnius.Core.RocketPack.Tests.Internal.Enum8 X16 { get; }
     public float X17 { get; }
     public double X18 { get; }
-    public global::Omnius.Core.RocketPack.Utf8Array X19 { get; }
+    public global::Omnius.Core.RocketPack.Utf8String X19 { get; }
     public global::Omnius.Core.RocketPack.Timestamp X20 { get; }
     public global::System.ReadOnlyMemory<byte> X21 { get; }
     public global::System.Buffers.IMemoryOwner<byte> X22 { get; }
-    public global::Omnius.Core.Collections.ReadOnlyListSlim<global::Omnius.Core.RocketPack.Utf8Array> X23 { get; }
-    public global::Omnius.Core.Collections.ReadOnlyDictionarySlim<byte, global::Omnius.Core.RocketPack.Utf8Array> X24 { get; }
+    public global::Omnius.Core.Collections.ReadOnlyListSlim<global::Omnius.Core.RocketPack.Utf8String> X23 { get; }
+    public global::Omnius.Core.Collections.ReadOnlyDictionarySlim<byte, global::Omnius.Core.RocketPack.Utf8String> X24 { get; }
     public global::Omnius.Core.RocketPack.Tests.Internal.StructElement_Struct X25 { get; }
     public global::Omnius.Core.RocketPack.Tests.Internal.MessageElement_Struct X26 { get; }
     public global::Omnius.Core.RocketPack.Tests.Internal.StructElement_Class X27 { get; }
@@ -1090,7 +1090,7 @@ internal readonly partial struct Message_Struct : global::Omnius.Core.RocketPack
                 w.Write((uint)19);
                 w.Write(value.X18);
             }
-            if (value.X19 != global::Omnius.Core.RocketPack.Utf8Array.Empty)
+            if (value.X19 != global::Omnius.Core.RocketPack.Utf8String.Empty)
             {
                 w.Write((uint)20);
                 w.Write(value.X19);
@@ -1174,12 +1174,12 @@ internal readonly partial struct Message_Struct : global::Omnius.Core.RocketPack
             global::Omnius.Core.RocketPack.Tests.Internal.Enum8 p_x16 = (global::Omnius.Core.RocketPack.Tests.Internal.Enum8)0;
             float p_x17 = 0.0F;
             double p_x18 = 0.0D;
-            global::Omnius.Core.RocketPack.Utf8Array p_x19 = global::Omnius.Core.RocketPack.Utf8Array.Empty;
+            global::Omnius.Core.RocketPack.Utf8String p_x19 = global::Omnius.Core.RocketPack.Utf8String.Empty;
             global::Omnius.Core.RocketPack.Timestamp p_x20 = global::Omnius.Core.RocketPack.Timestamp.Zero;
             global::System.ReadOnlyMemory<byte> p_x21 = global::System.ReadOnlyMemory<byte>.Empty;
             global::System.Buffers.IMemoryOwner<byte> p_x22 = global::Omnius.Core.MemoryOwner<byte>.Empty;
-            global::Omnius.Core.RocketPack.Utf8Array[] p_x23 = global::System.Array.Empty<global::Omnius.Core.RocketPack.Utf8Array>();
-            global::System.Collections.Generic.Dictionary<byte, global::Omnius.Core.RocketPack.Utf8Array> p_x24 = new global::System.Collections.Generic.Dictionary<byte, global::Omnius.Core.RocketPack.Utf8Array>();
+            global::Omnius.Core.RocketPack.Utf8String[] p_x23 = global::System.Array.Empty<global::Omnius.Core.RocketPack.Utf8String>();
+            global::System.Collections.Generic.Dictionary<byte, global::Omnius.Core.RocketPack.Utf8String> p_x24 = new global::System.Collections.Generic.Dictionary<byte, global::Omnius.Core.RocketPack.Utf8String>();
             global::Omnius.Core.RocketPack.Tests.Internal.StructElement_Struct p_x25 = global::Omnius.Core.RocketPack.Tests.Internal.StructElement_Struct.Empty;
             global::Omnius.Core.RocketPack.Tests.Internal.MessageElement_Struct p_x26 = global::Omnius.Core.RocketPack.Tests.Internal.MessageElement_Struct.Empty;
             global::Omnius.Core.RocketPack.Tests.Internal.StructElement_Class p_x27 = global::Omnius.Core.RocketPack.Tests.Internal.StructElement_Class.Empty;
@@ -1309,7 +1309,7 @@ internal readonly partial struct Message_Struct : global::Omnius.Core.RocketPack
                     case 24:
                         {
                             var length = r.GetUInt32();
-                            p_x23 = new global::Omnius.Core.RocketPack.Utf8Array[length];
+                            p_x23 = new global::Omnius.Core.RocketPack.Utf8String[length];
                             for (int i = 0; i < p_x23.Length; i++)
                             {
                                 p_x23[i] = r.GetString(128);
@@ -1319,9 +1319,9 @@ internal readonly partial struct Message_Struct : global::Omnius.Core.RocketPack
                     case 25:
                         {
                             var length = r.GetUInt32();
-                            p_x24 = new global::System.Collections.Generic.Dictionary<byte, global::Omnius.Core.RocketPack.Utf8Array>();
+                            p_x24 = new global::System.Collections.Generic.Dictionary<byte, global::Omnius.Core.RocketPack.Utf8String>();
                             byte t_key = 0;
-                            global::Omnius.Core.RocketPack.Utf8Array t_value = global::Omnius.Core.RocketPack.Utf8Array.Empty;
+                            global::Omnius.Core.RocketPack.Utf8String t_value = global::Omnius.Core.RocketPack.Utf8String.Empty;
                             for (int i = 0; i < length; i++)
                             {
                                 t_key = r.GetUInt8();
@@ -1376,7 +1376,7 @@ internal readonly partial struct NullableMessage_Struct : global::Omnius.Core.Ro
     public static readonly int MaxX23Count = 16;
     public static readonly int MaxX24Count = 32;
 
-    public NullableMessage_Struct(bool? x0, sbyte? x1, short? x2, int? x3, long? x4, byte? x5, ushort? x6, uint? x7, ulong? x8, global::Omnius.Core.RocketPack.Tests.Internal.Enum1? x9, global::Omnius.Core.RocketPack.Tests.Internal.Enum2? x10, global::Omnius.Core.RocketPack.Tests.Internal.Enum3? x11, global::Omnius.Core.RocketPack.Tests.Internal.Enum4? x12, global::Omnius.Core.RocketPack.Tests.Internal.Enum5? x13, global::Omnius.Core.RocketPack.Tests.Internal.Enum6? x14, global::Omnius.Core.RocketPack.Tests.Internal.Enum7? x15, global::Omnius.Core.RocketPack.Tests.Internal.Enum8? x16, float? x17, double? x18, global::Omnius.Core.RocketPack.Utf8Array? x19, global::Omnius.Core.RocketPack.Timestamp? x20, global::System.ReadOnlyMemory<byte>? x21, global::System.Buffers.IMemoryOwner<byte>? x22, global::Omnius.Core.RocketPack.Utf8Array[]? x23, global::System.Collections.Generic.Dictionary<byte, global::Omnius.Core.RocketPack.Utf8Array>? x24, global::Omnius.Core.RocketPack.Tests.Internal.StructElement_Struct? x25, global::Omnius.Core.RocketPack.Tests.Internal.MessageElement_Struct? x26, global::Omnius.Core.RocketPack.Tests.Internal.StructElement_Class? x27, global::Omnius.Core.RocketPack.Tests.Internal.MessageElement_Class? x28)
+    public NullableMessage_Struct(bool? x0, sbyte? x1, short? x2, int? x3, long? x4, byte? x5, ushort? x6, uint? x7, ulong? x8, global::Omnius.Core.RocketPack.Tests.Internal.Enum1? x9, global::Omnius.Core.RocketPack.Tests.Internal.Enum2? x10, global::Omnius.Core.RocketPack.Tests.Internal.Enum3? x11, global::Omnius.Core.RocketPack.Tests.Internal.Enum4? x12, global::Omnius.Core.RocketPack.Tests.Internal.Enum5? x13, global::Omnius.Core.RocketPack.Tests.Internal.Enum6? x14, global::Omnius.Core.RocketPack.Tests.Internal.Enum7? x15, global::Omnius.Core.RocketPack.Tests.Internal.Enum8? x16, float? x17, double? x18, global::Omnius.Core.RocketPack.Utf8String? x19, global::Omnius.Core.RocketPack.Timestamp? x20, global::System.ReadOnlyMemory<byte>? x21, global::System.Buffers.IMemoryOwner<byte>? x22, global::Omnius.Core.RocketPack.Utf8String[]? x23, global::System.Collections.Generic.Dictionary<byte, global::Omnius.Core.RocketPack.Utf8String>? x24, global::Omnius.Core.RocketPack.Tests.Internal.StructElement_Struct? x25, global::Omnius.Core.RocketPack.Tests.Internal.MessageElement_Struct? x26, global::Omnius.Core.RocketPack.Tests.Internal.StructElement_Class? x27, global::Omnius.Core.RocketPack.Tests.Internal.MessageElement_Class? x28)
     {
         if (x19 is not null && x19.Length > 128) throw new global::System.ArgumentOutOfRangeException("x19");
         if (x21 is not null && x21.Value.Length > 256) throw new global::System.ArgumentOutOfRangeException("x21");
@@ -1424,15 +1424,15 @@ internal readonly partial struct NullableMessage_Struct : global::Omnius.Core.Ro
         this.X22 = x22;
         if (x23 != null)
         {
-            this.X23 = new global::Omnius.Core.Collections.ReadOnlyListSlim<global::Omnius.Core.RocketPack.Utf8Array>(x23);
+            this.X23 = new global::Omnius.Core.Collections.ReadOnlyListSlim<global::Omnius.Core.RocketPack.Utf8String>(x23);
         }
         else
         {
             this.X23 = null;
         }
-        if(x24 != null)
+        if (x24 != null)
         {
-            this.X24 = new global::Omnius.Core.Collections.ReadOnlyDictionarySlim<byte, global::Omnius.Core.RocketPack.Utf8Array>(x24);
+            this.X24 = new global::Omnius.Core.Collections.ReadOnlyDictionarySlim<byte, global::Omnius.Core.RocketPack.Utf8String>(x24);
         }
         else
         {
@@ -1468,14 +1468,14 @@ internal readonly partial struct NullableMessage_Struct : global::Omnius.Core.Ro
             if (x20 != default) ___h.Add(x20.GetHashCode());
             if (x21 is not null && !x21.Value.IsEmpty) ___h.Add(global::Omnius.Core.Helpers.ObjectHelper.GetHashCode(x21.Value.Span));
             if (x22 is not null && !x22.Memory.IsEmpty) ___h.Add(global::Omnius.Core.Helpers.ObjectHelper.GetHashCode(x22.Memory.Span));
-            if(x23 != null)
+            if (x23 != null)
             {
                 foreach (var n in x23)
                 {
                     if (!n.IsEmpty) ___h.Add(n.GetHashCode());
                 }
             }
-            if(x24 != null)
+            if (x24 != null)
             {
                 foreach (var n in x24)
                 {
@@ -1510,12 +1510,12 @@ internal readonly partial struct NullableMessage_Struct : global::Omnius.Core.Ro
     public global::Omnius.Core.RocketPack.Tests.Internal.Enum8? X16 { get; }
     public float? X17 { get; }
     public double? X18 { get; }
-    public global::Omnius.Core.RocketPack.Utf8Array? X19 { get; }
+    public global::Omnius.Core.RocketPack.Utf8String? X19 { get; }
     public global::Omnius.Core.RocketPack.Timestamp? X20 { get; }
     public global::System.ReadOnlyMemory<byte>? X21 { get; }
     public global::System.Buffers.IMemoryOwner<byte>? X22 { get; }
-    public global::Omnius.Core.Collections.ReadOnlyListSlim<global::Omnius.Core.RocketPack.Utf8Array>? X23 { get; }
-    public global::Omnius.Core.Collections.ReadOnlyDictionarySlim<byte, global::Omnius.Core.RocketPack.Utf8Array>? X24 { get; }
+    public global::Omnius.Core.Collections.ReadOnlyListSlim<global::Omnius.Core.RocketPack.Utf8String>? X23 { get; }
+    public global::Omnius.Core.Collections.ReadOnlyDictionarySlim<byte, global::Omnius.Core.RocketPack.Utf8String>? X24 { get; }
     public global::Omnius.Core.RocketPack.Tests.Internal.StructElement_Struct? X25 { get; }
     public global::Omnius.Core.RocketPack.Tests.Internal.MessageElement_Struct? X26 { get; }
     public global::Omnius.Core.RocketPack.Tests.Internal.StructElement_Class? X27 { get; }
@@ -1773,12 +1773,12 @@ internal readonly partial struct NullableMessage_Struct : global::Omnius.Core.Ro
             global::Omnius.Core.RocketPack.Tests.Internal.Enum8? p_x16 = null;
             float? p_x17 = null;
             double? p_x18 = null;
-            global::Omnius.Core.RocketPack.Utf8Array? p_x19 = null;
+            global::Omnius.Core.RocketPack.Utf8String? p_x19 = null;
             global::Omnius.Core.RocketPack.Timestamp? p_x20 = null;
             global::System.ReadOnlyMemory<byte>? p_x21 = null;
             global::System.Buffers.IMemoryOwner<byte>? p_x22 = null;
-            global::Omnius.Core.RocketPack.Utf8Array[]? p_x23 = null;
-            global::System.Collections.Generic.Dictionary<byte, global::Omnius.Core.RocketPack.Utf8Array>? p_x24 = null;
+            global::Omnius.Core.RocketPack.Utf8String[]? p_x23 = null;
+            global::System.Collections.Generic.Dictionary<byte, global::Omnius.Core.RocketPack.Utf8String>? p_x24 = null;
             global::Omnius.Core.RocketPack.Tests.Internal.StructElement_Struct? p_x25 = null;
             global::Omnius.Core.RocketPack.Tests.Internal.MessageElement_Struct? p_x26 = null;
             global::Omnius.Core.RocketPack.Tests.Internal.StructElement_Class? p_x27 = null;
@@ -1908,7 +1908,7 @@ internal readonly partial struct NullableMessage_Struct : global::Omnius.Core.Ro
                     case 24:
                         {
                             var length = r.GetUInt32();
-                            p_x23 = new global::Omnius.Core.RocketPack.Utf8Array[length];
+                            p_x23 = new global::Omnius.Core.RocketPack.Utf8String[length];
                             for (int i = 0; i < p_x23.Length; i++)
                             {
                                 p_x23[i] = r.GetString(128);
@@ -1918,9 +1918,9 @@ internal readonly partial struct NullableMessage_Struct : global::Omnius.Core.Ro
                     case 25:
                         {
                             var length = r.GetUInt32();
-                            p_x24 = new global::System.Collections.Generic.Dictionary<byte, global::Omnius.Core.RocketPack.Utf8Array>();
+                            p_x24 = new global::System.Collections.Generic.Dictionary<byte, global::Omnius.Core.RocketPack.Utf8String>();
                             byte t_key = 0;
-                            global::Omnius.Core.RocketPack.Utf8Array t_value = global::Omnius.Core.RocketPack.Utf8Array.Empty;
+                            global::Omnius.Core.RocketPack.Utf8String t_value = global::Omnius.Core.RocketPack.Utf8String.Empty;
                             for (int i = 0; i < length; i++)
                             {
                                 t_key = r.GetUInt8();
@@ -1964,7 +1964,7 @@ internal sealed partial class Struct_Class : global::Omnius.Core.RocketPack.IRoc
     static Struct_Class()
     {
         global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.RocketPack.Tests.Internal.Struct_Class>.Formatter = new ___CustomFormatter();
-        global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.RocketPack.Tests.Internal.Struct_Class>.Empty = new global::Omnius.Core.RocketPack.Tests.Internal.Struct_Class(false, 0, 0, 0, 0, 0, 0, 0, 0, (global::Omnius.Core.RocketPack.Tests.Internal.Enum1)0, (global::Omnius.Core.RocketPack.Tests.Internal.Enum2)0, (global::Omnius.Core.RocketPack.Tests.Internal.Enum3)0, (global::Omnius.Core.RocketPack.Tests.Internal.Enum4)0, (global::Omnius.Core.RocketPack.Tests.Internal.Enum5)0, (global::Omnius.Core.RocketPack.Tests.Internal.Enum6)0, (global::Omnius.Core.RocketPack.Tests.Internal.Enum7)0, (global::Omnius.Core.RocketPack.Tests.Internal.Enum8)0, 0.0F, 0.0D, global::Omnius.Core.RocketPack.Utf8Array.Empty, global::Omnius.Core.RocketPack.Timestamp.Zero, global::System.ReadOnlyMemory<byte>.Empty, global::Omnius.Core.MemoryOwner<byte>.Empty, global::System.Array.Empty<global::Omnius.Core.RocketPack.Utf8Array>(), new global::System.Collections.Generic.Dictionary<byte, global::Omnius.Core.RocketPack.Utf8Array>(), global::Omnius.Core.RocketPack.Tests.Internal.StructElement_Struct.Empty, global::Omnius.Core.RocketPack.Tests.Internal.MessageElement_Struct.Empty, global::Omnius.Core.RocketPack.Tests.Internal.StructElement_Class.Empty, global::Omnius.Core.RocketPack.Tests.Internal.MessageElement_Class.Empty);
+        global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.RocketPack.Tests.Internal.Struct_Class>.Empty = new global::Omnius.Core.RocketPack.Tests.Internal.Struct_Class(false, 0, 0, 0, 0, 0, 0, 0, 0, (global::Omnius.Core.RocketPack.Tests.Internal.Enum1)0, (global::Omnius.Core.RocketPack.Tests.Internal.Enum2)0, (global::Omnius.Core.RocketPack.Tests.Internal.Enum3)0, (global::Omnius.Core.RocketPack.Tests.Internal.Enum4)0, (global::Omnius.Core.RocketPack.Tests.Internal.Enum5)0, (global::Omnius.Core.RocketPack.Tests.Internal.Enum6)0, (global::Omnius.Core.RocketPack.Tests.Internal.Enum7)0, (global::Omnius.Core.RocketPack.Tests.Internal.Enum8)0, 0.0F, 0.0D, global::Omnius.Core.RocketPack.Utf8String.Empty, global::Omnius.Core.RocketPack.Timestamp.Zero, global::System.ReadOnlyMemory<byte>.Empty, global::Omnius.Core.MemoryOwner<byte>.Empty, global::System.Array.Empty<global::Omnius.Core.RocketPack.Utf8String>(), new global::System.Collections.Generic.Dictionary<byte, global::Omnius.Core.RocketPack.Utf8String>(), global::Omnius.Core.RocketPack.Tests.Internal.StructElement_Struct.Empty, global::Omnius.Core.RocketPack.Tests.Internal.MessageElement_Struct.Empty, global::Omnius.Core.RocketPack.Tests.Internal.StructElement_Class.Empty, global::Omnius.Core.RocketPack.Tests.Internal.MessageElement_Class.Empty);
     }
 
     private readonly global::System.Lazy<int> ___hashCode;
@@ -1975,7 +1975,7 @@ internal sealed partial class Struct_Class : global::Omnius.Core.RocketPack.IRoc
     public static readonly int MaxX23Count = 16;
     public static readonly int MaxX24Count = 32;
 
-    public Struct_Class(bool x0, sbyte x1, short x2, int x3, long x4, byte x5, ushort x6, uint x7, ulong x8, global::Omnius.Core.RocketPack.Tests.Internal.Enum1 x9, global::Omnius.Core.RocketPack.Tests.Internal.Enum2 x10, global::Omnius.Core.RocketPack.Tests.Internal.Enum3 x11, global::Omnius.Core.RocketPack.Tests.Internal.Enum4 x12, global::Omnius.Core.RocketPack.Tests.Internal.Enum5 x13, global::Omnius.Core.RocketPack.Tests.Internal.Enum6 x14, global::Omnius.Core.RocketPack.Tests.Internal.Enum7 x15, global::Omnius.Core.RocketPack.Tests.Internal.Enum8 x16, float x17, double x18, global::Omnius.Core.RocketPack.Utf8Array x19, global::Omnius.Core.RocketPack.Timestamp x20, global::System.ReadOnlyMemory<byte> x21, global::System.Buffers.IMemoryOwner<byte> x22, global::Omnius.Core.RocketPack.Utf8Array[] x23, global::System.Collections.Generic.Dictionary<byte, global::Omnius.Core.RocketPack.Utf8Array> x24, global::Omnius.Core.RocketPack.Tests.Internal.StructElement_Struct x25, global::Omnius.Core.RocketPack.Tests.Internal.MessageElement_Struct x26, global::Omnius.Core.RocketPack.Tests.Internal.StructElement_Class x27, global::Omnius.Core.RocketPack.Tests.Internal.MessageElement_Class x28)
+    public Struct_Class(bool x0, sbyte x1, short x2, int x3, long x4, byte x5, ushort x6, uint x7, ulong x8, global::Omnius.Core.RocketPack.Tests.Internal.Enum1 x9, global::Omnius.Core.RocketPack.Tests.Internal.Enum2 x10, global::Omnius.Core.RocketPack.Tests.Internal.Enum3 x11, global::Omnius.Core.RocketPack.Tests.Internal.Enum4 x12, global::Omnius.Core.RocketPack.Tests.Internal.Enum5 x13, global::Omnius.Core.RocketPack.Tests.Internal.Enum6 x14, global::Omnius.Core.RocketPack.Tests.Internal.Enum7 x15, global::Omnius.Core.RocketPack.Tests.Internal.Enum8 x16, float x17, double x18, global::Omnius.Core.RocketPack.Utf8String x19, global::Omnius.Core.RocketPack.Timestamp x20, global::System.ReadOnlyMemory<byte> x21, global::System.Buffers.IMemoryOwner<byte> x22, global::Omnius.Core.RocketPack.Utf8String[] x23, global::System.Collections.Generic.Dictionary<byte, global::Omnius.Core.RocketPack.Utf8String> x24, global::Omnius.Core.RocketPack.Tests.Internal.StructElement_Struct x25, global::Omnius.Core.RocketPack.Tests.Internal.MessageElement_Struct x26, global::Omnius.Core.RocketPack.Tests.Internal.StructElement_Class x27, global::Omnius.Core.RocketPack.Tests.Internal.MessageElement_Class x28)
     {
         if (x19 is null) throw new global::System.ArgumentNullException("x19");
         if (x19.Length > 128) throw new global::System.ArgumentOutOfRangeException("x19");
@@ -2022,8 +2022,8 @@ internal sealed partial class Struct_Class : global::Omnius.Core.RocketPack.IRoc
         this.X20 = x20;
         this.X21 = x21;
         this.X22 = x22;
-        this.X23 = new global::Omnius.Core.Collections.ReadOnlyListSlim<global::Omnius.Core.RocketPack.Utf8Array>(x23);
-        this.X24 = new global::Omnius.Core.Collections.ReadOnlyDictionarySlim<byte, global::Omnius.Core.RocketPack.Utf8Array>(x24);
+        this.X23 = new global::Omnius.Core.Collections.ReadOnlyListSlim<global::Omnius.Core.RocketPack.Utf8String>(x23);
+        this.X24 = new global::Omnius.Core.Collections.ReadOnlyDictionarySlim<byte, global::Omnius.Core.RocketPack.Utf8String>(x24);
         this.X25 = x25;
         this.X26 = x26;
         this.X27 = x27;
@@ -2091,12 +2091,12 @@ internal sealed partial class Struct_Class : global::Omnius.Core.RocketPack.IRoc
     public global::Omnius.Core.RocketPack.Tests.Internal.Enum8 X16 { get; }
     public float X17 { get; }
     public double X18 { get; }
-    public global::Omnius.Core.RocketPack.Utf8Array X19 { get; }
+    public global::Omnius.Core.RocketPack.Utf8String X19 { get; }
     public global::Omnius.Core.RocketPack.Timestamp X20 { get; }
     public global::System.ReadOnlyMemory<byte> X21 { get; }
     public global::System.Buffers.IMemoryOwner<byte> X22 { get; }
-    public global::Omnius.Core.Collections.ReadOnlyListSlim<global::Omnius.Core.RocketPack.Utf8Array> X23 { get; }
-    public global::Omnius.Core.Collections.ReadOnlyDictionarySlim<byte, global::Omnius.Core.RocketPack.Utf8Array> X24 { get; }
+    public global::Omnius.Core.Collections.ReadOnlyListSlim<global::Omnius.Core.RocketPack.Utf8String> X23 { get; }
+    public global::Omnius.Core.Collections.ReadOnlyDictionarySlim<byte, global::Omnius.Core.RocketPack.Utf8String> X24 { get; }
     public global::Omnius.Core.RocketPack.Tests.Internal.StructElement_Struct X25 { get; }
     public global::Omnius.Core.RocketPack.Tests.Internal.MessageElement_Struct X26 { get; }
     public global::Omnius.Core.RocketPack.Tests.Internal.StructElement_Class X27 { get; }
@@ -2231,12 +2231,12 @@ internal sealed partial class Struct_Class : global::Omnius.Core.RocketPack.IRoc
             global::Omnius.Core.RocketPack.Tests.Internal.Enum8 p_x16 = (global::Omnius.Core.RocketPack.Tests.Internal.Enum8)0;
             float p_x17 = 0.0F;
             double p_x18 = 0.0D;
-            global::Omnius.Core.RocketPack.Utf8Array p_x19 = global::Omnius.Core.RocketPack.Utf8Array.Empty;
+            global::Omnius.Core.RocketPack.Utf8String p_x19 = global::Omnius.Core.RocketPack.Utf8String.Empty;
             global::Omnius.Core.RocketPack.Timestamp p_x20 = global::Omnius.Core.RocketPack.Timestamp.Zero;
             global::System.ReadOnlyMemory<byte> p_x21 = global::System.ReadOnlyMemory<byte>.Empty;
             global::System.Buffers.IMemoryOwner<byte> p_x22 = global::Omnius.Core.MemoryOwner<byte>.Empty;
-            global::Omnius.Core.RocketPack.Utf8Array[] p_x23 = global::System.Array.Empty<global::Omnius.Core.RocketPack.Utf8Array>();
-            global::System.Collections.Generic.Dictionary<byte, global::Omnius.Core.RocketPack.Utf8Array> p_x24 = new global::System.Collections.Generic.Dictionary<byte, global::Omnius.Core.RocketPack.Utf8Array>();
+            global::Omnius.Core.RocketPack.Utf8String[] p_x23 = global::System.Array.Empty<global::Omnius.Core.RocketPack.Utf8String>();
+            global::System.Collections.Generic.Dictionary<byte, global::Omnius.Core.RocketPack.Utf8String> p_x24 = new global::System.Collections.Generic.Dictionary<byte, global::Omnius.Core.RocketPack.Utf8String>();
             global::Omnius.Core.RocketPack.Tests.Internal.StructElement_Struct p_x25 = global::Omnius.Core.RocketPack.Tests.Internal.StructElement_Struct.Empty;
             global::Omnius.Core.RocketPack.Tests.Internal.MessageElement_Struct p_x26 = global::Omnius.Core.RocketPack.Tests.Internal.MessageElement_Struct.Empty;
             global::Omnius.Core.RocketPack.Tests.Internal.StructElement_Class p_x27 = global::Omnius.Core.RocketPack.Tests.Internal.StructElement_Class.Empty;
@@ -2313,7 +2313,7 @@ internal sealed partial class Struct_Class : global::Omnius.Core.RocketPack.IRoc
             }
             {
                 var length = r.GetUInt32();
-                p_x23 = new global::Omnius.Core.RocketPack.Utf8Array[length];
+                p_x23 = new global::Omnius.Core.RocketPack.Utf8String[length];
                 for (int i = 0; i < p_x23.Length; i++)
                 {
                     p_x23[i] = r.GetString(128);
@@ -2321,9 +2321,9 @@ internal sealed partial class Struct_Class : global::Omnius.Core.RocketPack.IRoc
             }
             {
                 var length = r.GetUInt32();
-                p_x24 = new global::System.Collections.Generic.Dictionary<byte, global::Omnius.Core.RocketPack.Utf8Array>();
+                p_x24 = new global::System.Collections.Generic.Dictionary<byte, global::Omnius.Core.RocketPack.Utf8String>();
                 byte t_key = 0;
-                global::Omnius.Core.RocketPack.Utf8Array t_value = global::Omnius.Core.RocketPack.Utf8Array.Empty;
+                global::Omnius.Core.RocketPack.Utf8String t_value = global::Omnius.Core.RocketPack.Utf8String.Empty;
                 for (int i = 0; i < length; i++)
                 {
                     t_key = r.GetUInt8();
@@ -2355,7 +2355,7 @@ internal sealed partial class Message_Class : global::Omnius.Core.RocketPack.IRo
     static Message_Class()
     {
         global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.RocketPack.Tests.Internal.Message_Class>.Formatter = new ___CustomFormatter();
-        global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.RocketPack.Tests.Internal.Message_Class>.Empty = new global::Omnius.Core.RocketPack.Tests.Internal.Message_Class(false, 0, 0, 0, 0, 0, 0, 0, 0, (global::Omnius.Core.RocketPack.Tests.Internal.Enum1)0, (global::Omnius.Core.RocketPack.Tests.Internal.Enum2)0, (global::Omnius.Core.RocketPack.Tests.Internal.Enum3)0, (global::Omnius.Core.RocketPack.Tests.Internal.Enum4)0, (global::Omnius.Core.RocketPack.Tests.Internal.Enum5)0, (global::Omnius.Core.RocketPack.Tests.Internal.Enum6)0, (global::Omnius.Core.RocketPack.Tests.Internal.Enum7)0, (global::Omnius.Core.RocketPack.Tests.Internal.Enum8)0, 0.0F, 0.0D, global::Omnius.Core.RocketPack.Utf8Array.Empty, global::Omnius.Core.RocketPack.Timestamp.Zero, global::System.ReadOnlyMemory<byte>.Empty, global::Omnius.Core.MemoryOwner<byte>.Empty, global::System.Array.Empty<global::Omnius.Core.RocketPack.Utf8Array>(), new global::System.Collections.Generic.Dictionary<byte, global::Omnius.Core.RocketPack.Utf8Array>(), global::Omnius.Core.RocketPack.Tests.Internal.StructElement_Struct.Empty, global::Omnius.Core.RocketPack.Tests.Internal.MessageElement_Struct.Empty, global::Omnius.Core.RocketPack.Tests.Internal.StructElement_Class.Empty, global::Omnius.Core.RocketPack.Tests.Internal.MessageElement_Class.Empty);
+        global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.RocketPack.Tests.Internal.Message_Class>.Empty = new global::Omnius.Core.RocketPack.Tests.Internal.Message_Class(false, 0, 0, 0, 0, 0, 0, 0, 0, (global::Omnius.Core.RocketPack.Tests.Internal.Enum1)0, (global::Omnius.Core.RocketPack.Tests.Internal.Enum2)0, (global::Omnius.Core.RocketPack.Tests.Internal.Enum3)0, (global::Omnius.Core.RocketPack.Tests.Internal.Enum4)0, (global::Omnius.Core.RocketPack.Tests.Internal.Enum5)0, (global::Omnius.Core.RocketPack.Tests.Internal.Enum6)0, (global::Omnius.Core.RocketPack.Tests.Internal.Enum7)0, (global::Omnius.Core.RocketPack.Tests.Internal.Enum8)0, 0.0F, 0.0D, global::Omnius.Core.RocketPack.Utf8String.Empty, global::Omnius.Core.RocketPack.Timestamp.Zero, global::System.ReadOnlyMemory<byte>.Empty, global::Omnius.Core.MemoryOwner<byte>.Empty, global::System.Array.Empty<global::Omnius.Core.RocketPack.Utf8String>(), new global::System.Collections.Generic.Dictionary<byte, global::Omnius.Core.RocketPack.Utf8String>(), global::Omnius.Core.RocketPack.Tests.Internal.StructElement_Struct.Empty, global::Omnius.Core.RocketPack.Tests.Internal.MessageElement_Struct.Empty, global::Omnius.Core.RocketPack.Tests.Internal.StructElement_Class.Empty, global::Omnius.Core.RocketPack.Tests.Internal.MessageElement_Class.Empty);
     }
 
     private readonly global::System.Lazy<int> ___hashCode;
@@ -2366,7 +2366,7 @@ internal sealed partial class Message_Class : global::Omnius.Core.RocketPack.IRo
     public static readonly int MaxX23Count = 16;
     public static readonly int MaxX24Count = 32;
 
-    public Message_Class(bool x0, sbyte x1, short x2, int x3, long x4, byte x5, ushort x6, uint x7, ulong x8, global::Omnius.Core.RocketPack.Tests.Internal.Enum1 x9, global::Omnius.Core.RocketPack.Tests.Internal.Enum2 x10, global::Omnius.Core.RocketPack.Tests.Internal.Enum3 x11, global::Omnius.Core.RocketPack.Tests.Internal.Enum4 x12, global::Omnius.Core.RocketPack.Tests.Internal.Enum5 x13, global::Omnius.Core.RocketPack.Tests.Internal.Enum6 x14, global::Omnius.Core.RocketPack.Tests.Internal.Enum7 x15, global::Omnius.Core.RocketPack.Tests.Internal.Enum8 x16, float x17, double x18, global::Omnius.Core.RocketPack.Utf8Array x19, global::Omnius.Core.RocketPack.Timestamp x20, global::System.ReadOnlyMemory<byte> x21, global::System.Buffers.IMemoryOwner<byte> x22, global::Omnius.Core.RocketPack.Utf8Array[] x23, global::System.Collections.Generic.Dictionary<byte, global::Omnius.Core.RocketPack.Utf8Array> x24, global::Omnius.Core.RocketPack.Tests.Internal.StructElement_Struct x25, global::Omnius.Core.RocketPack.Tests.Internal.MessageElement_Struct x26, global::Omnius.Core.RocketPack.Tests.Internal.StructElement_Class x27, global::Omnius.Core.RocketPack.Tests.Internal.MessageElement_Class x28)
+    public Message_Class(bool x0, sbyte x1, short x2, int x3, long x4, byte x5, ushort x6, uint x7, ulong x8, global::Omnius.Core.RocketPack.Tests.Internal.Enum1 x9, global::Omnius.Core.RocketPack.Tests.Internal.Enum2 x10, global::Omnius.Core.RocketPack.Tests.Internal.Enum3 x11, global::Omnius.Core.RocketPack.Tests.Internal.Enum4 x12, global::Omnius.Core.RocketPack.Tests.Internal.Enum5 x13, global::Omnius.Core.RocketPack.Tests.Internal.Enum6 x14, global::Omnius.Core.RocketPack.Tests.Internal.Enum7 x15, global::Omnius.Core.RocketPack.Tests.Internal.Enum8 x16, float x17, double x18, global::Omnius.Core.RocketPack.Utf8String x19, global::Omnius.Core.RocketPack.Timestamp x20, global::System.ReadOnlyMemory<byte> x21, global::System.Buffers.IMemoryOwner<byte> x22, global::Omnius.Core.RocketPack.Utf8String[] x23, global::System.Collections.Generic.Dictionary<byte, global::Omnius.Core.RocketPack.Utf8String> x24, global::Omnius.Core.RocketPack.Tests.Internal.StructElement_Struct x25, global::Omnius.Core.RocketPack.Tests.Internal.MessageElement_Struct x26, global::Omnius.Core.RocketPack.Tests.Internal.StructElement_Class x27, global::Omnius.Core.RocketPack.Tests.Internal.MessageElement_Class x28)
     {
         if (x19 is null) throw new global::System.ArgumentNullException("x19");
         if (x19.Length > 128) throw new global::System.ArgumentOutOfRangeException("x19");
@@ -2413,8 +2413,8 @@ internal sealed partial class Message_Class : global::Omnius.Core.RocketPack.IRo
         this.X20 = x20;
         this.X21 = x21;
         this.X22 = x22;
-        this.X23 = new global::Omnius.Core.Collections.ReadOnlyListSlim<global::Omnius.Core.RocketPack.Utf8Array>(x23);
-        this.X24 = new global::Omnius.Core.Collections.ReadOnlyDictionarySlim<byte, global::Omnius.Core.RocketPack.Utf8Array>(x24);
+        this.X23 = new global::Omnius.Core.Collections.ReadOnlyListSlim<global::Omnius.Core.RocketPack.Utf8String>(x23);
+        this.X24 = new global::Omnius.Core.Collections.ReadOnlyDictionarySlim<byte, global::Omnius.Core.RocketPack.Utf8String>(x24);
         this.X25 = x25;
         this.X26 = x26;
         this.X27 = x27;
@@ -2482,12 +2482,12 @@ internal sealed partial class Message_Class : global::Omnius.Core.RocketPack.IRo
     public global::Omnius.Core.RocketPack.Tests.Internal.Enum8 X16 { get; }
     public float X17 { get; }
     public double X18 { get; }
-    public global::Omnius.Core.RocketPack.Utf8Array X19 { get; }
+    public global::Omnius.Core.RocketPack.Utf8String X19 { get; }
     public global::Omnius.Core.RocketPack.Timestamp X20 { get; }
     public global::System.ReadOnlyMemory<byte> X21 { get; }
     public global::System.Buffers.IMemoryOwner<byte> X22 { get; }
-    public global::Omnius.Core.Collections.ReadOnlyListSlim<global::Omnius.Core.RocketPack.Utf8Array> X23 { get; }
-    public global::Omnius.Core.Collections.ReadOnlyDictionarySlim<byte, global::Omnius.Core.RocketPack.Utf8Array> X24 { get; }
+    public global::Omnius.Core.Collections.ReadOnlyListSlim<global::Omnius.Core.RocketPack.Utf8String> X23 { get; }
+    public global::Omnius.Core.Collections.ReadOnlyDictionarySlim<byte, global::Omnius.Core.RocketPack.Utf8String> X24 { get; }
     public global::Omnius.Core.RocketPack.Tests.Internal.StructElement_Struct X25 { get; }
     public global::Omnius.Core.RocketPack.Tests.Internal.MessageElement_Struct X26 { get; }
     public global::Omnius.Core.RocketPack.Tests.Internal.StructElement_Class X27 { get; }
@@ -2655,7 +2655,7 @@ internal sealed partial class Message_Class : global::Omnius.Core.RocketPack.IRo
                 w.Write((uint)19);
                 w.Write(value.X18);
             }
-            if (value.X19 != global::Omnius.Core.RocketPack.Utf8Array.Empty)
+            if (value.X19 != global::Omnius.Core.RocketPack.Utf8String.Empty)
             {
                 w.Write((uint)20);
                 w.Write(value.X19);
@@ -2739,12 +2739,12 @@ internal sealed partial class Message_Class : global::Omnius.Core.RocketPack.IRo
             global::Omnius.Core.RocketPack.Tests.Internal.Enum8 p_x16 = (global::Omnius.Core.RocketPack.Tests.Internal.Enum8)0;
             float p_x17 = 0.0F;
             double p_x18 = 0.0D;
-            global::Omnius.Core.RocketPack.Utf8Array p_x19 = global::Omnius.Core.RocketPack.Utf8Array.Empty;
+            global::Omnius.Core.RocketPack.Utf8String p_x19 = global::Omnius.Core.RocketPack.Utf8String.Empty;
             global::Omnius.Core.RocketPack.Timestamp p_x20 = global::Omnius.Core.RocketPack.Timestamp.Zero;
             global::System.ReadOnlyMemory<byte> p_x21 = global::System.ReadOnlyMemory<byte>.Empty;
             global::System.Buffers.IMemoryOwner<byte> p_x22 = global::Omnius.Core.MemoryOwner<byte>.Empty;
-            global::Omnius.Core.RocketPack.Utf8Array[] p_x23 = global::System.Array.Empty<global::Omnius.Core.RocketPack.Utf8Array>();
-            global::System.Collections.Generic.Dictionary<byte, global::Omnius.Core.RocketPack.Utf8Array> p_x24 = new global::System.Collections.Generic.Dictionary<byte, global::Omnius.Core.RocketPack.Utf8Array>();
+            global::Omnius.Core.RocketPack.Utf8String[] p_x23 = global::System.Array.Empty<global::Omnius.Core.RocketPack.Utf8String>();
+            global::System.Collections.Generic.Dictionary<byte, global::Omnius.Core.RocketPack.Utf8String> p_x24 = new global::System.Collections.Generic.Dictionary<byte, global::Omnius.Core.RocketPack.Utf8String>();
             global::Omnius.Core.RocketPack.Tests.Internal.StructElement_Struct p_x25 = global::Omnius.Core.RocketPack.Tests.Internal.StructElement_Struct.Empty;
             global::Omnius.Core.RocketPack.Tests.Internal.MessageElement_Struct p_x26 = global::Omnius.Core.RocketPack.Tests.Internal.MessageElement_Struct.Empty;
             global::Omnius.Core.RocketPack.Tests.Internal.StructElement_Class p_x27 = global::Omnius.Core.RocketPack.Tests.Internal.StructElement_Class.Empty;
@@ -2874,7 +2874,7 @@ internal sealed partial class Message_Class : global::Omnius.Core.RocketPack.IRo
                     case 24:
                         {
                             var length = r.GetUInt32();
-                            p_x23 = new global::Omnius.Core.RocketPack.Utf8Array[length];
+                            p_x23 = new global::Omnius.Core.RocketPack.Utf8String[length];
                             for (int i = 0; i < p_x23.Length; i++)
                             {
                                 p_x23[i] = r.GetString(128);
@@ -2884,9 +2884,9 @@ internal sealed partial class Message_Class : global::Omnius.Core.RocketPack.IRo
                     case 25:
                         {
                             var length = r.GetUInt32();
-                            p_x24 = new global::System.Collections.Generic.Dictionary<byte, global::Omnius.Core.RocketPack.Utf8Array>();
+                            p_x24 = new global::System.Collections.Generic.Dictionary<byte, global::Omnius.Core.RocketPack.Utf8String>();
                             byte t_key = 0;
-                            global::Omnius.Core.RocketPack.Utf8Array t_value = global::Omnius.Core.RocketPack.Utf8Array.Empty;
+                            global::Omnius.Core.RocketPack.Utf8String t_value = global::Omnius.Core.RocketPack.Utf8String.Empty;
                             for (int i = 0; i < length; i++)
                             {
                                 t_key = r.GetUInt8();
@@ -2941,7 +2941,7 @@ internal sealed partial class NullableMessage_Class : global::Omnius.Core.Rocket
     public static readonly int MaxX23Count = 16;
     public static readonly int MaxX24Count = 32;
 
-    public NullableMessage_Class(bool? x0, sbyte? x1, short? x2, int? x3, long? x4, byte? x5, ushort? x6, uint? x7, ulong? x8, global::Omnius.Core.RocketPack.Tests.Internal.Enum1? x9, global::Omnius.Core.RocketPack.Tests.Internal.Enum2? x10, global::Omnius.Core.RocketPack.Tests.Internal.Enum3? x11, global::Omnius.Core.RocketPack.Tests.Internal.Enum4? x12, global::Omnius.Core.RocketPack.Tests.Internal.Enum5? x13, global::Omnius.Core.RocketPack.Tests.Internal.Enum6? x14, global::Omnius.Core.RocketPack.Tests.Internal.Enum7? x15, global::Omnius.Core.RocketPack.Tests.Internal.Enum8? x16, float? x17, double? x18, global::Omnius.Core.RocketPack.Utf8Array? x19, global::Omnius.Core.RocketPack.Timestamp? x20, global::System.ReadOnlyMemory<byte>? x21, global::System.Buffers.IMemoryOwner<byte>? x22, global::Omnius.Core.RocketPack.Utf8Array[]? x23, global::System.Collections.Generic.Dictionary<byte, global::Omnius.Core.RocketPack.Utf8Array>? x24, global::Omnius.Core.RocketPack.Tests.Internal.StructElement_Struct? x25, global::Omnius.Core.RocketPack.Tests.Internal.MessageElement_Struct? x26, global::Omnius.Core.RocketPack.Tests.Internal.StructElement_Class? x27, global::Omnius.Core.RocketPack.Tests.Internal.MessageElement_Class? x28)
+    public NullableMessage_Class(bool? x0, sbyte? x1, short? x2, int? x3, long? x4, byte? x5, ushort? x6, uint? x7, ulong? x8, global::Omnius.Core.RocketPack.Tests.Internal.Enum1? x9, global::Omnius.Core.RocketPack.Tests.Internal.Enum2? x10, global::Omnius.Core.RocketPack.Tests.Internal.Enum3? x11, global::Omnius.Core.RocketPack.Tests.Internal.Enum4? x12, global::Omnius.Core.RocketPack.Tests.Internal.Enum5? x13, global::Omnius.Core.RocketPack.Tests.Internal.Enum6? x14, global::Omnius.Core.RocketPack.Tests.Internal.Enum7? x15, global::Omnius.Core.RocketPack.Tests.Internal.Enum8? x16, float? x17, double? x18, global::Omnius.Core.RocketPack.Utf8String? x19, global::Omnius.Core.RocketPack.Timestamp? x20, global::System.ReadOnlyMemory<byte>? x21, global::System.Buffers.IMemoryOwner<byte>? x22, global::Omnius.Core.RocketPack.Utf8String[]? x23, global::System.Collections.Generic.Dictionary<byte, global::Omnius.Core.RocketPack.Utf8String>? x24, global::Omnius.Core.RocketPack.Tests.Internal.StructElement_Struct? x25, global::Omnius.Core.RocketPack.Tests.Internal.MessageElement_Struct? x26, global::Omnius.Core.RocketPack.Tests.Internal.StructElement_Class? x27, global::Omnius.Core.RocketPack.Tests.Internal.MessageElement_Class? x28)
     {
         if (x19 is not null && x19.Length > 128) throw new global::System.ArgumentOutOfRangeException("x19");
         if (x21 is not null && x21.Value.Length > 256) throw new global::System.ArgumentOutOfRangeException("x21");
@@ -2989,15 +2989,15 @@ internal sealed partial class NullableMessage_Class : global::Omnius.Core.Rocket
         this.X22 = x22;
         if (x23 != null)
         {
-            this.X23 = new global::Omnius.Core.Collections.ReadOnlyListSlim<global::Omnius.Core.RocketPack.Utf8Array>(x23);
+            this.X23 = new global::Omnius.Core.Collections.ReadOnlyListSlim<global::Omnius.Core.RocketPack.Utf8String>(x23);
         }
         else
         {
             this.X23 = null;
         }
-        if(x24 != null)
+        if (x24 != null)
         {
-            this.X24 = new global::Omnius.Core.Collections.ReadOnlyDictionarySlim<byte, global::Omnius.Core.RocketPack.Utf8Array>(x24);
+            this.X24 = new global::Omnius.Core.Collections.ReadOnlyDictionarySlim<byte, global::Omnius.Core.RocketPack.Utf8String>(x24);
         }
         else
         {
@@ -3034,14 +3034,14 @@ internal sealed partial class NullableMessage_Class : global::Omnius.Core.Rocket
             if (x20 != default) ___h.Add(x20.GetHashCode());
             if (x21 is not null && !x21.Value.IsEmpty) ___h.Add(global::Omnius.Core.Helpers.ObjectHelper.GetHashCode(x21.Value.Span));
             if (x22 is not null && !x22.Memory.IsEmpty) ___h.Add(global::Omnius.Core.Helpers.ObjectHelper.GetHashCode(x22.Memory.Span));
-            if(x23 != null)
+            if (x23 != null)
             {
                 foreach (var n in x23)
                 {
                     if (!n.IsEmpty) ___h.Add(n.GetHashCode());
                 }
             }
-            if(x24 != null)
+            if (x24 != null)
             {
                 foreach (var n in x24)
                 {
@@ -3076,12 +3076,12 @@ internal sealed partial class NullableMessage_Class : global::Omnius.Core.Rocket
     public global::Omnius.Core.RocketPack.Tests.Internal.Enum8? X16 { get; }
     public float? X17 { get; }
     public double? X18 { get; }
-    public global::Omnius.Core.RocketPack.Utf8Array? X19 { get; }
+    public global::Omnius.Core.RocketPack.Utf8String? X19 { get; }
     public global::Omnius.Core.RocketPack.Timestamp? X20 { get; }
     public global::System.ReadOnlyMemory<byte>? X21 { get; }
     public global::System.Buffers.IMemoryOwner<byte>? X22 { get; }
-    public global::Omnius.Core.Collections.ReadOnlyListSlim<global::Omnius.Core.RocketPack.Utf8Array>? X23 { get; }
-    public global::Omnius.Core.Collections.ReadOnlyDictionarySlim<byte, global::Omnius.Core.RocketPack.Utf8Array>? X24 { get; }
+    public global::Omnius.Core.Collections.ReadOnlyListSlim<global::Omnius.Core.RocketPack.Utf8String>? X23 { get; }
+    public global::Omnius.Core.Collections.ReadOnlyDictionarySlim<byte, global::Omnius.Core.RocketPack.Utf8String>? X24 { get; }
     public global::Omnius.Core.RocketPack.Tests.Internal.StructElement_Struct? X25 { get; }
     public global::Omnius.Core.RocketPack.Tests.Internal.MessageElement_Struct? X26 { get; }
     public global::Omnius.Core.RocketPack.Tests.Internal.StructElement_Class? X27 { get; }
@@ -3341,12 +3341,12 @@ internal sealed partial class NullableMessage_Class : global::Omnius.Core.Rocket
             global::Omnius.Core.RocketPack.Tests.Internal.Enum8? p_x16 = null;
             float? p_x17 = null;
             double? p_x18 = null;
-            global::Omnius.Core.RocketPack.Utf8Array? p_x19 = null;
+            global::Omnius.Core.RocketPack.Utf8String? p_x19 = null;
             global::Omnius.Core.RocketPack.Timestamp? p_x20 = null;
             global::System.ReadOnlyMemory<byte>? p_x21 = null;
             global::System.Buffers.IMemoryOwner<byte>? p_x22 = null;
-            global::Omnius.Core.RocketPack.Utf8Array[]? p_x23 = null;
-            global::System.Collections.Generic.Dictionary<byte, global::Omnius.Core.RocketPack.Utf8Array>? p_x24 = null;
+            global::Omnius.Core.RocketPack.Utf8String[]? p_x23 = null;
+            global::System.Collections.Generic.Dictionary<byte, global::Omnius.Core.RocketPack.Utf8String>? p_x24 = null;
             global::Omnius.Core.RocketPack.Tests.Internal.StructElement_Struct? p_x25 = null;
             global::Omnius.Core.RocketPack.Tests.Internal.MessageElement_Struct? p_x26 = null;
             global::Omnius.Core.RocketPack.Tests.Internal.StructElement_Class? p_x27 = null;
@@ -3476,7 +3476,7 @@ internal sealed partial class NullableMessage_Class : global::Omnius.Core.Rocket
                     case 24:
                         {
                             var length = r.GetUInt32();
-                            p_x23 = new global::Omnius.Core.RocketPack.Utf8Array[length];
+                            p_x23 = new global::Omnius.Core.RocketPack.Utf8String[length];
                             for (int i = 0; i < p_x23.Length; i++)
                             {
                                 p_x23[i] = r.GetString(128);
@@ -3486,9 +3486,9 @@ internal sealed partial class NullableMessage_Class : global::Omnius.Core.Rocket
                     case 25:
                         {
                             var length = r.GetUInt32();
-                            p_x24 = new global::System.Collections.Generic.Dictionary<byte, global::Omnius.Core.RocketPack.Utf8Array>();
+                            p_x24 = new global::System.Collections.Generic.Dictionary<byte, global::Omnius.Core.RocketPack.Utf8String>();
                             byte t_key = 0;
-                            global::Omnius.Core.RocketPack.Utf8Array t_value = global::Omnius.Core.RocketPack.Utf8Array.Empty;
+                            global::Omnius.Core.RocketPack.Utf8String t_value = global::Omnius.Core.RocketPack.Utf8String.Empty;
                             for (int i = 0; i < length; i++)
                             {
                                 t_key = r.GetUInt8();

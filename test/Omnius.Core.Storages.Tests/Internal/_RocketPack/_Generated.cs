@@ -11,14 +11,14 @@ internal readonly partial struct TestMessage : global::Omnius.Core.RocketPack.IR
     static TestMessage()
     {
         global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.Storages.Tests.Internal.TestMessage>.Formatter = new ___CustomFormatter();
-        global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.Storages.Tests.Internal.TestMessage>.Empty = new global::Omnius.Core.Storages.Tests.Internal.TestMessage(global::Omnius.Core.RocketPack.Utf8Array.Empty);
+        global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.Storages.Tests.Internal.TestMessage>.Empty = new global::Omnius.Core.Storages.Tests.Internal.TestMessage(global::Omnius.Core.RocketPack.Utf8String.Empty);
     }
 
     private readonly int ___hashCode;
 
     public static readonly int MaxCommentLength = 2147483647;
 
-    public TestMessage(global::Omnius.Core.RocketPack.Utf8Array comment)
+    public TestMessage(global::Omnius.Core.RocketPack.Utf8String comment)
     {
         if (comment is null) throw new global::System.ArgumentNullException("comment");
         if (comment.Length > 2147483647) throw new global::System.ArgumentOutOfRangeException("comment");
@@ -32,7 +32,7 @@ internal readonly partial struct TestMessage : global::Omnius.Core.RocketPack.IR
         }
     }
 
-    public global::Omnius.Core.RocketPack.Utf8Array Comment { get; }
+    public global::Omnius.Core.RocketPack.Utf8String Comment { get; }
 
     public static global::Omnius.Core.Storages.Tests.Internal.TestMessage Import(global::System.Buffers.ReadOnlySequence<byte> sequence, global::Omnius.Core.IBytesPool bytesPool)
     {
@@ -78,7 +78,7 @@ internal readonly partial struct TestMessage : global::Omnius.Core.RocketPack.IR
         {
             if (rank > 256) throw new global::System.FormatException();
 
-            global::Omnius.Core.RocketPack.Utf8Array p_comment = global::Omnius.Core.RocketPack.Utf8Array.Empty;
+            global::Omnius.Core.RocketPack.Utf8String p_comment = global::Omnius.Core.RocketPack.Utf8String.Empty;
 
             {
                 p_comment = r.GetString(2147483647);

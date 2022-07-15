@@ -536,7 +536,7 @@ public sealed partial class OmniDigitalSignature : global::Omnius.Core.RocketPac
     static OmniDigitalSignature()
     {
         global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.Cryptography.OmniDigitalSignature>.Formatter = new ___CustomFormatter();
-        global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.Cryptography.OmniDigitalSignature>.Empty = new global::Omnius.Core.Cryptography.OmniDigitalSignature(global::Omnius.Core.RocketPack.Utf8Array.Empty, (global::Omnius.Core.Cryptography.OmniDigitalSignatureAlgorithmType)0, global::System.ReadOnlyMemory<byte>.Empty, global::System.ReadOnlyMemory<byte>.Empty);
+        global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.Cryptography.OmniDigitalSignature>.Empty = new global::Omnius.Core.Cryptography.OmniDigitalSignature(global::Omnius.Core.RocketPack.Utf8String.Empty, (global::Omnius.Core.Cryptography.OmniDigitalSignatureAlgorithmType)0, global::System.ReadOnlyMemory<byte>.Empty, global::System.ReadOnlyMemory<byte>.Empty);
     }
 
     private readonly global::System.Lazy<int> ___hashCode;
@@ -545,7 +545,7 @@ public sealed partial class OmniDigitalSignature : global::Omnius.Core.RocketPac
     public static readonly int MaxPublicKeyLength = 8192;
     public static readonly int MaxPrivateKeyLength = 8192;
 
-    public OmniDigitalSignature(global::Omnius.Core.RocketPack.Utf8Array name, global::Omnius.Core.Cryptography.OmniDigitalSignatureAlgorithmType algorithmType, global::System.ReadOnlyMemory<byte> publicKey, global::System.ReadOnlyMemory<byte> privateKey)
+    public OmniDigitalSignature(global::Omnius.Core.RocketPack.Utf8String name, global::Omnius.Core.Cryptography.OmniDigitalSignatureAlgorithmType algorithmType, global::System.ReadOnlyMemory<byte> publicKey, global::System.ReadOnlyMemory<byte> privateKey)
     {
         if (name is null) throw new global::System.ArgumentNullException("name");
         if (name.Length > 32) throw new global::System.ArgumentOutOfRangeException("name");
@@ -568,7 +568,7 @@ public sealed partial class OmniDigitalSignature : global::Omnius.Core.RocketPac
         });
     }
 
-    public global::Omnius.Core.RocketPack.Utf8Array Name { get; }
+    public global::Omnius.Core.RocketPack.Utf8String Name { get; }
     public global::Omnius.Core.Cryptography.OmniDigitalSignatureAlgorithmType AlgorithmType { get; }
     public global::System.ReadOnlyMemory<byte> PublicKey { get; }
     public global::System.ReadOnlyMemory<byte> PrivateKey { get; }
@@ -616,7 +616,7 @@ public sealed partial class OmniDigitalSignature : global::Omnius.Core.RocketPac
         {
             if (rank > 256) throw new global::System.FormatException();
 
-            if (value.Name != global::Omnius.Core.RocketPack.Utf8Array.Empty)
+            if (value.Name != global::Omnius.Core.RocketPack.Utf8String.Empty)
             {
                 w.Write((uint)1);
                 w.Write(value.Name);
@@ -642,7 +642,7 @@ public sealed partial class OmniDigitalSignature : global::Omnius.Core.RocketPac
         {
             if (rank > 256) throw new global::System.FormatException();
 
-            global::Omnius.Core.RocketPack.Utf8Array p_name = global::Omnius.Core.RocketPack.Utf8Array.Empty;
+            global::Omnius.Core.RocketPack.Utf8String p_name = global::Omnius.Core.RocketPack.Utf8String.Empty;
             global::Omnius.Core.Cryptography.OmniDigitalSignatureAlgorithmType p_algorithmType = (global::Omnius.Core.Cryptography.OmniDigitalSignatureAlgorithmType)0;
             global::System.ReadOnlyMemory<byte> p_publicKey = global::System.ReadOnlyMemory<byte>.Empty;
             global::System.ReadOnlyMemory<byte> p_privateKey = global::System.ReadOnlyMemory<byte>.Empty;
@@ -688,7 +688,7 @@ public sealed partial class OmniCertificate : global::Omnius.Core.RocketPack.IRo
     static OmniCertificate()
     {
         global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.Cryptography.OmniCertificate>.Formatter = new ___CustomFormatter();
-        global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.Cryptography.OmniCertificate>.Empty = new global::Omnius.Core.Cryptography.OmniCertificate(global::Omnius.Core.RocketPack.Utf8Array.Empty, (global::Omnius.Core.Cryptography.OmniDigitalSignatureAlgorithmType)0, global::System.ReadOnlyMemory<byte>.Empty, global::System.ReadOnlyMemory<byte>.Empty);
+        global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.Cryptography.OmniCertificate>.Empty = new global::Omnius.Core.Cryptography.OmniCertificate(global::Omnius.Core.RocketPack.Utf8String.Empty, (global::Omnius.Core.Cryptography.OmniDigitalSignatureAlgorithmType)0, global::System.ReadOnlyMemory<byte>.Empty, global::System.ReadOnlyMemory<byte>.Empty);
     }
 
     private readonly global::System.Lazy<int> ___hashCode;
@@ -697,7 +697,7 @@ public sealed partial class OmniCertificate : global::Omnius.Core.RocketPack.IRo
     public static readonly int MaxPublicKeyLength = 8192;
     public static readonly int MaxValueLength = 8192;
 
-    public OmniCertificate(global::Omnius.Core.RocketPack.Utf8Array name, global::Omnius.Core.Cryptography.OmniDigitalSignatureAlgorithmType algorithmType, global::System.ReadOnlyMemory<byte> publicKey, global::System.ReadOnlyMemory<byte> value)
+    public OmniCertificate(global::Omnius.Core.RocketPack.Utf8String name, global::Omnius.Core.Cryptography.OmniDigitalSignatureAlgorithmType algorithmType, global::System.ReadOnlyMemory<byte> publicKey, global::System.ReadOnlyMemory<byte> value)
     {
         if (name is null) throw new global::System.ArgumentNullException("name");
         if (name.Length > 32) throw new global::System.ArgumentOutOfRangeException("name");
@@ -720,7 +720,7 @@ public sealed partial class OmniCertificate : global::Omnius.Core.RocketPack.IRo
         });
     }
 
-    public global::Omnius.Core.RocketPack.Utf8Array Name { get; }
+    public global::Omnius.Core.RocketPack.Utf8String Name { get; }
     public global::Omnius.Core.Cryptography.OmniDigitalSignatureAlgorithmType AlgorithmType { get; }
     public global::System.ReadOnlyMemory<byte> PublicKey { get; }
     public global::System.ReadOnlyMemory<byte> Value { get; }
@@ -768,7 +768,7 @@ public sealed partial class OmniCertificate : global::Omnius.Core.RocketPack.IRo
         {
             if (rank > 256) throw new global::System.FormatException();
 
-            if (value.Name != global::Omnius.Core.RocketPack.Utf8Array.Empty)
+            if (value.Name != global::Omnius.Core.RocketPack.Utf8String.Empty)
             {
                 w.Write((uint)1);
                 w.Write(value.Name);
@@ -794,7 +794,7 @@ public sealed partial class OmniCertificate : global::Omnius.Core.RocketPack.IRo
         {
             if (rank > 256) throw new global::System.FormatException();
 
-            global::Omnius.Core.RocketPack.Utf8Array p_name = global::Omnius.Core.RocketPack.Utf8Array.Empty;
+            global::Omnius.Core.RocketPack.Utf8String p_name = global::Omnius.Core.RocketPack.Utf8String.Empty;
             global::Omnius.Core.Cryptography.OmniDigitalSignatureAlgorithmType p_algorithmType = (global::Omnius.Core.Cryptography.OmniDigitalSignatureAlgorithmType)0;
             global::System.ReadOnlyMemory<byte> p_publicKey = global::System.ReadOnlyMemory<byte>.Empty;
             global::System.ReadOnlyMemory<byte> p_value = global::System.ReadOnlyMemory<byte>.Empty;
@@ -840,14 +840,14 @@ public sealed partial class OmniSignature : global::Omnius.Core.RocketPack.IRock
     static OmniSignature()
     {
         global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.Cryptography.OmniSignature>.Formatter = new ___CustomFormatter();
-        global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.Cryptography.OmniSignature>.Empty = new global::Omnius.Core.Cryptography.OmniSignature(global::Omnius.Core.RocketPack.Utf8Array.Empty, global::Omnius.Core.Cryptography.OmniHash.Empty);
+        global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.Cryptography.OmniSignature>.Empty = new global::Omnius.Core.Cryptography.OmniSignature(global::Omnius.Core.RocketPack.Utf8String.Empty, global::Omnius.Core.Cryptography.OmniHash.Empty);
     }
 
     private readonly global::System.Lazy<int> ___hashCode;
 
     public static readonly int MaxNameLength = 32;
 
-    public OmniSignature(global::Omnius.Core.RocketPack.Utf8Array name, global::Omnius.Core.Cryptography.OmniHash hash)
+    public OmniSignature(global::Omnius.Core.RocketPack.Utf8String name, global::Omnius.Core.Cryptography.OmniHash hash)
     {
         if (name is null) throw new global::System.ArgumentNullException("name");
         if (name.Length > 32) throw new global::System.ArgumentOutOfRangeException("name");
@@ -863,7 +863,7 @@ public sealed partial class OmniSignature : global::Omnius.Core.RocketPack.IRock
         });
     }
 
-    public global::Omnius.Core.RocketPack.Utf8Array Name { get; }
+    public global::Omnius.Core.RocketPack.Utf8String Name { get; }
     public global::Omnius.Core.Cryptography.OmniHash Hash { get; }
 
     public static global::Omnius.Core.Cryptography.OmniSignature Import(global::System.Buffers.ReadOnlySequence<byte> sequence, global::Omnius.Core.IBytesPool bytesPool)
@@ -907,7 +907,7 @@ public sealed partial class OmniSignature : global::Omnius.Core.RocketPack.IRock
         {
             if (rank > 256) throw new global::System.FormatException();
 
-            if (value.Name != global::Omnius.Core.RocketPack.Utf8Array.Empty)
+            if (value.Name != global::Omnius.Core.RocketPack.Utf8String.Empty)
             {
                 w.Write((uint)1);
                 w.Write(value.Name);
@@ -923,7 +923,7 @@ public sealed partial class OmniSignature : global::Omnius.Core.RocketPack.IRock
         {
             if (rank > 256) throw new global::System.FormatException();
 
-            global::Omnius.Core.RocketPack.Utf8Array p_name = global::Omnius.Core.RocketPack.Utf8Array.Empty;
+            global::Omnius.Core.RocketPack.Utf8String p_name = global::Omnius.Core.RocketPack.Utf8String.Empty;
             global::Omnius.Core.Cryptography.OmniHash p_hash = global::Omnius.Core.Cryptography.OmniHash.Empty;
 
             for (; ; )
