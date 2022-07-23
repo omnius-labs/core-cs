@@ -114,7 +114,7 @@ internal sealed class EnumElement
     public int Id { get; }
 }
 
-internal enum MessageFormatType
+internal enum ObjectFormatType
 {
     Struct,
     Message,
@@ -122,7 +122,7 @@ internal enum MessageFormatType
 
 internal sealed class ObjectDefinition
 {
-    public ObjectDefinition(IEnumerable<string> attributes, string name, MessageFormatType formatType, IEnumerable<ObjectElement> elements)
+    public ObjectDefinition(IEnumerable<string> attributes, string name, ObjectFormatType formatType, IEnumerable<ObjectElement> elements)
     {
         this.Attributes = attributes?.ToList() ?? throw new ArgumentNullException(nameof(attributes));
         this.Name = name ?? throw new ArgumentNullException(nameof(name));
@@ -138,7 +138,7 @@ internal sealed class ObjectDefinition
 
     public string FullName => this.Namespace + "." + this.Name;
 
-    public MessageFormatType FormatType { get; }
+    public ObjectFormatType FormatType { get; }
 
     public IList<ObjectElement> Elements { get; }
 

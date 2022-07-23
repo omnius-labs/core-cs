@@ -6,7 +6,7 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler;
 
 internal partial class CodeGenerator
 {
-    private sealed class MessageWriter
+    private sealed class ObjectWriter
     {
         private const string CustomFormatterName = "___CustomFormatter";
         private const string HashCodeName = "___hashCode";
@@ -16,7 +16,7 @@ internal partial class CodeGenerator
         private readonly RocketPackDefinition _rootDefinition;
         private readonly IList<RocketPackDefinition> _externalDefinitions;
 
-        public MessageWriter(RocketPackDefinition rootDefinition, IEnumerable<RocketPackDefinition> externalDefinitions)
+        public ObjectWriter(RocketPackDefinition rootDefinition, IEnumerable<RocketPackDefinition> externalDefinitions)
         {
             _rootDefinition = rootDefinition;
             _externalDefinitions = externalDefinitions.ToList();
@@ -24,14 +24,22 @@ internal partial class CodeGenerator
 
         public void Write(CodeWriter b, ObjectDefinition objectDefinition, string accessLevel = "public")
         {
+            string? prefix;
+
             if (objectDefinition.IsCSharpStruct)
             {
-                b.WriteLine($"{accessLevel} readonly partial struct {objectDefinition.Name} : {GenerateTypeFullName("IRocketMessage<>", objectDefinition.CSharpFullName)}");
+                prefix = "readonly partial struct";
             }
-            else if (objectDefinition.IsCSharpClass)
+            else
             {
-                b.WriteLine($"{accessLevel} sealed partial class {objectDefinition.Name} : {GenerateTypeFullName("IRocketMessage<>", objectDefinition.CSharpFullName)}");
+                prefix = "sealed partial class";
             }
+
+            var inheritances = new List<string>();
+            inheritances.Add(GenerateTypeFullName("IRocketMessage<>", objectDefinition.CSharpFullName));
+            if (this.ShouldDispose(objectDefinition)) inheritances.Add(GenerateTypeFullName("IDisposable"));
+
+            b.WriteLine($"{accessLevel} {prefix} {objectDefinition.Name} : {string.Join(", ", inheritances)}");
 
             b.WriteLine("{");
 
@@ -43,6 +51,12 @@ internal partial class CodeGenerator
                 this.Write_Constructor(b, objectDefinition);
                 b.WriteLine();
 
+                if (this.ShouldDispose(objectDefinition))
+                {
+                    this.Write_Dispose(b, objectDefinition);
+                    b.WriteLine();
+                }
+
                 this.Write_Properties(b, objectDefinition);
                 b.WriteLine();
 
@@ -52,11 +66,11 @@ internal partial class CodeGenerator
                 this.Write_Equals(b, objectDefinition);
                 b.WriteLine();
 
-                if (objectDefinition.FormatType == MessageFormatType.Message)
+                if (objectDefinition.FormatType == ObjectFormatType.Message)
                 {
                     this.Write_Medium_Formatter(b, objectDefinition);
                 }
-                else if (objectDefinition.FormatType == MessageFormatType.Struct)
+                else if (objectDefinition.FormatType == ObjectFormatType.Struct)
                 {
                     this.Write_Small_Formatter(b, objectDefinition);
                 }
@@ -597,6 +611,32 @@ internal partial class CodeGenerator
 
                     break;
             }
+        }
+
+        private void Write_Dispose(CodeWriter b, ObjectDefinition objectDefinition)
+        {
+            b.WriteLine($"public void Dispose()");
+            b.WriteLine("{");
+
+            using (b.Indent())
+            {
+                foreach (var element in objectDefinition.Elements)
+                {
+                    if (this.ShouldDispose(element.Type))
+                    {
+                        if (!element.Type.IsOptional)
+                        {
+                            b.WriteLine($"this.{element.Name}.Dispose();");
+                        }
+                        else
+                        {
+                            b.WriteLine($"if (this.{element.Name} is not null) this.{element.Name}.Dispose();");
+                        }
+                    }
+                }
+            }
+
+            b.WriteLine("}");
         }
 
         private void Write_ImportAndExport(CodeWriter b, ObjectDefinition objectDefinition)
@@ -1764,8 +1804,8 @@ internal partial class CodeGenerator
                 CustomType type => this.FindDefinition(type) switch
                 {
                     EnumDefinition enumDefinition => enumDefinition.CSharpFullName + (type.IsOptional ? "?" : ""),
-                    ObjectDefinition objectDefinition when (objectDefinition.FormatType == MessageFormatType.Message) => objectDefinition.CSharpFullName + (type.IsOptional ? "?" : ""),
-                    ObjectDefinition objectDefinition when (objectDefinition.FormatType == MessageFormatType.Struct) => objectDefinition.CSharpFullName + (type.IsOptional ? "?" : ""),
+                    ObjectDefinition objectDefinition when (objectDefinition.FormatType == ObjectFormatType.Message) => objectDefinition.CSharpFullName + (type.IsOptional ? "?" : ""),
+                    ObjectDefinition objectDefinition when (objectDefinition.FormatType == ObjectFormatType.Struct) => objectDefinition.CSharpFullName + (type.IsOptional ? "?" : ""),
                     _ => throw new ArgumentException($"Type \"{type.TypeName}\" was not found", nameof(typeBase)),
                 },
                 _ => throw new ArgumentException($"Type \"{typeBase.GetType().Name}\" was not found", nameof(typeBase)),
@@ -1793,6 +1833,25 @@ internal partial class CodeGenerator
                     _ => throw new ArgumentException($"Type \"{type.TypeName}\" was not found", nameof(typeBase)),
                 },
                 _ => throw new ArgumentException($"Type \"{typeBase.GetType().Name}\" was not found", nameof(typeBase)),
+            };
+        }
+
+        private bool ShouldDispose(ObjectDefinition objectDefinition)
+        {
+            return objectDefinition.Elements.Any(n => this.ShouldDispose(n.Type));
+        }
+
+        private bool ShouldDispose(TypeBase typeBase)
+        {
+            return typeBase switch
+            {
+                BytesType type when (type.IsUseMemoryPool) => true,
+                CustomType type => this.FindDefinition(type) switch
+                {
+                    ObjectDefinition objectDefinition => this.ShouldDispose(objectDefinition),
+                    _ => false,
+                },
+                _ => false,
             };
         }
     }

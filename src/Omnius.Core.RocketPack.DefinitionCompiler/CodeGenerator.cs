@@ -37,7 +37,7 @@ internal partial class CodeGenerator
                 enumWriter.Write(b, enumDefinition, accessLevel);
             }
 
-            var objectWriter = new MessageWriter(_rootDefinition, _externalDefinitions);
+            var objectWriter = new ObjectWriter(_rootDefinition, _externalDefinitions);
             foreach (var objectDefinition in _rootDefinition.Objects)
             {
                 objectWriter.Write(b, objectDefinition, accessLevel);

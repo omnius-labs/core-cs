@@ -397,7 +397,7 @@ internal sealed partial class MessageElement_Class : global::Omnius.Core.RocketP
         }
     }
 }
-internal readonly partial struct Struct_Struct : global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.RocketPack.Tests.Internal.Struct_Struct>
+internal readonly partial struct Struct_Struct : global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.RocketPack.Tests.Internal.Struct_Struct>, global::System.IDisposable
 {
     public static global::Omnius.Core.RocketPack.IRocketMessageFormatter<global::Omnius.Core.RocketPack.Tests.Internal.Struct_Struct> Formatter => global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.RocketPack.Tests.Internal.Struct_Struct>.Formatter;
     public static global::Omnius.Core.RocketPack.Tests.Internal.Struct_Struct Empty => global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.RocketPack.Tests.Internal.Struct_Struct>.Empty;
@@ -510,6 +510,11 @@ internal readonly partial struct Struct_Struct : global::Omnius.Core.RocketPack.
             if (x28 != default) ___h.Add(x28.GetHashCode());
             ___hashCode = ___h.ToHashCode();
         }
+    }
+
+    public void Dispose()
+    {
+        this.X22.Dispose();
     }
 
     public bool X0 { get; }
@@ -785,7 +790,7 @@ internal readonly partial struct Struct_Struct : global::Omnius.Core.RocketPack.
         }
     }
 }
-internal readonly partial struct Message_Struct : global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.RocketPack.Tests.Internal.Message_Struct>
+internal readonly partial struct Message_Struct : global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.RocketPack.Tests.Internal.Message_Struct>, global::System.IDisposable
 {
     public static global::Omnius.Core.RocketPack.IRocketMessageFormatter<global::Omnius.Core.RocketPack.Tests.Internal.Message_Struct> Formatter => global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.RocketPack.Tests.Internal.Message_Struct>.Formatter;
     public static global::Omnius.Core.RocketPack.Tests.Internal.Message_Struct Empty => global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.RocketPack.Tests.Internal.Message_Struct>.Empty;
@@ -898,6 +903,11 @@ internal readonly partial struct Message_Struct : global::Omnius.Core.RocketPack
             if (x28 != default) ___h.Add(x28.GetHashCode());
             ___hashCode = ___h.ToHashCode();
         }
+    }
+
+    public void Dispose()
+    {
+        this.X22.Dispose();
     }
 
     public bool X0 { get; }
@@ -1357,7 +1367,7 @@ internal readonly partial struct Message_Struct : global::Omnius.Core.RocketPack
         }
     }
 }
-internal readonly partial struct NullableMessage_Struct : global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.RocketPack.Tests.Internal.NullableMessage_Struct>
+internal readonly partial struct NullableMessage_Struct : global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.RocketPack.Tests.Internal.NullableMessage_Struct>, global::System.IDisposable
 {
     public static global::Omnius.Core.RocketPack.IRocketMessageFormatter<global::Omnius.Core.RocketPack.Tests.Internal.NullableMessage_Struct> Formatter => global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.RocketPack.Tests.Internal.NullableMessage_Struct>.Formatter;
     public static global::Omnius.Core.RocketPack.Tests.Internal.NullableMessage_Struct Empty => global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.RocketPack.Tests.Internal.NullableMessage_Struct>.Empty;
@@ -1430,7 +1440,7 @@ internal readonly partial struct NullableMessage_Struct : global::Omnius.Core.Ro
         {
             this.X23 = null;
         }
-        if (x24 != null)
+        if(x24 != null)
         {
             this.X24 = new global::Omnius.Core.Collections.ReadOnlyDictionarySlim<byte, global::Omnius.Core.RocketPack.Utf8String>(x24);
         }
@@ -1468,14 +1478,14 @@ internal readonly partial struct NullableMessage_Struct : global::Omnius.Core.Ro
             if (x20 != default) ___h.Add(x20.GetHashCode());
             if (x21 is not null && !x21.Value.IsEmpty) ___h.Add(global::Omnius.Core.Helpers.ObjectHelper.GetHashCode(x21.Value.Span));
             if (x22 is not null && !x22.Memory.IsEmpty) ___h.Add(global::Omnius.Core.Helpers.ObjectHelper.GetHashCode(x22.Memory.Span));
-            if (x23 != null)
+            if(x23 != null)
             {
                 foreach (var n in x23)
                 {
                     if (!n.IsEmpty) ___h.Add(n.GetHashCode());
                 }
             }
-            if (x24 != null)
+            if(x24 != null)
             {
                 foreach (var n in x24)
                 {
@@ -1489,6 +1499,11 @@ internal readonly partial struct NullableMessage_Struct : global::Omnius.Core.Ro
             if (x28 != default) ___h.Add(x28.GetHashCode());
             ___hashCode = ___h.ToHashCode();
         }
+    }
+
+    public void Dispose()
+    {
+        if (this.X22 is not null) this.X22.Dispose();
     }
 
     public bool? X0 { get; }
@@ -1956,7 +1971,7 @@ internal readonly partial struct NullableMessage_Struct : global::Omnius.Core.Ro
         }
     }
 }
-internal sealed partial class Struct_Class : global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.RocketPack.Tests.Internal.Struct_Class>
+internal sealed partial class Struct_Class : global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.RocketPack.Tests.Internal.Struct_Class>, global::System.IDisposable
 {
     public static global::Omnius.Core.RocketPack.IRocketMessageFormatter<global::Omnius.Core.RocketPack.Tests.Internal.Struct_Class> Formatter => global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.RocketPack.Tests.Internal.Struct_Class>.Formatter;
     public static global::Omnius.Core.RocketPack.Tests.Internal.Struct_Class Empty => global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.RocketPack.Tests.Internal.Struct_Class>.Empty;
@@ -2070,6 +2085,11 @@ internal sealed partial class Struct_Class : global::Omnius.Core.RocketPack.IRoc
             if (x28 != default) ___h.Add(x28.GetHashCode());
             return ___h.ToHashCode();
         });
+    }
+
+    public void Dispose()
+    {
+        this.X22.Dispose();
     }
 
     public bool X0 { get; }
@@ -2347,7 +2367,7 @@ internal sealed partial class Struct_Class : global::Omnius.Core.RocketPack.IRoc
         }
     }
 }
-internal sealed partial class Message_Class : global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.RocketPack.Tests.Internal.Message_Class>
+internal sealed partial class Message_Class : global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.RocketPack.Tests.Internal.Message_Class>, global::System.IDisposable
 {
     public static global::Omnius.Core.RocketPack.IRocketMessageFormatter<global::Omnius.Core.RocketPack.Tests.Internal.Message_Class> Formatter => global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.RocketPack.Tests.Internal.Message_Class>.Formatter;
     public static global::Omnius.Core.RocketPack.Tests.Internal.Message_Class Empty => global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.RocketPack.Tests.Internal.Message_Class>.Empty;
@@ -2461,6 +2481,11 @@ internal sealed partial class Message_Class : global::Omnius.Core.RocketPack.IRo
             if (x28 != default) ___h.Add(x28.GetHashCode());
             return ___h.ToHashCode();
         });
+    }
+
+    public void Dispose()
+    {
+        this.X22.Dispose();
     }
 
     public bool X0 { get; }
@@ -2922,7 +2947,7 @@ internal sealed partial class Message_Class : global::Omnius.Core.RocketPack.IRo
         }
     }
 }
-internal sealed partial class NullableMessage_Class : global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.RocketPack.Tests.Internal.NullableMessage_Class>
+internal sealed partial class NullableMessage_Class : global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.RocketPack.Tests.Internal.NullableMessage_Class>, global::System.IDisposable
 {
     public static global::Omnius.Core.RocketPack.IRocketMessageFormatter<global::Omnius.Core.RocketPack.Tests.Internal.NullableMessage_Class> Formatter => global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.RocketPack.Tests.Internal.NullableMessage_Class>.Formatter;
     public static global::Omnius.Core.RocketPack.Tests.Internal.NullableMessage_Class Empty => global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.RocketPack.Tests.Internal.NullableMessage_Class>.Empty;
@@ -2995,7 +3020,7 @@ internal sealed partial class NullableMessage_Class : global::Omnius.Core.Rocket
         {
             this.X23 = null;
         }
-        if (x24 != null)
+        if(x24 != null)
         {
             this.X24 = new global::Omnius.Core.Collections.ReadOnlyDictionarySlim<byte, global::Omnius.Core.RocketPack.Utf8String>(x24);
         }
@@ -3034,14 +3059,14 @@ internal sealed partial class NullableMessage_Class : global::Omnius.Core.Rocket
             if (x20 != default) ___h.Add(x20.GetHashCode());
             if (x21 is not null && !x21.Value.IsEmpty) ___h.Add(global::Omnius.Core.Helpers.ObjectHelper.GetHashCode(x21.Value.Span));
             if (x22 is not null && !x22.Memory.IsEmpty) ___h.Add(global::Omnius.Core.Helpers.ObjectHelper.GetHashCode(x22.Memory.Span));
-            if (x23 != null)
+            if(x23 != null)
             {
                 foreach (var n in x23)
                 {
                     if (!n.IsEmpty) ___h.Add(n.GetHashCode());
                 }
             }
-            if (x24 != null)
+            if(x24 != null)
             {
                 foreach (var n in x24)
                 {
@@ -3055,6 +3080,11 @@ internal sealed partial class NullableMessage_Class : global::Omnius.Core.Rocket
             if (x28 != default) ___h.Add(x28.GetHashCode());
             return ___h.ToHashCode();
         });
+    }
+
+    public void Dispose()
+    {
+        if (this.X22 is not null) this.X22.Dispose();
     }
 
     public bool? X0 { get; }

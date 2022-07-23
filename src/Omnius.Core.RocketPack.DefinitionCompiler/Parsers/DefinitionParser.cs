@@ -188,7 +188,7 @@ internal static class DefinitionParser
 
     private static readonly Parser<ObjectDefinition> _objectDefinitionParser =
         from attributes in _attributeParser.XMany().TokenWithSkipComment()
-        from type in Parse.String("struct").TokenWithSkipComment().Return(MessageFormatType.Struct).Or(Parse.String("message").TokenWithSkipComment().Return(MessageFormatType.Message))
+        from type in Parse.String("struct").TokenWithSkipComment().Return(ObjectFormatType.Struct).Or(Parse.String("message").TokenWithSkipComment().Return(ObjectFormatType.Message))
         from name in _nameParser.TokenWithSkipComment()
         from beginTag in Parse.Char('{').TokenWithSkipComment()
         from elements in _objectElementParser.Except(Parse.Char('}')).XMany().TokenWithSkipComment()
@@ -264,7 +264,7 @@ internal static class DefinitionParser
     private static void ValidateDefinition(RocketPackDefinition result)
     {
         // struct形式のメッセージはOptional型は認めない。
-        foreach (var objectDefinition in result.Objects.Where(n => n.FormatType == MessageFormatType.Struct))
+        foreach (var objectDefinition in result.Objects.Where(n => n.FormatType == ObjectFormatType.Struct))
         {
             if (objectDefinition.Elements.Any(n => n.Type.IsOptional)) throw new Exception();
         }

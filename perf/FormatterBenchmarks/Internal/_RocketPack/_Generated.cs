@@ -122,7 +122,7 @@ internal sealed partial class RocketPack_BytesElementsList : global::Omnius.Core
         }
     }
 }
-internal sealed partial class RocketPack_BytesElements : global::Omnius.Core.RocketPack.IRocketMessage<global::FormatterBenchmarks.Internal.RocketPack_BytesElements>
+internal sealed partial class RocketPack_BytesElements : global::Omnius.Core.RocketPack.IRocketMessage<global::FormatterBenchmarks.Internal.RocketPack_BytesElements>, global::System.IDisposable
 {
     public static global::Omnius.Core.RocketPack.IRocketMessageFormatter<global::FormatterBenchmarks.Internal.RocketPack_BytesElements> Formatter => global::Omnius.Core.RocketPack.IRocketMessage<global::FormatterBenchmarks.Internal.RocketPack_BytesElements>.Formatter;
     public static global::FormatterBenchmarks.Internal.RocketPack_BytesElements Empty => global::Omnius.Core.RocketPack.IRocketMessage<global::FormatterBenchmarks.Internal.RocketPack_BytesElements>.Empty;
@@ -195,6 +195,20 @@ internal sealed partial class RocketPack_BytesElements : global::Omnius.Core.Roc
             if (!x9.Memory.IsEmpty) ___h.Add(global::Omnius.Core.Helpers.ObjectHelper.GetHashCode(x9.Memory.Span));
             return ___h.ToHashCode();
         });
+    }
+
+    public void Dispose()
+    {
+        this.X0.Dispose();
+        this.X1.Dispose();
+        this.X2.Dispose();
+        this.X3.Dispose();
+        this.X4.Dispose();
+        this.X5.Dispose();
+        this.X6.Dispose();
+        this.X7.Dispose();
+        this.X8.Dispose();
+        this.X9.Dispose();
     }
 
     public global::System.Buffers.IMemoryOwner<byte> X0 { get; }

@@ -56,6 +56,11 @@ internal sealed class RocketRemotingListener<TError> : AsyncDisposableBase, IRoc
 
                 await connectionCloseWaitTask;
 
+                if (result is IDisposable disposable)
+                {
+                    disposable.Dispose();
+                }
+
                 return;
             }
             catch (Exception e)
@@ -94,6 +99,11 @@ internal sealed class RocketRemotingListener<TError> : AsyncDisposableBase, IRoc
                 }, cancellationTokenSource.Token);
 
             await connectionCloseWaitTask;
+
+            if (result is IDisposable disposable)
+            {
+                disposable.Dispose();
+            }
 
             return;
         }
