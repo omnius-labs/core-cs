@@ -70,6 +70,7 @@ public static class OmniMessageConverter
             {
                 crc32.Compute(buffer.Span);
             }
+
             var computedCrc32 = crc32.GetResult();
             if (decodedCrc32 != computedCrc32) return false;
 
