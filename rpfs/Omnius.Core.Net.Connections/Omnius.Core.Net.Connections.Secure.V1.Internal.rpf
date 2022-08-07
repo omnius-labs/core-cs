@@ -44,7 +44,7 @@ message VerificationMessage {
 }
 
 message AuthenticationMessage {
-    CreatedTime: timestamp,
+    CreatedTime: timestamp64,
     Hash: bytes(capacity: 32),
     Certificate: OmniCertificate?,
 }

@@ -13,7 +13,7 @@ public sealed partial class OmniAgreement
         {
             var (publicKey, privateKey) = EcDh_P521_Sha2_256.CreateKeys();
 
-            return new OmniAgreement(Timestamp.FromDateTime(createdTime), algorithmType, publicKey, privateKey);
+            return new OmniAgreement(Timestamp64.FromDateTime(createdTime), algorithmType, publicKey, privateKey);
         }
 
         throw new NotSupportedException(nameof(algorithmType));

@@ -389,14 +389,14 @@ internal sealed partial class AuthenticationMessage : global::Omnius.Core.Rocket
     static AuthenticationMessage()
     {
         global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.Net.Connections.Secure.V1.Internal.AuthenticationMessage>.Formatter = new ___CustomFormatter();
-        global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.Net.Connections.Secure.V1.Internal.AuthenticationMessage>.Empty = new global::Omnius.Core.Net.Connections.Secure.V1.Internal.AuthenticationMessage(global::Omnius.Core.RocketPack.Timestamp.Zero, global::System.ReadOnlyMemory<byte>.Empty, null);
+        global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.Net.Connections.Secure.V1.Internal.AuthenticationMessage>.Empty = new global::Omnius.Core.Net.Connections.Secure.V1.Internal.AuthenticationMessage(global::Omnius.Core.RocketPack.Timestamp64.Zero, global::System.ReadOnlyMemory<byte>.Empty, null);
     }
 
     private readonly global::System.Lazy<int> ___hashCode;
 
     public static readonly int MaxHashLength = 32;
 
-    public AuthenticationMessage(global::Omnius.Core.RocketPack.Timestamp createdTime, global::System.ReadOnlyMemory<byte> hash, global::Omnius.Core.Cryptography.OmniCertificate? certificate)
+    public AuthenticationMessage(global::Omnius.Core.RocketPack.Timestamp64 createdTime, global::System.ReadOnlyMemory<byte> hash, global::Omnius.Core.Cryptography.OmniCertificate? certificate)
     {
         if (hash.Length > 32) throw new global::System.ArgumentOutOfRangeException("hash");
         this.CreatedTime = createdTime;
@@ -413,7 +413,7 @@ internal sealed partial class AuthenticationMessage : global::Omnius.Core.Rocket
         });
     }
 
-    public global::Omnius.Core.RocketPack.Timestamp CreatedTime { get; }
+    public global::Omnius.Core.RocketPack.Timestamp64 CreatedTime { get; }
     public global::System.ReadOnlyMemory<byte> Hash { get; }
     public global::Omnius.Core.Cryptography.OmniCertificate? Certificate { get; }
 
@@ -460,7 +460,7 @@ internal sealed partial class AuthenticationMessage : global::Omnius.Core.Rocket
         {
             if (rank > 256) throw new global::System.FormatException();
 
-            if (value.CreatedTime != global::Omnius.Core.RocketPack.Timestamp.Zero)
+            if (value.CreatedTime != global::Omnius.Core.RocketPack.Timestamp64.Zero)
             {
                 w.Write((uint)1);
                 w.Write(value.CreatedTime);
@@ -481,7 +481,7 @@ internal sealed partial class AuthenticationMessage : global::Omnius.Core.Rocket
         {
             if (rank > 256) throw new global::System.FormatException();
 
-            global::Omnius.Core.RocketPack.Timestamp p_createdTime = global::Omnius.Core.RocketPack.Timestamp.Zero;
+            global::Omnius.Core.RocketPack.Timestamp64 p_createdTime = global::Omnius.Core.RocketPack.Timestamp64.Zero;
             global::System.ReadOnlyMemory<byte> p_hash = global::System.ReadOnlyMemory<byte>.Empty;
             global::Omnius.Core.Cryptography.OmniCertificate? p_certificate = null;
 
@@ -493,7 +493,7 @@ internal sealed partial class AuthenticationMessage : global::Omnius.Core.Rocket
                 {
                     case 1:
                         {
-                            p_createdTime = r.GetTimestamp();
+                            p_createdTime = r.GetTimestamp64();
                             break;
                         }
                     case 2:

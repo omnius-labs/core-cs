@@ -99,8 +99,9 @@ internal static class DefinitionParser
 
     private static readonly Parser<TimestampType> _timestampTypeParser =
         from type in Parse.String("timestamp")
+        from size in Parse.Decimal
         from isOptional in Parse.Char('?').Then(n => Parse.Return(true)).Or(Parse.Return(false)).TokenWithSkipComment()
-        select new TimestampType(isOptional);
+        select new TimestampType(int.Parse(size), isOptional);
 
     private static readonly Parser<BytesType> _memoryTypeParser =
         from type in Parse.String("bytes").TokenWithSkipComment()

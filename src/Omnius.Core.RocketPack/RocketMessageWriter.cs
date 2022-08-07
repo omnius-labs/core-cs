@@ -36,7 +36,13 @@ public ref struct RocketMessageWriter
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void Write(in Timestamp value)
+    public void Write(in Timestamp64 value)
+    {
+        this.Write(value.Seconds);
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public void Write(in Timestamp96 value)
     {
         this.Write(value.Seconds);
         this.Write((uint)value.Nanos);

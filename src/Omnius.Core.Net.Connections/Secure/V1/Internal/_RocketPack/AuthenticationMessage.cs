@@ -8,14 +8,14 @@ internal partial class AuthenticationMessage
 {
     public static AuthenticationMessage Create(DateTime createdTime, ReadOnlyMemory<byte> hash, OmniDigitalSignature? digitalSignature)
     {
-        if (digitalSignature is null) return new AuthenticationMessage(Timestamp.FromDateTime(createdTime), hash, null);
+        if (digitalSignature is null) return new AuthenticationMessage(Timestamp64.FromDateTime(createdTime), hash, null);
 
         using var bytesPipe = new BytesPipe();
-        var target = new AuthenticationMessage(Timestamp.FromDateTime(createdTime), hash, null);
+        var target = new AuthenticationMessage(Timestamp64.FromDateTime(createdTime), hash, null);
         target.Export(bytesPipe.Writer, BytesPool.Shared);
 
         var certificate = OmniDigitalSignature.CreateOmniCertificate(digitalSignature, bytesPipe.Reader.GetSequence());
-        return new AuthenticationMessage(Timestamp.FromDateTime(createdTime), hash, certificate);
+        return new AuthenticationMessage(Timestamp64.FromDateTime(createdTime), hash, certificate);
     }
 
     public bool Verify()

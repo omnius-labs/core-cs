@@ -242,10 +242,13 @@ internal sealed class StringType : TypeBase
 
 internal sealed class TimestampType : TypeBase
 {
-    public TimestampType(bool isOptional)
+    public TimestampType(int size, bool isOptional)
         : base(isOptional)
     {
+        this.Size = size;
     }
+
+    public int Size { get; }
 }
 
 internal sealed class BytesType : TypeBase

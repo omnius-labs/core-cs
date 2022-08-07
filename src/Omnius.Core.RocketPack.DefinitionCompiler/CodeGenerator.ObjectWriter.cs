@@ -751,7 +751,7 @@ internal partial class CodeGenerator
                         case IntType type:
                             b.WriteLine($"if (this.{element.Name} != target.{element.Name}) return false;");
                             break;
-                        case FloatType type when (type.Size == 32):
+                        case FloatType type:
                             b.WriteLine($"if (this.{element.Name} != target.{element.Name}) return false;");
                             break;
                         case StringType type:
@@ -1133,17 +1133,14 @@ internal partial class CodeGenerator
                 case IntType intType when (intType.IsSigned):
                     b.WriteLine($"{name} = r.GetInt{intType.Size}();");
                     break;
-                case FloatType floatType when (floatType.Size == 32):
-                    b.WriteLine($"{name} = r.GetFloat32();");
-                    break;
-                case FloatType floatType when (floatType.Size == 64):
-                    b.WriteLine($"{name} = r.GetFloat64();");
+                case FloatType floatType:
+                    b.WriteLine($"{name} = r.GetFloat{floatType.Size}();");
                     break;
                 case StringType stringType:
                     b.WriteLine($"{name} = r.GetString({stringType.MaxLength});");
                     break;
-                case TimestampType:
-                    b.WriteLine($"{name} = r.GetTimestamp();");
+                case TimestampType timestampType:
+                    b.WriteLine($"{name} = r.GetTimestamp{timestampType.Size}();");
                     break;
                 case BytesType memoryType when (memoryType.IsUseMemoryPool):
                     b.WriteLine($"{name} = r.GetRecyclableMemory({memoryType.MaxLength});");
@@ -1452,17 +1449,14 @@ internal partial class CodeGenerator
                 case IntType intType when (intType.IsSigned):
                     b.WriteLine($"{name} = r.GetInt{intType.Size}();");
                     break;
-                case FloatType floatType when (floatType.Size == 32):
-                    b.WriteLine($"{name} = r.GetFloat32();");
-                    break;
-                case FloatType floatType when (floatType.Size == 64):
-                    b.WriteLine($"{name} = r.GetFloat64();");
+                case FloatType floatType:
+                    b.WriteLine($"{name} = r.GetFloat{floatType.Size}();");
                     break;
                 case StringType stringType:
                     b.WriteLine($"{name} = r.GetString({stringType.MaxLength});");
                     break;
                 case TimestampType timestampType:
-                    b.WriteLine($"{name} = r.GetTimestamp();");
+                    b.WriteLine($"{name} = r.GetTimestamp{timestampType.Size}();");
                     break;
                 case BytesType memoryType when (memoryType.IsUseMemoryPool):
                     b.WriteLine($"{name} = r.GetRecyclableMemory({memoryType.MaxLength});");
@@ -1600,7 +1594,7 @@ internal partial class CodeGenerator
                 case TimestampType type:
                     if (!type.IsOptional)
                     {
-                        sb.Append($"value.{element.Name} != {GenerateTypeFullName("Timestamp")}.Zero)");
+                        sb.Append($"value.{element.Name} != {GenerateTypeFullName($"Timestamp{type.Size}")}.Zero)");
                     }
                     else
                     {
@@ -1796,7 +1790,8 @@ internal partial class CodeGenerator
                 FloatType type when (type.Size == 32) => "float" + (type.IsOptional ? "?" : ""),
                 FloatType type when (type.Size == 64) => "double" + (type.IsOptional ? "?" : ""),
                 StringType type => GenerateTypeFullName("Utf8String") + (type.IsOptional ? "?" : ""),
-                TimestampType type => GenerateTypeFullName("Timestamp") + (type.IsOptional ? "?" : ""),
+                TimestampType type when (type.Size == 64) => GenerateTypeFullName("Timestamp64") + (type.IsOptional ? "?" : ""),
+                TimestampType type when (type.Size == 96) => GenerateTypeFullName("Timestamp96") + (type.IsOptional ? "?" : ""),
                 BytesType type when (type.IsUseMemoryPool) => GenerateTypeFullName("IMemoryOwner<>", "byte") + (type.IsOptional ? "?" : ""),
                 BytesType type when (!type.IsUseMemoryPool) => GenerateTypeFullName("ReadOnlyMemory<>", "byte") + (type.IsOptional ? "?" : ""),
                 VectorType type => $"{this.GenerateParameterTypeFullName(type.ElementType)}[]" + (type.IsOptional ? "?" : ""),
@@ -1821,7 +1816,7 @@ internal partial class CodeGenerator
                 FloatType type when (type.Size == 32) => type.IsOptional ? "null" : "0.0F",
                 FloatType type when (type.Size == 64) => type.IsOptional ? "null" : "0.0D",
                 StringType type => type.IsOptional ? "null" : GenerateTypeFullName("Utf8String") + ".Empty",
-                TimestampType type => type.IsOptional ? "null" : GenerateTypeFullName("Timestamp") + ".Zero",
+                TimestampType type => type.IsOptional ? "null" : GenerateTypeFullName($"Timestamp{type.Size}") + ".Zero",
                 BytesType type when (!type.IsUseMemoryPool) => type.IsOptional ? "null" : GenerateTypeFullName("ReadOnlyMemory<>", "byte") + ".Empty",
                 BytesType type when (type.IsUseMemoryPool) => type.IsOptional ? "null" : GenerateTypeFullName("MemoryOwner<>", "byte") + ".Empty",
                 VectorType type => type.IsOptional ? "null" : GenerateTypeFullName("Array") + ".Empty<" + this.GenerateParameterTypeFullName(type.ElementType) + ">()",

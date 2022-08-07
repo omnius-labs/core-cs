@@ -2,46 +2,46 @@ namespace Omnius.Core.RocketPack;
 
 // https://gitbytesPipe.com/google/protobuf/blob/master/csharp/src/Google.Protobuf/WellKnownTypes/TimestampPartial.cs
 
-public readonly struct Timestamp : IEquatable<Timestamp>, IComparable<Timestamp>
+public readonly struct Timestamp96 : IEquatable<Timestamp96>, IComparable<Timestamp96>
 {
-    public Timestamp(long seconds, int nanos)
+    public Timestamp96(long seconds, int nanos)
     {
         this.Seconds = seconds;
         this.Nanos = nanos;
     }
 
-    public static Timestamp Zero { get; } = new Timestamp(0, 0);
+    public static Timestamp96 Zero { get; } = new Timestamp96(0, 0);
 
     public long Seconds { get; }
 
     public int Nanos { get; }
 
-    public static bool operator ==(Timestamp x, Timestamp y)
+    public static bool operator ==(Timestamp96 x, Timestamp96 y)
     {
         return x.Equals(y);
     }
 
-    public static bool operator !=(Timestamp x, Timestamp y)
+    public static bool operator !=(Timestamp96 x, Timestamp96 y)
     {
         return !x.Equals(y);
     }
 
-    public static bool operator <(Timestamp x, Timestamp y)
+    public static bool operator <(Timestamp96 x, Timestamp96 y)
     {
         return x.CompareTo(y) < 0;
     }
 
-    public static bool operator >(Timestamp x, Timestamp y)
+    public static bool operator >(Timestamp96 x, Timestamp96 y)
     {
         return x.CompareTo(y) > 0;
     }
 
-    public static bool operator <=(Timestamp x, Timestamp y)
+    public static bool operator <=(Timestamp96 x, Timestamp96 y)
     {
         return x.CompareTo(y) <= 0;
     }
 
-    public static bool operator >=(Timestamp x, Timestamp y)
+    public static bool operator >=(Timestamp96 x, Timestamp96 y)
     {
         return x.CompareTo(y) >= 0;
     }
@@ -53,17 +53,17 @@ public readonly struct Timestamp : IEquatable<Timestamp>, IComparable<Timestamp>
 
     public override bool Equals(object? obj)
     {
-        if (obj is not Timestamp) return false;
+        if (obj is not Timestamp96) return false;
 
-        return this.Equals((Timestamp)obj);
+        return this.Equals((Timestamp96)obj);
     }
 
-    public bool Equals(Timestamp other)
+    public bool Equals(Timestamp96 other)
     {
         return (this.Seconds == other.Seconds && this.Nanos == other.Nanos);
     }
 
-    public int CompareTo(Timestamp other)
+    public int CompareTo(Timestamp96 other)
     {
         int result;
 
@@ -81,13 +81,13 @@ public readonly struct Timestamp : IEquatable<Timestamp>, IComparable<Timestamp>
         return DateTime.UnixEpoch.AddSeconds(this.Seconds).AddTicks(this.Nanos / 100);
     }
 
-    public static Timestamp FromDateTime(DateTime dateTime)
+    public static Timestamp96 FromDateTime(DateTime dateTime)
     {
         if (dateTime.Kind != DateTimeKind.Utc) throw new ArgumentException("Conversion from DateTime to Timestamp requires the DateTime kind to be Utc", "dateTime");
 
         long ticks = dateTime.Ticks - DateTime.UnixEpoch.Ticks;
         long seconds = ticks / TimeSpan.TicksPerSecond;
         int nanos = (int)(ticks % TimeSpan.TicksPerSecond) * 100;
-        return new Timestamp(seconds, nanos);
+        return new Timestamp96(seconds, nanos);
     }
 }

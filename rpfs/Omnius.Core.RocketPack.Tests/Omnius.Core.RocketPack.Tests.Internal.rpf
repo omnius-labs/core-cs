@@ -83,15 +83,16 @@ struct Struct_Struct {
     X17: float32,
     X18: float64,
     X19: string(capacity: 128), // maximum bytes size is 128
-    X20: timestamp,
-    X21: bytes(capacity: 256), // maximum bytes size is 256
-    X22: bytes(capacity: 256, recyclable: true), // use csharp_recyclable memory
-    X23: vector<string(capacity: 128)>(capacity: 16),
-    X24: map<uint8, string(capacity: 128)>(capacity: 32),
-    X25: StructElement_Struct,
-    X26: MessageElement_Struct,
-    X27: StructElement_Class,
-    X28: MessageElement_Class,
+    X20: timestamp64,
+    X21: timestamp96,
+    X22: bytes(capacity: 256), // maximum bytes size is 256
+    X23: bytes(capacity: 256, recyclable: true), // use csharp_recyclable memory
+    X24: vector<string(capacity: 128)>(capacity: 16),
+    X25: map<uint8, string(capacity: 128)>(capacity: 32),
+    X26: StructElement_Struct,
+    X27: MessageElement_Struct,
+    X28: StructElement_Class,
+    X29: MessageElement_Class,
 }
 
 [csharp_struct]
@@ -116,15 +117,16 @@ message Message_Struct {
     X17: float32,
     X18: float64,
     X19: string(capacity: 128), // maximum bytes size is 128
-    X20: timestamp,
-    X21: bytes(capacity: 256), // maximum bytes size is 256
-    X22: bytes(capacity: 256, recyclable: true), // use csharp_recyclable memory
-    X23: vector<string(capacity: 128)>(capacity: 16),
-    X24: map<uint8, string(capacity: 128)>(capacity: 32),
-    X25: StructElement_Struct,
-    X26: MessageElement_Struct,
-    X27: StructElement_Class,
-    X28: MessageElement_Class,
+    X20: timestamp64,
+    X21: timestamp96,
+    X22: bytes(capacity: 256), // maximum bytes size is 256
+    X23: bytes(capacity: 256, recyclable: true), // use csharp_recyclable memory
+    X24: vector<string(capacity: 128)>(capacity: 16),
+    X25: map<uint8, string(capacity: 128)>(capacity: 32),
+    X26: StructElement_Struct,
+    X27: MessageElement_Struct,
+    X28: StructElement_Class,
+    X29: MessageElement_Class,
 }
 
 [csharp_struct]
@@ -149,15 +151,16 @@ message NullableMessage_Struct {
     X17: float32?,
     X18: float64?,
     X19: string?(capacity: 128), // maximum bytes size is 128
-    X20: timestamp?,
-    X21: bytes?(capacity: 256), // maximum bytes size is 256
-    X22: bytes?(capacity: 256, recyclable: true), // use csharp_recyclable memory
-    X23: vector<string(capacity: 128)>?(capacity: 16),
-    X24: map<uint8, string(capacity: 128)>?(capacity: 32),
-    X25: StructElement_Struct?,
-    X26: MessageElement_Struct?,
-    X27: StructElement_Class?,
-    X28: MessageElement_Class?,
+    X20: timestamp64?,
+    X21: timestamp96?,
+    X22: bytes?(capacity: 256), // maximum bytes size is 256
+    X23: bytes?(capacity: 256, recyclable: true), // use csharp_recyclable memory
+    X24: vector<string(capacity: 128)>?(capacity: 16),
+    X25: map<uint8, string(capacity: 128)>?(capacity: 32),
+    X26: StructElement_Struct?,
+    X27: MessageElement_Struct?,
+    X28: StructElement_Class?,
+    X29: MessageElement_Class?,
 }
 
 struct Struct_Class {
@@ -181,15 +184,16 @@ struct Struct_Class {
     X17: float32,
     X18: float64,
     X19: string(capacity: 128), // maximum bytes size is 128
-    X20: timestamp,
-    X21: bytes(capacity: 256), // maximum bytes size is 256
-    X22: bytes(capacity: 256, recyclable: true), // use csharp_recyclable memory
-    X23: vector<string(capacity: 128)>(capacity: 16),
-    X24: map<uint8, string(capacity: 128)>(capacity: 32),
-    X25: StructElement_Struct,
-    X26: MessageElement_Struct,
-    X27: StructElement_Class,
-    X28: MessageElement_Class,
+    X20: timestamp64,
+    X21: timestamp96,
+    X22: bytes(capacity: 256), // maximum bytes size is 256
+    X23: bytes(capacity: 256, recyclable: true), // use csharp_recyclable memory
+    X24: vector<string(capacity: 128)>(capacity: 16),
+    X25: map<uint8, string(capacity: 128)>(capacity: 32),
+    X26: StructElement_Struct,
+    X27: MessageElement_Struct,
+    X28: StructElement_Class,
+    X29: MessageElement_Class,
 }
 
 message Message_Class {
@@ -213,15 +217,16 @@ message Message_Class {
     X17: float32,
     X18: float64,
     X19: string(capacity: 128), // maximum bytes size is 128
-    X20: timestamp,
-    X21: bytes(capacity: 256), // maximum bytes size is 256
-    X22: bytes(capacity: 256, recyclable: true), // use csharp_recyclable memory
-    X23: vector<string(capacity: 128)>(capacity: 16),
-    X24: map<uint8, string(capacity: 128)>(capacity: 32),
-    X25: StructElement_Struct,
-    X26: MessageElement_Struct,
-    X27: StructElement_Class,
-    X28: MessageElement_Class,
+    X20: timestamp64,
+    X21: timestamp96,
+    X22: bytes(capacity: 256), // maximum bytes size is 256
+    X23: bytes(capacity: 256, recyclable: true), // use csharp_recyclable memory
+    X24: vector<string(capacity: 128)>(capacity: 16),
+    X25: map<uint8, string(capacity: 128)>(capacity: 32),
+    X26: StructElement_Struct,
+    X27: MessageElement_Struct,
+    X28: StructElement_Class,
+    X29: MessageElement_Class,
 }
 
 message NullableMessage_Class {
@@ -245,13 +250,14 @@ message NullableMessage_Class {
     X17: float32?,
     X18: float64?,
     X19: string?(capacity: 128), // maximum bytes size is 128
-    X20: timestamp?,
-    X21: bytes?(capacity: 256), // maximum bytes size is 256
-    X22: bytes?(capacity: 256, recyclable: true), // use csharp_recyclable memory
-    X23: vector<string(capacity: 128)>?(capacity: 16),
-    X24: map<uint8, string(capacity: 128)>?(capacity: 32),
-    X25: StructElement_Struct?,
-    X26: MessageElement_Struct?,
-    X27: StructElement_Class?,
-    X28: MessageElement_Class?,
+    X20: timestamp64?,
+    X21: timestamp96?,
+    X22: bytes?(capacity: 256), // maximum bytes size is 256
+    X23: bytes?(capacity: 256, recyclable: true), // use csharp_recyclable memory
+    X24: vector<string(capacity: 128)>?(capacity: 16),
+    X25: map<uint8, string(capacity: 128)>?(capacity: 32),
+    X26: StructElement_Struct?,
+    X27: MessageElement_Struct?,
+    X28: StructElement_Class?,
+    X29: MessageElement_Class?,
 }

@@ -123,7 +123,7 @@ public sealed partial class OmniAgreement : global::Omnius.Core.RocketPack.IRock
     static OmniAgreement()
     {
         global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.Cryptography.OmniAgreement>.Formatter = new ___CustomFormatter();
-        global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.Cryptography.OmniAgreement>.Empty = new global::Omnius.Core.Cryptography.OmniAgreement(global::Omnius.Core.RocketPack.Timestamp.Zero, (global::Omnius.Core.Cryptography.OmniAgreementAlgorithmType)0, global::System.ReadOnlyMemory<byte>.Empty, global::System.ReadOnlyMemory<byte>.Empty);
+        global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.Cryptography.OmniAgreement>.Empty = new global::Omnius.Core.Cryptography.OmniAgreement(global::Omnius.Core.RocketPack.Timestamp64.Zero, (global::Omnius.Core.Cryptography.OmniAgreementAlgorithmType)0, global::System.ReadOnlyMemory<byte>.Empty, global::System.ReadOnlyMemory<byte>.Empty);
     }
 
     private readonly global::System.Lazy<int> ___hashCode;
@@ -131,7 +131,7 @@ public sealed partial class OmniAgreement : global::Omnius.Core.RocketPack.IRock
     public static readonly int MaxPublicKeyLength = 8192;
     public static readonly int MaxPrivateKeyLength = 8192;
 
-    public OmniAgreement(global::Omnius.Core.RocketPack.Timestamp createdTime, global::Omnius.Core.Cryptography.OmniAgreementAlgorithmType algorithmType, global::System.ReadOnlyMemory<byte> publicKey, global::System.ReadOnlyMemory<byte> privateKey)
+    public OmniAgreement(global::Omnius.Core.RocketPack.Timestamp64 createdTime, global::Omnius.Core.Cryptography.OmniAgreementAlgorithmType algorithmType, global::System.ReadOnlyMemory<byte> publicKey, global::System.ReadOnlyMemory<byte> privateKey)
     {
         if (publicKey.Length > 8192) throw new global::System.ArgumentOutOfRangeException("publicKey");
         if (privateKey.Length > 8192) throw new global::System.ArgumentOutOfRangeException("privateKey");
@@ -152,7 +152,7 @@ public sealed partial class OmniAgreement : global::Omnius.Core.RocketPack.IRock
         });
     }
 
-    public global::Omnius.Core.RocketPack.Timestamp CreatedTime { get; }
+    public global::Omnius.Core.RocketPack.Timestamp64 CreatedTime { get; }
     public global::Omnius.Core.Cryptography.OmniAgreementAlgorithmType AlgorithmType { get; }
     public global::System.ReadOnlyMemory<byte> PublicKey { get; }
     public global::System.ReadOnlyMemory<byte> PrivateKey { get; }
@@ -200,7 +200,7 @@ public sealed partial class OmniAgreement : global::Omnius.Core.RocketPack.IRock
         {
             if (rank > 256) throw new global::System.FormatException();
 
-            if (value.CreatedTime != global::Omnius.Core.RocketPack.Timestamp.Zero)
+            if (value.CreatedTime != global::Omnius.Core.RocketPack.Timestamp64.Zero)
             {
                 w.Write((uint)1);
                 w.Write(value.CreatedTime);
@@ -226,7 +226,7 @@ public sealed partial class OmniAgreement : global::Omnius.Core.RocketPack.IRock
         {
             if (rank > 256) throw new global::System.FormatException();
 
-            global::Omnius.Core.RocketPack.Timestamp p_createdTime = global::Omnius.Core.RocketPack.Timestamp.Zero;
+            global::Omnius.Core.RocketPack.Timestamp64 p_createdTime = global::Omnius.Core.RocketPack.Timestamp64.Zero;
             global::Omnius.Core.Cryptography.OmniAgreementAlgorithmType p_algorithmType = (global::Omnius.Core.Cryptography.OmniAgreementAlgorithmType)0;
             global::System.ReadOnlyMemory<byte> p_publicKey = global::System.ReadOnlyMemory<byte>.Empty;
             global::System.ReadOnlyMemory<byte> p_privateKey = global::System.ReadOnlyMemory<byte>.Empty;
@@ -239,7 +239,7 @@ public sealed partial class OmniAgreement : global::Omnius.Core.RocketPack.IRock
                 {
                     case 1:
                         {
-                            p_createdTime = r.GetTimestamp();
+                            p_createdTime = r.GetTimestamp64();
                             break;
                         }
                     case 2:
@@ -272,14 +272,14 @@ public sealed partial class OmniAgreementPublicKey : global::Omnius.Core.RocketP
     static OmniAgreementPublicKey()
     {
         global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.Cryptography.OmniAgreementPublicKey>.Formatter = new ___CustomFormatter();
-        global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.Cryptography.OmniAgreementPublicKey>.Empty = new global::Omnius.Core.Cryptography.OmniAgreementPublicKey(global::Omnius.Core.RocketPack.Timestamp.Zero, (global::Omnius.Core.Cryptography.OmniAgreementAlgorithmType)0, global::System.ReadOnlyMemory<byte>.Empty);
+        global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.Cryptography.OmniAgreementPublicKey>.Empty = new global::Omnius.Core.Cryptography.OmniAgreementPublicKey(global::Omnius.Core.RocketPack.Timestamp64.Zero, (global::Omnius.Core.Cryptography.OmniAgreementAlgorithmType)0, global::System.ReadOnlyMemory<byte>.Empty);
     }
 
     private readonly global::System.Lazy<int> ___hashCode;
 
     public static readonly int MaxPublicKeyLength = 8192;
 
-    public OmniAgreementPublicKey(global::Omnius.Core.RocketPack.Timestamp createdTime, global::Omnius.Core.Cryptography.OmniAgreementAlgorithmType algorithmType, global::System.ReadOnlyMemory<byte> publicKey)
+    public OmniAgreementPublicKey(global::Omnius.Core.RocketPack.Timestamp64 createdTime, global::Omnius.Core.Cryptography.OmniAgreementAlgorithmType algorithmType, global::System.ReadOnlyMemory<byte> publicKey)
     {
         if (publicKey.Length > 8192) throw new global::System.ArgumentOutOfRangeException("publicKey");
 
@@ -297,7 +297,7 @@ public sealed partial class OmniAgreementPublicKey : global::Omnius.Core.RocketP
         });
     }
 
-    public global::Omnius.Core.RocketPack.Timestamp CreatedTime { get; }
+    public global::Omnius.Core.RocketPack.Timestamp64 CreatedTime { get; }
     public global::Omnius.Core.Cryptography.OmniAgreementAlgorithmType AlgorithmType { get; }
     public global::System.ReadOnlyMemory<byte> PublicKey { get; }
 
@@ -343,7 +343,7 @@ public sealed partial class OmniAgreementPublicKey : global::Omnius.Core.RocketP
         {
             if (rank > 256) throw new global::System.FormatException();
 
-            if (value.CreatedTime != global::Omnius.Core.RocketPack.Timestamp.Zero)
+            if (value.CreatedTime != global::Omnius.Core.RocketPack.Timestamp64.Zero)
             {
                 w.Write((uint)1);
                 w.Write(value.CreatedTime);
@@ -364,7 +364,7 @@ public sealed partial class OmniAgreementPublicKey : global::Omnius.Core.RocketP
         {
             if (rank > 256) throw new global::System.FormatException();
 
-            global::Omnius.Core.RocketPack.Timestamp p_createdTime = global::Omnius.Core.RocketPack.Timestamp.Zero;
+            global::Omnius.Core.RocketPack.Timestamp64 p_createdTime = global::Omnius.Core.RocketPack.Timestamp64.Zero;
             global::Omnius.Core.Cryptography.OmniAgreementAlgorithmType p_algorithmType = (global::Omnius.Core.Cryptography.OmniAgreementAlgorithmType)0;
             global::System.ReadOnlyMemory<byte> p_publicKey = global::System.ReadOnlyMemory<byte>.Empty;
 
@@ -376,7 +376,7 @@ public sealed partial class OmniAgreementPublicKey : global::Omnius.Core.RocketP
                 {
                     case 1:
                         {
-                            p_createdTime = r.GetTimestamp();
+                            p_createdTime = r.GetTimestamp64();
                             break;
                         }
                     case 2:
@@ -404,14 +404,14 @@ public sealed partial class OmniAgreementPrivateKey : global::Omnius.Core.Rocket
     static OmniAgreementPrivateKey()
     {
         global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.Cryptography.OmniAgreementPrivateKey>.Formatter = new ___CustomFormatter();
-        global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.Cryptography.OmniAgreementPrivateKey>.Empty = new global::Omnius.Core.Cryptography.OmniAgreementPrivateKey(global::Omnius.Core.RocketPack.Timestamp.Zero, (global::Omnius.Core.Cryptography.OmniAgreementAlgorithmType)0, global::System.ReadOnlyMemory<byte>.Empty);
+        global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.Cryptography.OmniAgreementPrivateKey>.Empty = new global::Omnius.Core.Cryptography.OmniAgreementPrivateKey(global::Omnius.Core.RocketPack.Timestamp64.Zero, (global::Omnius.Core.Cryptography.OmniAgreementAlgorithmType)0, global::System.ReadOnlyMemory<byte>.Empty);
     }
 
     private readonly global::System.Lazy<int> ___hashCode;
 
     public static readonly int MaxPrivateKeyLength = 8192;
 
-    public OmniAgreementPrivateKey(global::Omnius.Core.RocketPack.Timestamp createdTime, global::Omnius.Core.Cryptography.OmniAgreementAlgorithmType algorithmType, global::System.ReadOnlyMemory<byte> privateKey)
+    public OmniAgreementPrivateKey(global::Omnius.Core.RocketPack.Timestamp64 createdTime, global::Omnius.Core.Cryptography.OmniAgreementAlgorithmType algorithmType, global::System.ReadOnlyMemory<byte> privateKey)
     {
         if (privateKey.Length > 8192) throw new global::System.ArgumentOutOfRangeException("privateKey");
 
@@ -429,7 +429,7 @@ public sealed partial class OmniAgreementPrivateKey : global::Omnius.Core.Rocket
         });
     }
 
-    public global::Omnius.Core.RocketPack.Timestamp CreatedTime { get; }
+    public global::Omnius.Core.RocketPack.Timestamp64 CreatedTime { get; }
     public global::Omnius.Core.Cryptography.OmniAgreementAlgorithmType AlgorithmType { get; }
     public global::System.ReadOnlyMemory<byte> PrivateKey { get; }
 
@@ -475,7 +475,7 @@ public sealed partial class OmniAgreementPrivateKey : global::Omnius.Core.Rocket
         {
             if (rank > 256) throw new global::System.FormatException();
 
-            if (value.CreatedTime != global::Omnius.Core.RocketPack.Timestamp.Zero)
+            if (value.CreatedTime != global::Omnius.Core.RocketPack.Timestamp64.Zero)
             {
                 w.Write((uint)1);
                 w.Write(value.CreatedTime);
@@ -496,7 +496,7 @@ public sealed partial class OmniAgreementPrivateKey : global::Omnius.Core.Rocket
         {
             if (rank > 256) throw new global::System.FormatException();
 
-            global::Omnius.Core.RocketPack.Timestamp p_createdTime = global::Omnius.Core.RocketPack.Timestamp.Zero;
+            global::Omnius.Core.RocketPack.Timestamp64 p_createdTime = global::Omnius.Core.RocketPack.Timestamp64.Zero;
             global::Omnius.Core.Cryptography.OmniAgreementAlgorithmType p_algorithmType = (global::Omnius.Core.Cryptography.OmniAgreementAlgorithmType)0;
             global::System.ReadOnlyMemory<byte> p_privateKey = global::System.ReadOnlyMemory<byte>.Empty;
 
@@ -508,7 +508,7 @@ public sealed partial class OmniAgreementPrivateKey : global::Omnius.Core.Rocket
                 {
                     case 1:
                         {
-                            p_createdTime = r.GetTimestamp();
+                            p_createdTime = r.GetTimestamp64();
                             break;
                         }
                     case 2:

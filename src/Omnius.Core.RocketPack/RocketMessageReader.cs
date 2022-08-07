@@ -70,12 +70,20 @@ public unsafe ref struct RocketMessageReader
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public Timestamp GetTimestamp()
+    public Timestamp64 GetTimestamp64()
+    {
+        long seconds = this.GetInt64();
+
+        return new Timestamp64(seconds);
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public Timestamp96 GetTimestamp96()
     {
         long seconds = this.GetInt64();
         int nanos = (int)this.GetUInt32();
 
-        return new Timestamp(seconds, nanos);
+        return new Timestamp96(seconds, nanos);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
