@@ -69,6 +69,7 @@ public class TreeNodeModel : BindableBase
 
     private string? _name;
     private object? _tag;
+    private bool _isSelected;
     private bool _isExpanded;
     private List<TreeNodeModel> _children = new List<TreeNodeModel>();
     protected IRootTreeNode? _root;
@@ -90,6 +91,12 @@ public class TreeNodeModel : BindableBase
     {
         get => _tag;
         set => this.SetProperty(ref _tag, value);
+    }
+
+    public bool IsSelected
+    {
+        get => _isSelected;
+        set => this.SetProperty(ref _isSelected, value);
     }
 
     public bool IsExpanded
