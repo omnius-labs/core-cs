@@ -1,6 +1,5 @@
 using System.Buffers;
 using System.Runtime.CompilerServices;
-using System.Text;
 using Omnius.Core.RocketPack.Internal;
 
 namespace Omnius.Core.RocketPack;
@@ -10,8 +9,6 @@ namespace Omnius.Core.RocketPack;
 /// </summary>
 public ref struct RocketMessageWriter
 {
-    private static readonly Lazy<Encoding> _encoding = new Lazy<Encoding>(() => new UTF8Encoding(false));
-
     private IBufferWriter<byte> _bufferWriter;
     private IBytesPool _bytesPool;
 

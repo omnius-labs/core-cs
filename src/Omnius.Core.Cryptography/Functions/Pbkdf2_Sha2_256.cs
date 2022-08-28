@@ -20,23 +20,23 @@ public unsafe class Pbkdf2_Sha2_256
             keyLength++;
         }
 
-        var extendedkeyLength = (salt.Length + 4);
-        Span<byte> extendedkey = extendedkeyLength <= 128 ? stackalloc byte[extendedkeyLength] : new byte[extendedkeyLength];
+        var extendedKeyLength = (salt.Length + 4);
+        Span<byte> extendedKey = extendedKeyLength <= 128 ? stackalloc byte[extendedKeyLength] : new byte[extendedKeyLength];
 
-        BytesOperations.Copy(salt, extendedkey, salt.Length);
+        BytesOperations.Copy(salt, extendedKey, salt.Length);
 
         Span<byte> f = stackalloc byte[hashLength];
         Span<byte> u = stackalloc byte[hashLength];
 
         for (int i = 0; i < keyLength; i++)
         {
-            extendedkey[salt.Length] = (byte)(((i + 1) >> 24) & 0xFF);
-            extendedkey[salt.Length + 1] = (byte)(((i + 1) >> 16) & 0xFF);
-            extendedkey[salt.Length + 2] = (byte)(((i + 1) >> 8) & 0xFF);
-            extendedkey[salt.Length + 3] = (byte)(((i + 1)) & 0xFF);
+            extendedKey[salt.Length] = (byte)(((i + 1) >> 24) & 0xFF);
+            extendedKey[salt.Length + 1] = (byte)(((i + 1) >> 16) & 0xFF);
+            extendedKey[salt.Length + 2] = (byte)(((i + 1) >> 8) & 0xFF);
+            extendedKey[salt.Length + 3] = (byte)(((i + 1)) & 0xFF);
 
-            Hmac_Sha2_256.TryComputeHash(extendedkey, password, u);
-            BytesOperations.Zero(extendedkey.Slice(salt.Length, 4));
+            Hmac_Sha2_256.TryComputeHash(extendedKey, password, u);
+            BytesOperations.Zero(extendedKey.Slice(salt.Length, 4));
 
             BytesOperations.Copy(u, f, hashLength);
 
