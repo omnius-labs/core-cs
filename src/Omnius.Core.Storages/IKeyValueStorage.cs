@@ -24,4 +24,6 @@ public interface IKeyValueStorage<TKey> : IDisposable
     ValueTask WriteAsync(TKey key, ReadOnlyMemory<byte> memory, CancellationToken cancellationToken = default);
 
     ValueTask<bool> TryDeleteAsync(TKey key, CancellationToken cancellationToken = default);
+
+    ValueTask ShrinkAsync(IEnumerable<TKey> excludedKeys, CancellationToken cancellationToken = default);
 }

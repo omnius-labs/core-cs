@@ -174,7 +174,7 @@ public sealed class KeyValueLiteDatabaseStorage<TKey> : DisposableBase, IKeyValu
 
     public async ValueTask WriteAsync(TKey key, ReadOnlySequence<byte> sequence, CancellationToken cancellationToken = default)
     {
-        using (await _asyncLock.ReaderLockAsync(cancellationToken))
+        using (await _asyncLock.WriterLockAsync(cancellationToken))
         {
             var links = this.GetLinkCollection();
             if (links.Exists(Query.EQ("Key", new BsonValue(key)))) return;
@@ -198,7 +198,7 @@ public sealed class KeyValueLiteDatabaseStorage<TKey> : DisposableBase, IKeyValu
 
     public async ValueTask<bool> TryDeleteAsync(TKey key, CancellationToken cancellationToken = default)
     {
-        using (await _asyncLock.ReaderLockAsync(cancellationToken))
+        using (await _asyncLock.WriterLockAsync(cancellationToken))
         {
             var links = this.GetLinkCollection();
             var link = links.FindOne(Query.EQ("Key", new BsonValue(key)));
@@ -208,6 +208,31 @@ public sealed class KeyValueLiteDatabaseStorage<TKey> : DisposableBase, IKeyValu
             storage.Delete(link.Id);
 
             return links.Delete(link.Id);
+        }
+    }
+
+    public async ValueTask ShrinkAsync(IEnumerable<TKey> excludedKeys, CancellationToken cancellationToken = default)
+    {
+        var excludedKeySet = excludedKeys.ToHashSet();
+
+        using (await _asyncLock.WriterLockAsync(cancellationToken))
+        {
+            var links = this.GetLinkCollection();
+            var storage = this.GetStorage();
+
+            var removeIds = new List<long>();
+
+            foreach (var link in links.FindAll())
+            {
+                if (excludedKeySet.Contains(link.Key)) continue;
+                removeIds.Add(link.Id);
+            }
+
+            foreach (var id in removeIds)
+            {
+                storage.Delete(id);
+                links.Delete(id);
+            }
         }
     }
 
