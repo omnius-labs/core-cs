@@ -16,9 +16,11 @@ public sealed partial class BoundedMessagePipe : DisposableBase
 
     protected override void OnDispose(bool disposing)
     {
-        if (!disposing) return;
-        _writerSemaphore.Dispose();
-        _readerSemaphore.Dispose();
+        if (disposing)
+        {
+            _writerSemaphore.Dispose();
+            _readerSemaphore.Dispose();
+        }
     }
 
     public IMessagePipeWriter Writer { get; }

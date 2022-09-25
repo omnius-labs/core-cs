@@ -12,6 +12,13 @@ public static class ReadOnlySequenceExtensions
         }
     }
 
+    public static byte[] ToArray(this ReadOnlySequence<byte> sequence, IBytesPool bytesPool)
+    {
+        var bytes = new byte[sequence.Length];
+        sequence.CopyTo(bytes.AsSpan());
+        return bytes;
+    }
+
     public static Memory<byte> ToMemory(this ReadOnlySequence<byte> sequence, IBytesPool bytesPool)
     {
         var bytes = new byte[sequence.Length];

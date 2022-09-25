@@ -7,6 +7,12 @@ namespace Omnius.Core.Cryptography;
 
 public sealed partial class OmniSignature
 {
+    public static OmniSignature Parse(string item)
+    {
+        if (!TryParse(item, out var signature)) throw new FormatException();
+        return signature;
+    }
+
     public static bool TryParse(string item, [NotNullWhen(true)] out OmniSignature? signature)
     {
         if (item == null) throw new ArgumentNullException(nameof(item));
