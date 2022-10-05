@@ -1,6 +1,6 @@
+using FluentAssertions;
 using Omnius.Core.Internal;
 using Xunit;
-using FluentAssertions;
 
 namespace Omnius.Core;
 
