@@ -15,8 +15,8 @@ public static class OmniMessageConverter
         Varint.SetUInt32((uint)CompressionAlgorithm.Brotli, writer);
 
         var reader = new SequenceReader<byte>(sequence);
-        using var encoder = new BrotliEncoder(0, 10);
-        var crc32 = default(Crc32_Castagnoli);
+        using var encoder = new BrotliEncoder(11, 24);
+        var crc32 = new Crc32_Castagnoli();
 
         var crc32Buffer = writer.GetSpan(4).Slice(0, 4);
         writer.Advance(crc32Buffer.Length);
@@ -25,23 +25,35 @@ public static class OmniMessageConverter
         {
             var source = reader.UnreadSpan;
             var destination = writer.GetSpan();
-            var status = encoder.Compress(source, destination, out var bytesConsumed, out var bytesWritten, false);
-
+            var status = encoder.Compress(source, destination, out var consumed, out var written, false);
             if (status == OperationStatus.InvalidData)
             {
                 _logger.Warn("invalid data");
                 return false;
             }
 
-            reader.Advance(bytesConsumed);
+            reader.Advance(consumed);
 
-            crc32.Compute(destination.Slice(0, bytesWritten));
-            writer.Advance(bytesWritten);
+            crc32.Compute(destination.Slice(0, written));
+            writer.Advance(written);
 
-            if (status == OperationStatus.Done)
+            if (status == OperationStatus.Done) break;
+        }
+
+        for (; ; )
+        {
+            var destination = writer.GetSpan();
+            var status = encoder.Compress(ReadOnlySpan<byte>.Empty, destination, out _, out var written, true);
+            if (status == OperationStatus.InvalidData)
             {
-                break;
+                _logger.Warn("invalid data");
+                return false;
             }
+
+            writer.Advance(written);
+            crc32.Compute(destination.Slice(0, written));
+
+            if (written == 0) break;
         }
 
         BinaryPrimitives.WriteUInt32BigEndian(crc32Buffer, crc32.GetResult());
@@ -65,7 +77,7 @@ public static class OmniMessageConverter
 
             // Check CRC32
             var decodedCrc32 = BinaryPrimitives.ReadUInt32BigEndian(unreadSequence.Slice(0, 4).ToArray());
-            var crc32 = default(Crc32_Castagnoli);
+            var crc32 = new Crc32_Castagnoli();
             foreach (var buffer in unreadSequence.Slice(4, unreadSequence.Length - 4))
             {
                 crc32.Compute(buffer.Span);
@@ -78,7 +90,7 @@ public static class OmniMessageConverter
 
             if (compressionAlgorithm == CompressionAlgorithm.Brotli)
             {
-                using var decoder = default(BrotliDecoder);
+                using var decoder = new BrotliDecoder();
 
                 for (; ; )
                 {
@@ -95,10 +107,7 @@ public static class OmniMessageConverter
                     reader.Advance(bytesConsumed);
                     writer.Advance(bytesWritten);
 
-                    if (status == OperationStatus.Done || (bytesConsumed == 0 && bytesWritten == 0))
-                    {
-                        return true;
-                    }
+                    if (bytesWritten == 0) return true;
                 }
             }
         }
