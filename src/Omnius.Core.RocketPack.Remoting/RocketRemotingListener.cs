@@ -220,7 +220,7 @@ internal sealed class RocketRemotingListener<TError> : AsyncDisposableBase, IRoc
     {
         var tcs = new TaskCompletionSource();
         using var register = cancellationToken.Register(() => tcs.TrySetCanceled());
-        using var onCloseListenerRegister = _connection.Events.OnClosed.Listen(() => ExceptionHelper.TryCatch<ObjectDisposedException>(() => tcs.SetResult()));
+        using var onCloseRegister = _connection.Events.OnClosed.Listen(() => ExceptionHelper.TryCatch<ObjectDisposedException>(() => tcs.SetResult()));
         await tcs.Task;
     }
 }

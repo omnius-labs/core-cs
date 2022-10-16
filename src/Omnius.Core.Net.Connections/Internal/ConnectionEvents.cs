@@ -6,7 +6,7 @@ internal sealed class ConnectionEvents : DisposableBase, IConnectionEvents
 {
     private readonly CancellationTokenRegistration _cancellationTokenRegistration;
     private int _onClosedCalled = 0;
-    private readonly ActionPipe _closedPipe = new();
+    private readonly ActionPipe _closedActionPipe = new();
 
     public ConnectionEvents(CancellationToken cancellationToken)
     {
@@ -17,7 +17,7 @@ internal sealed class ConnectionEvents : DisposableBase, IConnectionEvents
     {
         if (Interlocked.CompareExchange(ref _onClosedCalled, 1, 0) == 0)
         {
-            _closedPipe.Caller.Call();
+            _closedActionPipe.Caller.Call();
         }
     }
 
@@ -29,5 +29,5 @@ internal sealed class ConnectionEvents : DisposableBase, IConnectionEvents
         }
     }
 
-    public IActionListener OnClosed => _closedPipe.Listener;
+    public IActionListener OnClosed => _closedActionPipe.Listener;
 }
