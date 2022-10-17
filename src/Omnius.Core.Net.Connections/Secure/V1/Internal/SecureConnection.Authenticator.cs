@@ -11,15 +11,10 @@ public partial class SecureConnection
     internal readonly struct AuthenticatedResult
     {
         public OmniSignature? Signature { get; init; }
-
         public CryptoAlgorithmType CryptoAlgorithmType { get; init; }
-
         public byte[] EncryptKey { get; init; }
-
         public byte[] DecryptKey { get; init; }
-
         public byte[] EncryptNonce { get; init; }
-
         public byte[] DecryptNonce { get; init; }
     }
 
