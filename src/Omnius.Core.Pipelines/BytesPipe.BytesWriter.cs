@@ -1,6 +1,6 @@
 namespace Omnius.Core.Pipelines;
 
-public partial class BytesPipe
+public sealed partial class BytesPipe
 {
     public sealed class BytesWriter : IBytesWriter
     {

@@ -2,7 +2,7 @@ using System.Collections;
 
 namespace Omnius.Core;
 
-public class CompositeDisposable : DisposableBase, ICollection<IDisposable>, IDisposable
+public sealed class CompositeDisposable : DisposableBase, ICollection<IDisposable>, IDisposable
 {
     private List<IDisposable> _disposables = new();
 

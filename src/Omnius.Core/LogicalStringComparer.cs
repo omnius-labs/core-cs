@@ -2,7 +2,7 @@ using System.Text.RegularExpressions;
 
 namespace Omnius.Core;
 
-public class LogicalStringComparer : IComparer<string>
+public sealed class LogicalStringComparer : IComparer<string>
 {
     public static LogicalStringComparer Instance = new LogicalStringComparer();
 

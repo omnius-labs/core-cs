@@ -1,7 +1,7 @@
 namespace Omnius.Core;
 
 // https://qiita.com/s-matsuba/items/1ee6bcc1bc5d721fc978
-public class CustomEqualityComparer<T> : IEqualityComparer<T>
+public sealed class CustomEqualityComparer<T> : IEqualityComparer<T>
 {
     private readonly Func<T?, T?, bool> _predicate;
     private readonly Func<T, int> _getHashCode;

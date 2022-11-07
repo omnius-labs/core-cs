@@ -2,7 +2,7 @@ using System.Text;
 
 namespace Omnius.Core.Helpers;
 
-public class StringHelper
+public static class StringHelper
 {
     public static string Normalize(string value)
     {

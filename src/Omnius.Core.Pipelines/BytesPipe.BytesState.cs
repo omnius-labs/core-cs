@@ -3,7 +3,7 @@ using Omnius.Core.Helpers;
 
 namespace Omnius.Core.Pipelines;
 
-public partial class BytesPipe
+public sealed partial class BytesPipe
 {
     internal partial class BytesState : DisposableBase, IBufferWriter<byte>
     {
