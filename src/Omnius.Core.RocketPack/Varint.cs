@@ -17,7 +17,7 @@ public static unsafe class Varint
     private const byte Int64Code = 0x83;
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void SetUInt8(in byte value, in IBufferWriter<byte> writer)
+    public static void SetUInt8(scoped in byte value, scoped in IBufferWriter<byte> writer)
     {
         unchecked
         {
@@ -40,7 +40,7 @@ public static unsafe class Varint
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void SetUInt16(in ushort value, in IBufferWriter<byte> writer)
+    public static void SetUInt16(scoped in ushort value, scoped in IBufferWriter<byte> writer)
     {
         unchecked
         {
@@ -77,7 +77,7 @@ public static unsafe class Varint
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void SetUInt32(in uint value, in IBufferWriter<byte> writer)
+    public static void SetUInt32(scoped in uint value, scoped in IBufferWriter<byte> writer)
     {
         unchecked
         {
@@ -128,7 +128,7 @@ public static unsafe class Varint
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void SetUInt64(in ulong value, in IBufferWriter<byte> writer)
+    public static void SetUInt64(scoped in ulong value, scoped in IBufferWriter<byte> writer)
     {
         unchecked
         {
@@ -193,7 +193,7 @@ public static unsafe class Varint
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void SetInt8(in sbyte value, in IBufferWriter<byte> writer)
+    public static void SetInt8(scoped in sbyte value, scoped in IBufferWriter<byte> writer)
     {
         unchecked
         {
@@ -202,7 +202,7 @@ public static unsafe class Varint
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void SetInt16(in short value, in IBufferWriter<byte> writer)
+    public static void SetInt16(scoped in short value, scoped in IBufferWriter<byte> writer)
     {
         unchecked
         {
@@ -211,7 +211,7 @@ public static unsafe class Varint
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void SetInt32(in int value, in IBufferWriter<byte> writer)
+    public static void SetInt32(scoped in int value, scoped in IBufferWriter<byte> writer)
     {
         unchecked
         {
@@ -220,7 +220,7 @@ public static unsafe class Varint
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void SetInt64(in long value, in IBufferWriter<byte> writer)
+    public static void SetInt64(scoped in long value, scoped in IBufferWriter<byte> writer)
     {
         unchecked
         {
@@ -229,7 +229,7 @@ public static unsafe class Varint
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static bool InternalTryGetUInt8(in ReadOnlySpan<byte> span, out byte value, out int consumed)
+    private static bool InternalTryGetUInt8(scoped in ReadOnlySpan<byte> span, out byte value, out int consumed)
     {
         unchecked
         {
@@ -262,7 +262,7 @@ public static unsafe class Varint
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static bool InternalTryGetUInt16(in ReadOnlySpan<byte> span, out ushort value, out int consumed)
+    private static bool InternalTryGetUInt16(scoped in ReadOnlySpan<byte> span, out ushort value, out int consumed)
     {
         unchecked
         {
@@ -299,7 +299,7 @@ public static unsafe class Varint
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static bool InternalTryGetUInt32(in ReadOnlySpan<byte> span, out uint value, out int consumed)
+    private static bool InternalTryGetUInt32(scoped in ReadOnlySpan<byte> span, out uint value, out int consumed)
     {
         unchecked
         {
@@ -340,7 +340,7 @@ public static unsafe class Varint
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static bool InternalTryGetUInt64(in ReadOnlySpan<byte> span, out ulong value, out int consumed)
+    private static bool InternalTryGetUInt64(scoped in ReadOnlySpan<byte> span, out ulong value, out int consumed)
     {
         unchecked
         {

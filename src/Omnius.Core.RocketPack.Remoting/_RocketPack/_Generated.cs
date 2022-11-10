@@ -85,7 +85,7 @@ public sealed partial class DefaultErrorMessage : global::Omnius.Core.RocketPack
 
     private sealed class ___CustomFormatter : global::Omnius.Core.RocketPack.IRocketMessageFormatter<global::Omnius.Core.RocketPack.Remoting.DefaultErrorMessage>
     {
-        public void Serialize(ref global::Omnius.Core.RocketPack.RocketMessageWriter w, in global::Omnius.Core.RocketPack.Remoting.DefaultErrorMessage value, in int rank)
+        public void Serialize(ref global::Omnius.Core.RocketPack.RocketMessageWriter w, scoped in global::Omnius.Core.RocketPack.Remoting.DefaultErrorMessage value, scoped in int rank)
         {
             if (rank > 256) throw new global::System.FormatException();
 
@@ -106,7 +106,7 @@ public sealed partial class DefaultErrorMessage : global::Omnius.Core.RocketPack
             }
             w.Write((uint)0);
         }
-        public global::Omnius.Core.RocketPack.Remoting.DefaultErrorMessage Deserialize(ref global::Omnius.Core.RocketPack.RocketMessageReader r, in int rank)
+        public global::Omnius.Core.RocketPack.Remoting.DefaultErrorMessage Deserialize(ref global::Omnius.Core.RocketPack.RocketMessageReader r, scoped in int rank)
         {
             if (rank > 256) throw new global::System.FormatException();
 

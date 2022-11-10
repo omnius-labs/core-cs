@@ -885,7 +885,7 @@ internal partial class CodeGenerator
 
         private void Write_Medium_Formatter_Serialize(CodeWriter b, ObjectDefinition objectDefinition)
         {
-            b.WriteLine($"public void Serialize(ref {GenerateTypeFullName("RocketMessageWriter")} w, in {objectDefinition.CSharpFullName} value, in int rank)");
+            b.WriteLine($"public void Serialize(ref {GenerateTypeFullName("RocketMessageWriter")} w, scoped in {objectDefinition.CSharpFullName} value, scoped in int rank)");
             b.WriteLine("{");
 
             using (b.Indent())
@@ -1061,7 +1061,7 @@ internal partial class CodeGenerator
 
         private void Write_Medium_Formatter_Deserialize(CodeWriter b, ObjectDefinition objectDefinition)
         {
-            b.WriteLine($"public {objectDefinition.CSharpFullName} Deserialize(ref {GenerateTypeFullName("RocketMessageReader")} r, in int rank)");
+            b.WriteLine($"public {objectDefinition.CSharpFullName} Deserialize(ref {GenerateTypeFullName("RocketMessageReader")} r, scoped in int rank)");
             b.WriteLine("{");
 
             using (b.Indent())
@@ -1229,7 +1229,7 @@ internal partial class CodeGenerator
 
         private void Write_Small_Formatter_Serialize(CodeWriter b, ObjectDefinition objectDefinition)
         {
-            b.WriteLine($"public void Serialize(ref {GenerateTypeFullName("RocketMessageWriter")} w, in {objectDefinition.CSharpFullName} value, in int rank)");
+            b.WriteLine($"public void Serialize(ref {GenerateTypeFullName("RocketMessageWriter")} w, scoped in {objectDefinition.CSharpFullName} value, scoped in int rank)");
             b.WriteLine("{");
 
             using (b.Indent())
@@ -1403,7 +1403,7 @@ internal partial class CodeGenerator
 
         private void Write_Small_Formatter_Deserialize(CodeWriter b, ObjectDefinition objectDefinition)
         {
-            b.WriteLine($"public {objectDefinition.CSharpFullName} Deserialize(ref {GenerateTypeFullName("RocketMessageReader")} r, in int rank)");
+            b.WriteLine($"public {objectDefinition.CSharpFullName} Deserialize(ref {GenerateTypeFullName("RocketMessageReader")} r, scoped in int rank)");
             b.WriteLine("{");
 
             using (b.Indent())

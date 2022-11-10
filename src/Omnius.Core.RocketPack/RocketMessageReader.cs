@@ -19,7 +19,7 @@ public unsafe ref struct RocketMessageReader
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public IMemoryOwner<byte> GetRecyclableMemory(in int limit)
+    public IMemoryOwner<byte> GetRecyclableMemory(scoped in int limit)
     {
         if (!Varint.TryGetUInt32(ref _reader, out uint length)) throw new FormatException();
         if (length > limit) throw new FormatException();
@@ -35,7 +35,7 @@ public unsafe ref struct RocketMessageReader
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public ReadOnlyMemory<byte> GetMemory(in int limit)
+    public ReadOnlyMemory<byte> GetMemory(scoped in int limit)
     {
         if (!Varint.TryGetUInt32(ref _reader, out uint length)) throw new FormatException();
         if (length > limit) throw new FormatException();
@@ -51,7 +51,7 @@ public unsafe ref struct RocketMessageReader
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public Utf8String GetString(in int limit)
+    public Utf8String GetString(scoped in int limit)
     {
         if (!Varint.TryGetUInt32(ref _reader, out uint length)) throw new FormatException();
         if (length > limit) throw new FormatException();

@@ -71,7 +71,7 @@ public sealed partial class OmniAddress : global::Omnius.Core.RocketPack.IRocket
 
     private sealed class ___CustomFormatter : global::Omnius.Core.RocketPack.IRocketMessageFormatter<global::Omnius.Core.Net.OmniAddress>
     {
-        public void Serialize(ref global::Omnius.Core.RocketPack.RocketMessageWriter w, in global::Omnius.Core.Net.OmniAddress value, in int rank)
+        public void Serialize(ref global::Omnius.Core.RocketPack.RocketMessageWriter w, scoped in global::Omnius.Core.Net.OmniAddress value, scoped in int rank)
         {
             if (rank > 256) throw new global::System.FormatException();
 
@@ -82,7 +82,7 @@ public sealed partial class OmniAddress : global::Omnius.Core.RocketPack.IRocket
             }
             w.Write((uint)0);
         }
-        public global::Omnius.Core.Net.OmniAddress Deserialize(ref global::Omnius.Core.RocketPack.RocketMessageReader r, in int rank)
+        public global::Omnius.Core.Net.OmniAddress Deserialize(ref global::Omnius.Core.RocketPack.RocketMessageReader r, scoped in int rank)
         {
             if (rank > 256) throw new global::System.FormatException();
 

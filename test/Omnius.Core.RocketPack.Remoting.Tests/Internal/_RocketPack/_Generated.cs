@@ -66,7 +66,7 @@ public sealed partial class TestParam : global::Omnius.Core.RocketPack.IRocketMe
 
     private sealed class ___CustomFormatter : global::Omnius.Core.RocketPack.IRocketMessageFormatter<global::Omnius.Core.RocketPack.Remoting.Tests.Internal.TestParam>
     {
-        public void Serialize(ref global::Omnius.Core.RocketPack.RocketMessageWriter w, in global::Omnius.Core.RocketPack.Remoting.Tests.Internal.TestParam value, in int rank)
+        public void Serialize(ref global::Omnius.Core.RocketPack.RocketMessageWriter w, scoped in global::Omnius.Core.RocketPack.Remoting.Tests.Internal.TestParam value, scoped in int rank)
         {
             if (rank > 256) throw new global::System.FormatException();
 
@@ -77,7 +77,7 @@ public sealed partial class TestParam : global::Omnius.Core.RocketPack.IRocketMe
             }
             w.Write((uint)0);
         }
-        public global::Omnius.Core.RocketPack.Remoting.Tests.Internal.TestParam Deserialize(ref global::Omnius.Core.RocketPack.RocketMessageReader r, in int rank)
+        public global::Omnius.Core.RocketPack.Remoting.Tests.Internal.TestParam Deserialize(ref global::Omnius.Core.RocketPack.RocketMessageReader r, scoped in int rank)
         {
             if (rank > 256) throw new global::System.FormatException();
 
@@ -164,7 +164,7 @@ public sealed partial class TestResult : global::Omnius.Core.RocketPack.IRocketM
 
     private sealed class ___CustomFormatter : global::Omnius.Core.RocketPack.IRocketMessageFormatter<global::Omnius.Core.RocketPack.Remoting.Tests.Internal.TestResult>
     {
-        public void Serialize(ref global::Omnius.Core.RocketPack.RocketMessageWriter w, in global::Omnius.Core.RocketPack.Remoting.Tests.Internal.TestResult value, in int rank)
+        public void Serialize(ref global::Omnius.Core.RocketPack.RocketMessageWriter w, scoped in global::Omnius.Core.RocketPack.Remoting.Tests.Internal.TestResult value, scoped in int rank)
         {
             if (rank > 256) throw new global::System.FormatException();
 
@@ -175,7 +175,7 @@ public sealed partial class TestResult : global::Omnius.Core.RocketPack.IRocketM
             }
             w.Write((uint)0);
         }
-        public global::Omnius.Core.RocketPack.Remoting.Tests.Internal.TestResult Deserialize(ref global::Omnius.Core.RocketPack.RocketMessageReader r, in int rank)
+        public global::Omnius.Core.RocketPack.Remoting.Tests.Internal.TestResult Deserialize(ref global::Omnius.Core.RocketPack.RocketMessageReader r, scoped in int rank)
         {
             if (rank > 256) throw new global::System.FormatException();
 

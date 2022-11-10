@@ -139,7 +139,7 @@ internal sealed partial class ProfileMessage : global::Omnius.Core.RocketPack.IR
 
     private sealed class ___CustomFormatter : global::Omnius.Core.RocketPack.IRocketMessageFormatter<global::Omnius.Core.Net.Connections.Secure.V1.Internal.ProfileMessage>
     {
-        public void Serialize(ref global::Omnius.Core.RocketPack.RocketMessageWriter w, in global::Omnius.Core.Net.Connections.Secure.V1.Internal.ProfileMessage value, in int rank)
+        public void Serialize(ref global::Omnius.Core.RocketPack.RocketMessageWriter w, scoped in global::Omnius.Core.Net.Connections.Secure.V1.Internal.ProfileMessage value, scoped in int rank)
         {
             if (rank > 256) throw new global::System.FormatException();
 
@@ -191,7 +191,7 @@ internal sealed partial class ProfileMessage : global::Omnius.Core.RocketPack.IR
             }
             w.Write((uint)0);
         }
-        public global::Omnius.Core.Net.Connections.Secure.V1.Internal.ProfileMessage Deserialize(ref global::Omnius.Core.RocketPack.RocketMessageReader r, in int rank)
+        public global::Omnius.Core.Net.Connections.Secure.V1.Internal.ProfileMessage Deserialize(ref global::Omnius.Core.RocketPack.RocketMessageReader r, scoped in int rank)
         {
             if (rank > 256) throw new global::System.FormatException();
 
@@ -335,7 +335,7 @@ internal sealed partial class VerificationMessage : global::Omnius.Core.RocketPa
 
     private sealed class ___CustomFormatter : global::Omnius.Core.RocketPack.IRocketMessageFormatter<global::Omnius.Core.Net.Connections.Secure.V1.Internal.VerificationMessage>
     {
-        public void Serialize(ref global::Omnius.Core.RocketPack.RocketMessageWriter w, in global::Omnius.Core.Net.Connections.Secure.V1.Internal.VerificationMessage value, in int rank)
+        public void Serialize(ref global::Omnius.Core.RocketPack.RocketMessageWriter w, scoped in global::Omnius.Core.Net.Connections.Secure.V1.Internal.VerificationMessage value, scoped in int rank)
         {
             if (rank > 256) throw new global::System.FormatException();
 
@@ -351,7 +351,7 @@ internal sealed partial class VerificationMessage : global::Omnius.Core.RocketPa
             }
             w.Write((uint)0);
         }
-        public global::Omnius.Core.Net.Connections.Secure.V1.Internal.VerificationMessage Deserialize(ref global::Omnius.Core.RocketPack.RocketMessageReader r, in int rank)
+        public global::Omnius.Core.Net.Connections.Secure.V1.Internal.VerificationMessage Deserialize(ref global::Omnius.Core.RocketPack.RocketMessageReader r, scoped in int rank)
         {
             if (rank > 256) throw new global::System.FormatException();
 
@@ -456,7 +456,7 @@ internal sealed partial class AuthenticationMessage : global::Omnius.Core.Rocket
 
     private sealed class ___CustomFormatter : global::Omnius.Core.RocketPack.IRocketMessageFormatter<global::Omnius.Core.Net.Connections.Secure.V1.Internal.AuthenticationMessage>
     {
-        public void Serialize(ref global::Omnius.Core.RocketPack.RocketMessageWriter w, in global::Omnius.Core.Net.Connections.Secure.V1.Internal.AuthenticationMessage value, in int rank)
+        public void Serialize(ref global::Omnius.Core.RocketPack.RocketMessageWriter w, scoped in global::Omnius.Core.Net.Connections.Secure.V1.Internal.AuthenticationMessage value, scoped in int rank)
         {
             if (rank > 256) throw new global::System.FormatException();
 
@@ -477,7 +477,7 @@ internal sealed partial class AuthenticationMessage : global::Omnius.Core.Rocket
             }
             w.Write((uint)0);
         }
-        public global::Omnius.Core.Net.Connections.Secure.V1.Internal.AuthenticationMessage Deserialize(ref global::Omnius.Core.RocketPack.RocketMessageReader r, in int rank)
+        public global::Omnius.Core.Net.Connections.Secure.V1.Internal.AuthenticationMessage Deserialize(ref global::Omnius.Core.RocketPack.RocketMessageReader r, scoped in int rank)
         {
             if (rank > 256) throw new global::System.FormatException();
 
