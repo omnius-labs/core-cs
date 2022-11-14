@@ -45,7 +45,7 @@ public class RestorableWindow : Window
 
             if (File.Exists(filePath))
             {
-                var windowStatus = Models.WindowStatus.Load(filePath);
+                var windowStatus = WindowStatus.Load(filePath);
                 this.SetWindowStatus(windowStatus);
             }
         }
@@ -65,7 +65,7 @@ public class RestorableWindow : Window
     {
         Dispatcher.UIThread.Post(() =>
         {
-            if (this.WindowState == WindowState.Normal)
+            if (this.WindowState == global::Avalonia.Controls.WindowState.Normal)
             {
                 _positionBeforeResizing = position;
             }
@@ -76,27 +76,27 @@ public class RestorableWindow : Window
     {
         Dispatcher.UIThread.Post(() =>
         {
-            if (this.WindowState == WindowState.Normal)
+            if (this.WindowState == global::Avalonia.Controls.WindowState.Normal)
             {
                 _clientSizeBeforeResizing = size;
             }
         }, DispatcherPriority.Background);
     }
 
-    private Models.WindowStatus GetWindowStatus()
+    private WindowStatus GetWindowStatus()
     {
-        var position = new Models.WindowPosition() { X = _positionBeforeResizing.X, Y = _positionBeforeResizing.Y };
-        var size = new Models.WindowSize() { Width = _clientSizeBeforeResizing.Width, Height = _clientSizeBeforeResizing.Height };
+        var position = new WindowPosition() { X = _positionBeforeResizing.X, Y = _positionBeforeResizing.Y };
+        var size = new WindowSize() { Width = _clientSizeBeforeResizing.Width, Height = _clientSizeBeforeResizing.Height };
         var state = this.WindowState switch
         {
-            WindowState.Normal => Models.WindowState.Normal,
-            WindowState.Minimized => Models.WindowState.Minimized,
-            WindowState.Maximized => Models.WindowState.Maximized,
-            WindowState.FullScreen => Models.WindowState.FullScreen,
-            _ => Models.WindowState.Normal,
+            global::Avalonia.Controls.WindowState.Normal => Avalonia.WindowState.Normal,
+            global::Avalonia.Controls.WindowState.Minimized => Avalonia.WindowState.Minimized,
+            global::Avalonia.Controls.WindowState.Maximized => Avalonia.WindowState.Maximized,
+            global::Avalonia.Controls.WindowState.FullScreen => Avalonia.WindowState.FullScreen,
+            _ => Avalonia.WindowState.Normal,
         };
 
-        return new Models.WindowStatus()
+        return new WindowStatus()
         {
             Position = position,
             Size = size,
@@ -104,7 +104,7 @@ public class RestorableWindow : Window
         };
     }
 
-    private void SetWindowStatus(Models.WindowStatus? status)
+    private void SetWindowStatus(WindowStatus? status)
     {
         if (status is null) return;
 
@@ -112,11 +112,11 @@ public class RestorableWindow : Window
         if (status.Size is not null) this.ClientSize = new Size(status.Size.Width, status.Size.Height);
         this.WindowState = status.State switch
         {
-            Models.WindowState.Normal => WindowState.Normal,
-            Models.WindowState.Minimized => WindowState.Minimized,
-            Models.WindowState.Maximized => WindowState.Maximized,
-            Models.WindowState.FullScreen => WindowState.FullScreen,
-            _ => WindowState.Normal,
+            Avalonia.WindowState.Normal => global::Avalonia.Controls.WindowState.Normal,
+            Avalonia.WindowState.Minimized => global::Avalonia.Controls.WindowState.Minimized,
+            Avalonia.WindowState.Maximized => global::Avalonia.Controls.WindowState.Maximized,
+            Avalonia.WindowState.FullScreen => global::Avalonia.Controls.WindowState.FullScreen,
+            _ => global::Avalonia.Controls.WindowState.Normal,
         };
     }
 }
