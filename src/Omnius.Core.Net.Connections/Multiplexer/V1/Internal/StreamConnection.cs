@@ -86,20 +86,13 @@ internal sealed partial class StreamConnection : IConnection
     }
 
     public bool IsConnected => !_disposed;
-
     public IConnectionSender Sender => _sender;
-
     public IConnectionReceiver Receiver => _receiver;
-
     public IConnectionEvents Events => _events;
 
     internal IMessagePipeReader<ArraySegment<byte>> SendDataReader => _sendDataMessagePipe.Reader;
-
     internal IMessagePipeWriter<ArraySegment<byte>> ReceiveDataWriter => _receiveDataMessagePipe.Writer;
-
     internal IMessagePipeReader SendDataAcceptedReader => _sendDataAcceptedMessagePipe.Reader;
-
     internal IActionCaller ReceiveDataAcceptedCaller => _receiveDataAcceptedActionPipe.Caller;
-
     internal IMessagePipeReader SendFinishReader => _sendFinishMessagePipe.Reader;
 }
