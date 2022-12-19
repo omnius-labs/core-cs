@@ -1,7 +1,7 @@
 {
   "version": 1,
   "dependencies": {
-    "net6.0": {
+    "net7.0": {
       "NeoSmart.AsyncLock": {
         "type": "Direct",
         "requested": "[3.2.1, )",
@@ -21,6 +21,6 @@
         "contentHash": "1j1pZX1ICzEyjafyssU3BzWVxUsaN3zq0wEmGKj3bxINC6NkmS30eEVuZ7k/QX2UKYNCaUch6g46taYKxcpFtw=="
       }
     },
-    "net6.0/linux-x64": {}
+    "net7.0/linux-x64": {}
   }
 }

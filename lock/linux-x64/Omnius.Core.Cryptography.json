@@ -1,7 +1,7 @@
 {
   "version": 1,
   "dependencies": {
-    "net6.0": {
+    "net7.0": {
       "NLog": {
         "type": "Direct",
         "requested": "[4.7.13, )",
@@ -21,60 +21,60 @@
       "omnius.core": {
         "type": "Project",
         "dependencies": {
-          "NLog": "4.7.13",
-          "NeoSmart.AsyncLock": "3.2.1",
-          "System.IO.Pipelines": "6.0.1"
+          "NLog": "[4.7.13, )",
+          "NeoSmart.AsyncLock": "[3.2.1, )",
+          "System.IO.Pipelines": "[6.0.1, )"
         }
       },
       "omnius.core.collections": {
         "type": "Project",
         "dependencies": {
-          "NLog": "4.7.13",
-          "Omnius.Core": "0.0.1-alpha.1",
-          "Omnius.Core.Tasks": "0.0.1-alpha.1"
+          "NLog": "[4.7.13, )",
+          "Omnius.Core": "[0.0.1-alpha.1, )",
+          "Omnius.Core.Tasks": "[0.0.1-alpha.1, )"
         }
       },
       "omnius.core.pipelines": {
         "type": "Project",
         "dependencies": {
-          "NLog": "4.7.13",
-          "Omnius.Core": "0.0.1-alpha.1"
+          "NLog": "[4.7.13, )",
+          "Omnius.Core": "[0.0.1-alpha.1, )"
         }
       },
       "omnius.core.rocketpack": {
         "type": "Project",
         "dependencies": {
-          "NLog": "4.7.13",
-          "Omnius.Core": "0.0.1-alpha.1",
-          "Omnius.Core.Pipelines": "0.0.1-alpha.1"
+          "NLog": "[4.7.13, )",
+          "Omnius.Core": "[0.0.1-alpha.1, )",
+          "Omnius.Core.Pipelines": "[0.0.1-alpha.1, )"
         }
       },
       "omnius.core.serialization": {
         "type": "Project",
         "dependencies": {
-          "NLog": "4.7.13",
-          "Omnius.Core": "0.0.1-alpha.1",
-          "Omnius.Core.Pipelines": "0.0.1-alpha.1",
-          "Omnius.Core.RocketPack": "0.0.1-alpha.1"
+          "NLog": "[4.7.13, )",
+          "Omnius.Core": "[0.0.1-alpha.1, )",
+          "Omnius.Core.Pipelines": "[0.0.1-alpha.1, )",
+          "Omnius.Core.RocketPack": "[0.0.1-alpha.1, )"
         }
       },
       "omnius.core.streams": {
         "type": "Project",
         "dependencies": {
-          "NLog": "4.7.13",
-          "Omnius.Core": "0.0.1-alpha.1",
-          "Omnius.Core.RocketPack": "0.0.1-alpha.1",
-          "Omnius.Core.Serialization": "0.0.1-alpha.1"
+          "NLog": "[4.7.13, )",
+          "Omnius.Core": "[0.0.1-alpha.1, )",
+          "Omnius.Core.RocketPack": "[0.0.1-alpha.1, )",
+          "Omnius.Core.Serialization": "[0.0.1-alpha.1, )"
         }
       },
       "omnius.core.tasks": {
         "type": "Project",
         "dependencies": {
-          "NLog": "4.7.13",
-          "Omnius.Core": "0.0.1-alpha.1"
+          "NLog": "[4.7.13, )",
+          "Omnius.Core": "[0.0.1-alpha.1, )"
         }
       }
     },
-    "net6.0/linux-x64": {}
+    "net7.0/linux-x64": {}
   }
 }

@@ -1,7 +1,7 @@
 {
   "version": 1,
   "dependencies": {
-    "net6.0": {
+    "net7.0": {
       "Newtonsoft.Json": {
         "type": "Direct",
         "requested": "[13.0.1, )",
@@ -21,6 +21,6 @@
         "contentHash": "tBt8K+korVfrjH9wyDEhiLKxbs8qoLCLIFwvYgkSUuMC9//w3z0cFQ8LQAI/5MCKq+BMil0cfRTRvPeE7eXhQw=="
       }
     },
-    "net6.0/win-x64": {}
+    "net7.0/win-x64": {}
   }
 }

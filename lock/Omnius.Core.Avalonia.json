@@ -1,7 +1,7 @@
 {
   "version": 1,
   "dependencies": {
-    "net6.0": {
+    "net7.0": {
       "Avalonia": {
         "type": "Direct",
         "requested": "[0.10.12, )",
@@ -542,24 +542,24 @@
       "omnius.core": {
         "type": "Project",
         "dependencies": {
-          "NLog": "4.7.13",
-          "NeoSmart.AsyncLock": "3.2.1",
-          "System.IO.Pipelines": "6.0.1"
+          "NLog": "[4.7.13, )",
+          "NeoSmart.AsyncLock": "[3.2.1, )",
+          "System.IO.Pipelines": "[6.0.1, )"
         }
       },
       "omnius.core.pipelines": {
         "type": "Project",
         "dependencies": {
-          "NLog": "4.7.13",
-          "Omnius.Core": "0.0.1-alpha.1"
+          "NLog": "[4.7.13, )",
+          "Omnius.Core": "[0.0.1-alpha.1, )"
         }
       },
       "omnius.core.utils": {
         "type": "Project",
         "dependencies": {
-          "NLog": "4.7.13",
-          "Newtonsoft.Json": "13.0.1",
-          "YamlDotNet": "11.2.1"
+          "NLog": "[4.7.13, )",
+          "Newtonsoft.Json": "[13.0.1, )",
+          "YamlDotNet": "[11.2.1, )"
         }
       }
     }
