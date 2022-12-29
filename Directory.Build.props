@@ -28,7 +28,7 @@
     <PackageProjectUrl>https://github.com/omnius-labs/core</PackageProjectUrl>
     <RepositoryUrl>https://github.com/omnius-labs/core</RepositoryUrl>
     <PackageTags>Omnius.Core</PackageTags>
-    <Copyright>Copyright (c) 2019 Lyrise</Copyright>
+    <Copyright>Copyright (c) 2023 Lyrise</Copyright>
     <RepositoryType>git</RepositoryType>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
