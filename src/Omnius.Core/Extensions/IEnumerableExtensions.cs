@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Runtime.ExceptionServices;
 
 namespace Omnius.Core;
 
@@ -62,49 +61,6 @@ public static class IEnumerableExtensions
         }
     }
 
-    // http://neue.cc/2014/03/14_448.html
-    public static async Task ForEachAsync<T>(this IEnumerable<T> source, Func<T, Task> action, int concurrency, CancellationToken cancellationToken = default, bool configureAwait = false)
-    {
-        if (source == null) throw new ArgumentNullException("source");
-        if (action == null) throw new ArgumentNullException("action");
-        if (concurrency <= 0) throw new ArgumentOutOfRangeException("concurrency must be greater than 1.");
-
-        using (var semaphore = new SemaphoreSlim(initialCount: concurrency, maxCount: concurrency))
-        {
-            var exceptionCount = 0;
-            var tasks = new List<Task>();
-
-            foreach (var item in source)
-            {
-                if (exceptionCount > 0) break;
-
-                cancellationToken.ThrowIfCancellationRequested();
-
-                await semaphore.WaitAsync(cancellationToken).ConfigureAwait(configureAwait);
-                var task = action(item).ContinueWith(t =>
-                {
-                    try
-                    {
-                        semaphore.Release();
-                    }
-                    catch (ObjectDisposedException)
-                    {
-                        // taskがキャンセルされていた場合、semaphoreがDisposedの可能性がある。
-                    }
-
-                    if (t.IsFaulted)
-                    {
-                        Interlocked.Increment(ref exceptionCount);
-                        ExceptionDispatchInfo.Throw(t.Exception?.InnerException!);
-                    }
-                });
-                tasks.Add(task);
-            }
-
-            await Task.WhenAll(tasks.ToArray()).ConfigureAwait(configureAwait);
-        }
-    }
-
     private static readonly Lazy<Random> _random = new(() => new Random());
 
     public static IEnumerable<T> Randomize<T>(this IEnumerable<T> items)
@@ -123,5 +79,19 @@ public static class IEnumerableExtensions
                 yield return result;
             }
         }
+    }
+
+    public static IEnumerable<T> WhereNotNull<T>(this IEnumerable<T?> source)
+        where T : class
+    {
+        if (source == null) return Enumerable.Empty<T>();
+        return source.Where(n => n != null)!;
+    }
+
+    public static IEnumerable<T> WhereNotNull<T>(this IEnumerable<Nullable<T>> source)
+        where T : struct
+    {
+        if (source == null) return Enumerable.Empty<T>();
+        return source.Where(n => n.HasValue).Select(n => n!.Value);
     }
 }
