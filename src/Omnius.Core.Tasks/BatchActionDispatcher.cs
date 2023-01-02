@@ -36,7 +36,7 @@ public sealed partial class BatchActionDispatcher : AsyncDisposableBase, IBatchA
         {
             for (; ; )
             {
-                await _resetEvent.WaitAsync(_cancellationTokenSource.Token);
+                await _resetEvent.WaitAsync(_cancellationTokenSource.Token).ConfigureAwait(false);
 
                 var batchActions = _batchActions;
                 if (batchActions.Count == 0) continue;
@@ -51,7 +51,7 @@ public sealed partial class BatchActionDispatcher : AsyncDisposableBase, IBatchA
                     batchAction.Execute();
                 }
 
-                await Task.Delay(_interval, _cancellationTokenSource.Token);
+                await Task.Delay(_interval, _cancellationTokenSource.Token).ConfigureAwait(false);
             }
         }
         catch (OperationCanceledException e)

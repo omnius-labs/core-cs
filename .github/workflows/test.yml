@@ -24,7 +24,7 @@ jobs:
       - name: format check
         run: dotnet format --verify-no-changes
       - name: Test
-        run: dotnet test
+        run: dotnet test --no-restore
   windows:
     runs-on: windows-latest
     env:
@@ -39,4 +39,4 @@ jobs:
       - name: Install dependencies
         run: dotnet restore
       - name: Test
-        run: dotnet test
+        run: dotnet test --no-restore
