@@ -14,7 +14,7 @@
     <PackageReference Update="Cocona.Lite" Version="2.1.0" />
     <PackageReference Update="CommandLineParser" Version="2.8.0" />
     <PackageReference Update="Deadpikle.AvaloniaProgressRing" Version="0.9.8" />
-    <PackageReference Update="DiffPlex" Version="1.7.0" />
+    <PackageReference Update="DiffPlex" Version="1.7.1" />
     <PackageReference Update="Generator.Equals" Version="2.2.3" />
     <PackageReference Update="GitInfo" Version="2.2.0" />
     <PackageReference Update="Glob.cs" Version="5.1.766" />

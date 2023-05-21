@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Diagnostics;
 
 namespace Omnius.Core;
 
@@ -93,5 +94,57 @@ public static class IEnumerableExtensions
     {
         if (source == null) return Enumerable.Empty<T>();
         return source.Where(n => n.HasValue).Select(n => n!.Value);
+    }
+
+    public static IEnumerable<ElementWithContext<T>> WithContext<T>(this IEnumerable<T> source)
+    {
+        var e = source.GetEnumerator();
+
+        // len = 0
+        if (!e.MoveNext()) yield break;
+        T current = e.Current;
+
+        // len = 1
+        if (!e.MoveNext())
+        {
+            yield return new ElementWithContext<T>(default(T), current, default(T));
+            yield break;
+        }
+
+        T? previous = default(T);
+        T next = e.Current;
+
+        while (!e.MoveNext())
+        {
+            yield return new ElementWithContext<T>(previous, current, next);
+            previous = current;
+            current = next;
+            next = e.Current;
+        }
+
+        // tail
+        yield return new ElementWithContext<T>(previous, current, default(T));
+    }
+}
+
+[DebuggerDisplay("Previous = {previous}, Current = {current}, Next = {next}")]
+public readonly struct ElementWithContext<T>
+{
+    public readonly T? Previous;
+    public readonly T Current;
+    public readonly T? Next;
+
+    public ElementWithContext(T? previous, T current, T? next)
+    {
+        Previous = previous;
+        Current = current;
+        Next = next;
+    }
+
+    public void Deconstruct(out T? previous, out T current, out T? next)
+    {
+        previous = this.Previous;
+        current = this.Current;
+        next = this.Next;
     }
 }

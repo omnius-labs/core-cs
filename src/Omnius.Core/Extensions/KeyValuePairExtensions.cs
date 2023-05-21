@@ -1,6 +1,6 @@
 namespace Omnius.Core;
 
-public static class DeconstructExtensions
+public static class KeyValuePairExtensions
 {
     /// <summary>
     /// <see cref="KeyValuePair{TKey, TValue}" />を分解します。
