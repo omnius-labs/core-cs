@@ -10,7 +10,7 @@ public class KeyValueLiteDatabaseStorageTest
     public async Task SimpleTest()
     {
         using var deleter = FixtureFactory.GenTempDirectory(out var tempDirectoryPath);
-        using var storage = KeyValueLiteDatabaseStorage.Factory.Create<string>(Path.Combine(tempDirectoryPath, "test.db"), BytesPool.Shared);
+        await using var storage = KeyValueFileStorage.Factory.Create<string>(Path.Combine(tempDirectoryPath, "test.db"), BytesPool.Shared);
         await storage.MigrateAsync();
         await storage.RebuildAsync();
 

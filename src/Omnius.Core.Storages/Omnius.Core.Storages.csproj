@@ -9,13 +9,18 @@
     <ProjectReference Include="..\Omnius.Core.Pipelines\Omnius.Core.Pipelines.csproj" />
     <ProjectReference Include="..\Omnius.Core.RocketPack\Omnius.Core.RocketPack.csproj" />
     <ProjectReference Include="..\Omnius.Core.Serialization\Omnius.Core.Serialization.csproj" />
+    <ProjectReference Include="..\Omnius.Core.Streams\Omnius.Core.Streams.csproj" />
+    <ProjectReference Include="..\Omnius.Core.Sql\Omnius.Core.Sql.csproj" />
     <ProjectReference Include="..\Omnius.Core\Omnius.Core.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="LiteDB" />
     <PackageReference Include="NLog" />
     <PackageReference Include="Nito.AsyncEx" />
+    <PackageReference Include="System.Data.SQLite.Core" />
+    <PackageReference Include="SqlKata" />
+    <PackageReference Include="SqlKata.Execution" />
+    <PackageReference Include="RocksDB" />
   </ItemGroup>
 
 </Project>

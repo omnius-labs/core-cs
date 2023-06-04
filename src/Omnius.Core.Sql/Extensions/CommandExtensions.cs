@@ -1,5 +1,7 @@
 using System.Data.Common;
 
+namespace Omnius.Core.Sql;
+
 public static class CommandExtensions
 {
     public static void AddParameters(this DbCommand command, IEnumerable<(string, object)> parameters)

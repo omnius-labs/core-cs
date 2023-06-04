@@ -3,7 +3,7 @@ using Omnius.Core.Helpers;
 
 namespace Omnius.Core.Storages;
 
-public sealed class SingleValueFileStorage : DisposableBase, ISingleValueStorage
+public sealed class SingleValueFileStorage : AsyncDisposableBase, ISingleValueStorage
 {
     private readonly string _filePath;
     private readonly IBytesPool _bytesPool;
@@ -29,7 +29,7 @@ public sealed class SingleValueFileStorage : DisposableBase, ISingleValueStorage
         DirectoryHelper.CreateDirectory(Path.GetDirectoryName(filePath)!);
     }
 
-    protected override void OnDispose(bool disposing)
+    protected override async ValueTask OnDisposeAsync()
     {
     }
 

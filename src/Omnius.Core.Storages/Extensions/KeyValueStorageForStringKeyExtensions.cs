@@ -3,9 +3,9 @@ using Omnius.Core.RocketPack;
 
 namespace Omnius.Core.Storages;
 
-public static class KeyValueStorageForStringKeyExtensions
+public static class KeyValueStorageExtensions
 {
-    public static async ValueTask<TValue?> TryReadAsync<TValue>(this IKeyValueStorage<string> storage, string key, CancellationToken cancellationToken = default)
+    public static async ValueTask<TValue?> TryReadAsync<TValue>(this IKeyValueStorage storage, string key, CancellationToken cancellationToken = default)
         where TValue : IRocketMessage<TValue>
     {
         var bytesPool = BytesPool.Shared;
@@ -17,7 +17,7 @@ public static class KeyValueStorageForStringKeyExtensions
         return value;
     }
 
-    public static async ValueTask WriteAsync<TValue>(this IKeyValueStorage<string> storage, string key, TValue value, CancellationToken cancellationToken = default)
+    public static async ValueTask WriteAsync<TValue>(this IKeyValueStorage storage, string key, TValue value, CancellationToken cancellationToken = default)
         where TValue : IRocketMessage<TValue>
     {
         var bytesPool = BytesPool.Shared;
