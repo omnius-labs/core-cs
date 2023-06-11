@@ -53,16 +53,24 @@ public sealed class KeyValueFileStorage : AsyncDisposableBase, IKeyValueStorage
         return connection;
     }
 
-    internal static string GenFilePath(long id)
+    internal string GenFilePath(long id)
     {
-        var v = new int[6];
+        var filePath = Path.Combine(_dirPath, "blocks", ComputeRelativeFilePath(id));
+        DirectoryHelper.CreateDirectory(Path.GetDirectoryName(filePath)!);
+        return filePath;
+    }
 
-        for (int i = 0; i < v.Length; i++)
+    internal static string ComputeRelativeFilePath(long id)
+    {
+        var res = new int[6];
+
+        for (int i = 0; i < res.Length; i++)
         {
-            v[(v.Length - 1) - i] = (int)(id >> i & 0xFFFFFF);
+            int v = (int)((id >>> (i * 11)) & 0x7FF);
+            res[(res.Length - 1) - i] = v;
         }
 
-        return string.Join("/", v);
+        return string.Join("/", res);
     }
 
     public async ValueTask MigrateAsync(CancellationToken cancellationToken = default)
@@ -176,7 +184,7 @@ SELECT name
             var id = await this.TryReadIdAsync(key, cancellationToken);
             if (id < 0) return null;
 
-            var filePath = GenFilePath(id);
+            var filePath = this.GenFilePath(id);
             using var stream = new UnbufferedFileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read, FileOptions.None, _bytesPool);
             return await stream.ToBytesAsync(_bytesPool, cancellationToken);
         }
@@ -189,7 +197,7 @@ SELECT name
             var id = await this.TryReadIdAsync(key, cancellationToken);
             if (id < 0) return false;
 
-            var filePath = GenFilePath(id);
+            var filePath = this.GenFilePath(id);
             using var stream = new UnbufferedFileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read, FileOptions.None, _bytesPool);
             await bufferWriter.WriteAsync(stream, cancellationToken);
             return true;
@@ -224,7 +232,8 @@ SELECT id
         using (await _asyncLock.LockAsync(cancellationToken))
         {
             var id = await this.WriteIdAsync(key, cancellationToken);
-            var filePath = GenFilePath(id);
+
+            var filePath = this.GenFilePath(id);
             using var stream = new UnbufferedFileStream(filePath, FileMode.Open, FileAccess.Write, FileShare.Write, FileOptions.None, _bytesPool);
             await stream.WriteAsync(sequence);
         }
@@ -235,7 +244,8 @@ SELECT id
         using (await _asyncLock.LockAsync(cancellationToken))
         {
             var id = await this.WriteIdAsync(key, cancellationToken);
-            var filePath = GenFilePath(id);
+
+            var filePath = this.GenFilePath(id);
             using var stream = new UnbufferedFileStream(filePath, FileMode.Open, FileAccess.Write, FileShare.Write, FileOptions.None, _bytesPool);
             await stream.WriteAsync(memory);
         }

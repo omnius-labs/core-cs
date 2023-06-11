@@ -38,7 +38,7 @@ public static class OmniMiner
             {
                 if (RuntimeInformation.ProcessArchitecture == Architecture.X64)
                 {
-                    _path = "hashcash.x64.exe";
+                    _path = "native/hashcash.x64.exe";
                 }
                 else
                 {
@@ -49,7 +49,7 @@ public static class OmniMiner
             {
                 if (RuntimeInformation.ProcessArchitecture == Architecture.X64)
                 {
-                    _path = "hashcash.x64";
+                    _path = "native/hashcash.x64";
                 }
                 else
                 {

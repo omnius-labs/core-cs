@@ -11,7 +11,7 @@ public static class DbConnectionExtensions
 
     public static int ExecuteNonQuery(this DbConnection connection, string query, IEnumerable<(string, object)> parameters)
     {
-        var command = connection.CreateCommand();
+        using var command = connection.CreateCommand();
         command.CommandText = query;
         command.AddParameters(parameters);
         return command.ExecuteNonQuery();
@@ -24,7 +24,7 @@ public static class DbConnectionExtensions
 
     public static async ValueTask<int> ExecuteNonQueryAsync(this DbConnection connection, string query, IEnumerable<(string, object)> parameters, CancellationToken cancellationToken = default)
     {
-        var command = connection.CreateCommand();
+        using var command = connection.CreateCommand();
         command.CommandText = query;
         command.AddParameters(parameters);
         return await command.ExecuteNonQueryAsync(cancellationToken);
@@ -37,7 +37,7 @@ public static class DbConnectionExtensions
 
     public static object? ExecuteScalar(this DbConnection connection, string query, IEnumerable<(string, object)> parameters)
     {
-        var command = connection.CreateCommand();
+        using var command = connection.CreateCommand();
         command.CommandText = query;
         command.AddParameters(parameters);
         return command.ExecuteScalar();
@@ -50,7 +50,7 @@ public static class DbConnectionExtensions
 
     public static async ValueTask<object?> ExecuteScalarAsync(this DbConnection connection, string query, IEnumerable<(string, object)> parameters, CancellationToken cancellationToken = default)
     {
-        var command = connection.CreateCommand();
+        using var command = connection.CreateCommand();
         command.CommandText = query;
         command.AddParameters(parameters);
         return await command.ExecuteScalarAsync(cancellationToken);

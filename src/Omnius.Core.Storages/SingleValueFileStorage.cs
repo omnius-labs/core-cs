@@ -70,7 +70,7 @@ public sealed class SingleValueFileStorage : AsyncDisposableBase, ISingleValueSt
         }
     }
 
-    public async ValueTask<bool> WriteAsync(ReadOnlySequence<byte> sequence, CancellationToken cancellationToken = default)
+    public async ValueTask WriteAsync(ReadOnlySequence<byte> sequence, CancellationToken cancellationToken = default)
     {
         using (await _asyncLock.WriterLockAsync(cancellationToken))
         {
@@ -80,14 +80,12 @@ public sealed class SingleValueFileStorage : AsyncDisposableBase, ISingleValueSt
             {
                 await fileStream.WriteAsync(memory, cancellationToken);
             }
-
-            return true;
         }
     }
 
-    public async ValueTask<bool> WriteAsync(ReadOnlyMemory<byte> memory, CancellationToken cancellationToken = default)
+    public async ValueTask WriteAsync(ReadOnlyMemory<byte> memory, CancellationToken cancellationToken = default)
     {
-        return await this.WriteAsync(new ReadOnlySequence<byte>(memory), cancellationToken);
+        await this.WriteAsync(new ReadOnlySequence<byte>(memory), cancellationToken);
     }
 
     public async ValueTask<bool> TryDeleteAsync(CancellationToken cancellationToken = default)

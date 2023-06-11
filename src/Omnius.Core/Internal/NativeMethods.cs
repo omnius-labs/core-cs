@@ -14,7 +14,7 @@ internal unsafe sealed partial class NativeMethods
             {
                 if (RuntimeInformation.ProcessArchitecture == Architecture.X64)
                 {
-                    NativeLibraryManager = new NativeLibraryManager("omnius-core.x64.dll");
+                    NativeLibraryManager = new NativeLibraryManager("native/omnius-core.x64.dll");
                 }
                 else
                 {
@@ -25,7 +25,7 @@ internal unsafe sealed partial class NativeMethods
             {
                 if (RuntimeInformation.ProcessArchitecture == Architecture.X64)
                 {
-                    NativeLibraryManager = new NativeLibraryManager("omnius-core.x64.so");
+                    NativeLibraryManager = new NativeLibraryManager("native/omnius-core.x64.so");
                 }
                 else
                 {

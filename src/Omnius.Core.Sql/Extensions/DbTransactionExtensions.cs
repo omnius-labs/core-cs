@@ -13,7 +13,7 @@ public static class DbTransactionExtensions
     {
         ArgumentNullException.ThrowIfNull(transaction.Connection);
 
-        var command = transaction.Connection.CreateCommand();
+        using var command = transaction.Connection.CreateCommand();
         command.CommandText = query;
         command.AddParameters(parameters);
         return command.ExecuteNonQuery();
@@ -28,7 +28,7 @@ public static class DbTransactionExtensions
     {
         ArgumentNullException.ThrowIfNull(transaction.Connection);
 
-        var command = transaction.Connection.CreateCommand();
+        using var command = transaction.Connection.CreateCommand();
         command.CommandText = query;
         command.AddParameters(parameters);
         return await command.ExecuteNonQueryAsync(cancellationToken);
@@ -43,7 +43,7 @@ public static class DbTransactionExtensions
     {
         ArgumentNullException.ThrowIfNull(transaction.Connection);
 
-        var command = transaction.Connection.CreateCommand();
+        using var command = transaction.Connection.CreateCommand();
         command.CommandText = query;
         command.AddParameters(parameters);
         return command.ExecuteScalar();
@@ -58,7 +58,7 @@ public static class DbTransactionExtensions
     {
         ArgumentNullException.ThrowIfNull(transaction.Connection);
 
-        var command = transaction.Connection.CreateCommand();
+        using var command = transaction.Connection.CreateCommand();
         command.CommandText = query;
         command.AddParameters(parameters);
         return await command.ExecuteScalarAsync(cancellationToken);
