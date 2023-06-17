@@ -6,20 +6,16 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="Nuget\build\net6.0\Omnius.Core.Cryptography.targets">
-      <PackagePath>build/net6.0/</PackagePath>
-      <Pack>true</Pack>
-    </Content>
     <Content Include="Assemblies\Win\hashcash.x64.exe">
       <CopyToOutputDirectory Condition=" '$(NativeDepsPlatform)' == 'Windows' ">PreserveNewest</CopyToOutputDirectory>
-      <Link>hashcash.x64.exe</Link>
+      <Link>native/hashcash.x64.exe</Link>
       <Visible>false</Visible>
       <Pack>true</Pack>
       <PackagePath>runtimes\win\native\hashcash.x64.exe</PackagePath>
     </Content>
     <Content Include="Assemblies\Linux\hashcash.x64">
       <CopyToOutputDirectory Condition=" '$(NativeDepsPlatform)' == 'Linux' ">PreserveNewest</CopyToOutputDirectory>
-      <Link>hashcash.x64</Link>
+      <Link>native/hashcash.x64</Link>
       <Visible>false</Visible>
       <Pack>true</Pack>
       <PackagePath>runtimes\linux\native\hashcash.x64</PackagePath>

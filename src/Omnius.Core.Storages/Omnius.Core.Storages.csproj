@@ -6,16 +6,38 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Include="Assemblies\Win\rocksdb.dll">
+      <CopyToOutputDirectory Condition=" '$(NativeDepsPlatform)' == 'Windows' ">PreserveNewest</CopyToOutputDirectory>
+      <Link>native/rocksdb.dll</Link>
+      <Visible>false</Visible>
+      <Pack>true</Pack>
+      <PackagePath>runtimes\win\native\rocksdb.dll</PackagePath>
+    </Content>
+    <Content Include="Assemblies\Linux\librocksdb.so">
+      <CopyToOutputDirectory Condition=" '$(NativeDepsPlatform)' == 'Linux' ">PreserveNewest</CopyToOutputDirectory>
+      <Link>native/librocksdb.so</Link>
+      <Visible>false</Visible>
+      <Pack>true</Pack>
+      <PackagePath>runtimes\linux\native\librocksdb.so</PackagePath>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Omnius.Core.Pipelines\Omnius.Core.Pipelines.csproj" />
     <ProjectReference Include="..\Omnius.Core.RocketPack\Omnius.Core.RocketPack.csproj" />
     <ProjectReference Include="..\Omnius.Core.Serialization\Omnius.Core.Serialization.csproj" />
+    <ProjectReference Include="..\Omnius.Core.Streams\Omnius.Core.Streams.csproj" />
+    <ProjectReference Include="..\Omnius.Core.Sql\Omnius.Core.Sql.csproj" />
     <ProjectReference Include="..\Omnius.Core\Omnius.Core.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="LiteDB" />
     <PackageReference Include="NLog" />
     <PackageReference Include="Nito.AsyncEx" />
+    <PackageReference Include="System.Data.SQLite.Core" />
+    <PackageReference Include="SqlKata" />
+    <PackageReference Include="SqlKata.Execution" />
+    <PackageReference Include="RocksDB" />
   </ItemGroup>
 
 </Project>

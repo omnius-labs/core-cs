@@ -16,13 +16,12 @@ public static class IBufferWriterExtensions
         }
     }
 
-    public static void Write(this IBufferWriter<byte> bufferWriter, Stream stream)
+    public static async Task WriteAsync(this IBufferWriter<byte> bufferWriter, Stream stream, CancellationToken cancellationToken = default)
     {
-        long remain = stream.Length - stream.Position;
-        while (remain > 0)
+        while (stream.Position < stream.Length)
         {
-            var span = bufferWriter.GetSpan();
-            int readLength = stream.Read(span);
+            var memory = bufferWriter.GetMemory();
+            int readLength = await stream.ReadAsync(memory, cancellationToken);
             bufferWriter.Advance(readLength);
         }
     }

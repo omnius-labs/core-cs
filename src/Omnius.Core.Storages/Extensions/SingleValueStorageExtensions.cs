@@ -17,7 +17,7 @@ public static class SingleValueStorageExtensions
         return value;
     }
 
-    public static async ValueTask<bool> TrySetValueAsync<TValue>(this ISingleValueStorage storage, TValue value, CancellationToken cancellationToken = default)
+    public static async ValueTask SetValueAsync<TValue>(this ISingleValueStorage storage, TValue value, CancellationToken cancellationToken = default)
         where TValue : IRocketMessage<TValue>
     {
         var bytesPool = BytesPool.Shared;
@@ -26,6 +26,6 @@ public static class SingleValueStorageExtensions
         if (value is not IRocketMessage<TValue> rocketPackObject) throw new NotSupportedException();
         rocketPackObject.Export(bytesPipe.Writer, bytesPool);
 
-        return await storage.WriteAsync(bytesPipe.Reader.GetSequence(), cancellationToken);
+        await storage.WriteAsync(bytesPipe.Reader.GetSequence(), cancellationToken);
     }
 }

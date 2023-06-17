@@ -3,7 +3,7 @@ using Omnius.Core.Helpers;
 
 namespace Omnius.Core.Storages;
 
-public sealed class SingleValueFileStorage : DisposableBase, ISingleValueStorage
+public sealed class SingleValueFileStorage : AsyncDisposableBase, ISingleValueStorage
 {
     private readonly string _filePath;
     private readonly IBytesPool _bytesPool;
@@ -29,7 +29,7 @@ public sealed class SingleValueFileStorage : DisposableBase, ISingleValueStorage
         DirectoryHelper.CreateDirectory(Path.GetDirectoryName(filePath)!);
     }
 
-    protected override void OnDispose(bool disposing)
+    protected override async ValueTask OnDisposeAsync()
     {
     }
 
@@ -70,7 +70,7 @@ public sealed class SingleValueFileStorage : DisposableBase, ISingleValueStorage
         }
     }
 
-    public async ValueTask<bool> WriteAsync(ReadOnlySequence<byte> sequence, CancellationToken cancellationToken = default)
+    public async ValueTask WriteAsync(ReadOnlySequence<byte> sequence, CancellationToken cancellationToken = default)
     {
         using (await _asyncLock.WriterLockAsync(cancellationToken))
         {
@@ -80,14 +80,12 @@ public sealed class SingleValueFileStorage : DisposableBase, ISingleValueStorage
             {
                 await fileStream.WriteAsync(memory, cancellationToken);
             }
-
-            return true;
         }
     }
 
-    public async ValueTask<bool> WriteAsync(ReadOnlyMemory<byte> memory, CancellationToken cancellationToken = default)
+    public async ValueTask WriteAsync(ReadOnlyMemory<byte> memory, CancellationToken cancellationToken = default)
     {
-        return await this.WriteAsync(new ReadOnlySequence<byte>(memory), cancellationToken);
+        await this.WriteAsync(new ReadOnlySequence<byte>(memory), cancellationToken);
     }
 
     public async ValueTask<bool> TryDeleteAsync(CancellationToken cancellationToken = default)

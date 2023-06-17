@@ -1,0 +1,31 @@
+{
+  "version": 1,
+  "dependencies": {
+    "net7.0": {
+      "NLog": {
+        "type": "Direct",
+        "requested": "[4.7.15, )",
+        "resolved": "4.7.15",
+        "contentHash": "vXMmsK17hXnMsKd8BdCrJzvb8JMT0+cPgBGRfnqcXIb6y8b6RMIZexO4hMhQgifcTHgU7dbubvCR5A5wX6Ne+A=="
+      },
+      "NeoSmart.AsyncLock": {
+        "type": "Transitive",
+        "resolved": "3.2.1",
+        "contentHash": "bYIpqtgA5oZWdSgcsGA4XLkKVYuz6Qc+aEVfTYPOIX2rSFbb8NFxHcBb5V62qio8Q6Au/Xn+7ci86VW9vqIk0w=="
+      },
+      "System.IO.Pipelines": {
+        "type": "Transitive",
+        "resolved": "7.0.0",
+        "contentHash": "jRn6JYnNPW6xgQazROBLSfpdoczRw694vO5kKvMcNnpXuolEixUyw6IBuBs2Y2mlSX/LdLvyyWmfXhaI3ND1Yg=="
+      },
+      "omnius.core": {
+        "type": "Project",
+        "dependencies": {
+          "NLog": "[4.7.15, )",
+          "NeoSmart.AsyncLock": "[3.2.1, )",
+          "System.IO.Pipelines": "[7.0.0, )"
+        }
+      }
+    }
+  }
+}

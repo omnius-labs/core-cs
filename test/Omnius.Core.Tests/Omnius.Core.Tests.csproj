@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Omnius.Core\Omnius.Core.csproj" />
+    <ProjectReference Include="..\..\src\Omnius.Core.UnitTestToolkit\Omnius.Core.UnitTestToolkit.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -11,6 +11,7 @@
     <NoWarn>CS1591,CS1998,NU5105,NU1603,NU1605</NoWarn>
     <GenerateFullPaths>true</GenerateFullPaths>
     <RepoRoot>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)'))</RepoRoot>
+    <DefineConstants Condition=" '$(StableTest)' == 'true' ">$(DefineConstants);STABLE_TEST</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup>
