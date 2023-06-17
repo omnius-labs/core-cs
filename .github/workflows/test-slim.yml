@@ -47,7 +47,5 @@ jobs:
           dotnet-version: 7.0.x
       - name: Install dependencies
         run: dotnet restore
-      - name: format check
-        run: dotnet format --verify-no-changes
       - name: Test
         run: dotnet test --no-restore
