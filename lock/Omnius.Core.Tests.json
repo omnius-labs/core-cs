@@ -1083,8 +1083,10 @@
         "type": "Project",
         "dependencies": {
           "DiffPlex": "[1.7.1, )",
+          "Microsoft.NET.Test.Sdk": "[17.4.1, )",
           "NLog": "[4.7.15, )",
-          "System.Text.Json": "[7.0.1, )"
+          "System.Text.Json": "[7.0.1, )",
+          "xunit": "[2.4.2, )"
         }
       }
     }

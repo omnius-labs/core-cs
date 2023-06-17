@@ -9,10 +9,28 @@ public class KeyValueStorageTest
     [Fact]
     public async Task SimpleTest()
     {
-        await using var container = new StorageContainer(KeyValueFileStorage.Factory);
-        await container.Storage.MigrateAsync();
+        foreach (var factory in new[] { KeyValueFileStorage.Factory, KeyValueRocksDbStorage.Factory })
+        {
+            {
+                await using var container = new StorageContainer(factory);
+                await this.RebuildTestAsync(container.Storage);
+            }
 
-        await NewMethod(storage);
+            {
+                await using var container = new StorageContainer(factory);
+                await this.TryChangeKeyAndReadWriteTestAsync(container.Storage);
+            }
+
+            {
+                await using var container = new StorageContainer(factory);
+                await this.ContainsKeyAndGetKeysTestAsync(container.Storage);
+            }
+
+            {
+                await using var container = new StorageContainer(factory);
+                await this.TryDeleteAndShrinkTestAsync(container.Storage);
+            }
+        }
     }
 
     private class StorageContainer : IAsyncDisposable
@@ -34,34 +52,91 @@ public class KeyValueStorageTest
         }
     }
 
-    // ValueTask MigrateAsync(CancellationToken cancellationToken = default);
-    // ValueTask RebuildAsync(CancellationToken cancellationToken = default);
-    // ValueTask<bool> TryChangeKeyAsync(string oldKey, string newKey, CancellationToken cancellationToken = default);
-    // ValueTask<bool> ContainsKeyAsync(string key, CancellationToken cancellationToken = default);
-    // IAsyncEnumerable<string> GetKeysAsync(CancellationToken cancellationToken = default);
-    // ValueTask<IMemoryOwner<byte>?> TryReadAsync(string key, CancellationToken cancellationToken = default);
-    // ValueTask<bool> TryReadAsync(string key, IBufferWriter<byte> bufferWriter, CancellationToken cancellationToken = default);
-    // ValueTask WriteAsync(string key, ReadOnlySequence<byte> sequence, CancellationToken cancellationToken = default);
-    // ValueTask WriteAsync(string key, ReadOnlyMemory<byte> memory, CancellationToken cancellationToken = default);
-    // ValueTask<bool> TryDeleteAsync(string key, CancellationToken cancellationToken = default);
-    // ValueTask ShrinkAsync(IEnumerable<string> excludedKeys, CancellationToken cancellationToken = default);
-
-    private static async Task TryChangeKeyTest(IKeyValueStorage storage)
+    private async Task RebuildTestAsync(IKeyValueStorage storage)
     {
-        {
-            var m = new TestMessage("aaa");
-            await storage.WriteAsync("a", m);
-        }
+        await storage.MigrateAsync();
+        await storage.RebuildAsync();
+    }
+
+    private async Task TryChangeKeyAndReadWriteTestAsync(IKeyValueStorage storage)
+    {
+        await storage.MigrateAsync();
+
+        var res = await storage.TryChangeKeyAsync("a", "b");
+        Assert.False(res);
+
+        var m = new TestMessage("aaa");
+        await storage.WriteAsync<TestMessage>("a", m);
 
         var m2 = await storage.TryReadAsync<TestMessage>("a");
+        Assert.Equal(m, m2);
 
-        Assert.Equal(m1, m2);
+        var res2 = await storage.TryChangeKeyAsync("a", "b");
+        Assert.True(res2);
 
-        await storage.TryChangeKeyAsync("a", "b");
+        var m3 = await storage.TryReadAsync<TestMessage>("a");
+        Assert.Equal(m3, TestMessage.Empty);
 
-        var m3 = await storage.TryReadAsync<TestMessage>("b");
+        var m4 = await storage.TryReadAsync<TestMessage>("b");
+        Assert.Equal(m, m4);
+    }
 
-        Assert.Equal(m1, m3);
+    private async Task ContainsKeyAndGetKeysTestAsync(IKeyValueStorage storage)
+    {
+        await storage.MigrateAsync();
+
+        var res = await storage.ContainsKeyAsync("a");
+        Assert.False(res);
+
+        var ma = new TestMessage("aaa");
+        await storage.WriteAsync<TestMessage>("a", ma);
+
+        var res2 = await storage.ContainsKeyAsync("a");
+        Assert.True(res2);
+
+        var mb = new TestMessage("bbb");
+        await storage.WriteAsync<TestMessage>("b", mb);
+
+        var resList = await storage.GetKeysAsync().ToListAsync();
+        resList.Sort();
+        Assert.Equal(resList, new[] { "a", "b" });
+    }
+
+    private async Task TryDeleteAndShrinkTestAsync(IKeyValueStorage storage)
+    {
+        await storage.MigrateAsync();
+
+        var res = await storage.TryDeleteAsync("a");
+        Assert.False(res);
+
+        var ma = new TestMessage("aaa");
+        await storage.WriteAsync<TestMessage>("a", ma);
+
+        var res2 = await storage.ContainsKeyAsync("a");
+        Assert.True(res2);
+
+        var mb = new TestMessage("bbb");
+        await storage.WriteAsync<TestMessage>("b", mb);
+
+        var res3 = await storage.TryDeleteAsync("a");
+        Assert.True(res3);
+
+        var resList = await storage.GetKeysAsync().ToListAsync();
+        resList.Sort();
+        Assert.Equal(resList, new[] { "b" });
+
+        var mc = new TestMessage("ccc");
+        await storage.WriteAsync<TestMessage>("c", mc);
+
+        var res2List = await storage.GetKeysAsync().ToListAsync();
+        res2List.Sort();
+        Assert.Equal(res2List, new[] { "b", "c" });
+
+        await storage.ShrinkAsync(new[] { "b" });
+
+        var res3List = await storage.GetKeysAsync().ToListAsync();
+        res3List.Sort();
+        Assert.Equal(res3List, new[] { "b" });
     }
 
     [Fact]

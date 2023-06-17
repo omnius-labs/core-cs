@@ -6,11 +6,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="NLog" />
+    <ProjectReference Include="..\Omnius.Core\Omnius.Core.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Omnius.Core\Omnius.Core.csproj" />
+    <PackageReference Include="NLog" />
   </ItemGroup>
 
 </Project>

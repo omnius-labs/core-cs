@@ -60,10 +60,16 @@ public sealed class KeyValueRocksDbStorage : AsyncDisposableBase, IKeyValueStora
     {
         using (await _asyncLock.LockAsync(cancellationToken))
         {
-            var value = _rocksDb.Get(_utf8Encoding.Value.GetBytes(oldKey));
+            var bOldKey = _utf8Encoding.Value.GetBytes(oldKey);
+            var bNewKey = _utf8Encoding.Value.GetBytes(newKey);
+
+            var value = _rocksDb.Get(bOldKey);
             if (value is null) return false;
 
-            _rocksDb.Put(_utf8Encoding.Value.GetBytes(newKey), value);
+            _rocksDb.Put(bNewKey, value);
+
+            _rocksDb.Remove(bOldKey);
+
             return true;
         }
     }
@@ -80,18 +86,14 @@ public sealed class KeyValueRocksDbStorage : AsyncDisposableBase, IKeyValueStora
     {
         using (await _asyncLock.LockAsync(cancellationToken))
         {
-            var iter = _rocksDb.NewIterator();
+            using var iter = _rocksDb.NewIterator();
+            iter.SeekToFirst();
 
             while (iter.Valid())
             {
                 yield return _utf8Encoding.Value.GetString(iter.Key());
-
-                var nextIter = iter.Next();
-                iter.Dispose();
-                iter = nextIter;
+                iter.Next();
             }
-
-            iter.Dispose();
         }
     }
 
@@ -122,16 +124,16 @@ public sealed class KeyValueRocksDbStorage : AsyncDisposableBase, IKeyValueStora
     {
         using (await _asyncLock.LockAsync(cancellationToken))
         {
-            var bkey = _utf8Encoding.Value.GetBytes(key);
+            var bKey = _utf8Encoding.Value.GetBytes(key);
 
             if (sequence.IsSingleSegment)
             {
-                _rocksDb.Put(bkey, sequence.FirstSpan);
+                _rocksDb.Put(bKey, sequence.FirstSpan);
             }
             else
             {
                 using var value = sequence.ToMemoryOwner(_bytesPool);
-                _rocksDb.Put(bkey, value.Memory.Span);
+                _rocksDb.Put(bKey, value.Memory.Span);
             }
         }
     }
@@ -148,10 +150,10 @@ public sealed class KeyValueRocksDbStorage : AsyncDisposableBase, IKeyValueStora
     {
         using (await _asyncLock.LockAsync(cancellationToken))
         {
-            var bkey = _utf8Encoding.Value.GetBytes(key);
-            if (!_rocksDb.HasKey(bkey)) return false;
+            var bKey = _utf8Encoding.Value.GetBytes(key);
+            if (!_rocksDb.HasKey(bKey)) return false;
 
-            _rocksDb.Remove(bkey);
+            _rocksDb.Remove(bKey);
             return true;
         }
     }
@@ -162,24 +164,21 @@ public sealed class KeyValueRocksDbStorage : AsyncDisposableBase, IKeyValueStora
 
         using (await _asyncLock.LockAsync(cancellationToken))
         {
-            var iter = _rocksDb.NewIterator();
+            using var iter = _rocksDb.NewIterator();
+            iter.SeekToFirst();
 
             while (iter.Valid())
             {
-                var bkey = iter.Key();
-                var key = _utf8Encoding.Value.GetString(bkey);
+                var bKey = iter.Key();
+                var key = _utf8Encoding.Value.GetString(bKey);
 
                 if (!excludedKeySet.Contains(key))
                 {
-                    _rocksDb.Remove(bkey);
+                    _rocksDb.Remove(bKey);
                 }
 
-                var nextIter = iter.Next();
-                iter.Dispose();
-                iter = nextIter;
+                iter.Next();
             }
-
-            iter.Dispose();
         }
     }
 }

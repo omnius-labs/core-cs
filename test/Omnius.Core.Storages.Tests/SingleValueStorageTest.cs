@@ -9,14 +9,17 @@ public class SingleValueStorageTest
     [Fact]
     public async Task SingleValueFileStorageTest()
     {
+        foreach (var factory in new[] { SingleValueFileStorage.Factory })
         {
-            await using var container = new StorageContainer(SingleValueFileStorage.Factory);
-            await this.SetValueAndTryGetValueTest(container.Storage);
-        }
+            {
+                await using var container = new StorageContainer(factory);
+                await this.SetValueAndTryGetValueTestAsync(container.Storage);
+            }
 
-        {
-            await using var container = new StorageContainer(SingleValueFileStorage.Factory);
-            await this.SetValueAndTryDeleteTest(container.Storage);
+            {
+                await using var container = new StorageContainer(factory);
+                await this.SetValueAndTryDeleteTestAsync(container.Storage);
+            }
         }
     }
 
@@ -39,7 +42,7 @@ public class SingleValueStorageTest
         }
     }
 
-    private async Task SetValueAndTryGetValueTest(ISingleValueStorage storage)
+    private async Task SetValueAndTryGetValueTestAsync(ISingleValueStorage storage)
     {
         {
             var res = await storage.TryGetValueAsync<TestMessage>();
@@ -55,7 +58,7 @@ public class SingleValueStorageTest
         }
     }
 
-    private async Task SetValueAndTryDeleteTest(ISingleValueStorage storage)
+    private async Task SetValueAndTryDeleteTestAsync(ISingleValueStorage storage)
     {
         {
             var res = await storage.TryDeleteAsync();

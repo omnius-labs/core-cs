@@ -109,8 +109,8 @@ CREATE TABLE IF NOT EXISTS keys (
             var query =
 $@"
 UPDATE keys
-    SET name = '{SqliteQueryHelper.EscapeText(oldKey)}'
-    WHERE name = '{SqliteQueryHelper.EscapeText(newKey)}'
+    SET name = '{SqliteQueryHelper.EscapeText(newKey)}'
+    WHERE name = '{SqliteQueryHelper.EscapeText(oldKey)}'
 ;
 ";
 
@@ -135,7 +135,7 @@ SELECT COUNT(1)
 ";
 
             var result = await connection.ExecuteScalarAsync(query, cancellationToken);
-            if (result is int count && count == 1) return true;
+            if ((long)result! == 1) return true;
 
             return false;
         }
@@ -155,15 +155,11 @@ SELECT COUNT(1)
 
             for (; ; )
             {
-                var query =
-$@"
-SELECT name
-    FROM keys
-    OFFSET {offset}
-    LIMIT {limit}
-;
-";
-                var rows = await db.Query().SelectRaw(query).GetAsync();
+                var rows = await db.Query("keys")
+                    .Select("name")
+                    .Offset(offset)
+                    .Limit(limit)
+                    .GetAsync();
                 if (!rows.Any()) yield break;
 
                 foreach (var name in rows.Select(n => n.name).OfType<string>())
@@ -210,18 +206,14 @@ SELECT name
         var compiler = new SqliteCompiler();
         using var db = new QueryFactory(connection, compiler);
 
-        var query =
-$@"
-SELECT id
-    FROM keys
-    WHERE name = '{SqliteQueryHelper.EscapeText(key)}'
-;
-";
-        var rows = await db.Query().SelectRaw(query).GetAsync();
+        var rows = await db.Query("keys")
+            .Select("id")
+            .Where("name", "=", key)
+            .GetAsync();
         if (!rows.Any()) return -1;
 
         var id = rows
-            .Select(n => n.count)
+            .Select(n => n.id)
             .OfType<long>()
             .First();
         return id;
@@ -234,7 +226,7 @@ SELECT id
             var id = await this.WriteIdAsync(key, cancellationToken);
 
             var filePath = this.GenFilePath(id);
-            using var stream = new UnbufferedFileStream(filePath, FileMode.Open, FileAccess.Write, FileShare.Write, FileOptions.None, _bytesPool);
+            using var stream = new UnbufferedFileStream(filePath, FileMode.Create, FileAccess.ReadWrite, FileShare.Read, FileOptions.None, _bytesPool);
             await stream.WriteAsync(sequence);
         }
     }
@@ -246,7 +238,7 @@ SELECT id
             var id = await this.WriteIdAsync(key, cancellationToken);
 
             var filePath = this.GenFilePath(id);
-            using var stream = new UnbufferedFileStream(filePath, FileMode.Open, FileAccess.Write, FileShare.Write, FileOptions.None, _bytesPool);
+            using var stream = new UnbufferedFileStream(filePath, FileMode.Create, FileAccess.ReadWrite, FileShare.Read, FileOptions.None, _bytesPool);
             await stream.WriteAsync(memory);
         }
     }
@@ -265,9 +257,7 @@ INSERT
 ";
 
         var result = await connection.ExecuteScalarAsync(query, cancellationToken);
-        if (result is not long) throw new Exception();
-
-        return (long)result;
+        return (long)result!;
     }
 
     public async ValueTask<bool> TryDeleteAsync(string key, CancellationToken cancellationToken = default)
@@ -293,6 +283,39 @@ DELETE
     {
         using (await _asyncLock.LockAsync(cancellationToken))
         {
+            using var connection = await this.GetConnectionAsync(cancellationToken);
+            using var transaction = connection.BeginTransaction();
+            var compiler = new SqliteCompiler();
+            using var db = new QueryFactory(connection, compiler);
+
+            {
+                var query =
+@"
+CREATE TEMP TABLE excluded_keys (
+    name TEXT NOT NULL
+);
+";
+                await transaction.ExecuteNonQueryAsync(query, cancellationToken);
+            }
+
+            foreach (var chunkedKeys in excludedKeys.Chunk(500))
+            {
+                var columns = new[] { "name" };
+                var values = chunkedKeys.Select(name => new object[] { name.ToString() });
+                await db.Query("excluded_keys")
+                    .InsertAsync(columns, values, transaction, null, cancellationToken);
+            }
+
+            {
+                var query =
+@"
+DELETE FROM keys
+    WHERE (name) NOT IN (SELECT (name) FROM excluded_keys);
+";
+                await transaction.ExecuteNonQueryAsync(query, cancellationToken);
+            }
+
+            await transaction.CommitAsync(cancellationToken);
         }
     }
 }

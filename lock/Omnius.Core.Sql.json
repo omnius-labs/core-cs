@@ -25,30 +25,6 @@
           "NeoSmart.AsyncLock": "[3.2.1, )",
           "System.IO.Pipelines": "[7.0.0, )"
         }
-      },
-      "omnius.core.pipelines": {
-        "type": "Project",
-        "dependencies": {
-          "NLog": "[4.7.15, )",
-          "Omnius.Core": "[0.0.1-alpha.1, )"
-        }
-      },
-      "omnius.core.rocketpack": {
-        "type": "Project",
-        "dependencies": {
-          "NLog": "[4.7.15, )",
-          "Omnius.Core": "[0.0.1-alpha.1, )",
-          "Omnius.Core.Pipelines": "[0.0.1-alpha.1, )"
-        }
-      },
-      "omnius.core.serialization": {
-        "type": "Project",
-        "dependencies": {
-          "NLog": "[4.7.15, )",
-          "Omnius.Core": "[0.0.1-alpha.1, )",
-          "Omnius.Core.Pipelines": "[0.0.1-alpha.1, )",
-          "Omnius.Core.RocketPack": "[0.0.1-alpha.1, )"
-        }
       }
     }
   }

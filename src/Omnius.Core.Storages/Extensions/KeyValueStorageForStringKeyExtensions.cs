@@ -11,7 +11,7 @@ public static class KeyValueStorageExtensions
         var bytesPool = BytesPool.Shared;
         using var bytesPipe = new BytesPipe(bytesPool);
 
-        if (!await storage.TryReadAsync(key, bytesPipe.Writer, cancellationToken)) return default;
+        if (!await storage.TryReadAsync(key, bytesPipe.Writer, cancellationToken)) return IRocketMessage<TValue>.Empty;
 
         var value = IRocketMessage<TValue>.Import(bytesPipe.Reader.GetSequence(), bytesPool);
         return value;

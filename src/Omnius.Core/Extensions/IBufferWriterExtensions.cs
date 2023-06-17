@@ -18,8 +18,7 @@ public static class IBufferWriterExtensions
 
     public static async Task WriteAsync(this IBufferWriter<byte> bufferWriter, Stream stream, CancellationToken cancellationToken = default)
     {
-        long remain = stream.Length - stream.Position;
-        while (remain > 0)
+        while (stream.Position < stream.Length)
         {
             var memory = bufferWriter.GetMemory();
             int readLength = await stream.ReadAsync(memory, cancellationToken);
