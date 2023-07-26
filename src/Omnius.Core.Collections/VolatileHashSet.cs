@@ -9,21 +9,23 @@ public class VolatileHashSet<T> : DisposableBase, ISet<T>, ICollection<T>, IEnum
     private readonly Dictionary<T, DateTime> _map;
     private readonly TimeSpan _survivalInterval;
     private readonly TimeSpan _trimInterval;
+    private readonly ISystemClock _systemClock;
     private readonly IBatchActionDispatcher _batchActionDispatcher;
     private readonly IBatchAction _batchAction;
 
     private object _lockObject = new();
 
-    public VolatileHashSet(TimeSpan survivalInterval, TimeSpan trimInterval, IBatchActionDispatcher batchActionDispatcher)
-        : this(survivalInterval, trimInterval, EqualityComparer<T>.Default, batchActionDispatcher)
+    public VolatileHashSet(TimeSpan survivalInterval, TimeSpan trimInterval, ISystemClock systemClock, IBatchActionDispatcher batchActionDispatcher)
+        : this(survivalInterval, trimInterval, EqualityComparer<T>.Default, systemClock, batchActionDispatcher)
     {
     }
 
-    public VolatileHashSet(TimeSpan survivalInterval, TimeSpan trimInterval, IEqualityComparer<T> comparer, IBatchActionDispatcher batchActionDispatcher)
+    public VolatileHashSet(TimeSpan survivalInterval, TimeSpan trimInterval, IEqualityComparer<T> comparer, ISystemClock systemClock, IBatchActionDispatcher batchActionDispatcher)
     {
         _map = new Dictionary<T, DateTime>(comparer);
         _survivalInterval = survivalInterval;
         _trimInterval = trimInterval;
+        _systemClock = systemClock;
         _batchActionDispatcher = batchActionDispatcher;
         _batchAction = new BatchAction(this);
         _batchActionDispatcher.Register(_batchAction);
@@ -55,7 +57,7 @@ public class VolatileHashSet<T> : DisposableBase, ISet<T>, ICollection<T>, IEnum
     {
         lock (_lockObject)
         {
-            var now = DateTime.UtcNow;
+            var now = _systemClock.GetUtcNow();
 
             var removingKeys = new List<T>();
 
@@ -94,7 +96,7 @@ public class VolatileHashSet<T> : DisposableBase, ISet<T>, ICollection<T>, IEnum
         {
             if (!_map.TryGetValue(item, out var updatedTime)) return _survivalInterval;
 
-            var now = DateTime.UtcNow;
+            var now = _systemClock.GetUtcNow();
             return (now - updatedTime);
         }
     }
@@ -126,7 +128,7 @@ public class VolatileHashSet<T> : DisposableBase, ISet<T>, ICollection<T>, IEnum
         lock (_lockObject)
         {
             int count = _map.Count;
-            _map[item] = DateTime.UtcNow;
+            _map[item] = _systemClock.GetUtcNow();
 
             return (count != _map.Count);
         }
@@ -195,7 +197,7 @@ public class VolatileHashSet<T> : DisposableBase, ISet<T>, ICollection<T>, IEnum
     {
         lock (_lockObject)
         {
-            var now = DateTime.UtcNow;
+            var now = _systemClock.GetUtcNow();
 
             foreach (var value in other)
             {

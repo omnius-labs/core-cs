@@ -98,6 +98,7 @@ public static class IEnumerableExtensions
 
     public static IEnumerable<ElementWithContext<T>> WithContext<T>(this IEnumerable<T> source)
     {
+        int index = 0;
         var e = source.GetEnumerator();
 
         // len = 0
@@ -108,7 +109,7 @@ public static class IEnumerableExtensions
         // len = 1
         if (!e.MoveNext())
         {
-            yield return new ElementWithContext<T>(default(T), current, default(T));
+            yield return new ElementWithContext<T>(default(T), current, default(T), index++);
             yield break;
         }
 
@@ -117,7 +118,7 @@ public static class IEnumerableExtensions
 
         for (; ; )
         {
-            yield return new ElementWithContext<T>(previous, current, next);
+            yield return new ElementWithContext<T>(previous, current, next, index++);
 
             if (!e.MoveNext()) break;
 
@@ -127,7 +128,7 @@ public static class IEnumerableExtensions
         }
 
         // tail
-        yield return new ElementWithContext<T>(current, next, default(T));
+        yield return new ElementWithContext<T>(current, next, default(T), index++);
     }
 }
 
@@ -137,12 +138,14 @@ public readonly struct ElementWithContext<T>
     public readonly T? Previous;
     public readonly T Current;
     public readonly T? Next;
+    public readonly int Index;
 
-    public ElementWithContext(T? previous, T current, T? next)
+    public ElementWithContext(T? previous, T current, T? next, int index)
     {
         Previous = previous;
         Current = current;
         Next = next;
+        Index = index;
     }
 
     public void Deconstruct(out T? previous, out T current, out T? next)
@@ -150,5 +153,13 @@ public readonly struct ElementWithContext<T>
         previous = this.Previous;
         current = this.Current;
         next = this.Next;
+    }
+
+    public void Deconstruct(out T? previous, out T current, out T? next, out int index)
+    {
+        previous = this.Previous;
+        current = this.Current;
+        next = this.Next;
+        index = this.Index;
     }
 }

@@ -9,21 +9,23 @@ public partial class VolatileListDictionary<TKey, TValue> : DisposableBase, IEnu
     private readonly Dictionary<TKey, List<Entry<TValue>>> _map;
     private readonly TimeSpan _survivalInterval;
     private readonly TimeSpan _trimInterval;
+    private readonly ISystemClock _systemClock;
     private readonly IBatchActionDispatcher _batchActionDispatcher;
     private readonly IBatchAction _batchAction;
 
     private object _lockObject = new();
 
-    public VolatileListDictionary(TimeSpan survivalInterval, TimeSpan trimInterval, IBatchActionDispatcher batchActionDispatcher)
-        : this(survivalInterval, trimInterval, EqualityComparer<TKey>.Default, batchActionDispatcher)
+    public VolatileListDictionary(TimeSpan survivalInterval, TimeSpan trimInterval, ISystemClock systemClock, IBatchActionDispatcher batchActionDispatcher)
+        : this(survivalInterval, trimInterval, EqualityComparer<TKey>.Default, systemClock, batchActionDispatcher)
     {
     }
 
-    public VolatileListDictionary(TimeSpan survivalInterval, TimeSpan trimInterval, IEqualityComparer<TKey> comparer, IBatchActionDispatcher batchActionDispatcher)
+    public VolatileListDictionary(TimeSpan survivalInterval, TimeSpan trimInterval, IEqualityComparer<TKey> comparer, ISystemClock systemClock, IBatchActionDispatcher batchActionDispatcher)
     {
         _map = new Dictionary<TKey, List<Entry<TValue>>>(comparer);
         _survivalInterval = survivalInterval;
         _trimInterval = trimInterval;
+        _systemClock = systemClock;
         _batchActionDispatcher = batchActionDispatcher;
         _batchAction = new BatchAction(this);
         _batchActionDispatcher.Register(_batchAction);
@@ -55,7 +57,7 @@ public partial class VolatileListDictionary<TKey, TValue> : DisposableBase, IEnu
     {
         lock (_lockObject)
         {
-            var now = DateTime.UtcNow;
+            var now = _systemClock.GetUtcNow();
 
             var removingKeys = new List<TKey>();
 
@@ -151,7 +153,7 @@ public partial class VolatileListDictionary<TKey, TValue> : DisposableBase, IEnu
                 _map.Add(key, list);
             }
 
-            list.Add(new Entry<TValue>(value, DateTime.UtcNow));
+            list.Add(new Entry<TValue>(value, _systemClock.GetUtcNow()));
         }
     }
 
@@ -167,7 +169,7 @@ public partial class VolatileListDictionary<TKey, TValue> : DisposableBase, IEnu
 
             foreach (var value in collection)
             {
-                list.Add(new Entry<TValue>(value, DateTime.UtcNow));
+                list.Add(new Entry<TValue>(value, _systemClock.GetUtcNow()));
             }
         }
     }

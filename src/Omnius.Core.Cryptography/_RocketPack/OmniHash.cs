@@ -43,6 +43,12 @@ public partial struct OmniHash
         return algorithmType + ":" + value;
     }
 
+    public static OmniHash Parse(string text)
+    {
+        if (TryParse(text, out var value)) return value;
+        throw new FormatException("Invalid format");
+    }
+
     public static bool TryParse(string text, out OmniHash value)
     {
         value = default;
