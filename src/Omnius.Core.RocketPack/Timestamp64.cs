@@ -83,4 +83,9 @@ public readonly struct Timestamp64 : IEquatable<Timestamp64>, IComparable<Timest
         long seconds = ticks / TimeSpan.TicksPerSecond;
         return new Timestamp64(seconds);
     }
+
+    public static Timestamp64 FromSeconds(long seconds)
+    {
+        return new Timestamp64(seconds);
+    }
 }

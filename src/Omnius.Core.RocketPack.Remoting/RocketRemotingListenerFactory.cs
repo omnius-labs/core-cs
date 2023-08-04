@@ -20,9 +20,9 @@ public sealed partial class RocketRemotingListenerFactory<TError> : IRocketRemot
 
     public async ValueTask<IRocketRemotingListener<TError>> CreateAsync(CancellationToken cancellationToken = default)
     {
-        uint functionId = 0;
-
         var connection = await _multiplexer.AcceptAsync(cancellationToken);
+
+        uint functionId = 0;
 
         await connection.Receiver.ReceiveAsync(
             sequence =>

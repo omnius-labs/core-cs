@@ -1,8 +1,6 @@
 - Includes:
     - ./rpfs/**/*.rpf
   CompileTargets:
-    - Input: ./rpfs/FormatterBenchmarks/FormatterBenchmarks.Internal.rpf
-      Output: ./perf/FormatterBenchmarks/Internal/_RocketPack/_Generated.cs
     - Input: ./rpfs/Omnius.Core.Cryptography/Omnius.Core.Cryptography.rpf
       Output: ./src/Omnius.Core.Cryptography/_RocketPack/_Generated.cs
     - Input: ./rpfs/Omnius.Core.Net/Omnius.Core.Net.rpf

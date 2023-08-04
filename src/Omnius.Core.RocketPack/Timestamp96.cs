@@ -90,4 +90,9 @@ public readonly struct Timestamp96 : IEquatable<Timestamp96>, IComparable<Timest
         int nanos = (int)(ticks % TimeSpan.TicksPerSecond) * 100;
         return new Timestamp96(seconds, nanos);
     }
+
+    public static Timestamp96 FromSecondsAndNanos(long seconds, int nanos)
+    {
+        return new Timestamp96(seconds, nanos);
+    }
 }

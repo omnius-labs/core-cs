@@ -7,6 +7,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <IsPackable>false</IsPackable>
+    <InvariantGlobalization>true</InvariantGlobalization>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <NoWarn>CS1591,CS1998,NU5105,NU1603,NU1605</NoWarn>
     <GenerateFullPaths>true</GenerateFullPaths>
