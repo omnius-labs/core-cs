@@ -43,8 +43,6 @@ internal partial class StreamConnection
 
             await _semaphoreSlim.WaitAsync(linkedTokenSource.Token);
             _semaphoreSlim.Release();
-
-            await _dataWriter.WaitToWriteAsync(linkedTokenSource.Token);
         }
 
         public async ValueTask SendAsync(Action<IBufferWriter<byte>> action, CancellationToken cancellationToken = default)
@@ -52,44 +50,28 @@ internal partial class StreamConnection
             using var linkedTokenSource = CancellationTokenSource.CreateLinkedTokenSource(_cancellationToken, cancellationToken);
 
             await _semaphoreSlim.WaitAsync(linkedTokenSource.Token);
-
-            var payload = this.GetPayload(action);
-            if (payload.Count == 0)
-            {
-                _semaphoreSlim.Release();
-                return;
-            }
-
-            Interlocked.Add(ref _totalBytesSent, payload.Count);
-            await _dataWriter.WriteAsync(() => payload, linkedTokenSource.Token);
+            this.InternalSend(action);
         }
 
         public bool TrySend(Action<IBufferWriter<byte>> action)
         {
             if (!_semaphoreSlim.Wait(0)) return false;
-
-            var payload = this.GetPayload(action);
-            if (payload.Count == 0)
-            {
-                _semaphoreSlim.Release();
-                return false;
-            }
-
-            Interlocked.Add(ref _totalBytesSent, payload.Count);
-            return _dataWriter.TryWrite(() => payload);
+            this.InternalSend(action);
+            return true;
         }
 
-        private ArraySegment<byte> GetPayload(Action<IBufferWriter<byte>> action)
+        private void InternalSend(Action<IBufferWriter<byte>> action)
         {
             using var bytesPipe = new BytesPipe(_bytesPool);
             action.Invoke(bytesPipe.Writer);
-            if (bytesPipe.Writer.WrittenBytes == 0) return ArraySegment<byte>.Empty;
+            if (bytesPipe.Writer.WrittenBytes == 0) return;
 
             var sequence = bytesPipe.Reader.GetSequence();
             var buffer = _bytesPool.Array.Rent((int)sequence.Length);
             sequence.CopyTo(buffer.AsSpan());
 
-            return new ArraySegment<byte>(buffer, 0, (int)sequence.Length);
+            _dataWriter.TryWrite(() => new ArraySegment<byte>(buffer, 0, (int)sequence.Length));
+            Interlocked.Add(ref _totalBytesSent, sequence.Length);
         }
     }
 }

@@ -15,6 +15,7 @@ internal sealed partial class StreamConnection : IConnection
     private readonly BoundedMessagePipe<ArraySegment<byte>> _receiveDataMessagePipe;
     private readonly BoundedMessagePipe _sendDataAcceptedMessagePipe;
     private readonly ActionPipe _receiveDataAcceptedActionPipe;
+
     private readonly ConnectionSender _sender;
     private readonly ConnectionReceiver _receiver;
     private readonly ConnectionEvents _events;
@@ -48,10 +49,10 @@ internal sealed partial class StreamConnection : IConnection
 
     public async ValueTask DisposeAsync()
     {
-        this.InternalStop();
+        this.InternalFinish();
     }
 
-    internal void InternalStop()
+    internal void InternalFinish()
     {
         lock (_lockObject)
         {

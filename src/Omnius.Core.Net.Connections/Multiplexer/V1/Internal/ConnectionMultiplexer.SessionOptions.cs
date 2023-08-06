@@ -6,5 +6,6 @@ internal sealed partial class ConnectionMultiplexer
         TimeSpan PacketReceiveTimeout,
         uint MaxStreamRequestQueueSize,
         uint MaxDataSize,
-        uint MaxDataQueueSize);
+        uint MaxDataQueueSize
+    );
 }

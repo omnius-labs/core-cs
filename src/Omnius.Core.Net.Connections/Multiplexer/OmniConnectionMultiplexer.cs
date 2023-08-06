@@ -11,9 +11,9 @@ public sealed class OmniConnectionMultiplexer : AsyncDisposableBase, IConnection
 
     private OmniConnectionMultiplexerVersion? _version;
 
-    public static OmniConnectionMultiplexer CreateV1(IConnection connection, IBatchActionDispatcher batchActionDispatcher, IBytesPool bytesPool, V1.OmniConnectionMultiplexerOptions options)
+    public static OmniConnectionMultiplexer CreateV1(IConnection connection, IBatchActionDispatcher batchActionDispatcher, ISystemClock systemClock, IBytesPool bytesPool, V1.OmniConnectionMultiplexerOptions options)
     {
-        var multiplexer = new V1.Internal.ConnectionMultiplexer(connection, batchActionDispatcher, bytesPool, options);
+        var multiplexer = new V1.Internal.ConnectionMultiplexer(connection, batchActionDispatcher, systemClock, bytesPool, options);
         return new OmniConnectionMultiplexer(connection, multiplexer);
     }
 

@@ -31,7 +31,7 @@ internal sealed partial class ConnectionMultiplexer
 
             try
             {
-                _connectionMultiplexer.InternalReceive();
+                _connectionMultiplexer.Receive();
             }
             catch (Exception e)
             {

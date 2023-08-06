@@ -2,22 +2,9 @@ namespace Omnius.Core.Net.Connections.Multiplexer.V1;
 
 public record OmniConnectionMultiplexerOptions
 {
-    public OmniConnectionMultiplexerOptions(OmniConnectionMultiplexerType type, TimeSpan packetReceiveTimeout, uint maxStreamRequestQueueSize, uint maxStreamDataSize, uint maxStreamDataQueueSize)
-    {
-        this.Type = type;
-        this.PacketReceiveTimeout = packetReceiveTimeout;
-        this.MaxStreamRequestQueueSize = maxStreamRequestQueueSize;
-        this.MaxStreamDataSize = maxStreamDataSize;
-        this.MaxStreamDataQueueSize = maxStreamDataQueueSize;
-    }
-
-    public OmniConnectionMultiplexerType Type { get; }
-
-    public TimeSpan PacketReceiveTimeout { get; }
-
-    public uint MaxStreamRequestQueueSize { get; }
-
-    public uint MaxStreamDataSize { get; }
-
-    public uint MaxStreamDataQueueSize { get; }
+    public required OmniConnectionMultiplexerType Type { get; init; }
+    public required TimeSpan PacketReceiveTimeout { get; init; }
+    public required uint MaxStreamRequestQueueSize { get; init; }
+    public required uint MaxStreamDataSize { get; init; }
+    public required uint MaxStreamDataQueueSize { get; init; }
 }
