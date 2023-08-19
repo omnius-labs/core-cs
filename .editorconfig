@@ -167,6 +167,9 @@ dotnet_diagnostic.CA1310.severity = error
 dotnet_diagnostic.IDE0007.severity = none
 dotnet_diagnostic.IDE0008.severity = none
 
+# https://learn.microsoft.com/en-us/dotnet/csharp//language-reference/proposals/csharp-12.0/primary-constructors
+dotnet_diagnostic.IDE0290.severity = none
+
 # Xml files
 [*.{xml}]
 indent_size = 2
