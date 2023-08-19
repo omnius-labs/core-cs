@@ -163,6 +163,10 @@ dotnet_diagnostic.CA1305.severity = error
 dotnet_diagnostic.CA1307.severity = error
 dotnet_diagnostic.CA1310.severity = error
 
+# https://learn.microsoft.com/ja-jp/dotnet/fundamentals/code-analysis/style-rules/ide0007-ide0008
+dotnet_diagnostic.IDE0007.severity = none
+dotnet_diagnostic.IDE0008.severity = none
+
 # Xml files
 [*.{xml}]
 indent_size = 2

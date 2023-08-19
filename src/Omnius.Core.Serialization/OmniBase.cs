@@ -2,43 +2,40 @@ using System.Buffers;
 
 namespace Omnius.Core.Serialization;
 
+// example: https://github.com/multiformats/multibase#multibase-table
+
 public static class OmniBase
 {
-    private static readonly Lazy<Base16> _base16_Lower = new(() => new Base16(ConvertStringCase.Lower));
-    private static readonly Lazy<Base16> _base16_Upper = new(() => new Base16(ConvertStringCase.Upper));
-    private static readonly Lazy<Base58Btc> _base58Btc = new(() => new Base58Btc());
+    private static readonly Lazy<Base16> _base16_Lower = new(() => new Base16(Base16Case.Lower));
+    private static readonly Lazy<Base16> _base16_Upper = new(() => new Base16(Base16Case.Upper));
+    private static readonly Lazy<Base58Btc> _base58_Btc = new(() => new Base58Btc());
 
-    public static string? Encode(ReadOnlyMemory<byte> memory, ConvertStringType convertStringType, ConvertStringCase convertStringCase = ConvertStringCase.Lower)
+    public static string? Encode(ReadOnlyMemory<byte> memory, ConvertStringType convertStringType)
     {
-        return Encode(new ReadOnlySequence<byte>(memory), convertStringType, convertStringCase);
+        return Encode(new ReadOnlySequence<byte>(memory), convertStringType);
     }
 
-    public static string? Encode(ReadOnlySequence<byte> sequence, ConvertStringType convertStringType, ConvertStringCase convertStringCase = ConvertStringCase.Lower)
+    public static string? Encode(ReadOnlySequence<byte> sequence, ConvertStringType convertStringType)
     {
-        if (convertStringType == ConvertStringType.Base16)
+        if (convertStringType == ConvertStringType.Base16Lower)
         {
-            switch (convertStringCase)
-            {
-                case ConvertStringCase.Lower:
-                    {
-                        _base16_Lower.Value.TryEncode(sequence, out string? text, true);
-                        return text;
-                    }
-
-                case ConvertStringCase.Upper:
-                    {
-                        _base16_Upper.Value.TryEncode(sequence, out string? text, true);
-                        return text;
-                    }
-
-                default:
-                    throw new NotSupportedException(nameof(convertStringCase));
-            }
-        }
-        else if (convertStringType == ConvertStringType.Base58)
-        {
-            _base58Btc.Value.TryEncode(sequence, out string? text, true);
+            _base16_Lower.Value.TryEncode(sequence, out string? text, true);
             return text;
+        }
+        else if (convertStringType == ConvertStringType.Base16Upper)
+        {
+            _base16_Upper.Value.TryEncode(sequence, out string? text, true);
+            return text;
+        }
+        else if (convertStringType == ConvertStringType.Base58Btc)
+        {
+            _base58_Btc.Value.TryEncode(sequence, out string? text, true);
+            return text;
+        }
+        else if (convertStringType == ConvertStringType.Base64)
+        {
+            var bytes = sequence.ToArray();
+            return "m" + Convert.ToBase64String(bytes);
         }
         else
         {
@@ -62,7 +59,10 @@ public static class OmniBase
                 _base16_Upper.Value.TryDecode(text[1..], bufferWriter);
                 return true;
             case 'z':
-                _base58Btc.Value.TryDecode(text[1..], bufferWriter);
+                _base58_Btc.Value.TryDecode(text[1..], bufferWriter);
+                return true;
+            case 'm':
+                bufferWriter.Write(Convert.FromBase64String(text[1..]));
                 return true;
             default:
                 return false;

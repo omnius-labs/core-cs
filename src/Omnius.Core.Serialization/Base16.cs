@@ -2,28 +2,34 @@ using System.Buffers;
 
 namespace Omnius.Core.Serialization;
 
+public enum Base16Case
+{
+    Upper,
+    Lower,
+}
+
 public unsafe class Base16 : IBytesToUtf8StringConverter
 {
-    private readonly ConvertStringCase _convertStringCase;
+    private readonly Base16Case _base16Case;
 
     public Base16()
     {
-        _convertStringCase = ConvertStringCase.Lower;
+        _base16Case = Base16Case.Lower;
     }
 
-    public Base16(ConvertStringCase convertStringCase)
+    public Base16(Base16Case base16Case)
     {
-        _convertStringCase = convertStringCase;
+        _base16Case = base16Case;
     }
 
     private byte ByteToWord(in byte c)
     {
-        if (_convertStringCase == ConvertStringCase.Lower)
+        if (_base16Case == Base16Case.Lower)
         {
             if (c < 10) return (byte)(c + '0');
             else return (byte)(c - 10 + 'a');
         }
-        else if (_convertStringCase == ConvertStringCase.Upper)
+        else if (_base16Case == Base16Case.Upper)
         {
             if (c < 10) return (byte)(c + '0');
             else return (byte)(c - 10 + 'A');
@@ -51,7 +57,7 @@ public unsafe class Base16 : IBytesToUtf8StringConverter
 
             if (includePrefix)
             {
-                *p_result_start++ = (_convertStringCase == ConvertStringCase.Lower) ? (byte)'f' : (byte)'F';
+                *p_result_start++ = (_base16Case == Base16Case.Lower) ? (byte)'f' : (byte)'F';
             }
 
             foreach (var segment in sequence)

@@ -62,7 +62,7 @@ public sealed partial class OmniSignature
                 this.Hash.Export(bytesPipe.Writer, BytesPool.Shared);
 
                 // bytesPipeからHash情報を読み込み、Base58Btcへ変換する。
-                hashString = OmniBase.Encode(bytesPipe.Reader.GetSequence(), ConvertStringType.Base58) ?? string.Empty;
+                hashString = OmniBase.Encode(bytesPipe.Reader.GetSequence(), ConvertStringType.Base58Btc) ?? string.Empty;
             }
 
             _toString = StringHelper.Normalize(this.Name) + "@" + hashString;

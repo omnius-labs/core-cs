@@ -29,16 +29,16 @@ public partial struct OmniHash
         }
     }
 
-    public override string ToString() => this.ToString(ConvertStringType.Base16);
+    public override string ToString() => this.ToString(ConvertStringType.Base16Lower);
 
-    public string ToString(ConvertStringType convertStringType, ConvertStringCase convertStringCase = ConvertStringCase.Lower)
+    public string ToString(ConvertStringType convertStringType)
     {
         var algorithmType = this.AlgorithmType switch
         {
             OmniHashAlgorithmType.Sha2_256 => "sha2-256",
             _ => throw new NotSupportedException()
         };
-        var value = OmniBase.Encode(new ReadOnlySequence<byte>(this.Value), convertStringType, convertStringCase);
+        var value = OmniBase.Encode(new ReadOnlySequence<byte>(this.Value), convertStringType);
 
         return algorithmType + ":" + value;
     }
@@ -49,14 +49,33 @@ public partial struct OmniHash
         throw new FormatException("Invalid format");
     }
 
-    public static bool TryParse(string text, out OmniHash value)
+    public static bool TryParse(string text, out OmniHash result)
     {
-        value = default;
+        result = default;
 
-        var bytesPipe = new BytesPipe();
-        if (!OmniBase.TryDecode(text, bytesPipe.Writer)) return false;
+        var sp = text.IndexOf(':');
+        if (sp == -1) return false;
 
-        value = Import(bytesPipe.Reader.GetSequence(), BytesPool.Shared);
+        var algorithmTypeString = text[..sp];
+        var valueString = text[(sp + 1)..];
+
+        var algorithmType = algorithmTypeString switch
+        {
+            "sha2-256" => OmniHashAlgorithmType.Sha2_256,
+            _ => throw new NotSupportedException()
+        };
+        var valueLength = algorithmType switch
+        {
+            OmniHashAlgorithmType.Sha2_256 => 32,
+            _ => throw new NotSupportedException()
+        };
+
+        var bufferWriter = new ArrayBufferWriter<byte>(valueLength);
+        if (!OmniBase.TryDecode(valueString, bufferWriter)) return false;
+        var value = bufferWriter.WrittenMemory;
+
+        result = new OmniHash(algorithmType, value);
+
         return true;
     }
 }

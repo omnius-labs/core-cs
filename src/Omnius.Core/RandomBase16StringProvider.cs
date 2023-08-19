@@ -35,7 +35,7 @@ public unsafe class RandomBase16StringProvider : IRandomStringProvider
         else return (char)(c - 10 + 'A');
     }
 
-    public string GetRandomString()
+    public string Gen()
     {
         Span<byte> bytes = _length <= 1024 ? stackalloc byte[_length] : new byte[_length];
         RandomNumberGenerator.Fill(bytes);
