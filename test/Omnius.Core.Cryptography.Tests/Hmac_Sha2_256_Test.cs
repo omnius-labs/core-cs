@@ -6,7 +6,7 @@ using Xunit;
 
 namespace Omnius.Core.Cryptography;
 
-public class Hmac_Sha2_256_Test
+public class HmacSha2256Test
 {
     public class ComputeHashTestCase
     {
@@ -26,7 +26,7 @@ public class Hmac_Sha2_256_Test
 
         foreach (var c in caseList)
         {
-            var base16 = new Base16(ConvertStringCase.Lower);
+            var base16 = new Base16(Base16Case.Lower);
 
             var key = base16.StringToBytes(c.Key ?? throw new NullReferenceException());
             var value = base16.StringToBytes(c.Value ?? throw new NullReferenceException());

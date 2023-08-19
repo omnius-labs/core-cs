@@ -42,9 +42,12 @@ public class Base58BtcTest
     {
         result = null;
 
-        var base16 = new Base16(ConvertStringCase.Lower);
+        var base16 = new Base16(Base16Case.Lower);
         var bytesPipe = new BytesPipe();
-        if (!base16.TryDecode(text, bytesPipe.Writer)) return false;
+        if (!base16.TryDecode(text, bytesPipe.Writer))
+        {
+            return false;
+        }
 
         result = bytesPipe.Reader.GetSequence().ToArray();
         return true;
@@ -56,7 +59,10 @@ public class Base58BtcTest
 
         var base58Btc = new Base58Btc();
         var bytesPipe = new BytesPipe();
-        if (!base58Btc.TryDecode(text, bytesPipe.Writer)) return false;
+        if (!base58Btc.TryDecode(text, bytesPipe.Writer))
+        {
+            return false;
+        }
 
         result = bytesPipe.Reader.GetSequence().ToArray();
         return true;
@@ -67,7 +73,10 @@ public class Base58BtcTest
         result = null;
 
         var base58Btc = new Base58Btc();
-        if (!base58Btc.TryEncode(new ReadOnlySequence<byte>(value), out var utf8bytes)) return false;
+        if (!base58Btc.TryEncode(new ReadOnlySequence<byte>(value), out var utf8bytes))
+        {
+            return false;
+        }
 
         result = Encoding.UTF8.GetString(utf8bytes);
         return true;
