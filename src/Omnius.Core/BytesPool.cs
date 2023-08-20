@@ -21,6 +21,5 @@ public sealed class BytesPool : IBytesPool
     }
 
     public ArrayPool<byte> Array => _arrayPool;
-
     public MemoryPool<byte> Memory => _memoryPool;
 }

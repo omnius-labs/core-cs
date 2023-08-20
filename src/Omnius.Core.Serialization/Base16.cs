@@ -10,35 +10,42 @@ public enum Base16Case
 
 public unsafe class Base16 : IBytesToUtf8StringConverter
 {
-    private readonly Base16Case _base16Case;
+    private readonly byte _prefix;
+    private readonly delegate*<in byte, byte> _byteToWord;
 
-    public Base16()
-    {
-        _base16Case = Base16Case.Lower;
-    }
+    public Base16() : this(Base16Case.Lower) { }
 
     public Base16(Base16Case base16Case)
     {
-        _base16Case = base16Case;
+        if (base16Case == Base16Case.Lower)
+        {
+            _prefix = (byte)'f';
+            _byteToWord = &ByteToLowerWord;
+        }
+        else if (base16Case == Base16Case.Upper)
+        {
+            _prefix = (byte)'F';
+            _byteToWord = &ByteToUpperWord;
+        }
+        else
+        {
+            throw new NotSupportedException();
+        }
     }
 
-    private byte ByteToWord(in byte c)
+    private static byte ByteToLowerWord(in byte c)
     {
-        if (_base16Case == Base16Case.Lower)
-        {
-            if (c < 10) return (byte)(c + '0');
-            else return (byte)(c - 10 + 'a');
-        }
-        else if (_base16Case == Base16Case.Upper)
-        {
-            if (c < 10) return (byte)(c + '0');
-            else return (byte)(c - 10 + 'A');
-        }
-
-        throw new NotSupportedException();
+        if (c < 10) return (byte)(c + '0');
+        else return (byte)(c - 10 + 'a');
     }
 
-    private byte WordToByte(in byte c)
+    private static byte ByteToUpperWord(in byte c)
+    {
+        if (c < 10) return (byte)(c + '0');
+        else return (byte)(c - 10 + 'A');
+    }
+
+    private static byte WordToByte(in byte c)
     {
         if (c >= '0' && c <= '9') return (byte)(c - '0');
         else if (c >= 'a' && c <= 'f') return (byte)((c - 'a') + 10);
@@ -57,7 +64,7 @@ public unsafe class Base16 : IBytesToUtf8StringConverter
 
             if (includePrefix)
             {
-                *p_result_start++ = (_base16Case == Base16Case.Lower) ? (byte)'f' : (byte)'F';
+                *p_result_start++ = _prefix;
             }
 
             foreach (var segment in sequence)
@@ -71,8 +78,8 @@ public unsafe class Base16 : IBytesToUtf8StringConverter
                     {
                         byte b = *p_value_start++;
 
-                        *p_result_start++ = this.ByteToWord((byte)(b >> 4));
-                        *p_result_start++ = this.ByteToWord((byte)(b & 0x0F));
+                        *p_result_start++ = _byteToWord((byte)(b >> 4));
+                        *p_result_start++ = _byteToWord((byte)(b & 0x0F));
                     }
                 }
             }
@@ -96,7 +103,7 @@ public unsafe class Base16 : IBytesToUtf8StringConverter
 
             if (text.Length % 2 != 0)
             {
-                var tmp = this.WordToByte(*p_text_start++);
+                var tmp = WordToByte(*p_text_start++);
 
                 bufferWriter.GetSpan()[0] = tmp;
                 bufferWriter.Advance(1);
@@ -104,8 +111,8 @@ public unsafe class Base16 : IBytesToUtf8StringConverter
 
             while (p_text_start != p_text_end)
             {
-                var tmp1 = this.WordToByte(*p_text_start++);
-                var tmp2 = this.WordToByte(*p_text_start++);
+                var tmp1 = WordToByte(*p_text_start++);
+                var tmp2 = WordToByte(*p_text_start++);
 
                 bufferWriter.GetSpan()[0] = (byte)((tmp1 << 4) | tmp2);
                 bufferWriter.Advance(1);
