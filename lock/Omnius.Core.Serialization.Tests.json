@@ -1061,6 +1061,14 @@
           "System.IO.Pipelines": "[7.0.0, )"
         }
       },
+      "omnius.core.collections": {
+        "type": "Project",
+        "dependencies": {
+          "NLog": "[4.7.15, )",
+          "Omnius.Core": "[0.0.1-alpha.1, )",
+          "Omnius.Core.Tasks": "[0.0.1-alpha.1, )"
+        }
+      },
       "omnius.core.pipelines": {
         "type": "Project",
         "dependencies": {
@@ -1073,6 +1081,7 @@
         "dependencies": {
           "NLog": "[4.7.15, )",
           "Omnius.Core": "[0.0.1-alpha.1, )",
+          "Omnius.Core.Collections": "[0.0.1-alpha.1, )",
           "Omnius.Core.Pipelines": "[0.0.1-alpha.1, )"
         }
       },
@@ -1083,6 +1092,13 @@
           "Omnius.Core": "[0.0.1-alpha.1, )",
           "Omnius.Core.Pipelines": "[0.0.1-alpha.1, )",
           "Omnius.Core.RocketPack": "[0.0.1-alpha.1, )"
+        }
+      },
+      "omnius.core.tasks": {
+        "type": "Project",
+        "dependencies": {
+          "NLog": "[4.7.15, )",
+          "Omnius.Core": "[0.0.1-alpha.1, )"
         }
       }
     }
