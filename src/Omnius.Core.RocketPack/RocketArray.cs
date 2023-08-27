@@ -70,7 +70,6 @@ public struct RocketArray<T> : IRocketMessage<RocketArray<T>>
 
     public bool Equals(RocketArray<T> target)
     {
-        if (object.ReferenceEquals(this, target)) return true;
         if (!Helpers.CollectionHelper.Equals(this.Values, target.Values)) return false;
 
         return true;
