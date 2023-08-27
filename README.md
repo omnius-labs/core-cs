@@ -1,7 +1,7 @@
 # Omnius Core C#
 
-[![Test](https://github.com/omnius-labs/core-cs/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/omnius-labs/core-cs/actions/workflows/test.yml)
-[![Gitter](https://badges.gitter.im/omnius-labs.svg)](https://gitter.im/omnius-labs/community)
+[![test](https://github.com/omnius-labs/core-cs/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/omnius-labs/core-cs/actions/workflows/test.yml)
+[![chat](https://badges.gitter.im/omnius-labs.svg)](https://gitter.im/omnius-labs/community)
 
 ## Installing Required Dependencies
 
