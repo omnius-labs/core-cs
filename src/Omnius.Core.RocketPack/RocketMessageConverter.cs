@@ -3,7 +3,7 @@ using Omnius.Core.Pipelines;
 
 namespace Omnius.Core.RocketPack;
 
-public static class RocketMessage
+public static class RocketMessageConverter
 {
     public static T FromStream<T>(Stream inStream)
         where T : IRocketMessage<T>

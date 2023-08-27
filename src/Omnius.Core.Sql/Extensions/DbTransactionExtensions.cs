@@ -6,10 +6,10 @@ public static class DbTransactionExtensions
 {
     public static int ExecuteNonQuery(this DbTransaction transaction, string query)
     {
-        return ExecuteNonQuery(transaction, query, Array.Empty<(string, object)>());
+        return ExecuteNonQuery(transaction, query, Array.Empty<(string, object?)>());
     }
 
-    public static int ExecuteNonQuery(this DbTransaction transaction, string query, IEnumerable<(string, object)> parameters)
+    public static int ExecuteNonQuery(this DbTransaction transaction, string query, IEnumerable<(string, object?)> parameters)
     {
         ArgumentNullException.ThrowIfNull(transaction.Connection);
 
@@ -21,10 +21,10 @@ public static class DbTransactionExtensions
 
     public static ValueTask<int> ExecuteNonQueryAsync(this DbTransaction transaction, string query, CancellationToken cancellationToken = default)
     {
-        return ExecuteNonQueryAsync(transaction, query, Array.Empty<(string, object)>(), cancellationToken);
+        return ExecuteNonQueryAsync(transaction, query, Array.Empty<(string, object?)>(), cancellationToken);
     }
 
-    public static async ValueTask<int> ExecuteNonQueryAsync(this DbTransaction transaction, string query, IEnumerable<(string, object)> parameters, CancellationToken cancellationToken = default)
+    public static async ValueTask<int> ExecuteNonQueryAsync(this DbTransaction transaction, string query, IEnumerable<(string, object?)> parameters, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(transaction.Connection);
 
@@ -36,10 +36,10 @@ public static class DbTransactionExtensions
 
     public static object? ExecuteScalar(this DbTransaction transaction, string query)
     {
-        return ExecuteScalar(transaction, query, Array.Empty<(string, object)>());
+        return ExecuteScalar(transaction, query, Array.Empty<(string, object?)>());
     }
 
-    public static object? ExecuteScalar(this DbTransaction transaction, string query, IEnumerable<(string, object)> parameters)
+    public static object? ExecuteScalar(this DbTransaction transaction, string query, IEnumerable<(string, object?)> parameters)
     {
         ArgumentNullException.ThrowIfNull(transaction.Connection);
 
@@ -51,10 +51,10 @@ public static class DbTransactionExtensions
 
     public static ValueTask<object?> ExecuteScalarAsync(this DbTransaction transaction, string query, CancellationToken cancellationToken = default)
     {
-        return ExecuteScalarAsync(transaction, query, Array.Empty<(string, object)>(), cancellationToken);
+        return ExecuteScalarAsync(transaction, query, Array.Empty<(string, object?)>(), cancellationToken);
     }
 
-    public static async ValueTask<object?> ExecuteScalarAsync(this DbTransaction transaction, string query, IEnumerable<(string, object)> parameters, CancellationToken cancellationToken = default)
+    public static async ValueTask<object?> ExecuteScalarAsync(this DbTransaction transaction, string query, IEnumerable<(string, object?)> parameters, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(transaction.Connection);
 
