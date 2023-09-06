@@ -2,7 +2,7 @@ using FluentAssertions;
 using Omnius.Core.Internal;
 using Xunit;
 
-namespace Omnius.Core;
+namespace Omnius.Core.Text;
 
 public class LogicalStringComparerTest
 {
