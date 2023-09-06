@@ -1,6 +1,6 @@
 using System.Text.RegularExpressions;
 
-namespace Omnius.Core;
+namespace Omnius.Core.Text;
 
 public sealed class LogicalStringComparer : IComparer<string>
 {
