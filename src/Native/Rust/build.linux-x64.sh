@@ -1,4 +1,4 @@
-#!/usr/env bash
+#!/bin/bash
 cwd=$(cd $(dirname $0); pwd)
 
 cd ${cwd}/hashcash
