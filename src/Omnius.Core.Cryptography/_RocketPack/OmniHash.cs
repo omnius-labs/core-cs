@@ -29,9 +29,9 @@ public partial struct OmniHash
         }
     }
 
-    public override string ToString() => this.ToString(ConvertStringType.Base16Lower);
+    public override string ToString() => this.ToString(ConvertBaseType.Base16Lower);
 
-    public string ToString(ConvertStringType convertStringType)
+    public string ToString(ConvertBaseType convertStringType)
     {
         var algorithmType = this.AlgorithmType switch
         {

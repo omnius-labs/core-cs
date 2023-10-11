@@ -10,36 +10,36 @@ public static class OmniBase
     private static readonly Lazy<Base16> _base16_Upper = new(() => new Base16(Base16Case.Upper));
     private static readonly Lazy<Base58Btc> _base58_Btc = new(() => new Base58Btc());
 
-    public static string? Encode(ReadOnlyMemory<byte> memory, ConvertStringType convertStringType)
+    public static string? Encode(ReadOnlyMemory<byte> memory, ConvertBaseType convertBaseType)
     {
-        return Encode(new ReadOnlySequence<byte>(memory), convertStringType);
+        return Encode(new ReadOnlySequence<byte>(memory), convertBaseType);
     }
 
-    public static string? Encode(ReadOnlySequence<byte> sequence, ConvertStringType convertStringType)
+    public static string? Encode(ReadOnlySequence<byte> sequence, ConvertBaseType convertBaseType)
     {
-        if (convertStringType == ConvertStringType.Base16Lower)
+        if (convertBaseType == ConvertBaseType.Base16Lower)
         {
             _base16_Lower.Value.TryEncode(sequence, out string? text, true);
             return text;
         }
-        else if (convertStringType == ConvertStringType.Base16Upper)
+        else if (convertBaseType == ConvertBaseType.Base16Upper)
         {
             _base16_Upper.Value.TryEncode(sequence, out string? text, true);
             return text;
         }
-        else if (convertStringType == ConvertStringType.Base58Btc)
+        else if (convertBaseType == ConvertBaseType.Base58Btc)
         {
             _base58_Btc.Value.TryEncode(sequence, out string? text, true);
             return text;
         }
-        else if (convertStringType == ConvertStringType.Base64)
+        else if (convertBaseType == ConvertBaseType.Base64)
         {
             var bytes = sequence.ToArray();
             return "m" + Convert.ToBase64String(bytes);
         }
         else
         {
-            throw new NotSupportedException(nameof(convertStringType));
+            throw new NotSupportedException(nameof(convertBaseType));
         }
     }
 

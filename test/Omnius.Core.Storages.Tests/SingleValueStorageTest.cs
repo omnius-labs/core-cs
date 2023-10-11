@@ -25,11 +25,11 @@ public class SingleValueStorageTest
 
     private class StorageContainer : IAsyncDisposable
     {
-        private readonly IDisposable _deleter;
+        private readonly IDisposable _disposable;
 
         public StorageContainer(ISingleValueStorageFactory factory)
         {
-            _deleter = FixtureFactory.GenTempDirectory(out var tempDirectoryPath);
+            _disposable = FixtureFactory.GenTempDirectory(out var tempDirectoryPath);
             this.Storage = factory.Create(Path.Combine(tempDirectoryPath, "test.db"), BytesPool.Shared);
         }
 
@@ -38,7 +38,7 @@ public class SingleValueStorageTest
         public async ValueTask DisposeAsync()
         {
             await this.Storage.DisposeAsync();
-            _deleter.Dispose();
+            _disposable.Dispose();
         }
     }
 

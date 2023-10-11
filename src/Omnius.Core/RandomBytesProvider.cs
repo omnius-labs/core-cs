@@ -5,6 +5,8 @@ namespace Omnius.Core;
 
 public unsafe class RandomBytesProvider : IRandomBytesProvider
 {
+    public static readonly RandomBytesProvider Shared = new();
+
     public byte[] GetBytes(int length)
     {
         var bytes = new byte[length];

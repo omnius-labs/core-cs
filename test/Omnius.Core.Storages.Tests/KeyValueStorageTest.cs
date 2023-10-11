@@ -35,11 +35,11 @@ public class KeyValueStorageTest
 
     private class StorageContainer : IAsyncDisposable
     {
-        private readonly IDisposable _deleter;
+        private readonly IDisposable _disposable;
 
         public StorageContainer(IKeyValueStorageFactory factory)
         {
-            _deleter = FixtureFactory.GenTempDirectory(out var tempDirectoryPath);
+            _disposable = FixtureFactory.GenTempDirectory(out var tempDirectoryPath);
             this.Storage = factory.Create(tempDirectoryPath, BytesPool.Shared);
         }
 
@@ -48,7 +48,7 @@ public class KeyValueStorageTest
         public async ValueTask DisposeAsync()
         {
             await this.Storage.DisposeAsync();
-            _deleter.Dispose();
+            _disposable.Dispose();
         }
     }
 

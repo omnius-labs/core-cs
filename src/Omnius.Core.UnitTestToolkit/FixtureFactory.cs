@@ -11,13 +11,13 @@ public class FixtureFactory
     {
         path = Path.Combine(Path.GetTempPath(), "_Omnius_Test_", DateTime.Now.ToString("yyyy-MM-ddTHH-mm-ssZ") + "_" + Guid.NewGuid().ToString("N"));
         if (!Directory.Exists(path)) Directory.CreateDirectory(path);
-        return new DirectoryDeleter(path);
+        return new DirectoryRemover(path);
     }
 
-    private sealed class DirectoryDeleter : IDisposable
+    private sealed class DirectoryRemover : IDisposable
     {
         private readonly string _path;
-        public DirectoryDeleter(string path) => _path = path;
+        public DirectoryRemover(string path) => _path = path;
 
         public void Dispose() => Directory.Delete(_path, true);
     }
