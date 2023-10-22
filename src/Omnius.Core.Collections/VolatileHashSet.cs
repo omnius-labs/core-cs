@@ -3,54 +3,53 @@ using Omnius.Core.Tasks;
 
 namespace Omnius.Core.Collections;
 
-public class VolatileHashSet<T> : DisposableBase, ISet<T>, ICollection<T>, IEnumerable<T>
+public class VolatileHashSet<T> : AsyncDisposableBase, ISet<T>, ICollection<T>, IEnumerable<T>
     where T : notnull
 {
     private readonly Dictionary<T, DateTime> _map;
     private readonly TimeSpan _survivalInterval;
-    private readonly TimeSpan _trimInterval;
     private readonly ISystemClock _systemClock;
-    private readonly IBatchActionDispatcher _batchActionDispatcher;
-    private readonly IBatchAction _batchAction;
 
-    private object _lockObject = new();
+    private readonly CancellationTokenSource _cancellationTokenSource;
+    private readonly PeriodicTimer _reaperTimer;
+    private readonly Task _reaperTask;
 
-    public VolatileHashSet(TimeSpan survivalInterval, TimeSpan trimInterval, ISystemClock systemClock, IBatchActionDispatcher batchActionDispatcher)
-        : this(survivalInterval, trimInterval, EqualityComparer<T>.Default, systemClock, batchActionDispatcher)
+    private readonly object _lockObject = new();
+
+    public VolatileHashSet(TimeSpan survivalInterval, TimeSpan reapingInterval, ISystemClock systemClock, IBatchActionDispatcher batchActionDispatcher)
+        : this(survivalInterval, reapingInterval, EqualityComparer<T>.Default, systemClock, batchActionDispatcher)
     {
     }
 
-    public VolatileHashSet(TimeSpan survivalInterval, TimeSpan trimInterval, IEqualityComparer<T> comparer, ISystemClock systemClock, IBatchActionDispatcher batchActionDispatcher)
+    public VolatileHashSet(TimeSpan survivalInterval, TimeSpan reapingInterval, IEqualityComparer<T> comparer, ISystemClock systemClock, IBatchActionDispatcher batchActionDispatcher)
     {
         _map = new Dictionary<T, DateTime>(comparer);
         _survivalInterval = survivalInterval;
-        _trimInterval = trimInterval;
         _systemClock = systemClock;
-        _batchActionDispatcher = batchActionDispatcher;
-        _batchAction = new BatchAction(this);
-        _batchActionDispatcher.Register(_batchAction);
+
+        _cancellationTokenSource = new CancellationTokenSource();
+        _reaperTimer = new PeriodicTimer(reapingInterval);
+        _reaperTask = Task.Factory.StartNew(async () =>
+        {
+            try
+            {
+                while (await _reaperTimer.WaitForNextTickAsync(_cancellationTokenSource.Token))
+                {
+                    this.Refresh();
+                }
+            }
+            catch (OperationCanceledException)
+            {
+
+            }
+        }, TaskCreationOptions.LongRunning);
     }
 
-    protected override void OnDispose(bool disposing)
+    protected override async ValueTask OnDisposeAsync()
     {
-        _batchActionDispatcher.Unregister(_batchAction);
-    }
-
-    private sealed class BatchAction : IBatchAction
-    {
-        private readonly VolatileHashSet<T> _volatileHashSet;
-
-        public BatchAction(VolatileHashSet<T> volatileHashSet)
-        {
-            _volatileHashSet = volatileHashSet;
-        }
-
-        public TimeSpan Interval => _volatileHashSet._trimInterval;
-
-        public void Execute()
-        {
-            _volatileHashSet.Refresh();
-        }
+        _cancellationTokenSource.Cancel();
+        await _reaperTask;
+        _cancellationTokenSource.Dispose();
     }
 
     private void Refresh()

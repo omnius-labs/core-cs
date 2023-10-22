@@ -3,54 +3,54 @@ using Omnius.Core.Tasks;
 
 namespace Omnius.Core.Collections;
 
-public partial class VolatileListDictionary<TKey, TValue> : DisposableBase, IEnumerable<KeyValuePair<TKey, IReadOnlyList<TValue>>>, IEnumerable
+public partial class VolatileListDictionary<TKey, TValue> : AsyncDisposableBase, IEnumerable<KeyValuePair<TKey, IReadOnlyList<TValue>>>, IEnumerable
     where TKey : notnull
 {
     private readonly Dictionary<TKey, List<Entry<TValue>>> _map;
     private readonly TimeSpan _survivalInterval;
     private readonly TimeSpan _trimInterval;
     private readonly ISystemClock _systemClock;
-    private readonly IBatchActionDispatcher _batchActionDispatcher;
-    private readonly IBatchAction _batchAction;
 
-    private object _lockObject = new();
+    private readonly CancellationTokenSource _cancellationTokenSource;
+    private readonly PeriodicTimer _reaperTimer;
+    private readonly Task _reaperTask;
 
-    public VolatileListDictionary(TimeSpan survivalInterval, TimeSpan trimInterval, ISystemClock systemClock, IBatchActionDispatcher batchActionDispatcher)
-        : this(survivalInterval, trimInterval, EqualityComparer<TKey>.Default, systemClock, batchActionDispatcher)
+    private readonly object _lockObject = new();
+
+    public VolatileListDictionary(TimeSpan survivalInterval, TimeSpan reapingInterval, ISystemClock systemClock, IBatchActionDispatcher batchActionDispatcher)
+        : this(survivalInterval, reapingInterval, EqualityComparer<TKey>.Default, systemClock, batchActionDispatcher)
     {
     }
 
-    public VolatileListDictionary(TimeSpan survivalInterval, TimeSpan trimInterval, IEqualityComparer<TKey> comparer, ISystemClock systemClock, IBatchActionDispatcher batchActionDispatcher)
+    public VolatileListDictionary(TimeSpan survivalInterval, TimeSpan reapingInterval, IEqualityComparer<TKey> comparer, ISystemClock systemClock, IBatchActionDispatcher batchActionDispatcher)
     {
         _map = new Dictionary<TKey, List<Entry<TValue>>>(comparer);
         _survivalInterval = survivalInterval;
-        _trimInterval = trimInterval;
         _systemClock = systemClock;
-        _batchActionDispatcher = batchActionDispatcher;
-        _batchAction = new BatchAction(this);
-        _batchActionDispatcher.Register(_batchAction);
+
+        _cancellationTokenSource = new CancellationTokenSource();
+        _reaperTimer = new PeriodicTimer(reapingInterval);
+        _reaperTask = Task.Factory.StartNew(async () =>
+        {
+            try
+            {
+                while (await _reaperTimer.WaitForNextTickAsync(_cancellationTokenSource.Token))
+                {
+                    this.Refresh();
+                }
+            }
+            catch (OperationCanceledException)
+            {
+
+            }
+        }, TaskCreationOptions.LongRunning);
     }
 
-    protected override void OnDispose(bool disposing)
+    protected override async ValueTask OnDisposeAsync()
     {
-        _batchActionDispatcher.Unregister(_batchAction);
-    }
-
-    private sealed class BatchAction : IBatchAction
-    {
-        private readonly VolatileListDictionary<TKey, TValue> _volatileListDictionary;
-
-        public BatchAction(VolatileListDictionary<TKey, TValue> volatileListDictionary)
-        {
-            _volatileListDictionary = volatileListDictionary;
-        }
-
-        public TimeSpan Interval => _volatileListDictionary._trimInterval;
-
-        public void Execute()
-        {
-            _volatileListDictionary.Refresh();
-        }
+        _cancellationTokenSource.Cancel();
+        await _reaperTask;
+        _cancellationTokenSource.Dispose();
     }
 
     private void Refresh()
