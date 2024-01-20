@@ -27,7 +27,7 @@ jobs:
       - name: Install dependencies (lib)
         run: sudo apt-get install libsnappy-dev
       - name: Setup dotnet
-        uses: actions/setup-dotnet@v3
+        uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 7.0.x
       - name: Setup dotnet tool
@@ -44,7 +44,7 @@ jobs:
       - name: Checkout branch
         uses: actions/checkout@v4
       - name: Setup dotnet
-        uses: actions/setup-dotnet@v3
+        uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 7.0.x
       - name: Install dependencies
