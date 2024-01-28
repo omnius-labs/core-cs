@@ -50,7 +50,10 @@ public class OmniConnectionMultiplexerTest
         var connectTask = clientMultiplexer.ConnectAsync().AsTask();
         var acceptTask = serverMultiplexer.AcceptAsync().AsTask();
 
-        await ConnectionTestHelper.RandomSendAndReceive(random, connectTask.Result, acceptTask.Result);
-        await ConnectionTestHelper.RandomSendAndReceive(random, acceptTask.Result, connectTask.Result);
+        var connect = await connectTask;
+        var accept = await acceptTask;
+
+        await ConnectionTestHelper.RandomSendAndReceive(random, connect, accept);
+        await ConnectionTestHelper.RandomSendAndReceive(random, accept, connect);
     }
 }
