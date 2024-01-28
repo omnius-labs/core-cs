@@ -9,7 +9,6 @@
 
   <ItemGroup>
     <PackageReference Include="NLog" />
-    <PackageReference Include="NLog.Config" />
     <PackageReference Include="Cocona.Lite" />
     <PackageReference Include="Glob.cs" />
     <PackageReference Include="Sprache" />

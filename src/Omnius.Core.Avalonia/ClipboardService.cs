@@ -1,4 +1,6 @@
 using Avalonia;
+using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Input.Platform;
 
 namespace Omnius.Core.Avalonia;
 
@@ -13,21 +15,32 @@ public interface IClipboardService
 
 public class ClipboardService : IClipboardService
 {
+    private IClipboard? GetClipboard()
+    {
+        var applicationLifetime = Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime;
+        return applicationLifetime?.MainWindow?.Clipboard;
+    }
+
+    private void ThrowIfNotSupported()
+    {
+        if (this.GetClipboard() is null) throw new NotSupportedException();
+    }
+
     public async Task ClearAsync()
     {
-        if (Application.Current?.Clipboard is null) throw new NotSupportedException();
-        await Application.Current.Clipboard.ClearAsync();
+        this.ThrowIfNotSupported();
+        await this.GetClipboard()!.ClearAsync();
     }
 
     public async Task<string> GetTextAsync()
     {
-        if (Application.Current?.Clipboard is null) throw new NotSupportedException();
-        return await Application.Current.Clipboard.GetTextAsync();
+        this.ThrowIfNotSupported();
+        return await this.GetClipboard()!.GetTextAsync();
     }
 
     public async Task SetTextAsync(string text)
     {
-        if (Application.Current?.Clipboard is null) throw new NotSupportedException();
-        await Application.Current.Clipboard.SetTextAsync(text);
+        this.ThrowIfNotSupported();
+        await this.GetClipboard()!.SetTextAsync(text);
     }
 }

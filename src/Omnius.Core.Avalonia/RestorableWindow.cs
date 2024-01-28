@@ -17,6 +17,7 @@ public class RestorableWindow : Window
 
     public RestorableWindow()
     {
+        this.Closing += (sender, e) => this.SaveWindowStatus();
         this.PositionChanged += (sender, e) => this.OnPositionChanged(e.Point);
         this.GetObservable(ClientSizeProperty).Subscribe(this.OnClientSizeChanged);
     }
@@ -26,13 +27,6 @@ public class RestorableWindow : Window
         _configDirectoryPath = configDirectoryPath;
 
         this.LoadWindowStatus();
-    }
-
-    protected override void OnClosing(CancelEventArgs e)
-    {
-        this.SaveWindowStatus();
-
-        base.OnClosing(e);
     }
 
     private void LoadWindowStatus()
