@@ -28,7 +28,7 @@ jobs:
       - name: Setup dotnet
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: 7.0.x
+          dotnet-version: 8.0.200
       - name: Setup dotnet tool
         run: dotnet tool restore
       - name: Install dependencies
@@ -45,7 +45,7 @@ jobs:
       - name: Setup dotnet
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: 7.0.x
+          dotnet-version: 8.0.200
       - name: Install dependencies
         run: dotnet restore
       - name: Test
