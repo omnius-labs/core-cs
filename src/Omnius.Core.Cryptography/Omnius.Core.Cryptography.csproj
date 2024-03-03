@@ -6,23 +6,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="Assemblies\Win\hashcash.x64.exe">
-      <CopyToOutputDirectory Condition=" '$(NativeDepsPlatform)' == 'Windows' ">PreserveNewest</CopyToOutputDirectory>
-      <Link>native/hashcash.x64.exe</Link>
-      <Visible>false</Visible>
-      <Pack>true</Pack>
-      <PackagePath>runtimes\win\native\hashcash.x64.exe</PackagePath>
-    </Content>
-    <Content Include="Assemblies\Linux\hashcash.x64">
-      <CopyToOutputDirectory Condition=" '$(NativeDepsPlatform)' == 'Linux' ">PreserveNewest</CopyToOutputDirectory>
-      <Link>native/hashcash.x64</Link>
-      <Visible>false</Visible>
-      <Pack>true</Pack>
-      <PackagePath>runtimes\linux\native\hashcash.x64</PackagePath>
-    </Content>
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="NLog" />
   </ItemGroup>
 
