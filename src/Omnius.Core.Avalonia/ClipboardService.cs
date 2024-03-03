@@ -7,40 +7,32 @@ namespace Omnius.Core.Avalonia;
 public interface IClipboardService
 {
     Task ClearAsync();
-
-    Task<string> GetTextAsync();
-
+    Task<string?> GetTextAsync();
     Task SetTextAsync(string text);
 }
 
 public class ClipboardService : IClipboardService
 {
-    private IClipboard? GetClipboard()
+    private IClipboard GetClipboard()
     {
         var applicationLifetime = Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime;
-        return applicationLifetime?.MainWindow?.Clipboard;
-    }
-
-    private void ThrowIfNotSupported()
-    {
-        if (this.GetClipboard() is null) throw new NotSupportedException();
+        var clipboard = applicationLifetime?.MainWindow?.Clipboard;
+        if (clipboard is null) throw new NotSupportedException();
+        return clipboard;
     }
 
     public async Task ClearAsync()
     {
-        this.ThrowIfNotSupported();
-        await this.GetClipboard()!.ClearAsync();
+        await this.GetClipboard().ClearAsync();
     }
 
-    public async Task<string> GetTextAsync()
+    public async Task<string?> GetTextAsync()
     {
-        this.ThrowIfNotSupported();
-        return await this.GetClipboard()!.GetTextAsync();
+        return await this.GetClipboard().GetTextAsync();
     }
 
     public async Task SetTextAsync(string text)
     {
-        this.ThrowIfNotSupported();
-        await this.GetClipboard()!.SetTextAsync(text);
+        await this.GetClipboard().SetTextAsync(text);
     }
 }

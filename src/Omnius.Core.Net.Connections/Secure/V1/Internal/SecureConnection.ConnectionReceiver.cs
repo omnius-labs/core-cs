@@ -69,7 +69,7 @@ public partial class SecureConnection
 
         public AesGcmDecrypter(byte[] cryptoKey, byte[] nonce, IBytesPool bytesPool)
         {
-            _aes = new AesGcm(cryptoKey);
+            _aes = new AesGcm(cryptoKey, TagLength);
             _nonce = nonce;
             _bytesPool = bytesPool;
         }

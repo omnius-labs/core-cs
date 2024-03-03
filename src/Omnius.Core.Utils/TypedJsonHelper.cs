@@ -1,4 +1,5 @@
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using System.Text;
 using Newtonsoft.Json;
@@ -68,7 +69,7 @@ public sealed class TypedJsonHelper
             {
                 var objectContract = this.CreateObjectContract(objectType);
                 objectContract.DefaultCreatorNonPublic = false;
-                objectContract.DefaultCreator = () => FormatterServices.GetUninitializedObject(objectType);
+                objectContract.DefaultCreator = () => RuntimeHelpers.GetUninitializedObject(objectType);
 
                 return objectContract;
             }
