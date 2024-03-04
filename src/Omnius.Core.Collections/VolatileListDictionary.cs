@@ -8,7 +8,6 @@ public partial class VolatileListDictionary<TKey, TValue> : AsyncDisposableBase,
 {
     private readonly Dictionary<TKey, List<Entry<TValue>>> _map;
     private readonly TimeSpan _survivalInterval;
-    private readonly TimeSpan _trimInterval;
     private readonly ISystemClock _systemClock;
 
     private readonly CancellationTokenSource _cancellationTokenSource;
