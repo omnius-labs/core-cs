@@ -2,9 +2,9 @@ using Avalonia.Collections;
 using Avalonia.Threading;
 using Omnius.Core.Pipelines;
 
-namespace Omnius.Core.Avalonia;
-
 // https://github.com/kekekeks/example-avalonia-huge-tree/blob/c77f1c32721dfa2ef8da1c65c0cce909b3b33eb2/AvaloniaHugeTree/TreeNodeModel.cs#L10
+
+namespace Omnius.Core.Avalonia;
 
 public interface IRootTreeNode
 {
@@ -13,7 +13,7 @@ public interface IRootTreeNode
 
 public class RootTreeNodeModel : TreeNodeModel, IRootTreeNode
 {
-    private AvaloniaList<TreeNodeModel> _visibleChildren = new();
+    private AvaloniaList<TreeNodeModel> _visibleChildren = new() { ResetBehavior = ResetBehavior.Remove };
     private bool _updateEnqueued;
 
     public RootTreeNodeModel(IActionCaller<TreeNodeModel> isExpandedChangedActionCaller) : base(isExpandedChangedActionCaller)
@@ -35,21 +35,42 @@ public class RootTreeNodeModel : TreeNodeModel, IRootTreeNode
         if (!_updateEnqueued)
         {
             _updateEnqueued = true;
-            Dispatcher.UIThread.Post(this.Update, DispatcherPriority.Background);
+            //Dispatcher.UIThread.Post(this.Update, DispatcherPriority.Background);
+            this.Update();
         }
     }
 
     public void Update()
     {
         _updateEnqueued = false;
-        var list = new AvaloniaList<TreeNodeModel>();
-        AppendItems(list, this);
 
-        _visibleChildren = new AvaloniaList<TreeNodeModel>(list);
-        this.RaisePropertyChanged(nameof(VisibleChildren));
+        var newList = new List<TreeNodeModel>();
+        AppendItems(newList, this);
+
+        // 以下、ItemRepeaterの更新時のちらつきを抑えるため、複雑な差分更新処理となっている
+
+        // 同一なら無視
+        if (newList.SequenceEqual(_visibleChildren)) return;
+
+        // 追加された要素を末尾に挿入
+        var oldItems = _visibleChildren.ToHashSet();
+        var addedItems = newList.Where(n => !oldItems.Contains(n)).ToArray();
+        _visibleChildren.AddRange(addedItems);
+
+        // ソート (破棄された項目は一番後ろに寄せられる)
+        for (int i = 0; i < newList.Count; i++)
+        {
+            if (newList[i] == _visibleChildren[i]) continue;
+            int oldIndex = _visibleChildren.IndexOf(newList[i]);
+            _visibleChildren.Move(oldIndex, i);
+        }
+
+        // 末尾の不要な要素を削除
+        int removeCount = _visibleChildren.Count - newList.Count;
+        _visibleChildren.RemoveRange(_visibleChildren.Count - removeCount, removeCount);
     }
 
-    private static void AppendItems(AvaloniaList<TreeNodeModel> list, TreeNodeModel node)
+    private static void AppendItems(List<TreeNodeModel> list, TreeNodeModel node)
     {
         list.Add(node);
 
@@ -112,30 +133,52 @@ public class TreeNodeModel : BindableBase
 
     public IReadOnlyList<TreeNodeModel> Children => _children;
 
+    public void AddChildren(IEnumerable<TreeNodeModel> children)
+    {
+        _children.AddRange(children);
+
+        foreach (var child in _children)
+        {
+            child.SetRoot(_root, this.Level + 1);
+        }
+
+        _root?.EnqueueUpdate();
+    }
+
     public void AddChild(TreeNodeModel child)
     {
-        InsertChild(_children.Count, child);
+        _children.Add(child);
+        child.SetRoot(_root, this.Level + 1);
+        _root?.EnqueueUpdate();
     }
 
     public void InsertChild(int index, TreeNodeModel child)
     {
-        if (child._root != null) throw new InvalidOperationException();
         _children.Insert(index, child);
         child.SetRoot(_root, this.Level + 1);
         _root?.EnqueueUpdate();
     }
 
-    public void RemoveChild(TreeNodeModel child)
-    {
-        var index = _children.IndexOf(child);
-        if (index != -1) RemoveChildAt(index);
-    }
-
     public void RemoveChildAt(int index)
     {
-        var child = _children[index];
-        _children.RemoveAt(index);
+        this.RemoveChild(_children[index]);
+    }
+
+    public void RemoveChild(TreeNodeModel child)
+    {
+        _children.Remove(child);
         child.SetRoot(null, 0);
+        _root?.EnqueueUpdate();
+    }
+
+    public void ClearChildren()
+    {
+        foreach (var child in _children)
+        {
+            child.SetRoot(null, 0);
+        }
+
+        _children.Clear();
         _root?.EnqueueUpdate();
     }
 
