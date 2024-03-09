@@ -35,8 +35,7 @@ public class RootTreeNodeModel : TreeNodeModel, IRootTreeNode
         if (!_updateEnqueued)
         {
             _updateEnqueued = true;
-            //Dispatcher.UIThread.Post(this.Update, DispatcherPriority.Background);
-            this.Update();
+            Dispatcher.UIThread.Post(this.Update, DispatcherPriority.Background);
         }
     }
 
