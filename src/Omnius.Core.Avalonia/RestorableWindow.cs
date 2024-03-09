@@ -1,4 +1,3 @@
-using System.ComponentModel;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Threading;
@@ -61,7 +60,7 @@ public class RestorableWindow : Window
         {
             if (this.WindowState == global::Avalonia.Controls.WindowState.Normal)
             {
-                _positionBeforeResizing = position;
+                _positionBeforeResizing = this.Position;
             }
         }, DispatcherPriority.Background);
     }
@@ -72,7 +71,7 @@ public class RestorableWindow : Window
         {
             if (this.WindowState == global::Avalonia.Controls.WindowState.Normal)
             {
-                _clientSizeBeforeResizing = size;
+                _clientSizeBeforeResizing = this.ClientSize;
             }
         }, DispatcherPriority.Background);
     }
