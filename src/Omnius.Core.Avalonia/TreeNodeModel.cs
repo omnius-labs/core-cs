@@ -13,7 +13,7 @@ public interface IRootTreeNode
 
 public class RootTreeNodeModel : TreeNodeModel, IRootTreeNode
 {
-    private AvaloniaList<TreeNodeModel> _visibleChildren = new() { ResetBehavior = ResetBehavior.Remove };
+    private AvaloniaList<TreeNodeModel> _visibleChildren = new();
     private bool _updateEnqueued;
 
     public RootTreeNodeModel(IActionCaller<TreeNodeModel> isExpandedChangedActionCaller) : base(isExpandedChangedActionCaller)
