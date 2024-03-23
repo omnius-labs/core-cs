@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Omnius.Core.Collections;
 
-// TODO 実装中
+// Memo: 実装中
 internal partial class GolombCodedSet
 {
     public async void Test()
