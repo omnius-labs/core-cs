@@ -46,7 +46,7 @@ public sealed partial class SamBridge : AsyncDisposableBase
         return Guid.NewGuid().ToString("N");
     }
 
-    public async ValueTask InitAsync(CancellationToken cancellationToken = default)
+    private async ValueTask InitAsync(CancellationToken cancellationToken = default)
     {
         Socket? socket = null;
 

@@ -109,11 +109,11 @@ public static class IEnumerableExtensions
         // len = 1
         if (!e.MoveNext())
         {
-            yield return new ElementWithContext<T>(default(T), current, default(T), index++);
+            yield return new ElementWithContext<T>(default, current, default, index++);
             yield break;
         }
 
-        T? previous = default(T);
+        T? previous = default;
         T next = e.Current;
 
         for (; ; )

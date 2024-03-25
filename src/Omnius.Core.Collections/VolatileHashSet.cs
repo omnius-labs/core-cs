@@ -1,5 +1,4 @@
 using System.Collections;
-using Omnius.Core.Tasks;
 
 namespace Omnius.Core.Collections;
 
@@ -16,12 +15,12 @@ public class VolatileHashSet<T> : AsyncDisposableBase, ISet<T>, ICollection<T>, 
 
     private readonly object _lockObject = new();
 
-    public VolatileHashSet(TimeSpan survivalInterval, TimeSpan reapingInterval, ISystemClock systemClock, IBatchActionDispatcher batchActionDispatcher)
-        : this(survivalInterval, reapingInterval, EqualityComparer<T>.Default, systemClock, batchActionDispatcher)
+    public VolatileHashSet(TimeSpan survivalInterval, TimeSpan reapingInterval, ISystemClock systemClock)
+        : this(survivalInterval, reapingInterval, EqualityComparer<T>.Default, systemClock)
     {
     }
 
-    public VolatileHashSet(TimeSpan survivalInterval, TimeSpan reapingInterval, IEqualityComparer<T> comparer, ISystemClock systemClock, IBatchActionDispatcher batchActionDispatcher)
+    public VolatileHashSet(TimeSpan survivalInterval, TimeSpan reapingInterval, IEqualityComparer<T> comparer, ISystemClock systemClock)
     {
         _map = new Dictionary<T, DateTime>(comparer);
         _survivalInterval = survivalInterval;
@@ -33,14 +32,13 @@ public class VolatileHashSet<T> : AsyncDisposableBase, ISet<T>, ICollection<T>, 
         {
             try
             {
-                while (await _reaperTimer.WaitForNextTickAsync(_cancellationTokenSource.Token))
+                while (await _reaperTimer.WaitForNextTickAsync(_cancellationTokenSource.Token).ConfigureAwait(false))
                 {
                     this.Refresh();
                 }
             }
             catch (OperationCanceledException)
             {
-
             }
         }, TaskCreationOptions.LongRunning);
     }

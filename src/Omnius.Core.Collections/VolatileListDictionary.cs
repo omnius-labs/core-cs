@@ -1,5 +1,4 @@
 using System.Collections;
-using Omnius.Core.Tasks;
 
 namespace Omnius.Core.Collections;
 
@@ -16,12 +15,12 @@ public partial class VolatileListDictionary<TKey, TValue> : AsyncDisposableBase,
 
     private readonly object _lockObject = new();
 
-    public VolatileListDictionary(TimeSpan survivalInterval, TimeSpan reapingInterval, ISystemClock systemClock, IBatchActionDispatcher batchActionDispatcher)
-        : this(survivalInterval, reapingInterval, EqualityComparer<TKey>.Default, systemClock, batchActionDispatcher)
+    public VolatileListDictionary(TimeSpan survivalInterval, TimeSpan reapingInterval, ISystemClock systemClock)
+        : this(survivalInterval, reapingInterval, EqualityComparer<TKey>.Default, systemClock)
     {
     }
 
-    public VolatileListDictionary(TimeSpan survivalInterval, TimeSpan reapingInterval, IEqualityComparer<TKey> comparer, ISystemClock systemClock, IBatchActionDispatcher batchActionDispatcher)
+    public VolatileListDictionary(TimeSpan survivalInterval, TimeSpan reapingInterval, IEqualityComparer<TKey> comparer, ISystemClock systemClock)
     {
         _map = new Dictionary<TKey, List<Entry<TValue>>>(comparer);
         _survivalInterval = survivalInterval;
@@ -33,14 +32,13 @@ public partial class VolatileListDictionary<TKey, TValue> : AsyncDisposableBase,
         {
             try
             {
-                while (await _reaperTimer.WaitForNextTickAsync(_cancellationTokenSource.Token))
+                while (await _reaperTimer.WaitForNextTickAsync(_cancellationTokenSource.Token).ConfigureAwait(false))
                 {
                     this.Refresh();
                 }
             }
             catch (OperationCanceledException)
             {
-
             }
         }, TaskCreationOptions.LongRunning);
     }
