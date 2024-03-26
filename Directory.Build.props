@@ -52,6 +52,10 @@
     <NativeDepsPlatform>Linux</NativeDepsPlatform>
     <PlatformTarget>x64</PlatformTarget>
   </PropertyGroup>
+  <PropertyGroup Condition=" '$(NativeDepsPlatform)' == '' And '$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::OSX)))' ">
+    <NativeDepsPlatform>OSX</NativeDepsPlatform>
+    <PlatformTarget>ARM64</PlatformTarget>
+  </PropertyGroup>
 
   <!-- Set path -->
   <PropertyGroup Condition=" '$(BuildTargetName)' == '' ">
@@ -64,6 +68,14 @@
   <PropertyGroup Condition=" '$(NativeDepsPlatform)' == 'Linux' ">
     <BaseIntermediateOutputPath Condition=" '$(BaseIntermediateOutputPath)' == '' ">$(MSBuildThisFileDirectory)tmp\obj\linux-$(BuildTargetName)\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
     <BaseOutputPath Condition=" '$(BaseOutputPath)' == '' ">$(MSBuildThisFileDirectory)tmp\bin\linux-$(BuildTargetName)\$(MSBuildProjectName)\</BaseOutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(NativeDepsPlatform)' == 'OSX' ">
+    <BaseIntermediateOutputPath Condition=" '$(BaseIntermediateOutputPath)' == '' ">$(MSBuildThisFileDirectory)tmp\obj\osx-$(BuildTargetName)\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
+    <BaseOutputPath Condition=" '$(BaseOutputPath)' == '' ">$(MSBuildThisFileDirectory)tmp\bin\osx-$(BuildTargetName)\$(MSBuildProjectName)\</BaseOutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(NativeDepsPlatform)' == '' ">
+    <BaseIntermediateOutputPath Condition=" '$(BaseIntermediateOutputPath)' == '' ">$(MSBuildThisFileDirectory)tmp\obj\unknown-$(BuildTargetName)\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
+    <BaseOutputPath Condition=" '$(BaseOutputPath)' == '' ">$(MSBuildThisFileDirectory)tmp\bin\unknown-$(BuildTargetName)\$(MSBuildProjectName)\</BaseOutputPath>
   </PropertyGroup>
 
 </Project>
