@@ -99,17 +99,20 @@ public class RestorableWindow : Window
 
     private void SetWindowStatus(WindowStatus? status)
     {
-        if (status is null) return;
-
-        if (status.Position is not null) this.Position = new PixelPoint(status.Position.X, status.Position.Y);
-        if (status.Size is not null) this.ClientSize = new Size(status.Size.Width, status.Size.Height);
-        this.WindowState = status.State switch
+        Dispatcher.UIThread.Post(() =>
         {
-            Avalonia.WindowState.Normal => global::Avalonia.Controls.WindowState.Normal,
-            Avalonia.WindowState.Minimized => global::Avalonia.Controls.WindowState.Minimized,
-            Avalonia.WindowState.Maximized => global::Avalonia.Controls.WindowState.Maximized,
-            Avalonia.WindowState.FullScreen => global::Avalonia.Controls.WindowState.FullScreen,
-            _ => global::Avalonia.Controls.WindowState.Normal,
-        };
+            if (status is null) return;
+
+            if (status.Position is not null) this.Position = new PixelPoint(status.Position.X, status.Position.Y);
+            if (status.Size is not null) this.ClientSize = new Size(status.Size.Width, status.Size.Height);
+            this.WindowState = status.State switch
+            {
+                Avalonia.WindowState.Normal => global::Avalonia.Controls.WindowState.Normal,
+                Avalonia.WindowState.Minimized => global::Avalonia.Controls.WindowState.Minimized,
+                Avalonia.WindowState.Maximized => global::Avalonia.Controls.WindowState.Maximized,
+                Avalonia.WindowState.FullScreen => global::Avalonia.Controls.WindowState.FullScreen,
+                _ => global::Avalonia.Controls.WindowState.Normal,
+            };
+        }, DispatcherPriority.Background);
     }
 }
