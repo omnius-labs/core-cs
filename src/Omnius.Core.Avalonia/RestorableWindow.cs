@@ -99,10 +99,20 @@ public class RestorableWindow : Window
 
     private void SetWindowStatus(WindowStatus? status)
     {
-        Dispatcher.UIThread.Post(() =>
-        {
-            if (status is null) return;
+        if (status is null) return;
 
+        if (OperatingSystem.IsLinux())
+        {
+            // 即時実行では、正しく反映されない場合があるため、苦肉の策
+            Dispatcher.UIThread.Post(() => Set(status), DispatcherPriority.Background);
+        }
+        else
+        {
+            Set(status);
+        }
+
+        void Set(WindowStatus status)
+        {
             if (status.Position is not null) this.Position = new PixelPoint(status.Position.X, status.Position.Y);
             if (status.Size is not null) this.ClientSize = new Size(status.Size.Width, status.Size.Height);
             this.WindowState = status.State switch
@@ -113,6 +123,6 @@ public class RestorableWindow : Window
                 Avalonia.WindowState.FullScreen => global::Avalonia.Controls.WindowState.FullScreen,
                 _ => global::Avalonia.Controls.WindowState.Normal,
             };
-        }, DispatcherPriority.Background);
+        };
     }
 }
