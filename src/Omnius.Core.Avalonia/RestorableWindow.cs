@@ -19,6 +19,13 @@ public class RestorableWindow : Window
         this.Closing += (sender, e) => this.SaveWindowStatus();
         this.PositionChanged += (sender, e) => this.OnPositionChanged(e.Point);
         this.GetObservable(ClientSizeProperty).Subscribe(this.OnClientSizeChanged);
+
+        if (OperatingSystem.IsLinux())
+        {
+            // 正しく反映されない場合があるため、苦肉の策
+            this.Loaded += (sender, e) => this.LoadWindowStatus();
+            this.Opened += (sender, e) => this.LoadWindowStatus();
+        }
     }
 
     public RestorableWindow(string configDirectoryPath) : this()
@@ -101,28 +108,15 @@ public class RestorableWindow : Window
     {
         if (status is null) return;
 
-        if (OperatingSystem.IsLinux())
+        if (status.Position is not null) this.Position = new PixelPoint(status.Position.X, status.Position.Y);
+        if (status.Size is not null) this.ClientSize = new Size(status.Size.Width, status.Size.Height);
+        this.WindowState = status.State switch
         {
-            // 即時実行では、正しく反映されない場合があるため、苦肉の策
-            Dispatcher.UIThread.Post(() => Set(status), DispatcherPriority.Background);
-        }
-        else
-        {
-            Set(status);
-        }
-
-        void Set(WindowStatus status)
-        {
-            if (status.Position is not null) this.Position = new PixelPoint(status.Position.X, status.Position.Y);
-            if (status.Size is not null) this.ClientSize = new Size(status.Size.Width, status.Size.Height);
-            this.WindowState = status.State switch
-            {
-                Avalonia.WindowState.Normal => global::Avalonia.Controls.WindowState.Normal,
-                Avalonia.WindowState.Minimized => global::Avalonia.Controls.WindowState.Minimized,
-                Avalonia.WindowState.Maximized => global::Avalonia.Controls.WindowState.Maximized,
-                Avalonia.WindowState.FullScreen => global::Avalonia.Controls.WindowState.FullScreen,
-                _ => global::Avalonia.Controls.WindowState.Normal,
-            };
+            Avalonia.WindowState.Normal => global::Avalonia.Controls.WindowState.Normal,
+            Avalonia.WindowState.Minimized => global::Avalonia.Controls.WindowState.Minimized,
+            Avalonia.WindowState.Maximized => global::Avalonia.Controls.WindowState.Maximized,
+            Avalonia.WindowState.FullScreen => global::Avalonia.Controls.WindowState.FullScreen,
+            _ => global::Avalonia.Controls.WindowState.Normal,
         };
     }
 }
