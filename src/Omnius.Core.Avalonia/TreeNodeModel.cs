@@ -16,19 +16,12 @@ public class RootTreeNodeModel : TreeNodeModel, IRootTreeNode
     private AvaloniaList<TreeNodeModel> _visibleChildren = new();
     private bool _updateEnqueued;
 
-    public RootTreeNodeModel(IActionCaller<TreeNodeModel> isExpandedChangedActionCaller) : base(isExpandedChangedActionCaller)
+    public RootTreeNodeModel(Action<TreeNodeModel> isExpandedChangedCallback) : base(isExpandedChangedCallback)
     {
         _root = this;
     }
 
-    public event Action<TreeNodeModel> IsExpandedChanged = (_) => { };
-
     public IAvaloniaReadOnlyList<TreeNodeModel> VisibleChildren => _visibleChildren;
-
-    internal void OnIsExpandedChanged(TreeNodeModel node)
-    {
-        this.IsExpandedChanged?.Invoke(node);
-    }
 
     public void EnqueueUpdate()
     {
@@ -85,7 +78,7 @@ public class RootTreeNodeModel : TreeNodeModel, IRootTreeNode
 
 public class TreeNodeModel : BindableBase
 {
-    private readonly IActionCaller<TreeNodeModel> _isExpandedChangedActionCaller;
+    private readonly Action<TreeNodeModel> _isExpandedChangedCallback;
 
     private string? _name;
     private object? _tag;
@@ -94,9 +87,9 @@ public class TreeNodeModel : BindableBase
     private List<TreeNodeModel> _children = new List<TreeNodeModel>();
     protected IRootTreeNode? _root;
 
-    public TreeNodeModel(IActionCaller<TreeNodeModel> isExpandedChangedActionCaller)
+    public TreeNodeModel(Action<TreeNodeModel> isExpandedChangedCallback)
     {
-        _isExpandedChangedActionCaller = isExpandedChangedActionCaller;
+        _isExpandedChangedCallback = isExpandedChangedCallback;
     }
 
     public int Level { get; private set; }
@@ -125,7 +118,7 @@ public class TreeNodeModel : BindableBase
         set
         {
             this.SetProperty(ref _isExpanded, value);
-            _isExpandedChangedActionCaller.Call(this);
+            _isExpandedChangedCallback(this);
             _root?.EnqueueUpdate();
         }
     }
