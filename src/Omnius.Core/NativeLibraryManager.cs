@@ -8,7 +8,7 @@ public sealed class NativeLibraryManager : DisposableBase
 
     public NativeLibraryManager(string path)
     {
-        var basePath = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly()?.Location);
+        var basePath = System.AppContext.BaseDirectory;
         basePath ??= Directory.GetCurrentDirectory();
 
         string fullPath = Path.Combine(basePath, path);
