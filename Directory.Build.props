@@ -33,7 +33,7 @@
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/omnius-labs/core</PackageProjectUrl>
     <RepositoryUrl>https://github.com/omnius-labs/core</RepositoryUrl>
-    <PackageTags>Omnius.Core</PackageTags>
+    <PackageTags>Core</PackageTags>
     <Copyright>Copyright (c) 2023 Lyrise</Copyright>
     <RepositoryType>git</RepositoryType>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>

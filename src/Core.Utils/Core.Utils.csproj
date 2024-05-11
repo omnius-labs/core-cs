@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <IsPackable>true</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="NLog" />
+    <PackageReference Include="Newtonsoft.Json" />
+    <PackageReference Include="YamlDotNet" />
+  </ItemGroup>
+
+</Project>

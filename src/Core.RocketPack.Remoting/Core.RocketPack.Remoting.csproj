@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <IsPackable>true</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="NLog" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Core.Base\Core.Base.csproj" />
+    <ProjectReference Include="..\Core.Net\Core.Net.csproj" />
+    <ProjectReference Include="..\Core.Net.Caps\Core.Net.Caps.csproj" />
+    <ProjectReference Include="..\Core.Net.Connections\Core.Net.Connections.csproj" />
+    <ProjectReference Include="..\Core.Pipelines\Core.Pipelines.csproj" />
+    <ProjectReference Include="..\Core.RocketPack\Core.RocketPack.csproj" />
+    <ProjectReference Include="..\Core.Serialization\Core.Serialization.csproj" />
+  </ItemGroup>
+
+</Project>

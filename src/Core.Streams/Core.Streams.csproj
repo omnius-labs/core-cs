@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <IsPackable>true</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="NLog" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Core.RocketPack\Core.RocketPack.csproj" />
+    <ProjectReference Include="..\Core.Serialization\Core.Serialization.csproj" />
+    <ProjectReference Include="..\Core.Base\Core.Base.csproj" />
+  </ItemGroup>
+
+</Project>

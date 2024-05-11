@@ -1,0 +1,10 @@
+LIBRARY Core.dll
+
+EXPORTS
+	BytesOperations_Zero
+	BytesOperations_Copy
+	BytesOperations_Equals
+	BytesOperations_Compare
+	BytesOperations_And
+	BytesOperations_Or
+	BytesOperations_Xor

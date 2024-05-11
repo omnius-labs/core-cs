@@ -1,0 +1,43 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <IsPackable>true</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="Assemblies\Win\rocksdb.dll">
+      <CopyToOutputDirectory Condition=" '$(NativeDepsPlatform)' == 'Windows' ">PreserveNewest</CopyToOutputDirectory>
+      <Link>native/rocksdb.dll</Link>
+      <Visible>false</Visible>
+      <Pack>true</Pack>
+      <PackagePath>runtimes\win\native\rocksdb.dll</PackagePath>
+    </Content>
+    <Content Include="Assemblies\Linux\librocksdb.so">
+      <CopyToOutputDirectory Condition=" '$(NativeDepsPlatform)' == 'Linux' ">PreserveNewest</CopyToOutputDirectory>
+      <Link>native/librocksdb.so</Link>
+      <Visible>false</Visible>
+      <Pack>true</Pack>
+      <PackagePath>runtimes\linux\native\librocksdb.so</PackagePath>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Core.Pipelines\Core.Pipelines.csproj" />
+    <ProjectReference Include="..\Core.RocketPack\Core.RocketPack.csproj" />
+    <ProjectReference Include="..\Core.Serialization\Core.Serialization.csproj" />
+    <ProjectReference Include="..\Core.Streams\Core.Streams.csproj" />
+    <ProjectReference Include="..\Core.Sql\Core.Sql.csproj" />
+    <ProjectReference Include="..\Core.Base\Core.Base.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="NLog" />
+    <PackageReference Include="Nito.AsyncEx" />
+    <PackageReference Include="System.Data.SQLite.Core" />
+    <PackageReference Include="SqlKata" />
+    <PackageReference Include="SqlKata.Execution" />
+    <PackageReference Include="RocksDB" />
+  </ItemGroup>
+
+</Project>
