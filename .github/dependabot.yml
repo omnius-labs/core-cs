@@ -3,7 +3,7 @@ updates:
   - package-ecosystem: nuget
     directory: "/"
     schedule:
-      interval: "daily"
+      interval: "weekly"
     labels:
       - "dependabot"
     groups:
@@ -13,7 +13,7 @@ updates:
   - package-ecosystem: github-actions
     directory: "/"
     schedule:
-      interval: "daily"
+      interval: "weekly"
     labels:
       - "dependabot"
     groups:
