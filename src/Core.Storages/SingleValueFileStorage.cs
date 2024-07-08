@@ -1,8 +1,8 @@
 using System.Buffers;
-using Core.Base;
-using Core.Base.Helpers;
+using Omnius.Core.Base;
+using Omnius.Core.Base.Helpers;
 
-namespace Core.Storages;
+namespace Omnius.Core.Storages;
 
 public sealed class SingleValueFileStorage : AsyncDisposableBase, ISingleValueStorage
 {

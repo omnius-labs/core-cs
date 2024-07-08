@@ -3,7 +3,7 @@ using System.Diagnostics;
 using System.IO.Pipelines;
 using System.Text;
 
-namespace Core.Collections;
+namespace Omnius.Core.Collections;
 
 // Memo: 実装中
 internal partial class GolombCodedSet

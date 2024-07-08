@@ -1,6 +1,6 @@
 using System.Collections.ObjectModel;
 
-namespace Core.RocketPack.DefinitionCompiler.Models;
+namespace Omnius.Core.RocketPack.DefinitionCompiler.Models;
 
 internal sealed class RocketPackDefinition
 {

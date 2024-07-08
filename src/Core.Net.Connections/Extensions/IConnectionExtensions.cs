@@ -1,6 +1,6 @@
-using Core.RocketPack;
+using Omnius.Core.RocketPack;
 
-namespace Core.Net.Connections;
+namespace Omnius.Core.Net.Connections;
 
 public static class IConnectionExtensions
 {

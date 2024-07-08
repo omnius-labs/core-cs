@@ -1,7 +1,8 @@
+using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Text;
 
-namespace Core.Base;
+namespace Omnius.Core.Base;
 
 public sealed class AsyncLockMonitor
 {
@@ -23,10 +24,10 @@ public sealed class AsyncLockMonitor
         var disposable = await _lock.LockAsync(cancellationToken);
 
         var sb = new StringBuilder();
-        sb.AppendLine($"LockAsync UUID: {_guid}");
-        sb.AppendLine($"LockAsync MemberName: {member}");
-        sb.AppendLine($"LockAsync FilePath: {file}");
-        sb.AppendLine($"LockAsync LineNumber: {line}");
+        sb.AppendLine(CultureInfo.InvariantCulture, $"LockAsync UUID: {_guid}");
+        sb.AppendLine(CultureInfo.InvariantCulture, $"LockAsync MemberName: {member}");
+        sb.AppendLine(CultureInfo.InvariantCulture, $"LockAsync FilePath: {file}");
+        sb.AppendLine(CultureInfo.InvariantCulture, $"LockAsync LineNumber: {line}");
         _logger.Trace(sb.ToString());
 
         return disposable;

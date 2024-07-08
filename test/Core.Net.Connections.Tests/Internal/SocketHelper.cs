@@ -1,7 +1,7 @@
 using System.Net;
 using System.Net.Sockets;
 
-namespace Core.Net.Connections.Internal;
+namespace Omnius.Core.Net.Connections.Internal;
 
 internal static class SocketHelper
 {

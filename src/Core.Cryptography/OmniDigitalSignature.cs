@@ -1,9 +1,9 @@
 using System.Buffers;
-using Core.Cryptography.Functions;
-using Core.Cryptography.Internal;
-using Core.RocketPack;
+using Omnius.Core.Cryptography.Functions;
+using Omnius.Core.Cryptography.Internal;
+using Omnius.Core.RocketPack;
 
-namespace Core.Cryptography;
+namespace Omnius.Core.Cryptography;
 
 public sealed partial class OmniDigitalSignature
 {

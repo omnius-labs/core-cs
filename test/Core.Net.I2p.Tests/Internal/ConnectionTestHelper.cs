@@ -2,7 +2,7 @@ using System.Diagnostics;
 using System.Net.Sockets;
 using FluentAssertions;
 
-namespace Core.Net.I2p.Internal;
+namespace Omnius.Core.Net.I2p.Internal;
 
 internal static class ConnectionTestHelper
 {

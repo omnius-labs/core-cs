@@ -1,7 +1,7 @@
-using Core.Base;
-using Core.RocketPack;
+using Omnius.Core.Base;
+using Omnius.Core.RocketPack;
 
-namespace Core.Net.Connections;
+namespace Omnius.Core.Net.Connections;
 
 public static class IConnectionSenderExtensions
 {

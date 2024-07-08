@@ -1,6 +1,6 @@
 using Sprache;
 
-namespace Core.RocketPack.DefinitionCompiler.Parsers.Extensions;
+namespace Omnius.Core.RocketPack.DefinitionCompiler.Parsers.Extensions;
 
 internal static class ParserExtensions
 {

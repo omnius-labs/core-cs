@@ -1,11 +1,11 @@
 using System.Security.Cryptography;
-using Core.Base;
-using Core.Base.Helpers;
-using Core.Cryptography;
-using Core.Cryptography.Functions;
-using Core.Pipelines;
+using Omnius.Core.Base;
+using Omnius.Core.Base.Helpers;
+using Omnius.Core.Cryptography;
+using Omnius.Core.Cryptography.Functions;
+using Omnius.Core.Pipelines;
 
-namespace Core.Net.Connections.Secure.V1.Internal;
+namespace Omnius.Core.Net.Connections.Secure.V1.Internal;
 
 public partial class SecureConnection
 {

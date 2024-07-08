@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace Core.RocketPack.DefinitionCompiler;
+namespace Omnius.Core.RocketPack.DefinitionCompiler;
 
 internal sealed class CodeWriter
 {
@@ -46,7 +46,7 @@ internal sealed class CodeWriter
 
     public override string ToString()
     {
-        return _sb.ToString().Replace("\r\n", "\n");
+        return _sb.ToString().Replace("\r\n", "\n", StringComparison.InvariantCulture);
     }
 
     private bool TryWriteIndent()

@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <RootNamespace>Core.RocketPack.Remoting</RootNamespace>
+    <RootNamespace>Omnius.Core.RocketPack.Remoting</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

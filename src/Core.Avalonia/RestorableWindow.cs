@@ -1,9 +1,9 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Threading;
-using Core.Base.Helpers;
+using Omnius.Core.Base.Helpers;
 
-namespace Core.Avalonia;
+namespace Omnius.Core.Avalonia;
 
 public class RestorableWindow : Window
 {

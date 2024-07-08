@@ -1,9 +1,9 @@
-using Core.Base;
-using Core.Storages.Tests.Internal;
-using Core.UnitTestToolkit;
+using Omnius.Core.Base;
+using Omnius.Core.Storages.Tests.Internal;
+using Omnius.Core.UnitTestToolkit;
 using Xunit;
 
-namespace Core.Storages;
+namespace Omnius.Core.Storages;
 
 public class KeyValueStorageTest
 {

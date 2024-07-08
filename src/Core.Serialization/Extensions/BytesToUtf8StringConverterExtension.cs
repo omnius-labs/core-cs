@@ -1,10 +1,10 @@
 using System.Buffers;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
-using Core.Base;
-using Core.Pipelines;
+using Omnius.Core.Base;
+using Omnius.Core.Pipelines;
 
-namespace Core.Serialization;
+namespace Omnius.Core.Serialization;
 
 public static class BytesToUtf8StringConverterExtension
 {

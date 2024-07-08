@@ -1,9 +1,9 @@
-using Core.Base;
-using Core.Cryptography;
-using Core.Pipelines;
-using Core.RocketPack;
+using Omnius.Core.Base;
+using Omnius.Core.Cryptography;
+using Omnius.Core.Pipelines;
+using Omnius.Core.RocketPack;
 
-namespace Core.Net.Connections.Secure.V1.Internal;
+namespace Omnius.Core.Net.Connections.Secure.V1.Internal;
 
 internal partial class AuthenticationMessage
 {

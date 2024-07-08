@@ -1,6 +1,6 @@
 using Xunit;
 
-namespace Core.UnitTestToolkit;
+namespace Omnius.Core.UnitTestToolkit;
 
 public class StableTestSkipAttribute : FactAttribute
 {

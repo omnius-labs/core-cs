@@ -1,10 +1,10 @@
-using Core.Base;
-using Core.Net.Caps;
-using Core.Net.Connections.Internal;
-using Core.Tasks;
+using Omnius.Core.Base;
+using Omnius.Core.Net.Caps;
+using Omnius.Core.Net.Connections.Internal;
+using Omnius.Core.Tasks;
 using Xunit;
 
-namespace Core.Net.Connections.Bridge;
+namespace Omnius.Core.Net.Connections.Bridge;
 
 public class BridgeConnectionTest
 {

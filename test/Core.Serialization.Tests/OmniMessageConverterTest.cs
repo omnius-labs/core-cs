@@ -1,9 +1,9 @@
 using System.Buffers;
-using Core.Base;
-using Core.Pipelines;
+using Omnius.Core.Base;
+using Omnius.Core.Pipelines;
 using Xunit;
 
-namespace Core.Serialization;
+namespace Omnius.Core.Serialization;
 
 public class OmniMessageConverterTest
 {

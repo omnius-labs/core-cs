@@ -1,4 +1,4 @@
-namespace Core.Net.Connections.Multiplexer.V1.Internal;
+namespace Omnius.Core.Net.Connections.Multiplexer.V1.Internal;
 
 internal partial class ConnectionMultiplexer
 {

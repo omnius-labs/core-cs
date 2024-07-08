@@ -1,6 +1,6 @@
-using Core.Base;
+using Omnius.Core.Base;
 
-namespace Core.Net.Connections;
+namespace Omnius.Core.Net.Connections;
 
 public interface IBandwidthLimiter : ISynchronized
 {

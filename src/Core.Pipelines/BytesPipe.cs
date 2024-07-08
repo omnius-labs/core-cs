@@ -1,6 +1,6 @@
-using Core.Base;
+using Omnius.Core.Base;
 
-namespace Core.Pipelines;
+namespace Omnius.Core.Pipelines;
 
 public sealed partial class BytesPipe : DisposableBase
 {

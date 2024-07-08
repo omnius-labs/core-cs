@@ -1,13 +1,13 @@
-using Core.Base;
-using Core.Cryptography;
-using Core.Net.Caps;
-using Core.Net.Connections.Bridge;
-using Core.Net.Connections.Internal;
-using Core.Net.Connections.Secure.V1;
-using Core.Tasks;
+using Omnius.Core.Base;
+using Omnius.Core.Cryptography;
+using Omnius.Core.Net.Caps;
+using Omnius.Core.Net.Connections.Bridge;
+using Omnius.Core.Net.Connections.Internal;
+using Omnius.Core.Net.Connections.Secure.V1;
+using Omnius.Core.Tasks;
 using Xunit;
 
-namespace Core.Net.Connections.Secure;
+namespace Omnius.Core.Net.Connections.Secure;
 
 public class OmniSecureConnectionTest
 {

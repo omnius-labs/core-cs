@@ -1,4 +1,4 @@
-namespace Core.Cryptography.Functions;
+namespace Omnius.Core.Cryptography.Functions;
 
 // https://qiita.com/Ushio/items/a19083514d087a57fc72
 public static class Fnv1_64

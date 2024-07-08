@@ -1,9 +1,9 @@
 using System.Buffers;
-using Core.Base;
-using Core.Base.Helpers;
-using Core.Pipelines;
+using Omnius.Core.Base;
+using Omnius.Core.Base.Helpers;
+using Omnius.Core.Pipelines;
 
-namespace Core.Net.Connections.Multiplexer.V1.Internal;
+namespace Omnius.Core.Net.Connections.Multiplexer.V1.Internal;
 
 internal partial class StreamConnection
 {

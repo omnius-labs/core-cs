@@ -1,7 +1,7 @@
 syntax v1.0;
 
-using "Core.Cryptography";
-namespace "Core.Net.Connections.Multiplexer";
+using "Omnius.Core.Cryptography";
+namespace "Omnius.Core.Net.Connections.Multiplexer";
 
 enum OmniConnectionMultiplexerVersion : uint8 {
     Unknown = 0,

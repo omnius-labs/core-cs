@@ -1,6 +1,6 @@
 using System.Buffers;
 
-namespace Core.Serialization;
+namespace Omnius.Core.Serialization;
 
 // example: https://github.com/multiformats/multibase#multibase-table
 

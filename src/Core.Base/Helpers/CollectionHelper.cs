@@ -1,6 +1,6 @@
-using Core.Base;
+using Omnius.Core.Base;
 
-namespace Core.Base.Helpers;
+namespace Omnius.Core.Base.Helpers;
 
 public static class CollectionHelper
 {

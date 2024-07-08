@@ -1,4 +1,4 @@
-namespace Core.Net.I2p;
+namespace Omnius.Core.Net.I2p;
 
 public sealed class SamBridgeException : Exception
 {

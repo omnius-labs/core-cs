@@ -1,7 +1,8 @@
+using System.Globalization;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace Core.UnitTestToolkit;
+namespace Omnius.Core.UnitTestToolkit;
 
 public class FixtureFactory
 {
@@ -9,7 +10,7 @@ public class FixtureFactory
 
     public static IDisposable GenTempDirectory(out string path)
     {
-        path = Path.Combine(Path.GetTempPath(), "_Omnius_Test_", DateTime.Now.ToString("yyyy-MM-ddTHH-mm-ssZ") + "_" + Guid.NewGuid().ToString("N"));
+        path = Path.Combine(Path.GetTempPath(), "_Omnius_Test_", DateTime.Now.ToString("yyyy-MM-ddTHH-mm-ssZ", CultureInfo.InvariantCulture) + "_" + Guid.NewGuid().ToString("N"));
         if (!Directory.Exists(path)) Directory.CreateDirectory(path);
         return new DirectoryRemover(path);
     }

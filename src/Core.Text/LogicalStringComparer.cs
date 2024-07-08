@@ -1,6 +1,6 @@
 using System.Text.RegularExpressions;
 
-namespace Core.Text;
+namespace Omnius.Core.Text;
 
 public sealed class LogicalStringComparer : IComparer<string>
 {
@@ -36,7 +36,7 @@ public sealed class LogicalStringComparer : IComparer<string>
             // 文字列の比較
             else if (!xf && !yf)
             {
-                ret = xs[i].CompareTo(ys[i]);
+                ret = string.Compare(xs[i], ys[i], StringComparison.InvariantCulture);
                 if (ret != 0) return ret;
             }
             else
@@ -46,6 +46,6 @@ public sealed class LogicalStringComparer : IComparer<string>
             }
         }
 
-        return x.CompareTo(y);
+        return string.Compare(x, y, StringComparison.InvariantCulture);
     }
 }

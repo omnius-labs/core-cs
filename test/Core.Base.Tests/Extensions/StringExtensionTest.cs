@@ -1,6 +1,6 @@
 using Xunit;
 
-namespace Core.Base;
+namespace Omnius.Core.Base;
 
 public class StringExtensionTest
 {

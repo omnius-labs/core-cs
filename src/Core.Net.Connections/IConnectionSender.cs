@@ -1,6 +1,6 @@
 using System.Buffers;
 
-namespace Core.Net.Connections;
+namespace Omnius.Core.Net.Connections;
 
 public interface IConnectionSender
 {

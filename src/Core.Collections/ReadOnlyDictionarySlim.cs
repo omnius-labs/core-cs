@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Core.Collections;
+namespace Omnius.Core.Collections;
 
 public sealed class ReadOnlyDictionarySlim<TKey, TValue> : IReadOnlyDictionary<TKey, TValue>
     where TKey : notnull

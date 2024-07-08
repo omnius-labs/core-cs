@@ -1,14 +1,14 @@
 using System.Buffers;
 using System.Data.SQLite;
 using System.Runtime.CompilerServices;
-using Core.Base;
-using Core.Base.Helpers;
-using Core.Sql;
-using Core.Streams;
+using Omnius.Core.Base;
+using Omnius.Core.Base.Helpers;
+using Omnius.Core.Sql;
+using Omnius.Core.Streams;
 using SqlKata.Compilers;
 using SqlKata.Execution;
 
-namespace Core.Storages;
+namespace Omnius.Core.Storages;
 
 public sealed class KeyValueFileStorage : AsyncDisposableBase, IKeyValueStorage
 {

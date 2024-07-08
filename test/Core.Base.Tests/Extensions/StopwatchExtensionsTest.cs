@@ -1,7 +1,7 @@
 using System.Diagnostics;
 using Xunit;
 
-namespace Core.Base;
+namespace Omnius.Core.Base;
 
 public class StopwatchExtensionsTest
 {

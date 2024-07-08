@@ -1,7 +1,7 @@
 using System.Net;
 using Xunit;
 
-namespace Core.Net;
+namespace Omnius.Core.Net;
 
 public class OmniAddressTest
 {

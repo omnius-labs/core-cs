@@ -1,6 +1,6 @@
 using Avalonia.Controls;
 
-namespace Core.Avalonia;
+namespace Omnius.Core.Avalonia;
 
 public interface IMainWindowProvider
 {

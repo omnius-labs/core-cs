@@ -1,9 +1,9 @@
 using System.Collections;
 using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
-using Core.Base;
+using Omnius.Core.Base;
 
-namespace Core.Avalonia;
+namespace Omnius.Core.Avalonia;
 
 internal class ObservableDictionary<TKey, TValue> : IDictionary<TKey, TValue>
     where TKey : notnull

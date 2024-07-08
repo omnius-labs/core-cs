@@ -1,7 +1,7 @@
 using System.Runtime.InteropServices;
-using Core.Base;
+using Omnius.Core.Base;
 
-namespace Core.Base.Internal;
+namespace Omnius.Core.Base.Internal;
 
 internal unsafe sealed partial class NativeMethods
 {

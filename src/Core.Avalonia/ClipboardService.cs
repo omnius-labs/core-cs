@@ -2,7 +2,7 @@ using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Input.Platform;
 
-namespace Core.Avalonia;
+namespace Omnius.Core.Avalonia;
 
 public interface IClipboardService
 {

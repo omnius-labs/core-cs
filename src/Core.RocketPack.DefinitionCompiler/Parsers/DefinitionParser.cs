@@ -1,8 +1,9 @@
-using Core.RocketPack.DefinitionCompiler.Models;
-using Core.RocketPack.DefinitionCompiler.Parsers.Extensions;
+using System.Globalization;
+using Omnius.Core.RocketPack.DefinitionCompiler.Models;
+using Omnius.Core.RocketPack.DefinitionCompiler.Parsers.Extensions;
 using Sprache;
 
-namespace Core.RocketPack.DefinitionCompiler.Parsers;
+namespace Omnius.Core.RocketPack.DefinitionCompiler.Parsers;
 
 internal static class DefinitionParser
 {
@@ -15,7 +16,7 @@ internal static class DefinitionParser
         from fragments in Parse.Char('\\').Then(_ => Parse.AnyChar.Select(c => $"\\{c}")).Or(Parse.CharExcept("\\\"").XMany().Text()).XMany()
         from closeQuote in Parse.Char('\"')
         from trailing in Parse.WhiteSpace.XMany()
-        select string.Join(string.Empty, fragments).Replace("\\\"", "\"");
+        select string.Join(string.Empty, fragments).Replace("\\\"", "\"", StringComparison.InvariantCulture);
 
     // 英数字と'_'の文字列を抽出するパーサー
     private static readonly Parser<string> _nameParser =
@@ -78,7 +79,7 @@ internal static class DefinitionParser
         from type in Parse.String("int")
         from size in Parse.Decimal
         from isOptional in Parse.Char('?').Then(n => Parse.Return(true)).Or(Parse.Return(false)).TokenWithSkipComment()
-        select new IntType(isSigned, int.Parse(size), isOptional);
+        select new IntType(isSigned, int.Parse(size, CultureInfo.InvariantCulture), isOptional);
 
     private static readonly Parser<BoolType> _boolTypeParser =
         from type in Parse.String("bool").TokenWithSkipComment()
@@ -89,7 +90,7 @@ internal static class DefinitionParser
         from type in Parse.String("float").TokenWithSkipComment()
         from size in Parse.Decimal.TokenWithSkipComment()
         from isOptional in Parse.Char('?').Then(n => Parse.Return(true)).Or(Parse.Return(false)).TokenWithSkipComment()
-        select new FloatType(int.Parse(size), isOptional);
+        select new FloatType(int.Parse(size, CultureInfo.InvariantCulture), isOptional);
 
     private static readonly Parser<StringType> _stringTypeParser =
         from type in Parse.String("string").TokenWithSkipComment()
@@ -101,7 +102,7 @@ internal static class DefinitionParser
         from type in Parse.String("timestamp")
         from size in Parse.Decimal
         from isOptional in Parse.Char('?').Then(n => Parse.Return(true)).Or(Parse.Return(false)).TokenWithSkipComment()
-        select new TimestampType(int.Parse(size), isOptional);
+        select new TimestampType(int.Parse(size, CultureInfo.InvariantCulture), isOptional);
 
     private static readonly Parser<BytesType> _memoryTypeParser =
         from type in Parse.String("bytes").TokenWithSkipComment()
@@ -158,7 +159,7 @@ internal static class DefinitionParser
         from equal in Parse.Char('=').TokenWithSkipComment()
         from id in Parse.Decimal.TokenWithSkipComment()
         from comma in Parse.Char(',').TokenWithSkipComment()
-        select new EnumElement(attributes.ToList(), name, int.Parse(id));
+        select new EnumElement(attributes.ToList(), name, int.Parse(id, CultureInfo.InvariantCulture));
 
     private static readonly Parser<EnumDefinition> _enumDefinitionParser =
         (from attributes in _attributeParser.XMany().TokenWithSkipComment()

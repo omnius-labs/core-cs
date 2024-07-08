@@ -1,6 +1,6 @@
 using System.Collections;
 
-namespace Core.Base;
+namespace Omnius.Core.Base;
 
 public sealed class ObjectIdMap<T> : IEnumerable<KeyValuePair<int, T>>, IEnumerable
     where T : notnull

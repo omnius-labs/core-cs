@@ -1,7 +1,7 @@
 using System.Collections;
-using Core.Base;
+using Omnius.Core.Base;
 
-namespace Core.Collections;
+namespace Omnius.Core.Collections;
 
 public class LockedSet<TItem> : ISet<TItem>, ICollection<TItem>, IEnumerable<TItem>, ISynchronized
 {

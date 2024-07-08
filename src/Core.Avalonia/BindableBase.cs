@@ -1,7 +1,7 @@
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
-namespace Core.Avalonia;
+namespace Omnius.Core.Avalonia;
 
 public abstract class BindableBase : INotifyPropertyChanged
 {

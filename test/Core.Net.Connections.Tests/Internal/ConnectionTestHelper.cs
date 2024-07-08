@@ -2,7 +2,7 @@ using System.Buffers;
 using System.Diagnostics;
 using Xunit;
 
-namespace Core.Net.Connections.Internal;
+namespace Omnius.Core.Net.Connections.Internal;
 
 internal static class ConnectionTestHelper
 {

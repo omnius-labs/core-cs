@@ -5,7 +5,7 @@ using System.Text;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
-namespace Core.Utils;
+namespace Omnius.Core.Utils;
 
 public sealed class TypedJsonHelper
 {

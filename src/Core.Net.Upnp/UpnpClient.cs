@@ -1,12 +1,13 @@
 using System.Dynamic;
+using System.Globalization;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
-using Core.Base;
+using Omnius.Core.Base;
 
-namespace Core.Net.Upnp;
+namespace Omnius.Core.Net.Upnp;
 
 public class UpnpClient : DisposableBase, IUpnpClient
 {
@@ -174,11 +175,11 @@ public class UpnpClient : DisposableBase, IUpnpClient
 
     private static async ValueTask<string?> GetExternalIpAddressFromContentsAsync(string contents, string serviceType, string gatewayIp, int gatewayPort, CancellationToken cancellationToken = default)
     {
-        if (contents == null || !contents.Contains(serviceType)) return null;
+        if (contents == null || !contents.Contains(serviceType, StringComparison.InvariantCulture)) return null;
 
         try
         {
-            contents = contents[contents.IndexOf(serviceType)..];
+            contents = contents[contents.IndexOf(serviceType, StringComparison.InvariantCulture)..];
 
             string controlUrl = _controlUrlRegex.Match(contents).Groups["url"].Value.Trim();
             string soapBody =
@@ -187,7 +188,7 @@ public class UpnpClient : DisposableBase, IUpnpClient
                 "  <u:GetExternalIPAddress xmlns:u=\"" + serviceType + "\">" + "</u:GetExternalIPAddress>" +
                 " </s:Body>" +
                 "</s:Envelope>";
-            var uri = new Uri(new Uri("http://" + gatewayIp + ":" + gatewayPort.ToString()), controlUrl);
+            var uri = new Uri(new Uri("http://" + gatewayIp + ":" + gatewayPort.ToString(CultureInfo.InvariantCulture)), controlUrl);
 
             using (var client = new HttpClient())
             {
@@ -209,11 +210,11 @@ public class UpnpClient : DisposableBase, IUpnpClient
 
     private static async ValueTask<bool> OpenPortFromContentsAsync(string contents, string serviceType, string gatewayIp, int gatewayPort, UpnpProtocolType protocol, string machineIp, int externalPort, int internalPort, string description, CancellationToken cancellationToken = default)
     {
-        if (contents == null || !contents.Contains(serviceType)) return false;
+        if (contents == null || !contents.Contains(serviceType, StringComparison.InvariantCulture)) return false;
 
         try
         {
-            contents = contents[contents.IndexOf(serviceType)..];
+            contents = contents[contents.IndexOf(serviceType, StringComparison.InvariantCulture)..];
 
             string controlUrl = _controlUrlRegex.Match(contents).Groups["url"].Value.Trim();
             string protocolString = "";
@@ -242,7 +243,7 @@ public class UpnpClient : DisposableBase, IUpnpClient
                 "  </u:AddPortMapping>" +
                 " </s:Body>" +
                 "</s:Envelope>";
-            var uri = new Uri(new Uri("http://" + gatewayIp + ":" + gatewayPort.ToString()), controlUrl);
+            var uri = new Uri(new Uri("http://" + gatewayIp + ":" + gatewayPort.ToString(CultureInfo.InvariantCulture)), controlUrl);
 
             using (var client = new HttpClient())
             {
@@ -264,11 +265,11 @@ public class UpnpClient : DisposableBase, IUpnpClient
 
     private static async ValueTask<bool> ClosePortFromContentsAsync(string services, string serviceType, string gatewayIp, int gatewayPort, UpnpProtocolType protocol, int externalPort, CancellationToken cancellationToken = default)
     {
-        if (services == null || !services.Contains(serviceType)) return false;
+        if (services == null || !services.Contains(serviceType, StringComparison.InvariantCulture)) return false;
 
         try
         {
-            services = services[services.IndexOf(serviceType)..];
+            services = services[services.IndexOf(serviceType, StringComparison.InvariantCulture)..];
 
             string controlUrl = _controlUrlRegex.Match(services).Groups["url"].Value.Trim();
             string protocolString = "";
@@ -292,7 +293,7 @@ public class UpnpClient : DisposableBase, IUpnpClient
                 "  </u:DeletePortMapping>" +
                 " </s:Body>" +
                 "</s:Envelope>";
-            var uri = new Uri(new Uri("http://" + gatewayIp + ":" + gatewayPort.ToString()), controlUrl);
+            var uri = new Uri(new Uri("http://" + gatewayIp + ":" + gatewayPort.ToString(CultureInfo.InvariantCulture)), controlUrl);
 
             using (var client = new HttpClient())
             {
@@ -314,11 +315,11 @@ public class UpnpClient : DisposableBase, IUpnpClient
 
     private static async ValueTask<dynamic?> GetPortEntryFromContentsAsync(string services, string serviceType, string gatewayIp, int gatewayPort, int index, CancellationToken cancellationToken = default)
     {
-        if (services == null || !services.Contains(serviceType)) return null;
+        if (services == null || !services.Contains(serviceType, StringComparison.InvariantCulture)) return null;
 
         try
         {
-            services = services[services.IndexOf(serviceType)..];
+            services = services[services.IndexOf(serviceType, StringComparison.InvariantCulture)..];
 
             string controlUrl = _controlUrlRegex.Match(services).Groups["url"].Value.Trim();
             string soapBody =
@@ -329,7 +330,7 @@ public class UpnpClient : DisposableBase, IUpnpClient
                 "  </u:GetGenericPortMappingEntry>" +
                 " </s:Body>" +
                 "</s:Envelope>";
-            var uri = new Uri(new Uri("http://" + gatewayIp + ":" + gatewayPort.ToString()), controlUrl);
+            var uri = new Uri(new Uri("http://" + gatewayIp + ":" + gatewayPort.ToString(CultureInfo.InvariantCulture)), controlUrl);
 
             var expandoObject = new ExpandoObject();
 

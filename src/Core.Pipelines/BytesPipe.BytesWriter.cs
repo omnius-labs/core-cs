@@ -1,4 +1,4 @@
-namespace Core.Pipelines;
+namespace Omnius.Core.Pipelines;
 
 public sealed partial class BytesPipe
 {

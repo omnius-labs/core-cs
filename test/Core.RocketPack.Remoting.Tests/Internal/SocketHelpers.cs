@@ -1,7 +1,7 @@
 using System.Net;
 using System.Net.Sockets;
 
-namespace Core.RocketPack.Remoting;
+namespace Omnius.Core.RocketPack.Remoting;
 
 internal static class SocketHelper
 {

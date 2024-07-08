@@ -1,8 +1,8 @@
 using System.Buffers;
 using System.Security.Cryptography;
-using Core.Common;
+using Omnius.Core.Common;
 
-namespace Core.Base.Helpers;
+namespace Omnius.Core.Base.Helpers;
 
 public static partial class ObjectHelper
 {

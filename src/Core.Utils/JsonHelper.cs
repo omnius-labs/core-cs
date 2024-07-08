@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace Core.Utils;
+namespace Omnius.Core.Utils;
 
 public static class JsonHelper
 {

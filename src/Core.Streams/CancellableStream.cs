@@ -1,4 +1,4 @@
-namespace Core.Streams;
+namespace Omnius.Core.Streams;
 
 public class CancellableStream : Stream
 {

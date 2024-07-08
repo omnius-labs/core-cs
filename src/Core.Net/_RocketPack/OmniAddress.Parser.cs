@@ -1,11 +1,11 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using System.Net.Sockets;
-using Core.Collections;
-using Core.Net.Internal.Extensions;
+using Omnius.Core.Collections;
+using Omnius.Core.Net.Internal.Extensions;
 using Sprache;
 
-namespace Core.Net;
+namespace Omnius.Core.Net;
 
 public partial class OmniAddress
 {
@@ -181,7 +181,7 @@ public partial class OmniAddress
             from openQuote in Sprache.Parse.Char('\"')
             from fragments in Sprache.Parse.Char('\\').Then(_ => Sprache.Parse.AnyChar.Select(c => $"\\{c}")).Or(Sprache.Parse.CharExcept("\\\"").Many().Text()).Many()
             from closeQuote in Sprache.Parse.Char('\"')
-            select string.Join(string.Empty, fragments).Replace("\\\"", "\"");
+            select string.Join(string.Empty, fragments).Replace("\\\"", "\"", StringComparison.InvariantCulture);
 
         private static readonly Parser<ConstantElement> _constantElementParser =
             from element in _stringLiteralParser.Or(_quotedStringLiteralParser).TokenWithSkipSpace()

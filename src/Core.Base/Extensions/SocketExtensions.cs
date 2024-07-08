@@ -1,7 +1,7 @@
 using System.Net;
 using System.Net.Sockets;
 
-namespace Core.Base;
+namespace Omnius.Core.Base;
 
 public static class SocketExtensions
 {

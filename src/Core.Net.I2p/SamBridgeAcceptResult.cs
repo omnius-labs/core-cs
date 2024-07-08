@@ -1,6 +1,6 @@
 using System.Net.Sockets;
 
-namespace Core.Net.I2p;
+namespace Omnius.Core.Net.I2p;
 
 public sealed partial class SamBridge
 {

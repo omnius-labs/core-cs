@@ -1,10 +1,10 @@
 
 using System.Buffers;
-using Core.Pipelines;
-using Core.RocketPack.Tests.Internal;
+using Omnius.Core.Pipelines;
+using Omnius.Core.RocketPack.Tests.Internal;
 using Xunit;
 
-namespace Core.RocketPack;
+namespace Omnius.Core.RocketPack;
 
 public class RocketArrayTest
 {

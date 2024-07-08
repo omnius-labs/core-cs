@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <RootNamespace>Core.Net.Upnp</RootNamespace>
+    <RootNamespace>Omnius.Core.Net.Upnp</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

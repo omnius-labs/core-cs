@@ -1,7 +1,8 @@
 using System.Collections;
-using Core.Base;
+using System.Globalization;
+using Omnius.Core.Base;
 
-namespace Core.Collections;
+namespace Omnius.Core.Collections;
 
 /// <summary>
 /// Bloom filter.
@@ -47,7 +48,7 @@ public sealed class BloomFilter<T>
 
         if (errorRate >= 1 || errorRate <= 0)
         {
-            throw new ArgumentOutOfRangeException("errorRate", errorRate, string.Format("errorRate must be between 0 and 1, exclusive. Was {0}", errorRate));
+            throw new ArgumentOutOfRangeException("errorRate", errorRate, string.Format(CultureInfo.InvariantCulture, "errorRate must be between 0 and 1, exclusive. Was {0}", errorRate));
         }
 
         _hashFunctionCount = ComputeBestK(capacity, errorRate);
@@ -67,12 +68,12 @@ public sealed class BloomFilter<T>
 
         if (errorRate >= 1 || errorRate <= 0)
         {
-            throw new ArgumentOutOfRangeException("errorRate", errorRate, string.Format("errorRate must be between 0 and 1, exclusive. Was {0}", errorRate));
+            throw new ArgumentOutOfRangeException("errorRate", errorRate, string.Format(CultureInfo.InvariantCulture, "errorRate must be between 0 and 1, exclusive. Was {0}", errorRate));
         }
 
         if (hashFunctionCount < 1)
         {
-            throw new ArgumentOutOfRangeException(string.Format("hashFunctionCount", hashFunctionCount, "hashFunctionCount must be > 0"));
+            throw new ArgumentOutOfRangeException(string.Format(CultureInfo.InvariantCulture, "hashFunctionCount", hashFunctionCount, "hashFunctionCount must be > 0"));
         }
 
         _hashFunctionCount = hashFunctionCount;

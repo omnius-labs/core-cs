@@ -1,6 +1,6 @@
-using Core.Base;
+using Omnius.Core.Base;
 
-namespace Core.Storages;
+namespace Omnius.Core.Storages;
 
 public interface ISingleValueStorageFactory
 {

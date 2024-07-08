@@ -1,6 +1,6 @@
 ﻿syntax v1.0;
 
-namespace "Core.RocketPack.Remoting";
+namespace "Omnius.Core.RocketPack.Remoting";
 
 message DefaultErrorMessage {
     Type: string(capacity: 8192),

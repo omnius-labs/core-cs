@@ -1,6 +1,6 @@
 using Xunit;
 
-namespace Core.Net.Connections.Secure.V1.Internal;
+namespace Omnius.Core.Net.Connections.Secure.V1.Internal;
 
 public class SecureConnectionTest
 {

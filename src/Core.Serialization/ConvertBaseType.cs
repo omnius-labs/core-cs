@@ -1,4 +1,4 @@
-namespace Core.Serialization;
+namespace Omnius.Core.Serialization;
 
 public enum ConvertBaseType
 {

@@ -1,4 +1,4 @@
-namespace Core.Base;
+namespace Omnius.Core.Base;
 
 /// <summary>
 /// <see cref="Interlocked"/>を利用したStatefulなカウンターです。

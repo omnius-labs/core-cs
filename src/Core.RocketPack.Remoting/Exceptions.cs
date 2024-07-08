@@ -1,6 +1,6 @@
 using System.Runtime.Serialization;
 
-namespace Core.RocketPack.Remoting;
+namespace Omnius.Core.RocketPack.Remoting;
 
 [Serializable]
 public class RocketPackRpcException : Exception

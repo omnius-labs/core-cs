@@ -1,10 +1,10 @@
 using System.Buffers;
 using System.Buffers.Binary;
-using Core.Base;
-using Core.Net.Caps;
-using Core.Pipelines;
+using Omnius.Core.Base;
+using Omnius.Core.Net.Caps;
+using Omnius.Core.Pipelines;
 
-namespace Core.Net.Connections.Bridge;
+namespace Omnius.Core.Net.Connections.Bridge;
 
 public partial class BridgeConnection
 {

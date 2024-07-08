@@ -1,7 +1,7 @@
-using Core.Base.Helpers;
-using Core.Utils;
+using Omnius.Core.Base.Helpers;
+using Omnius.Core.Utils;
 
-namespace Core.Avalonia;
+namespace Omnius.Core.Avalonia;
 
 public sealed class WindowStatus
 {

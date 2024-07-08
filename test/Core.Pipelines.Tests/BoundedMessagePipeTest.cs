@@ -1,6 +1,6 @@
 using Xunit;
 
-namespace Core.Pipelines;
+namespace Omnius.Core.Pipelines;
 
 public class BoundedMessagePipeTest
 {

@@ -1,9 +1,9 @@
-using Core.Base;
-using Core.Base.Helpers;
-using Core.Cryptography;
-using Core.Net.Connections.Secure.Internal;
+using Omnius.Core.Base;
+using Omnius.Core.Base.Helpers;
+using Omnius.Core.Cryptography;
+using Omnius.Core.Net.Connections.Secure.Internal;
 
-namespace Core.Net.Connections.Secure;
+namespace Omnius.Core.Net.Connections.Secure;
 
 public sealed class OmniSecureConnection : AsyncDisposableBase, IConnection
 {

@@ -1,7 +1,7 @@
-using Core.Base.Internal;
+using Omnius.Core.Base.Internal;
 using Xunit;
 
-namespace Core.Base;
+namespace Omnius.Core.Base;
 
 public class BytesOperationsTest
 {

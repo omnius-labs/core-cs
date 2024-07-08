@@ -1,7 +1,7 @@
 using System.Text;
 using System.Text.Json;
 
-namespace Core.Text;
+namespace Omnius.Core.Text;
 
 public class SnakeCaseJsonNamingPolicy : JsonNamingPolicy
 {

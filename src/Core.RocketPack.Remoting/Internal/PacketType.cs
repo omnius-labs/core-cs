@@ -1,4 +1,4 @@
-namespace Core.RocketPack.Remoting.Internal;
+namespace Omnius.Core.RocketPack.Remoting.Internal;
 
 [Flags]
 internal enum PacketType : byte

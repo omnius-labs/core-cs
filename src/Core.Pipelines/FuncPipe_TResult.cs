@@ -1,7 +1,7 @@
 using System.Collections.Immutable;
-using Core.Base;
+using Omnius.Core.Base;
 
-namespace Core.Pipelines;
+namespace Omnius.Core.Pipelines;
 
 public sealed class FuncPipe<TResult>
 {

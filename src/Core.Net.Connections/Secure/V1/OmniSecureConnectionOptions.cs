@@ -1,6 +1,6 @@
-using Core.Cryptography;
+using Omnius.Core.Cryptography;
 
-namespace Core.Net.Connections.Secure.V1;
+namespace Omnius.Core.Net.Connections.Secure.V1;
 
 public record OmniSecureConnectionOptions
 {

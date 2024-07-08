@@ -1,6 +1,6 @@
 using System.Collections;
 
-namespace Core.Base;
+namespace Omnius.Core.Base;
 
 public sealed class CompositeDisposable : DisposableBase, ICollection<IDisposable>, IDisposable
 {

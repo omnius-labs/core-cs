@@ -1,4 +1,4 @@
-namespace Core.Net.Upnp;
+namespace Omnius.Core.Net.Upnp;
 
 public interface IUpnpClientFactory
 {

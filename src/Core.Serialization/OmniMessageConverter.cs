@@ -1,9 +1,9 @@
 using System.Buffers;
 using System.Buffers.Binary;
 using System.IO.Compression;
-using Core.RocketPack;
+using Omnius.Core.RocketPack;
 
-namespace Core.Serialization;
+namespace Omnius.Core.Serialization;
 
 public static class OmniMessageConverter
 {

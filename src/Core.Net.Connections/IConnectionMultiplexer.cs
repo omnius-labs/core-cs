@@ -1,4 +1,4 @@
-namespace Core.Net.Connections;
+namespace Omnius.Core.Net.Connections;
 
 public interface IConnectionMultiplexer : IAsyncDisposable
 {

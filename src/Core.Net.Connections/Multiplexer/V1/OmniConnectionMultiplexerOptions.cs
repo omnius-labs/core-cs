@@ -1,4 +1,4 @@
-namespace Core.Net.Connections.Multiplexer.V1;
+namespace Omnius.Core.Net.Connections.Multiplexer.V1;
 
 public record OmniConnectionMultiplexerOptions
 {

@@ -1,6 +1,6 @@
 using System.Runtime.InteropServices;
 
-namespace Core.RocketPack.Internal;
+namespace Omnius.Core.RocketPack.Internal;
 
 [StructLayout(LayoutKind.Explicit)]
 internal struct Float64Bits

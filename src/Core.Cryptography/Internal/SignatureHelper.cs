@@ -1,10 +1,10 @@
 using System.Text;
-using Core.Base;
-using Core.Cryptography.Functions;
-using Core.Pipelines;
-using Core.RocketPack;
+using Omnius.Core.Base;
+using Omnius.Core.Cryptography.Functions;
+using Omnius.Core.Pipelines;
+using Omnius.Core.RocketPack;
 
-namespace Core.Cryptography.Internal;
+namespace Omnius.Core.Cryptography.Internal;
 
 internal static class SignatureHelper
 {

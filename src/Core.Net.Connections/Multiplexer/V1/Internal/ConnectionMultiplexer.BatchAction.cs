@@ -1,6 +1,6 @@
-using Core.Tasks;
+using Omnius.Core.Tasks;
 
-namespace Core.Net.Connections.Multiplexer.V1.Internal;
+namespace Omnius.Core.Net.Connections.Multiplexer.V1.Internal;
 
 internal sealed partial class ConnectionMultiplexer
 {

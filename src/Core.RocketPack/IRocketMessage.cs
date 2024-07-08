@@ -1,7 +1,7 @@
 using System.Buffers;
-using Core.Base;
+using Omnius.Core.Base;
 
-namespace Core.RocketPack;
+namespace Omnius.Core.RocketPack;
 
 public interface IRocketMessage<T> : IEquatable<T>
 {

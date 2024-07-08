@@ -1,6 +1,6 @@
 using System.Buffers;
 
-namespace Core.Base;
+namespace Omnius.Core.Base;
 
 public sealed class BytesPool : IBytesPool
 {

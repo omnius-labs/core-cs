@@ -1,4 +1,4 @@
-namespace Core.Base;
+namespace Omnius.Core.Base;
 
 public sealed class FileLock
 {

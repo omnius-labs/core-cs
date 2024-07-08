@@ -1,4 +1,4 @@
-namespace Core.Net.Proxies;
+namespace Omnius.Core.Net.Proxies;
 
 public interface ISocks5ProxyClientFactory
 {

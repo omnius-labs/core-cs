@@ -1,7 +1,7 @@
-using Core.Base;
+using Omnius.Core.Base;
 using Xunit;
 
-namespace Core.Streams;
+namespace Omnius.Core.Streams;
 
 public class RecyclableMemoryStreamTest
 {

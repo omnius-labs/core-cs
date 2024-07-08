@@ -1,6 +1,6 @@
 using System.Buffers;
 
-namespace Core.Base.Helpers;
+namespace Omnius.Core.Base.Helpers;
 
 public static class ReadOnlySequenceHelper
 {

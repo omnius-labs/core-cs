@@ -1,8 +1,9 @@
 using System.Collections.Immutable;
+using System.Globalization;
 using System.Text;
-using Core.Base.Helpers;
+using Omnius.Core.Base.Helpers;
 
-namespace Core.Net.I2p.Internal;
+namespace Omnius.Core.Net.I2p.Internal;
 
 internal sealed class SamCommand : IEquatable<SamCommand>
 {
@@ -84,7 +85,7 @@ internal sealed class SamCommand : IEquatable<SamCommand>
 
             foreach (string pair in lines.Skip(2))
             {
-                int equalsPosition = pair.IndexOf('=');
+                int equalsPosition = pair.IndexOf('=', StringComparison.InvariantCulture);
 
                 string key;
                 string value;
@@ -145,25 +146,25 @@ internal sealed class SamCommand : IEquatable<SamCommand>
 
         foreach (string command in _commands)
         {
-            sb.AppendFormat("{0} ", command);
+            sb.AppendFormat(CultureInfo.InvariantCulture, "{0} ", command);
         }
 
         foreach (var (key, value) in _parameters)
         {
             if (value != null)
             {
-                if (!value.Contains(" "))
+                if (!value.Contains(" ", StringComparison.InvariantCulture))
                 {
-                    sb.AppendFormat("{0}={1} ", key, value);
+                    sb.AppendFormat(CultureInfo.InvariantCulture, "{0}={1} ", key, value);
                 }
                 else
                 {
-                    sb.AppendFormat("{0}=\"{1}\" ", key, value);
+                    sb.AppendFormat(CultureInfo.InvariantCulture, "{0}=\"{1}\" ", key, value);
                 }
             }
             else
             {
-                sb.AppendFormat("{0} ", key);
+                sb.AppendFormat(CultureInfo.InvariantCulture, "{0} ", key);
             }
         }
 

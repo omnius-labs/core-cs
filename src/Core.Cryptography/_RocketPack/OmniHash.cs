@@ -1,10 +1,10 @@
 using System.Buffers;
-using Core.Base;
-using Core.Cryptography.Functions;
-using Core.Pipelines;
-using Core.Serialization;
+using Omnius.Core.Base;
+using Omnius.Core.Cryptography.Functions;
+using Omnius.Core.Pipelines;
+using Omnius.Core.Serialization;
 
-namespace Core.Cryptography;
+namespace Omnius.Core.Cryptography;
 
 public partial struct OmniHash
 {
@@ -54,7 +54,7 @@ public partial struct OmniHash
     {
         result = default;
 
-        var sp = text.IndexOf(':');
+        var sp = text.IndexOf(':', StringComparison.InvariantCulture);
         if (sp == -1) return false;
 
         var algorithmTypeString = text[..sp];

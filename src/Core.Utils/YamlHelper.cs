@@ -2,7 +2,7 @@ using System.Text;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
 
-namespace Core.Utils;
+namespace Omnius.Core.Utils;
 
 public static class YamlHelper
 {

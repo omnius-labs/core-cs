@@ -1,9 +1,9 @@
-using Core.Base;
-using Core.Base.Helpers;
-using Core.Net.Connections.Multiplexer.Internal;
-using Core.Tasks;
+using Omnius.Core.Base;
+using Omnius.Core.Base.Helpers;
+using Omnius.Core.Net.Connections.Multiplexer.Internal;
+using Omnius.Core.Tasks;
 
-namespace Core.Net.Connections.Multiplexer;
+namespace Omnius.Core.Net.Connections.Multiplexer;
 
 public sealed class OmniConnectionMultiplexer : AsyncDisposableBase, IConnectionMultiplexer
 {

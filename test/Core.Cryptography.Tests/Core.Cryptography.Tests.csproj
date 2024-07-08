@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <RootNamespace>Core.Cryptography</RootNamespace>
+    <RootNamespace>Omnius.Core.Cryptography</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

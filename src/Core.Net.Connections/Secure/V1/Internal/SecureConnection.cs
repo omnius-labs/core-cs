@@ -1,8 +1,8 @@
-using Core.Base;
-using Core.Cryptography;
-using Core.Net.Connections.Internal;
+using Omnius.Core.Base;
+using Omnius.Core.Cryptography;
+using Omnius.Core.Net.Connections.Internal;
 
-namespace Core.Net.Connections.Secure.V1.Internal;
+namespace Omnius.Core.Net.Connections.Secure.V1.Internal;
 
 public sealed partial class SecureConnection : AsyncDisposableBase
 {

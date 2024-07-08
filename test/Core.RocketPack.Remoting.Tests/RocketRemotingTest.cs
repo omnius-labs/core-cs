@@ -1,14 +1,14 @@
-using Core.Base;
-using Core.Net.Caps;
-using Core.Net.Connections.Bridge;
-using Core.Net.Connections.Multiplexer;
-using Core.Net.Connections.Multiplexer.V1;
-using Core.RocketPack.Remoting.Tests.Internal;
-using Core.Tasks;
 using Moq;
+using Omnius.Core.Base;
+using Omnius.Core.Net.Caps;
+using Omnius.Core.Net.Connections.Bridge;
+using Omnius.Core.Net.Connections.Multiplexer;
+using Omnius.Core.Net.Connections.Multiplexer.V1;
+using Omnius.Core.RocketPack.Remoting.Tests.Internal;
+using Omnius.Core.Tasks;
 using Xunit;
 
-namespace Core.RocketPack.Remoting;
+namespace Omnius.Core.RocketPack.Remoting;
 
 public class RocketRemotingTest
 {

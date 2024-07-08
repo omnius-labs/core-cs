@@ -1,7 +1,7 @@
 using System.Net.Sockets;
 using System.Text;
 
-namespace Core.Net.I2p.Internal
+namespace Omnius.Core.Net.I2p.Internal
 {
     internal sealed class SocketLineReader
     {

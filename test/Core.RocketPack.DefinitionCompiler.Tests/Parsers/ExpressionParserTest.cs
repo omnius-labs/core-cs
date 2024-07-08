@@ -1,7 +1,7 @@
 using Sprache;
 using Xunit;
 
-namespace Core.RocketPack.DefinitionCompiler.Parsers;
+namespace Omnius.Core.RocketPack.DefinitionCompiler.Parsers;
 
 public class ExpressionParserTest
 {

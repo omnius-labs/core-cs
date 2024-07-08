@@ -1,10 +1,10 @@
 using System.Buffers;
 using System.Buffers.Binary;
 using System.Security.Cryptography;
-using Core.Base;
-using Core.Pipelines;
+using Omnius.Core.Base;
+using Omnius.Core.Pipelines;
 
-namespace Core.Net.Connections.Secure.V1.Internal;
+namespace Omnius.Core.Net.Connections.Secure.V1.Internal;
 
 public partial class SecureConnection
 {

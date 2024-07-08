@@ -3,7 +3,7 @@ using System.IO.Pipelines;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace Core.Cryptography.Functions;
+namespace Omnius.Core.Cryptography.Functions;
 
 public static class Sha2_256
 {

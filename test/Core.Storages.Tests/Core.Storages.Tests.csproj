@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <RootNamespace>Core.Storages</RootNamespace>
+    <RootNamespace>Omnius.Core.Storages</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

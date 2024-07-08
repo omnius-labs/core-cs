@@ -1,4 +1,4 @@
-namespace Core.Net.Caps;
+namespace Omnius.Core.Net.Caps;
 
 public interface ICap : IDisposable
 {

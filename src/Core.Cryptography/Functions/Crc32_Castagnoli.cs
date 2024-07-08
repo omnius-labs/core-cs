@@ -1,7 +1,7 @@
 using System.Buffers;
 using System.Text;
 
-namespace Core.Cryptography.Functions;
+namespace Omnius.Core.Cryptography.Functions;
 
 public static unsafe class Crc32_Castagnoli
 {

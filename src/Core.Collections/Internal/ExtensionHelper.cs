@@ -1,6 +1,6 @@
 using System.Collections;
 
-namespace Core.Base.Internal;
+namespace Omnius.Core.Base.Internal;
 
 internal static class ExtensionHelper
 {

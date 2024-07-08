@@ -1,7 +1,7 @@
 syntax v1.0;
 
-using "Core.Cryptography";
-namespace "Core.Net.Connections.Secure.V1.Internal";
+using "Omnius.Core.Cryptography";
+namespace "Omnius.Core.Net.Connections.Secure.V1.Internal";
 option csharp_access_level "internal";
 
 enum KeyExchangeAlgorithmType : uint8 {

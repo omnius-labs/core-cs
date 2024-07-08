@@ -1,10 +1,10 @@
 using System.Buffers;
 using System.Text.Json;
-using Core.Cryptography.Functions;
-using Core.Serialization;
+using Omnius.Core.Cryptography.Functions;
+using Omnius.Core.Serialization;
 using Xunit;
 
-namespace Core.Cryptography;
+namespace Omnius.Core.Cryptography;
 
 public class HmacSha2256Test
 {

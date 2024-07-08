@@ -1,4 +1,4 @@
-namespace Core.RocketPack.DefinitionCompiler.Internal;
+namespace Omnius.Core.RocketPack.DefinitionCompiler.Internal;
 
 internal sealed partial class ThrowHelper
 {

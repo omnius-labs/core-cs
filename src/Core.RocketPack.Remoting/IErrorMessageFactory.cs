@@ -1,4 +1,4 @@
-namespace Core.RocketPack.Remoting;
+namespace Omnius.Core.RocketPack.Remoting;
 
 public interface IErrorMessageFactory<TErrorMessage>
     where TErrorMessage : IRocketMessage<TErrorMessage>

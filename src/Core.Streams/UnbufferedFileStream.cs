@@ -1,7 +1,7 @@
 using System.Runtime.InteropServices;
-using Core.Base;
+using Omnius.Core.Base;
 
-namespace Core.Streams;
+namespace Omnius.Core.Streams;
 
 /// <summary>
 /// IOバッファを無効化した<see cref="FileStream"/>の機能を提供します。 (OSがWindowsの時のみFILE_FLAG_NO_BUFFERINGフラグを有効化します)

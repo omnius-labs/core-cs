@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <RootNamespace>Core.Net</RootNamespace>
+    <RootNamespace>Omnius.Core.Net</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

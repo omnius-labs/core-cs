@@ -1,9 +1,9 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
-using Core.Base;
-using Core.Base.Helpers;
+using Omnius.Core.Base;
+using Omnius.Core.Base.Helpers;
 
-namespace Core.RocketPack;
+namespace Omnius.Core.RocketPack;
 
 public class Utf8String : IEquatable<Utf8String>
 {

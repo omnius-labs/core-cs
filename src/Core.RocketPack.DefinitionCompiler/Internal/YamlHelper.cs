@@ -2,7 +2,7 @@ using System.Text;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
 
-namespace Core.RocketPack.DefinitionCompiler.Internal;
+namespace Omnius.Core.RocketPack.DefinitionCompiler.Internal;
 
 public static class YamlHelper
 {

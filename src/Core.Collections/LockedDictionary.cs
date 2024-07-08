@@ -1,8 +1,8 @@
 using System.Collections;
 using System.Diagnostics.CodeAnalysis;
-using Core.Base;
+using Omnius.Core.Base;
 
-namespace Core.Collections;
+namespace Omnius.Core.Collections;
 
 public sealed partial class LockedDictionary<TKey, TValue> : IDictionary<TKey, TValue>, ICollection<KeyValuePair<TKey, TValue>>, IEnumerable<KeyValuePair<TKey, TValue>>, ISynchronized
     where TKey : notnull

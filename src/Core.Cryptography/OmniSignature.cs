@@ -1,10 +1,10 @@
 using System.Diagnostics.CodeAnalysis;
-using Core.Base;
-using Core.Base.Helpers;
-using Core.Pipelines;
-using Core.Serialization;
+using Omnius.Core.Base;
+using Omnius.Core.Base.Helpers;
+using Omnius.Core.Pipelines;
+using Omnius.Core.Serialization;
 
-namespace Core.Cryptography;
+namespace Omnius.Core.Cryptography;
 
 public sealed partial class OmniSignature
 {
@@ -22,7 +22,7 @@ public sealed partial class OmniSignature
 
         try
         {
-            int index = item.IndexOf('@');
+            int index = item.IndexOf('@', StringComparison.InvariantCulture);
             if (index == -1) return false;
 
             // @より前の文字列を取得

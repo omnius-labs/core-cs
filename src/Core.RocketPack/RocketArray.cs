@@ -1,9 +1,9 @@
 using System.Buffers;
-using Core.Base;
-using Core.Base.Helpers;
-using Core.Collections;
+using Omnius.Core.Base;
+using Omnius.Core.Base.Helpers;
+using Omnius.Core.Collections;
 
-namespace Core.RocketPack;
+namespace Omnius.Core.RocketPack;
 
 public struct RocketArray<T> : IRocketMessage<RocketArray<T>>
 {

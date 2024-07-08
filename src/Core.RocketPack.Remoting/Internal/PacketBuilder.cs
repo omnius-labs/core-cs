@@ -1,7 +1,7 @@
 using System.Buffers;
-using Core.Base;
+using Omnius.Core.Base;
 
-namespace Core.RocketPack.Remoting.Internal;
+namespace Omnius.Core.RocketPack.Remoting.Internal;
 
 internal struct PacketBuilder
 {

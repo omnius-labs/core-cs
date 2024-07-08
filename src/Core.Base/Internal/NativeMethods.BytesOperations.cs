@@ -1,7 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 
-namespace Core.Base.Internal;
+namespace Omnius.Core.Base.Internal;
 
 internal partial class NativeMethods
 {

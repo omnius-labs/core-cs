@@ -1,7 +1,7 @@
 using System.Buffers;
 using System.Collections;
 
-namespace Core.Base;
+namespace Omnius.Core.Base;
 
 public static class BitArrayExtensions
 {

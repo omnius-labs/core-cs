@@ -1,4 +1,4 @@
-namespace Core.Net.Connections.Multiplexer;
+namespace Omnius.Core.Net.Connections.Multiplexer;
 
 public sealed class OmniConnectionMultiplexerException : Exception
 {

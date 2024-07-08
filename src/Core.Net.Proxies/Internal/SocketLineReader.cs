@@ -1,8 +1,8 @@
 using System.Net.Sockets;
 using System.Text;
-using Core.Base;
+using Omnius.Core.Base;
 
-namespace Core.Net.Proxies.Internal;
+namespace Omnius.Core.Net.Proxies.Internal;
 
 internal class SocketLineReader : DisposableBase
 {

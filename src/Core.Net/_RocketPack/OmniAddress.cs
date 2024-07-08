@@ -1,6 +1,6 @@
 using System.Diagnostics;
 
-namespace Core.Net;
+namespace Omnius.Core.Net;
 
 [DebuggerDisplay("{Value}")]
 public partial class OmniAddress

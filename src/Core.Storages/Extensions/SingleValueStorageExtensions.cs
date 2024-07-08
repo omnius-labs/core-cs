@@ -1,8 +1,8 @@
-using Core.Base;
-using Core.Pipelines;
-using Core.RocketPack;
+using Omnius.Core.Base;
+using Omnius.Core.Pipelines;
+using Omnius.Core.RocketPack;
 
-namespace Core.Storages;
+namespace Omnius.Core.Storages;
 
 public static class SingleValueStorageExtensions
 {

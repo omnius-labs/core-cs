@@ -1,6 +1,6 @@
 using Avalonia.Threading;
 
-namespace Core.Avalonia;
+namespace Omnius.Core.Avalonia;
 
 public interface IApplicationDispatcher
 {

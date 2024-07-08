@@ -1,4 +1,4 @@
-namespace Core.RocketPack;
+namespace Omnius.Core.RocketPack;
 
 public interface IRocketMessageFormatter<T>
 {

@@ -1,9 +1,9 @@
 using System.Globalization;
 using System.Net.Sockets;
 using System.Text;
-using Core.Net.Proxies.Internal;
+using Omnius.Core.Net.Proxies.Internal;
 
-namespace Core.Net.Proxies;
+namespace Omnius.Core.Net.Proxies;
 
 public class HttpProxyClient : IHttpProxyClient
 {
@@ -91,7 +91,7 @@ public class HttpProxyClient : IHttpProxyClient
         catch (SocketException ex)
         {
             var remoteAddress = ((System.Net.IPEndPoint)socket.RemoteEndPoint!).Address?.ToString();
-            var remotePort = ((System.Net.IPEndPoint)socket.RemoteEndPoint!).Port.ToString();
+            var remotePort = ((System.Net.IPEndPoint)socket.RemoteEndPoint!).Port.ToString(CultureInfo.InvariantCulture);
             throw new ProxyClientException($"Connection to proxy host {remoteAddress} on port {remotePort} failed.", ex);
         }
     }
@@ -145,8 +145,8 @@ public class HttpProxyClient : IHttpProxyClient
     private void HandleProxyCommandError(Socket socket, string host, int port, HttpResponseCodes code, string text)
     {
         var remoteAddress = ((System.Net.IPEndPoint)socket.RemoteEndPoint!).Address?.ToString();
-        var remotePort = ((System.Net.IPEndPoint)socket.RemoteEndPoint!).Port.ToString();
-        var codeText = ((int)code).ToString();
+        var remotePort = ((System.Net.IPEndPoint)socket.RemoteEndPoint!).Port.ToString(CultureInfo.InvariantCulture);
+        var codeText = ((int)code).ToString(CultureInfo.InvariantCulture);
 
         string msg = code switch
         {
@@ -165,10 +165,10 @@ public class HttpProxyClient : IHttpProxyClient
         // get rid of the LF character if it exists and then split the string on all CR
         string line = response.Replace('\n', ' ').Split('\r')[0];
 
-        if (!line.Contains("HTTP")) throw new ProxyClientException($"No HTTP response received from proxy destination. Server response: {line}");
+        if (!line.Contains("HTTP", StringComparison.InvariantCulture)) throw new ProxyClientException($"No HTTP response received from proxy destination. Server response: {line}");
 
-        int begin = line.IndexOf(" ") + 1;
-        int end = line.IndexOf(" ", begin);
+        int begin = line.IndexOf(" ", StringComparison.InvariantCulture) + 1;
+        int end = line.IndexOf(" ", begin, StringComparison.InvariantCulture);
         string value = line[begin..end];
 
         if (!int.TryParse(value, out int code)) throw new ProxyClientException($"An invalid response code was received from proxy destination. Server response: {line}");

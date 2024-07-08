@@ -1,8 +1,8 @@
 using System.Buffers;
-using Core.Base;
-using Core.Base.Helpers;
+using Omnius.Core.Base;
+using Omnius.Core.Base.Helpers;
 
-namespace Core.Pipelines;
+namespace Omnius.Core.Pipelines;
 
 public sealed partial class BytesPipe
 {

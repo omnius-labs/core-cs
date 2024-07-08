@@ -3,7 +3,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Xaml.Interactivity;
 
-namespace Core.Avalonia.Behaviors;
+namespace Omnius.Core.Avalonia.Behaviors;
 
 public class DataGridBindSelectedItemsBehavior : Behavior<DataGrid>
 {

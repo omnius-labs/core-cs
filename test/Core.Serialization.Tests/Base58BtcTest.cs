@@ -1,10 +1,10 @@
 using System.Buffers;
 using System.Text;
 using System.Text.Json;
-using Core.Pipelines;
+using Omnius.Core.Pipelines;
 using Xunit;
 
-namespace Core.Serialization;
+namespace Omnius.Core.Serialization;
 
 public class Base58BtcTest
 {

@@ -1,8 +1,8 @@
 using System.Buffers;
-using Core.Base;
-using Core.Pipelines;
+using Omnius.Core.Base;
+using Omnius.Core.Pipelines;
 
-namespace Core.RocketPack;
+namespace Omnius.Core.RocketPack;
 
 public static class RocketMessageConverter
 {

@@ -1,6 +1,6 @@
 using System.Buffers;
 
-namespace Core.Storages;
+namespace Omnius.Core.Storages;
 
 public interface ISingleValueStorage : IAsyncDisposable
 {

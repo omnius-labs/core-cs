@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <RootNamespace>Core.Net.Connections</RootNamespace>
+    <RootNamespace>Omnius.Core.Net.Connections</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

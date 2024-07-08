@@ -1,6 +1,6 @@
-using Core.Pipelines;
+using Omnius.Core.Pipelines;
 
-namespace Core.Net.Connections;
+namespace Omnius.Core.Net.Connections;
 
 public interface IConnectionEvents
 {

@@ -2,7 +2,7 @@ using Avalonia;
 using Avalonia.Xaml.Interactivity;
 using AvaloniaEdit;
 
-namespace Core.Avalonia.Behaviors;
+namespace Omnius.Core.Avalonia.Behaviors;
 
 public class AvalonEditTextEditorTextBehavior : Behavior<TextEditor>
 {

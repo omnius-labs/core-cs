@@ -1,8 +1,8 @@
-using Core.Base.Internal;
 using FluentAssertions;
+using Omnius.Core.Base.Internal;
 using Xunit;
 
-namespace Core.Text;
+namespace Omnius.Core.Text;
 
 public class LogicalStringComparerTest
 {

@@ -1,7 +1,7 @@
 using System.Collections.ObjectModel;
-using Core.Base;
+using Omnius.Core.Base;
 
-namespace Core.Avalonia;
+namespace Omnius.Core.Avalonia;
 
 public class CollectionViewUpdater<TViewModel, TModel> : AsyncDisposableBase
     where TViewModel : ICollectionViewModel<TViewModel, TModel>, new()

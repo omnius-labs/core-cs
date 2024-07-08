@@ -1,8 +1,8 @@
 using System.Net.Sockets;
 using System.Text;
-using Core.Base;
+using Omnius.Core.Base;
 
-namespace Core.Net.I2p.Internal;
+namespace Omnius.Core.Net.I2p.Internal;
 
 internal sealed class SamConnection : DisposableBase
 {

@@ -1,4 +1,4 @@
-namespace Core.Base;
+namespace Omnius.Core.Base;
 
 // https://qiita.com/s-matsuba/items/1ee6bcc1bc5d721fc978
 public sealed class EqualityCustomComparer<T> : IEqualityComparer<T>

@@ -1,6 +1,6 @@
 using Sprache;
 
-namespace Core.Net.Internal.Extensions;
+namespace Omnius.Core.Net.Internal.Extensions;
 
 internal static class ParserExtensions
 {

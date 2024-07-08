@@ -1,7 +1,7 @@
-using Core.Cryptography.Functions;
-using Core.RocketPack;
+using Omnius.Core.Cryptography.Functions;
+using Omnius.Core.RocketPack;
 
-namespace Core.Cryptography;
+namespace Omnius.Core.Cryptography;
 
 public sealed partial class OmniAgreement
 {

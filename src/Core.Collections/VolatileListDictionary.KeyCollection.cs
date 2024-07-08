@@ -1,6 +1,6 @@
 using System.Collections;
 
-namespace Core.Collections;
+namespace Omnius.Core.Collections;
 
 public partial class VolatileListDictionary<TKey, TValue>
 {

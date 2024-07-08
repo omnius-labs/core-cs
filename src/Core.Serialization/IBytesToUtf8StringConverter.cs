@@ -1,6 +1,6 @@
 using System.Buffers;
 
-namespace Core.Serialization;
+namespace Omnius.Core.Serialization;
 
 public interface IBytesToUtf8StringConverter
 {

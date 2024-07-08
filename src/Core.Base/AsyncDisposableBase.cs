@@ -1,4 +1,4 @@
-namespace Core.Base;
+namespace Omnius.Core.Base;
 
 /// <summary>
 /// <see cref="IAsyncDisposable"/>を実装します。

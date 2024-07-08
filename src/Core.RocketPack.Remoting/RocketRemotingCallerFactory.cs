@@ -1,7 +1,7 @@
-using Core.Base;
-using Core.Net.Connections;
+using Omnius.Core.Base;
+using Omnius.Core.Net.Connections;
 
-namespace Core.RocketPack.Remoting;
+namespace Omnius.Core.RocketPack.Remoting;
 
 public sealed partial class RocketRemotingCallerFactory<TError> : IRocketRemotingCallerFactory<TError>
     where TError : IRocketMessage<TError>

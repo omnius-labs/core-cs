@@ -1,9 +1,9 @@
 using System.Buffers;
 using System.Runtime.CompilerServices;
-using Core.Base;
-using Core.RocketPack.Internal;
+using Omnius.Core.Base;
+using Omnius.Core.RocketPack.Internal;
 
-namespace Core.RocketPack;
+namespace Omnius.Core.RocketPack;
 
 /// <summary>
 /// RocketPackフォーマットのシリアライズ機能を提供します。

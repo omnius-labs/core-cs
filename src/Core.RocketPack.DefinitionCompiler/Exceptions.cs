@@ -1,6 +1,6 @@
 using System.Runtime.Serialization;
 
-namespace Core.RocketPack.DefinitionCompiler;
+namespace Omnius.Core.RocketPack.DefinitionCompiler;
 
 [Serializable]
 public class RocketPackDefinitionCompilerException : Exception

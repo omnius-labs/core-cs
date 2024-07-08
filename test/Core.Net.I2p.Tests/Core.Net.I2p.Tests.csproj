@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <RootNamespace>Core.Net.I2p</RootNamespace>
+    <RootNamespace>Omnius.Core.Net.I2p</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

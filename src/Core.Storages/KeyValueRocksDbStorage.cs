@@ -1,11 +1,11 @@
 using System.Buffers;
 using System.Runtime.CompilerServices;
 using System.Text;
-using Core.Base;
-using Core.Base.Helpers;
+using Omnius.Core.Base;
+using Omnius.Core.Base.Helpers;
 using RocksDbSharp;
 
-namespace Core.Storages;
+namespace Omnius.Core.Storages;
 
 public sealed class KeyValueRocksDbStorage : AsyncDisposableBase, IKeyValueStorage
 {

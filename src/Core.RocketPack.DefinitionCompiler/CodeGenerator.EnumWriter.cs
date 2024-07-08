@@ -1,6 +1,6 @@
-using Core.RocketPack.DefinitionCompiler.Models;
+using Omnius.Core.RocketPack.DefinitionCompiler.Models;
 
-namespace Core.RocketPack.DefinitionCompiler;
+namespace Omnius.Core.RocketPack.DefinitionCompiler;
 
 internal partial class CodeGenerator
 {

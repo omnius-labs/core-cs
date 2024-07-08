@@ -1,4 +1,4 @@
-namespace Core.RocketPack.DefinitionCompiler.Configuration;
+namespace Omnius.Core.RocketPack.DefinitionCompiler.Configuration;
 
 public class AppConfig
 {

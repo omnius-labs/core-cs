@@ -1,6 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 
-namespace Core.RocketPack.Remoting.Internal;
+namespace Omnius.Core.RocketPack.Remoting.Internal;
 
 internal sealed partial class ThrowHelper
 {

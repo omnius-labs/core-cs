@@ -1,9 +1,9 @@
-using Core.Base;
-using Core.Base.Helpers;
-using Core.Net.Connections;
-using Core.RocketPack.Remoting.Internal;
+using Omnius.Core.Base;
+using Omnius.Core.Base.Helpers;
+using Omnius.Core.Net.Connections;
+using Omnius.Core.RocketPack.Remoting.Internal;
 
-namespace Core.RocketPack.Remoting;
+namespace Omnius.Core.RocketPack.Remoting;
 
 internal sealed class RocketRemotingListener<TError> : AsyncDisposableBase, IRocketRemotingListener<TError>
     where TError : IRocketMessage<TError>

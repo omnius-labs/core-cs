@@ -1,7 +1,8 @@
+using System.Globalization;
 using System.Linq.Expressions;
 using Sprache;
 
-namespace Core.RocketPack.DefinitionCompiler.Parsers;
+namespace Omnius.Core.RocketPack.DefinitionCompiler.Parsers;
 
 // https://gitbytesPipe.com/sprache/Sprache/blob/develop/samples/LinqyCalculator/ExpressionParser.cs
 internal static class ExpressionParser
@@ -51,13 +52,13 @@ internal static class ExpressionParser
 
     private static readonly Parser<Expression> _numberConstant =
         (from value in Parse.Number.Token()
-         select Expression.Constant(long.Parse(value), typeof(long))).Named("number");
+         select Expression.Constant(long.Parse(value, CultureInfo.InvariantCulture), typeof(long))).Named("number");
 
     private static readonly Parser<Expression> _floatConstant =
         (from integerPart in Parse.Number.Text()
          from point in Parse.Char('.').Token()
          from decimalPart in Parse.Number.Text()
-         select Expression.Constant(double.Parse($"{integerPart}.{decimalPart}"), typeof(double))).Named("float");
+         select Expression.Constant(double.Parse($"{integerPart}.{decimalPart}", CultureInfo.InvariantCulture), typeof(double))).Named("float");
 
     private static readonly Parser<Expression> _factor =
         (from lparen in Parse.Char('(').Token()
@@ -90,7 +91,7 @@ internal static class ExpressionParser
         from fragments in Parse.Char('\\').Then(_ => Parse.AnyChar.Select(c => $"\\{c}")).XOr(Parse.CharExcept("\\\"").XMany().Text()).XMany()
         from closeQuote in Parse.Char('\"')
         from trailing in Parse.WhiteSpace.XMany()
-        select Expression.Constant(string.Join(string.Empty, fragments).Replace("\\\"", "\""), typeof(object));
+        select Expression.Constant(string.Join(string.Empty, fragments).Replace("\\\"", "\"", StringComparison.InvariantCulture), typeof(object));
 
     private static readonly Parser<Expression<Func<object>>> _lambda =
         _expr.Or(_stringLiteral).Or(_boolLiteral).Select(body => Expression.Lambda<Func<object>>(body));

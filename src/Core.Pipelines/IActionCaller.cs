@@ -1,4 +1,4 @@
-namespace Core.Pipelines;
+namespace Omnius.Core.Pipelines;
 
 public interface IActionCaller
 {

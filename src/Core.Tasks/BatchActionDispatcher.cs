@@ -1,7 +1,7 @@
 using System.Collections.Immutable;
-using Core.Base;
+using Omnius.Core.Base;
 
-namespace Core.Tasks;
+namespace Omnius.Core.Tasks;
 
 public sealed partial class BatchActionDispatcher : AsyncDisposableBase, IBatchActionDispatcher
 {

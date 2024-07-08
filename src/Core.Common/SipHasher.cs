@@ -4,7 +4,7 @@
 using System.Buffers;
 using System.Runtime.CompilerServices;
 
-namespace Core.Common;
+namespace Omnius.Core.Common;
 
 internal struct SipHasher
 {

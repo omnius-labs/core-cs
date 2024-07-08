@@ -1,4 +1,4 @@
-namespace Core.Avalonia;
+namespace Omnius.Core.Avalonia;
 
 public interface ICollectionViewModel<TViewModel, TModel>
     where TViewModel : ICollectionViewModel<TViewModel, TModel>

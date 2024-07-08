@@ -1,6 +1,6 @@
 using System.Data.Common;
 
-namespace Core.Sql;
+namespace Omnius.Core.Sql;
 
 public static class CommandExtensions
 {

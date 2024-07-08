@@ -1,7 +1,7 @@
-using Core.Base;
-using Core.Pipelines;
+using Omnius.Core.Base;
+using Omnius.Core.Pipelines;
 
-namespace Core.Net.Connections.Internal;
+namespace Omnius.Core.Net.Connections.Internal;
 
 internal sealed class ConnectionEvents : DisposableBase, IConnectionEvents
 {

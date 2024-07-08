@@ -1,7 +1,7 @@
 using System.Net.Sockets;
-using Core.Base;
+using Omnius.Core.Base;
 
-namespace Core.Net.Caps;
+namespace Omnius.Core.Net.Caps;
 
 public sealed class SocketCap : DisposableBase, ICap
 {

@@ -1,6 +1,6 @@
-using Core.Tasks;
+using Omnius.Core.Tasks;
 
-namespace Core.Net.Connections.Bridge;
+namespace Omnius.Core.Net.Connections.Bridge;
 
 public partial class BridgeConnection
 {

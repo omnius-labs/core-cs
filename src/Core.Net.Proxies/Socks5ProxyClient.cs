@@ -1,9 +1,10 @@
 using System.Buffers.Binary;
+using System.Globalization;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
 
-namespace Core.Net.Proxies;
+namespace Omnius.Core.Net.Proxies;
 
 public class Socks5ProxyClient : ISocks5ProxyClient
 {
@@ -89,7 +90,7 @@ public class Socks5ProxyClient : ISocks5ProxyClient
         catch (Exception ex)
         {
             var remoteAddress = ((System.Net.IPEndPoint)socket.RemoteEndPoint!).Address?.ToString();
-            var remotePort = ((System.Net.IPEndPoint)socket.RemoteEndPoint!).Port.ToString();
+            var remotePort = ((System.Net.IPEndPoint)socket.RemoteEndPoint!).Port.ToString(CultureInfo.InvariantCulture);
             throw new ProxyClientException($"Connection to proxy host {remoteAddress} on port {remotePort} failed.", ex);
         }
     }

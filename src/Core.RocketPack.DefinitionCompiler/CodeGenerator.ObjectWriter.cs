@@ -1,8 +1,9 @@
+using System.Globalization;
 using System.Text;
-using Core.RocketPack.DefinitionCompiler.Internal;
-using Core.RocketPack.DefinitionCompiler.Models;
+using Omnius.Core.RocketPack.DefinitionCompiler.Internal;
+using Omnius.Core.RocketPack.DefinitionCompiler.Models;
 
-namespace Core.RocketPack.DefinitionCompiler;
+namespace Omnius.Core.RocketPack.DefinitionCompiler;
 
 internal partial class CodeGenerator
 {
@@ -1539,110 +1540,110 @@ internal partial class CodeGenerator
                 case BoolType type:
                     if (!type.IsOptional)
                     {
-                        sb.Append($"value.{element.Name} != false)");
+                        sb.Append(CultureInfo.InvariantCulture, $"value.{element.Name} != false)");
                     }
                     else
                     {
-                        sb.Append($"value.{element.Name} != null)");
+                        sb.Append(CultureInfo.InvariantCulture, $"value.{element.Name} != null)");
                     }
 
                     break;
                 case IntType type:
                     if (!type.IsOptional)
                     {
-                        sb.Append($"value.{element.Name} != 0)");
+                        sb.Append(CultureInfo.InvariantCulture, $"value.{element.Name} != 0)");
                     }
                     else
                     {
-                        sb.Append($"value.{element.Name} != null)");
+                        sb.Append(CultureInfo.InvariantCulture, $"value.{element.Name} != null)");
                     }
 
                     break;
                 case FloatType type when (type.Size == 32):
                     if (!type.IsOptional)
                     {
-                        sb.Append($"value.{element.Name} != 0.0F)");
+                        sb.Append(CultureInfo.InvariantCulture, $"value.{element.Name} != 0.0F)");
                     }
                     else
                     {
-                        sb.Append($"value.{element.Name} != null)");
+                        sb.Append(CultureInfo.InvariantCulture, $"value.{element.Name} != null)");
                     }
 
                     break;
                 case FloatType type when (type.Size == 64):
                     if (!type.IsOptional)
                     {
-                        sb.Append($"value.{element.Name} != 0.0D)");
+                        sb.Append(CultureInfo.InvariantCulture, $"value.{element.Name} != 0.0D)");
                     }
                     else
                     {
-                        sb.Append($"value.{element.Name} != null)");
+                        sb.Append(CultureInfo.InvariantCulture, $"value.{element.Name} != null)");
                     }
 
                     break;
                 case StringType type:
                     if (!type.IsOptional)
                     {
-                        sb.Append($"value.{element.Name} != {GenerateTypeFullName("Utf8String")}.Empty)");
+                        sb.Append(CultureInfo.InvariantCulture, $"value.{element.Name} != {GenerateTypeFullName("Utf8String")}.Empty)");
                     }
                     else
                     {
-                        sb.Append($"value.{element.Name} != null)");
+                        sb.Append(CultureInfo.InvariantCulture, $"value.{element.Name} != null)");
                     }
 
                     break;
                 case TimestampType type:
                     if (!type.IsOptional)
                     {
-                        sb.Append($"value.{element.Name} != {GenerateTypeFullName($"Timestamp{type.Size}")}.Zero)");
+                        sb.Append(CultureInfo.InvariantCulture, $"value.{element.Name} != {GenerateTypeFullName($"Timestamp{type.Size}")}.Zero)");
                     }
                     else
                     {
-                        sb.Append($"value.{element.Name} != null)");
+                        sb.Append(CultureInfo.InvariantCulture, $"value.{element.Name} != null)");
                     }
 
                     break;
                 case BytesType type when !type.IsUseMemoryPool:
                     if (!type.IsOptional)
                     {
-                        sb.Append($"!value.{element.Name}.IsEmpty)");
+                        sb.Append(CultureInfo.InvariantCulture, $"!value.{element.Name}.IsEmpty)");
                     }
                     else
                     {
-                        sb.Append($"value.{element.Name} != null)");
+                        sb.Append(CultureInfo.InvariantCulture, $"value.{element.Name} != null)");
                     }
 
                     break;
                 case BytesType type when type.IsUseMemoryPool:
                     if (!type.IsOptional)
                     {
-                        sb.Append($"!value.{element.Name}.Memory.IsEmpty)");
+                        sb.Append(CultureInfo.InvariantCulture, $"!value.{element.Name}.Memory.IsEmpty)");
                     }
                     else
                     {
-                        sb.Append($"value.{element.Name} != null)");
+                        sb.Append(CultureInfo.InvariantCulture, $"value.{element.Name} != null)");
                     }
 
                     break;
                 case VectorType type:
                     if (!type.IsOptional)
                     {
-                        sb.Append($"value.{element.Name}.Count != 0)");
+                        sb.Append(CultureInfo.InvariantCulture, $"value.{element.Name}.Count != 0)");
                     }
                     else
                     {
-                        sb.Append($"value.{element.Name} != null)");
+                        sb.Append(CultureInfo.InvariantCulture, $"value.{element.Name} != null)");
                     }
 
                     break;
                 case MapType type:
                     if (!type.IsOptional)
                     {
-                        sb.Append($"value.{element.Name}.Count != 0)");
+                        sb.Append(CultureInfo.InvariantCulture, $"value.{element.Name}.Count != 0)");
                     }
                     else
                     {
-                        sb.Append($"value.{element.Name} != null)");
+                        sb.Append(CultureInfo.InvariantCulture, $"value.{element.Name} != null)");
                     }
 
                     break;
@@ -1652,22 +1653,22 @@ internal partial class CodeGenerator
                         case EnumDefinition elementEnumDefinition:
                             if (!type.IsOptional)
                             {
-                                sb.Append($"value.{element.Name} != ({elementEnumDefinition.CSharpFullName})0)");
+                                sb.Append(CultureInfo.InvariantCulture, $"value.{element.Name} != ({elementEnumDefinition.CSharpFullName})0)");
                             }
                             else
                             {
-                                sb.Append($"value.{element.Name} != null)");
+                                sb.Append(CultureInfo.InvariantCulture, $"value.{element.Name} != null)");
                             }
 
                             break;
                         case ObjectDefinition elementMessageDefinition:
                             if (!type.IsOptional)
                             {
-                                sb.Append($"value.{element.Name} != {elementMessageDefinition.CSharpFullName}.Empty)");
+                                sb.Append(CultureInfo.InvariantCulture, $"value.{element.Name} != {elementMessageDefinition.CSharpFullName}.Empty)");
                             }
                             else
                             {
-                                sb.Append($"value.{element.Name} != null)");
+                                sb.Append(CultureInfo.InvariantCulture, $"value.{element.Name} != null)");
                             }
 
                             break;
@@ -1696,12 +1697,12 @@ internal partial class CodeGenerator
         /// </summary>
         private static string GenerateFieldVariableName(string name)
         {
-            return name[0].ToString().ToLower() + name[1..];
+            return name[0].ToString().ToLower(CultureInfo.InvariantCulture) + name[1..];
         }
 
         private object? FindDefinition(CustomType customType)
         {
-            bool isFullName = customType.TypeName.Contains(".");
+            bool isFullName = customType.TypeName.Contains(".", StringComparison.InvariantCulture);
 
             if (isFullName)
             {

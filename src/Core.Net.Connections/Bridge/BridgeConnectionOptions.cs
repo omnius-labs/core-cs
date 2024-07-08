@@ -1,4 +1,4 @@
-namespace Core.Net.Connections.Bridge;
+namespace Omnius.Core.Net.Connections.Bridge;
 
 public record BridgeConnectionOptions
 {

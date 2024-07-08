@@ -1,8 +1,8 @@
 using System.Buffers;
-using Core.Pipelines;
+using Omnius.Core.Pipelines;
 using Xunit;
 
-namespace Core.RocketPack;
+namespace Omnius.Core.RocketPack;
 
 public class VarintTest
 {

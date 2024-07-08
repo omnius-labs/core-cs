@@ -1,4 +1,4 @@
-namespace Core.Serialization;
+namespace Omnius.Core.Serialization;
 
 public unsafe ref struct Crc32_Castagnoli
 {

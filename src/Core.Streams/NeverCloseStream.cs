@@ -1,4 +1,4 @@
-namespace Core.Streams;
+namespace Omnius.Core.Streams;
 
 /// <summary>
 /// DisposeとCloseの呼び出しを無効化する<see cref="Stream"/>のラッパークラスです。

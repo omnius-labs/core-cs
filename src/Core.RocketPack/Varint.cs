@@ -1,7 +1,7 @@
 using System.Buffers;
 using System.Runtime.CompilerServices;
 
-namespace Core.RocketPack;
+namespace Omnius.Core.RocketPack;
 
 /// <summary>
 /// <see cref="long"/>と<see cref="byte"/>[]の変換機能を提供します。

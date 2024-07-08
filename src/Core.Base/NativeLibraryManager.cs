@@ -1,6 +1,6 @@
 using System.Runtime.InteropServices;
 
-namespace Core.Base;
+namespace Omnius.Core.Base;
 
 public sealed class NativeLibraryManager : DisposableBase
 {

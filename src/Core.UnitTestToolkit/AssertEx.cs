@@ -4,7 +4,7 @@ using System.Text.Json.Serialization;
 using DiffPlex.DiffBuilder;
 using DiffPlex.DiffBuilder.Model;
 
-namespace Core.UnitTestToolkit;
+namespace Omnius.Core.UnitTestToolkit;
 
 public static class AssertEx
 {

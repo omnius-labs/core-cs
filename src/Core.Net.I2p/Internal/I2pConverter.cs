@@ -1,6 +1,6 @@
 using System.Security.Cryptography;
 
-namespace Core.Net.I2p.Internal
+namespace Omnius.Core.Net.I2p.Internal
 {
     internal static class I2pConverter
     {

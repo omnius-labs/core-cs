@@ -1,6 +1,6 @@
-using Core.Base.Internal;
+using Omnius.Core.Base.Internal;
 
-namespace Core.Base;
+namespace Omnius.Core.Base;
 
 public static unsafe class BytesOperations
 {

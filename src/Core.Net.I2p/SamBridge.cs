@@ -1,11 +1,11 @@
 using System.Net;
 using System.Net.Sockets;
-using Core.Base;
-using Core.Base.Helpers;
-using Core.Net.I2p.Internal;
-using Core.Pipelines;
+using Omnius.Core.Base;
+using Omnius.Core.Base.Helpers;
+using Omnius.Core.Net.I2p.Internal;
+using Omnius.Core.Pipelines;
 
-namespace Core.Net.I2p;
+namespace Omnius.Core.Net.I2p;
 
 public sealed partial class SamBridge : AsyncDisposableBase
 {

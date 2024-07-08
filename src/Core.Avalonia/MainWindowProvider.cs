@@ -2,7 +2,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 
-namespace Core.Avalonia;
+namespace Omnius.Core.Avalonia;
 
 public class MainWindowProvider : IMainWindowProvider
 {

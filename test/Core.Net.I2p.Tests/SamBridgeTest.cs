@@ -1,10 +1,10 @@
 using System.Net;
 using System.Net.Sockets;
-using Core.Net.I2p.Internal;
 using FluentAssertions;
+using Omnius.Core.Net.I2p.Internal;
 using Xunit;
 
-namespace Core.Net.I2p;
+namespace Omnius.Core.Net.I2p;
 
 public class SamBridgeTest
 {

@@ -2,7 +2,7 @@ using System.Globalization;
 using Avalonia;
 using Avalonia.Data.Converters;
 
-namespace Core.Avalonia.Converters;
+namespace Omnius.Core.Avalonia.Converters;
 
 public class LevelPaddingConverter : IValueConverter
 {

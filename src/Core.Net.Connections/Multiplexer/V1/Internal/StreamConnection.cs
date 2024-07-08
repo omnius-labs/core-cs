@@ -1,8 +1,8 @@
-using Core.Base;
-using Core.Net.Connections.Internal;
-using Core.Pipelines;
+using Omnius.Core.Base;
+using Omnius.Core.Net.Connections.Internal;
+using Omnius.Core.Pipelines;
 
-namespace Core.Net.Connections.Multiplexer.V1.Internal;
+namespace Omnius.Core.Net.Connections.Multiplexer.V1.Internal;
 
 internal sealed partial class StreamConnection : IConnection
 {

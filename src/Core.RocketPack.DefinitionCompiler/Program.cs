@@ -1,10 +1,11 @@
 using System.ComponentModel.DataAnnotations;
+using System.Globalization;
 using System.Text;
 using Cocona;
-using Core.RocketPack.DefinitionCompiler.Configuration;
-using Core.RocketPack.DefinitionCompiler.Internal;
+using Omnius.Core.RocketPack.DefinitionCompiler.Configuration;
+using Omnius.Core.RocketPack.DefinitionCompiler.Internal;
 
-namespace Core.RocketPack.DefinitionCompiler;
+namespace Omnius.Core.RocketPack.DefinitionCompiler;
 
 public class Program
 {
@@ -25,10 +26,13 @@ public class Program
 
             foreach (var target in config.CompileTargets ?? throw new NullReferenceException(nameof(config.CompileTargets)))
             {
+
                 try
                 {
-                    var input = target.Input ?? throw new NullReferenceException(nameof(target.Input));
-                    var output = target.Output ?? throw new NullReferenceException(nameof(target.Output));
+                    var input = Path.GetFullPath(target.Input ?? throw new NullReferenceException(nameof(target.Input)));
+                    var output = Path.GetFullPath(target.Output ?? throw new NullReferenceException(nameof(target.Output)));
+
+                    _logger.Info($"Start compile: {input} -> {output}");
 
                     // 読み込み
                     var (rootDefinition, includedDefinitions) = DefinitionLoader.Load(input, includeFiles);
@@ -44,8 +48,8 @@ public class Program
                 catch (Exception e)
                 {
                     var sb = new StringBuilder();
-                    sb.AppendLine($"input: {target.Input}");
-                    sb.AppendLine($"output: {target.Output}");
+                    sb.AppendLine(CultureInfo.InvariantCulture, $"input: {target.Input}");
+                    sb.AppendLine(CultureInfo.InvariantCulture, $"output: {target.Output}");
 
                     _logger.Error(e, sb.ToString());
 

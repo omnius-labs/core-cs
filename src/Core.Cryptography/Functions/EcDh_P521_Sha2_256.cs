@@ -1,6 +1,6 @@
 using System.Security.Cryptography;
 
-namespace Core.Cryptography.Functions;
+namespace Omnius.Core.Cryptography.Functions;
 
 public static class EcDh_P521_Sha2_256
 {

@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Diagnostics;
 
-namespace Core.Base;
+namespace Omnius.Core.Base;
 
 public static class IEnumerableExtensions
 {

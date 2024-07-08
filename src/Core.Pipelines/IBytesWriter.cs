@@ -1,6 +1,6 @@
 using System.Buffers;
 
-namespace Core.Pipelines;
+namespace Omnius.Core.Pipelines;
 
 public interface IBytesWriter : IBufferWriter<byte>
 {

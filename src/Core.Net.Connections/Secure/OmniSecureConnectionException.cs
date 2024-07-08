@@ -1,4 +1,4 @@
-namespace Core.Net.Connections.Secure;
+namespace Omnius.Core.Net.Connections.Secure;
 
 public sealed class OmniSecureConnectionException : Exception
 {

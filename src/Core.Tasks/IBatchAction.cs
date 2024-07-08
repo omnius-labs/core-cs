@@ -1,4 +1,4 @@
-namespace Core.Tasks;
+namespace Omnius.Core.Tasks;
 
 public interface IBatchAction
 {

@@ -1,7 +1,7 @@
 using System.Buffers;
-using Core.Base;
+using Omnius.Core.Base;
 
-namespace Core.Streams;
+namespace Omnius.Core.Streams;
 
 /// <summary>
 /// <see cref="Core.Base.IBytesPool"/>を利用した<see cref="MemoryStream"/>の機能を提供します。

@@ -1,10 +1,10 @@
 using System.Buffers;
 using System.Collections.Immutable;
-using Core.Base;
-using Core.Pipelines;
-using Core.Tasks;
+using Omnius.Core.Base;
+using Omnius.Core.Pipelines;
+using Omnius.Core.Tasks;
 
-namespace Core.Net.Connections.Multiplexer.V1.Internal;
+namespace Omnius.Core.Net.Connections.Multiplexer.V1.Internal;
 
 internal sealed partial class ConnectionMultiplexer : AsyncDisposableBase
 {

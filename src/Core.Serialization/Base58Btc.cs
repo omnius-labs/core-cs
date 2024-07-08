@@ -1,7 +1,7 @@
 using System.Buffers;
-using Core.Base;
+using Omnius.Core.Base;
 
-namespace Core.Serialization;
+namespace Omnius.Core.Serialization;
 
 // https://gitbytesPipe.com/bitcoin/bitcoin/blob/master/src/base58.cpp
 

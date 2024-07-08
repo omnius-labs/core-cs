@@ -1,7 +1,7 @@
-using Core.RocketPack.DefinitionCompiler.Models;
-using Core.RocketPack.DefinitionCompiler.Parsers;
+using Omnius.Core.RocketPack.DefinitionCompiler.Models;
+using Omnius.Core.RocketPack.DefinitionCompiler.Parsers;
 
-namespace Core.RocketPack.DefinitionCompiler;
+namespace Omnius.Core.RocketPack.DefinitionCompiler;
 
 internal static class DefinitionLoader
 {
