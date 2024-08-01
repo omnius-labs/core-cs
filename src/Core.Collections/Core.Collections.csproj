@@ -6,12 +6,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="NLog" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Core.Base\Core.Base.csproj" />
-    <ProjectReference Include="..\Core.Tasks\Core.Tasks.csproj" />
   </ItemGroup>
 
 </Project>

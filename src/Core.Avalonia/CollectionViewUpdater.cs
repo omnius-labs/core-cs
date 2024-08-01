@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using Microsoft.Extensions.Logging;
 using Omnius.Core.Base;
 
 namespace Omnius.Core.Avalonia;
@@ -7,29 +8,29 @@ public class CollectionViewUpdater<TViewModel, TModel> : AsyncDisposableBase
     where TViewModel : ICollectionViewModel<TViewModel, TModel>, new()
     where TModel : notnull
 {
-    private static readonly NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
-
     private readonly IApplicationDispatcher _applicationDispatcher;
     private readonly Func<CancellationToken, ValueTask<IEnumerable<TModel>>> _callback;
     private readonly TimeSpan _refreshSpan;
     private readonly IEqualityComparer<TModel> _equalityComparer;
+    private readonly ILogger _logger;
 
     private readonly ObservableDictionary<TModel, TViewModel> _observableDictionary;
 
     private readonly Task _refreshTask;
     private readonly CancellationTokenSource _cancellationTokenSource = new();
 
-    public CollectionViewUpdater(IApplicationDispatcher applicationDispatcher, Func<CancellationToken, ValueTask<IEnumerable<TModel>>> callback, TimeSpan refreshSpan)
-        : this(applicationDispatcher, callback, refreshSpan, EqualityComparer<TModel>.Default)
+    public CollectionViewUpdater(IApplicationDispatcher applicationDispatcher, Func<CancellationToken, ValueTask<IEnumerable<TModel>>> callback, TimeSpan refreshSpan, ILogger<CollectionViewUpdater<TViewModel, TModel>> logger)
+        : this(applicationDispatcher, callback, refreshSpan, EqualityComparer<TModel>.Default, logger)
     {
     }
 
-    public CollectionViewUpdater(IApplicationDispatcher applicationDispatcher, Func<CancellationToken, ValueTask<IEnumerable<TModel>>> callback, TimeSpan refreshSpan, IEqualityComparer<TModel> equalityComparer)
+    public CollectionViewUpdater(IApplicationDispatcher applicationDispatcher, Func<CancellationToken, ValueTask<IEnumerable<TModel>>> callback, TimeSpan refreshSpan, IEqualityComparer<TModel> equalityComparer, ILogger<CollectionViewUpdater<TViewModel, TModel>> logger)
     {
         _applicationDispatcher = applicationDispatcher;
         _callback = callback;
         _refreshSpan = refreshSpan;
         _equalityComparer = equalityComparer;
+        _logger = logger;
 
         _observableDictionary = new(_equalityComparer);
 
@@ -83,7 +84,7 @@ public class CollectionViewUpdater<TViewModel, TModel> : AsyncDisposableBase
         }
         catch (OperationCanceledException e)
         {
-            _logger.Debug(e, "Operation Canceled");
+            _logger.LogDebug(e, "Operation Canceled");
         }
     }
 }

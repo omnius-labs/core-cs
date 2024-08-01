@@ -1,19 +1,19 @@
 using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Text;
+using Microsoft.Extensions.Logging;
 
 namespace Omnius.Core.Base;
 
 public sealed class AsyncLockMonitor
 {
-    private static readonly NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
-
+    private readonly ILogger _logger;
     private readonly NeoSmart.AsyncLock.AsyncLock _lock; // Recursiveなロックが可能
-
     private readonly Guid _guid = Guid.NewGuid();
 
-    public AsyncLockMonitor()
+    public AsyncLockMonitor(ILogger<AsyncLockMonitor> logger)
     {
+        _logger = logger;
         _lock = new NeoSmart.AsyncLock.AsyncLock();
     }
 
@@ -28,7 +28,7 @@ public sealed class AsyncLockMonitor
         sb.AppendLine(CultureInfo.InvariantCulture, $"LockAsync MemberName: {member}");
         sb.AppendLine(CultureInfo.InvariantCulture, $"LockAsync FilePath: {file}");
         sb.AppendLine(CultureInfo.InvariantCulture, $"LockAsync LineNumber: {line}");
-        _logger.Trace(sb.ToString());
+        _logger.LogTrace(sb.ToString());
 
         return disposable;
     }

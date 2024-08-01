@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <IsPackable>true</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Sprache" />
+    <PackageReference Include="Portable.BouncyCastle" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Core.Pipelines\Core.Pipelines.csproj" />
+    <ProjectReference Include="..\Core.RocketPack\Core.RocketPack.csproj" />
+    <ProjectReference Include="..\Core.Base\Core.Base.csproj" />
+  </ItemGroup>
+
+</Project>

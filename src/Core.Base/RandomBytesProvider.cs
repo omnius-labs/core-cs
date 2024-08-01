@@ -13,4 +13,9 @@ public unsafe class RandomBytesProvider : IRandomBytesProvider
         RandomNumberGenerator.Fill(bytes);
         return bytes;
     }
+
+    public void Fill(Span<byte> data)
+    {
+        RandomNumberGenerator.Fill(data);
+    }
 }

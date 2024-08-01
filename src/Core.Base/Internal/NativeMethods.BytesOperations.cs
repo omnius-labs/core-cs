@@ -7,8 +7,6 @@ internal partial class NativeMethods
 {
     public static unsafe class BytesOperations
     {
-        private static readonly NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
-
         static BytesOperations()
         {
             if (!TryLoadNativeMethods())
@@ -55,22 +53,15 @@ internal partial class NativeMethods
 
             if (nativeLibraryManager != null)
             {
-                try
-                {
-                    Zero = nativeLibraryManager.GetMethod<ZeroDelegate>("BytesOperations_Zero");
-                    Copy = nativeLibraryManager.GetMethod<CopyDelegate>("BytesOperations_Copy");
-                    Equals = nativeLibraryManager.GetMethod<EqualsDelegate>("BytesOperations_Equals");
-                    Compare = nativeLibraryManager.GetMethod<CompareDelegate>("BytesOperations_Compare");
-                    And = nativeLibraryManager.GetMethod<BitwiseOperationDelegate>("BytesOperations_And");
-                    Or = nativeLibraryManager.GetMethod<BitwiseOperationDelegate>("BytesOperations_Or");
-                    Xor = nativeLibraryManager.GetMethod<BitwiseOperationDelegate>("BytesOperations_Xor");
+                Zero = nativeLibraryManager.GetMethod<ZeroDelegate>("BytesOperations_Zero");
+                Copy = nativeLibraryManager.GetMethod<CopyDelegate>("BytesOperations_Copy");
+                Equals = nativeLibraryManager.GetMethod<EqualsDelegate>("BytesOperations_Equals");
+                Compare = nativeLibraryManager.GetMethod<CompareDelegate>("BytesOperations_Compare");
+                And = nativeLibraryManager.GetMethod<BitwiseOperationDelegate>("BytesOperations_And");
+                Or = nativeLibraryManager.GetMethod<BitwiseOperationDelegate>("BytesOperations_Or");
+                Xor = nativeLibraryManager.GetMethod<BitwiseOperationDelegate>("BytesOperations_Xor");
 
-                    return true;
-                }
-                catch (Exception e)
-                {
-                    _logger.Error(e, "Failed to load native library");
-                }
+                return true;
             }
 
             return false;

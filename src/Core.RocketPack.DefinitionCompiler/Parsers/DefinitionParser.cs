@@ -7,8 +7,6 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler.Parsers;
 
 internal static class DefinitionParser
 {
-    private static readonly NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
-
     // 「"」で囲まれた文字列を抽出するパーサー
     private static readonly Parser<string> _stringLiteralParser =
         from leading in Parse.WhiteSpace.XMany()
@@ -274,23 +272,15 @@ internal static class DefinitionParser
 
     public static RocketPackDefinition Load(string definitionFilePath)
     {
-        try
-        {
-            // Load
-            var text = LoadDefinition(definitionFilePath);
+        // Load
+        var text = LoadDefinition(definitionFilePath);
 
-            // Parse
-            var result = ParseDefinition(text);
+        // Parse
+        var result = ParseDefinition(text);
 
-            // Validate
-            ValidateDefinition(result);
+        // Validate
+        ValidateDefinition(result);
 
-            return result;
-        }
-        catch (Exception e)
-        {
-            _logger.Error(e, $"Load Error: {definitionFilePath}");
-            throw;
-        }
+        return result;
     }
 }

@@ -5,8 +5,6 @@ namespace Omnius.Core.Streams;
 /// </summary>
 public class NeverCloseStream : Stream
 {
-    private static readonly NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
-
     private readonly Stream _stream;
 
     private bool _disposed;
@@ -103,14 +101,7 @@ public class NeverCloseStream : Stream
 
     public override void Flush()
     {
-        try
-        {
-            _stream.Flush();
-        }
-        catch (Exception e)
-        {
-            _logger.Debug(e, "NeverCloseStream Failed to Flush");
-        }
+        _stream.Flush();
     }
 
     protected override void Dispose(bool disposing)

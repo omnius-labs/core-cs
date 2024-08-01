@@ -1,40 +1,26 @@
+using System.Text.Json;
 using Omnius.Core.Base.Helpers;
-using Omnius.Core.Utils;
+using Omnius.Core.Serialization;
 
 namespace Omnius.Core.Avalonia;
 
 public sealed class WindowStatus
 {
-    private static readonly NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
-
     public WindowPosition? Position { get; set; }
 
     public WindowSize? Size { get; set; }
 
     public WindowState State { get; set; }
 
-    public static WindowStatus Load(string configPath)
+    public static WindowStatus? Load(string configPath)
     {
-        WindowStatus? result = null;
-
-        try
-        {
-            result = JsonHelper.ReadFile<WindowStatus>(configPath);
-        }
-        catch (Exception e)
-        {
-            _logger.Debug(e, "Failed to Load file");
-        }
-
-        result ??= new WindowStatus();
-
-        return result;
+        return Json.ReadFile<WindowStatus>(configPath);
     }
 
     public void Save(string configPath)
     {
         DirectoryHelper.CreateDirectory(Path.GetDirectoryName(configPath)!);
-        JsonHelper.WriteFile(configPath, this, true);
+        Json.WriteFile(configPath, this, new JsonSerializerOptions() { WriteIndented = true });
     }
 }
 

@@ -2,6 +2,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Globalization;
 using System.Text;
 using Cocona;
+using Microsoft.Extensions.Logging;
 using Omnius.Core.RocketPack.DefinitionCompiler.Configuration;
 using Omnius.Core.RocketPack.DefinitionCompiler.Internal;
 
@@ -9,15 +10,21 @@ namespace Omnius.Core.RocketPack.DefinitionCompiler;
 
 public class Program
 {
-    private static readonly NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
-
     public static void Main(string[] args)
     {
         CoconaLiteApp.Run<Program>(args);
     }
 
-    public void Compile([Option("config", new[] { 'c' })][FilePathExists] string configPath)
+    public void Compile([Option("config", ['c'])][FilePathExists] string configPath)
     {
+        var loggerFactory = LoggerFactory.Create(builder =>
+        {
+            builder
+                .AddConsole()
+                .AddDebug();
+        });
+        var logger = loggerFactory.CreateLogger<Program>();
+
         var configs = YamlHelper.ReadFile<AppConfig[]>(configPath);
 
         foreach (var config in configs)
@@ -32,7 +39,7 @@ public class Program
                     var input = Path.GetFullPath(target.Input ?? throw new NullReferenceException(nameof(target.Input)));
                     var output = Path.GetFullPath(target.Output ?? throw new NullReferenceException(nameof(target.Output)));
 
-                    _logger.Info($"Start compile: {input} -> {output}");
+                    logger.LogInformation($"Start compile: {input} -> {output}");
 
                     // 読み込み
                     var (rootDefinition, includedDefinitions) = DefinitionLoader.Load(input, includeFiles);
@@ -51,7 +58,7 @@ public class Program
                     sb.AppendLine(CultureInfo.InvariantCulture, $"input: {target.Input}");
                     sb.AppendLine(CultureInfo.InvariantCulture, $"output: {target.Output}");
 
-                    _logger.Error(e, sb.ToString());
+                    logger.LogError(e, sb.ToString());
 
                     throw;
                 }

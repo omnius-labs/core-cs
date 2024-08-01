@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Immutable;
 
 namespace Omnius.Core.Collections;
 
@@ -15,7 +16,7 @@ public partial class VolatileListDictionary<TKey, TValue>
 
         public IReadOnlyList<TValue>[] ToArray()
         {
-            return _collection.Select(n => new ReadOnlyListSlim<TValue>(n.Select(m => m.Value).ToArray())).ToArray();
+            return _collection.Select(n => n.Select(m => m.Value).ToImmutableList()).ToArray();
         }
 
         public int Count => _collection.Count;

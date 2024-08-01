@@ -5,13 +5,14 @@ using System.Net.Sockets;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
+using Microsoft.Extensions.Logging;
 using Omnius.Core.Base;
 
 namespace Omnius.Core.Net.Upnp;
 
 public class UpnpClient : DisposableBase, IUpnpClient
 {
-    private static readonly NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
+    private readonly ILogger _logger;
 
     private string? _contents;
     private Uri? _location;
@@ -19,18 +20,9 @@ public class UpnpClient : DisposableBase, IUpnpClient
     private static readonly Regex _deviceTypeRegex = new Regex(@"<(\s*)deviceType((\s*)|(\s+)(.*?))>(\s*)urn:schemas-upnp-org:device:InternetGatewayDevice:1(\s*)</(\s*)deviceType(\s*)>", RegexOptions.Singleline | RegexOptions.IgnoreCase);
     private static readonly Regex _controlUrlRegex = new Regex(@"<(\s*)controlURL((\s*)|(\s+)(.*?))>(\s*)(?<url>.*?)(\s*)</(\s*)controlURL(\s*)>", RegexOptions.Singleline | RegexOptions.IgnoreCase);
 
-    internal sealed class UpnpClientFactory : IUpnpClientFactory
+    internal UpnpClient(ILogger<UpnpClient> logger)
     {
-        public IUpnpClient Create()
-        {
-            return new UpnpClient();
-        }
-    }
-
-    public static IUpnpClientFactory Factory { get; } = new UpnpClientFactory();
-
-    internal UpnpClient()
-    {
+        _logger = logger;
     }
 
     public bool IsConnected => _contents != null;
@@ -47,20 +39,20 @@ public class UpnpClient : DisposableBase, IUpnpClient
 
             try
             {
-                (_contents, _location) = await GetContentsAndLocationFromDeviceAsync(IPAddress.Parse("239.255.255.250"), machineIp, cancellationToken);
+                (_contents, _location) = await this.GetContentsAndLocationFromDeviceAsync(IPAddress.Parse("239.255.255.250"), machineIp, cancellationToken);
                 return;
             }
             catch (Exception e)
             {
                 lastException = e;
-                _logger.Debug(e, "UPnP error");
+                _logger.LogDebug(e, "UPnP error");
             }
         }
 
         throw new UpnpClientException("Failed to connect.", lastException);
     }
 
-    private static async ValueTask<(string contents, Uri location)> GetContentsAndLocationFromDeviceAsync(IPAddress targetIp, IPAddress localIp, CancellationToken cancellationToken = default)
+    private async ValueTask<(string contents, Uri location)> GetContentsAndLocationFromDeviceAsync(IPAddress targetIp, IPAddress localIp, CancellationToken cancellationToken = default)
     {
         var querys = new List<string>
         {
@@ -94,7 +86,7 @@ public class UpnpClient : DisposableBase, IUpnpClient
                 }
                 catch (SocketException e)
                 {
-                    _logger.Info(e, "Failed to bind of socket.");
+                    _logger.LogTrace(e, "Failed to bind of socket.");
                     if (i > 10) throw new UpnpClientException("Failed to bind of socket.", e);
                 }
             }
@@ -116,7 +108,7 @@ public class UpnpClient : DisposableBase, IUpnpClient
                 }
                 catch (SocketException e)
                 {
-                    _logger.Info(e, "Failed to send of socket.");
+                    _logger.LogTrace(e, "Failed to send of socket.");
                 }
             }
 
@@ -136,7 +128,7 @@ public class UpnpClient : DisposableBase, IUpnpClient
                 }
                 catch (SocketException e)
                 {
-                    _logger.Info(e, "Failed to receive of socket.");
+                    _logger.LogTrace(e, "Failed to receive of socket.");
                     continue;
                 }
 
@@ -148,7 +140,7 @@ public class UpnpClient : DisposableBase, IUpnpClient
                     var sb = new StringBuilder();
                     sb.AppendLine("UPnP Router: " + targetIp.ToString());
                     sb.AppendLine("UPnP Location: " + location);
-                    _logger.Debug(sb.ToString());
+                    _logger.LogDebug(sb.ToString());
 
                     string contexts;
 
@@ -165,7 +157,7 @@ public class UpnpClient : DisposableBase, IUpnpClient
                 }
                 catch (HttpRequestException e)
                 {
-                    _logger.Info(e, "Failed to http request.");
+                    _logger.LogTrace(e, "Failed to http request.");
                 }
             }
 

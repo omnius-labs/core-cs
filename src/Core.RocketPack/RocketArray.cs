@@ -1,4 +1,5 @@
 using System.Buffers;
+using System.Collections.Immutable;
 using Omnius.Core.Base;
 using Omnius.Core.Base.Helpers;
 using Omnius.Core.Collections;
@@ -26,7 +27,7 @@ public struct RocketArray<T> : IRocketMessage<RocketArray<T>>
             if (n is null) throw new ArgumentNullException("n");
         }
 
-        this.Values = new ReadOnlyListSlim<T>(values);
+        this.Values = values.ToImmutableArray();
 
         _hashCode = new Lazy<int>(() =>
         {
@@ -40,7 +41,7 @@ public struct RocketArray<T> : IRocketMessage<RocketArray<T>>
         });
     }
 
-    public ReadOnlyListSlim<T> Values { get; }
+    public IReadOnlyList<T> Values { get; }
 
     public static RocketArray<T> Import(ReadOnlySequence<byte> sequence, IBytesPool bytesPool)
     {

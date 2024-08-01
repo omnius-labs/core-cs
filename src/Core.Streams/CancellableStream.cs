@@ -2,8 +2,6 @@ namespace Omnius.Core.Streams;
 
 public class CancellableStream : Stream
 {
-    private static readonly NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
-
     private readonly Stream _stream;
     private readonly CancellationToken _cancellationToken;
 

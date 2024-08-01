@@ -12,8 +12,6 @@ internal partial class CodeGenerator
         private const string CustomFormatterName = "___CustomFormatter";
         private const string HashCodeName = "___hashCode";
 
-        private static readonly NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
-
         private readonly RocketPackDefinition _rootDefinition;
         private readonly IList<RocketPackDefinition> _externalDefinitions;
 
@@ -173,7 +171,7 @@ internal partial class CodeGenerator
                             b.PushIndent();
                         }
 
-                        b.WriteLine($"this.{element.Name} = new {GenerateTypeFullName("ReadOnlyListSlim<>", this.GenerateParameterTypeFullName(type.ElementType))}({GenerateFieldVariableName(element.Name)});");
+                        b.WriteLine($"this.{element.Name} = {GenerateTypeFullName("ImmutableList")}.CreateRange<{this.GenerateParameterTypeFullName(type.ElementType)}>({GenerateFieldVariableName(element.Name)});");
 
                         if (type.IsOptional)
                         {
@@ -200,7 +198,7 @@ internal partial class CodeGenerator
                             b.PushIndent();
                         }
 
-                        b.WriteLine($"this.{element.Name} = new {GenerateTypeFullName("ReadOnlyDictionarySlim<,>", this.GenerateParameterTypeFullName(type.KeyType), this.GenerateParameterTypeFullName(type.ValueType))}({GenerateFieldVariableName(element.Name)});");
+                        b.WriteLine($"this.{element.Name} = {GenerateTypeFullName("ImmutableDictionary")}.CreateRange<{this.GenerateParameterTypeFullName(type.KeyType)}, {this.GenerateParameterTypeFullName(type.ValueType)}>({GenerateFieldVariableName(element.Name)});");
 
                         if (type.IsOptional)
                         {
@@ -1769,8 +1767,8 @@ internal partial class CodeGenerator
         {
             return typeBase switch
             {
-                VectorType type => GenerateTypeFullName("ReadOnlyListSlim<>", this.GenerateParameterTypeFullName(type.ElementType)) + (type.IsOptional ? "?" : ""),
-                MapType type => GenerateTypeFullName("ReadOnlyDictionarySlim<,>", this.GenerateParameterTypeFullName(type.KeyType), this.GenerateParameterTypeFullName(type.ValueType)) + (type.IsOptional ? "?" : ""),
+                VectorType type => GenerateTypeFullName("ImmutableList<>", this.GenerateParameterTypeFullName(type.ElementType)) + (type.IsOptional ? "?" : ""),
+                MapType type => GenerateTypeFullName("ImmutableDictionary<,>", this.GenerateParameterTypeFullName(type.KeyType), this.GenerateParameterTypeFullName(type.ValueType)) + (type.IsOptional ? "?" : ""),
                 _ => this.GenerateParameterTypeFullName(typeBase),
             };
         }

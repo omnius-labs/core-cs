@@ -1,0 +1,20 @@
+{
+    "cSpell.words": [
+        "Avalonia",
+        "Browsable",
+        "Cocona",
+        "Diffie",
+        "Golomb",
+        "Hasher",
+        "Newtonsoft",
+        "Omni",
+        "Omnikit",
+        "Omnius",
+        "pkcs",
+        "Sprache",
+        "Testkit",
+        "Upnp",
+        "Xunit"
+    ],
+    "dotnet.defaultSolution": "core.sln"
+}

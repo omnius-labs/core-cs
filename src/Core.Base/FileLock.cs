@@ -1,14 +1,16 @@
+using Microsoft.Extensions.Logging;
+
 namespace Omnius.Core.Base;
 
 public sealed class FileLock
 {
-    private static readonly NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
-
     private readonly string _path;
+    private readonly ILogger _logger;
 
-    public FileLock(string path)
+    public FileLock(string path, ILogger<FileLock> logger)
     {
         _path = path;
+        _logger = logger;
     }
 
     public async Task<IDisposable> LockAsync(CancellationToken cancellationToken = default)
@@ -23,7 +25,7 @@ public sealed class FileLock
             }
             catch (Exception e)
             {
-                _logger.Info(e, "FileLock waiting...");
+                _logger.LogTrace(e, "FileLock waiting...");
             }
 
             await Task.Delay(1000).ConfigureAwait(false);
@@ -42,7 +44,7 @@ public sealed class FileLock
             }
             catch (Exception e)
             {
-                _logger.Info(e, "FileLock waiting...");
+                _logger.LogTrace(e, "FileLock waiting...");
             }
 
             Thread.Sleep(1000);

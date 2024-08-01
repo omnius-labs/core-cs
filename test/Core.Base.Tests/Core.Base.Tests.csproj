@@ -6,7 +6,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Core.Base\Core.Base.csproj" />
-    <ProjectReference Include="..\..\src\Core.UnitTestToolkit\Core.UnitTestToolkit.csproj" />
+    <ProjectReference Include="..\..\src\Core.Testkit\Core.Testkit.csproj" />
   </ItemGroup>
 
   <ItemGroup>

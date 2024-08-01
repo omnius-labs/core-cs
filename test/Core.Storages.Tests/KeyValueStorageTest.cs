@@ -1,6 +1,6 @@
 using Omnius.Core.Base;
 using Omnius.Core.Storages.Tests.Internal;
-using Omnius.Core.UnitTestToolkit;
+using Omnius.Core.Testkit;
 using Xunit;
 
 namespace Omnius.Core.Storages;

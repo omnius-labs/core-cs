@@ -7,7 +7,6 @@
 
   <ItemGroup>
     <PackageReference Include="Avalonia.AvaloniaEdit" />
-    <PackageReference Include="NLog" />
     <PackageReference Include="Avalonia" />
     <PackageReference Include="Avalonia.Controls.DataGrid" />
     <PackageReference Include="Avalonia.Desktop" />
@@ -15,11 +14,12 @@
     <PackageReference Include="Avalonia.Xaml.Behaviors" />
     <PackageReference Include="Avalonia.Xaml.Interactions" />
     <PackageReference Include="Avalonia.Xaml.Interactivity" />
+    <PackageReference Include="Microsoft.Extensions.Logging" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Core.Base\Core.Base.csproj" />
-    <ProjectReference Include="..\Core.Utils\Core.Utils.csproj" />
+    <ProjectReference Include="..\Core.Serialization\Core.Serialization.csproj" />
     <ProjectReference Include="..\Core.Pipelines\Core.Pipelines.csproj" />
   </ItemGroup>
 

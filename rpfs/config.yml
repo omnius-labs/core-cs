@@ -1,28 +1,5 @@
-- Includes:
-    - ./rpfs/**/*.rpf
-  CompileTargets:
-    - Input: ./rpfs/Core.Cryptography/Core.Cryptography.rpf
-      Output: ./src/Core.Cryptography/_RocketPack/_Generated.cs
-    - Input: ./rpfs/Core.Net/Core.Net.rpf
-      Output: ./src/Core.Net/_RocketPack/_Generated.cs
-    - Input: ./rpfs/Core.Net.Connections/Core.Net.Connections.Multiplexer.rpf
-      Output: ./src/Core.Net.Connections/Multiplexer/_RocketPack/_Generated.cs
-    - Input: ./rpfs/Core.Net.Connections/Core.Net.Connections.Multiplexer.Internal.rpf
-      Output: ./src/Core.Net.Connections/Multiplexer/Internal/_RocketPack/_Generated.cs
-    - Input: ./rpfs/Core.Net.Connections/Core.Net.Connections.Multiplexer.V1.Internal.rpf
-      Output: ./src/Core.Net.Connections/Multiplexer/V1/Internal/_RocketPack/_Generated.cs
-    - Input: ./rpfs/Core.Net.Connections/Core.Net.Connections.Secure.rpf
-      Output: ./src/Core.Net.Connections/Secure/_RocketPack/_Generated.cs
-    - Input: ./rpfs/Core.Net.Connections/Core.Net.Connections.Secure.Internal.rpf
-      Output: ./src/Core.Net.Connections/Secure/Internal/_RocketPack/_Generated.cs
-    - Input: ./rpfs/Core.Net.Connections/Core.Net.Connections.Secure.V1.Internal.rpf
-      Output: ./src/Core.Net.Connections/Secure/V1/Internal/_RocketPack/_Generated.cs
-    - Input: ./rpfs/Core.RocketPack.Remoting/Core.RocketPack.Remoting.rpf
-      Output: ./src/Core.RocketPack.Remoting/_RocketPack/_Generated.cs
 - CompileTargets:
     - Input: ./rpfs/Core.RocketPack.Tests/Core.RocketPack.Tests.Internal.rpf
       Output: ./test/Core.RocketPack.Tests/Internal/_RocketPack/_Generated.cs
-    - Input: ./rpfs/Core.RocketPack.Remoting.Tests/Core.RocketPack.Remoting.Tests.Internal.rpf
-      Output: ./test/Core.RocketPack.Remoting.Tests/Internal/_RocketPack/_Generated.cs
     - Input: ./rpfs/Core.Storages.Tests/Core.Storages.Tests.Internal.rpf
       Output: ./test/Core.Storages.Tests/Internal/_RocketPack/_Generated.cs

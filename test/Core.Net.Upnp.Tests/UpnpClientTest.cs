@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging;
 using Xunit;
 
 namespace Omnius.Core.Net.Upnp;
@@ -9,7 +10,14 @@ public class UpnpClientTest
     {
         using (var cancellationTokenSource = new CancellationTokenSource(10 * 1000))
         {
-            var upnp = new UpnpClient();
+            var loggerFactory = LoggerFactory.Create(builder =>
+            {
+                builder
+                    .AddConsole()
+                    .AddDebug();
+            });
+            var logger = loggerFactory.CreateLogger<UpnpClient>();
+            var upnp = new UpnpClient(logger);
 
             try
             {

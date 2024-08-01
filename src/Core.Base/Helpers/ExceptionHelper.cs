@@ -1,10 +1,10 @@
+using Microsoft.Extensions.Logging;
+
 namespace Omnius.Core.Base.Helpers;
 
 public static class ExceptionHelper
 {
-    private static readonly NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
-
-    public static void TryCatch<TException>(Action callback)
+    public static void ExecuteAndLogIfFailed<TException>(Action callback, ILogger logger)
         where TException : Exception
     {
         try
@@ -13,11 +13,11 @@ public static class ExceptionHelper
         }
         catch (TException e)
         {
-            _logger.Trace(e, "Caught");
+            logger.LogTrace(e, "Caught");
         }
     }
 
-    public static TResult? TryCatch<TException, TResult>(Func<TResult> callback)
+    public static TResult? ExecuteAndLogIfFailed<TException, TResult>(Func<TResult> callback, ILogger logger)
         where TException : Exception
     {
         try
@@ -26,7 +26,7 @@ public static class ExceptionHelper
         }
         catch (TException e)
         {
-            _logger.Trace(e, "Caught");
+            logger.LogTrace(e, "Caught");
         }
 
         return default;

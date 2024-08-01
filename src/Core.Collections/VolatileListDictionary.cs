@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Immutable;
 using Omnius.Core.Base;
 
 namespace Omnius.Core.Collections;
@@ -90,7 +91,7 @@ public partial class VolatileListDictionary<TKey, TValue> : AsyncDisposableBase,
 
             foreach (var (key, entries) in _map)
             {
-                list.Add(new KeyValuePair<TKey, IReadOnlyList<TValue>>(key, new ReadOnlyListSlim<TValue>(entries.Select(n => n.Value).ToArray())));
+                list.Add(new KeyValuePair<TKey, IReadOnlyList<TValue>>(key, entries.Select(n => n.Value).ToImmutableList()));
             }
 
             return list.ToArray();
@@ -114,7 +115,7 @@ public partial class VolatileListDictionary<TKey, TValue> : AsyncDisposableBase,
         {
             lock (_lockObject)
             {
-                return _map.Values.Select(entries => new ReadOnlyListSlim<TValue>(entries.Select(n => n.Value).ToArray())).ToArray();
+                return _map.Values.Select(entries => entries.Select(n => n.Value).ToImmutableList()).ToArray();
             }
         }
     }
@@ -202,7 +203,7 @@ public partial class VolatileListDictionary<TKey, TValue> : AsyncDisposableBase,
         {
             if (_map.TryGetValue(key, out var entries))
             {
-                value = new ReadOnlyListSlim<TValue>(entries.Select(m => m.Value).ToArray());
+                value = entries.Select(m => m.Value).ToImmutableList();
                 return true;
             }
             else
@@ -221,7 +222,7 @@ public partial class VolatileListDictionary<TKey, TValue> : AsyncDisposableBase,
         {
             foreach (var (key, entries) in _map)
             {
-                var value = new ReadOnlyListSlim<TValue>(entries.Select(m => m.Value).ToArray());
+                var value = entries.Select(m => m.Value).ToImmutableList();
                 items.Add(new KeyValuePair<TKey, IReadOnlyList<TValue>>(key, value));
             }
         }

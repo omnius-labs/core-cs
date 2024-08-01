@@ -1,6 +1,7 @@
 using System.Net;
 using System.Net.Sockets;
 using FluentAssertions;
+using Microsoft.Extensions.Logging;
 using Omnius.Core.Net.I2p.Internal;
 using Xunit;
 
@@ -13,9 +14,16 @@ public class SamBridgeTest
     public async Task ConnectTest()
     {
         var random = new Random(0);
+        var loggerFactory = LoggerFactory.Create(builder =>
+        {
+            builder
+                .AddConsole()
+                .AddDebug();
+        });
+        var logger = loggerFactory.CreateLogger<SamBridge>();
 
-        var samBridge1 = await SamBridge.CreateAsync(IPAddress.Parse("127.0.0.1"), 7656, "Test_1");
-        var samBridge2 = await SamBridge.CreateAsync(IPAddress.Parse("127.0.0.1"), 7656, "Test_2");
+        var samBridge1 = await SamBridge.CreateAsync(IPAddress.Parse("127.0.0.1"), 7656, "Test_1", logger);
+        var samBridge2 = await SamBridge.CreateAsync(IPAddress.Parse("127.0.0.1"), 7656, "Test_2", logger);
 
         await Task.Delay(10 * 1000);
 

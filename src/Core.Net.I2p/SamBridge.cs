@@ -1,5 +1,6 @@
 using System.Net;
 using System.Net.Sockets;
+using Microsoft.Extensions.Logging;
 using Omnius.Core.Base;
 using Omnius.Core.Base.Helpers;
 using Omnius.Core.Net.I2p.Internal;
@@ -9,11 +10,10 @@ namespace Omnius.Core.Net.I2p;
 
 public sealed partial class SamBridge : AsyncDisposableBase
 {
-    private static readonly NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
-
     private readonly IPAddress _ipAddress;
     private readonly int _port;
     private readonly string _caption;
+    private readonly ILogger _logger;
     private readonly BoundedMessagePipe<SamBridgeAcceptResult> _acceptResultPipe = new(3);
     private string _sessionId;
 
@@ -27,18 +27,19 @@ public sealed partial class SamBridge : AsyncDisposableBase
 
     private readonly CancellationTokenSource _cancellationTokenSource = new();
 
-    public static async ValueTask<SamBridge> CreateAsync(IPAddress ipAddress, int port, string caption, CancellationToken cancellationToken = default)
+    public static async ValueTask<SamBridge> CreateAsync(IPAddress ipAddress, int port, string caption, ILogger<SamBridge> logger, CancellationToken cancellationToken = default)
     {
-        var result = new SamBridge(ipAddress, port, caption);
+        var result = new SamBridge(ipAddress, port, caption, logger);
         await result.InitAsync(cancellationToken);
         return result;
     }
 
-    private SamBridge(IPAddress ipAddress, int port, string caption)
+    private SamBridge(IPAddress ipAddress, int port, string caption, ILogger<SamBridge> logger)
     {
         _ipAddress = ipAddress;
         _port = port;
         _caption = caption;
+        _logger = logger;
         _sessionId = GenSessionId();
     }
 
@@ -57,7 +58,7 @@ public sealed partial class SamBridge : AsyncDisposableBase
             if (socket is null) throw new SamBridgeException($"Failed to connect {_ipAddress}");
 
             using var timeoutTokenSource = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
-            using var callbackRegister = timeoutTokenSource.Token.Register(() => ExceptionHelper.TryCatch<ObjectDisposedException>(() => socket.Dispose()));
+            using var callbackRegister = timeoutTokenSource.Token.Register(() => ExceptionHelper.ExecuteAndLogIfFailed<ObjectDisposedException>(() => socket.Dispose(), _logger));
             timeoutTokenSource.CancelAfter(60 * 1000);
 
             _base32Address = await this.HandshakeAsync(socket, timeoutTokenSource.Token);
@@ -118,11 +119,11 @@ public sealed partial class SamBridge : AsyncDisposableBase
         }
         catch (OperationCanceledException e)
         {
-            _logger.Debug(e, "Operation Canceled");
+            _logger.LogDebug(e, "Operation Canceled");
         }
         catch (Exception e)
         {
-            _logger.Error(e, "Unexpected Exception");
+            _logger.LogDebug(e, "Unexpected Exception");
         }
     }
 
@@ -146,7 +147,7 @@ public sealed partial class SamBridge : AsyncDisposableBase
                 {
                     if (samCommand.Commands[1] != _lastPingMessage)
                     {
-                        _logger.Debug("Invalid PONG");
+                        _logger.LogDebug("Invalid PONG");
                     }
 
                     _lastPingMessage = null;
@@ -155,11 +156,11 @@ public sealed partial class SamBridge : AsyncDisposableBase
         }
         catch (OperationCanceledException e)
         {
-            _logger.Debug(e, "Operation Canceled");
+            _logger.LogDebug(e, "Operation Canceled");
         }
         catch (Exception e)
         {
-            _logger.Error(e, "Unexpected Exception");
+            _logger.LogError(e, "Unexpected Exception");
         }
     }
 
@@ -188,11 +189,11 @@ public sealed partial class SamBridge : AsyncDisposableBase
         }
         catch (OperationCanceledException e)
         {
-            _logger.Debug(e, "Operation Canceled");
+            _logger.LogDebug(e, "Operation Canceled");
         }
         catch (Exception e)
         {
-            _logger.Error(e, "Unexpected Exception");
+            _logger.LogError(e, "Unexpected Exception");
         }
     }
 

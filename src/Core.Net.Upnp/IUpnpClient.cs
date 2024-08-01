@@ -1,9 +1,6 @@
-namespace Omnius.Core.Net.Upnp;
+using Microsoft.Extensions.Logging;
 
-public interface IUpnpClientFactory
-{
-    IUpnpClient Create();
-}
+namespace Omnius.Core.Net.Upnp;
 
 public interface IUpnpClient : IDisposable
 {
