@@ -32,7 +32,7 @@ public class OmniAgreementTest : TestBase<OmniAgreementTest>
     [Fact]
     public void CompatibilityTest()
     {
-        // data from https://github.com/omnius-labs/core-rs/blob/3ce0a88823d6ccb3d580f2d1e399627fd1c39591/modules/omnikit/src/model/omni_agreement.rs
+        // ref. https://github.com/omnius-labs/core-rs/blob/6ac4b87f9ec6c6de4df4d8c2aa9cb9fa7568863a/modules/omnikit/src/model/omni_agreement.rs
 
         var base16 = new Base16();
 

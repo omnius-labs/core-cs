@@ -5,6 +5,8 @@ using Omnius.Core.Omnikit.Internal;
 
 namespace Omnius.Core.Omnikit;
 
+// ref. https://github.com/omnius-labs/core-rs/blob/6ac4b87f9ec6c6de4df4d8c2aa9cb9fa7568863a/modules/omnikit/src/model/omni_agreement.rs
+
 [Flags]
 public enum OmniAgreementAlgorithmType
 {
