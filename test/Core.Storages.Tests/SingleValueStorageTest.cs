@@ -47,7 +47,7 @@ public class SingleValueStorageTest
     {
         {
             var res = await storage.TryGetValueAsync<TestMessage>();
-            Assert.Equal(res, default(TestMessage));
+            Assert.Equal(default(TestMessage), res);
         }
 
         {
@@ -68,7 +68,7 @@ public class SingleValueStorageTest
 
         {
             var res = await storage.TryGetValueAsync<TestMessage>();
-            Assert.Equal(res, default(TestMessage));
+            Assert.Equal(default(TestMessage), res);
         }
 
         {
@@ -91,7 +91,7 @@ public class SingleValueStorageTest
 
         {
             var res = await storage.TryGetValueAsync<TestMessage>();
-            Assert.Equal(res, default(TestMessage));
+            Assert.Equal(default(TestMessage), res);
         }
     }
 }

@@ -43,26 +43,15 @@ enum Enum8: uint64 {
     No = 1,
 }
 
-[csharp_struct]
-struct StructElement_Struct {
+struct StructElement {
     X0: bool,
 }
 
-[csharp_struct]
-message MessageElement_Struct {
+message MessageElement {
     X0: bool,
 }
 
-struct StructElement_Class {
-    X0: bool,
-}
-
-message MessageElement_Class {
-    X0: bool,
-}
-
-[csharp_struct]
-struct Struct_Struct {
+struct Struct {
     X0: bool,
     X1: int8,
     X2: int16,
@@ -89,14 +78,11 @@ struct Struct_Struct {
     X23: bytes(capacity: 256, recyclable: true), // use csharp_recyclable memory
     X24: vector<string(capacity: 128)>(capacity: 16),
     X25: map<uint8, string(capacity: 128)>(capacity: 32),
-    X26: StructElement_Struct,
-    X27: MessageElement_Struct,
-    X28: StructElement_Class,
-    X29: MessageElement_Class,
+    X26: StructElement,
+    X27: MessageElement,
 }
 
-[csharp_struct]
-message Message_Struct {
+message Message {
     X0: bool,
     X1: int8,
     X2: int16,
@@ -123,14 +109,11 @@ message Message_Struct {
     X23: bytes(capacity: 256, recyclable: true), // use csharp_recyclable memory
     X24: vector<string(capacity: 128)>(capacity: 16),
     X25: map<uint8, string(capacity: 128)>(capacity: 32),
-    X26: StructElement_Struct,
-    X27: MessageElement_Struct,
-    X28: StructElement_Class,
-    X29: MessageElement_Class,
+    X26: StructElement,
+    X27: MessageElement,
 }
 
-[csharp_struct]
-message NullableMessage_Struct {
+message NullableMessage {
     X0: bool?,
     X1: int8?,
     X2: int16?,
@@ -157,107 +140,6 @@ message NullableMessage_Struct {
     X23: bytes?(capacity: 256, recyclable: true), // use csharp_recyclable memory
     X24: vector<string(capacity: 128)>?(capacity: 16),
     X25: map<uint8, string(capacity: 128)>?(capacity: 32),
-    X26: StructElement_Struct?,
-    X27: MessageElement_Struct?,
-    X28: StructElement_Class?,
-    X29: MessageElement_Class?,
-}
-
-struct Struct_Class {
-    X0: bool,
-    X1: int8,
-    X2: int16,
-    X3: int32,
-    X4: int64,
-    X5: uint8,
-    X6: uint16,
-    X7: uint32,
-    X8: uint64,
-    X9: Enum1,
-    X10: Enum2,
-    X11: Enum3,
-    X12: Enum4,
-    X13: Enum5,
-    X14: Enum6,
-    X15: Enum7,
-    X16: Enum8,
-    X17: float32,
-    X18: float64,
-    X19: string(capacity: 128), // maximum bytes size is 128
-    X20: timestamp64,
-    X21: timestamp96,
-    X22: bytes(capacity: 256), // maximum bytes size is 256
-    X23: bytes(capacity: 256, recyclable: true), // use csharp_recyclable memory
-    X24: vector<string(capacity: 128)>(capacity: 16),
-    X25: map<uint8, string(capacity: 128)>(capacity: 32),
-    X26: StructElement_Struct,
-    X27: MessageElement_Struct,
-    X28: StructElement_Class,
-    X29: MessageElement_Class,
-}
-
-message Message_Class {
-    X0: bool,
-    X1: int8,
-    X2: int16,
-    X3: int32,
-    X4: int64,
-    X5: uint8,
-    X6: uint16,
-    X7: uint32,
-    X8: uint64,
-    X9: Enum1,
-    X10: Enum2,
-    X11: Enum3,
-    X12: Enum4,
-    X13: Enum5,
-    X14: Enum6,
-    X15: Enum7,
-    X16: Enum8,
-    X17: float32,
-    X18: float64,
-    X19: string(capacity: 128), // maximum bytes size is 128
-    X20: timestamp64,
-    X21: timestamp96,
-    X22: bytes(capacity: 256), // maximum bytes size is 256
-    X23: bytes(capacity: 256, recyclable: true), // use csharp_recyclable memory
-    X24: vector<string(capacity: 128)>(capacity: 16),
-    X25: map<uint8, string(capacity: 128)>(capacity: 32),
-    X26: StructElement_Struct,
-    X27: MessageElement_Struct,
-    X28: StructElement_Class,
-    X29: MessageElement_Class,
-}
-
-message NullableMessage_Class {
-    X0: bool?,
-    X1: int8?,
-    X2: int16?,
-    X3: int32?,
-    X4: int64?,
-    X5: uint8?,
-    X6: uint16?,
-    X7: uint32?,
-    X8: uint64?,
-    X9: Enum1?,
-    X10: Enum2?,
-    X11: Enum3?,
-    X12: Enum4?,
-    X13: Enum5?,
-    X14: Enum6?,
-    X15: Enum7?,
-    X16: Enum8?,
-    X17: float32?,
-    X18: float64?,
-    X19: string?(capacity: 128), // maximum bytes size is 128
-    X20: timestamp64?,
-    X21: timestamp96?,
-    X22: bytes?(capacity: 256), // maximum bytes size is 256
-    X23: bytes?(capacity: 256, recyclable: true), // use csharp_recyclable memory
-    X24: vector<string(capacity: 128)>?(capacity: 16),
-    X25: map<uint8, string(capacity: 128)>?(capacity: 32),
-    X26: StructElement_Struct?,
-    X27: MessageElement_Struct?,
-    X28: StructElement_Class?,
-    X29: MessageElement_Class?,
+    X26: StructElement?,
+    X27: MessageElement?,
 }

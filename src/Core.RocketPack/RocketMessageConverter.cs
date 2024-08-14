@@ -7,7 +7,7 @@ namespace Omnius.Core.RocketPack;
 public static class RocketMessageConverter
 {
     public static T FromStream<T>(Stream inStream)
-        where T : IRocketMessage<T>
+        where T : RocketMessage<T>
     {
         using var bytesPipe = new BytesPipe();
 
@@ -21,11 +21,11 @@ public static class RocketMessageConverter
             bytesPipe.Writer.Advance(readLength);
         }
 
-        return IRocketMessage<T>.Import(bytesPipe.Reader.GetSequence(), BytesPool.Shared);
+        return RocketMessage<T>.Import(bytesPipe.Reader.GetSequence(), BytesPool.Shared);
     }
 
     public static void ToStream<T>(T message, Stream stream)
-        where T : IRocketMessage<T>
+        where T : RocketMessage<T>
     {
         using var bytesPipe = new BytesPipe();
 
@@ -41,13 +41,13 @@ public static class RocketMessageConverter
     }
 
     public static T FromBytes<T>(ReadOnlyMemory<byte> memory)
-        where T : IRocketMessage<T>
+        where T : RocketMessage<T>
     {
-        return IRocketMessage<T>.Import(new ReadOnlySequence<byte>(memory), BytesPool.Shared);
+        return RocketMessage<T>.Import(new ReadOnlySequence<byte>(memory), BytesPool.Shared);
     }
 
     public static IMemoryOwner<byte> ToBytes<T>(T message)
-        where T : IRocketMessage<T>
+        where T : RocketMessage<T>
     {
         using var hub = new BytesPipe();
         message.Export(hub.Writer, BytesPool.Shared);

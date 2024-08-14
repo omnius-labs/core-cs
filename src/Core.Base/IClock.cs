@@ -1,6 +1,6 @@
 namespace Omnius.Core.Base;
 
-public interface ISystemClock
+public interface IClock
 {
     DateTime GetUtcNow();
 }

@@ -13,8 +13,8 @@ public class OmniAgreementTest : TestBase<OmniAgreementTest>
     [Fact]
     public void SimpleTest()
     {
-        var agreement1 = new OmniAgreement(DateTime.UtcNow, OmniAgreementAlgorithmType.EcDhP256);
-        var agreement2 = new OmniAgreement(DateTime.UtcNow, OmniAgreementAlgorithmType.EcDhP256);
+        var agreement1 = OmniAgreement.Create(DateTime.UtcNow, OmniAgreementAlgorithmType.X25519);
+        var agreement2 = OmniAgreement.Create(DateTime.UtcNow, OmniAgreementAlgorithmType.X25519);
 
         var publicKey1 = agreement1.GenAgreementPublicKey();
         var privateKey1 = agreement1.GenAgreementPrivateKey();
@@ -39,13 +39,13 @@ public class OmniAgreementTest : TestBase<OmniAgreementTest>
         var publicKey1 = new OmniAgreementPublicKey
         {
             CreatedTime = DateTime.UtcNow,
-            AlgorithmType = OmniAgreementAlgorithmType.EcDhP256,
+            AlgorithmType = OmniAgreementAlgorithmType.X25519,
             PublicKey = base16.StringToBytes("773e70d8b7809086c16b1a6f4c5993c24351e78a31e5f020b3bcaf3bae6fac1e"),
         };
         var privateKey2 = new OmniAgreementPrivateKey
         {
             CreatedTime = DateTime.UtcNow,
-            AlgorithmType = OmniAgreementAlgorithmType.EcDhP256,
+            AlgorithmType = OmniAgreementAlgorithmType.X25519,
             SecretKey = base16.StringToBytes("1931b4cad67708e8f525823025e4d6d7e805508e48051d148f0f61fd0801e712"),
         };
 

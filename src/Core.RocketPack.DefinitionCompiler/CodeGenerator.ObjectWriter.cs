@@ -9,7 +9,7 @@ internal partial class CodeGenerator
 {
     private sealed class ObjectWriter
     {
-        private const string CustomFormatterName = "___CustomFormatter";
+        private const string CustomSerializerName = "___CustomSerializer";
         private const string HashCodeName = "___hashCode";
 
         private readonly RocketPackDefinition _rootDefinition;
@@ -23,22 +23,11 @@ internal partial class CodeGenerator
 
         public void Write(CodeWriter b, ObjectDefinition objectDefinition, string accessLevel = "public")
         {
-            string? prefix;
-
-            if (objectDefinition.IsCSharpStruct)
-            {
-                prefix = "readonly partial struct";
-            }
-            else
-            {
-                prefix = "sealed partial class";
-            }
-
             var inheritances = new List<string>();
-            inheritances.Add(GenerateTypeFullName("IRocketMessage<>", objectDefinition.CSharpFullName));
+            inheritances.Add(GenerateTypeFullName("RocketMessage<>", objectDefinition.CSharpFullName));
             if (this.ShouldDispose(objectDefinition)) inheritances.Add(GenerateTypeFullName("IDisposable"));
 
-            b.WriteLine($"{accessLevel} {prefix} {objectDefinition.Name} : {string.Join(", ", inheritances)}");
+            b.WriteLine($"{accessLevel} sealed partial class {objectDefinition.Name} : {string.Join(", ", inheritances)}");
 
             b.WriteLine("{");
 
@@ -57,9 +46,6 @@ internal partial class CodeGenerator
                 }
 
                 this.Write_Properties(b, objectDefinition);
-                b.WriteLine();
-
-                this.Write_ImportAndExport(b, objectDefinition);
                 b.WriteLine();
 
                 this.Write_Equals(b, objectDefinition);
@@ -83,17 +69,13 @@ internal partial class CodeGenerator
         /// </summary>
         private void Write_StaticConstructor(CodeWriter b, ObjectDefinition objectDefinition)
         {
-            b.WriteLine($"public static {GenerateTypeFullName("IRocketMessageFormatter<>", objectDefinition.CSharpFullName)} Formatter => {GenerateTypeFullName("IRocketMessage<>", objectDefinition.CSharpFullName)}.Formatter;");
-            b.WriteLine($"public static {objectDefinition.CSharpFullName} Empty => {GenerateTypeFullName("IRocketMessage<>", objectDefinition.CSharpFullName)}.Empty;");
-            b.WriteLine();
-
             b.WriteLine($"static {objectDefinition.Name}()");
             b.WriteLine("{");
 
             using (b.Indent())
             {
-                // CustomFormatterのインスタンスの作成
-                this.Write_StaticConstructor_CustomFormatterProperty(b, objectDefinition);
+                // CustomSerializerのインスタンスの作成
+                this.Write_StaticConstructor_CustomSerializerProperty(b, objectDefinition);
 
                 // Emptyのインスタンスの作成
                 this.Write_StaticConstructor_EmptyProperty(b, objectDefinition);
@@ -102,9 +84,9 @@ internal partial class CodeGenerator
             b.WriteLine("}");
         }
 
-        private void Write_StaticConstructor_CustomFormatterProperty(CodeWriter b, ObjectDefinition objectDefinition)
+        private void Write_StaticConstructor_CustomSerializerProperty(CodeWriter b, ObjectDefinition objectDefinition)
         {
-            b.WriteLine($"{GenerateTypeFullName("IRocketMessage<>", objectDefinition.CSharpFullName)}.Formatter = new {CustomFormatterName}();");
+            b.WriteLine($"Formatter = new {CustomSerializerName}();");
         }
 
         private void Write_StaticConstructor_EmptyProperty(CodeWriter b, ObjectDefinition objectDefinition)
@@ -116,7 +98,7 @@ internal partial class CodeGenerator
                 parameters.Add(this.GetDefaultValueString(element.Type));
             }
 
-            b.WriteLine($"{GenerateTypeFullName("IRocketMessage<>", objectDefinition.CSharpFullName)}.Empty = new {objectDefinition.CSharpFullName}({string.Join(", ", parameters)});");
+            b.WriteLine($"Empty = new {objectDefinition.CSharpFullName}({string.Join(", ", parameters)});");
         }
 
         /// <summary>
@@ -124,14 +106,7 @@ internal partial class CodeGenerator
         /// </summary>
         private void Write_Constructor(CodeWriter b, ObjectDefinition objectDefinition)
         {
-            if (objectDefinition.IsCSharpStruct)
-            {
-                b.WriteLine($"private readonly int {HashCodeName};");
-            }
-            else if (objectDefinition.IsCSharpClass)
-            {
-                b.WriteLine($"private readonly {GenerateTypeFullName("Lazy<>", "int")} {HashCodeName};");
-            }
+            b.WriteLine($"private readonly {GenerateTypeFullName("Lazy<>", "int")} {HashCodeName};");
 
             b.WriteLine();
 
@@ -385,7 +360,7 @@ internal partial class CodeGenerator
                 case CustomType customType when !type.IsOptional:
                     switch (this.FindDefinition(customType))
                     {
-                        case ObjectDefinition objectDefinition when objectDefinition.IsCSharpClass:
+                        case ObjectDefinition objectDefinition:
                             b.WriteLine($"if ({name} is null) throw new {GenerateTypeFullName("ArgumentNullException")}(\"{name}\");");
                             return true;
                     }
@@ -447,43 +422,22 @@ internal partial class CodeGenerator
         {
             const string TempVariableName = "___h";
 
-            if (objectDefinition.IsCSharpStruct)
+            b.WriteLine($"{HashCodeName} = new {GenerateTypeFullName("Lazy<>", "int")}(() =>");
+            b.WriteLine("{");
+
+            using (b.Indent())
             {
-                b.WriteLine("{");
+                b.WriteLine($"var {TempVariableName} = new {GenerateTypeFullName("HashCode")}();");
 
-                using (b.Indent())
+                foreach (var elementInfo in objectDefinition.Elements)
                 {
-                    b.WriteLine($"var {TempVariableName} = new {GenerateTypeFullName("HashCode")}();");
-
-                    foreach (var elementInfo in objectDefinition.Elements)
-                    {
-                        this.Write_Constructor_HashCode_Element(b, TempVariableName, GenerateFieldVariableName(elementInfo.Name), elementInfo.Type);
-                    }
-
-                    b.WriteLine($"{HashCodeName} = {TempVariableName}.ToHashCode();");
+                    this.Write_Constructor_HashCode_Element(b, TempVariableName, GenerateFieldVariableName(elementInfo.Name), elementInfo.Type);
                 }
 
-                b.WriteLine("}");
+                b.WriteLine($"return {TempVariableName}.ToHashCode();");
             }
-            else
-            {
-                b.WriteLine($"{HashCodeName} = new {GenerateTypeFullName("Lazy<>", "int")}(() =>");
-                b.WriteLine("{");
 
-                using (b.Indent())
-                {
-                    b.WriteLine($"var {TempVariableName} = new {GenerateTypeFullName("HashCode")}();");
-
-                    foreach (var elementInfo in objectDefinition.Elements)
-                    {
-                        this.Write_Constructor_HashCode_Element(b, TempVariableName, GenerateFieldVariableName(elementInfo.Name), elementInfo.Type);
-                    }
-
-                    b.WriteLine($"return {TempVariableName}.ToHashCode();");
-                }
-
-                b.WriteLine("});");
-            }
+            b.WriteLine("});");
         }
 
         private void Write_Constructor_HashCode_Element(CodeWriter b, string hashCodeName, string parameterName, TypeBase type)
@@ -592,18 +546,7 @@ internal partial class CodeGenerator
                         case EnumDefinition:
                             b.WriteLine($"if ({parameterName} != default) {hashCodeName}.Add({parameterName}.GetHashCode());");
                             break;
-                        case ObjectDefinition objectDefinition when (objectDefinition.IsCSharpStruct):
-                            if (!customType.IsOptional)
-                            {
-                                b.WriteLine($"if ({parameterName} != default) {hashCodeName}.Add({parameterName}.GetHashCode());");
-                            }
-                            else
-                            {
-                                b.WriteLine($"if ({parameterName} is not null) {hashCodeName}.Add({parameterName}.Value.GetHashCode());");
-                            }
-
-                            break;
-                        case ObjectDefinition objectDefinition when (objectDefinition.IsCSharpClass):
+                        case ObjectDefinition objectDefinition:
                             b.WriteLine($"if ({parameterName} != default) {hashCodeName}.Add({parameterName}.GetHashCode());");
                             break;
                     }
@@ -637,78 +580,27 @@ internal partial class CodeGenerator
 
             b.WriteLine("}");
         }
-
-        private void Write_ImportAndExport(CodeWriter b, ObjectDefinition objectDefinition)
-        {
-            b.WriteLine($"public static {objectDefinition.CSharpFullName} Import({GenerateTypeFullName("ReadOnlySequence<>", "byte")} sequence, {GenerateTypeFullName("IBytesPool")} bytesPool)");
-            b.WriteLine("{");
-
-            using (b.Indent())
-            {
-                b.WriteLine($"var reader = new {GenerateTypeFullName("RocketMessageReader")}(sequence, bytesPool);");
-                b.WriteLine($"return Formatter.Deserialize(ref reader, 0);");
-            }
-
-            b.WriteLine("}");
-
-            b.WriteLine($"public void Export({GenerateTypeFullName("IBufferWriter<>", "byte")} bufferWriter, {GenerateTypeFullName("IBytesPool")} bytesPool)");
-            b.WriteLine("{");
-
-            using (b.Indent())
-            {
-                b.WriteLine($"var writer = new {GenerateTypeFullName("RocketMessageWriter")}(bufferWriter, bytesPool);");
-                b.WriteLine($"Formatter.Serialize(ref writer, this, 0);");
-            }
-
-            b.WriteLine("}");
-        }
-
         private void Write_Equals(CodeWriter b, ObjectDefinition objectDefinition)
         {
-            if (objectDefinition.IsCSharpStruct)
+            b.WriteLine($"public static bool operator ==({objectDefinition.CSharpFullName}? left, {objectDefinition.CSharpFullName}? right)");
+            b.WriteLine("{");
+
+            using (b.Indent())
             {
-                b.WriteLine($"public static bool operator ==({objectDefinition.CSharpFullName} left, {objectDefinition.CSharpFullName} right)");
-                b.WriteLine("{");
-
-                using (b.Indent())
-                {
-                    b.WriteLine("return right.Equals(left);");
-                }
-
-                b.WriteLine("}");
-
-                b.WriteLine($"public static bool operator !=({objectDefinition.CSharpFullName} left, {objectDefinition.CSharpFullName} right)");
-                b.WriteLine("{");
-
-                using (b.Indent())
-                {
-                    b.WriteLine("return !(left == right);");
-                }
-
-                b.WriteLine("}");
+                b.WriteLine("return (right is null) ? (left is null) : right.Equals(left);");
             }
-            else if (objectDefinition.IsCSharpClass)
+
+            b.WriteLine("}");
+
+            b.WriteLine($"public static bool operator !=({objectDefinition.CSharpFullName}? left, {objectDefinition.CSharpFullName}? right)");
+            b.WriteLine("{");
+
+            using (b.Indent())
             {
-                b.WriteLine($"public static bool operator ==({objectDefinition.CSharpFullName}? left, {objectDefinition.CSharpFullName}? right)");
-                b.WriteLine("{");
-
-                using (b.Indent())
-                {
-                    b.WriteLine("return (right is null) ? (left is null) : right.Equals(left);");
-                }
-
-                b.WriteLine("}");
-
-                b.WriteLine($"public static bool operator !=({objectDefinition.CSharpFullName}? left, {objectDefinition.CSharpFullName}? right)");
-                b.WriteLine("{");
-
-                using (b.Indent())
-                {
-                    b.WriteLine("return !(left == right);");
-                }
-
-                b.WriteLine("}");
+                b.WriteLine("return !(left == right);");
             }
+
+            b.WriteLine("}");
 
             b.WriteLine("public override bool Equals(object? other)");
             b.WriteLine("{");
@@ -721,24 +613,13 @@ internal partial class CodeGenerator
 
             b.WriteLine("}");
 
-            if (objectDefinition.IsCSharpStruct)
-            {
-                b.WriteLine($"public bool Equals({objectDefinition.CSharpFullName} target)");
-            }
-            else if (objectDefinition.IsCSharpClass)
-            {
-                b.WriteLine($"public bool Equals({objectDefinition.CSharpFullName}? target)");
-            }
-
+            b.WriteLine($"public override bool Equals({objectDefinition.CSharpFullName}? target)");
             b.WriteLine("{");
 
             using (b.Indent())
             {
-                if (objectDefinition.IsCSharpClass)
-                {
-                    b.WriteLine("if (target is null) return false;");
-                    b.WriteLine("if (object.ReferenceEquals(this, target)) return true;");
-                }
+                b.WriteLine("if (target is null) return false;");
+                b.WriteLine("if (object.ReferenceEquals(this, target)) return true;");
 
                 foreach (var element in objectDefinition.Elements)
                 {
@@ -813,19 +694,7 @@ internal partial class CodeGenerator
                                 case EnumDefinition enumInfo:
                                     b.WriteLine($"if (this.{element.Name} != target.{element.Name}) return false;");
                                     break;
-                                case ObjectDefinition objectDefinition2 when (objectDefinition2.IsCSharpStruct):
-                                    if (!type.IsOptional)
-                                    {
-                                        b.WriteLine($"if (this.{element.Name} != target.{element.Name}) return false;");
-                                    }
-                                    else
-                                    {
-                                        b.WriteLine($"if ((this.{element.Name} is null) != (target.{element.Name} is null)) return false;");
-                                        b.WriteLine($"if ((this.{element.Name} is not null) && (target.{element.Name} is not null) && this.{element.Name} != target.{element.Name}) return false;");
-                                    }
-
-                                    break;
-                                case ObjectDefinition objectDefinition2 when (objectDefinition2.IsCSharpClass):
+                                case ObjectDefinition objectDefinition2:
                                     if (!type.IsOptional)
                                     {
                                         b.WriteLine($"if (this.{element.Name} != target.{element.Name}) return false;");
@@ -850,14 +719,7 @@ internal partial class CodeGenerator
 
             b.WriteLine("}");
 
-            if (objectDefinition.IsCSharpStruct)
-            {
-                b.WriteLine($"public override int GetHashCode() => {HashCodeName};");
-            }
-            else if (objectDefinition.IsCSharpClass)
-            {
-                b.WriteLine($"public override int GetHashCode() => {HashCodeName}.Value;");
-            }
+            b.WriteLine($"public override int GetHashCode() => {HashCodeName}.Value;");
         }
 
         private void Write_Properties(CodeWriter b, ObjectDefinition objectDefinition)
@@ -870,7 +732,7 @@ internal partial class CodeGenerator
 
         private void Write_Medium_Formatter(CodeWriter b, ObjectDefinition objectDefinition)
         {
-            b.WriteLine($"private sealed class {CustomFormatterName} : {GenerateTypeFullName("IRocketMessageFormatter<>", objectDefinition.CSharpFullName)}");
+            b.WriteLine($"private sealed class {CustomSerializerName} : {GenerateTypeFullName("IRocketMessageSerializer<>", objectDefinition.CSharpFullName)}");
             b.WriteLine("{");
 
             using (b.Indent())
@@ -884,12 +746,12 @@ internal partial class CodeGenerator
 
         private void Write_Medium_Formatter_Serialize(CodeWriter b, ObjectDefinition objectDefinition)
         {
-            b.WriteLine($"public void Serialize(ref {GenerateTypeFullName("RocketMessageWriter")} w, scoped in {objectDefinition.CSharpFullName} value, scoped in int rank)");
+            b.WriteLine($"public void Serialize(ref {GenerateTypeFullName("RocketMessageWriter")} w, scoped in {objectDefinition.CSharpFullName} value, scoped in int depth)");
             b.WriteLine("{");
 
             using (b.Indent())
             {
-                b.WriteLine($"if (rank > 256) throw new {GenerateTypeFullName("FormatException")}();");
+                b.WriteLine($"if (depth > 256) throw new {GenerateTypeFullName("FormatException")}();");
                 b.WriteLine();
 
                 foreach (var (index, element) in objectDefinition.Elements.Select((n, i) => (i + 1, n)))
@@ -907,7 +769,7 @@ internal partial class CodeGenerator
             b.WriteLine("}");
         }
 
-        private void Write_Medium_Formatter_Serialize_PropertyDef(CodeWriter b, string name, TypeBase type, int rank)
+        private void Write_Medium_Formatter_Serialize_PropertyDef(CodeWriter b, string name, TypeBase type, int depth)
         {
             switch (type)
             {
@@ -987,7 +849,7 @@ internal partial class CodeGenerator
 
                     using (b.Indent())
                     {
-                        this.Write_Medium_Formatter_Serialize_PropertyDef(b, "n", listType.ElementType, rank + 1);
+                        this.Write_Medium_Formatter_Serialize_PropertyDef(b, "n", listType.ElementType, depth + 1);
                     }
 
                     b.WriteLine("}");
@@ -1000,8 +862,8 @@ internal partial class CodeGenerator
 
                     using (b.Indent())
                     {
-                        this.Write_Medium_Formatter_Serialize_PropertyDef(b, "n.Key", mapType.KeyType, rank + 1);
-                        this.Write_Medium_Formatter_Serialize_PropertyDef(b, "n.Value", mapType.ValueType, rank + 1);
+                        this.Write_Medium_Formatter_Serialize_PropertyDef(b, "n.Key", mapType.KeyType, depth + 1);
+                        this.Write_Medium_Formatter_Serialize_PropertyDef(b, "n.Value", mapType.ValueType, depth + 1);
                     }
 
                     b.WriteLine("}");
@@ -1038,19 +900,8 @@ internal partial class CodeGenerator
                             }
 
                             break;
-                        case ObjectDefinition objectDefinition when (objectDefinition.IsCSharpStruct):
-                            if (!type.IsOptional)
-                            {
-                                b.WriteLine($"{objectDefinition.CSharpFullName}.Formatter.Serialize(ref w, {name}, rank + 1);");
-                            }
-                            else
-                            {
-                                b.WriteLine($"{objectDefinition.CSharpFullName}.Formatter.Serialize(ref w, {name}.Value, rank + 1);");
-                            }
-
-                            break;
-                        case ObjectDefinition objectDefinition when (objectDefinition.IsCSharpClass):
-                            b.WriteLine($"{objectDefinition.CSharpFullName}.Formatter.Serialize(ref w, {name}, rank + 1);");
+                        case ObjectDefinition objectDefinition:
+                            b.WriteLine($"{objectDefinition.CSharpFullName}.Formatter.Serialize(ref w, {name}, depth + 1);");
                             break;
                     }
 
@@ -1060,12 +911,12 @@ internal partial class CodeGenerator
 
         private void Write_Medium_Formatter_Deserialize(CodeWriter b, ObjectDefinition objectDefinition)
         {
-            b.WriteLine($"public {objectDefinition.CSharpFullName} Deserialize(ref {GenerateTypeFullName("RocketMessageReader")} r, scoped in int rank)");
+            b.WriteLine($"public {objectDefinition.CSharpFullName} Deserialize(ref {GenerateTypeFullName("RocketMessageReader")} r, scoped in int depth)");
             b.WriteLine("{");
 
             using (b.Indent())
             {
-                b.WriteLine($"if (rank > 256) throw new {GenerateTypeFullName("FormatException")}();");
+                b.WriteLine($"if (depth > 256) throw new {GenerateTypeFullName("FormatException")}();");
                 b.WriteLine();
 
                 foreach (var element in objectDefinition.Elements)
@@ -1119,7 +970,7 @@ internal partial class CodeGenerator
             b.WriteLine("}");
         }
 
-        private void Write_Medium_Formatter_Deserialize_PropertyDef(CodeWriter b, string name, TypeBase type, int rank)
+        private void Write_Medium_Formatter_Deserialize_PropertyDef(CodeWriter b, string name, TypeBase type, int depth)
         {
             switch (type)
             {
@@ -1157,7 +1008,7 @@ internal partial class CodeGenerator
 
                         using (b.Indent())
                         {
-                            this.Write_Medium_Formatter_Deserialize_PropertyDef(b, $"{name}[i]", listType.ElementType, rank + 1);
+                            this.Write_Medium_Formatter_Deserialize_PropertyDef(b, $"{name}[i]", listType.ElementType, depth + 1);
                         }
 
                         b.WriteLine("}");
@@ -1176,8 +1027,8 @@ internal partial class CodeGenerator
 
                         using (b.Indent())
                         {
-                            this.Write_Medium_Formatter_Deserialize_PropertyDef(b, "t_key", mapType.KeyType, rank + 1);
-                            this.Write_Medium_Formatter_Deserialize_PropertyDef(b, "t_value", mapType.ValueType, rank + 1);
+                            this.Write_Medium_Formatter_Deserialize_PropertyDef(b, "t_key", mapType.KeyType, depth + 1);
+                            this.Write_Medium_Formatter_Deserialize_PropertyDef(b, "t_value", mapType.ValueType, depth + 1);
                             b.WriteLine($"{name}[t_key] = t_value;");
                         }
 
@@ -1200,11 +1051,8 @@ internal partial class CodeGenerator
                             }
 
                             break;
-                        case ObjectDefinition objectDefinition when (objectDefinition.IsCSharpStruct):
-                            b.WriteLine($"{name} = {objectDefinition.CSharpFullName}.Formatter.Deserialize(ref r, rank + 1);");
-                            break;
-                        case ObjectDefinition objectDefinition when (objectDefinition.IsCSharpClass):
-                            b.WriteLine($"{name} = {objectDefinition.CSharpFullName}.Formatter.Deserialize(ref r, rank + 1);");
+                        case ObjectDefinition objectDefinition:
+                            b.WriteLine($"{name} = {objectDefinition.CSharpFullName}.Formatter.Deserialize(ref r, depth + 1);");
                             break;
                     }
 
@@ -1214,7 +1062,7 @@ internal partial class CodeGenerator
 
         private void Write_Small_Formatter(CodeWriter b, ObjectDefinition objectDefinition)
         {
-            b.WriteLine($"private sealed class ___CustomFormatter : {GenerateTypeFullName("IRocketMessageFormatter<>", objectDefinition.CSharpFullName)}");
+            b.WriteLine($"private sealed class ___CustomSerializer : {GenerateTypeFullName("IRocketMessageSerializer<>", objectDefinition.CSharpFullName)}");
             b.WriteLine("{");
 
             using (b.Indent())
@@ -1228,12 +1076,12 @@ internal partial class CodeGenerator
 
         private void Write_Small_Formatter_Serialize(CodeWriter b, ObjectDefinition objectDefinition)
         {
-            b.WriteLine($"public void Serialize(ref {GenerateTypeFullName("RocketMessageWriter")} w, scoped in {objectDefinition.CSharpFullName} value, scoped in int rank)");
+            b.WriteLine($"public void Serialize(ref {GenerateTypeFullName("RocketMessageWriter")} w, scoped in {objectDefinition.CSharpFullName} value, scoped in int depth)");
             b.WriteLine("{");
 
             using (b.Indent())
             {
-                b.WriteLine($"if (rank > 256) throw new {GenerateTypeFullName("FormatException")}();");
+                b.WriteLine($"if (depth > 256) throw new {GenerateTypeFullName("FormatException")}();");
                 b.WriteLine();
 
                 foreach (var element in objectDefinition.Elements)
@@ -1245,7 +1093,7 @@ internal partial class CodeGenerator
             b.WriteLine("}");
         }
 
-        private void Write_Small_Formatter_Serialize_PropertyDef(CodeWriter b, string name, TypeBase type, int rank)
+        private void Write_Small_Formatter_Serialize_PropertyDef(CodeWriter b, string name, TypeBase type, int depth)
         {
             switch (type)
             {
@@ -1326,7 +1174,7 @@ internal partial class CodeGenerator
 
                         using (b.Indent())
                         {
-                            this.Write_Small_Formatter_Serialize_PropertyDef(b, "n", listType.ElementType, rank + 1);
+                            this.Write_Small_Formatter_Serialize_PropertyDef(b, "n", listType.ElementType, depth + 1);
                         }
 
                         b.WriteLine("}");
@@ -1341,8 +1189,8 @@ internal partial class CodeGenerator
 
                         using (b.Indent())
                         {
-                            this.Write_Small_Formatter_Serialize_PropertyDef(b, "n.Key", mapType.KeyType, rank + 1);
-                            this.Write_Small_Formatter_Serialize_PropertyDef(b, "n.Value", mapType.ValueType, rank + 1);
+                            this.Write_Small_Formatter_Serialize_PropertyDef(b, "n.Key", mapType.KeyType, depth + 1);
+                            this.Write_Small_Formatter_Serialize_PropertyDef(b, "n.Value", mapType.ValueType, depth + 1);
                         }
 
                         b.WriteLine("}");
@@ -1380,19 +1228,8 @@ internal partial class CodeGenerator
                             }
 
                             break;
-                        case ObjectDefinition objectDefinition when (objectDefinition.IsCSharpStruct):
-                            if (!customType.IsOptional)
-                            {
-                                b.WriteLine($"{objectDefinition.CSharpFullName}.Formatter.Serialize(ref w, {name}, rank + 1);");
-                            }
-                            else
-                            {
-                                b.WriteLine($"{objectDefinition.CSharpFullName}.Formatter.Serialize(ref w, {name}.Value, rank + 1);");
-                            }
-
-                            break;
-                        case ObjectDefinition objectDefinition when (objectDefinition.IsCSharpClass):
-                            b.WriteLine($"{objectDefinition.CSharpFullName}.Formatter.Serialize(ref w, {name}, rank + 1);");
+                        case ObjectDefinition objectDefinition:
+                            b.WriteLine($"{objectDefinition.CSharpFullName}.Formatter.Serialize(ref w, {name}, depth + 1);");
                             break;
                     }
 
@@ -1402,12 +1239,12 @@ internal partial class CodeGenerator
 
         private void Write_Small_Formatter_Deserialize(CodeWriter b, ObjectDefinition objectDefinition)
         {
-            b.WriteLine($"public {objectDefinition.CSharpFullName} Deserialize(ref {GenerateTypeFullName("RocketMessageReader")} r, scoped in int rank)");
+            b.WriteLine($"public {objectDefinition.CSharpFullName} Deserialize(ref {GenerateTypeFullName("RocketMessageReader")} r, scoped in int depth)");
             b.WriteLine("{");
 
             using (b.Indent())
             {
-                b.WriteLine($"if (rank > 256) throw new {GenerateTypeFullName("FormatException")}();");
+                b.WriteLine($"if (depth > 256) throw new {GenerateTypeFullName("FormatException")}();");
                 b.WriteLine();
 
                 foreach (var elementInfo in objectDefinition.Elements)
@@ -1435,7 +1272,7 @@ internal partial class CodeGenerator
             b.WriteLine("}");
         }
 
-        private void Write_Small_Formatter_Deserialize_PropertyDef(CodeWriter b, string name, TypeBase type, int rank)
+        private void Write_Small_Formatter_Deserialize_PropertyDef(CodeWriter b, string name, TypeBase type, int depth)
         {
             switch (type)
             {
@@ -1473,7 +1310,7 @@ internal partial class CodeGenerator
 
                         using (b.Indent())
                         {
-                            this.Write_Small_Formatter_Deserialize_PropertyDef(b, $"{name}[i]", listType.ElementType, rank + 1);
+                            this.Write_Small_Formatter_Deserialize_PropertyDef(b, $"{name}[i]", listType.ElementType, depth + 1);
                         }
 
                         b.WriteLine("}");
@@ -1492,8 +1329,8 @@ internal partial class CodeGenerator
 
                         using (b.Indent())
                         {
-                            this.Write_Small_Formatter_Deserialize_PropertyDef(b, "t_key", mapType.KeyType, rank + 1);
-                            this.Write_Small_Formatter_Deserialize_PropertyDef(b, "t_value", mapType.ValueType, rank + 1);
+                            this.Write_Small_Formatter_Deserialize_PropertyDef(b, "t_key", mapType.KeyType, depth + 1);
+                            this.Write_Small_Formatter_Deserialize_PropertyDef(b, "t_value", mapType.ValueType, depth + 1);
                             b.WriteLine($"{name}[t_key] = t_value;");
                         }
 
@@ -1516,11 +1353,8 @@ internal partial class CodeGenerator
                             }
 
                             break;
-                        case ObjectDefinition objectDefinition when (objectDefinition.IsCSharpStruct):
-                            b.WriteLine($"{name} = {objectDefinition.CSharpFullName}.Formatter.Deserialize(ref r, rank + 1);");
-                            break;
-                        case ObjectDefinition objectDefinition when (objectDefinition.IsCSharpClass):
-                            b.WriteLine($"{name} = {objectDefinition.CSharpFullName}.Formatter.Deserialize(ref r, rank + 1);");
+                        case ObjectDefinition objectDefinition:
+                            b.WriteLine($"{name} = {objectDefinition.CSharpFullName}.Formatter.Deserialize(ref r, depth + 1);");
                             break;
                     }
 
@@ -1671,7 +1505,7 @@ internal partial class CodeGenerator
 
                             break;
                         default:
-                            throw new ArgumentException($"Type \"{type.TypeName}\" was not found", nameof(element));
+                            throw new ArgumentException($"Type \"{type.Type}\" was not found", nameof(element));
                     }
 
                     break;
@@ -1700,7 +1534,7 @@ internal partial class CodeGenerator
 
         private object? FindDefinition(CustomType customType)
         {
-            bool isFullName = customType.TypeName.Contains(".", StringComparison.InvariantCulture);
+            bool isFullName = customType.Type.Contains(".", StringComparison.InvariantCulture);
 
             if (isFullName)
             {
@@ -1716,12 +1550,12 @@ internal partial class CodeGenerator
                 if (result is not null) return result;
             }
 
-            throw ThrowHelper.CreateRocketPackDefinitionCompilerException_DefinitionNotFound(customType.TypeName);
+            throw ThrowHelper.CreateRocketPackDefinitionCompilerException_DefinitionNotFound(customType.Type);
 
             object? FindDefsForRootByName(CustomType customType)
             {
-                var enumDefinitions = _rootDefinition.Enums.Where(m => m.Name == customType.TypeName).ToArray();
-                var objectDefinitions = _rootDefinition.Objects.Where(m => m.Name == customType.TypeName).ToArray();
+                var enumDefinitions = _rootDefinition.Enums.Where(m => m.Name == customType.Type).ToArray();
+                var objectDefinitions = _rootDefinition.Objects.Where(m => m.Name == customType.Type).ToArray();
                 return Validate(enumDefinitions.Union<object>(objectDefinitions));
             }
 
@@ -1731,8 +1565,8 @@ internal partial class CodeGenerator
 
                 foreach (var definition in _externalDefinitions)
                 {
-                    var enumDefinitions = definition.Enums.Where(m => m.Name == customType.TypeName).ToArray();
-                    var objectDefinitions = definition.Objects.Where(m => m.Name == customType.TypeName).ToArray();
+                    var enumDefinitions = definition.Enums.Where(m => m.Name == customType.Type).ToArray();
+                    var objectDefinitions = definition.Objects.Where(m => m.Name == customType.Type).ToArray();
                     results.AddRange(enumDefinitions.Union<object>(objectDefinitions));
                 }
 
@@ -1745,8 +1579,8 @@ internal partial class CodeGenerator
 
                 foreach (var definition in new[] { _rootDefinition }.Union(_externalDefinitions))
                 {
-                    var enumDefinitions = definition.Enums.Where(m => m.FullName == customType.TypeName).ToArray();
-                    var objectDefinitions = definition.Objects.Where(m => m.FullName == customType.TypeName).ToArray();
+                    var enumDefinitions = definition.Enums.Where(m => m.FullName == customType.Type).ToArray();
+                    var objectDefinitions = definition.Objects.Where(m => m.FullName == customType.Type).ToArray();
                     results.AddRange(enumDefinitions.Union<object>(objectDefinitions));
                 }
 
@@ -1757,7 +1591,7 @@ internal partial class CodeGenerator
             {
                 int count = results.Count();
 
-                if (count > 1) throw ThrowHelper.CreateRocketPackDefinitionCompilerException_NotOneDefinitionFound(customType.TypeName);
+                if (count > 1) throw ThrowHelper.CreateRocketPackDefinitionCompilerException_NotOneDefinitionFound(customType.Type);
 
                 return results.FirstOrDefault();
             }
@@ -1800,7 +1634,7 @@ internal partial class CodeGenerator
                     EnumDefinition enumDefinition => enumDefinition.CSharpFullName + (type.IsOptional ? "?" : ""),
                     ObjectDefinition objectDefinition when (objectDefinition.FormatType == ObjectFormatType.Message) => objectDefinition.CSharpFullName + (type.IsOptional ? "?" : ""),
                     ObjectDefinition objectDefinition when (objectDefinition.FormatType == ObjectFormatType.Struct) => objectDefinition.CSharpFullName + (type.IsOptional ? "?" : ""),
-                    _ => throw new ArgumentException($"Type \"{type.TypeName}\" was not found", nameof(typeBase)),
+                    _ => throw new ArgumentException($"Type \"{type.Type}\" was not found", nameof(typeBase)),
                 },
                 _ => throw new ArgumentException($"Type \"{typeBase.GetType().Name}\" was not found", nameof(typeBase)),
             };
@@ -1824,7 +1658,7 @@ internal partial class CodeGenerator
                 {
                     EnumDefinition elementEnumDefinition => type.IsOptional ? "null" : $"({elementEnumDefinition.CSharpFullName})0",
                     ObjectDefinition elementMessageDefinition => type.IsOptional ? "null" : $"{elementMessageDefinition.CSharpFullName}.Empty",
-                    _ => throw new ArgumentException($"Type \"{type.TypeName}\" was not found", nameof(typeBase)),
+                    _ => throw new ArgumentException($"Type \"{type.Type}\" was not found", nameof(typeBase)),
                 },
                 _ => throw new ArgumentException($"Type \"{typeBase.GetType().Name}\" was not found", nameof(typeBase)),
             };

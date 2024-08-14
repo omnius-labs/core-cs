@@ -10,6 +10,9 @@ public record class OmniAddress
 {
     public required string Value { get; init; }
 
+    public static explicit operator OmniAddress(string s) => new OmniAddress { Value = s };
+    public static explicit operator string(OmniAddress address) => address.Value;
+
     public static OmniAddress CreateI2p(string address)
     {
         return new OmniAddress { Value = $"i2p({address})" };

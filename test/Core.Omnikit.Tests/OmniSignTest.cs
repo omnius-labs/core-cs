@@ -7,14 +7,14 @@ using Xunit.Abstractions;
 
 namespace Omnius.Core.Omnikit;
 
-public class omniSignTest : TestBase<omniSignTest>
+public class OmniSignTest : TestBase<OmniSignTest>
 {
-    public omniSignTest(ITestOutputHelper output) : base(output) { }
+    public OmniSignTest(ITestOutputHelper output) : base(output) { }
 
     [Fact]
     public void SimpleTest()
     {
-        var signer = new OmniSigner(OmniSignType.Ed25519_Sha3_256_Base64Url, "test_user");
+        var signer = OmniSigner.Create(OmniSignType.Ed25519_Sha3_256_Base64Url, "test_user");
         var signature = signer.Sign("test"u8.ToArray());
 
         Console.WriteLine(signer);

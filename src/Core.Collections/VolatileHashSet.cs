@@ -8,7 +8,7 @@ public class VolatileHashSet<T> : AsyncDisposableBase, ISet<T>, ICollection<T>, 
 {
     private readonly Dictionary<T, DateTime> _map;
     private readonly TimeSpan _survivalInterval;
-    private readonly ISystemClock _systemClock;
+    private readonly IClock _clock;
 
     private readonly CancellationTokenSource _cancellationTokenSource;
     private readonly PeriodicTimer _reaperTimer;
@@ -16,16 +16,16 @@ public class VolatileHashSet<T> : AsyncDisposableBase, ISet<T>, ICollection<T>, 
 
     private readonly object _lockObject = new();
 
-    public VolatileHashSet(TimeSpan survivalInterval, TimeSpan reapingInterval, ISystemClock systemClock)
+    public VolatileHashSet(TimeSpan survivalInterval, TimeSpan reapingInterval, IClock systemClock)
         : this(survivalInterval, reapingInterval, EqualityComparer<T>.Default, systemClock)
     {
     }
 
-    public VolatileHashSet(TimeSpan survivalInterval, TimeSpan reapingInterval, IEqualityComparer<T> comparer, ISystemClock systemClock)
+    public VolatileHashSet(TimeSpan survivalInterval, TimeSpan reapingInterval, IEqualityComparer<T> comparer, IClock systemClock)
     {
         _map = new Dictionary<T, DateTime>(comparer);
         _survivalInterval = survivalInterval;
-        _systemClock = systemClock;
+        _clock = systemClock;
 
         _cancellationTokenSource = new CancellationTokenSource();
         _reaperTimer = new PeriodicTimer(reapingInterval);
@@ -55,7 +55,7 @@ public class VolatileHashSet<T> : AsyncDisposableBase, ISet<T>, ICollection<T>, 
     {
         lock (_lockObject)
         {
-            var now = _systemClock.GetUtcNow();
+            var now = _clock.GetUtcNow();
 
             var removingKeys = new List<T>();
 
@@ -94,7 +94,7 @@ public class VolatileHashSet<T> : AsyncDisposableBase, ISet<T>, ICollection<T>, 
         {
             if (!_map.TryGetValue(item, out var updatedTime)) return _survivalInterval;
 
-            var now = _systemClock.GetUtcNow();
+            var now = _clock.GetUtcNow();
             return (now - updatedTime);
         }
     }
@@ -126,7 +126,7 @@ public class VolatileHashSet<T> : AsyncDisposableBase, ISet<T>, ICollection<T>, 
         lock (_lockObject)
         {
             int count = _map.Count;
-            _map[item] = _systemClock.GetUtcNow();
+            _map[item] = _clock.GetUtcNow();
 
             return (count != _map.Count);
         }
@@ -195,7 +195,7 @@ public class VolatileHashSet<T> : AsyncDisposableBase, ISet<T>, ICollection<T>, 
     {
         lock (_lockObject)
         {
-            var now = _systemClock.GetUtcNow();
+            var now = _clock.GetUtcNow();
 
             foreach (var value in other)
             {

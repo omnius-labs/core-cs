@@ -42,12 +42,6 @@ internal partial class CodeGenerator
             {
                 objectWriter.Write(b, objectDefinition, accessLevel);
             }
-
-            var serviceWriter = new ServiceWriter(_rootDefinition, _externalDefinitions);
-            foreach (var serviceDefinition in _rootDefinition.Services)
-            {
-                serviceWriter.Write(b, serviceDefinition, accessLevel);
-            }
         }
 
         return b.ToString();
@@ -82,9 +76,8 @@ internal partial class CodeGenerator
             "ImmutableDictionary<,>" => $"System.Collections.Immutable.ImmutableDictionary<{@params[0]}, {@params[1]}>",
             "ImmutableList" => $"System.Collections.Immutable.ImmutableList",
             "ImmutableList<>" => $"System.Collections.Immutable.ImmutableList<{@params[0]}>",
-            "IRocketMessage" => $"Omnius.Core.RocketPack.IRocketMessage<{@params[0]}>",
-            "IRocketMessage<>" => $"Omnius.Core.RocketPack.IRocketMessage<{@params[0]}>",
-            "IRocketMessageFormatter<>" => $"Omnius.Core.RocketPack.IRocketMessageFormatter<{@params[0]}>",
+            "RocketMessage<>" => $"Omnius.Core.RocketPack.RocketMessage<{@params[0]}>",
+            "IRocketMessageSerializer<>" => $"Omnius.Core.RocketPack.IRocketMessageSerializer<{@params[0]}>",
             "IRocketRemotingCallerFactory" => $"Omnius.Core.RocketPack.Remoting.IRocketRemotingCallerFactory<{@params[0]}>",
             "IRocketRemotingListenerFactory" => $"Omnius.Core.RocketPack.Remoting.IRocketRemotingListenerFactory<{@params[0]}>",
             "Lazy<>" => $"System.Lazy<{@params[0]}>",

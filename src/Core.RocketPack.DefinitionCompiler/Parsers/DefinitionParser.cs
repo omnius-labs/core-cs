@@ -34,21 +34,21 @@ internal static class DefinitionParser
         from name in _nameParser.TokenWithSkipComment()
         from value in ExpressionParser.GetParser()
         from semicolon in Parse.Char(';').TokenWithSkipComment()
-        select new OptionDefinition(name, value.Compile().Invoke());
+        select new OptionDefinition { Name = name, Value = value.Compile().Invoke() };
 
     // example: using "RocketPack.Messages";
     private static readonly Parser<UsingDefinition> _usingParser =
         from keyword in Parse.String("using").TokenWithSkipComment()
         from value in _stringLiteralParser.TokenWithSkipComment()
         from semicolon in Parse.Char(';').TokenWithSkipComment()
-        select new UsingDefinition(value);
+        select new UsingDefinition { Value = value };
 
     // example: namespace "RocketPack.Messages";
     private static readonly Parser<NamespaceDefinition> _namespaceParser =
         from keyword in Parse.String("namespace").TokenWithSkipComment()
         from value in _stringLiteralParser.TokenWithSkipComment()
         from semicolon in Parse.Char(';').TokenWithSkipComment()
-        select new NamespaceDefinition(value);
+        select new NamespaceDefinition { Value = value };
 
     // example: [csharp_recyclable]
     private static readonly Parser<string> _attributeParser =
@@ -77,41 +77,41 @@ internal static class DefinitionParser
         from type in Parse.String("int")
         from size in Parse.Decimal
         from isOptional in Parse.Char('?').Then(n => Parse.Return(true)).Or(Parse.Return(false)).TokenWithSkipComment()
-        select new IntType(isSigned, int.Parse(size, CultureInfo.InvariantCulture), isOptional);
+        select new IntType { IsSigned = isSigned, Size = int.Parse(size, CultureInfo.InvariantCulture), IsOptional = isOptional };
 
     private static readonly Parser<BoolType> _boolTypeParser =
         from type in Parse.String("bool").TokenWithSkipComment()
         from isOptional in Parse.Char('?').Then(n => Parse.Return(true)).Or(Parse.Return(false)).TokenWithSkipComment()
-        select new BoolType(isOptional);
+        select new BoolType { IsOptional = isOptional };
 
     private static readonly Parser<FloatType> _floatTypeParser =
         from type in Parse.String("float").TokenWithSkipComment()
         from size in Parse.Decimal.TokenWithSkipComment()
         from isOptional in Parse.Char('?').Then(n => Parse.Return(true)).Or(Parse.Return(false)).TokenWithSkipComment()
-        select new FloatType(int.Parse(size, CultureInfo.InvariantCulture), isOptional);
+        select new FloatType { Size = int.Parse(size, CultureInfo.InvariantCulture), IsOptional = isOptional };
 
     private static readonly Parser<StringType> _stringTypeParser =
         from type in Parse.String("string").TokenWithSkipComment()
         from isOptional in Parse.Char('?').Then(n => Parse.Return(true)).Or(Parse.Return(false)).TokenWithSkipComment()
         from parameters in _parametersParser.Or(Parse.Return(new Dictionary<string, object>())).TokenWithSkipComment()
-        select new StringType(isOptional, parameters);
+        select new StringType { IsOptional = isOptional, Parameters = parameters };
 
     private static readonly Parser<TimestampType> _timestampTypeParser =
         from type in Parse.String("timestamp")
         from size in Parse.Decimal
         from isOptional in Parse.Char('?').Then(n => Parse.Return(true)).Or(Parse.Return(false)).TokenWithSkipComment()
-        select new TimestampType(int.Parse(size, CultureInfo.InvariantCulture), isOptional);
+        select new TimestampType { Size = int.Parse(size, CultureInfo.InvariantCulture), IsOptional = isOptional };
 
     private static readonly Parser<BytesType> _memoryTypeParser =
         from type in Parse.String("bytes").TokenWithSkipComment()
         from isOptional in Parse.Char('?').Then(n => Parse.Return(true)).Or(Parse.Return(false)).TokenWithSkipComment()
         from parameters in _parametersParser.Or(Parse.Return(new Dictionary<string, object>())).TokenWithSkipComment()
-        select new BytesType(isOptional, parameters);
+        select new BytesType { IsOptional = isOptional, Parameters = parameters };
 
     private static readonly Parser<CustomType> _customTypeParser =
         from type in _nameParser.Text()
         from isOptional in Parse.Char('?').Then(n => Parse.Return(true)).Or(Parse.Return(false)).TokenWithSkipComment()
-        select new CustomType(type, isOptional);
+        select new CustomType { Type = type, IsOptional = isOptional };
 
     private static readonly Parser<VectorType> _vectorTypeParser =
         from type in Parse.String("vector").TokenWithSkipComment()
@@ -126,7 +126,7 @@ internal static class DefinitionParser
         from endType in Parse.String(">").TokenWithSkipComment()
         from isOptional in Parse.Char('?').Then(n => Parse.Return(true)).Or(Parse.Return(false)).TokenWithSkipComment()
         from parameters in _parametersParser.Or(Parse.Return(new Dictionary<string, object>())).TokenWithSkipComment()
-        select new VectorType(elementType, isOptional, parameters);
+        select new VectorType { ElementType = elementType, IsOptional = isOptional, Parameters = parameters };
 
     private static readonly Parser<MapType> _mapTypeParser =
         from type in Parse.String("map").TokenWithSkipComment()
@@ -149,7 +149,7 @@ internal static class DefinitionParser
         from endType in Parse.Char('>').TokenWithSkipComment()
         from isOptional in Parse.Char('?').Then(n => Parse.Return(true)).Or(Parse.Return(false)).TokenWithSkipComment()
         from parameters in _parametersParser.Or(Parse.Return(new Dictionary<string, object>())).TokenWithSkipComment()
-        select new MapType(keyType, valueType, isOptional, parameters);
+        select new MapType { KeyType = keyType, ValueType = valueType, IsOptional = isOptional, Parameters = parameters };
 
     private static readonly Parser<EnumElement> _enumElementParser =
         from attributes in _attributeParser.XMany().TokenWithSkipComment()
@@ -157,7 +157,7 @@ internal static class DefinitionParser
         from equal in Parse.Char('=').TokenWithSkipComment()
         from id in Parse.Decimal.TokenWithSkipComment()
         from comma in Parse.Char(',').TokenWithSkipComment()
-        select new EnumElement(attributes.ToList(), name, int.Parse(id, CultureInfo.InvariantCulture));
+        select new EnumElement { Attributes = attributes.ToList(), Name = name, Id = int.Parse(id, CultureInfo.InvariantCulture) };
 
     private static readonly Parser<EnumDefinition> _enumDefinitionParser =
         (from attributes in _attributeParser.XMany().TokenWithSkipComment()
@@ -166,9 +166,9 @@ internal static class DefinitionParser
          from colon in Parse.Char(':').TokenWithSkipComment()
          from type in _intTypeParser
          from beginTag in Parse.Char('{').TokenWithSkipComment()
-         from enumProperties in _enumElementParser.Except(Parse.Char('}')).XMany().TokenWithSkipComment()
+         from enumElements in _enumElementParser.Except(Parse.Char('}')).XMany().TokenWithSkipComment()
          from endTag in Parse.Char('}').TokenWithSkipComment()
-         select new EnumDefinition(attributes.ToList(), name, type, enumProperties.ToList())).Named("enum");
+         select new EnumDefinition { Attributes = attributes.ToList(), Name = name, Type = type, Elements = enumElements.ToList() }).Named("enum");
 
     private static readonly Parser<ObjectElement> _objectElementParser =
         from attributes in _attributeParser.XMany().TokenWithSkipComment()
@@ -184,7 +184,7 @@ internal static class DefinitionParser
             .Or(_mapTypeParser)
             .Or(_customTypeParser).TokenWithSkipComment()
         from comma in Parse.Char(',').TokenWithSkipComment()
-        select new ObjectElement(attributes.ToList(), name, type);
+        select new ObjectElement { Attributes = attributes.ToList(), Name = name, Type = type };
 
     private static readonly Parser<ObjectDefinition> _objectDefinitionParser =
         from attributes in _attributeParser.XMany().TokenWithSkipComment()
@@ -193,44 +193,22 @@ internal static class DefinitionParser
         from beginTag in Parse.Char('{').TokenWithSkipComment()
         from elements in _objectElementParser.Except(Parse.Char('}')).XMany().TokenWithSkipComment()
         from endTag in Parse.Char('}').TokenWithSkipComment()
-        select new ObjectDefinition(attributes.ToList(), name, type, elements.ToList());
-
-    private static readonly Parser<FuncElement> _funcElementParser =
-        from attributes in _attributeParser.XMany().TokenWithSkipComment()
-        from name in _nameParser.TokenWithSkipComment()
-        from colon in Parse.Char(':').TokenWithSkipComment()
-        from beginParam in Parse.Char('(').TokenWithSkipComment()
-        from inType in _customTypeParser.Or(Parse.Return<CustomType?>(null))
-        from endParam in Parse.Char(')').TokenWithSkipComment()
-        from arrow in Parse.String("->").TokenWithSkipComment()
-        from beginResult in Parse.Char('(').TokenWithSkipComment()
-        from outType in _customTypeParser.Or(Parse.Return<CustomType?>(null))
-        from endResult in Parse.Char(')').TokenWithSkipComment()
-        from comma in Parse.Char(',').TokenWithSkipComment()
-        select new FuncElement(attributes.ToList(), name, inType, outType);
-
-    private static readonly Parser<ServiceDefinition> _serviceDefinitionParser =
-        from attributes in _attributeParser.XMany().TokenWithSkipComment()
-        from keyword in Parse.String("service").TokenWithSkipComment()
-        from name in _nameParser.TokenWithSkipComment()
-        from beginTag in Parse.Char('{').TokenWithSkipComment()
-        from funcElements in _funcElementParser.Except(Parse.Char('}')).XMany().TokenWithSkipComment()
-        from endTag in Parse.Char('}').TokenWithSkipComment()
-        select new ServiceDefinition(attributes.ToList(), name, funcElements.ToList());
+        select new ObjectDefinition { Attributes = attributes.ToList(), Name = name, FormatType = type, Elements = elements.ToList() };
 
     private static readonly Parser<RocketPackDefinition> _rocketPackDefinitionParser =
         from syntax in _syntaxParser.Once().TokenWithSkipComment()
         from usings in _usingParser.XMany().TokenWithSkipComment()
         from @namespace in _namespaceParser.Once().TokenWithSkipComment()
         from options in _optionParser.XMany().TokenWithSkipComment()
-        from contents in _enumDefinitionParser.Or<object>(_objectDefinitionParser).Or(_serviceDefinitionParser).XMany().TokenWithSkipComment().End()
-        select new RocketPackDefinition(
-            usings,
-            @namespace.First(),
-            options,
-            contents.OfType<EnumDefinition>().ToList(),
-            contents.OfType<ObjectDefinition>().ToList(),
-            contents.OfType<ServiceDefinition>().ToList());
+        from contents in _enumDefinitionParser.Or<object>(_objectDefinitionParser).XMany().TokenWithSkipComment().End()
+        select new RocketPackDefinition
+        {
+            Usings = usings.ToList(),
+            Namespace = @namespace.First(),
+            Options = options.ToList(),
+            Enums = contents.OfType<EnumDefinition>().ToList(),
+            Objects = contents.OfType<ObjectDefinition>().ToList()
+        };
 
     private static string LoadDefinition(string path)
     {
@@ -249,11 +227,6 @@ internal static class DefinitionParser
         }
 
         foreach (var item in result.Enums)
-        {
-            item.Namespace = result.Namespace.Value;
-        }
-
-        foreach (var item in result.Services)
         {
             item.Namespace = result.Namespace.Value;
         }

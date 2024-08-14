@@ -79,7 +79,7 @@ public unsafe ref struct RocketMessageReader
     public Timestamp96 GetTimestamp96()
     {
         long seconds = this.GetInt64();
-        int nanos = (int)this.GetUInt32();
+        uint nanos = this.GetUInt32();
 
         return new Timestamp96(seconds, nanos);
     }

@@ -13,6 +13,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Core.Pipelines\Core.Pipelines.csproj" />
     <ProjectReference Include="..\Core.RocketPack\Core.RocketPack.csproj" />
+    <ProjectReference Include="..\Core.Serialization\Core.Serialization.csproj" />
     <ProjectReference Include="..\Core.Base\Core.Base.csproj" />
   </ItemGroup>
 

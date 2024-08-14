@@ -4,7 +4,7 @@ namespace Omnius.Core.RocketPack;
 
 public readonly struct Timestamp96 : IEquatable<Timestamp96>, IComparable<Timestamp96>
 {
-    public Timestamp96(long seconds, int nanos)
+    public Timestamp96(long seconds, uint nanos)
     {
         this.Seconds = seconds;
         this.Nanos = nanos;
@@ -14,7 +14,7 @@ public readonly struct Timestamp96 : IEquatable<Timestamp96>, IComparable<Timest
 
     public long Seconds { get; }
 
-    public int Nanos { get; }
+    public uint Nanos { get; }
 
     public static bool operator ==(Timestamp96 x, Timestamp96 y)
     {
@@ -87,11 +87,11 @@ public readonly struct Timestamp96 : IEquatable<Timestamp96>, IComparable<Timest
 
         long ticks = dateTime.Ticks - DateTime.UnixEpoch.Ticks;
         long seconds = ticks / TimeSpan.TicksPerSecond;
-        int nanos = (int)(ticks % TimeSpan.TicksPerSecond) * 100;
+        uint nanos = (uint)(ticks % TimeSpan.TicksPerSecond) * 100;
         return new Timestamp96(seconds, nanos);
     }
 
-    public static Timestamp96 FromSecondsAndNanos(long seconds, int nanos)
+    public static Timestamp96 FromSecondsAndNanos(long seconds, uint nanos)
     {
         return new Timestamp96(seconds, nanos);
     }

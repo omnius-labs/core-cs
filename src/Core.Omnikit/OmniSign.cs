@@ -1,11 +1,11 @@
-using System;
-using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
+using System.Buffers;
 using System.Text.Json;
-using System.Text.Json.Serialization;
+using Omnius.Core.Base;
 using Omnius.Core.Omnikit.Converters;
 using Omnius.Core.Omnikit.Internal;
+using Omnius.Core.Pipelines;
+using Omnius.Core.RocketPack;
+using Omnius.Core.Serialization;
 
 namespace Omnius.Core.Omnikit;
 
@@ -18,21 +18,25 @@ public enum OmniSignType
     Ed25519_Sha3_256_Base64Url = 1
 }
 
-public class OmniSigner
+public class OmniSigner : RocketMessage<OmniSigner>
 {
-    public OmniSignType Type { get; init; }
-    public string Name { get; init; }
-    public byte[] Key { get; init; }
+    public required OmniSignType Type { get; init; }
+    public required string Name { get; init; }
+    public required byte[] Key { get; init; }
 
-    public OmniSigner(OmniSignType type, string name)
+    public static OmniSigner Create(OmniSignType type, string name)
     {
-        this.Type = type;
-        this.Name = name;
-
         if (type == OmniSignType.Ed25519_Sha3_256_Base64Url)
         {
             var signingKey = Ed25519.CreateSigningKey();
-            this.Key = Ed25519.GetPrivateKeyPkcs8Der(signingKey);
+            var key = Ed25519.GetPrivateKeyPkcs8Der(signingKey);
+
+            return new OmniSigner
+            {
+                Type = type,
+                Name = name,
+                Key = key
+            };
         }
         else
         {
@@ -75,9 +79,61 @@ public class OmniSigner
             return string.Empty;
         }
     }
+
+    private int? _hashCode;
+
+    public override int GetHashCode()
+    {
+        if (_hashCode is null)
+        {
+            var h = new HashCode();
+            h.Add(this.Type);
+            h.Add(this.Name);
+            h.Add(this.Key);
+            _hashCode = h.ToHashCode();
+        }
+
+        return _hashCode.Value;
+    }
+
+    public override bool Equals(OmniSigner? other)
+    {
+        if (other is null) return false;
+        if (ReferenceEquals(this, other)) return true;
+        return this.Type == other.Type && this.Name == other.Name && this.Key.SequenceEqual(other.Key);
+    }
+
+    static OmniSigner()
+    {
+        Formatter = new CustomSerializer();
+        Empty = new OmniSigner() { Name = string.Empty, Type = OmniSignType.None, Key = Array.Empty<byte>() };
+    }
+
+    private sealed class CustomSerializer : IRocketMessageSerializer<OmniSigner>
+    {
+        public void Serialize(ref RocketMessageWriter w, scoped in OmniSigner value, scoped in int depth)
+        {
+            w.Write(value.Type.ToString());
+            w.Write(value.Name);
+            w.Write(value.Key);
+        }
+        public OmniSigner Deserialize(ref RocketMessageReader r, scoped in int depth)
+        {
+            var type = Enum.Parse<OmniSignType>(r.GetString(1024));
+            var name = r.GetString(1024);
+            var key = r.GetMemory(1024).ToArray();
+
+            return new OmniSigner()
+            {
+                Type = type,
+                Name = name,
+                Key = key,
+            };
+        }
+    }
 }
 
-public class OmniCert
+public class OmniCert : RocketMessage<OmniCert>
 {
     public required OmniSignType Type { get; init; }
     public required string Name { get; init; }
@@ -90,10 +146,8 @@ public class OmniCert
         {
             return Ed25519.Verify(this.PublicKey, this.Value, msg);
         }
-        else
-        {
-            throw new NotSupportedException("Unsupported sign type");
-        }
+
+        throw new NotSupportedException("Unsupported sign type");
     }
 
     public override string ToString()
@@ -103,9 +157,63 @@ public class OmniCert
             var hash = Sha3_256.ComputeHash(this.PublicKey);
             return $"{this.Name}@{Base64Url.Instance.BytesToString(hash)}";
         }
-        else
+
+        return string.Empty;
+    }
+
+    private int? _hashCode;
+
+    public override int GetHashCode()
+    {
+        if (_hashCode is null)
         {
-            return string.Empty;
+            var h = new HashCode();
+            h.Add(this.Type);
+            h.Add(this.Name);
+            h.Add(this.PublicKey);
+            h.Add(this.Value);
+            _hashCode = h.ToHashCode();
+        }
+
+        return _hashCode.Value;
+    }
+
+    public override bool Equals(OmniCert? other)
+    {
+        if (other is null) return false;
+        if (ReferenceEquals(this, other)) return true;
+        return this.Type == other.Type && this.Name == other.Name && this.PublicKey.SequenceEqual(other.PublicKey) && this.Value.SequenceEqual(other.Value);
+    }
+
+    static OmniCert()
+    {
+        Formatter = new CustomSerializer();
+        Empty = new OmniCert() { Name = string.Empty, Type = OmniSignType.None, PublicKey = Array.Empty<byte>(), Value = Array.Empty<byte>() };
+    }
+
+    private sealed class CustomSerializer : IRocketMessageSerializer<OmniCert>
+    {
+        public void Serialize(ref RocketMessageWriter w, scoped in OmniCert value, scoped in int depth)
+        {
+            w.Write(value.Type.ToString());
+            w.Write(value.Name);
+            w.Write(value.PublicKey);
+            w.Write(value.Value);
+        }
+        public OmniCert Deserialize(ref RocketMessageReader r, scoped in int depth)
+        {
+            var type = Enum.Parse<OmniSignType>(r.GetString(1024));
+            var name = r.GetString(1024);
+            var publicKey = r.GetMemory(1024).ToArray();
+            var value = r.GetMemory(1024).ToArray();
+
+            return new OmniCert()
+            {
+                Type = type,
+                Name = name,
+                PublicKey = publicKey,
+                Value = value
+            };
         }
     }
 }

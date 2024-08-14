@@ -3,18 +3,15 @@
 
 namespace Omnius.Core.Storages.Tests.Internal;
 
-internal readonly partial struct TestMessage : global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.Storages.Tests.Internal.TestMessage>
+internal sealed partial class TestMessage : global::Omnius.Core.RocketPack.RocketMessage<global::Omnius.Core.Storages.Tests.Internal.TestMessage>
 {
-    public static global::Omnius.Core.RocketPack.IRocketMessageFormatter<global::Omnius.Core.Storages.Tests.Internal.TestMessage> Formatter => global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.Storages.Tests.Internal.TestMessage>.Formatter;
-    public static global::Omnius.Core.Storages.Tests.Internal.TestMessage Empty => global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.Storages.Tests.Internal.TestMessage>.Empty;
-
     static TestMessage()
     {
-        global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.Storages.Tests.Internal.TestMessage>.Formatter = new ___CustomFormatter();
-        global::Omnius.Core.RocketPack.IRocketMessage<global::Omnius.Core.Storages.Tests.Internal.TestMessage>.Empty = new global::Omnius.Core.Storages.Tests.Internal.TestMessage(global::Omnius.Core.RocketPack.Utf8String.Empty);
+        Formatter = new ___CustomSerializer();
+        Empty = new global::Omnius.Core.Storages.Tests.Internal.TestMessage(global::Omnius.Core.RocketPack.Utf8String.Empty);
     }
 
-    private readonly int ___hashCode;
+    private readonly global::System.Lazy<int> ___hashCode;
 
     public static readonly int MaxCommentLength = 2147483647;
 
@@ -25,31 +22,21 @@ internal readonly partial struct TestMessage : global::Omnius.Core.RocketPack.IR
 
         this.Comment = comment;
 
+        ___hashCode = new global::System.Lazy<int>(() =>
         {
             var ___h = new global::System.HashCode();
             if (!comment.IsEmpty) ___h.Add(comment.GetHashCode());
-            ___hashCode = ___h.ToHashCode();
-        }
+            return ___h.ToHashCode();
+        });
     }
 
     public global::Omnius.Core.RocketPack.Utf8String Comment { get; }
 
-    public static global::Omnius.Core.Storages.Tests.Internal.TestMessage Import(global::System.Buffers.ReadOnlySequence<byte> sequence, global::Omnius.Core.Base.IBytesPool bytesPool)
+    public static bool operator ==(global::Omnius.Core.Storages.Tests.Internal.TestMessage? left, global::Omnius.Core.Storages.Tests.Internal.TestMessage? right)
     {
-        var reader = new global::Omnius.Core.RocketPack.RocketMessageReader(sequence, bytesPool);
-        return Formatter.Deserialize(ref reader, 0);
+        return (right is null) ? (left is null) : right.Equals(left);
     }
-    public void Export(global::System.Buffers.IBufferWriter<byte> bufferWriter, global::Omnius.Core.Base.IBytesPool bytesPool)
-    {
-        var writer = new global::Omnius.Core.RocketPack.RocketMessageWriter(bufferWriter, bytesPool);
-        Formatter.Serialize(ref writer, this, 0);
-    }
-
-    public static bool operator ==(global::Omnius.Core.Storages.Tests.Internal.TestMessage left, global::Omnius.Core.Storages.Tests.Internal.TestMessage right)
-    {
-        return right.Equals(left);
-    }
-    public static bool operator !=(global::Omnius.Core.Storages.Tests.Internal.TestMessage left, global::Omnius.Core.Storages.Tests.Internal.TestMessage right)
+    public static bool operator !=(global::Omnius.Core.Storages.Tests.Internal.TestMessage? left, global::Omnius.Core.Storages.Tests.Internal.TestMessage? right)
     {
         return !(left == right);
     }
@@ -58,25 +45,27 @@ internal readonly partial struct TestMessage : global::Omnius.Core.RocketPack.IR
         if (other is not global::Omnius.Core.Storages.Tests.Internal.TestMessage) return false;
         return this.Equals((global::Omnius.Core.Storages.Tests.Internal.TestMessage)other);
     }
-    public bool Equals(global::Omnius.Core.Storages.Tests.Internal.TestMessage target)
+    public override bool Equals(global::Omnius.Core.Storages.Tests.Internal.TestMessage? target)
     {
+        if (target is null) return false;
+        if (object.ReferenceEquals(this, target)) return true;
         if (this.Comment != target.Comment) return false;
 
         return true;
     }
-    public override int GetHashCode() => ___hashCode;
+    public override int GetHashCode() => ___hashCode.Value;
 
-    private sealed class ___CustomFormatter : global::Omnius.Core.RocketPack.IRocketMessageFormatter<global::Omnius.Core.Storages.Tests.Internal.TestMessage>
+    private sealed class ___CustomSerializer : global::Omnius.Core.RocketPack.IRocketMessageSerializer<global::Omnius.Core.Storages.Tests.Internal.TestMessage>
     {
-        public void Serialize(ref global::Omnius.Core.RocketPack.RocketMessageWriter w, scoped in global::Omnius.Core.Storages.Tests.Internal.TestMessage value, scoped in int rank)
+        public void Serialize(ref global::Omnius.Core.RocketPack.RocketMessageWriter w, scoped in global::Omnius.Core.Storages.Tests.Internal.TestMessage value, scoped in int depth)
         {
-            if (rank > 256) throw new global::System.FormatException();
+            if (depth > 256) throw new global::System.FormatException();
 
             w.Write(value.Comment);
         }
-        public global::Omnius.Core.Storages.Tests.Internal.TestMessage Deserialize(ref global::Omnius.Core.RocketPack.RocketMessageReader r, scoped in int rank)
+        public global::Omnius.Core.Storages.Tests.Internal.TestMessage Deserialize(ref global::Omnius.Core.RocketPack.RocketMessageReader r, scoped in int depth)
         {
-            if (rank > 256) throw new global::System.FormatException();
+            if (depth > 256) throw new global::System.FormatException();
 
             global::Omnius.Core.RocketPack.Utf8String p_comment = global::Omnius.Core.RocketPack.Utf8String.Empty;
 

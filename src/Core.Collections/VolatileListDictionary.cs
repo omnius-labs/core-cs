@@ -9,7 +9,7 @@ public partial class VolatileListDictionary<TKey, TValue> : AsyncDisposableBase,
 {
     private readonly Dictionary<TKey, List<Entry<TValue>>> _map;
     private readonly TimeSpan _survivalInterval;
-    private readonly ISystemClock _systemClock;
+    private readonly IClock _clock;
 
     private readonly CancellationTokenSource _cancellationTokenSource;
     private readonly PeriodicTimer _reaperTimer;
@@ -17,16 +17,16 @@ public partial class VolatileListDictionary<TKey, TValue> : AsyncDisposableBase,
 
     private readonly object _lockObject = new();
 
-    public VolatileListDictionary(TimeSpan survivalInterval, TimeSpan reapingInterval, ISystemClock systemClock)
+    public VolatileListDictionary(TimeSpan survivalInterval, TimeSpan reapingInterval, IClock systemClock)
         : this(survivalInterval, reapingInterval, EqualityComparer<TKey>.Default, systemClock)
     {
     }
 
-    public VolatileListDictionary(TimeSpan survivalInterval, TimeSpan reapingInterval, IEqualityComparer<TKey> comparer, ISystemClock systemClock)
+    public VolatileListDictionary(TimeSpan survivalInterval, TimeSpan reapingInterval, IEqualityComparer<TKey> comparer, IClock systemClock)
     {
         _map = new Dictionary<TKey, List<Entry<TValue>>>(comparer);
         _survivalInterval = survivalInterval;
-        _systemClock = systemClock;
+        _clock = systemClock;
 
         _cancellationTokenSource = new CancellationTokenSource();
         _reaperTimer = new PeriodicTimer(reapingInterval);
@@ -56,7 +56,7 @@ public partial class VolatileListDictionary<TKey, TValue> : AsyncDisposableBase,
     {
         lock (_lockObject)
         {
-            var now = _systemClock.GetUtcNow();
+            var now = _clock.GetUtcNow();
 
             var removingKeys = new List<TKey>();
 
@@ -152,7 +152,7 @@ public partial class VolatileListDictionary<TKey, TValue> : AsyncDisposableBase,
                 _map.Add(key, list);
             }
 
-            list.Add(new Entry<TValue>(value, _systemClock.GetUtcNow()));
+            list.Add(new Entry<TValue>(value, _clock.GetUtcNow()));
         }
     }
 
@@ -168,7 +168,7 @@ public partial class VolatileListDictionary<TKey, TValue> : AsyncDisposableBase,
 
             foreach (var value in collection)
             {
-                list.Add(new Entry<TValue>(value, _systemClock.GetUtcNow()));
+                list.Add(new Entry<TValue>(value, _clock.GetUtcNow()));
             }
         }
     }
