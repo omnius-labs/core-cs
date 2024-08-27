@@ -19,6 +19,7 @@
         "opad",
         "oxor",
         "pkcs",
+        "Remoting",
         "Sprache",
         "Testkit",
         "Upnp",
