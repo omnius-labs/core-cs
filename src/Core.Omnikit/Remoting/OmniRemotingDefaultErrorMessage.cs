@@ -3,7 +3,7 @@ using Omnius.Core.RocketPack;
 
 namespace Omnius.Core.Omnikit.Remoting;
 
-public class OmniRemotingErrorMessage : RocketMessage<OmniRemotingErrorMessage>
+public class OmniRemotingDefaultErrorMessage : RocketMessage<OmniRemotingDefaultErrorMessage>
 {
     public required string Type { get; init; }
     public required string Message { get; init; }
@@ -36,34 +36,34 @@ public class OmniRemotingErrorMessage : RocketMessage<OmniRemotingErrorMessage>
         return _hashCode.Value;
     }
 
-    public override bool Equals(OmniRemotingErrorMessage? other)
+    public override bool Equals(OmniRemotingDefaultErrorMessage? other)
     {
         if (other is null) return false;
         if (ReferenceEquals(this, other)) return true;
         return this.Type == other.Type && this.Message == other.Message && this.StackTrace == other.StackTrace;
     }
 
-    static OmniRemotingErrorMessage()
+    static OmniRemotingDefaultErrorMessage()
     {
         Formatter = new CustomSerializer();
-        Empty = new OmniRemotingErrorMessage() { Type = string.Empty, Message = string.Empty, StackTrace = string.Empty };
+        Empty = new OmniRemotingDefaultErrorMessage() { Type = string.Empty, Message = string.Empty, StackTrace = string.Empty };
     }
 
-    private sealed class CustomSerializer : IRocketMessageSerializer<OmniRemotingErrorMessage>
+    private sealed class CustomSerializer : IRocketMessageSerializer<OmniRemotingDefaultErrorMessage>
     {
-        public void Serialize(ref RocketMessageWriter w, scoped in OmniRemotingErrorMessage value, scoped in int depth)
+        public void Serialize(ref RocketMessageWriter w, scoped in OmniRemotingDefaultErrorMessage value, scoped in int depth)
         {
             w.Write(value.Type);
             w.Write(value.Message);
             w.Write(value.StackTrace);
         }
-        public OmniRemotingErrorMessage Deserialize(ref RocketMessageReader r, scoped in int depth)
+        public OmniRemotingDefaultErrorMessage Deserialize(ref RocketMessageReader r, scoped in int depth)
         {
             var type = r.GetString(1024);
             var message = r.GetString(1024 * 8);
             var stackTrace = r.GetString(1024 * 32);
 
-            return new OmniRemotingErrorMessage()
+            return new OmniRemotingDefaultErrorMessage()
             {
                 Type = type,
                 Message = message,

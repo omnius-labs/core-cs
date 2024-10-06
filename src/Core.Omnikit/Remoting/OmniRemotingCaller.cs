@@ -13,7 +13,7 @@ public sealed class OmniRemotingCaller<TError> : AsyncDisposableBase
     private readonly FramedReceiver _receiver;
     private readonly IBytesPool _bytesPool;
 
-    public OmniRemotingCaller(Stream stream, uint functionId, int maxFrameLength, IBytesPool bytesPool)
+    internal OmniRemotingCaller(Stream stream, uint functionId, int maxFrameLength, IBytesPool bytesPool)
     {
         _stream = stream;
         _sender = new FramedSender(stream, maxFrameLength, bytesPool);
@@ -36,7 +36,7 @@ public sealed class OmniRemotingCaller<TError> : AsyncDisposableBase
         await _sender.SendAsync(sendMemoryOwner.Memory, cancellationToken);
     }
 
-    public async ValueTask<TResult> CallFunctionAsync<TParam, TResult>(TParam param, CancellationToken cancellationToken = default)
+    public async ValueTask<TResult> CallAsync<TParam, TResult>(TParam param, CancellationToken cancellationToken = default)
         where TParam : RocketMessage<TParam>
         where TResult : RocketMessage<TResult>
     {
@@ -49,62 +49,6 @@ public sealed class OmniRemotingCaller<TError> : AsyncDisposableBase
         if (result.IsCompleted)
         {
             return result.Message;
-        }
-        else if (result.IsError)
-        {
-            throw ThrowHelper.CreateRocketRemotingApplicationException(result.ErrorMessage);
-        }
-
-        throw ThrowHelper.CreateRocketRemotingProtocolException_UnexpectedProtocol();
-    }
-
-    public async ValueTask<TResult> CallFunctionAsync<TResult>(CancellationToken cancellationToken = default)
-        where TResult : RocketMessage<TResult>
-    {
-        using var receivedMemoryOwner = await _receiver.ReceiveAsync(cancellationToken);
-        var result = PacketMessage<TResult, TError>.Import(receivedMemoryOwner.Memory, _bytesPool);
-
-        if (result.IsCompleted)
-        {
-            return result.Message;
-        }
-        else if (result.IsError)
-        {
-            throw ThrowHelper.CreateRocketRemotingApplicationException(result.ErrorMessage);
-        }
-
-        throw ThrowHelper.CreateRocketRemotingProtocolException_UnexpectedProtocol();
-    }
-
-    public async ValueTask CallActionAsync<TParam>(TParam param, CancellationToken cancellationToken = default)
-        where TParam : RocketMessage<TParam>
-    {
-        using var sendMemoryOwner = PacketMessage<TParam, TError>.CreateCompleted(param).Export(_bytesPool);
-        await _sender.SendAsync(sendMemoryOwner.Memory, cancellationToken);
-
-        using var receivedMemoryOwner = await _receiver.ReceiveAsync(cancellationToken);
-        var result = PacketMessage<UnitRocketMessage, TError>.Import(receivedMemoryOwner.Memory, _bytesPool);
-
-        if (result.IsCompleted)
-        {
-            return;
-        }
-        else if (result.IsError)
-        {
-            throw ThrowHelper.CreateRocketRemotingApplicationException(result.ErrorMessage);
-        }
-
-        throw ThrowHelper.CreateRocketRemotingProtocolException_UnexpectedProtocol();
-    }
-
-    public async ValueTask CallActionAsync(CancellationToken cancellationToken = default)
-    {
-        using var receivedMemoryOwner = await _receiver.ReceiveAsync(cancellationToken);
-        var result = PacketMessage<UnitRocketMessage, TError>.Import(receivedMemoryOwner.Memory, _bytesPool);
-
-        if (result.IsCompleted)
-        {
-            return;
         }
         else if (result.IsError)
         {

@@ -7,8 +7,8 @@ namespace Omnius.Core.Omnikit.Remoting.Internal;
 internal enum PacketType : byte
 {
     Unknown = 0,
-    Completed = 1,
-    Continue = 2,
+    Continue = 1,
+    Completed = 2,
     Error = 3,
 }
 
@@ -32,14 +32,14 @@ internal class PacketMessage<TMessage, TErrorMessage> : RocketMessage<PacketMess
         return new PacketMessage<TMessage, TErrorMessage>(PacketType.Unknown, RocketMessage<TMessage>.Empty, RocketMessage<TErrorMessage>.Empty);
     }
 
-    public static PacketMessage<TMessage, TErrorMessage> CreateCompleted(TMessage message)
-    {
-        return new PacketMessage<TMessage, TErrorMessage>(PacketType.Completed, message, RocketMessage<TErrorMessage>.Empty);
-    }
-
     public static PacketMessage<TMessage, TErrorMessage> CreateContinue(TMessage message)
     {
         return new PacketMessage<TMessage, TErrorMessage>(PacketType.Continue, message, RocketMessage<TErrorMessage>.Empty);
+    }
+
+    public static PacketMessage<TMessage, TErrorMessage> CreateCompleted(TMessage message)
+    {
+        return new PacketMessage<TMessage, TErrorMessage>(PacketType.Completed, message, RocketMessage<TErrorMessage>.Empty);
     }
 
     public static PacketMessage<TMessage, TErrorMessage> CreateError(TErrorMessage errorMessage)
@@ -51,8 +51,8 @@ internal class PacketMessage<TMessage, TErrorMessage> : RocketMessage<PacketMess
     public TErrorMessage ErrorMessage => _errorMessage;
 
     public bool IsUnknown => (_type & PacketType.Unknown) != 0;
-    public bool IsCompleted => (_type & PacketType.Completed) != 0;
     public bool IsContinue => (_type & PacketType.Continue) != 0;
+    public bool IsCompleted => (_type & PacketType.Completed) != 0;
     public bool IsError => (_type & PacketType.Error) != 0;
 
     private int? _hashCode;
@@ -89,31 +89,47 @@ internal class PacketMessage<TMessage, TErrorMessage> : RocketMessage<PacketMess
         {
             w.Write((byte)value._type);
 
-            if (value._type == PacketType.Continue || value._type == PacketType.Completed)
+            switch (value._type)
             {
-                RocketMessage<TMessage>.Formatter.Serialize(ref w, value._message, depth + 1);
-            }
-            else if (value._type == PacketType.Error)
-            {
-                RocketMessage<TErrorMessage>.Formatter.Serialize(ref w, value._errorMessage, depth + 1);
+                case PacketType.Unknown:
+                    break;
+                case PacketType.Continue:
+                    RocketMessage<TMessage>.Formatter.Serialize(ref w, value._message, depth + 1);
+                    break;
+                case PacketType.Completed:
+                    RocketMessage<TMessage>.Formatter.Serialize(ref w, value._message, depth + 1);
+                    break;
+                case PacketType.Error:
+                    RocketMessage<TErrorMessage>.Formatter.Serialize(ref w, value._errorMessage, depth + 1);
+                    break;
             }
         }
         public PacketMessage<TMessage, TErrorMessage> Deserialize(ref RocketMessageReader r, scoped in int depth)
         {
             var type = (PacketType)r.GetUInt8();
-            var message = RocketMessage<TMessage>.Empty;
-            var errorMessage = RocketMessage<TErrorMessage>.Empty;
 
-            if (type == PacketType.Continue || type == PacketType.Completed)
+            switch (type)
             {
-                message = RocketMessage<TMessage>.Formatter.Deserialize(ref r, depth + 1);
-            }
-            else if (type == PacketType.Error)
-            {
-                errorMessage = RocketMessage<TErrorMessage>.Formatter.Deserialize(ref r, depth + 1);
+                case PacketType.Unknown:
+                    return PacketMessage<TMessage, TErrorMessage>.CreateUnknown();
+                case PacketType.Continue:
+                    {
+                        var message = RocketMessage<TMessage>.Formatter.Deserialize(ref r, depth + 1);
+                        return PacketMessage<TMessage, TErrorMessage>.CreateContinue(message);
+                    }
+                case PacketType.Completed:
+                    {
+                        var message = RocketMessage<TMessage>.Formatter.Deserialize(ref r, depth + 1);
+                        return PacketMessage<TMessage, TErrorMessage>.CreateCompleted(message);
+                    }
+                case PacketType.Error:
+                    {
+                        var errorMessage = RocketMessage<TErrorMessage>.Formatter.Deserialize(ref r, depth + 1);
+                        return PacketMessage<TMessage, TErrorMessage>.CreateError(errorMessage);
+                    }
             }
 
-            return new PacketMessage<TMessage, TErrorMessage>(type, message, errorMessage);
+            throw ThrowHelper.CreateRocketRemotingProtocolException_UnexpectedProtocol();
         }
     }
 }

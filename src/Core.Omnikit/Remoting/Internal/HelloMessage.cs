@@ -39,6 +39,12 @@ internal class HelloMessage : RocketMessage<HelloMessage>
         return this.Version == other.Version && this.FunctionId == other.FunctionId;
     }
 
+    static HelloMessage()
+    {
+        Formatter = new CustomSerializer();
+        Empty = new HelloMessage() { Version = OmniRemotingVersion.Unknown, FunctionId = 0 };
+    }
+
     private sealed class CustomSerializer : IRocketMessageSerializer<HelloMessage>
     {
         public void Serialize(ref RocketMessageWriter w, scoped in HelloMessage value, scoped in int depth)

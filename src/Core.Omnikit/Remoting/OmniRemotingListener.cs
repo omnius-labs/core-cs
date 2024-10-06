@@ -16,7 +16,7 @@ public sealed class OmniRemotingListener<TError> : AsyncDisposableBase
 
     private readonly CancellationTokenSource _listenerCancellationTokenSource = new();
 
-    public OmniRemotingListener(Stream stream, int maxFrameLength, IOmniRemotingErrorMessageFactory<TError> errorMessageFactory, IBytesPool bytesPool)
+    internal OmniRemotingListener(Stream stream, int maxFrameLength, IOmniRemotingErrorMessageFactory<TError> errorMessageFactory, IBytesPool bytesPool)
     {
         _stream = stream;
         _sender = new FramedSender(stream, maxFrameLength, bytesPool);
@@ -51,7 +51,7 @@ public sealed class OmniRemotingListener<TError> : AsyncDisposableBase
         throw ThrowHelper.CreateRocketRemotingProtocolException_UnexpectedProtocol();
     }
 
-    public async ValueTask ListenFunctionAsync<TParam, TResult>(Func<TParam, CancellationToken, ValueTask<TResult>> callback, CancellationToken cancellationToken = default)
+    public async ValueTask ListenAsync<TParam, TResult>(Func<TParam, CancellationToken, ValueTask<TResult>> callback, CancellationToken cancellationToken = default)
         where TParam : RocketMessage<TParam>
         where TResult : RocketMessage<TResult>
     {
@@ -83,95 +83,6 @@ public sealed class OmniRemotingListener<TError> : AsyncDisposableBase
 
                 throw;
             }
-        }
-
-        throw ThrowHelper.CreateRocketRemotingProtocolException_UnexpectedProtocol();
-    }
-
-    public async ValueTask ListenFunctionAsync<TResult>(Func<CancellationToken, ValueTask<TResult>> callback, CancellationToken cancellationToken = default)
-        where TResult : RocketMessage<TResult>
-    {
-        cancellationToken = this.GetMixedCancellationToken(cancellationToken);
-
-        try
-        {
-            var result = await callback.Invoke(cancellationToken);
-
-            using var sendMemoryOwner = PacketMessage<TResult, TError>.CreateCompleted(result).Export(_bytesPool);
-            await _sender.SendAsync(sendMemoryOwner.Memory, cancellationToken);
-
-            if (result is IDisposable disposable) disposable.Dispose();
-            else if (result is IAsyncDisposable asyncDisposable) await asyncDisposable.DisposeAsync();
-
-            return;
-        }
-        catch (Exception e)
-        {
-            var errorMessage = _errorMessageFactory.Create(e);
-
-            using var sendMemoryOwner = PacketMessage<TResult, TError>.CreateError(errorMessage).Export(_bytesPool);
-            await _sender.SendAsync(sendMemoryOwner.Memory, cancellationToken);
-
-            throw;
-        }
-
-        throw ThrowHelper.CreateRocketRemotingProtocolException_UnexpectedProtocol();
-    }
-
-    public async ValueTask ListenActionAsync<TParam>(Func<TParam, CancellationToken, ValueTask> callback, CancellationToken cancellationToken = default)
-        where TParam : RocketMessage<TParam>
-    {
-        cancellationToken = this.GetMixedCancellationToken(cancellationToken);
-
-        using var receivedMemoryOwner = await _receiver.ReceiveAsync(cancellationToken);
-        var param = PacketMessage<TParam, TError>.Import(receivedMemoryOwner.Memory, _bytesPool);
-
-        if (param.IsCompleted)
-        {
-            try
-            {
-                await callback.Invoke(param.Message, cancellationToken);
-
-                using var sendMemoryOwner = PacketMessage<UnitRocketMessage, TError>.CreateCompleted(UnitRocketMessage.Empty).Export(_bytesPool);
-                await _sender.SendAsync(sendMemoryOwner.Memory, cancellationToken);
-
-                return;
-            }
-            catch (Exception e)
-            {
-                var errorMessage = _errorMessageFactory.Create(e);
-
-                using var sendMemoryOwner = PacketMessage<UnitRocketMessage, TError>.CreateError(errorMessage).Export(_bytesPool);
-                await _sender.SendAsync(sendMemoryOwner.Memory, cancellationToken);
-
-                throw;
-            }
-        }
-
-        throw ThrowHelper.CreateRocketRemotingProtocolException_UnexpectedProtocol();
-    }
-
-    public async ValueTask ListenActionAsync(Func<CancellationToken, ValueTask> callback, CancellationToken cancellationToken = default)
-    {
-        cancellationToken = this.GetMixedCancellationToken(cancellationToken);
-
-        try
-        {
-            await callback.Invoke(cancellationToken);
-
-            using var sendMemoryOwner = PacketMessage<UnitRocketMessage, TError>.CreateCompleted(UnitRocketMessage.Empty).Export(_bytesPool);
-            await _sender.SendAsync(sendMemoryOwner.Memory, cancellationToken);
-
-            return;
-        }
-        catch (Exception e)
-        {
-            var errorMessage = _errorMessageFactory.Create(e);
-
-            using var sendMemoryOwner = PacketMessage<UnitRocketMessage, TError>.CreateError(errorMessage).Export(_bytesPool);
-            await _sender.SendAsync(sendMemoryOwner.Memory, cancellationToken);
-
-            throw;
         }
 
         throw ThrowHelper.CreateRocketRemotingProtocolException_UnexpectedProtocol();
