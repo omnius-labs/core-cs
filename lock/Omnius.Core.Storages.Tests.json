@@ -248,8 +248,8 @@
       },
       "Stub.System.Data.SQLite.Core.NetStandard": {
         "type": "Transitive",
-        "resolved": "1.0.118",
-        "contentHash": "4TS8IZvDj0ud6utxfXI6zv9Ditk4U9Kt9KqLyAIQGcU3GXp5oGBHgGZifq+APcqRCayuN/MSE8t9ZZmygtU28A=="
+        "resolved": "1.0.119",
+        "contentHash": "dI7ngiCNgdm+n00nQvFTa+LbHvE9MIQXwMSLRzJI/KAJ7G1WmCachsvfE1CD6xvb3OXJvYYEfv3+S/LHyhN0Rg=="
       },
       "System.Collections": {
         "type": "Transitive",
@@ -530,7 +530,7 @@
         "type": "Project",
         "dependencies": {
           "Newtonsoft.Json": "[13.0.3, )",
-          "YamlDotNet": "[16.0.0, )"
+          "YamlDotNet": "[16.1.3, )"
         }
       },
       "Omnius.Core.Sql": {
@@ -552,7 +552,7 @@
           "RocksDB": "[9.4.0.50294, )",
           "SqlKata": "[2.4.0, )",
           "SqlKata.Execution": "[2.4.0, )",
-          "System.Data.SQLite.Core": "[1.0.118, )"
+          "System.Data.SQLite.Core": "[1.0.119, )"
         }
       },
       "Omnius.Core.Streams": {
@@ -686,11 +686,11 @@
       },
       "System.Data.SQLite.Core": {
         "type": "CentralTransitive",
-        "requested": "[1.0.118, )",
-        "resolved": "1.0.118",
-        "contentHash": "2V1PsfBeqWlZxF/VtB8lQKPfDBayCU8zD5Xc3Mq7cILOa2ZqpPDSwMP0fTfk1gtGSStSk//DxKiGy6zwCQs7Uw==",
+        "requested": "[1.0.119, )",
+        "resolved": "1.0.119",
+        "contentHash": "bhQB8HVtRA+OOYw8UTD1F1kU+nGJ0/OZvH1JmlVUI4bGvgVEWeX1NcHjA765NvUoRVuCPlt8PrEpZ1thSsk1jg==",
         "dependencies": {
-          "Stub.System.Data.SQLite.Core.NetStandard": "[1.0.118]"
+          "Stub.System.Data.SQLite.Core.NetStandard": "[1.0.119]"
         }
       },
       "System.IO.Pipelines": {
@@ -710,9 +710,9 @@
       },
       "YamlDotNet": {
         "type": "CentralTransitive",
-        "requested": "[16.0.0, )",
-        "resolved": "16.0.0",
-        "contentHash": "kZ4jR5ltFhnjaUqK9x81zXRIUTH4PTXTTEmJDNQdkDLQhcv+2Nl19r0dCSvPW1mstOYBfXTnjdieRbUO6gHMDw=="
+        "requested": "[16.1.3, )",
+        "resolved": "16.1.3",
+        "contentHash": "gtHGiDvU9VTtWte8f0thIM38cL1oowOjStKpeAEKKfA+Rc4AvekJzqFDZiiPcc4kw00ZiwR4OTJS56L16q98DQ=="
       }
     }
   }

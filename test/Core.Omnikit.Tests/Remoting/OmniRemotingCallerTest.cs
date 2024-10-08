@@ -15,7 +15,7 @@ public class OmniRemotingCallerTest : TestBase<OmniRemotingCallerTest>
 {
     public OmniRemotingCallerTest(ITestOutputHelper output) : base(output) { }
 
-    [Fact]
+    [Fact(Skip = "Echo server is required.")]
     public async Task CallTest()
     {
         var client = new TcpClient();
