@@ -8,6 +8,7 @@
     <ProjectReference Include="..\..\src\Core.Collections\Core.Collections.csproj" />
     <ProjectReference Include="..\..\src\Core.RocketPack\Core.RocketPack.csproj" />
     <ProjectReference Include="..\..\src\Core.Pipelines\Core.Pipelines.csproj" />
+    <ProjectReference Include="..\..\src\Core.Testkit\Core.Testkit.csproj" />
   </ItemGroup>
 
   <ItemGroup>

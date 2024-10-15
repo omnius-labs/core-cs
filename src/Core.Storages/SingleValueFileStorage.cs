@@ -9,7 +9,7 @@ public sealed class SingleValueFileStorage : AsyncDisposableBase, ISingleValueSt
     private readonly string _filePath;
     private readonly IBytesPool _bytesPool;
 
-    private readonly Nito.AsyncEx.AsyncReaderWriterLock _asyncLock = new();
+    private readonly AsyncLock _asyncLock = new();
 
     internal sealed class SingleValueStorageFactory : ISingleValueStorageFactory
     {
@@ -36,7 +36,7 @@ public sealed class SingleValueFileStorage : AsyncDisposableBase, ISingleValueSt
 
     public async ValueTask<IMemoryOwner<byte>?> TryReadAsync(CancellationToken cancellationToken = default)
     {
-        using (await _asyncLock.ReaderLockAsync(cancellationToken))
+        using (await _asyncLock.LockAsync(cancellationToken))
         {
             if (!File.Exists(_filePath)) return null;
 
@@ -55,7 +55,7 @@ public sealed class SingleValueFileStorage : AsyncDisposableBase, ISingleValueSt
 
     public async ValueTask<bool> TryReadAsync(IBufferWriter<byte> bufferWriter, CancellationToken cancellationToken = default)
     {
-        using (await _asyncLock.ReaderLockAsync(cancellationToken))
+        using (await _asyncLock.LockAsync(cancellationToken))
         {
             if (!File.Exists(_filePath)) return false;
 
@@ -73,7 +73,7 @@ public sealed class SingleValueFileStorage : AsyncDisposableBase, ISingleValueSt
 
     public async ValueTask WriteAsync(ReadOnlySequence<byte> sequence, CancellationToken cancellationToken = default)
     {
-        using (await _asyncLock.WriterLockAsync(cancellationToken))
+        using (await _asyncLock.LockAsync(cancellationToken))
         {
             await using var fileStream = new FileStream(_filePath, FileMode.Create);
 
@@ -91,7 +91,7 @@ public sealed class SingleValueFileStorage : AsyncDisposableBase, ISingleValueSt
 
     public async ValueTask<bool> TryDeleteAsync(CancellationToken cancellationToken = default)
     {
-        using (await _asyncLock.WriterLockAsync(cancellationToken))
+        using (await _asyncLock.LockAsync(cancellationToken))
         {
             if (!File.Exists(_filePath)) return false;
 

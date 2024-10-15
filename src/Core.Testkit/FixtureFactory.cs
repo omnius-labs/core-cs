@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Omnius.Core.Testkit;
 
-public class FixtureFactory
+public unsafe class FixtureFactory
 {
     private static readonly Random _random = new();
 
@@ -94,5 +94,61 @@ public class FixtureFactory
         var range = to - from;
         var randTimeSpan = new TimeSpan((long)(_random.NextDouble() * range.Ticks));
         return (from + randTimeSpan).ToUniversalTime();
+    }
+
+    public static byte GetRandomUInt8()
+    {
+        Span<byte> buf = stackalloc byte[1];
+        _random.NextBytes(buf);
+        return buf[0];
+    }
+
+    public static sbyte GetRandomInt8()
+    {
+        Span<byte> buf = stackalloc byte[1];
+        _random.NextBytes(buf);
+        return (sbyte)buf[0];
+    }
+
+    public static short GetRandomInt16()
+    {
+        Span<byte> buf = stackalloc byte[2];
+        _random.NextBytes(buf);
+        return System.Buffers.Binary.BinaryPrimitives.ReadInt16LittleEndian(buf);
+    }
+
+    public static ushort GetRandomUInt16()
+    {
+        Span<byte> buf = stackalloc byte[2];
+        _random.NextBytes(buf);
+        return System.Buffers.Binary.BinaryPrimitives.ReadUInt16LittleEndian(buf);
+    }
+
+    public static int GetRandomInt32()
+    {
+        Span<byte> buf = stackalloc byte[4];
+        _random.NextBytes(buf);
+        return System.Buffers.Binary.BinaryPrimitives.ReadInt32LittleEndian(buf);
+    }
+
+    public static uint GetRandomUInt32()
+    {
+        Span<byte> buf = stackalloc byte[4];
+        _random.NextBytes(buf);
+        return System.Buffers.Binary.BinaryPrimitives.ReadUInt32LittleEndian(buf);
+    }
+
+    public static long GetRandomInt64()
+    {
+        Span<byte> buf = stackalloc byte[8];
+        _random.NextBytes(buf);
+        return System.Buffers.Binary.BinaryPrimitives.ReadInt64LittleEndian(buf);
+    }
+
+    public static ulong GetRandomUInt64()
+    {
+        Span<byte> buf = stackalloc byte[8];
+        _random.NextBytes(buf);
+        return System.Buffers.Binary.BinaryPrimitives.ReadUInt64LittleEndian(buf);
     }
 }
