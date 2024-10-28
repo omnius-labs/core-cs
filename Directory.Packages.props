@@ -15,9 +15,9 @@
     <PackageVersion Include="Avalonia.HtmlRenderer" Version="11.0.0" />
     <PackageVersion Include="Avalonia.Skia" Version="11.1.4" />
     <PackageVersion Include="Avalonia.Svg.Skia" Version="11.0.0.12" />
-    <PackageVersion Include="Avalonia.Xaml.Behaviors" Version="11.1.0.4" />
-    <PackageVersion Include="Avalonia.Xaml.Interactions" Version="11.1.0.4" />
-    <PackageVersion Include="Avalonia.Xaml.Interactivity" Version="11.1.0.4" />
+    <PackageVersion Include="Avalonia.Xaml.Behaviors" Version="11.1.0.5" />
+    <PackageVersion Include="Avalonia.Xaml.Interactions" Version="11.1.0.5" />
+    <PackageVersion Include="Avalonia.Xaml.Interactivity" Version="11.1.0.5" />
     <PackageVersion Include="Avalonia" Version="11.1.4" />
     <PackageVersion Include="AvaloniaEdit.TextMate" Version="11.0.5" />
     <PackageVersion Include="Cocona.Lite" Version="2.2.0" />
