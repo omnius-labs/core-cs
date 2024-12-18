@@ -68,7 +68,7 @@ public class TestMessage : RocketMessage<TestMessage>
     {
         public void Serialize(ref RocketMessageWriter w, scoped in TestMessage value, scoped in int depth)
         {
-            w.Write(value.Value);
+            w.Put(value.Value);
         }
         public TestMessage Deserialize(ref RocketMessageReader r, scoped in int depth)
         {

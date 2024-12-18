@@ -87,7 +87,7 @@ internal class PacketMessage<TMessage, TErrorMessage> : RocketMessage<PacketMess
     {
         public void Serialize(ref RocketMessageWriter w, scoped in PacketMessage<TMessage, TErrorMessage> value, scoped in int depth)
         {
-            w.Write((byte)value._type);
+            w.Put((byte)value._type);
 
             switch (value._type)
             {

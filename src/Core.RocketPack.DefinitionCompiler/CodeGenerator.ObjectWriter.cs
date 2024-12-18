@@ -758,12 +758,12 @@ internal partial class CodeGenerator
                 {
                     this.BlockWhoseValueIsNotDefault(b, element, () =>
                     {
-                        b.WriteLine($"w.Write((uint){index});");
+                        b.WriteLine($"w.Put((uint){index});");
                         this.Write_Medium_Formatter_Serialize_PropertyDef(b, "value." + element.Name, element.Type, 0);
                     });
                 }
 
-                b.WriteLine($"w.Write((uint){0});");
+                b.WriteLine($"w.Put((uint){0});");
             }
 
             b.WriteLine("}");
@@ -776,74 +776,74 @@ internal partial class CodeGenerator
                 case BoolType:
                     if (!type.IsOptional)
                     {
-                        b.WriteLine($"w.Write({name});");
+                        b.WriteLine($"w.Put({name});");
                     }
                     else
                     {
-                        b.WriteLine($"w.Write({name}.Value);");
+                        b.WriteLine($"w.Put({name}.Value);");
                     }
 
                     break;
                 case IntType:
                     if (!type.IsOptional)
                     {
-                        b.WriteLine($"w.Write({name});");
+                        b.WriteLine($"w.Put({name});");
                     }
                     else
                     {
-                        b.WriteLine($"w.Write({name}.Value);");
+                        b.WriteLine($"w.Put({name}.Value);");
                     }
 
                     break;
                 case FloatType:
                     if (!type.IsOptional)
                     {
-                        b.WriteLine($"w.Write({name});");
+                        b.WriteLine($"w.Put({name});");
                     }
                     else
                     {
-                        b.WriteLine($"w.Write({name}.Value);");
+                        b.WriteLine($"w.Put({name}.Value);");
                     }
 
                     break;
                 case StringType:
-                    b.WriteLine($"w.Write({name});");
+                    b.WriteLine($"w.Put({name});");
                     break;
                 case TimestampType:
                     if (!type.IsOptional)
                     {
-                        b.WriteLine($"w.Write({name});");
+                        b.WriteLine($"w.Put({name});");
                     }
                     else
                     {
-                        b.WriteLine($"w.Write({name}.Value);");
+                        b.WriteLine($"w.Put({name}.Value);");
                     }
 
                     break;
                 case BytesType memoryType when (!memoryType.IsUseMemoryPool):
                     if (!type.IsOptional)
                     {
-                        b.WriteLine($"w.Write({name}.Span);");
+                        b.WriteLine($"w.Put({name}.Span);");
                     }
                     else
                     {
-                        b.WriteLine($"w.Write({name}.Value.Span);");
+                        b.WriteLine($"w.Put({name}.Value.Span);");
                     }
 
                     break;
                 case BytesType memoryType when (memoryType.IsUseMemoryPool):
                     if (!type.IsOptional)
                     {
-                        b.WriteLine($"w.Write({name}.Memory.Span);");
+                        b.WriteLine($"w.Put({name}.Memory.Span);");
                     }
                     else
                     {
-                        b.WriteLine($"w.Write({name}.Memory.Span);");
+                        b.WriteLine($"w.Put({name}.Memory.Span);");
                     }
 
                     break;
                 case VectorType listType:
-                    b.WriteLine($"w.Write((uint){name}.Count);");
+                    b.WriteLine($"w.Put((uint){name}.Count);");
                     b.WriteLine($"foreach (var n in {name})");
                     b.WriteLine("{");
 
@@ -856,7 +856,7 @@ internal partial class CodeGenerator
 
                     break;
                 case MapType mapType:
-                    b.WriteLine($"w.Write((uint){name}.Count);");
+                    b.WriteLine($"w.Put((uint){name}.Count);");
                     b.WriteLine($"foreach (var n in {name})");
                     b.WriteLine("{");
 
@@ -878,22 +878,22 @@ internal partial class CodeGenerator
                                 case IntType intType when (intType.IsSigned):
                                     if (!intType.IsOptional)
                                     {
-                                        b.WriteLine($"w.Write((long){name});");
+                                        b.WriteLine($"w.Put((long){name});");
                                     }
                                     else
                                     {
-                                        b.WriteLine($"w.Write((long){name}.Value);");
+                                        b.WriteLine($"w.Put((long){name}.Value);");
                                     }
 
                                     break;
                                 case IntType intType when (!intType.IsSigned):
                                     if (!intType.IsOptional)
                                     {
-                                        b.WriteLine($"w.Write((ulong){name});");
+                                        b.WriteLine($"w.Put((ulong){name});");
                                     }
                                     else
                                     {
-                                        b.WriteLine($"w.Write((ulong){name}.Value);");
+                                        b.WriteLine($"w.Put((ulong){name}.Value);");
                                     }
 
                                     break;
@@ -1100,75 +1100,75 @@ internal partial class CodeGenerator
                 case BoolType:
                     if (!type.IsOptional)
                     {
-                        b.WriteLine($"w.Write({name});");
+                        b.WriteLine($"w.Put({name});");
                     }
                     else
                     {
-                        b.WriteLine($"w.Write({name}.Value);");
+                        b.WriteLine($"w.Put({name}.Value);");
                     }
 
                     break;
                 case IntType:
                     if (!type.IsOptional)
                     {
-                        b.WriteLine($"w.Write({name});");
+                        b.WriteLine($"w.Put({name});");
                     }
                     else
                     {
-                        b.WriteLine($"w.Write({name}.Value);");
+                        b.WriteLine($"w.Put({name}.Value);");
                     }
 
                     break;
                 case FloatType:
                     if (!type.IsOptional)
                     {
-                        b.WriteLine($"w.Write({name});");
+                        b.WriteLine($"w.Put({name});");
                     }
                     else
                     {
-                        b.WriteLine($"w.Write({name}.Value);");
+                        b.WriteLine($"w.Put({name}.Value);");
                     }
 
                     break;
                 case StringType:
-                    b.WriteLine($"w.Write({name});");
+                    b.WriteLine($"w.Put({name});");
                     break;
                 case TimestampType:
                     if (!type.IsOptional)
                     {
-                        b.WriteLine($"w.Write({name});");
+                        b.WriteLine($"w.Put({name});");
                     }
                     else
                     {
-                        b.WriteLine($"w.Write({name}.Value);");
+                        b.WriteLine($"w.Put({name}.Value);");
                     }
 
                     break;
                 case BytesType memoryType when (!memoryType.IsUseMemoryPool):
                     if (!type.IsOptional)
                     {
-                        b.WriteLine($"w.Write({name}.Span);");
+                        b.WriteLine($"w.Put({name}.Span);");
                     }
                     else
                     {
-                        b.WriteLine($"w.Write({name}.Value.Span);");
+                        b.WriteLine($"w.Put({name}.Value.Span);");
                     }
 
                     break;
                 case BytesType memoryType when (memoryType.IsUseMemoryPool):
                     if (!type.IsOptional)
                     {
-                        b.WriteLine($"w.Write({name}.Memory.Span);");
+                        b.WriteLine($"w.Put({name}.Memory.Span);");
                     }
                     else
                     {
-                        b.WriteLine($"w.Write({name}.Memory.Span);");
+                        b.WriteLine($"w.Put({name}.Memory.Span);");
                     }
 
                     break;
                 case VectorType listType:
                     {
-                        b.WriteLine($"w.Write((uint){name}.Count);");
+                        b.WriteLine($"w.Put((uint){name}.Count);");
                         b.WriteLine($"foreach (var n in {name})");
                         b.WriteLine("{");
 
@@ -1183,7 +1183,7 @@ internal partial class CodeGenerator
                     break;
                 case MapType mapType:
                     {
-                        b.WriteLine($"w.Write((uint){name}.Count);");
+                        b.WriteLine($"w.Put((uint){name}.Count);");
                         b.WriteLine($"foreach (var n in {name})");
                         b.WriteLine("{");
 
@@ -1206,22 +1206,22 @@ internal partial class CodeGenerator
                                 case IntType intType when (intType.IsSigned):
                                     if (!intType.IsOptional)
                                     {
-                                        b.WriteLine($"w.Write((long){name});");
+                                        b.WriteLine($"w.Put((long){name});");
                                     }
                                     else
                                     {
-                                        b.WriteLine($"w.Write((long){name}.Value);");
+                                        b.WriteLine($"w.Put((long){name}.Value);");
                                     }
 
                                     break;
                                 case IntType intType when (!intType.IsSigned):
                                     if (!intType.IsOptional)
                                     {
-                                        b.WriteLine($"w.Write((ulong){name});");
+                                        b.WriteLine($"w.Put((ulong){name});");
                                     }
                                     else
                                     {
-                                        b.WriteLine($"w.Write((ulong){name}.Value);");
+                                        b.WriteLine($"w.Put((ulong){name}.Value);");
                                     }
 
                                     break;

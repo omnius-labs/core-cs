@@ -91,12 +91,12 @@ class ProfileMessage : RocketMessage<ProfileMessage>
     {
         public void Serialize(ref RocketMessageWriter w, scoped in ProfileMessage value, scoped in int depth)
         {
-            w.Write(value.SessionId);
-            w.Write(value.AuthType.ToString());
-            w.Write(value.KeyExchangeAlgorithmType.ToString());
-            w.Write(value.KeyDerivationAlgorithmType.ToString());
-            w.Write(value.CipherAlgorithmType.ToString());
-            w.Write(value.HashAlgorithmType.ToString());
+            w.Put(value.SessionId);
+            w.Put(value.AuthType.ToString());
+            w.Put(value.KeyExchangeAlgorithmType.ToString());
+            w.Put(value.KeyDerivationAlgorithmType.ToString());
+            w.Put(value.CipherAlgorithmType.ToString());
+            w.Put(value.HashAlgorithmType.ToString());
         }
         public ProfileMessage Deserialize(ref RocketMessageReader r, scoped in int depth)
         {

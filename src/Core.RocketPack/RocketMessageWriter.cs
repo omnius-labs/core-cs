@@ -20,89 +20,89 @@ public ref struct RocketMessageWriter
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void Write(scoped in Utf8String value)
+    public void Put(scoped in Utf8String value)
     {
-        Varint.SetUInt32((uint)value.Length, _bufferWriter);
+        Varint.PutUInt32((uint)value.Length, _bufferWriter);
         _bufferWriter.Write(value.Span);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void Write(scoped in ReadOnlySpan<byte> value)
+    public void Put(scoped in ReadOnlySpan<byte> value)
     {
-        Varint.SetUInt32((uint)value.Length, _bufferWriter);
+        Varint.PutUInt32((uint)value.Length, _bufferWriter);
         _bufferWriter.Write(value);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void Write(scoped in Timestamp64 value)
+    public void Put(scoped in Timestamp64 value)
     {
-        this.Write(value.Seconds);
+        this.Put(value.Seconds);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void Write(scoped in Timestamp96 value)
+    public void Put(scoped in Timestamp96 value)
     {
-        this.Write(value.Seconds);
-        this.Write((uint)value.Nanos);
+        this.Put(value.Seconds);
+        this.Put((uint)value.Nanos);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void Write(scoped in bool value)
+    public void Put(scoped in bool value)
     {
         _bufferWriter.GetSpan(1)[0] = !value ? (byte)0x00 : (byte)0x01;
         _bufferWriter.Advance(1);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void Write(scoped in byte value)
+    public void Put(scoped in byte value)
     {
-        Varint.SetUInt64(value, _bufferWriter);
+        Varint.PutUInt64(value, _bufferWriter);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void Write(scoped in ushort value)
+    public void Put(scoped in ushort value)
     {
-        Varint.SetUInt64(value, _bufferWriter);
+        Varint.PutUInt64(value, _bufferWriter);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void Write(scoped in uint value)
+    public void Put(scoped in uint value)
     {
-        Varint.SetUInt64(value, _bufferWriter);
+        Varint.PutUInt64(value, _bufferWriter);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void Write(scoped in ulong value)
+    public void Put(scoped in ulong value)
     {
-        Varint.SetUInt64(value, _bufferWriter);
+        Varint.PutUInt64(value, _bufferWriter);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void Write(scoped in sbyte value)
+    public void Put(scoped in sbyte value)
     {
-        Varint.SetInt64(value, _bufferWriter);
+        Varint.PutInt64(value, _bufferWriter);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void Write(scoped in short value)
+    public void Put(scoped in short value)
     {
-        Varint.SetInt64(value, _bufferWriter);
+        Varint.PutInt64(value, _bufferWriter);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void Write(scoped in int value)
+    public void Put(scoped in int value)
     {
-        Varint.SetInt64(value, _bufferWriter);
+        Varint.PutInt64(value, _bufferWriter);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void Write(scoped in long value)
+    public void Put(scoped in long value)
     {
-        Varint.SetInt64(value, _bufferWriter);
+        Varint.PutInt64(value, _bufferWriter);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void Write(scoped in float value)
+    public void Put(scoped in float value)
     {
         var f = new Float32Bits(value);
         var tempSpan = _bufferWriter.GetSpan(4);
@@ -111,7 +111,7 @@ public ref struct RocketMessageWriter
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void Write(scoped in double value)
+    public void Put(scoped in double value)
     {
         var f = new Float64Bits(value);
         var tempSpan = _bufferWriter.GetSpan(8);

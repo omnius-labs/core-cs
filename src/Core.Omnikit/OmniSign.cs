@@ -113,9 +113,9 @@ public class OmniSigner : RocketMessage<OmniSigner>
     {
         public void Serialize(ref RocketMessageWriter w, scoped in OmniSigner value, scoped in int depth)
         {
-            w.Write(value.Type.ToString());
-            w.Write(value.Name);
-            w.Write(value.Key);
+            w.Put(value.Type.ToString());
+            w.Put(value.Name);
+            w.Put(value.Key);
         }
         public OmniSigner Deserialize(ref RocketMessageReader r, scoped in int depth)
         {
@@ -195,10 +195,10 @@ public class OmniCert : RocketMessage<OmniCert>
     {
         public void Serialize(ref RocketMessageWriter w, scoped in OmniCert value, scoped in int depth)
         {
-            w.Write(value.Type.ToString());
-            w.Write(value.Name);
-            w.Write(value.PublicKey);
-            w.Write(value.Value);
+            w.Put(value.Type.ToString());
+            w.Put(value.Name);
+            w.Put(value.PublicKey);
+            w.Put(value.Value);
         }
         public OmniCert Deserialize(ref RocketMessageReader r, scoped in int depth)
         {

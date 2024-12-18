@@ -109,10 +109,10 @@ public class OmniAgreement : RocketMessage<OmniAgreement>
     {
         public void Serialize(ref RocketMessageWriter w, scoped in OmniAgreement value, scoped in int depth)
         {
-            w.Write(Timestamp64.FromDateTime(value.CreatedTime));
-            w.Write(value.AlgorithmType.ToString());
-            w.Write(value.PublicKey);
-            w.Write(value.SecretKey);
+            w.Put(Timestamp64.FromDateTime(value.CreatedTime));
+            w.Put(value.AlgorithmType.ToString());
+            w.Put(value.PublicKey);
+            w.Put(value.SecretKey);
         }
         public OmniAgreement Deserialize(ref RocketMessageReader r, scoped in int depth)
         {
@@ -171,9 +171,9 @@ public class OmniAgreementPublicKey : RocketMessage<OmniAgreementPublicKey>
     {
         public void Serialize(ref RocketMessageWriter w, scoped in OmniAgreementPublicKey value, scoped in int depth)
         {
-            w.Write(Timestamp64.FromDateTime(value.CreatedTime));
-            w.Write(value.AlgorithmType.ToString());
-            w.Write(value.PublicKey);
+            w.Put(Timestamp64.FromDateTime(value.CreatedTime));
+            w.Put(value.AlgorithmType.ToString());
+            w.Put(value.PublicKey);
         }
         public OmniAgreementPublicKey Deserialize(ref RocketMessageReader r, scoped in int depth)
         {
@@ -230,9 +230,9 @@ public class OmniAgreementPrivateKey : RocketMessage<OmniAgreementPrivateKey>
     {
         public void Serialize(ref RocketMessageWriter w, scoped in OmniAgreementPrivateKey value, scoped in int depth)
         {
-            w.Write(Timestamp64.FromDateTime(value.CreatedTime));
-            w.Write(value.AlgorithmType.ToString());
-            w.Write(value.SecretKey);
+            w.Put(Timestamp64.FromDateTime(value.CreatedTime));
+            w.Put(value.AlgorithmType.ToString());
+            w.Put(value.SecretKey);
         }
         public OmniAgreementPrivateKey Deserialize(ref RocketMessageReader r, scoped in int depth)
         {

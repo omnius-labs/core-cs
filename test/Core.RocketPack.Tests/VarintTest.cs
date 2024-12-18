@@ -264,7 +264,7 @@ public class VarintTest
             for (int i = 0; i < 32; i++)
             {
                 var result1 = FixtureFactory.GetRandomUInt8();
-                Varint.SetUInt8(result1, bytesPipe.Writer);
+                Varint.PutUInt8(result1, bytesPipe.Writer);
 
                 var reader = new SequenceReader<byte>(bytesPipe.Reader.GetSequence());
                 Varint.TryGetUInt8(ref reader, out var result2);
@@ -280,7 +280,7 @@ public class VarintTest
             for (int i = 0; i < 32; i++)
             {
                 var result1 = FixtureFactory.GetRandomInt8();
-                Varint.SetInt8(result1, bytesPipe.Writer);
+                Varint.PutInt8(result1, bytesPipe.Writer);
 
                 var reader = new SequenceReader<byte>(bytesPipe.Reader.GetSequence());
                 Varint.TryGetInt8(ref reader, out var result2);
@@ -296,7 +296,7 @@ public class VarintTest
             for (int i = 0; i < 32; i++)
             {
                 var result1 = FixtureFactory.GetRandomUInt16();
-                Varint.SetUInt16(result1, bytesPipe.Writer);
+                Varint.PutUInt16(result1, bytesPipe.Writer);
 
                 var reader = new SequenceReader<byte>(bytesPipe.Reader.GetSequence());
                 Varint.TryGetUInt16(ref reader, out var result2);
@@ -312,7 +312,7 @@ public class VarintTest
             for (int i = 0; i < 32; i++)
             {
                 var result1 = FixtureFactory.GetRandomInt16();
-                Varint.SetInt16(result1, bytesPipe.Writer);
+                Varint.PutInt16(result1, bytesPipe.Writer);
 
                 var reader = new SequenceReader<byte>(bytesPipe.Reader.GetSequence());
                 Varint.TryGetInt16(ref reader, out var result2);
@@ -328,7 +328,7 @@ public class VarintTest
             for (int i = 0; i < 32; i++)
             {
                 var result1 = FixtureFactory.GetRandomUInt32();
-                Varint.SetUInt32(result1, bytesPipe.Writer);
+                Varint.PutUInt32(result1, bytesPipe.Writer);
 
                 var reader = new SequenceReader<byte>(bytesPipe.Reader.GetSequence());
                 Varint.TryGetUInt32(ref reader, out var result2);
@@ -344,7 +344,7 @@ public class VarintTest
             for (int i = 0; i < 32; i++)
             {
                 var result1 = FixtureFactory.GetRandomInt32();
-                Varint.SetInt32(result1, bytesPipe.Writer);
+                Varint.PutInt32(result1, bytesPipe.Writer);
 
                 var reader = new SequenceReader<byte>(bytesPipe.Reader.GetSequence());
                 Varint.TryGetInt32(ref reader, out var result2);
@@ -360,7 +360,7 @@ public class VarintTest
             for (int i = 0; i < 32; i++)
             {
                 var result1 = FixtureFactory.GetRandomUInt64();
-                Varint.SetUInt64(result1, bytesPipe.Writer);
+                Varint.PutUInt64(result1, bytesPipe.Writer);
 
                 var reader = new SequenceReader<byte>(bytesPipe.Reader.GetSequence());
                 Varint.TryGetUInt64(ref reader, out var result2);
@@ -376,7 +376,7 @@ public class VarintTest
             for (int i = 0; i < 32; i++)
             {
                 var result1 = FixtureFactory.GetRandomInt64();
-                Varint.SetInt64(result1, bytesPipe.Writer);
+                Varint.PutInt64(result1, bytesPipe.Writer);
 
                 var reader = new SequenceReader<byte>(bytesPipe.Reader.GetSequence());
                 Varint.TryGetInt64(ref reader, out var result2);

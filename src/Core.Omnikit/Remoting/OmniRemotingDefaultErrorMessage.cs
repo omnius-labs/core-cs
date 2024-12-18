@@ -53,9 +53,9 @@ public class OmniRemotingDefaultErrorMessage : RocketMessage<OmniRemotingDefault
     {
         public void Serialize(ref RocketMessageWriter w, scoped in OmniRemotingDefaultErrorMessage value, scoped in int depth)
         {
-            w.Write(value.Type);
-            w.Write(value.Message);
-            w.Write(value.StackTrace);
+            w.Put(value.Type);
+            w.Put(value.Message);
+            w.Put(value.StackTrace);
         }
         public OmniRemotingDefaultErrorMessage Deserialize(ref RocketMessageReader r, scoped in int depth)
         {

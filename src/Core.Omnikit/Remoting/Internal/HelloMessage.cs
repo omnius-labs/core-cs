@@ -49,8 +49,8 @@ internal class HelloMessage : RocketMessage<HelloMessage>
     {
         public void Serialize(ref RocketMessageWriter w, scoped in HelloMessage value, scoped in int depth)
         {
-            w.Write(value.Version.ToString());
-            w.Write(value.FunctionId);
+            w.Put(value.Version.ToString());
+            w.Put(value.FunctionId);
         }
         public HelloMessage Deserialize(ref RocketMessageReader r, scoped in int depth)
         {

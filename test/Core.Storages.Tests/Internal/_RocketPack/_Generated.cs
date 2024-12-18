@@ -61,7 +61,7 @@ internal sealed partial class TestMessage : global::Omnius.Core.RocketPack.Rocke
         {
             if (depth > 256) throw new global::System.FormatException();
 
-            w.Write(value.Comment);
+            w.Put(value.Comment);
         }
         public global::Omnius.Core.Storages.Tests.Internal.TestMessage Deserialize(ref global::Omnius.Core.RocketPack.RocketMessageReader r, scoped in int depth)
         {

@@ -17,7 +17,7 @@ public static unsafe class Varint
     private const byte Int64Code = 0x83;
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void SetUInt8(scoped in byte value, scoped in IBufferWriter<byte> writer)
+    public static void PutUInt8(scoped in byte value, scoped in IBufferWriter<byte> writer)
     {
         unchecked
         {
@@ -40,7 +40,7 @@ public static unsafe class Varint
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void SetUInt16(scoped in ushort value, scoped in IBufferWriter<byte> writer)
+    public static void PutUInt16(scoped in ushort value, scoped in IBufferWriter<byte> writer)
     {
         unchecked
         {
@@ -77,7 +77,7 @@ public static unsafe class Varint
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void SetUInt32(scoped in uint value, scoped in IBufferWriter<byte> writer)
+    public static void PutUInt32(scoped in uint value, scoped in IBufferWriter<byte> writer)
     {
         unchecked
         {
@@ -128,7 +128,7 @@ public static unsafe class Varint
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void SetUInt64(scoped in ulong value, scoped in IBufferWriter<byte> writer)
+    public static void PutUInt64(scoped in ulong value, scoped in IBufferWriter<byte> writer)
     {
         unchecked
         {
@@ -193,38 +193,38 @@ public static unsafe class Varint
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void SetInt8(scoped in sbyte value, scoped in IBufferWriter<byte> writer)
+    public static void PutInt8(scoped in sbyte value, scoped in IBufferWriter<byte> writer)
     {
         unchecked
         {
-            SetUInt8((byte)((value << 1) ^ (value >> 7)), writer);
+            PutUInt8((byte)((value << 1) ^ (value >> 7)), writer);
         }
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void SetInt16(scoped in short value, scoped in IBufferWriter<byte> writer)
+    public static void PutInt16(scoped in short value, scoped in IBufferWriter<byte> writer)
     {
         unchecked
         {
-            SetUInt16((ushort)((value << 1) ^ (value >> 15)), writer);
+            PutUInt16((ushort)((value << 1) ^ (value >> 15)), writer);
         }
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void SetInt32(scoped in int value, scoped in IBufferWriter<byte> writer)
+    public static void PutInt32(scoped in int value, scoped in IBufferWriter<byte> writer)
     {
         unchecked
         {
-            SetUInt32((uint)((value << 1) ^ (value >> 31)), writer);
+            PutUInt32((uint)((value << 1) ^ (value >> 31)), writer);
         }
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void SetInt64(scoped in long value, scoped in IBufferWriter<byte> writer)
+    public static void PutInt64(scoped in long value, scoped in IBufferWriter<byte> writer)
     {
         unchecked
         {
-            SetUInt64((ulong)((value << 1) ^ (value >> 63)), writer);
+            PutUInt64((ulong)((value << 1) ^ (value >> 63)), writer);
         }
     }
 

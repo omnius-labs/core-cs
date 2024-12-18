@@ -96,7 +96,7 @@ internal sealed partial class StructElement : global::Omnius.Core.RocketPack.Roc
         {
             if (depth > 256) throw new global::System.FormatException();
 
-            w.Write(value.X0);
+            w.Put(value.X0);
         }
         public global::Omnius.Core.RocketPack.Tests.Internal.StructElement Deserialize(ref global::Omnius.Core.RocketPack.RocketMessageReader r, scoped in int depth)
         {
@@ -166,10 +166,10 @@ internal sealed partial class MessageElement : global::Omnius.Core.RocketPack.Ro
 
             if (value.X0 != false)
             {
-                w.Write((uint)1);
-                w.Write(value.X0);
+                w.Put((uint)1);
+                w.Put(value.X0);
             }
-            w.Write((uint)0);
+            w.Put((uint)0);
         }
         public global::Omnius.Core.RocketPack.Tests.Internal.MessageElement Deserialize(ref global::Omnius.Core.RocketPack.RocketMessageReader r, scoped in int depth)
         {
@@ -396,40 +396,40 @@ internal sealed partial class Struct : global::Omnius.Core.RocketPack.RocketMess
         {
             if (depth > 256) throw new global::System.FormatException();
 
-            w.Write(value.X0);
-            w.Write(value.X1);
-            w.Write(value.X2);
-            w.Write(value.X3);
-            w.Write(value.X4);
-            w.Write(value.X5);
-            w.Write(value.X6);
-            w.Write(value.X7);
-            w.Write(value.X8);
-            w.Write((long)value.X9);
-            w.Write((long)value.X10);
-            w.Write((long)value.X11);
-            w.Write((long)value.X12);
-            w.Write((ulong)value.X13);
-            w.Write((ulong)value.X14);
-            w.Write((ulong)value.X15);
-            w.Write((ulong)value.X16);
-            w.Write(value.X17);
-            w.Write(value.X18);
-            w.Write(value.X19);
-            w.Write(value.X20);
-            w.Write(value.X21);
-            w.Write(value.X22.Span);
-            w.Write(value.X23.Memory.Span);
-            w.Write((uint)value.X24.Count);
+            w.Put(value.X0);
+            w.Put(value.X1);
+            w.Put(value.X2);
+            w.Put(value.X3);
+            w.Put(value.X4);
+            w.Put(value.X5);
+            w.Put(value.X6);
+            w.Put(value.X7);
+            w.Put(value.X8);
+            w.Put((long)value.X9);
+            w.Put((long)value.X10);
+            w.Put((long)value.X11);
+            w.Put((long)value.X12);
+            w.Put((ulong)value.X13);
+            w.Put((ulong)value.X14);
+            w.Put((ulong)value.X15);
+            w.Put((ulong)value.X16);
+            w.Put(value.X17);
+            w.Put(value.X18);
+            w.Put(value.X19);
+            w.Put(value.X20);
+            w.Put(value.X21);
+            w.Put(value.X22.Span);
+            w.Put(value.X23.Memory.Span);
+            w.Put((uint)value.X24.Count);
             foreach (var n in value.X24)
             {
-                w.Write(n);
+                w.Put(n);
             }
-            w.Write((uint)value.X25.Count);
+            w.Put((uint)value.X25.Count);
             foreach (var n in value.X25)
             {
-                w.Write(n.Key);
-                w.Write(n.Value);
+                w.Put(n.Key);
+                w.Put(n.Value);
             }
             global::Omnius.Core.RocketPack.Tests.Internal.StructElement.Formatter.Serialize(ref w, value.X26, depth + 1);
             global::Omnius.Core.RocketPack.Tests.Internal.MessageElement.Formatter.Serialize(ref w, value.X27, depth + 1);
@@ -772,154 +772,154 @@ internal sealed partial class Message : global::Omnius.Core.RocketPack.RocketMes
 
             if (value.X0 != false)
             {
-                w.Write((uint)1);
-                w.Write(value.X0);
+                w.Put((uint)1);
+                w.Put(value.X0);
             }
             if (value.X1 != 0)
             {
-                w.Write((uint)2);
-                w.Write(value.X1);
+                w.Put((uint)2);
+                w.Put(value.X1);
             }
             if (value.X2 != 0)
             {
-                w.Write((uint)3);
-                w.Write(value.X2);
+                w.Put((uint)3);
+                w.Put(value.X2);
             }
             if (value.X3 != 0)
             {
-                w.Write((uint)4);
-                w.Write(value.X3);
+                w.Put((uint)4);
+                w.Put(value.X3);
             }
             if (value.X4 != 0)
             {
-                w.Write((uint)5);
-                w.Write(value.X4);
+                w.Put((uint)5);
+                w.Put(value.X4);
             }
             if (value.X5 != 0)
             {
-                w.Write((uint)6);
-                w.Write(value.X5);
+                w.Put((uint)6);
+                w.Put(value.X5);
             }
             if (value.X6 != 0)
             {
-                w.Write((uint)7);
-                w.Write(value.X6);
+                w.Put((uint)7);
+                w.Put(value.X6);
             }
             if (value.X7 != 0)
             {
-                w.Write((uint)8);
-                w.Write(value.X7);
+                w.Put((uint)8);
+                w.Put(value.X7);
             }
             if (value.X8 != 0)
             {
-                w.Write((uint)9);
-                w.Write(value.X8);
+                w.Put((uint)9);
+                w.Put(value.X8);
             }
             if (value.X9 != (global::Omnius.Core.RocketPack.Tests.Internal.Enum1)0)
             {
-                w.Write((uint)10);
-                w.Write((long)value.X9);
+                w.Put((uint)10);
+                w.Put((long)value.X9);
             }
             if (value.X10 != (global::Omnius.Core.RocketPack.Tests.Internal.Enum2)0)
             {
-                w.Write((uint)11);
-                w.Write((long)value.X10);
+                w.Put((uint)11);
+                w.Put((long)value.X10);
             }
             if (value.X11 != (global::Omnius.Core.RocketPack.Tests.Internal.Enum3)0)
             {
-                w.Write((uint)12);
-                w.Write((long)value.X11);
+                w.Put((uint)12);
+                w.Put((long)value.X11);
             }
             if (value.X12 != (global::Omnius.Core.RocketPack.Tests.Internal.Enum4)0)
             {
-                w.Write((uint)13);
-                w.Write((long)value.X12);
+                w.Put((uint)13);
+                w.Put((long)value.X12);
             }
             if (value.X13 != (global::Omnius.Core.RocketPack.Tests.Internal.Enum5)0)
             {
-                w.Write((uint)14);
-                w.Write((ulong)value.X13);
+                w.Put((uint)14);
+                w.Put((ulong)value.X13);
             }
             if (value.X14 != (global::Omnius.Core.RocketPack.Tests.Internal.Enum6)0)
             {
-                w.Write((uint)15);
-                w.Write((ulong)value.X14);
+                w.Put((uint)15);
+                w.Put((ulong)value.X14);
             }
             if (value.X15 != (global::Omnius.Core.RocketPack.Tests.Internal.Enum7)0)
             {
-                w.Write((uint)16);
-                w.Write((ulong)value.X15);
+                w.Put((uint)16);
+                w.Put((ulong)value.X15);
             }
             if (value.X16 != (global::Omnius.Core.RocketPack.Tests.Internal.Enum8)0)
             {
-                w.Write((uint)17);
-                w.Write((ulong)value.X16);
+                w.Put((uint)17);
+                w.Put((ulong)value.X16);
             }
             if (value.X17 != 0.0F)
             {
-                w.Write((uint)18);
-                w.Write(value.X17);
+                w.Put((uint)18);
+                w.Put(value.X17);
             }
             if (value.X18 != 0.0D)
             {
-                w.Write((uint)19);
-                w.Write(value.X18);
+                w.Put((uint)19);
+                w.Put(value.X18);
             }
             if (value.X19 != global::Omnius.Core.RocketPack.Utf8String.Empty)
             {
-                w.Write((uint)20);
-                w.Write(value.X19);
+                w.Put((uint)20);
+                w.Put(value.X19);
             }
             if (value.X20 != global::Omnius.Core.RocketPack.Timestamp64.Zero)
             {
-                w.Write((uint)21);
-                w.Write(value.X20);
+                w.Put((uint)21);
+                w.Put(value.X20);
             }
             if (value.X21 != global::Omnius.Core.RocketPack.Timestamp96.Zero)
             {
-                w.Write((uint)22);
-                w.Write(value.X21);
+                w.Put((uint)22);
+                w.Put(value.X21);
             }
             if (!value.X22.IsEmpty)
             {
-                w.Write((uint)23);
-                w.Write(value.X22.Span);
+                w.Put((uint)23);
+                w.Put(value.X22.Span);
             }
             if (!value.X23.Memory.IsEmpty)
             {
-                w.Write((uint)24);
-                w.Write(value.X23.Memory.Span);
+                w.Put((uint)24);
+                w.Put(value.X23.Memory.Span);
             }
             if (value.X24.Count != 0)
             {
-                w.Write((uint)25);
-                w.Write((uint)value.X24.Count);
+                w.Put((uint)25);
+                w.Put((uint)value.X24.Count);
                 foreach (var n in value.X24)
                 {
-                    w.Write(n);
+                    w.Put(n);
                 }
             }
             if (value.X25.Count != 0)
             {
-                w.Write((uint)26);
-                w.Write((uint)value.X25.Count);
+                w.Put((uint)26);
+                w.Put((uint)value.X25.Count);
                 foreach (var n in value.X25)
                 {
-                    w.Write(n.Key);
-                    w.Write(n.Value);
+                    w.Put(n.Key);
+                    w.Put(n.Value);
                 }
             }
             if (value.X26 != global::Omnius.Core.RocketPack.Tests.Internal.StructElement.Empty)
             {
-                w.Write((uint)27);
+                w.Put((uint)27);
                 global::Omnius.Core.RocketPack.Tests.Internal.StructElement.Formatter.Serialize(ref w, value.X26, depth + 1);
             }
             if (value.X27 != global::Omnius.Core.RocketPack.Tests.Internal.MessageElement.Empty)
             {
-                w.Write((uint)28);
+                w.Put((uint)28);
                 global::Omnius.Core.RocketPack.Tests.Internal.MessageElement.Formatter.Serialize(ref w, value.X27, depth + 1);
             }
-            w.Write((uint)0);
+            w.Put((uint)0);
         }
         public global::Omnius.Core.RocketPack.Tests.Internal.Message Deserialize(ref global::Omnius.Core.RocketPack.RocketMessageReader r, scoped in int depth)
         {
@@ -1192,7 +1192,7 @@ internal sealed partial class NullableMessage : global::Omnius.Core.RocketPack.R
         {
             this.X24 = null;
         }
-        if (x25 != null)
+        if(x25 != null)
         {
             this.X25 = global::System.Collections.Immutable.ImmutableDictionary.CreateRange<byte, global::Omnius.Core.RocketPack.Utf8String>(x25);
         }
@@ -1230,14 +1230,14 @@ internal sealed partial class NullableMessage : global::Omnius.Core.RocketPack.R
             if (x21 != default) ___h.Add(x21.GetHashCode());
             if (x22 is not null && !x22.Value.IsEmpty) ___h.Add(global::Omnius.Core.Base.Helpers.ObjectHelper.GetHashCode(x22.Value.Span));
             if (x23 is not null && !x23.Memory.IsEmpty) ___h.Add(global::Omnius.Core.Base.Helpers.ObjectHelper.GetHashCode(x23.Memory.Span));
-            if (x24 != null)
+            if(x24 != null)
             {
                 foreach (var n in x24)
                 {
                     if (!n.IsEmpty) ___h.Add(n.GetHashCode());
                 }
             }
-            if (x25 != null)
+            if(x25 != null)
             {
                 foreach (var n in x25)
                 {
@@ -1349,154 +1349,154 @@ internal sealed partial class NullableMessage : global::Omnius.Core.RocketPack.R
 
             if (value.X0 != null)
             {
-                w.Write((uint)1);
-                w.Write(value.X0.Value);
+                w.Put((uint)1);
+                w.Put(value.X0.Value);
             }
             if (value.X1 != null)
             {
-                w.Write((uint)2);
-                w.Write(value.X1.Value);
+                w.Put((uint)2);
+                w.Put(value.X1.Value);
             }
             if (value.X2 != null)
             {
-                w.Write((uint)3);
-                w.Write(value.X2.Value);
+                w.Put((uint)3);
+                w.Put(value.X2.Value);
             }
             if (value.X3 != null)
             {
-                w.Write((uint)4);
-                w.Write(value.X3.Value);
+                w.Put((uint)4);
+                w.Put(value.X3.Value);
             }
             if (value.X4 != null)
             {
-                w.Write((uint)5);
-                w.Write(value.X4.Value);
+                w.Put((uint)5);
+                w.Put(value.X4.Value);
             }
             if (value.X5 != null)
             {
-                w.Write((uint)6);
-                w.Write(value.X5.Value);
+                w.Put((uint)6);
+                w.Put(value.X5.Value);
             }
             if (value.X6 != null)
             {
-                w.Write((uint)7);
-                w.Write(value.X6.Value);
+                w.Put((uint)7);
+                w.Put(value.X6.Value);
             }
             if (value.X7 != null)
             {
-                w.Write((uint)8);
-                w.Write(value.X7.Value);
+                w.Put((uint)8);
+                w.Put(value.X7.Value);
             }
             if (value.X8 != null)
             {
-                w.Write((uint)9);
-                w.Write(value.X8.Value);
+                w.Put((uint)9);
+                w.Put(value.X8.Value);
             }
             if (value.X9 != null)
             {
-                w.Write((uint)10);
-                w.Write((long)value.X9);
+                w.Put((uint)10);
+                w.Put((long)value.X9);
             }
             if (value.X10 != null)
             {
-                w.Write((uint)11);
-                w.Write((long)value.X10);
+                w.Put((uint)11);
+                w.Put((long)value.X10);
             }
             if (value.X11 != null)
             {
-                w.Write((uint)12);
-                w.Write((long)value.X11);
+                w.Put((uint)12);
+                w.Put((long)value.X11);
             }
             if (value.X12 != null)
             {
-                w.Write((uint)13);
-                w.Write((long)value.X12);
+                w.Put((uint)13);
+                w.Put((long)value.X12);
             }
             if (value.X13 != null)
             {
-                w.Write((uint)14);
-                w.Write((ulong)value.X13);
+                w.Put((uint)14);
+                w.Put((ulong)value.X13);
             }
             if (value.X14 != null)
             {
-                w.Write((uint)15);
-                w.Write((ulong)value.X14);
+                w.Put((uint)15);
+                w.Put((ulong)value.X14);
             }
             if (value.X15 != null)
             {
-                w.Write((uint)16);
-                w.Write((ulong)value.X15);
+                w.Put((uint)16);
+                w.Put((ulong)value.X15);
             }
             if (value.X16 != null)
             {
-                w.Write((uint)17);
-                w.Write((ulong)value.X16);
+                w.Put((uint)17);
+                w.Put((ulong)value.X16);
             }
             if (value.X17 != null)
             {
-                w.Write((uint)18);
-                w.Write(value.X17.Value);
+                w.Put((uint)18);
+                w.Put(value.X17.Value);
             }
             if (value.X18 != null)
             {
-                w.Write((uint)19);
-                w.Write(value.X18.Value);
+                w.Put((uint)19);
+                w.Put(value.X18.Value);
             }
             if (value.X19 != null)
             {
-                w.Write((uint)20);
-                w.Write(value.X19);
+                w.Put((uint)20);
+                w.Put(value.X19);
             }
             if (value.X20 != null)
             {
-                w.Write((uint)21);
-                w.Write(value.X20.Value);
+                w.Put((uint)21);
+                w.Put(value.X20.Value);
             }
             if (value.X21 != null)
             {
-                w.Write((uint)22);
-                w.Write(value.X21.Value);
+                w.Put((uint)22);
+                w.Put(value.X21.Value);
             }
             if (value.X22 != null)
             {
-                w.Write((uint)23);
-                w.Write(value.X22.Value.Span);
+                w.Put((uint)23);
+                w.Put(value.X22.Value.Span);
             }
             if (value.X23 != null)
             {
-                w.Write((uint)24);
-                w.Write(value.X23.Memory.Span);
+                w.Put((uint)24);
+                w.Put(value.X23.Memory.Span);
             }
             if (value.X24 != null)
             {
-                w.Write((uint)25);
-                w.Write((uint)value.X24.Count);
+                w.Put((uint)25);
+                w.Put((uint)value.X24.Count);
                 foreach (var n in value.X24)
                 {
-                    w.Write(n);
+                    w.Put(n);
                 }
             }
             if (value.X25 != null)
             {
-                w.Write((uint)26);
-                w.Write((uint)value.X25.Count);
+                w.Put((uint)26);
+                w.Put((uint)value.X25.Count);
                 foreach (var n in value.X25)
                 {
-                    w.Write(n.Key);
-                    w.Write(n.Value);
+                    w.Put(n.Key);
+                    w.Put(n.Value);
                 }
             }
             if (value.X26 != null)
             {
-                w.Write((uint)27);
+                w.Put((uint)27);
                 global::Omnius.Core.RocketPack.Tests.Internal.StructElement.Formatter.Serialize(ref w, value.X26, depth + 1);
             }
             if (value.X27 != null)
             {
-                w.Write((uint)28);
+                w.Put((uint)28);
                 global::Omnius.Core.RocketPack.Tests.Internal.MessageElement.Formatter.Serialize(ref w, value.X27, depth + 1);
             }
-            w.Write((uint)0);
+            w.Put((uint)0);
         }
         public global::Omnius.Core.RocketPack.Tests.Internal.NullableMessage Deserialize(ref global::Omnius.Core.RocketPack.RocketMessageReader r, scoped in int depth)
         {
