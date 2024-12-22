@@ -34,12 +34,13 @@ public class OmniSecureStreamTest : TestBase<OmniSecureStreamTest>
     [Fact]
     public async Task SimpleTest()
     {
+        var fixtureFactory = new FixtureFactory(0);
         var randomBytesProvider = new RandomBytesProvider();
         var clock = new FakeClock(new DateTime(2000, 1, 1, 0, 0, 0, DateTimeKind.Utc));
         var bytesPool = BytesPool.Shared;
 
-        var ipEndPoint = new IPEndPoint(IPAddress.Loopback, 50001);
-        var listener = new TcpListener(ipEndPoint);
+        var listener = fixtureFactory.GenTcpListener(IPAddress.Loopback, 10);
+        var ipEndPoint = (IPEndPoint)listener.LocalEndpoint;
         listener.Start();
 
         var clientTask = Task.Run(async () =>
@@ -86,8 +87,12 @@ public class OmniSecureStreamTest : TestBase<OmniSecureStreamTest>
         foreach (var c in cases)
         {
             var data = randomBytesProvider.GetBytes(c);
-            await secureClientSender.SendAsync(data);
-            var receivedData = await secureServerReceiver.ReceiveAsync();
+            var sendTask = secureClientSender.SendAsync(data).AsTask();
+            var receiveTask = secureServerReceiver.ReceiveAsync().AsTask();
+
+            await Task.WhenAll(sendTask, receiveTask);
+
+            var receivedData = await receiveTask;
 
             Assert.Equal(data, receivedData.Memory.ToArray());
         }

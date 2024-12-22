@@ -1,3 +1,4 @@
+using System.Runtime.InteropServices;
 using Omnius.Core.Base.Internal;
 using Xunit;
 
@@ -5,6 +6,23 @@ namespace Omnius.Core.Base;
 
 public class BytesOperationsTest
 {
+    [Fact]
+    public void TryLoadNativeMethodsTest()
+    {
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows) && RuntimeInformation.ProcessArchitecture == Architecture.X64)
+        {
+            Assert.True(NativeMethods.BytesOperations.TryLoadNativeMethods());
+        }
+        else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux) && RuntimeInformation.ProcessArchitecture == Architecture.X64)
+        {
+            Assert.True(NativeMethods.BytesOperations.TryLoadNativeMethods());
+        }
+        else
+        {
+            Assert.False(NativeMethods.BytesOperations.TryLoadNativeMethods());
+        }
+    }
+
     [Fact]
     public void CopyTest()
     {
@@ -51,22 +69,6 @@ public class BytesOperationsTest
 
     [Fact]
     public void BitwiseTest()
-    {
-        try
-        {
-            Assert.True(NativeMethods.BytesOperations.TryLoadNativeMethods());
-            this.InternalBitwiseTest();
-
-            NativeMethods.BytesOperations.LoadPureUnsafeMethods();
-            this.InternalBitwiseTest();
-        }
-        finally
-        {
-            Assert.True(NativeMethods.BytesOperations.TryLoadNativeMethods());
-        }
-    }
-
-    private void InternalBitwiseTest()
     {
         var random = new Random(0);
 

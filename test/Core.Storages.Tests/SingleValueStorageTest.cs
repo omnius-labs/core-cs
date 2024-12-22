@@ -8,17 +8,19 @@ namespace Omnius.Core.Storages;
 public class SingleValueStorageTest
 {
     [Fact]
-    public async Task SingleValueFileStorageTest()
+    public async Task SingleValueStorageAllTest()
     {
+        var fixtureFactory = new FixtureFactory(2);
+
         foreach (var factory in new[] { SingleValueFileStorage.Factory })
         {
             {
-                await using var container = new StorageContainer(factory);
+                await using var container = new StorageContainer(factory, fixtureFactory);
                 await this.SetValueAndTryGetValueTestAsync(container.Storage);
             }
 
             {
-                await using var container = new StorageContainer(factory);
+                await using var container = new StorageContainer(factory, fixtureFactory);
                 await this.SetValueAndTryDeleteTestAsync(container.Storage);
             }
         }
@@ -28,9 +30,9 @@ public class SingleValueStorageTest
     {
         private readonly IDisposable _disposable;
 
-        public StorageContainer(ISingleValueStorageFactory factory)
+        public StorageContainer(ISingleValueStorageFactory factory, FixtureFactory fixtureFactory)
         {
-            _disposable = FixtureFactory.GenTempDirectory(out var tempDirectoryPath);
+            _disposable = fixtureFactory.GenTempDirectory(out var tempDirectoryPath);
             this.Storage = factory.Create(Path.Combine(tempDirectoryPath, "test.db"), BytesPool.Shared);
         }
 

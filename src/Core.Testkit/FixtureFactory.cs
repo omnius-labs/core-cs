@@ -1,4 +1,6 @@
 using System.Globalization;
+using System.Net;
+using System.Net.Sockets;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -6,11 +8,16 @@ namespace Omnius.Core.Testkit;
 
 public unsafe class FixtureFactory
 {
-    private static readonly Random _random = new();
+    private readonly Random _random;
 
-    public static IDisposable GenTempDirectory(out string path)
+    public FixtureFactory(int seed)
     {
-        path = Path.Combine(Path.GetTempPath(), "_Omnius_Test_", DateTime.Now.ToString("yyyy-MM-ddTHH-mm-ssZ", CultureInfo.InvariantCulture) + "_" + Guid.NewGuid().ToString("N"));
+        _random = new Random(seed);
+    }
+
+    public IDisposable GenTempDirectory(out string path)
+    {
+        path = Path.Combine(Path.GetTempPath(), "_Omnius_Test_" + DateTime.Now.ToString("yyyy-MM-ddTHH-mm-ssZ", CultureInfo.InvariantCulture) + "_" + this.GenRandomString(16));
         if (!Directory.Exists(path)) Directory.CreateDirectory(path);
         return new DirectoryRemover(path);
     }
@@ -23,7 +30,7 @@ public unsafe class FixtureFactory
         public void Dispose() => Directory.Delete(_path, true);
     }
 
-    public static string GenRandomFile(string directoryPath, long size)
+    public string GenRandomFile(string directoryPath, long size)
     {
         using var stream = GenRandomFileStream(directoryPath);
 
@@ -38,15 +45,13 @@ public unsafe class FixtureFactory
         return stream.Name;
     }
 
-    public static FileStream GenRandomFileStream(string directoryPath)
+    public FileStream GenRandomFileStream(string directoryPath)
     {
-        var buffer = new byte[32];
-
         int count = 0;
 
         for (; ; )
         {
-            var randomText = Guid.NewGuid().ToString("N");
+            var randomText = this.GenRandomString(16);
             var tempFilePath = Path.Combine(directoryPath, randomText);
 
             try
@@ -62,7 +67,7 @@ public unsafe class FixtureFactory
         }
     }
 
-    public static byte[] GetRandomBytes(int length)
+    public byte[] GenRandomBytes(int length)
     {
         var result = new byte[length];
         _random.NextBytes(result);
@@ -72,14 +77,15 @@ public unsafe class FixtureFactory
     // https://stackoverflow.com/questions/1344221/how-can-i-generate-random-alphanumeric-strings
     private static readonly char[] _chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890".ToCharArray();
 
-    public static string GetRandomString(int size)
+    public string GenRandomString(int size)
     {
-        byte[] data = RandomNumberGenerator.GetBytes(4 * size);
+        byte[] buf = new byte[size * 4];
+        _random.NextBytes(buf);
 
         var result = new StringBuilder(size);
         for (int i = 0; i < size; i++)
         {
-            var rnd = BitConverter.ToUInt32(data, i * 4);
+            var rnd = BitConverter.ToUInt32(buf, i * 4);
             var idx = rnd % _chars.Length;
 
             result.Append(_chars[idx]);
@@ -89,66 +95,83 @@ public unsafe class FixtureFactory
     }
 
     // https://stackoverflow.com/questions/14505932/random-datetime-between-range-not-unified-output/14511053
-    public static DateTime GetRandomDateTimeUtc(DateTime from, DateTime to)
+    public DateTime GenRandomDateTimeUtc(DateTime from, DateTime to)
     {
         var range = to - from;
         var randTimeSpan = new TimeSpan((long)(_random.NextDouble() * range.Ticks));
         return (from + randTimeSpan).ToUniversalTime();
     }
 
-    public static byte GetRandomUInt8()
+    public byte GenRandomUInt8()
     {
         Span<byte> buf = stackalloc byte[1];
         _random.NextBytes(buf);
         return buf[0];
     }
 
-    public static sbyte GetRandomInt8()
+    public sbyte GenRandomInt8()
     {
         Span<byte> buf = stackalloc byte[1];
         _random.NextBytes(buf);
         return (sbyte)buf[0];
     }
 
-    public static short GetRandomInt16()
+    public short GenRandomInt16()
     {
         Span<byte> buf = stackalloc byte[2];
         _random.NextBytes(buf);
         return System.Buffers.Binary.BinaryPrimitives.ReadInt16LittleEndian(buf);
     }
 
-    public static ushort GetRandomUInt16()
+    public ushort GenRandomUInt16()
     {
         Span<byte> buf = stackalloc byte[2];
         _random.NextBytes(buf);
         return System.Buffers.Binary.BinaryPrimitives.ReadUInt16LittleEndian(buf);
     }
 
-    public static int GetRandomInt32()
+    public int GenRandomInt32()
     {
         Span<byte> buf = stackalloc byte[4];
         _random.NextBytes(buf);
         return System.Buffers.Binary.BinaryPrimitives.ReadInt32LittleEndian(buf);
     }
 
-    public static uint GetRandomUInt32()
+    public uint GenRandomUInt32()
     {
         Span<byte> buf = stackalloc byte[4];
         _random.NextBytes(buf);
         return System.Buffers.Binary.BinaryPrimitives.ReadUInt32LittleEndian(buf);
     }
 
-    public static long GetRandomInt64()
+    public long GenRandomInt64()
     {
         Span<byte> buf = stackalloc byte[8];
         _random.NextBytes(buf);
         return System.Buffers.Binary.BinaryPrimitives.ReadInt64LittleEndian(buf);
     }
 
-    public static ulong GetRandomUInt64()
+    public ulong GenRandomUInt64()
     {
         Span<byte> buf = stackalloc byte[8];
         _random.NextBytes(buf);
         return System.Buffers.Binary.BinaryPrimitives.ReadUInt64LittleEndian(buf);
+    }
+
+    public TcpListener GenTcpListener(IPAddress address, int retry)
+    {
+        for (int i = 0; ; i++)
+        {
+            try
+            {
+                var listener = new TcpListener(address, _random.Next(1024, 65535));
+                listener.Start();
+                return listener;
+            }
+            catch (SocketException)
+            {
+                if (i >= retry) throw;
+            }
+        }
     }
 }

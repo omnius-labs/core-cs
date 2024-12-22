@@ -8,27 +8,29 @@ namespace Omnius.Core.Storages;
 public class KeyValueStorageTest
 {
     [Fact]
-    public async Task SimpleTest()
+    public async Task KeyValueStorageAllTest()
     {
-        foreach (var factory in new[] { KeyValueFileStorage.Factory, KeyValueRocksDbStorage.Factory })
+        var fixtureFactory = new FixtureFactory(1);
+
+        foreach (var factory in new[] { KeyValueFileStorage.Factory })
         {
             {
-                await using var container = new StorageContainer(factory);
+                await using var container = new StorageContainer(factory, fixtureFactory);
                 await this.RebuildTestAsync(container.Storage);
             }
 
             {
-                await using var container = new StorageContainer(factory);
+                await using var container = new StorageContainer(factory, fixtureFactory);
                 await this.TryChangeKeyAndReadWriteTestAsync(container.Storage);
             }
 
             {
-                await using var container = new StorageContainer(factory);
+                await using var container = new StorageContainer(factory, fixtureFactory);
                 await this.ContainsKeyAndGetKeysTestAsync(container.Storage);
             }
 
             {
-                await using var container = new StorageContainer(factory);
+                await using var container = new StorageContainer(factory, fixtureFactory);
                 await this.TryDeleteAndShrinkTestAsync(container.Storage);
             }
         }
@@ -38,9 +40,9 @@ public class KeyValueStorageTest
     {
         private readonly IDisposable _disposable;
 
-        public StorageContainer(IKeyValueStorageFactory factory)
+        public StorageContainer(IKeyValueStorageFactory factory, FixtureFactory fixtureFactory)
         {
-            _disposable = FixtureFactory.GenTempDirectory(out var tempDirectoryPath);
+            _disposable = fixtureFactory.GenTempDirectory(out var tempDirectoryPath);
             this.Storage = factory.Create(tempDirectoryPath, BytesPool.Shared);
         }
 

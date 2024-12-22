@@ -1,5 +1,5 @@
 using System.Buffers;
-using System.Data.SQLite;
+using Microsoft.Data.Sqlite;
 using System.Runtime.CompilerServices;
 using Omnius.Core.Base;
 using Omnius.Core.Base.Helpers;
@@ -42,14 +42,14 @@ public sealed class KeyValueFileStorage : AsyncDisposableBase, IKeyValueStorage
     {
     }
 
-    private async ValueTask<SQLiteConnection> GetConnectionAsync(CancellationToken cancellationToken = default)
+    private async ValueTask<SqliteConnection> GetConnectionAsync(CancellationToken cancellationToken = default)
     {
-        var sqlConnectionStringBuilder = new SQLiteConnectionStringBuilder
+        var sqlConnectionStringBuilder = new SqliteConnectionStringBuilder
         {
             DataSource = _sqlitePath,
             ForeignKeys = true,
         };
-        var connection = new SQLiteConnection(sqlConnectionStringBuilder.ToString());
+        var connection = new SqliteConnection(sqlConnectionStringBuilder.ToString());
         await connection.OpenAsync(cancellationToken);
         return connection;
     }
