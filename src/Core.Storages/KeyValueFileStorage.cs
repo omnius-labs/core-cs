@@ -1,6 +1,6 @@
 using System.Buffers;
-using Microsoft.Data.Sqlite;
 using System.Runtime.CompilerServices;
+using Microsoft.Data.Sqlite;
 using Omnius.Core.Base;
 using Omnius.Core.Base.Helpers;
 using Omnius.Core.Sql;
