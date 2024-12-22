@@ -48,6 +48,7 @@ public sealed class KeyValueFileStorage : AsyncDisposableBase, IKeyValueStorage
         {
             DataSource = _sqlitePath,
             ForeignKeys = true,
+            Pooling = false,
         };
         var connection = new SqliteConnection(sqlConnectionStringBuilder.ToString());
         await connection.OpenAsync(cancellationToken);
