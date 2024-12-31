@@ -1,5 +1,6 @@
 using System.Buffers;
 using System.Runtime.CompilerServices;
+using Omnius.Core.Base;
 
 namespace Omnius.Core.RocketPack;
 
@@ -25,7 +26,6 @@ public static unsafe class Varint
             {
                 var span = writer.GetSpan(1);
                 span[0] = value;
-
                 writer.Advance(1);
             }
             else
@@ -33,7 +33,6 @@ public static unsafe class Varint
                 var span = writer.GetSpan(2);
                 span[0] = Int8Code;
                 span[1] = value;
-
                 writer.Advance(2);
             }
         }
@@ -48,7 +47,6 @@ public static unsafe class Varint
             {
                 var span = writer.GetSpan(1);
                 span[0] = (byte)value;
-
                 writer.Advance(1);
             }
             else if (value <= byte.MaxValue)
@@ -56,7 +54,6 @@ public static unsafe class Varint
                 var span = writer.GetSpan(2);
                 span[0] = Int8Code;
                 span[1] = (byte)value;
-
                 writer.Advance(2);
             }
             else
@@ -66,7 +63,6 @@ public static unsafe class Varint
                 fixed (byte* p = span)
                 {
                     p[0] = Int16Code;
-
                     ushort* uint_p = (ushort*)(p + 1);
                     *uint_p = value;
                 }
@@ -85,7 +81,6 @@ public static unsafe class Varint
             {
                 var span = writer.GetSpan(1);
                 span[0] = (byte)value;
-
                 writer.Advance(1);
             }
             else if (value <= byte.MaxValue)
@@ -93,7 +88,6 @@ public static unsafe class Varint
                 var span = writer.GetSpan(2);
                 span[0] = Int8Code;
                 span[1] = (byte)value;
-
                 writer.Advance(2);
             }
             else if (value <= ushort.MaxValue)
@@ -103,7 +97,6 @@ public static unsafe class Varint
                 fixed (byte* p = span)
                 {
                     p[0] = Int16Code;
-
                     ushort* uint_p = (ushort*)(p + 1);
                     *uint_p = (ushort)value;
                 }
@@ -117,7 +110,6 @@ public static unsafe class Varint
                 fixed (byte* p = span)
                 {
                     span[0] = Int32Code;
-
                     uint* uint_p = (uint*)(p + 1);
                     *uint_p = value;
                 }
@@ -136,7 +128,6 @@ public static unsafe class Varint
             {
                 var span = writer.GetSpan(1);
                 span[0] = (byte)value;
-
                 writer.Advance(1);
             }
             else if (value <= byte.MaxValue)
@@ -144,7 +135,6 @@ public static unsafe class Varint
                 var span = writer.GetSpan(2);
                 span[0] = Int8Code;
                 span[1] = (byte)value;
-
                 writer.Advance(2);
             }
             else if (value <= ushort.MaxValue)
@@ -154,7 +144,6 @@ public static unsafe class Varint
                 fixed (byte* p = span)
                 {
                     span[0] = Int16Code;
-
                     ushort* uint_p = (ushort*)(p + 1);
                     *uint_p = (ushort)value;
                 }
@@ -168,7 +157,6 @@ public static unsafe class Varint
                 fixed (byte* p = span)
                 {
                     span[0] = Int32Code;
-
                     uint* uint_p = (uint*)(p + 1);
                     *uint_p = (uint)value;
                 }
@@ -177,12 +165,11 @@ public static unsafe class Varint
             }
             else
             {
-                var span = writer.GetSpan(5);
+                var span = writer.GetSpan(9);
 
                 fixed (byte* p = span)
                 {
                     span[0] = Int64Code;
-
                     ulong* ulong_p = (ulong*)(p + 1);
                     *ulong_p = value;
                 }
@@ -229,7 +216,175 @@ public static unsafe class Varint
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static bool InternalTryGetUInt8(scoped in ReadOnlySpan<byte> span, out byte value, out int consumed)
+    public static byte GetUInt8(ref ReadOnlySequence<byte> sequence)
+    {
+        var reader = new SequenceReader<byte>(sequence);
+        var result = GetUInt8(ref reader);
+        sequence = sequence.Slice(reader.Consumed);
+        return result;
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static byte GetUInt8(ref SequenceReader<byte> reader)
+    {
+        if (reader.Remaining == 0) throw new VarintException(VarintErrorCode.EndOfInput);
+
+        return InternalGetValue(ref reader, 2, InternalGetUInt8);
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static ushort GetUInt16(ref ReadOnlySequence<byte> sequence)
+    {
+        var reader = new SequenceReader<byte>(sequence);
+        var result = GetUInt16(ref reader);
+        sequence = sequence.Slice(reader.Consumed);
+        return result;
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static ushort GetUInt16(ref SequenceReader<byte> reader)
+    {
+        if (reader.Remaining == 0) throw new VarintException(VarintErrorCode.EndOfInput);
+
+        return InternalGetValue(ref reader, 3, InternalGetUInt16);
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static uint GetUInt32(ref ReadOnlySequence<byte> sequence)
+    {
+        var reader = new SequenceReader<byte>(sequence);
+        var result = GetUInt32(ref reader);
+        sequence = sequence.Slice(reader.Consumed);
+        return result;
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static uint GetUInt32(ref SequenceReader<byte> reader)
+    {
+        if (reader.Remaining == 0) throw new VarintException(VarintErrorCode.EndOfInput);
+
+        return InternalGetValue(ref reader, 5, InternalGetUInt32);
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static ulong GetUInt64(ref ReadOnlySequence<byte> sequence)
+    {
+        var reader = new SequenceReader<byte>(sequence);
+        var result = GetUInt64(ref reader);
+        sequence = sequence.Slice(reader.Consumed);
+        return result;
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static ulong GetUInt64(ref SequenceReader<byte> reader)
+    {
+        if (reader.Remaining == 0) throw new VarintException(VarintErrorCode.EndOfInput);
+
+        return InternalGetValue(ref reader, 9, InternalGetUInt64);
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static sbyte GetInt8(ref ReadOnlySequence<byte> sequence)
+    {
+        var reader = new SequenceReader<byte>(sequence);
+        var result = GetInt8(ref reader);
+        sequence = sequence.Slice(reader.Consumed);
+        return result;
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static sbyte GetInt8(ref SequenceReader<byte> reader)
+    {
+        unchecked
+        {
+            var byte_result = GetUInt8(ref reader);
+            return (sbyte)((byte_result >> 1) ^ (-((sbyte)byte_result & 1)));
+        }
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static short GetInt16(ref ReadOnlySequence<byte> sequence)
+    {
+        var reader = new SequenceReader<byte>(sequence);
+        var result = GetInt16(ref reader);
+        sequence = sequence.Slice(reader.Consumed);
+        return result;
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static short GetInt16(ref SequenceReader<byte> reader)
+    {
+        unchecked
+        {
+            var ushort_result = GetUInt16(ref reader);
+            return (short)((ushort_result >> 1) ^ (-((short)ushort_result & 1)));
+        }
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static int GetInt32(ref ReadOnlySequence<byte> sequence)
+    {
+        var reader = new SequenceReader<byte>(sequence);
+        var result = GetInt32(ref reader);
+        sequence = sequence.Slice(reader.Consumed);
+        return result;
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static int GetInt32(ref SequenceReader<byte> reader)
+    {
+        unchecked
+        {
+            var uint_result = GetUInt32(ref reader);
+            return (int)(uint_result >> 1) ^ (-((int)uint_result & 1));
+        }
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static long GetInt64(ref ReadOnlySequence<byte> sequence)
+    {
+        var reader = new SequenceReader<byte>(sequence);
+        var result = GetInt64(ref reader);
+        sequence = sequence.Slice(reader.Consumed);
+        return result;
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static long GetInt64(ref SequenceReader<byte> reader)
+    {
+        unchecked
+        {
+            var ulong_result = GetUInt64(ref reader);
+            return (long)(ulong_result >> 1) ^ (-((long)ulong_result & 1));
+        }
+    }
+
+    private delegate TResult ConvertReadOnlySpan<TResult>(scoped in ReadOnlySpan<byte> span, out int consumed);
+
+    private static TResult InternalGetValue<TResult>(ref SequenceReader<byte> reader, int maxLength, ConvertReadOnlySpan<TResult> action)
+    {
+        if (reader.UnreadSpan.Length >= maxLength)
+        {
+            var readOnlySpan = reader.UnreadSpan;
+            var result = action(readOnlySpan, out int consumed);
+            reader.Advance(consumed);
+            return result;
+        }
+        else
+        {
+            var length = (int)Math.Min(reader.Remaining, maxLength);
+            Span<byte> buffer = stackalloc byte[length];
+            _ = reader.TryCopyTo(buffer);
+
+            var readOnlySpan = (ReadOnlySpan<byte>)buffer;
+            var result = action(readOnlySpan, out int consumed);
+            reader.Advance(consumed);
+            return result;
+        }
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static byte InternalGetUInt8(scoped in ReadOnlySpan<byte> span, out int consumed)
     {
         unchecked
         {
@@ -237,32 +392,27 @@ public static unsafe class Varint
             {
                 var p = fixed_p;
 
-                if ((*p & 0x80) == 0 && span.Length >= 1)
+                if ((*p & 0x80) == 0)
                 {
-                    value = *p;
                     consumed = 1;
-                    return true;
+                    return *p;
+                }
+                else if (*p == Int8Code)
+                {
+                    if (span.Length < 2) throw new VarintException(VarintErrorCode.TooSmallBody);
+                    consumed = 2;
+                    return p[1];
                 }
                 else
                 {
-                    switch (*p)
-                    {
-                        case Int8Code when span.Length >= 2:
-                            value = p[1];
-                            consumed = 2;
-                            return true;
-                        default:
-                            value = 0;
-                            consumed = 0;
-                            return false;
-                    }
+                    throw new VarintException(VarintErrorCode.InvalidHeader);
                 }
             }
         }
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static bool InternalTryGetUInt16(scoped in ReadOnlySpan<byte> span, out ushort value, out int consumed)
+    private static ushort InternalGetUInt16(scoped in ReadOnlySpan<byte> span, out int consumed)
     {
         unchecked
         {
@@ -270,36 +420,33 @@ public static unsafe class Varint
             {
                 var p = fixed_p;
 
-                if ((*p & 0x80) == 0 && span.Length >= 1)
+                if ((*p & 0x80) == 0)
                 {
-                    value = *p;
                     consumed = 1;
-                    return true;
+                    return *p;
+                }
+                else if (*p == Int8Code)
+                {
+                    if (span.Length < 2) throw new VarintException(VarintErrorCode.TooSmallBody);
+                    consumed = 2;
+                    return p[1];
+                }
+                else if (*p == Int16Code)
+                {
+                    if (span.Length < 3) throw new VarintException(VarintErrorCode.TooSmallBody);
+                    consumed = 3;
+                    return *(ushort*)(p + 1);
                 }
                 else
                 {
-                    switch (*p)
-                    {
-                        case Int8Code when span.Length >= 2:
-                            value = p[1];
-                            consumed = 2;
-                            return true;
-                        case Int16Code when span.Length >= 3:
-                            value = *(ushort*)(p + 1);
-                            consumed = 3;
-                            return true;
-                        default:
-                            value = 0;
-                            consumed = 0;
-                            return false;
-                    }
+                    throw new VarintException(VarintErrorCode.InvalidHeader);
                 }
             }
         }
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static bool InternalTryGetUInt32(scoped in ReadOnlySpan<byte> span, out uint value, out int consumed)
+    private static uint InternalGetUInt32(scoped in ReadOnlySpan<byte> span, out int consumed)
     {
         unchecked
         {
@@ -307,40 +454,39 @@ public static unsafe class Varint
             {
                 var p = fixed_p;
 
-                if ((*p & 0x80) == 0 && span.Length >= 1)
+                if ((*p & 0x80) == 0)
                 {
-                    value = *p;
                     consumed = 1;
-                    return true;
+                    return *p;
+                }
+                else if (*p == Int8Code)
+                {
+                    if (span.Length < 2) throw new VarintException(VarintErrorCode.TooSmallBody);
+                    consumed = 2;
+                    return p[1];
+                }
+                else if (*p == Int16Code)
+                {
+                    if (span.Length < 3) throw new VarintException(VarintErrorCode.TooSmallBody);
+                    consumed = 3;
+                    return *(ushort*)(p + 1);
+                }
+                else if (*p == Int32Code)
+                {
+                    if (span.Length < 5) throw new VarintException(VarintErrorCode.TooSmallBody);
+                    consumed = 5;
+                    return *(uint*)(p + 1);
                 }
                 else
                 {
-                    switch (*p)
-                    {
-                        case Int8Code when span.Length >= 2:
-                            value = p[1];
-                            consumed = 2;
-                            return true;
-                        case Int16Code when span.Length >= 3:
-                            value = *(ushort*)(p + 1);
-                            consumed = 3;
-                            return true;
-                        case Int32Code when span.Length >= 5:
-                            value = *(uint*)(p + 1);
-                            consumed = 5;
-                            return true;
-                        default:
-                            value = 0;
-                            consumed = 0;
-                            return false;
-                    }
+                    throw new VarintException(VarintErrorCode.InvalidHeader);
                 }
             }
         }
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static bool InternalTryGetUInt64(scoped in ReadOnlySpan<byte> span, out ulong value, out int consumed)
+    private static ulong InternalGetUInt64(scoped in ReadOnlySpan<byte> span, out int consumed)
     {
         unchecked
         {
@@ -348,287 +494,40 @@ public static unsafe class Varint
             {
                 var p = fixed_p;
 
-                if ((*p & 0x80) == 0 && span.Length >= 1)
+                if ((*p & 0x80) == 0)
                 {
-                    value = *p;
                     consumed = 1;
-                    return true;
+                    return *p;
+                }
+                else if (*p == Int8Code)
+                {
+                    if (span.Length < 2) throw new VarintException(VarintErrorCode.TooSmallBody);
+                    consumed = 2;
+                    return p[1];
+                }
+                else if (*p == Int16Code)
+                {
+                    if (span.Length < 3) throw new VarintException(VarintErrorCode.TooSmallBody);
+                    consumed = 3;
+                    return *(ushort*)(p + 1);
+                }
+                else if (*p == Int32Code)
+                {
+                    if (span.Length < 5) throw new VarintException(VarintErrorCode.TooSmallBody);
+                    consumed = 5;
+                    return *(uint*)(p + 1);
+                }
+                else if (*p == Int64Code)
+                {
+                    if (span.Length < 9) throw new VarintException(VarintErrorCode.TooSmallBody);
+                    consumed = 9;
+                    return *(ulong*)(p + 1);
                 }
                 else
                 {
-                    switch (*p)
-                    {
-                        case Int8Code when span.Length >= 2:
-                            value = p[1];
-                            consumed = 2;
-                            return true;
-                        case Int16Code when span.Length >= 3:
-                            value = *(ushort*)(p + 1);
-                            consumed = 3;
-                            return true;
-                        case Int32Code when span.Length >= 5:
-                            value = *(uint*)(p + 1);
-                            consumed = 5;
-                            return true;
-                        case Int64Code when span.Length >= 9:
-                            value = *(ulong*)(p + 1);
-                            consumed = 9;
-                            return true;
-                        default:
-                            value = 0;
-                            consumed = 0;
-                            return false;
-                    }
+                    throw new VarintException(VarintErrorCode.InvalidHeader);
                 }
             }
         }
-    }
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool TryGetUInt8(ref SequenceReader<byte> reader, out byte value)
-    {
-        value = 0;
-        if (reader.Remaining == 0) return false;
-
-        unchecked
-        {
-            if (reader.UnreadSpan.Length >= 2)
-            {
-                if (!InternalTryGetUInt8(reader.UnreadSpan, out value, out int consumed)) return false;
-
-                reader.Advance(consumed);
-                return true;
-            }
-            else
-            {
-                int size = (int)Math.Min(2, reader.Remaining);
-                byte* buffer = stackalloc byte[size];
-                var tempSpan = new Span<byte>(buffer, size);
-
-                if (!reader.TryCopyTo(tempSpan)) return false;
-                if (!InternalTryGetUInt8(tempSpan, out value, out int consumed)) return false;
-
-                reader.Advance(consumed);
-                return true;
-            }
-        }
-    }
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool TryGetUInt8(ref ReadOnlySequence<byte> sequence, out byte value)
-    {
-        var reader = new SequenceReader<byte>(sequence);
-        var result = TryGetUInt8(ref reader, out value);
-        sequence = sequence.Slice(reader.Consumed);
-        return result;
-    }
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool TryGetUInt16(ref SequenceReader<byte> reader, out ushort value)
-    {
-        value = 0;
-        if (reader.Remaining == 0) return false;
-
-        unchecked
-        {
-            if (reader.UnreadSpan.Length >= 3)
-            {
-                if (!InternalTryGetUInt16(reader.UnreadSpan, out value, out int consumed)) return false;
-
-                reader.Advance(consumed);
-                return true;
-            }
-            else
-            {
-                int size = (int)Math.Min(3, reader.Remaining);
-                byte* buffer = stackalloc byte[size];
-                var tempSpan = new Span<byte>(buffer, size);
-
-                if (!reader.TryCopyTo(tempSpan)) return false;
-                if (!InternalTryGetUInt16(tempSpan, out value, out int consumed)) return false;
-
-                reader.Advance(consumed);
-                return true;
-            }
-        }
-    }
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool TryGetUInt16(ref ReadOnlySequence<byte> sequence, out ushort value)
-    {
-        var reader = new SequenceReader<byte>(sequence);
-        var result = TryGetUInt16(ref reader, out value);
-        sequence = sequence.Slice(reader.Consumed);
-        return result;
-    }
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool TryGetUInt32(ref SequenceReader<byte> reader, out uint value)
-    {
-        value = 0;
-        if (reader.Remaining == 0) return false;
-
-        unchecked
-        {
-            if (reader.UnreadSpan.Length >= 5)
-            {
-                if (!InternalTryGetUInt32(reader.UnreadSpan, out value, out int consumed)) return false;
-
-                reader.Advance(consumed);
-                return true;
-            }
-            else
-            {
-                int size = (int)Math.Min(5, reader.Remaining);
-                byte* buffer = stackalloc byte[size];
-                var tempSpan = new Span<byte>(buffer, size);
-
-                if (!reader.TryCopyTo(tempSpan)) return false;
-                if (!InternalTryGetUInt32(tempSpan, out value, out int consumed)) return false;
-
-                reader.Advance(consumed);
-                return true;
-            }
-        }
-    }
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool TryGetUInt32(ref ReadOnlySequence<byte> sequence, out uint value)
-    {
-        var reader = new SequenceReader<byte>(sequence);
-        var result = TryGetUInt32(ref reader, out value);
-        sequence = sequence.Slice(reader.Consumed);
-        return result;
-    }
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool TryGetUInt64(ref SequenceReader<byte> reader, out ulong value)
-    {
-        value = 0;
-        if (reader.Remaining == 0) return false;
-
-        unchecked
-        {
-            if (reader.UnreadSpan.Length >= 9)
-            {
-                if (!InternalTryGetUInt64(reader.UnreadSpan, out value, out int consumed)) return false;
-
-                reader.Advance(consumed);
-                return true;
-            }
-            else
-            {
-                int size = (int)Math.Min(9, reader.Remaining);
-                byte* buffer = stackalloc byte[size];
-                var tempSpan = new Span<byte>(buffer, size);
-
-                if (!reader.TryCopyTo(tempSpan)) return false;
-                if (!InternalTryGetUInt64(tempSpan, out value, out int consumed)) return false;
-
-                reader.Advance(consumed);
-                return true;
-            }
-        }
-    }
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool TryGetUInt64(ref ReadOnlySequence<byte> sequence, out ulong value)
-    {
-        var reader = new SequenceReader<byte>(sequence);
-        var result = TryGetUInt64(ref reader, out value);
-        sequence = sequence.Slice(reader.Consumed);
-        return result;
-    }
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool TryGetInt8(ref SequenceReader<byte> reader, out sbyte value)
-    {
-        unchecked
-        {
-            value = 0;
-
-            if (!TryGetUInt8(ref reader, out byte byte_result)) return false;
-
-            value = (sbyte)((byte_result >> 1) ^ (-((sbyte)byte_result & 1)));
-            return true;
-        }
-    }
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool TryGetInt8(ref ReadOnlySequence<byte> sequence, out sbyte value)
-    {
-        var reader = new SequenceReader<byte>(sequence);
-        var result = TryGetInt8(ref reader, out value);
-        sequence = sequence.Slice(reader.Consumed);
-        return result;
-    }
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool TryGetInt16(ref SequenceReader<byte> reader, out short value)
-    {
-        unchecked
-        {
-            value = 0;
-
-            if (!TryGetUInt16(ref reader, out ushort ushort_result)) return false;
-
-            value = (short)((ushort_result >> 1) ^ (-((short)ushort_result & 1)));
-            return true;
-        }
-    }
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool TryGetInt16(ref ReadOnlySequence<byte> sequence, out short value)
-    {
-        var reader = new SequenceReader<byte>(sequence);
-        var result = TryGetInt16(ref reader, out value);
-        sequence = sequence.Slice(reader.Consumed);
-        return result;
-    }
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool TryGetInt32(ref SequenceReader<byte> reader, out int value)
-    {
-        unchecked
-        {
-            value = 0;
-
-            if (!TryGetUInt32(ref reader, out uint uint_result)) return false;
-
-            value = (int)(uint_result >> 1) ^ (-((int)uint_result & 1));
-            return true;
-        }
-    }
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool TryGetInt32(ref ReadOnlySequence<byte> sequence, out int value)
-    {
-        var reader = new SequenceReader<byte>(sequence);
-        var result = TryGetInt32(ref reader, out value);
-        sequence = sequence.Slice(reader.Consumed);
-        return result;
-    }
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool TryGetInt64(ref SequenceReader<byte> reader, out long result)
-    {
-        unchecked
-        {
-            result = 0;
-
-            if (!TryGetUInt64(ref reader, out ulong ulong_result)) return false;
-
-            result = (long)(ulong_result >> 1) ^ (-((long)ulong_result & 1));
-            return true;
-        }
-    }
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool TryGetInt64(ref ReadOnlySequence<byte> sequence, out long value)
-    {
-        var reader = new SequenceReader<byte>(sequence);
-        var result = TryGetInt64(ref reader, out value);
-        sequence = sequence.Slice(reader.Consumed);
-        return result;
     }
 }

@@ -100,7 +100,7 @@ class ProfileMessage : RocketMessage<ProfileMessage>
         }
         public ProfileMessage Deserialize(ref RocketMessageReader r, scoped in int depth)
         {
-            var sessionId = r.GetMemory(1024).ToArray();
+            var sessionId = r.GetBytes(1024);
             var authType = Enum.Parse<AuthType>(r.GetString(1024));
             var keyExchangeAlgorithmType = Enum.Parse<KeyExchangeAlgorithmType>(r.GetString(1024));
             var keyDerivationAlgorithmType = Enum.Parse<KeyDerivationAlgorithmType>(r.GetString(1024));

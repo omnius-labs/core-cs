@@ -22,13 +22,14 @@ public unsafe ref struct RocketMessageReader
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public IMemoryOwner<byte> GetRecyclableMemory(scoped in int limit)
     {
-        if (!Varint.TryGetUInt32(ref _reader, out uint length)) throw new FormatException();
-        if (length > limit) throw new FormatException();
+        var length = this.GetUInt32();
+        if (length > limit) throw new RocketMessageException(RocketMessageErrorCode.LimitExceeded);
 
         if (length == 0) return MemoryOwner<byte>.Empty;
 
-        var memoryOwner = _bytesPool.Memory.Rent((int)length).Shrink((int)length);
+        if (_reader.Remaining < length) throw new RocketMessageException(RocketMessageErrorCode.TooSmallBody);
 
+        var memoryOwner = _bytesPool.Memory.Rent((int)length).Shrink((int)length);
         _reader.TryCopyTo(memoryOwner.Memory.Span);
         _reader.Advance(length);
 
@@ -36,42 +37,33 @@ public unsafe ref struct RocketMessageReader
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public ReadOnlyMemory<byte> GetMemory(scoped in int limit)
+    public byte[] GetBytes(scoped in int limit)
     {
-        if (!Varint.TryGetUInt32(ref _reader, out uint length)) throw new FormatException();
-        if (length > limit) throw new FormatException();
+        var length = this.GetUInt32();
+        if (length > limit) throw new RocketMessageException(RocketMessageErrorCode.LimitExceeded);
 
-        if (length == 0) return ReadOnlyMemory<byte>.Empty;
+        if (length == 0) return Array.Empty<byte>();
+
+        if (_reader.Remaining < length) throw new RocketMessageException(RocketMessageErrorCode.TooSmallBody);
 
         var result = new byte[(int)length];
-
         _reader.TryCopyTo(result.AsSpan());
         _reader.Advance(length);
 
-        return new ReadOnlyMemory<byte>(result);
+        return result;
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public Utf8String GetString(scoped in int limit)
     {
-        if (!Varint.TryGetUInt32(ref _reader, out uint length)) throw new FormatException();
-        if (length > limit) throw new FormatException();
-
-        if (length == 0) return Utf8String.Empty;
-
-        var result = new byte[(int)length];
-
-        _reader.TryCopyTo(result.AsSpan());
-        _reader.Advance(length);
-
-        return new Utf8String(result);
+        var bytes = this.GetBytes(limit);
+        return new Utf8String(bytes);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public Timestamp64 GetTimestamp64()
     {
         long seconds = this.GetInt64();
-
         return new Timestamp64(seconds);
     }
 
@@ -80,107 +72,87 @@ public unsafe ref struct RocketMessageReader
     {
         long seconds = this.GetInt64();
         uint nanos = this.GetUInt32();
-
         return new Timestamp96(seconds, nanos);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public bool GetBoolean()
+    public bool GetBool()
     {
-        if (!Varint.TryGetUInt64(ref _reader, out ulong result)) throw new FormatException();
-
-        return (result != 0);
-    }
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public ulong GetUInt64()
-    {
-        if (!Varint.TryGetUInt64(ref _reader, out ulong result)) throw new FormatException();
-
-        return result;
+        var v = this.GetUInt64();
+        return (v != 0);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public byte GetUInt8()
     {
-        if (!Varint.TryGetUInt8(ref _reader, out byte result)) throw new FormatException();
-
-        return result;
+        return Varint.GetUInt8(ref _reader);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public ushort GetUInt16()
     {
-        if (!Varint.TryGetUInt16(ref _reader, out ushort result)) throw new FormatException();
-
-        return result;
+        return Varint.GetUInt16(ref _reader);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public uint GetUInt32()
     {
-        if (!Varint.TryGetUInt32(ref _reader, out uint result)) throw new FormatException();
+        return Varint.GetUInt32(ref _reader);
+    }
 
-        return result;
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public ulong GetUInt64()
+    {
+        return Varint.GetUInt64(ref _reader);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public sbyte GetInt8()
     {
-        if (!Varint.TryGetInt8(ref _reader, out sbyte result)) throw new FormatException();
-
-        return result;
+        return Varint.GetInt8(ref _reader);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public short GetInt16()
     {
-        if (!Varint.TryGetInt16(ref _reader, out short result)) throw new FormatException();
-
-        return result;
+        return Varint.GetInt16(ref _reader);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public int GetInt32()
     {
-        if (!Varint.TryGetInt32(ref _reader, out int result)) throw new FormatException();
-
-        return result;
+        return Varint.GetInt32(ref _reader);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public long GetInt64()
     {
-        if (!Varint.TryGetInt64(ref _reader, out long result)) throw new FormatException();
-
-        return result;
+        return Varint.GetInt64(ref _reader);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public float GetFloat32()
     {
+        if (_reader.Remaining < sizeof(float)) throw new RocketMessageException(RocketMessageErrorCode.EndOfInput);
+
         const int Size = 4;
-        byte* buffer = stackalloc byte[Size];
-        var tempSpan = new Span<byte>(buffer, Size);
+        Span<byte> buffer = stackalloc byte[Size];
+        _reader.TryCopyTo(buffer);
 
-        _reader.TryCopyTo(tempSpan);
-
-        var f = new Float32Bits(tempSpan);
-
+        var f = new Float32Bits(buffer);
         return f.Value;
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public double GetFloat64()
     {
+        if (_reader.Remaining < sizeof(double)) throw new RocketMessageException(RocketMessageErrorCode.EndOfInput);
+
         const int Size = 8;
-        byte* buffer = stackalloc byte[Size];
-        var tempSpan = new Span<byte>(buffer, Size);
+        Span<byte> buffer = stackalloc byte[Size];
+        _reader.TryCopyTo(buffer);
 
-        _reader.TryCopyTo(tempSpan);
-
-        var f = new Float64Bits(tempSpan);
-
+        var f = new Float64Bits(buffer);
         return f.Value;
     }
 }

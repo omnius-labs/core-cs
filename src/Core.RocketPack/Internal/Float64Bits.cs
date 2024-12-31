@@ -34,13 +34,13 @@ internal struct Float64Bits
 
     public Float64Bits(in double value)
     {
-        this = default(Float64Bits);
+        this = default;
         Value = value;
     }
 
     public Float64Bits(in Span<byte> bigEndianBytes)
     {
-        this = default(Float64Bits);
+        this = default;
 
         if (BitConverter.IsLittleEndian)
         {

@@ -121,7 +121,7 @@ public class OmniSigner : RocketMessage<OmniSigner>
         {
             var type = Enum.Parse<OmniSignType>(r.GetString(1024));
             var name = r.GetString(1024);
-            var key = r.GetMemory(1024).ToArray();
+            var key = r.GetBytes(1024);
 
             return new OmniSigner()
             {
@@ -204,8 +204,8 @@ public class OmniCert : RocketMessage<OmniCert>
         {
             var type = Enum.Parse<OmniSignType>(r.GetString(1024));
             var name = r.GetString(1024);
-            var publicKey = r.GetMemory(1024).ToArray();
-            var value = r.GetMemory(1024).ToArray();
+            var publicKey = r.GetBytes(1024);
+            var value = r.GetBytes(1024);
 
             return new OmniCert()
             {

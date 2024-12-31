@@ -105,7 +105,7 @@ internal sealed partial class StructElement : global::Omnius.Core.RocketPack.Roc
             bool p_x0 = false;
 
             {
-                p_x0 = r.GetBoolean();
+                p_x0 = r.GetBool();
             }
             return new global::Omnius.Core.RocketPack.Tests.Internal.StructElement(p_x0);
         }
@@ -185,7 +185,7 @@ internal sealed partial class MessageElement : global::Omnius.Core.RocketPack.Ro
                 {
                     case 1:
                         {
-                            p_x0 = r.GetBoolean();
+                            p_x0 = r.GetBool();
                             break;
                         }
                 }
@@ -468,7 +468,7 @@ internal sealed partial class Struct : global::Omnius.Core.RocketPack.RocketMess
             global::Omnius.Core.RocketPack.Tests.Internal.MessageElement p_x27 = global::Omnius.Core.RocketPack.Tests.Internal.MessageElement.Empty;
 
             {
-                p_x0 = r.GetBoolean();
+                p_x0 = r.GetBool();
             }
             {
                 p_x1 = r.GetInt8();
@@ -534,7 +534,7 @@ internal sealed partial class Struct : global::Omnius.Core.RocketPack.RocketMess
                 p_x21 = r.GetTimestamp96();
             }
             {
-                p_x22 = r.GetMemory(256);
+                p_x22 = r.GetBytes(256);
             }
             {
                 p_x23 = r.GetRecyclableMemory(256);
@@ -962,7 +962,7 @@ internal sealed partial class Message : global::Omnius.Core.RocketPack.RocketMes
                 {
                     case 1:
                         {
-                            p_x0 = r.GetBoolean();
+                            p_x0 = r.GetBool();
                             break;
                         }
                     case 2:
@@ -1072,7 +1072,7 @@ internal sealed partial class Message : global::Omnius.Core.RocketPack.RocketMes
                         }
                     case 23:
                         {
-                            p_x22 = r.GetMemory(256);
+                            p_x22 = r.GetBytes(256);
                             break;
                         }
                     case 24:
@@ -1539,7 +1539,7 @@ internal sealed partial class NullableMessage : global::Omnius.Core.RocketPack.R
                 {
                     case 1:
                         {
-                            p_x0 = r.GetBoolean();
+                            p_x0 = r.GetBool();
                             break;
                         }
                     case 2:
@@ -1649,7 +1649,7 @@ internal sealed partial class NullableMessage : global::Omnius.Core.RocketPack.R
                         }
                     case 23:
                         {
-                            p_x22 = r.GetMemory(256);
+                            p_x22 = r.GetBytes(256);
                             break;
                         }
                     case 24:

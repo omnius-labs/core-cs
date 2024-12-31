@@ -118,8 +118,8 @@ public class OmniAgreement : RocketMessage<OmniAgreement>
         {
             var createdTime = r.GetTimestamp64().ToDateTime();
             var algorithmType = Enum.Parse<OmniAgreementAlgorithmType>(r.GetString(1024));
-            var publicKey = r.GetMemory(1024).ToArray();
-            var secretKey = r.GetMemory(1024).ToArray();
+            var publicKey = r.GetBytes(1024);
+            var secretKey = r.GetBytes(1024);
 
             return new OmniAgreement()
             {
@@ -179,7 +179,7 @@ public class OmniAgreementPublicKey : RocketMessage<OmniAgreementPublicKey>
         {
             var createdTime = r.GetTimestamp64().ToDateTime();
             var algorithmType = Enum.Parse<OmniAgreementAlgorithmType>(r.GetString(1024));
-            var publicKey = r.GetMemory(1024).ToArray();
+            var publicKey = r.GetBytes(1024);
 
             return new OmniAgreementPublicKey()
             {
@@ -238,7 +238,7 @@ public class OmniAgreementPrivateKey : RocketMessage<OmniAgreementPrivateKey>
         {
             var createdTime = r.GetTimestamp64().ToDateTime();
             var algorithmType = Enum.Parse<OmniAgreementAlgorithmType>(r.GetString(1024));
-            var secretKey = r.GetMemory(1024).ToArray();
+            var secretKey = r.GetBytes(1024);
 
             return new OmniAgreementPrivateKey()
             {

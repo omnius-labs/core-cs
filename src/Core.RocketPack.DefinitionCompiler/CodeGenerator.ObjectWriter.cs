@@ -975,7 +975,7 @@ internal partial class CodeGenerator
             switch (type)
             {
                 case BoolType:
-                    b.WriteLine($"{name} = r.GetBoolean();");
+                    b.WriteLine($"{name} = r.GetBool();");
                     break;
                 case IntType intType when (!intType.IsSigned):
                     b.WriteLine($"{name} = r.GetUInt{intType.Size}();");
@@ -996,7 +996,7 @@ internal partial class CodeGenerator
                     b.WriteLine($"{name} = r.GetRecyclableMemory({memoryType.MaxLength});");
                     break;
                 case BytesType memoryType when (!memoryType.IsUseMemoryPool):
-                    b.WriteLine($"{name} = r.GetMemory({memoryType.MaxLength});");
+                    b.WriteLine($"{name} = r.GetBytes({memoryType.MaxLength});");
                     break;
                 case VectorType listType:
                     {
@@ -1277,7 +1277,7 @@ internal partial class CodeGenerator
             switch (type)
             {
                 case BoolType:
-                    b.WriteLine($"{name} = r.GetBoolean();");
+                    b.WriteLine($"{name} = r.GetBool();");
                     break;
                 case IntType intType when (!intType.IsSigned):
                     b.WriteLine($"{name} = r.GetUInt{intType.Size}();");
@@ -1298,7 +1298,7 @@ internal partial class CodeGenerator
                     b.WriteLine($"{name} = r.GetRecyclableMemory({memoryType.MaxLength});");
                     break;
                 case BytesType memoryType when (!memoryType.IsUseMemoryPool):
-                    b.WriteLine($"{name} = r.GetMemory({memoryType.MaxLength});");
+                    b.WriteLine($"{name} = r.GetBytes({memoryType.MaxLength});");
                     break;
                 case VectorType listType:
                     {

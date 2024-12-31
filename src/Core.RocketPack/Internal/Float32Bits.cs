@@ -22,13 +22,13 @@ internal struct Float32Bits
 
     public Float32Bits(in float value)
     {
-        this = default(Float32Bits);
+        this = default;
         Value = value;
     }
 
     public Float32Bits(in Span<byte> bigEndianBytes)
     {
-        this = default(Float32Bits);
+        this = default;
 
         if (BitConverter.IsLittleEndian)
         {

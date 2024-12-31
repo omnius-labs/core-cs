@@ -3,6 +3,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using DiffPlex.DiffBuilder;
 using DiffPlex.DiffBuilder.Model;
+using Xunit;
 
 namespace Omnius.Core.Testkit;
 
@@ -70,5 +71,11 @@ public static class AssertEx
             ReadOnlyMemory<byte> value,
             JsonSerializerOptions options) =>
             writer.WriteBase64StringValue(value.Span);
+    }
+
+    public static void Throws<T>(Action<T> verify, Action testCode) where T : Exception
+    {
+        var e = Assert.Throws<T>(testCode);
+        verify(e);
     }
 }
