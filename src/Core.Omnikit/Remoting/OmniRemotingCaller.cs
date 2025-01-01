@@ -13,7 +13,7 @@ public sealed class OmniRemotingCaller<TError> : AsyncDisposableBase
     private readonly FramedReceiver _receiver;
     private readonly IBytesPool _bytesPool;
 
-    internal OmniRemotingCaller(Stream stream, uint functionId, int maxFrameLength, IBytesPool bytesPool)
+    public OmniRemotingCaller(Stream stream, uint functionId, int maxFrameLength, IBytesPool bytesPool)
     {
         _stream = stream;
         _sender = new FramedSender(stream, maxFrameLength, bytesPool);
@@ -24,12 +24,13 @@ public sealed class OmniRemotingCaller<TError> : AsyncDisposableBase
 
     protected override async ValueTask OnDisposeAsync()
     {
-        await _stream.DisposeAsync();
+        await _sender.DisposeAsync();
+        await _receiver.DisposeAsync();
     }
 
     public uint FunctionId { get; }
 
-    internal async ValueTask HandshakeAsync(CancellationToken cancellationToken = default)
+    public async ValueTask HandshakeAsync(CancellationToken cancellationToken = default)
     {
         var helloMessage = new HelloMessage { Version = OmniRemotingVersion.V1, FunctionId = this.FunctionId };
         using var sendMemoryOwner = helloMessage.Export(_bytesPool);

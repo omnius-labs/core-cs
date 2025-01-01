@@ -2,7 +2,7 @@ using Omnius.Core.Base;
 
 namespace Omnius.Core.Omnikit.Connections.Codec;
 
-public class FramedSender
+public class FramedSender : AsyncDisposableBase
 {
     private readonly Stream _stream;
     private readonly int _maxFrameLength;
@@ -15,6 +15,12 @@ public class FramedSender
         _stream = stream;
         _maxFrameLength = maxFrameLength;
         _bytesPool = bytesPool;
+    }
+
+    protected override async ValueTask OnDisposeAsync()
+    {
+        await _stream.FlushAsync();
+        await _stream.DisposeAsync();
     }
 
     public async ValueTask SendAsync(ReadOnlyMemory<byte> data, CancellationToken cancellationToken = default)

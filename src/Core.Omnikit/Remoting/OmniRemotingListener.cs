@@ -16,7 +16,7 @@ public sealed class OmniRemotingListener<TError> : AsyncDisposableBase
 
     private readonly CancellationTokenSource _listenerCancellationTokenSource = new();
 
-    internal OmniRemotingListener(Stream stream, int maxFrameLength, IOmniRemotingErrorMessageFactory<TError> errorMessageFactory, IBytesPool bytesPool)
+    public OmniRemotingListener(Stream stream, int maxFrameLength, IOmniRemotingErrorMessageFactory<TError> errorMessageFactory, IBytesPool bytesPool)
     {
         _stream = stream;
         _sender = new FramedSender(stream, maxFrameLength, bytesPool);
@@ -27,7 +27,8 @@ public sealed class OmniRemotingListener<TError> : AsyncDisposableBase
 
     protected override async ValueTask OnDisposeAsync()
     {
-        await _stream.DisposeAsync();
+        await _sender.DisposeAsync();
+        await _receiver.DisposeAsync();
     }
 
     public uint FunctionId { get; private set; }
@@ -38,7 +39,7 @@ public sealed class OmniRemotingListener<TError> : AsyncDisposableBase
         return linkedTokenSource;
     }
 
-    internal async ValueTask HandshakeAsync(CancellationToken cancellationToken = default)
+    public async ValueTask HandshakeAsync(CancellationToken cancellationToken = default)
     {
         using var receivedMemoryOwner = await _receiver.ReceiveAsync(cancellationToken);
         var helloMessage = HelloMessage.Import(receivedMemoryOwner.Memory, _bytesPool);

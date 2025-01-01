@@ -19,16 +19,12 @@ public class OmniRemotingCallerTest : TestBase<OmniRemotingCallerTest>
     public async Task CallTest()
     {
         var client = new TcpClient();
+        await client.ConnectAsync(IPAddress.Parse("127.0.0.1"), 50000);
+        var stream = client.GetStream();
 
-        async ValueTask<Stream> Connect()
-        {
-            await client.ConnectAsync(IPAddress.Parse("127.0.0.1"), 50000);
-            return client.GetStream();
-        }
-
-        var factory = new OmniRemotingCallerFactory<OmniRemotingDefaultErrorMessage>(Connect, 1024 * 1024, BytesPool.Shared);
-        var fn = await factory.CreateAsync(1);
-        var result = await fn.CallAsync<TestMessage, TestMessage>(new TestMessage() { Value = 1 });
+        var remotingCaller = new OmniRemotingCaller<OmniRemotingDefaultErrorMessage>(stream, 1, 1024 * 1024, BytesPool.Shared);
+        await remotingCaller.HandshakeAsync();
+        var result = await remotingCaller.CallAsync<TestMessage, TestMessage>(new TestMessage() { Value = 1 });
         this.Output.WriteLine($"Result: {result.Value}");
     }
 }
