@@ -15,9 +15,9 @@
     <PackageVersion Include="Avalonia.HtmlRenderer" Version="11.0.0" />
     <PackageVersion Include="Avalonia.Skia" Version="11.2.3" />
     <PackageVersion Include="Avalonia.Svg.Skia" Version="11.0.0.12" />
-    <PackageVersion Include="Avalonia.Xaml.Behaviors" Version="11.2.0.1" />
-    <PackageVersion Include="Avalonia.Xaml.Interactions" Version="11.2.0.1" />
-    <PackageVersion Include="Avalonia.Xaml.Interactivity" Version="11.2.0.1" />
+    <PackageVersion Include="Avalonia.Xaml.Behaviors" Version="11.2.0.7" />
+    <PackageVersion Include="Avalonia.Xaml.Interactions" Version="11.2.0.7" />
+    <PackageVersion Include="Avalonia.Xaml.Interactivity" Version="11.2.0.7" />
     <PackageVersion Include="Avalonia" Version="11.2.3" />
     <PackageVersion Include="AvaloniaEdit.TextMate" Version="11.0.5" />
     <PackageVersion Include="Cocona.Lite" Version="2.2.0" />
@@ -35,7 +35,7 @@
     <PackageVersion Include="FuzzySharp" Version="2.0.2" />
     <PackageVersion Include="Generator.Equals" Version="2.2.3" />
     <PackageVersion Include="GitInfo" Version="2.2.0" />
-    <PackageVersion Include="Glob.cs" Version="5.1.1491" />
+    <PackageVersion Include="Glob.cs" Version="5.1.1625" />
     <PackageVersion Include="LiteDB" Version="5.0.15" />
     <PackageVersion Include="Magick.NET-Q16-AnyCPU" Version="10.0.0" />
     <PackageVersion Include="Markdown.Avalonia" Version="11.0.2" />
@@ -69,13 +69,13 @@
   <ItemGroup>
     <PackageVersion Include="Moq" Version="4.20.70" />
     <PackageVersion Include="FluentAssertions" Version="7.0.0" />
-    <PackageVersion Include="coverlet.msbuild" Version="6.0.2">
+    <PackageVersion Include="coverlet.msbuild" Version="6.0.3">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageVersion>
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
-    <PackageVersion Include="xunit" Version="2.9.2" />
-    <PackageVersion Include="xunit.runner.visualstudio" Version="3.0.0">
+    <PackageVersion Include="xunit" Version="2.9.3" />
+    <PackageVersion Include="xunit.runner.visualstudio" Version="3.0.1">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageVersion>
