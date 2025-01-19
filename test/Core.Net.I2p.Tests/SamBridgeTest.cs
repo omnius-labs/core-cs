@@ -1,8 +1,8 @@
 using System.Net;
 using System.Net.Sockets;
-using Shouldly;
 using Microsoft.Extensions.Logging;
 using Omnius.Core.Net.I2p.Internal;
+using Shouldly;
 using Xunit;
 
 namespace Omnius.Core.Net.I2p;

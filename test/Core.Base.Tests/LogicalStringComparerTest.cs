@@ -1,5 +1,5 @@
-using Shouldly;
 using Omnius.Core.Base.Internal;
+using Shouldly;
 using Xunit;
 
 namespace Omnius.Core;
