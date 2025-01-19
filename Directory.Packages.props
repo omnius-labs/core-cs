@@ -15,9 +15,9 @@
     <PackageVersion Include="Avalonia.HtmlRenderer" Version="11.0.0" />
     <PackageVersion Include="Avalonia.Skia" Version="11.2.3" />
     <PackageVersion Include="Avalonia.Svg.Skia" Version="11.0.0.12" />
-    <PackageVersion Include="Avalonia.Xaml.Behaviors" Version="11.2.0.1" />
-    <PackageVersion Include="Avalonia.Xaml.Interactions" Version="11.2.0.1" />
-    <PackageVersion Include="Avalonia.Xaml.Interactivity" Version="11.2.0.1" />
+    <PackageVersion Include="Avalonia.Xaml.Behaviors" Version="11.2.0.7" />
+    <PackageVersion Include="Avalonia.Xaml.Interactions" Version="11.2.0.7" />
+    <PackageVersion Include="Avalonia.Xaml.Interactivity" Version="11.2.0.7" />
     <PackageVersion Include="Avalonia" Version="11.2.3" />
     <PackageVersion Include="AvaloniaEdit.TextMate" Version="11.0.5" />
     <PackageVersion Include="Cocona.Lite" Version="2.2.0" />
@@ -35,17 +35,17 @@
     <PackageVersion Include="FuzzySharp" Version="2.0.2" />
     <PackageVersion Include="Generator.Equals" Version="2.2.3" />
     <PackageVersion Include="GitInfo" Version="2.2.0" />
-    <PackageVersion Include="Glob.cs" Version="5.1.1491" />
+    <PackageVersion Include="Glob.cs" Version="5.1.1625" />
     <PackageVersion Include="LiteDB" Version="5.0.15" />
     <PackageVersion Include="Magick.NET-Q16-AnyCPU" Version="10.0.0" />
     <PackageVersion Include="Markdown.Avalonia" Version="11.0.2" />
     <PackageVersion Include="MessagePipe.Interprocess" Version="1.7.4" />
     <PackageVersion Include="MessagePipe" Version="1.7.4" />
     <PackageVersion Include="MetadataExtractor" Version="2.8.1" />
-    <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="9.0.0" />
-    <PackageVersion Include="Microsoft.Extensions.Logging.Console" Version="9.0.0" />
-    <PackageVersion Include="Microsoft.Extensions.Logging.Debug" Version="9.0.0" />
-    <PackageVersion Include="Microsoft.Extensions.Logging" Version="9.0.0" />
+    <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="9.0.1" />
+    <PackageVersion Include="Microsoft.Extensions.Logging.Console" Version="9.0.1" />
+    <PackageVersion Include="Microsoft.Extensions.Logging.Debug" Version="9.0.1" />
+    <PackageVersion Include="Microsoft.Extensions.Logging" Version="9.0.1" />
     <PackageVersion Include="NeoSmart.AsyncLock" Version="3.2.1" />
     <PackageVersion Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageVersion Include="NSubstitute" Version="5.1.0" />
@@ -58,10 +58,10 @@
     <PackageVersion Include="Sprache" Version="2.3.1" />
     <PackageVersion Include="SqlKata.Execution" Version="2.4.0" />
     <PackageVersion Include="SqlKata" Version="2.4.0" />
-    <PackageVersion Include="Microsoft.Data.Sqlite" Version="9.0.0" />
-    <PackageVersion Include="System.IO.Pipelines" Version="9.0.0" />
+    <PackageVersion Include="Microsoft.Data.Sqlite" Version="9.0.1" />
+    <PackageVersion Include="System.IO.Pipelines" Version="9.0.1" />
     <PackageVersion Include="System.Linq.Async" Version="6.0.1" />
-    <PackageVersion Include="System.Text.Json" Version="9.0.0" />
+    <PackageVersion Include="System.Text.Json" Version="9.0.1" />
     <PackageVersion Include="TextMateSharp.Grammars" Version="1.0.56" />
     <PackageVersion Include="YamlDotNet" Version="16.3.0" />
     <PackageVersion Include="Portable.BouncyCastle" Version="1.9.0" />
@@ -69,13 +69,13 @@
   <ItemGroup>
     <PackageVersion Include="Moq" Version="4.20.70" />
     <PackageVersion Include="Shouldly" Version="4.2.1" />
-    <PackageVersion Include="coverlet.msbuild" Version="6.0.2">
+    <PackageVersion Include="coverlet.msbuild" Version="6.0.3">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageVersion>
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
-    <PackageVersion Include="xunit" Version="2.9.2" />
-    <PackageVersion Include="xunit.runner.visualstudio" Version="3.0.0">
+    <PackageVersion Include="xunit" Version="2.9.3" />
+    <PackageVersion Include="xunit.runner.visualstudio" Version="3.0.1">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageVersion>
