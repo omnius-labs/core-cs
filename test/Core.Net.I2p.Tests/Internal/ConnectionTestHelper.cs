@@ -1,6 +1,6 @@
 using System.Diagnostics;
 using System.Net.Sockets;
-using FluentAssertions;
+using Shouldly;
 
 namespace Omnius.Core.Net.I2p.Internal;
 
@@ -50,7 +50,7 @@ internal static class ConnectionTestHelper
 
             await Task.WhenAll(task1, task2);
 
-            buffer1.Should().Equal(buffer2);
+            buffer1.ShouldBe(buffer2);
 
             Debug.WriteLine($"RandomSendAndReceiveTest ({bufferSize}), time: {sb.ElapsedMilliseconds}/ms");
         }

@@ -1,4 +1,4 @@
-using FluentAssertions;
+using Shouldly;
 using Omnius.Core.Base.Internal;
 using Xunit;
 
@@ -17,21 +17,21 @@ public class LogicalStringComparerTest
         };
 
         list.Sort();
-        list.Should().BeEquivalentTo(
+        list.ShouldBe(
             new[] {
                 "a1.txt",
                 "a10.txt",
                 "a2.txt",
                 "a20.txt",
-            }, config => config.WithStrictOrdering());
+            });
 
         list.Sort(new LogicalStringComparer());
-        list.Should().BeEquivalentTo(
+        list.ShouldBe(
             new[] {
                 "a1.txt",
                 "a2.txt",
                 "a10.txt",
                 "a20.txt",
-            }, config => config.WithStrictOrdering());
+            });
     }
 }

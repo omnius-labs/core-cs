@@ -1,6 +1,6 @@
 using System.Net;
 using System.Net.Sockets;
-using FluentAssertions;
+using Shouldly;
 using Microsoft.Extensions.Logging;
 using Omnius.Core.Net.I2p.Internal;
 using Xunit;
@@ -40,21 +40,21 @@ public class SamBridgeTest
     public async Task SamCommandTest()
     {
         new SamCommand(new[] { "a", "b" }, new[] { ("c", "d") }).ToString()
-            .Should().Be("a b c=d");
+            .ShouldBe("a b c=d");
 
         SamCommand.Parse("a b c=d")
-            .Should().Be(new SamCommand(new[] { "a", "b" }, new[] { ("c", "d") }));
+            .ShouldBe(new SamCommand(new[] { "a", "b" }, new[] { ("c", "d") }));
 
         new SamCommand(new[] { "e" }).ToString()
-            .Should().Be("e");
+            .ShouldBe("e");
 
         SamCommand.Parse("e")
-            .Should().Be(new SamCommand(new[] { "e" }));
+            .ShouldBe(new SamCommand(new[] { "e" }));
 
         SamCommand.Parse("PING aaaaaaaaaaa")
-            .Should().Be(new SamCommand(new[] { "PING", "aaaaaaaaaaa" }));
+            .ShouldBe(new SamCommand(new[] { "PING", "aaaaaaaaaaa" }));
 
         new SamCommand(new[] { "PONG", "bbbbbbbbb" }).ToString()
-            .Should().Be("PONG bbbbbbbbb");
+            .ShouldBe("PONG bbbbbbbbb");
     }
 }
