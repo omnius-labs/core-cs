@@ -5,7 +5,7 @@
       "commands": [
         "coverlet"
       ],
-      "version": "6.0.2"
+      "version": "6.0.4"
     },
     "dotnet-reportgenerator-globaltool": {
       "commands": [
