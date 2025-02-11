@@ -129,7 +129,7 @@ internal class PacketMessage<TMessage, TErrorMessage> : RocketMessage<PacketMess
                     }
             }
 
-            throw ThrowHelper.CreateRocketRemotingProtocolException_UnexpectedProtocol();
+            return PacketMessage<TMessage, TErrorMessage>.CreateUnknown();
         }
     }
 }

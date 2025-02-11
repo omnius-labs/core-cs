@@ -33,16 +33,16 @@ public sealed class OmniRemotingCaller<TError> : AsyncDisposableBase
     public async ValueTask HandshakeAsync(CancellationToken cancellationToken = default)
     {
         var helloMessage = new HelloMessage { Version = OmniRemotingVersion.V1, FunctionId = this.FunctionId };
-        using var sendMemoryOwner = helloMessage.Export(_bytesPool);
-        await _sender.SendAsync(sendMemoryOwner.Memory, cancellationToken);
+        using var sendingMemoryOwner = helloMessage.Export(_bytesPool);
+        await _sender.SendAsync(sendingMemoryOwner.Memory, cancellationToken);
     }
 
     public async ValueTask<TResult> CallAsync<TParam, TResult>(TParam param, CancellationToken cancellationToken = default)
         where TParam : RocketMessage<TParam>
         where TResult : RocketMessage<TResult>
     {
-        using var sendMemoryOwner = PacketMessage<TParam, TError>.CreateCompleted(param).Export(_bytesPool);
-        await _sender.SendAsync(sendMemoryOwner.Memory, cancellationToken);
+        using var sendingMemoryOwner = PacketMessage<TParam, TError>.CreateCompleted(param).Export(_bytesPool);
+        await _sender.SendAsync(sendingMemoryOwner.Memory, cancellationToken);
 
         using var receivedMemoryOwner = await _receiver.ReceiveAsync(cancellationToken);
         var result = PacketMessage<TResult, TError>.Import(receivedMemoryOwner.Memory, _bytesPool);

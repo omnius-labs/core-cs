@@ -67,8 +67,8 @@ public sealed class OmniRemotingListener<TError> : AsyncDisposableBase
             {
                 var result = await callback.Invoke(param.Message, cancellationToken);
 
-                using var sendMemoryOwner = PacketMessage<TResult, TError>.CreateCompleted(result).Export(_bytesPool);
-                await _sender.SendAsync(sendMemoryOwner.Memory, cancellationToken);
+                using var sendingMemoryOwner = PacketMessage<TResult, TError>.CreateCompleted(result).Export(_bytesPool);
+                await _sender.SendAsync(sendingMemoryOwner.Memory, cancellationToken);
 
                 if (result is IDisposable disposable) disposable.Dispose();
                 else if (result is IAsyncDisposable asyncDisposable) await asyncDisposable.DisposeAsync();
