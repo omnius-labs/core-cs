@@ -5,13 +5,13 @@
       "commands": [
         "coverlet"
       ],
-      "version": "6.0.2"
+      "version": "6.0.4"
     },
     "dotnet-reportgenerator-globaltool": {
       "commands": [
         "reportgenerator"
       ],
-      "version": "5.4.3"
+      "version": "5.4.4"
     }
   },
   "version": 1
