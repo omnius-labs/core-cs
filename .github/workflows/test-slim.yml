@@ -30,7 +30,7 @@ jobs:
       - name: Setup dotnet
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: 8.x
+          dotnet-version: 9.x
       - name: Setup dotnet tool
         run: dotnet tool restore
       - name: Install dependencies
@@ -47,7 +47,7 @@ jobs:
       - name: Setup dotnet
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: 8.x
+          dotnet-version: 9.x
       - name: Install dependencies
         run: dotnet restore
       - name: Test
@@ -60,7 +60,7 @@ jobs:
       - name: Setup dotnet
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: 8.x
+          dotnet-version: 9.x
       - name: Install dependencies
         run: dotnet restore
       - name: Test

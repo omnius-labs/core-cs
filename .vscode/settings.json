@@ -26,5 +26,5 @@
         "Varint",
         "Xunit"
     ],
-    "dotnet.defaultSolution": "core.sln"
+    "dotnet.defaultSolution": "core.slnx"
 }
