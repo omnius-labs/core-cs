@@ -15,6 +15,7 @@
     <PackageReference Include="Avalonia.Xaml.Interactions" />
     <PackageReference Include="Avalonia.Xaml.Interactivity" />
     <PackageReference Include="Microsoft.Extensions.Logging" />
+    <PackageReference Include="R3" />
   </ItemGroup>
 
   <ItemGroup>

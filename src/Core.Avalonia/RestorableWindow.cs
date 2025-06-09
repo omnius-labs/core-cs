@@ -2,6 +2,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Threading;
 using Omnius.Core.Base.Helpers;
+using R3;
 
 namespace Omnius.Core.Avalonia;
 
@@ -12,13 +13,15 @@ public class RestorableWindow : Window
     private PixelPoint _positionBeforeResizing;
     private Size _clientSizeBeforeResizing;
 
+    DisposableBag _disposable;
+
     private const string WindowStatesFileName = "window_status.json";
 
     public RestorableWindow()
     {
         this.Closing += (sender, e) => this.SaveWindowStatus();
         this.PositionChanged += (sender, e) => this.OnPositionChanged(e.Point);
-        this.GetObservable(ClientSizeProperty).Subscribe(this.OnClientSizeChanged);
+        this.GetObservable(ClientSizeProperty).ToObservable().Subscribe(this.OnClientSizeChanged).AddTo(ref _disposable);
 
         if (OperatingSystem.IsLinux())
         {
@@ -33,6 +36,11 @@ public class RestorableWindow : Window
         _configDirectoryPath = configDirectoryPath;
 
         this.LoadWindowStatus();
+    }
+
+    protected override void OnClosed(EventArgs e)
+    {
+        _disposable.Dispose();
     }
 
     private void LoadWindowStatus()
