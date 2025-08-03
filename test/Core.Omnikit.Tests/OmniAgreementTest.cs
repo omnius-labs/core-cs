@@ -25,8 +25,6 @@ public class OmniAgreementTest : TestBase<OmniAgreementTest>
         var secret2 = OmniAgreement.GenSecret(privateKey2, publicKey1);
 
         Assert.Equal(secret1, secret2);
-
-        this.Output.WriteLine(Encoding.UTF8.GetString(publicKey1.PublicKey));
     }
 
     [Fact]
@@ -52,7 +50,5 @@ public class OmniAgreementTest : TestBase<OmniAgreementTest>
         var secret = OmniAgreement.GenSecret(privateKey2, publicKey1);
 
         Assert.Equal("650a5990cb592d8deda6bd1dcf7205b3cf44361290c4ed4485d4910e0b3be468", base16.BytesToString(secret));
-
-        this.Output.WriteLine(Encoding.UTF8.GetString(secret));
     }
 }
