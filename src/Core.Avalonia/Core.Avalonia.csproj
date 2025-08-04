@@ -19,6 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="System.IO.Pipelines" VersionOverride="9.0.7" />
     <ProjectReference Include="..\Core.Base\Core.Base.csproj" />
     <ProjectReference Include="..\Core.Serialization\Core.Serialization.csproj" />
     <ProjectReference Include="..\Core.Pipelines\Core.Pipelines.csproj" />
