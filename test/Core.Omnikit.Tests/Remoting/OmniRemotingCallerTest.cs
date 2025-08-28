@@ -24,7 +24,7 @@ public class OmniRemotingCallerTest : TestBase<OmniRemotingCallerTest>
 
         var remotingCaller = new OmniRemotingCaller<OmniRemotingDefaultErrorMessage>(stream, 1, 1024 * 1024, BytesPool.Shared);
         await remotingCaller.HandshakeAsync();
-        var result = await remotingCaller.CallAsync<TestMessage, TestMessage>(new TestMessage() { Value = 1 });
+        var result = await remotingCaller.CallUnaryAsync<TestMessage, TestMessage>(new TestMessage() { Value = 1 });
         this.Output.WriteLine($"Result: {result.Value}");
     }
 }

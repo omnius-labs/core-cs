@@ -52,7 +52,7 @@ public sealed class OmniRemotingListener<TError> : AsyncDisposableBase
         throw ThrowHelper.CreateRocketRemotingProtocolException_UnexpectedProtocol();
     }
 
-    public async ValueTask ListenAsync<TParam, TResult>(Func<TParam, CancellationToken, ValueTask<TResult>> callback, CancellationToken cancellationToken = default)
+    public async ValueTask ListenUnaryAsync<TParam, TResult>(Func<TParam, CancellationToken, ValueTask<TResult>> callback, CancellationToken cancellationToken = default)
         where TParam : RocketMessage<TParam>
         where TResult : RocketMessage<TResult>
     {
@@ -87,5 +87,12 @@ public sealed class OmniRemotingListener<TError> : AsyncDisposableBase
         }
 
         throw ThrowHelper.CreateRocketRemotingProtocolException_UnexpectedProtocol();
+    }
+
+    public async ValueTask ListenStreamAsync<TInput, TOutput>(Func<OmniRemotingStream<TInput, TOutput, TError>, CancellationToken, ValueTask> callback, CancellationToken cancellationToken = default)
+        where TInput : RocketMessage<TInput>
+        where TOutput : RocketMessage<TOutput>
+    {
+        await callback(new OmniRemotingStream<TInput, TOutput, TError>(_sender, _receiver, _bytesPool), cancellationToken);
     }
 }

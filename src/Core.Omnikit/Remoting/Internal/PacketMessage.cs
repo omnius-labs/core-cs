@@ -12,7 +12,7 @@ internal enum PacketType : byte
     Error = 3,
 }
 
-internal class PacketMessage<TMessage, TErrorMessage> : RocketMessage<PacketMessage<TMessage, TErrorMessage>>
+public class PacketMessage<TMessage, TErrorMessage> : RocketMessage<PacketMessage<TMessage, TErrorMessage>>
     where TMessage : RocketMessage<TMessage>
     where TErrorMessage : RocketMessage<TErrorMessage>
 {
@@ -54,6 +54,11 @@ internal class PacketMessage<TMessage, TErrorMessage> : RocketMessage<PacketMess
     public bool IsContinue => (_type & PacketType.Continue) != 0;
     public bool IsCompleted => (_type & PacketType.Completed) != 0;
     public bool IsError => (_type & PacketType.Error) != 0;
+
+    public void ThrownIfError()
+    {
+        if (this.IsError) ThrowHelper.CreateRocketRemotingApplicationException(_errorMessage);
+    }
 
     private int? _hashCode;
 

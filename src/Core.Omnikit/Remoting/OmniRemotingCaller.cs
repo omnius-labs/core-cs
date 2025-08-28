@@ -37,7 +37,7 @@ public sealed class OmniRemotingCaller<TError> : AsyncDisposableBase
         await _sender.SendAsync(sendingMemoryOwner.Memory, cancellationToken);
     }
 
-    public async ValueTask<TResult> CallAsync<TParam, TResult>(TParam param, CancellationToken cancellationToken = default)
+    public async ValueTask<TResult> CallUnaryAsync<TParam, TResult>(TParam param, CancellationToken cancellationToken = default)
         where TParam : RocketMessage<TParam>
         where TResult : RocketMessage<TResult>
     {
@@ -57,5 +57,12 @@ public sealed class OmniRemotingCaller<TError> : AsyncDisposableBase
         }
 
         throw ThrowHelper.CreateRocketRemotingProtocolException_UnexpectedProtocol();
+    }
+
+    public OmniRemotingStream<TInput, TOutput, TError> CallStream<TInput, TOutput>()
+        where TInput : RocketMessage<TInput>
+        where TOutput : RocketMessage<TOutput>
+    {
+        return new OmniRemotingStream<TInput, TOutput, TError>(_sender, _receiver, _bytesPool);
     }
 }
