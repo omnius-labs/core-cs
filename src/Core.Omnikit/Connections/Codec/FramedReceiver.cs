@@ -20,7 +20,6 @@ public class FramedReceiver : AsyncDisposableBase
 
     protected override async ValueTask OnDisposeAsync()
     {
-        await _stream.FlushAsync();
         await _stream.DisposeAsync();
     }
 
