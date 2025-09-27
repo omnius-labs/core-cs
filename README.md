@@ -3,9 +3,11 @@
 [![test](https://github.com/omnius-labs/core-cs/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/omnius-labs/core-cs/actions/workflows/test.yml)
 [![chat](https://badges.gitter.im/omnius-labs.svg)](https://gitter.im/omnius-labs/community)
 
-## Installing Required Dependencies
+## Development
 
-### Linux
+### Installing Required Dependencies
+
+#### Debian and Ubuntu
 
 ```sh
 sudo apt-get install -y libsnappy-dev
