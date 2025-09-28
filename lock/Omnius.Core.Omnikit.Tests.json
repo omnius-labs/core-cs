@@ -437,6 +437,14 @@
           "YamlDotNet": "[16.3.0, )"
         }
       },
+      "Omnius.Core.Streams": {
+        "type": "Project",
+        "dependencies": {
+          "Omnius.Core.Base": "[1.0.0, )",
+          "Omnius.Core.RocketPack": "[1.0.0, )",
+          "Omnius.Core.Serialization": "[1.0.0, )"
+        }
+      },
       "Omnius.Core.Testkit": {
         "type": "Project",
         "dependencies": {

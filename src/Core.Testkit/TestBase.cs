@@ -3,7 +3,8 @@ using Xunit.Abstractions;
 
 namespace Omnius.Core.Testkit;
 
-public abstract class TestBase<T> where T : TestBase<T>
+public abstract class TestBase<T>
+    where T : TestBase<T>
 {
     private static ILoggerFactory _loggerFactory = LoggerFactory.Create(builder =>
     {
@@ -15,17 +16,18 @@ public abstract class TestBase<T> where T : TestBase<T>
     public TestBase(ITestOutputHelper output)
     {
         var logger = _loggerFactory.CreateLogger<T>();
-        this.Output = new CustomOutput(output, logger);
+        this.Output = new CustomTestOutputHelper(output, logger);
     }
 
     public ITestOutputHelper Output { get; }
 
-    private class CustomOutput : ITestOutputHelper
+    // Loggerにも出力するようにする
+    private class CustomTestOutputHelper : ITestOutputHelper
     {
         private readonly ITestOutputHelper _output;
         private readonly ILogger<T> _logger;
 
-        public CustomOutput(ITestOutputHelper output, ILogger<T> logger)
+        public CustomTestOutputHelper(ITestOutputHelper output, ILogger<T> logger)
         {
             _output = output;
             _logger = logger;

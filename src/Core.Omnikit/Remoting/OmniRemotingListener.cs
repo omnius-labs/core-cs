@@ -7,6 +7,7 @@ namespace Omnius.Core.Omnikit.Remoting;
 
 public sealed class OmniRemotingListener : AsyncDisposableBase
 {
+    private readonly Stream _stream;
     private readonly FramedSender _sender;
     private readonly FramedReceiver _receiver;
     private readonly IBytesPool _bytesPool;
@@ -22,6 +23,7 @@ public sealed class OmniRemotingListener : AsyncDisposableBase
 
     private OmniRemotingListener(Stream stream, int maxFrameLength, IBytesPool bytesPool)
     {
+        _stream = stream;
         _sender = new FramedSender(stream, maxFrameLength, bytesPool);
         _receiver = new FramedReceiver(stream, maxFrameLength, bytesPool);
         _bytesPool = bytesPool;
@@ -43,8 +45,7 @@ public sealed class OmniRemotingListener : AsyncDisposableBase
 
     protected override async ValueTask OnDisposeAsync()
     {
-        await _sender.DisposeAsync();
-        await _receiver.DisposeAsync();
+        await _stream.DisposeAsync();
     }
 
     public uint FunctionId { get; private set; }
@@ -55,10 +56,8 @@ public sealed class OmniRemotingListener : AsyncDisposableBase
         return linkedTokenSource;
     }
 
-    public async ValueTask ListenStreamAsync<TInput, TOutput>(Func<OmniRemotingStream<TInput, TOutput>, CancellationToken, ValueTask> callback, CancellationToken cancellationToken = default)
-        where TInput : RocketMessage<TInput>
-        where TOutput : RocketMessage<TOutput>
+    public async ValueTask ListenStreamAsync(Func<OmniRemotingStream, CancellationToken, ValueTask> callback, CancellationToken cancellationToken = default)
     {
-        await callback(new OmniRemotingStream<TInput, TOutput>(_sender, _receiver, _bytesPool), this.GetMixedCancellationToken(cancellationToken));
+        await callback(new OmniRemotingStream(_sender, _receiver, _bytesPool), this.GetMixedCancellationToken(cancellationToken));
     }
 }

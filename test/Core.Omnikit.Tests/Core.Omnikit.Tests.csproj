@@ -8,6 +8,7 @@
     <ProjectReference Include="..\..\src\Core.Testkit\Core.Testkit.csproj" />
     <ProjectReference Include="..\..\src\Core.Omnikit\Core.Omnikit.csproj" />
     <ProjectReference Include="..\..\src\Core.Pipelines\Core.Pipelines.csproj" />
+    <ProjectReference Include="..\..\src\Core.Streams\Core.Streams.csproj" />
   </ItemGroup>
 
   <ItemGroup>

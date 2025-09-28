@@ -7,7 +7,7 @@ public abstract class DisposableBase : IDisposable
 {
     private int _called = 0;
 
-    protected bool IsDisposed => (_called == 1);
+    protected bool IsDisposed => (Volatile.Read(ref _called) == 1);
 
     protected void ThrowIfDisposingRequested()
     {
@@ -27,7 +27,7 @@ public abstract class DisposableBase : IDisposable
 
     private void InternalDispose(bool disposing)
     {
-        if (Interlocked.CompareExchange(ref _called, 1, 0) == 0)
+        if (Interlocked.Exchange(ref _called, 1) == 0)
         {
             this.OnDispose(disposing);
         }

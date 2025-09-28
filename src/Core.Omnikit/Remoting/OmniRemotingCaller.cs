@@ -7,6 +7,7 @@ namespace Omnius.Core.Omnikit.Remoting;
 
 public sealed class OmniRemotingCaller : AsyncDisposableBase
 {
+    private readonly Stream _stream;
     private readonly FramedSender _sender;
     private readonly FramedReceiver _receiver;
     private readonly IBytesPool _bytesPool;
@@ -20,6 +21,7 @@ public sealed class OmniRemotingCaller : AsyncDisposableBase
 
     private OmniRemotingCaller(Stream stream, uint functionId, int maxFrameLength, IBytesPool bytesPool)
     {
+        _stream = stream;
         _sender = new FramedSender(stream, maxFrameLength, bytesPool);
         _receiver = new FramedReceiver(stream, maxFrameLength, bytesPool);
         this.FunctionId = functionId;
@@ -35,16 +37,13 @@ public sealed class OmniRemotingCaller : AsyncDisposableBase
 
     protected override async ValueTask OnDisposeAsync()
     {
-        await _sender.DisposeAsync();
-        await _receiver.DisposeAsync();
+        await _stream.DisposeAsync();
     }
 
     public uint FunctionId { get; }
 
-    public OmniRemotingStream<TInput, TOutput> CallStream<TInput, TOutput>()
-        where TInput : RocketMessage<TInput>
-        where TOutput : RocketMessage<TOutput>
+    public OmniRemotingStream CallStream()
     {
-        return new OmniRemotingStream<TInput, TOutput>(_sender, _receiver, _bytesPool);
+        return new OmniRemotingStream(_sender, _receiver, _bytesPool);
     }
 }

@@ -1,9 +1,10 @@
 using System.Buffers;
+using System.Diagnostics;
 using Omnius.Core.Base;
 
 namespace Omnius.Core.Omnikit.Connections.Codec;
 
-public class FramedReceiver : AsyncDisposableBase
+public class FramedReceiver
 {
     private readonly Stream _stream;
     private readonly int _maxFrameLength;
@@ -16,11 +17,6 @@ public class FramedReceiver : AsyncDisposableBase
         _stream = stream;
         _maxFrameLength = maxFrameLength;
         _bytesPool = bytesPool;
-    }
-
-    protected override async ValueTask OnDisposeAsync()
-    {
-        await _stream.DisposeAsync();
     }
 
     public async ValueTask<IMemoryOwner<byte>> ReceiveAsync(CancellationToken cancellationToken = default)

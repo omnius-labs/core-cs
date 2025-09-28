@@ -4,11 +4,13 @@ using System.Net.Sockets;
 using System.Security.Cryptography;
 using System.Text;
 using Omnius.Core.Base;
+using Omnius.Core.Streams;
 using Omnius.Core.Omnikit.Converters;
 using Omnius.Core.RocketPack;
 using Omnius.Core.Testkit;
 using Xunit;
 using Xunit.Abstractions;
+using System.Diagnostics;
 
 namespace Omnius.Core.Omnikit.Remoting;
 
@@ -26,18 +28,15 @@ public class CommunicationTest : TestBase<CommunicationTest>
         using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(30));
         var cancellationToken = cts.Token;
 
-        var pipeName = $"{Guid.NewGuid():N}";
-        var serverStream = new NamedPipeServerStream(pipeName, PipeDirection.InOut, 1, PipeTransmissionMode.Byte, PipeOptions.Asynchronous);
-        var clientStream = new NamedPipeClientStream(".", pipeName, PipeDirection.InOut, PipeOptions.Asynchronous);
+        var (serverStream, clientStream) = DuplexStream.CreatePair();
 
         var listenerTask = Task.Run(async () =>
         {
-            await serverStream.WaitForConnectionAsync(cancellationToken);
             await using var listener = await OmniRemotingListener.Create(serverStream, MaxFrameLength, bytesPool, cancellationToken);
 
-            await listener.ListenStreamAsync<TestMessage, TestMessage>(async (stream, ct) =>
+            await listener.ListenStreamAsync(async (stream, ct) =>
             {
-                var received = await stream.ReceiveAsync(ct);
+                var received = await stream.ReceiveAsync<TestMessage>(ct);
                 this.Output.WriteLine($"listener receive: {received.Value}");
 
                 await stream.SendAsync(new TestMessage { Value = received.Value + 1 });
@@ -47,19 +46,21 @@ public class CommunicationTest : TestBase<CommunicationTest>
             return listener.FunctionId;
         });
 
-        await clientStream.ConnectAsync(cancellationToken);
         await using var caller = await OmniRemotingCaller.Create(clientStream, FunctionId, MaxFrameLength, bytesPool, cancellationToken);
 
-        var stream = caller.CallStream<TestMessage, TestMessage>();
+        var stream = caller.CallStream();
 
         await stream.SendAsync(new TestMessage { Value = 1 }, cancellationToken);
         this.Output.WriteLine("caller send");
 
-        var received = await stream.ReceiveAsync(cancellationToken);
+        var received = await stream.ReceiveAsync<TestMessage>(cancellationToken);
         this.Output.WriteLine($"caller receive: {received.Value}");
 
         Assert.Equal(2, received.Value);
         Assert.Equal(FunctionId, await listenerTask.WaitAsync(cancellationToken));
+
+        await clientStream.DisposeAsync();
+        await serverStream.DisposeAsync();
     }
 }
 
