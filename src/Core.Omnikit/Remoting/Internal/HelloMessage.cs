@@ -1,5 +1,6 @@
 using System.Buffers;
 using System.Collections.Concurrent;
+using System.Runtime.Serialization;
 using Omnius.Core.Base;
 using Omnius.Core.Pipelines;
 using Omnius.Core.RocketPack;
@@ -8,7 +9,10 @@ namespace Omnius.Core.Omnikit.Remoting.Internal;
 
 internal enum OmniRemotingVersion
 {
-    Unknown = 0,
+    [EnumMember(Value = "unknown")]
+    Unknown,
+
+    [EnumMember(Value = "v1")]
     V1 = 1
 }
 
@@ -49,12 +53,12 @@ internal class HelloMessage : RocketMessage<HelloMessage>
     {
         public void Serialize(ref RocketMessageWriter w, scoped in HelloMessage value, scoped in int depth)
         {
-            w.Put(value.Version.ToString());
+            w.Put(EnumAlias<OmniRemotingVersion>.ToStringAlias(value.Version));
             w.Put(value.FunctionId);
         }
         public HelloMessage Deserialize(ref RocketMessageReader r, scoped in int depth)
         {
-            var version = Enum.Parse<OmniRemotingVersion>(r.GetString(1024));
+            var version = EnumAlias<OmniRemotingVersion>.ParseAlias(r.GetString(1024));
             var functionId = r.GetUInt32();
 
             return new HelloMessage()

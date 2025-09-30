@@ -454,18 +454,7 @@ public class UpnpClient : DisposableBase, IUpnpClient
 
 public class UpnpClientException : Exception
 {
-    public UpnpClientException()
-        : base()
-    {
-    }
-
-    public UpnpClientException(string? message)
-        : base(message)
-    {
-    }
-
-    public UpnpClientException(string? message, Exception? innerException)
-        : base(message, innerException)
-    {
-    }
+    public UpnpClientException() : base() { }
+    public UpnpClientException(string? message) : base(message) { }
+    public UpnpClientException(string? message, Exception? innerException) : base(message, innerException) { }
 }

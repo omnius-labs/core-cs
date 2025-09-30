@@ -40,7 +40,7 @@ public sealed class OmniRemotingListener : AsyncDisposableBase
             return;
         }
 
-        throw ThrowHelper.CreateRocketRemotingProtocolException_UnexpectedProtocol();
+        throw new OmniRemotingProtocolException("Unsupported version");
     }
 
     protected override async ValueTask OnDisposeAsync()
