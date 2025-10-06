@@ -11,6 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" VersionOverride="13.0.4" />
     <ProjectReference Include="..\Core.Pipelines\Core.Pipelines.csproj" />
     <ProjectReference Include="..\Core.RocketPack\Core.RocketPack.csproj" />
     <ProjectReference Include="..\Core.Serialization\Core.Serialization.csproj" />
