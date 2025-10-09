@@ -32,6 +32,7 @@ jobs:
           submodules: "recursive"
 
       - name: Install dependencies (lib)
+        if: runner.os == 'Linux'
         run: sudo apt-get install libsnappy-dev
 
       - name: Setup dotnet
