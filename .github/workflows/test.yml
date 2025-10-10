@@ -46,6 +46,7 @@ jobs:
         run: dotnet restore
 
       - name: format check
+        if: runner.os != 'Windows'
         run: dotnet format --verify-no-changes
 
       - name: Test
