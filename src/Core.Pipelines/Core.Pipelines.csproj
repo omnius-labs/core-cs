@@ -9,6 +9,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Logging" VersionOverride="10.0.0" />
+    <PackageReference Include="System.IO.Pipelines" VersionOverride="10.0.0" />
     <ProjectReference Include="..\Core.Base\Core.Base.csproj" />
   </ItemGroup>
 
