@@ -31,7 +31,7 @@ public sealed class OmniRemotingCaller : AsyncDisposableBase
     private async ValueTask HandshakeAsync(CancellationToken cancellationToken = default)
     {
         var helloMessage = new HelloMessage { Version = OmniRemotingVersion.V1, FunctionId = this.FunctionId };
-        using var sendingMemoryOwner = helloMessage.Export(_bytesPool);
+        using var sendingMemoryOwner = RocketPackStruct.Export(helloMessage, _bytesPool);
         await _sender.SendAsync(sendingMemoryOwner.Memory, cancellationToken);
     }
 

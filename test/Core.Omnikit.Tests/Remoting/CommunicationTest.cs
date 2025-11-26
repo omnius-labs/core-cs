@@ -64,7 +64,7 @@ public class CommunicationTest : TestBase<CommunicationTest>
     }
 }
 
-public class TestMessage : RocketMessage<TestMessage>
+public class TestMessage : IRocketPackStruct<TestMessage>, IEquatable<TestMessage>
 {
     public required int Value { get; init; }
 
@@ -82,33 +82,21 @@ public class TestMessage : RocketMessage<TestMessage>
         return _hashCode.Value;
     }
 
-    public override bool Equals(TestMessage? other)
+    public bool Equals(TestMessage? other)
     {
         if (other is null) return false;
         if (ReferenceEquals(this, other)) return true;
         return this.Value == other.Value;
     }
 
-    static TestMessage()
+    public static void Pack(ref RocketPackBytesEncoder encoder, in TestMessage value)
     {
-        Formatter = new CustomSerializer();
-        Empty = new TestMessage() { Value = 0 };
+        encoder.WriteI32(value.Value);
     }
 
-    private sealed class CustomSerializer : IRocketMessageSerializer<TestMessage>
+    public static TestMessage Unpack(ref RocketPackBytesDecoder decoder)
     {
-        public void Serialize(ref RocketMessageWriter w, scoped in TestMessage value, scoped in int depth)
-        {
-            w.Put(value.Value);
-        }
-        public TestMessage Deserialize(ref RocketMessageReader r, scoped in int depth)
-        {
-            var value = r.GetInt32();
-
-            return new TestMessage()
-            {
-                Value = value
-            };
-        }
+        var value = decoder.ReadI32();
+        return new TestMessage { Value = value };
     }
 }

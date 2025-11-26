@@ -237,6 +237,14 @@
           "xunit.extensibility.core": "[2.9.3]"
         }
       },
+      "Omnius.Core.Base": {
+        "type": "Project",
+        "dependencies": {
+          "Microsoft.Extensions.Logging": "[9.0.7, )",
+          "NeoSmart.AsyncLock": "[3.2.1, )",
+          "System.IO.Pipelines": "[9.0.7, )"
+        }
+      },
       "Omnius.Core.Serialization": {
         "type": "Project",
         "dependencies": {
@@ -306,6 +314,12 @@
           "Microsoft.Extensions.Logging": "9.0.7",
           "Microsoft.Extensions.Logging.Abstractions": "9.0.7"
         }
+      },
+      "NeoSmart.AsyncLock": {
+        "type": "CentralTransitive",
+        "requested": "[3.2.1, )",
+        "resolved": "3.2.1",
+        "contentHash": "bYIpqtgA5oZWdSgcsGA4XLkKVYuz6Qc+aEVfTYPOIX2rSFbb8NFxHcBb5V62qio8Q6Au/Xn+7ci86VW9vqIk0w=="
       },
       "Newtonsoft.Json": {
         "type": "CentralTransitive",

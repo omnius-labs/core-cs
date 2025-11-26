@@ -5,7 +5,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\Core.Base\Core.Base.csproj" />
     <ProjectReference Include="..\..\src\Core.Storages\Core.Storages.csproj" />
+    <ProjectReference Include="..\..\src\Core.RocketPack\Core.RocketPack.csproj" />
     <ProjectReference Include="..\..\src\Core.Testkit\Core.Testkit.csproj" />
   </ItemGroup>
 

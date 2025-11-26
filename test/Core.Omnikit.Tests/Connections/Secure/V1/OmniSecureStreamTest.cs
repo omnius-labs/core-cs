@@ -3,6 +3,7 @@ using System.Net.Sockets;
 using System.Text;
 using Omnius.Core.Base;
 using Omnius.Core.Omnikit.Connections.Codec;
+using Omnius.Core.RocketPack;
 using Omnius.Core.Testkit;
 using Xunit;
 using Xunit.Abstractions;
@@ -25,8 +26,8 @@ public class OmniSecureStreamTest : TestBase<OmniSecureStreamTest>
             CipherAlgorithmType = CipherAlgorithmType.Aes256Gcm,
             HashAlgorithmType = HashAlgorithmType.Sha3_256,
         };
-        using var b = p.Export(BytesPool.Shared);
-        var p2 = ProfileMessage.Import(b.Memory, BytesPool.Shared);
+        using var b = RocketPackStruct.Export(p, BytesPool.Shared);
+        var p2 = RocketPackStruct.Import<ProfileMessage>(b.Memory, BytesPool.Shared);
 
         Assert.Equal(p, p2);
     }

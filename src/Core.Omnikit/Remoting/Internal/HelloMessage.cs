@@ -16,7 +16,7 @@ internal enum OmniRemotingVersion
     V1 = 1
 }
 
-internal class HelloMessage : RocketMessage<HelloMessage>
+internal class HelloMessage : IRocketPackStruct<HelloMessage>, IEquatable<HelloMessage>
 {
     public required OmniRemotingVersion Version { get; init; }
     public required uint FunctionId { get; init; }
@@ -36,36 +36,48 @@ internal class HelloMessage : RocketMessage<HelloMessage>
         return _hashCode.Value;
     }
 
-    public override bool Equals(HelloMessage? other)
+    public bool Equals(HelloMessage? other)
     {
         if (other is null) return false;
         if (ReferenceEquals(this, other)) return true;
         return this.Version == other.Version && this.FunctionId == other.FunctionId;
     }
 
-    static HelloMessage()
+    public static void Pack(ref RocketPackBytesEncoder encoder, in HelloMessage value)
     {
-        Formatter = new CustomSerializer();
-        Empty = new HelloMessage() { Version = OmniRemotingVersion.Unknown, FunctionId = 0 };
+        encoder.WriteMap(2);
+        encoder.WriteU64(0);
+        encoder.WriteString(EnumAlias<OmniRemotingVersion>.ToStringAlias(value.Version));
+        encoder.WriteU64(1);
+        encoder.WriteU32(value.FunctionId);
     }
 
-    private sealed class CustomSerializer : IRocketMessageSerializer<HelloMessage>
+    public static HelloMessage Unpack(ref RocketPackBytesDecoder decoder)
     {
-        public void Serialize(ref RocketMessageWriter w, scoped in HelloMessage value, scoped in int depth)
-        {
-            w.Put(EnumAlias<OmniRemotingVersion>.ToStringAlias(value.Version));
-            w.Put(value.FunctionId);
-        }
-        public HelloMessage Deserialize(ref RocketMessageReader r, scoped in int depth)
-        {
-            var version = EnumAlias<OmniRemotingVersion>.ParseAlias(r.GetString(1024));
-            var functionId = r.GetUInt32();
+        var count = decoder.ReadMap();
+        OmniRemotingVersion? version = null;
+        uint? functionId = null;
 
-            return new HelloMessage()
+        for (ulong i = 0; i < count; i++)
+        {
+            switch (decoder.ReadU64())
             {
-                Version = version,
-                FunctionId = functionId,
-            };
+                case 0:
+                    version = EnumAlias<OmniRemotingVersion>.ParseAlias(decoder.ReadString());
+                    break;
+                case 1:
+                    functionId = decoder.ReadU32();
+                    break;
+                default:
+                    decoder.SkipField();
+                    break;
+            }
         }
+
+        return new HelloMessage()
+        {
+            Version = version ?? throw RocketPackDecoderException.CreateOther("missing field: Version"),
+            FunctionId = functionId ?? throw RocketPackDecoderException.CreateOther("missing field: FunctionId"),
+        };
     }
 }

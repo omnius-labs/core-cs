@@ -1,11 +1,9 @@
 
-using System.Buffers;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Omnius.Core.Base;
 using Omnius.Core.Pipelines;
 using Omnius.Core.RocketPack;
-using Omnius.Core.Serialization;
 
 namespace Omnius.Core.Omnikit.Connections.Secure.V1;
 
@@ -44,7 +42,7 @@ enum HashAlgorithmType : uint
     Sha3_256 = 1
 }
 
-class ProfileMessage : RocketMessage<ProfileMessage>
+class ProfileMessage : IRocketPackStruct<ProfileMessage>, IEquatable<ProfileMessage>
 {
     public required byte[] SessionId { get; init; }
     public required AuthType AuthType { get; init; }
@@ -72,7 +70,7 @@ class ProfileMessage : RocketMessage<ProfileMessage>
         return _hashCode.Value;
     }
 
-    public override bool Equals(ProfileMessage? other)
+    public bool Equals(ProfileMessage? other)
     {
         if (other is null) return false;
         if (ReferenceEquals(this, other)) return true;
@@ -81,41 +79,76 @@ class ProfileMessage : RocketMessage<ProfileMessage>
             && this.CipherAlgorithmType == other.CipherAlgorithmType && this.HashAlgorithmType == other.HashAlgorithmType;
     }
 
-    static ProfileMessage()
+    public static void Pack(ref RocketPackBytesEncoder encoder, in ProfileMessage value)
     {
-        Formatter = new CustomSerializer();
-        Empty = new ProfileMessage() { SessionId = Array.Empty<byte>(), AuthType = AuthType.None, KeyExchangeAlgorithmType = KeyExchangeAlgorithmType.None, KeyDerivationAlgorithmType = KeyDerivationAlgorithmType.None, CipherAlgorithmType = CipherAlgorithmType.None, HashAlgorithmType = HashAlgorithmType.None };
+        encoder.WriteMap(6);
+
+        encoder.WriteU64(0);
+        encoder.WriteBytes(value.SessionId);
+
+        encoder.WriteU64(1);
+        encoder.WriteString(value.AuthType.ToString());
+
+        encoder.WriteU64(2);
+        encoder.WriteString(value.KeyExchangeAlgorithmType.ToString());
+
+        encoder.WriteU64(3);
+        encoder.WriteString(value.KeyDerivationAlgorithmType.ToString());
+
+        encoder.WriteU64(4);
+        encoder.WriteString(value.CipherAlgorithmType.ToString());
+
+        encoder.WriteU64(5);
+        encoder.WriteString(value.HashAlgorithmType.ToString());
     }
 
-    private sealed class CustomSerializer : IRocketMessageSerializer<ProfileMessage>
+    public static ProfileMessage Unpack(ref RocketPackBytesDecoder decoder)
     {
-        public void Serialize(ref RocketMessageWriter w, scoped in ProfileMessage value, scoped in int depth)
-        {
-            w.Put(value.SessionId);
-            w.Put(value.AuthType.ToString());
-            w.Put(value.KeyExchangeAlgorithmType.ToString());
-            w.Put(value.KeyDerivationAlgorithmType.ToString());
-            w.Put(value.CipherAlgorithmType.ToString());
-            w.Put(value.HashAlgorithmType.ToString());
-        }
-        public ProfileMessage Deserialize(ref RocketMessageReader r, scoped in int depth)
-        {
-            var sessionId = r.GetBytes(1024);
-            var authType = Enum.Parse<AuthType>(r.GetString(1024));
-            var keyExchangeAlgorithmType = Enum.Parse<KeyExchangeAlgorithmType>(r.GetString(1024));
-            var keyDerivationAlgorithmType = Enum.Parse<KeyDerivationAlgorithmType>(r.GetString(1024));
-            var cipherAlgorithmType = Enum.Parse<CipherAlgorithmType>(r.GetString(1024));
-            var hashAlgorithmType = Enum.Parse<HashAlgorithmType>(r.GetString(1024));
+        var count = decoder.ReadMap();
 
-            return new ProfileMessage()
+        byte[]? sessionId = null;
+        AuthType? authType = null;
+        KeyExchangeAlgorithmType? keyExchangeAlgorithmType = null;
+        KeyDerivationAlgorithmType? keyDerivationAlgorithmType = null;
+        CipherAlgorithmType? cipherAlgorithmType = null;
+        HashAlgorithmType? hashAlgorithmType = null;
+
+        for (ulong i = 0; i < count; i++)
+        {
+            switch (decoder.ReadU64())
             {
-                SessionId = sessionId,
-                AuthType = authType,
-                KeyExchangeAlgorithmType = keyExchangeAlgorithmType,
-                KeyDerivationAlgorithmType = keyDerivationAlgorithmType,
-                CipherAlgorithmType = cipherAlgorithmType,
-                HashAlgorithmType = hashAlgorithmType
-            };
+                case 0:
+                    sessionId = decoder.ReadBytesToArray();
+                    break;
+                case 1:
+                    authType = Enum.Parse<AuthType>(decoder.ReadString());
+                    break;
+                case 2:
+                    keyExchangeAlgorithmType = Enum.Parse<KeyExchangeAlgorithmType>(decoder.ReadString());
+                    break;
+                case 3:
+                    keyDerivationAlgorithmType = Enum.Parse<KeyDerivationAlgorithmType>(decoder.ReadString());
+                    break;
+                case 4:
+                    cipherAlgorithmType = Enum.Parse<CipherAlgorithmType>(decoder.ReadString());
+                    break;
+                case 5:
+                    hashAlgorithmType = Enum.Parse<HashAlgorithmType>(decoder.ReadString());
+                    break;
+                default:
+                    decoder.SkipField();
+                    break;
+            }
         }
+
+        return new ProfileMessage()
+        {
+            SessionId = sessionId ?? throw RocketPackDecoderException.CreateOther("missing SessionId"),
+            AuthType = authType ?? throw RocketPackDecoderException.CreateOther("missing AuthType"),
+            KeyExchangeAlgorithmType = keyExchangeAlgorithmType ?? throw RocketPackDecoderException.CreateOther("missing KeyExchangeAlgorithmType"),
+            KeyDerivationAlgorithmType = keyDerivationAlgorithmType ?? throw RocketPackDecoderException.CreateOther("missing KeyDerivationAlgorithmType"),
+            CipherAlgorithmType = cipherAlgorithmType ?? throw RocketPackDecoderException.CreateOther("missing CipherAlgorithmType"),
+            HashAlgorithmType = hashAlgorithmType ?? throw RocketPackDecoderException.CreateOther("missing HashAlgorithmType"),
+        };
     }
 }

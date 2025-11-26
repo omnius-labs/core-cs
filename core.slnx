@@ -8,7 +8,6 @@
     <Project Path="src/Core.Net.Upnp/Core.Net.Upnp.csproj" />
     <Project Path="src/Core.Omnikit/Core.Omnikit.csproj" />
     <Project Path="src/Core.Pipelines/Core.Pipelines.csproj" />
-    <Project Path="src/Core.RocketPack.DefinitionCompiler/Core.RocketPack.DefinitionCompiler.csproj" />
     <Project Path="src/Core.RocketPack/Core.RocketPack.csproj" />
     <Project Path="src/Core.Serialization/Core.Serialization.csproj" />
     <Project Path="src/Core.Sql/Core.Sql.csproj" />
@@ -22,7 +21,6 @@
     <Project Path="test/Core.Net.Upnp.Tests/Core.Net.Upnp.Tests.csproj" />
     <Project Path="test/Core.Omnikit.Tests/Core.Omnikit.Tests.csproj" />
     <Project Path="test/Core.Pipelines.Tests/Core.Pipelines.Tests.csproj" />
-    <Project Path="test/Core.RocketPack.DefinitionCompiler.Tests/Core.RocketPack.DefinitionCompiler.Tests.csproj" />
     <Project Path="test/Core.RocketPack.Tests/Core.RocketPack.Tests.csproj" />
     <Project Path="test/Core.Serialization.Tests/Core.Serialization.Tests.csproj" />
     <Project Path="test/Core.Storages.Tests/Core.Storages.Tests.csproj" />

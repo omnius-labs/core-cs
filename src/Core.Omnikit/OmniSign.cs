@@ -5,7 +5,6 @@ using Omnius.Core.Omnikit.Converters;
 using Omnius.Core.Omnikit.Internal;
 using Omnius.Core.Pipelines;
 using Omnius.Core.RocketPack;
-using Omnius.Core.Serialization;
 
 namespace Omnius.Core.Omnikit;
 
@@ -18,7 +17,7 @@ public enum OmniSignType
     Ed25519_Sha3_256_Base64Url = 1
 }
 
-public class OmniSigner : RocketMessage<OmniSigner>
+public class OmniSigner : IRocketPackStruct<OmniSigner>, IEquatable<OmniSigner>
 {
     public required OmniSignType Type { get; init; }
     public required string Name { get; init; }
@@ -96,44 +95,64 @@ public class OmniSigner : RocketMessage<OmniSigner>
         return _hashCode.Value;
     }
 
-    public override bool Equals(OmniSigner? other)
+    public bool Equals(OmniSigner? other)
     {
         if (other is null) return false;
         if (ReferenceEquals(this, other)) return true;
         return this.Type == other.Type && this.Name == other.Name && this.Key.SequenceEqual(other.Key);
     }
 
-    static OmniSigner()
+    public static void Pack(ref RocketPackBytesEncoder encoder, in OmniSigner value)
     {
-        Formatter = new CustomSerializer();
-        Empty = new OmniSigner() { Name = string.Empty, Type = OmniSignType.None, Key = Array.Empty<byte>() };
+        encoder.WriteMap(3);
+
+        encoder.WriteU64(0);
+        encoder.WriteString(value.Type.ToString().ToLowerInvariant());
+
+        encoder.WriteU64(1);
+        encoder.WriteString(value.Name);
+
+        encoder.WriteU64(2);
+        encoder.WriteBytes(value.Key);
     }
 
-    private sealed class CustomSerializer : IRocketMessageSerializer<OmniSigner>
+    public static OmniSigner Unpack(ref RocketPackBytesDecoder decoder)
     {
-        public void Serialize(ref RocketMessageWriter w, scoped in OmniSigner value, scoped in int depth)
-        {
-            w.Put(value.Type.ToString());
-            w.Put(value.Name);
-            w.Put(value.Key);
-        }
-        public OmniSigner Deserialize(ref RocketMessageReader r, scoped in int depth)
-        {
-            var type = Enum.Parse<OmniSignType>(r.GetString(1024));
-            var name = r.GetString(1024);
-            var key = r.GetBytes(1024);
+        var count = decoder.ReadMap();
 
-            return new OmniSigner()
+        OmniSignType? type = null;
+        string? name = null;
+        byte[]? key = null;
+
+        for (ulong i = 0; i < count; i++)
+        {
+            switch (decoder.ReadU64())
             {
-                Type = type,
-                Name = name,
-                Key = key,
-            };
+                case 0:
+                    type = Enum.Parse<OmniSignType>(decoder.ReadString(), true);
+                    break;
+                case 1:
+                    name = decoder.ReadString();
+                    break;
+                case 2:
+                    key = decoder.ReadBytesToArray();
+                    break;
+                default:
+                    decoder.SkipField();
+                    break;
+            }
         }
+
+        return new OmniSigner()
+        {
+            Type = type ?? throw RocketPackDecoderException.CreateOther("missing field: Type"),
+            Name = name ?? throw RocketPackDecoderException.CreateOther("missing field: Name"),
+            Key = key ?? throw RocketPackDecoderException.CreateOther("missing field: Key"),
+        };
     }
 }
 
-public class OmniCert : RocketMessage<OmniCert>
+public class OmniCert : IRocketPackStruct<OmniCert>, IEquatable<OmniCert>
 {
     public required OmniSignType Type { get; init; }
     public required string Name { get; init; }
@@ -178,42 +197,67 @@ public class OmniCert : RocketMessage<OmniCert>
         return _hashCode.Value;
     }
 
-    public override bool Equals(OmniCert? other)
+    public bool Equals(OmniCert? other)
     {
         if (other is null) return false;
         if (ReferenceEquals(this, other)) return true;
         return this.Type == other.Type && this.Name == other.Name && this.PublicKey.SequenceEqual(other.PublicKey) && this.Value.SequenceEqual(other.Value);
     }
 
-    static OmniCert()
+    public static void Pack(ref RocketPackBytesEncoder encoder, in OmniCert value)
     {
-        Formatter = new CustomSerializer();
-        Empty = new OmniCert() { Name = string.Empty, Type = OmniSignType.None, PublicKey = Array.Empty<byte>(), Value = Array.Empty<byte>() };
+        encoder.WriteMap(4);
+
+        encoder.WriteU64(0);
+        encoder.WriteString(value.Type.ToString().ToLowerInvariant());
+
+        encoder.WriteU64(1);
+        encoder.WriteString(value.Name);
+
+        encoder.WriteU64(2);
+        encoder.WriteBytes(value.PublicKey);
+
+        encoder.WriteU64(3);
+        encoder.WriteBytes(value.Value);
     }
 
-    private sealed class CustomSerializer : IRocketMessageSerializer<OmniCert>
+    public static OmniCert Unpack(ref RocketPackBytesDecoder decoder)
     {
-        public void Serialize(ref RocketMessageWriter w, scoped in OmniCert value, scoped in int depth)
-        {
-            w.Put(value.Type.ToString());
-            w.Put(value.Name);
-            w.Put(value.PublicKey);
-            w.Put(value.Value);
-        }
-        public OmniCert Deserialize(ref RocketMessageReader r, scoped in int depth)
-        {
-            var type = Enum.Parse<OmniSignType>(r.GetString(1024));
-            var name = r.GetString(1024);
-            var publicKey = r.GetBytes(1024);
-            var value = r.GetBytes(1024);
+        var count = decoder.ReadMap();
 
-            return new OmniCert()
+        OmniSignType? type = null;
+        string? name = null;
+        byte[]? publicKey = null;
+        byte[]? value = null;
+
+        for (ulong i = 0; i < count; i++)
+        {
+            switch (decoder.ReadU64())
             {
-                Type = type,
-                Name = name,
-                PublicKey = publicKey,
-                Value = value
-            };
+                case 0:
+                    type = Enum.Parse<OmniSignType>(decoder.ReadString(), true);
+                    break;
+                case 1:
+                    name = decoder.ReadString();
+                    break;
+                case 2:
+                    publicKey = decoder.ReadBytesToArray();
+                    break;
+                case 3:
+                    value = decoder.ReadBytesToArray();
+                    break;
+                default:
+                    decoder.SkipField();
+                    break;
+            }
         }
+
+        return new OmniCert()
+        {
+            Type = type ?? throw RocketPackDecoderException.CreateOther("missing field: Type"),
+            Name = name ?? throw RocketPackDecoderException.CreateOther("missing field: Name"),
+            PublicKey = publicKey ?? throw RocketPackDecoderException.CreateOther("missing field: PublicKey"),
+            Value = value ?? throw RocketPackDecoderException.CreateOther("missing field: Value"),
+        };
     }
 }

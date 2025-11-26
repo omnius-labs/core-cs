@@ -1,29 +1,14 @@
 
 namespace Omnius.Core.RocketPack;
 
-public sealed class EmptyRocketMessage : RocketMessage<EmptyRocketMessage>
+public sealed class EmptyRocketMessage : IRocketPackStruct<EmptyRocketMessage>
 {
-    public override int GetHashCode() => 0;
-
-    public override bool Equals(EmptyRocketMessage? other)
+    public static void Pack(ref RocketPackBytesEncoder encoder, in EmptyRocketMessage value)
     {
-        return (other is not null);
     }
 
-    static EmptyRocketMessage()
+    public static EmptyRocketMessage Unpack(ref RocketPackBytesDecoder decoder)
     {
-        Formatter = new CustomSerializer();
-        Empty = new EmptyRocketMessage();
-    }
-
-    private sealed class CustomSerializer : IRocketMessageSerializer<EmptyRocketMessage>
-    {
-        public void Serialize(ref RocketMessageWriter w, scoped in EmptyRocketMessage value, scoped in int depth)
-        {
-        }
-        public EmptyRocketMessage Deserialize(ref RocketMessageReader r, scoped in int depth)
-        {
-            return Empty;
-        }
+        return new EmptyRocketMessage();
     }
 }

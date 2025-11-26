@@ -4,7 +4,6 @@ using Omnius.Core.Base;
 using Omnius.Core.Omnikit.Internal;
 using Omnius.Core.Pipelines;
 using Omnius.Core.RocketPack;
-using Omnius.Core.Serialization;
 
 namespace Omnius.Core.Omnikit;
 
@@ -17,7 +16,7 @@ public enum OmniAgreementAlgorithmType
     X25519 = 1
 }
 
-public class OmniAgreement : RocketMessage<OmniAgreement>
+public class OmniAgreement : IRocketPackStruct<OmniAgreement>, IEquatable<OmniAgreement>
 {
     public static OmniAgreement Create(DateTime createdTime, OmniAgreementAlgorithmType algorithmType)
     {
@@ -92,47 +91,72 @@ public class OmniAgreement : RocketMessage<OmniAgreement>
         return _hashCode.Value;
     }
 
-    public override bool Equals(OmniAgreement? other)
+    public bool Equals(OmniAgreement? other)
     {
         if (other is null) return false;
         if (ReferenceEquals(this, other)) return true;
         return this.CreatedTime == other.CreatedTime && this.AlgorithmType == other.AlgorithmType && this.PublicKey.SequenceEqual(other.PublicKey) && this.SecretKey.SequenceEqual(other.SecretKey);
     }
 
-    static OmniAgreement()
+    public static void Pack(ref RocketPackBytesEncoder encoder, in OmniAgreement value)
     {
-        Formatter = new CustomSerializer();
-        Empty = new OmniAgreement() { CreatedTime = DateTime.MinValue, AlgorithmType = OmniAgreementAlgorithmType.None, PublicKey = Array.Empty<byte>(), SecretKey = Array.Empty<byte>() };
+        encoder.WriteMap(4);
+
+        encoder.WriteU64(0);
+        encoder.WriteString(value.AlgorithmType.ToString().ToLowerInvariant());
+
+        encoder.WriteU64(1);
+        encoder.WriteBytes(value.SecretKey);
+
+        encoder.WriteU64(2);
+        encoder.WriteBytes(value.PublicKey);
+
+        encoder.WriteU64(3);
+        encoder.WriteStruct(Timestamp64.FromDateTime(value.CreatedTime.ToUniversalTime()));
     }
 
-    private sealed class CustomSerializer : IRocketMessageSerializer<OmniAgreement>
+    public static OmniAgreement Unpack(ref RocketPackBytesDecoder decoder)
     {
-        public void Serialize(ref RocketMessageWriter w, scoped in OmniAgreement value, scoped in int depth)
-        {
-            w.Put(Timestamp64.FromDateTime(value.CreatedTime));
-            w.Put(value.AlgorithmType.ToString());
-            w.Put(value.PublicKey);
-            w.Put(value.SecretKey);
-        }
-        public OmniAgreement Deserialize(ref RocketMessageReader r, scoped in int depth)
-        {
-            var createdTime = r.GetTimestamp64().ToDateTime();
-            var algorithmType = Enum.Parse<OmniAgreementAlgorithmType>(r.GetString(1024));
-            var publicKey = r.GetBytes(1024);
-            var secretKey = r.GetBytes(1024);
+        var count = decoder.ReadMap();
 
-            return new OmniAgreement()
+        OmniAgreementAlgorithmType? algorithmType = null;
+        byte[]? secretKey = null;
+        byte[]? publicKey = null;
+        DateTime? createdTime = null;
+
+        for (ulong i = 0; i < count; i++)
+        {
+            switch (decoder.ReadU64())
             {
-                CreatedTime = createdTime,
-                AlgorithmType = algorithmType,
-                PublicKey = publicKey,
-                SecretKey = secretKey
-            };
+                case 0:
+                    algorithmType = Enum.Parse<OmniAgreementAlgorithmType>(decoder.ReadString(), true);
+                    break;
+                case 1:
+                    secretKey = decoder.ReadBytesToArray();
+                    break;
+                case 2:
+                    publicKey = decoder.ReadBytesToArray();
+                    break;
+                case 3:
+                    createdTime = decoder.ReadStruct<Timestamp64>().ToDateTime();
+                    break;
+                default:
+                    decoder.SkipField();
+                    break;
+            }
         }
+
+        return new OmniAgreement()
+        {
+            AlgorithmType = algorithmType ?? throw RocketPackDecoderException.CreateOther("missing field: AlgorithmType"),
+            SecretKey = secretKey ?? throw RocketPackDecoderException.CreateOther("missing field: SecretKey"),
+            PublicKey = publicKey ?? throw RocketPackDecoderException.CreateOther("missing field: PublicKey"),
+            CreatedTime = createdTime ?? throw RocketPackDecoderException.CreateOther("missing field: CreatedTime"),
+        };
     }
 }
 
-public class OmniAgreementPublicKey : RocketMessage<OmniAgreementPublicKey>
+public class OmniAgreementPublicKey : IRocketPackStruct<OmniAgreementPublicKey>, IEquatable<OmniAgreementPublicKey>
 {
     public required DateTime CreatedTime { get; init; }
     public required OmniAgreementAlgorithmType AlgorithmType { get; init; }
@@ -154,44 +178,64 @@ public class OmniAgreementPublicKey : RocketMessage<OmniAgreementPublicKey>
         return _hashCode.Value;
     }
 
-    public override bool Equals(OmniAgreementPublicKey? other)
+    public bool Equals(OmniAgreementPublicKey? other)
     {
         if (other is null) return false;
         if (ReferenceEquals(this, other)) return true;
         return this.CreatedTime == other.CreatedTime && this.AlgorithmType == other.AlgorithmType && this.PublicKey.SequenceEqual(other.PublicKey);
     }
 
-    static OmniAgreementPublicKey()
+    public static void Pack(ref RocketPackBytesEncoder encoder, in OmniAgreementPublicKey value)
     {
-        Formatter = new CustomSerializer();
-        Empty = new OmniAgreementPublicKey() { CreatedTime = DateTime.MinValue, AlgorithmType = OmniAgreementAlgorithmType.None, PublicKey = Array.Empty<byte>() };
+        encoder.WriteMap(3);
+
+        encoder.WriteU64(0);
+        encoder.WriteString(value.AlgorithmType.ToString().ToLowerInvariant());
+
+        encoder.WriteU64(1);
+        encoder.WriteBytes(value.PublicKey);
+
+        encoder.WriteU64(2);
+        encoder.WriteStruct(Timestamp64.FromDateTime(value.CreatedTime.ToUniversalTime()));
     }
 
-    private sealed class CustomSerializer : IRocketMessageSerializer<OmniAgreementPublicKey>
+    public static OmniAgreementPublicKey Unpack(ref RocketPackBytesDecoder decoder)
     {
-        public void Serialize(ref RocketMessageWriter w, scoped in OmniAgreementPublicKey value, scoped in int depth)
-        {
-            w.Put(Timestamp64.FromDateTime(value.CreatedTime));
-            w.Put(value.AlgorithmType.ToString());
-            w.Put(value.PublicKey);
-        }
-        public OmniAgreementPublicKey Deserialize(ref RocketMessageReader r, scoped in int depth)
-        {
-            var createdTime = r.GetTimestamp64().ToDateTime();
-            var algorithmType = Enum.Parse<OmniAgreementAlgorithmType>(r.GetString(1024));
-            var publicKey = r.GetBytes(1024);
+        var count = decoder.ReadMap();
 
-            return new OmniAgreementPublicKey()
+        OmniAgreementAlgorithmType? algorithmType = null;
+        byte[]? publicKey = null;
+        DateTime? createdTime = null;
+
+        for (ulong i = 0; i < count; i++)
+        {
+            switch (decoder.ReadU64())
             {
-                CreatedTime = createdTime,
-                AlgorithmType = algorithmType,
-                PublicKey = publicKey,
-            };
+                case 0:
+                    algorithmType = Enum.Parse<OmniAgreementAlgorithmType>(decoder.ReadString(), true);
+                    break;
+                case 1:
+                    publicKey = decoder.ReadBytesToArray();
+                    break;
+                case 2:
+                    createdTime = decoder.ReadStruct<Timestamp64>().ToDateTime();
+                    break;
+                default:
+                    decoder.SkipField();
+                    break;
+            }
         }
+
+        return new OmniAgreementPublicKey()
+        {
+            AlgorithmType = algorithmType ?? throw RocketPackDecoderException.CreateOther("missing field: AlgorithmType"),
+            PublicKey = publicKey ?? throw RocketPackDecoderException.CreateOther("missing field: PublicKey"),
+            CreatedTime = createdTime ?? throw RocketPackDecoderException.CreateOther("missing field: CreatedTime"),
+        };
     }
 }
 
-public class OmniAgreementPrivateKey : RocketMessage<OmniAgreementPrivateKey>
+public class OmniAgreementPrivateKey : IRocketPackStruct<OmniAgreementPrivateKey>, IEquatable<OmniAgreementPrivateKey>
 {
     public required DateTime CreatedTime { get; init; }
     public required OmniAgreementAlgorithmType AlgorithmType { get; init; }
@@ -213,39 +257,59 @@ public class OmniAgreementPrivateKey : RocketMessage<OmniAgreementPrivateKey>
         return _hashCode.Value;
     }
 
-    public override bool Equals(OmniAgreementPrivateKey? other)
+    public bool Equals(OmniAgreementPrivateKey? other)
     {
         if (other is null) return false;
         if (ReferenceEquals(this, other)) return true;
         return this.CreatedTime == other.CreatedTime && this.AlgorithmType == other.AlgorithmType && this.SecretKey.SequenceEqual(other.SecretKey);
     }
 
-    static OmniAgreementPrivateKey()
+    public static void Pack(ref RocketPackBytesEncoder encoder, in OmniAgreementPrivateKey value)
     {
-        Formatter = new CustomSerializer();
-        Empty = new OmniAgreementPrivateKey() { CreatedTime = DateTime.MinValue, AlgorithmType = OmniAgreementAlgorithmType.None, SecretKey = Array.Empty<byte>() };
+        encoder.WriteMap(3);
+
+        encoder.WriteU64(0);
+        encoder.WriteString(value.AlgorithmType.ToString().ToLowerInvariant());
+
+        encoder.WriteU64(1);
+        encoder.WriteBytes(value.SecretKey);
+
+        encoder.WriteU64(2);
+        encoder.WriteStruct(Timestamp64.FromDateTime(value.CreatedTime.ToUniversalTime()));
     }
 
-    private sealed class CustomSerializer : IRocketMessageSerializer<OmniAgreementPrivateKey>
+    public static OmniAgreementPrivateKey Unpack(ref RocketPackBytesDecoder decoder)
     {
-        public void Serialize(ref RocketMessageWriter w, scoped in OmniAgreementPrivateKey value, scoped in int depth)
-        {
-            w.Put(Timestamp64.FromDateTime(value.CreatedTime));
-            w.Put(value.AlgorithmType.ToString());
-            w.Put(value.SecretKey);
-        }
-        public OmniAgreementPrivateKey Deserialize(ref RocketMessageReader r, scoped in int depth)
-        {
-            var createdTime = r.GetTimestamp64().ToDateTime();
-            var algorithmType = Enum.Parse<OmniAgreementAlgorithmType>(r.GetString(1024));
-            var secretKey = r.GetBytes(1024);
+        var count = decoder.ReadMap();
 
-            return new OmniAgreementPrivateKey()
+        OmniAgreementAlgorithmType? algorithmType = null;
+        byte[]? secretKey = null;
+        DateTime? createdTime = null;
+
+        for (ulong i = 0; i < count; i++)
+        {
+            switch (decoder.ReadU64())
             {
-                CreatedTime = createdTime,
-                AlgorithmType = algorithmType,
-                SecretKey = secretKey
-            };
+                case 0:
+                    algorithmType = Enum.Parse<OmniAgreementAlgorithmType>(decoder.ReadString(), true);
+                    break;
+                case 1:
+                    secretKey = decoder.ReadBytesToArray();
+                    break;
+                case 2:
+                    createdTime = decoder.ReadStruct<Timestamp64>().ToDateTime();
+                    break;
+                default:
+                    decoder.SkipField();
+                    break;
+            }
         }
+
+        return new OmniAgreementPrivateKey()
+        {
+            AlgorithmType = algorithmType ?? throw RocketPackDecoderException.CreateOther("missing field: AlgorithmType"),
+            SecretKey = secretKey ?? throw RocketPackDecoderException.CreateOther("missing field: SecretKey"),
+            CreatedTime = createdTime ?? throw RocketPackDecoderException.CreateOther("missing field: CreatedTime"),
+        };
     }
 }

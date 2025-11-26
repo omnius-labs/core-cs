@@ -1,5 +1,5 @@
 using Omnius.Core.Base;
-using Omnius.Core.Storages.Tests.Internal;
+using Omnius.Core.RocketPack;
 using Omnius.Core.Testkit;
 using Xunit;
 
@@ -94,6 +94,48 @@ public class SingleValueStorageTest
         {
             var res = await storage.TryGetValueAsync<TestMessage>();
             Assert.Equal(default(TestMessage), res);
+        }
+    }
+
+    public class TestMessage : IRocketPackStruct<TestMessage>, IEquatable<TestMessage>
+    {
+        public TestMessage(string value)
+        {
+            this.Value = value;
+        }
+
+        public string Value { get; }
+
+        private int? _hashCode;
+
+        public override int GetHashCode()
+        {
+            if (_hashCode is null)
+            {
+                var h = new HashCode();
+                h.Add(this.Value);
+                _hashCode = h.ToHashCode();
+            }
+
+            return _hashCode.Value;
+        }
+
+        public bool Equals(TestMessage? other)
+        {
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return this.Value == other.Value;
+        }
+
+        public static void Pack(ref RocketPackBytesEncoder encoder, in TestMessage value)
+        {
+            encoder.WriteString(value.Value);
+        }
+
+        public static TestMessage Unpack(ref RocketPackBytesDecoder decoder)
+        {
+            var value = decoder.ReadString();
+            return new TestMessage(value);
         }
     }
 }

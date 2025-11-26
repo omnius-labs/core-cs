@@ -3,6 +3,7 @@ using System.Security.Cryptography;
 using System.Text;
 using Omnius.Core.Base;
 using Omnius.Core.Omnikit.Connections.Codec;
+using Omnius.Core.RocketPack;
 using Org.BouncyCastle.Crypto.Digests;
 using Org.BouncyCastle.Crypto.Generators;
 using Org.BouncyCastle.Crypto.Parameters;
@@ -42,11 +43,11 @@ class Authenticator
             HashAlgorithmType = HashAlgorithmType.Sha3_256,
         };
 
-        using var sendingProfileMessageBytes = myProfileMessage.Export(_bytesPool);
+        using var sendingProfileMessageBytes = RocketPackStruct.Export(myProfileMessage, _bytesPool);
         await _sender.SendAsync(sendingProfileMessageBytes.Memory, cancellationToken);
 
         using var receivedProfileMessageBytes = await _receiver.ReceiveAsync(cancellationToken);
-        var otherProfileMessage = ProfileMessage.Import(receivedProfileMessageBytes.Memory, _bytesPool);
+        var otherProfileMessage = RocketPackStruct.Import<ProfileMessage>(receivedProfileMessageBytes.Memory, _bytesPool);
 
         var keyExchangeAlgorithmType = myProfileMessage.KeyExchangeAlgorithmType & otherProfileMessage.KeyExchangeAlgorithmType;
         var keyDerivationAlgorithmType = myProfileMessage.KeyDerivationAlgorithmType & otherProfileMessage.KeyDerivationAlgorithmType;
@@ -61,25 +62,25 @@ class Authenticator
             var now = _clock.GetUtcNow();
             var myAgreement = OmniAgreement.Create(now, OmniAgreementAlgorithmType.X25519);
 
-            using var sendingAgreementPublicKeyBytes = myAgreement.GenAgreementPublicKey().Export(_bytesPool);
+            using var sendingAgreementPublicKeyBytes = RocketPackStruct.Export(myAgreement.GenAgreementPublicKey(), _bytesPool);
             await _sender.SendAsync(sendingAgreementPublicKeyBytes.Memory, cancellationToken);
 
             using var receivedAgreementPublicKeyBytes = await _receiver.ReceiveAsync(cancellationToken);
-            var otherAgreementPublicKey = OmniAgreementPublicKey.Import(receivedAgreementPublicKeyBytes.Memory, _bytesPool);
+            var otherAgreementPublicKey = RocketPackStruct.Import<OmniAgreementPublicKey>(receivedAgreementPublicKeyBytes.Memory, _bytesPool);
 
             if (_signer is not null)
             {
                 var myHash = GenHash(myProfileMessage, otherAgreementPublicKey, hashAlgorithmType);
                 var myCert = _signer.Sign(myHash);
 
-                using var sendingCertBytes = myCert.Export(_bytesPool);
+                using var sendingCertBytes = RocketPackStruct.Export(myCert, _bytesPool);
                 await _sender.SendAsync(sendingCertBytes.Memory, cancellationToken);
             }
 
             if (otherProfileMessage.AuthType == AuthType.Sign)
             {
                 using var receivedCertBytes = await _receiver.ReceiveAsync(cancellationToken);
-                var otherCert = OmniCert.Import(receivedCertBytes.Memory, _bytesPool);
+                var otherCert = RocketPackStruct.Import<OmniCert>(receivedCertBytes.Memory, _bytesPool);
 
                 var otherHash = GenHash(otherProfileMessage, myAgreement.GenAgreementPublicKey(), hashAlgorithmType);
                 if (!otherCert.Verify(otherHash)) throw new SecureStreamException("Invalid cert");

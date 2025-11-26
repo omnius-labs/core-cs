@@ -5,6 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\Core.Base\Core.Base.csproj" />
     <ProjectReference Include="..\..\src\Core.Streams\Core.Streams.csproj" />
   </ItemGroup>
 

@@ -19,17 +19,17 @@ public sealed class OmniRemotingStream
     }
 
     public async ValueTask SendAsync<T>(T message, CancellationToken cancellationToken = default)
-        where T : RocketMessage<T>
+        where T : IRocketPackStruct<T>
     {
-        using var sendingMemoryOwner = message.Export(_bytesPool);
+        using var sendingMemoryOwner = RocketPackStruct.Export(message, _bytesPool);
         await _sender.SendAsync(sendingMemoryOwner.Memory, cancellationToken);
     }
 
     public async ValueTask<T> ReceiveAsync<T>(CancellationToken cancellationToken = default)
-        where T : RocketMessage<T>
+        where T : IRocketPackStruct<T>
     {
         using var receivedMemoryOwner = await _receiver.ReceiveAsync(cancellationToken);
-        var message = RocketMessage<T>.Import(receivedMemoryOwner.Memory, _bytesPool);
+        var message = RocketPackStruct.Import<T>(receivedMemoryOwner.Memory, _bytesPool);
         return message;
     }
 }

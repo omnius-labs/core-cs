@@ -1,5 +1,5 @@
 using Omnius.Core.Base;
-using Omnius.Core.Storages.Tests.Internal;
+using Omnius.Core.RocketPack;
 using Omnius.Core.Testkit;
 using Xunit;
 
@@ -78,7 +78,7 @@ public class KeyValueStorageTest
         Assert.True(res2);
 
         var m3 = await storage.TryReadAsync<TestMessage>("a");
-        Assert.Equal(m3, TestMessage.Empty);
+        Assert.Null(m3);
 
         var m4 = await storage.TryReadAsync<TestMessage>("b");
         Assert.Equal(m, m4);
@@ -152,5 +152,47 @@ public class KeyValueStorageTest
         Assert.Equal("0/0/0/0/2047/2047", KeyValueFileStorage.ComputeRelativeFilePath(0x3FFFFF));
         Assert.Equal("0/0/0/1/0/0", KeyValueFileStorage.ComputeRelativeFilePath(0x3FFFFF + 1));
         Assert.Equal("255/2047/2047/2047/2047/2047", KeyValueFileStorage.ComputeRelativeFilePath(long.MaxValue));
+    }
+
+    public class TestMessage : IRocketPackStruct<TestMessage>, IEquatable<TestMessage>
+    {
+        public TestMessage(string value)
+        {
+            this.Value = value;
+        }
+
+        public string Value { get; }
+
+        private int? _hashCode;
+
+        public override int GetHashCode()
+        {
+            if (_hashCode is null)
+            {
+                var h = new HashCode();
+                h.Add(this.Value);
+                _hashCode = h.ToHashCode();
+            }
+
+            return _hashCode.Value;
+        }
+
+        public bool Equals(TestMessage? other)
+        {
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return this.Value == other.Value;
+        }
+
+        public static void Pack(ref RocketPackBytesEncoder encoder, in TestMessage value)
+        {
+            encoder.WriteString(value.Value);
+        }
+
+        public static TestMessage Unpack(ref RocketPackBytesDecoder decoder)
+        {
+            var value = decoder.ReadString();
+            return new TestMessage(value);
+        }
     }
 }

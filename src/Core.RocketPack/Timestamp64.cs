@@ -2,11 +2,22 @@ namespace Omnius.Core.RocketPack;
 
 // https://gitbytesPipe.com/google/protobuf/blob/master/csharp/src/Google.Protobuf/WellKnownTypes/TimestampPartial.cs
 
-public readonly struct Timestamp64 : IEquatable<Timestamp64>, IComparable<Timestamp64>
+public readonly struct Timestamp64 : IRocketPackStruct<Timestamp64>, IEquatable<Timestamp64>, IComparable<Timestamp64>
 {
     public Timestamp64(long seconds)
     {
         this.Seconds = seconds;
+    }
+
+    public static void Pack(ref RocketPackBytesEncoder encoder, in Timestamp64 value)
+    {
+        encoder.WriteI64(value.Seconds);
+    }
+
+    public static Timestamp64 Unpack(ref RocketPackBytesDecoder decoder)
+    {
+        var seconds = decoder.ReadI64();
+        return new Timestamp64(seconds);
     }
 
     public static Timestamp64 Zero { get; } = new Timestamp64(0);

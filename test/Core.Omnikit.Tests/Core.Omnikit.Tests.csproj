@@ -5,10 +5,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\Core.Base\Core.Base.csproj" />
     <ProjectReference Include="..\..\src\Core.Testkit\Core.Testkit.csproj" />
     <ProjectReference Include="..\..\src\Core.Omnikit\Core.Omnikit.csproj" />
     <ProjectReference Include="..\..\src\Core.Pipelines\Core.Pipelines.csproj" />
     <ProjectReference Include="..\..\src\Core.Streams\Core.Streams.csproj" />
+    <ProjectReference Include="..\..\src\Core.RocketPack\Core.RocketPack.csproj" />
   </ItemGroup>
 
   <ItemGroup>

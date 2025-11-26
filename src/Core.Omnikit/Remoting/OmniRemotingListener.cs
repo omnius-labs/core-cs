@@ -32,7 +32,7 @@ public sealed class OmniRemotingListener : AsyncDisposableBase
     private async ValueTask HandshakeAsync(CancellationToken cancellationToken = default)
     {
         using var receivedMemoryOwner = await _receiver.ReceiveAsync(cancellationToken);
-        var helloMessage = HelloMessage.Import(receivedMemoryOwner.Memory, _bytesPool);
+        var helloMessage = RocketPackStruct.Import<HelloMessage>(receivedMemoryOwner.Memory, _bytesPool);
 
         if (helloMessage.Version == OmniRemotingVersion.V1)
         {

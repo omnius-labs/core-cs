@@ -1,11 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <RootNamespace>Omnius.Core.Streams</RootNamespace>
+    <RootNamespace>Omnius.Core.Pipelines</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Core.Streams\Core.Streams.csproj" />
+    <ProjectReference Include="..\..\src\Core.Base\Core.Base.csproj" />
+    <ProjectReference Include="..\..\src\Core.Pipelines\Core.Pipelines.csproj" />
   </ItemGroup>
 
   <ItemGroup>
