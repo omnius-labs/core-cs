@@ -14,6 +14,7 @@
     <Project Path="src/Core.Storages/Core.Storages.csproj" />
     <Project Path="src/Core.Streams/Core.Streams.csproj" />
     <Project Path="src/Core.Testkit/Core.Testkit.csproj" />
+    <Project Path="src/Core.Yamux/Core.Yamux.csproj" />
   </Folder>
   <Folder Name="/test/">
     <Project Path="test/Core.Base.Tests/Core.Base.Tests.csproj" />
@@ -25,5 +26,6 @@
     <Project Path="test/Core.Serialization.Tests/Core.Serialization.Tests.csproj" />
     <Project Path="test/Core.Storages.Tests/Core.Storages.Tests.csproj" />
     <Project Path="test/Core.Streams.Tests/Core.Streams.Tests.csproj" />
+    <Project Path="test/Core.Yamux.Tests/Core.Yamux.Tests.csproj" />
   </Folder>
 </Solution>

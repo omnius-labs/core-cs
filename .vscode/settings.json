@@ -24,7 +24,8 @@
         "Testkit",
         "Upnp",
         "Varint",
-        "Xunit"
+        "Xunit",
+        "Yamux"
     ],
     "dotnet.defaultSolution": "core.slnx"
 }

@@ -40,19 +40,13 @@ public class OmniSecureStreamTest : TestBase<OmniSecureStreamTest>
         var clock = new FakeClock(new DateTime(2000, 1, 1, 0, 0, 0, DateTimeKind.Utc));
         var bytesPool = BytesPool.Shared;
 
-        var listener = fixtureFactory.GenTcpListener(IPAddress.Loopback, 10);
-        var ipEndPoint = (IPEndPoint)listener.LocalEndpoint;
-        listener.Start();
+        var (client, server) = DuplexStream.CreatePair();
 
         var clientTask = Task.Run(async () =>
         {
-            var client = new TcpClient();
-            await client.ConnectAsync(ipEndPoint.Address, ipEndPoint.Port);
-            var clientStream = client.GetStream();
-
             var secureClient = await OmniSecureStream.CreateAsync(
                 OmniSecureStreamType.Connected,
-                clientStream,
+                client,
                 null,
                 randomBytesProvider,
                 clock,
@@ -64,12 +58,9 @@ public class OmniSecureStreamTest : TestBase<OmniSecureStreamTest>
 
         var serverTask = Task.Run(async () =>
         {
-            var server = await listener.AcceptTcpClientAsync();
-            var serverStream = server.GetStream();
-
             var secureServer = await OmniSecureStream.CreateAsync(
                 OmniSecureStreamType.Accepted,
-                serverStream,
+                server,
                 null,
                 randomBytesProvider,
                 clock,

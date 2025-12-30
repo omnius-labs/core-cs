@@ -15,10 +15,11 @@ public abstract class TestBase<T>
 
     public TestBase(ITestOutputHelper output)
     {
-        var logger = _loggerFactory.CreateLogger<T>();
-        this.Output = new CustomTestOutputHelper(output, logger);
+        this.Logger = _loggerFactory.CreateLogger<T>();
+        this.Output = new CustomTestOutputHelper(output, this.Logger);
     }
 
+    public ILogger<T> Logger { get; }
     public ITestOutputHelper Output { get; }
 
     // Loggerにも出力するようにする
