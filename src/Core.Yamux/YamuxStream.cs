@@ -177,27 +177,24 @@ public partial class YamuxStream
     {
         if (Interlocked.CompareExchange(ref _closed, 1, 0) != 0) return;
 
-        StateChange change;
-
         try
         {
-            change = _stateMachine.CloseLocal();
+            var change = _stateMachine.CloseLocal();
+
+            using (await _controlHeaderLock.LockAsync(cancellationToken).ConfigureAwait(false))
+            {
+                var flags = this.ComputeSendFlags();
+                flags |= MessageFlag.FIN;
+                _controlHeader.encode(MessageType.WindowUpdate, flags, _streamId, 0);
+                await _multiplexer.SendFrameAsync(_controlHeader, default, cancellationToken).ConfigureAwait(false);
+            }
+
+            this.ApplyStateChange(change);
         }
         catch (YamuxException)
         {
             _logger.LogWarning("yamux: invalid state for close: {0}", _stateMachine.State);
-            throw;
         }
-
-        using (await _controlHeaderLock.LockAsync(cancellationToken).ConfigureAwait(false))
-        {
-            var flags = this.ComputeSendFlags();
-            flags |= MessageFlag.FIN;
-            _controlHeader.encode(MessageType.WindowUpdate, flags, _streamId, 0);
-            await _multiplexer.SendFrameAsync(_controlHeader, default, cancellationToken).ConfigureAwait(false);
-        }
-
-        this.ApplyStateChange(change);
     }
 
     private async Task OnCloseTimeoutAsync()
@@ -376,7 +373,14 @@ public partial class YamuxStream : Stream
 
     public override async ValueTask DisposeAsync()
     {
-        await this.CloseAsync().ConfigureAwait(false);
+        try
+        {
+            await this.CloseAsync().ConfigureAwait(false);
+        }
+        catch (Exception)
+        {
+            // ignore
+        }
 
         _receiveBuffer.Dispose();
         _sendEvent.Dispose();
@@ -411,6 +415,16 @@ public partial class YamuxStream : Stream
     public override void Flush()
     {
         this.FlushAsync().Wait();
+    }
+
+    public override Task FlushAsync(CancellationToken cancellationToken)
+    {
+        if (cancellationToken.IsCancellationRequested)
+        {
+            return Task.FromCanceled(cancellationToken);
+        }
+
+        return Task.CompletedTask;
     }
 
     public override long Seek(long offset, SeekOrigin origin)

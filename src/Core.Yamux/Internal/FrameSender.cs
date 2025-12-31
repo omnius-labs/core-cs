@@ -11,7 +11,9 @@ internal sealed class FrameSender
     private readonly ILogger _logger;
     private readonly Func<YamuxErrorCode, ValueTask> _exitAsync;
     private readonly Channel<SendCommand> _sendCommands = Channel.CreateBounded<SendCommand>(64);
-    private readonly Task _runTask;
+    private readonly CancellationToken _cancellationToken;
+    private Task? _runTask;
+    private int _started;
 
     public FrameSender(FrameWriter writer, YamuxOptions options, ILogger logger, Func<YamuxErrorCode, ValueTask> exitAsync, CancellationToken cancellationToken)
     {
@@ -19,10 +21,16 @@ internal sealed class FrameSender
         _options = options;
         _logger = logger;
         _exitAsync = exitAsync;
-        _runTask = this.RunAsync(cancellationToken);
+        _cancellationToken = cancellationToken;
     }
 
-    public Task Completion => _runTask;
+    public Task Completion => _runTask ?? Task.CompletedTask;
+
+    public void Start()
+    {
+        if (Interlocked.Exchange(ref _started, 1) == 1) return;
+        _runTask = this.RunAsync(_cancellationToken);
+    }
 
     public async ValueTask<YamuxErrorCode> EnqueueAsync(byte[] header, byte[] payload, CancellationToken cancellationToken)
     {

@@ -11,7 +11,8 @@ internal sealed class FrameReceiver
     private readonly ILogger _logger;
     private readonly Func<YamuxErrorCode, ValueTask> _exitAsync;
     private readonly CancellationTokenSource _cancellationTokenSource;
-    private readonly Task _runTask;
+    private Task? _runTask;
+    private int _started;
 
     public FrameReceiver(FrameReader reader, StreamMessageHandler streamHandler, Func<Header, CancellationToken, ValueTask> pingHandler, Func<Header, CancellationToken, ValueTask> goAwayHandler, ILogger logger, Func<YamuxErrorCode, ValueTask> exitAsync, CancellationToken cancellationToken)
     {
@@ -22,7 +23,6 @@ internal sealed class FrameReceiver
         _logger = logger;
         _exitAsync = exitAsync;
         _cancellationTokenSource = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
-        _runTask = this.RunAsync(_cancellationTokenSource.Token);
     }
 
     public void Complete()
@@ -30,7 +30,13 @@ internal sealed class FrameReceiver
         _cancellationTokenSource.Cancel();
     }
 
-    public Task Completion => _runTask;
+    public Task Completion => _runTask ?? Task.CompletedTask;
+
+    public void Start()
+    {
+        if (Interlocked.Exchange(ref _started, 1) == 1) return;
+        _runTask = this.RunAsync(_cancellationTokenSource.Token);
+    }
 
     private async Task RunAsync(CancellationToken cancellationToken)
     {
@@ -47,6 +53,7 @@ internal sealed class FrameReceiver
         }
         catch (YamuxException e)
         {
+            _logger.LogWarning(e, "yamux: receive loop error {ErrorCode}", e.ErrorCode);
             await _exitAsync(e.ErrorCode);
         }
     }

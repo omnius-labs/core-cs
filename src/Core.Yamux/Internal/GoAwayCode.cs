@@ -2,8 +2,8 @@ namespace Omnius.Yamux.Internal;
 
 internal enum GoAwayCode
 {
-    None,
-    Normal,
-    ProtocolError,
-    InternalError,
+    None = -1,
+    Normal = 0,
+    ProtocolError = 1,
+    InternalError = 2,
 }

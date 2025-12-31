@@ -264,10 +264,10 @@ public class YamuxMultiplexerTest : TestBase<YamuxMultiplexerTest>
     [Fact]
     public async Task PingTimeoutTest()
     {
-        var yamuxConfig = new YamuxOptions() { PingTimeout = TimeSpan.FromSeconds(0) };
+        var yamuxOptions = new YamuxOptions() { PingTimeout = TimeSpan.FromSeconds(0) };
         var timeProvider = new FakeTimeProvider(DateTimeOffset.Parse("2020-01-01T00:00:00Z", CultureInfo.InvariantCulture)) { AutoAdvanceAmount = TimeSpan.FromSeconds(10) };
 
-        var (client, server) = await _testHelper.CreateYamuxMultiplexerPair(yamuxConfig, timeProvider, this.Logger);
+        var (client, server) = await _testHelper.CreateYamuxMultiplexerPair(yamuxOptions, timeProvider, this.Logger);
 
         try
         {

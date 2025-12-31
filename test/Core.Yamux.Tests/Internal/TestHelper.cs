@@ -36,22 +36,22 @@ public class TestHelper : IDisposable
         return await this.CreateYamuxMultiplexerPair(new YamuxOptions(), timeProvider, logger);
     }
 
-    public async ValueTask<(YamuxMultiplexer, YamuxMultiplexer)> CreateYamuxMultiplexerPair(YamuxOptions yamuxConfig, ILogger logger)
+    public async ValueTask<(YamuxMultiplexer, YamuxMultiplexer)> CreateYamuxMultiplexerPair(YamuxOptions yamuxOptions, ILogger logger)
     {
-        return await this.CreateYamuxMultiplexerPair(yamuxConfig, yamuxConfig, TimeProvider.System, logger);
+        return await this.CreateYamuxMultiplexerPair(yamuxOptions, yamuxOptions, TimeProvider.System, logger);
     }
 
-    public async ValueTask<(YamuxMultiplexer, YamuxMultiplexer)> CreateYamuxMultiplexerPair(YamuxOptions yamuxConfig, TimeProvider timeProvider, ILogger logger)
+    public async ValueTask<(YamuxMultiplexer, YamuxMultiplexer)> CreateYamuxMultiplexerPair(YamuxOptions yamuxOptions, TimeProvider timeProvider, ILogger logger)
     {
-        return await this.CreateYamuxMultiplexerPair(yamuxConfig, yamuxConfig, timeProvider, logger);
+        return await this.CreateYamuxMultiplexerPair(yamuxOptions, yamuxOptions, timeProvider, logger);
     }
 
-    public async ValueTask<(YamuxMultiplexer, YamuxMultiplexer)> CreateYamuxMultiplexerPair(YamuxOptions serverYamuxConfig, YamuxOptions clientYamuxConfig, TimeProvider timeProvider, ILogger logger)
+    public async ValueTask<(YamuxMultiplexer, YamuxMultiplexer)> CreateYamuxMultiplexerPair(YamuxOptions serverYamuxOptions, YamuxOptions clientYamuxOptions, TimeProvider timeProvider, ILogger logger)
     {
         var (client, server) = DuplexStream.CreatePair();
 
-        var serverYamuxMultiplexer = new YamuxMultiplexer(YamuxSessionType.Server, client, serverYamuxConfig, timeProvider, logger);
-        var clientYamuxMultiplexer = new YamuxMultiplexer(YamuxSessionType.Client, server, clientYamuxConfig, timeProvider, logger);
+        var serverYamuxMultiplexer = new YamuxMultiplexer(YamuxSessionType.Server, client, serverYamuxOptions, timeProvider, logger);
+        var clientYamuxMultiplexer = new YamuxMultiplexer(YamuxSessionType.Client, server, clientYamuxOptions, timeProvider, logger);
 
         return (clientYamuxMultiplexer, serverYamuxMultiplexer);
     }

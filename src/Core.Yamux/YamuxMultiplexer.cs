@@ -53,8 +53,11 @@ public class YamuxMultiplexer : IAsyncDisposable
         var frameReader = new FrameReader(_networkStream, _bytesPool, _logger);
         var frameWriter = new FrameWriter(_networkStream);
         var streamMessageHandler = new StreamMessageHandler(_streamRegistry, frameReader, _networkStream, () => _localGoAwayCode, this.SendFrameFireAndForgetAsync, _logger);
-        _frameReceiver = new FrameReceiver(frameReader, streamMessageHandler, this.HandlePingAsync, this.HandleGoAwayAsync, _logger, this.ExitAsync, _cancellationTokenSource.Token);
         _frameSender = new FrameSender(frameWriter, _options, _logger, this.ExitAsync, _cancellationTokenSource.Token);
+        _frameReceiver = new FrameReceiver(frameReader, streamMessageHandler, this.HandlePingAsync, this.HandleGoAwayAsync, _logger, this.ExitAsync, _cancellationTokenSource.Token);
+
+        _frameSender.Start();
+        _frameReceiver.Start();
 
         if (options.EnableKeepAlive)
         {

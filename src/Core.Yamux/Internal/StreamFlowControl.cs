@@ -9,6 +9,8 @@ internal sealed class StreamFlowControl
     public StreamFlowControl(uint maxWindow)
     {
         _maxWindow = maxWindow;
+        _receiveWindow = Constants.INITIAL_STREAM_WINDOW;
+        _sendWindow = Constants.INITIAL_STREAM_WINDOW;
     }
 
     public uint SendWindow => _sendWindow;
