@@ -1,13 +1,17 @@
-namespace Omnius.Yamux
+namespace Omnius.Yamux;
+
+public class YamuxException : Exception
 {
-    public class YamuxException : Exception
-    {
-        private YamuxErrorCode _errorCode;
+    public YamuxException(string message) : base(message) { }
+    public YamuxException(string message, Exception inner) : base(message, inner) { }
+}
 
-        public YamuxException(YamuxErrorCode errorCode) { _errorCode = errorCode; }
-        public YamuxException(YamuxErrorCode errorCode, string message) : base(message) { _errorCode = errorCode; }
-        public YamuxException(YamuxErrorCode errorCode, string message, Exception innerException) : base(message, innerException) { _errorCode = errorCode; }
+public sealed class YamuxConnectionClosedException : YamuxException
+{
+    public YamuxConnectionClosedException(string message) : base(message) { }
+}
 
-        public YamuxErrorCode ErrorCode => _errorCode;
-    }
+public sealed class YamuxProtocolException : YamuxException
+{
+    public YamuxProtocolException(string message) : base(message) { }
 }

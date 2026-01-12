@@ -347,7 +347,8 @@
         "dependencies": {
           "Microsoft.Bcl.TimeProvider": "[9.0.5, )",
           "Omnius.Core.Base": "[1.0.0, )",
-          "Omnius.Core.Collections": "[1.0.0, )"
+          "Omnius.Core.Collections": "[1.0.0, )",
+          "Omnius.Core.Pipelines": "[1.0.0, )"
         }
       },
       "DiffPlex": {

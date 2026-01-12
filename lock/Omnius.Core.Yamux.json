@@ -55,6 +55,13 @@
           "Omnius.Core.Base": "[1.0.0, )"
         }
       },
+      "Omnius.Core.Pipelines": {
+        "type": "Project",
+        "dependencies": {
+          "Microsoft.Extensions.Logging": "[10.0.1, )",
+          "Omnius.Core.Base": "[1.0.0, )"
+        }
+      },
       "Microsoft.Extensions.DependencyInjection": {
         "type": "CentralTransitive",
         "requested": "[9.0.5, )",

@@ -2,6 +2,7 @@ using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
 using Microsoft.Extensions.Logging;
+using Omnius.Core.Base;
 using Xunit.Abstractions;
 
 namespace Omnius.Yamux.Internal;
@@ -26,33 +27,41 @@ public class TestHelper : IDisposable
         }
     }
 
-    public async ValueTask<(YamuxMultiplexer, YamuxMultiplexer)> CreateYamuxMultiplexerPair(ILogger logger)
+    public async ValueTask<(YamuxConnection, YamuxConnection)> CreateYamuxConnectionPair(ILogger logger)
     {
-        return await this.CreateYamuxMultiplexerPair(TimeProvider.System, logger);
+        return await this.CreateYamuxConnectionPair(TimeProvider.System, logger);
     }
 
-    public async ValueTask<(YamuxMultiplexer, YamuxMultiplexer)> CreateYamuxMultiplexerPair(TimeProvider timeProvider, ILogger logger)
+    public async ValueTask<(YamuxConnection, YamuxConnection)> CreateYamuxConnectionPair(TimeProvider timeProvider, ILogger logger)
     {
-        return await this.CreateYamuxMultiplexerPair(new YamuxOptions(), timeProvider, logger);
+        return await this.CreateYamuxConnectionPair(new YamuxConfig(), timeProvider, logger);
     }
 
-    public async ValueTask<(YamuxMultiplexer, YamuxMultiplexer)> CreateYamuxMultiplexerPair(YamuxOptions yamuxOptions, ILogger logger)
+    public async ValueTask<(YamuxConnection, YamuxConnection)> CreateYamuxConnectionPair(YamuxConfig yamuxConfig, ILogger logger)
     {
-        return await this.CreateYamuxMultiplexerPair(yamuxOptions, yamuxOptions, TimeProvider.System, logger);
+        return await this.CreateYamuxConnectionPair(yamuxConfig, yamuxConfig, TimeProvider.System, logger);
     }
 
-    public async ValueTask<(YamuxMultiplexer, YamuxMultiplexer)> CreateYamuxMultiplexerPair(YamuxOptions yamuxOptions, TimeProvider timeProvider, ILogger logger)
+    public async ValueTask<(YamuxConnection, YamuxConnection)> CreateYamuxConnectionPair(YamuxConfig yamuxConfig, TimeProvider timeProvider, ILogger logger)
     {
-        return await this.CreateYamuxMultiplexerPair(yamuxOptions, yamuxOptions, timeProvider, logger);
+        return await this.CreateYamuxConnectionPair(yamuxConfig, yamuxConfig, timeProvider, logger);
     }
 
-    public async ValueTask<(YamuxMultiplexer, YamuxMultiplexer)> CreateYamuxMultiplexerPair(YamuxOptions serverYamuxOptions, YamuxOptions clientYamuxOptions, TimeProvider timeProvider, ILogger logger)
+    public async ValueTask<(YamuxConnection, YamuxConnection)> CreateYamuxConnectionPair(YamuxConfig serverYamuxConfig, YamuxConfig clientYamuxConfig, TimeProvider timeProvider, ILogger logger)
     {
         var (client, server) = DuplexStream.CreatePair();
 
-        var serverYamuxMultiplexer = new YamuxMultiplexer(YamuxSessionType.Server, client, serverYamuxOptions, timeProvider, logger);
-        var clientYamuxMultiplexer = new YamuxMultiplexer(YamuxSessionType.Client, server, clientYamuxOptions, timeProvider, logger);
+        var serverYamuxConnection = new YamuxConnection(
+            client,
+            serverYamuxConfig,
+            YamuxMode.Server,
+            BytesPool.Shared);
+        var clientYamuxConnection = new YamuxConnection(
+            server,
+            clientYamuxConfig,
+            YamuxMode.Client,
+            BytesPool.Shared);
 
-        return (clientYamuxMultiplexer, serverYamuxMultiplexer);
+        return (clientYamuxConnection, serverYamuxConnection);
     }
 }
