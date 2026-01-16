@@ -1,4 +1,3 @@
-using System.Threading;
 using System.Threading.Channels;
 using Omnius.Core.Base;
 
@@ -54,34 +53,21 @@ internal sealed class IncomingBytes
         {
             using (await _asyncLock.LockAsync(cancellationToken))
             {
-                OwnedBytes current;
-                int offset;
+                if (_current.Memory.Length > _currentOffset)
                 {
-                    current = _current;
-                    offset = _currentOffset;
-                }
+                    var remain = _current.Memory.Slice(_currentOffset, Math.Min(_current.Memory.Length - _currentOffset, buffer.Length));
+                    remain.CopyTo(buffer);
 
-                if (current.Memory.Length > offset)
-                {
-                    var available = current.Memory.Slice(offset);
-                    var toCopy = Math.Min(available.Length, buffer.Length);
-                    available.Slice(0, toCopy).CopyTo(buffer);
-                    bool shouldDispose = false;
+                    _currentOffset += remain.Length;
 
-                    _currentOffset += toCopy;
-                    if (_currentOffset >= current.Memory.Length)
+                    if (_currentOffset >= _current.Memory.Length)
                     {
+                        _current.Dispose();
                         _current = OwnedBytes.Empty;
                         _currentOffset = 0;
-                        shouldDispose = true;
                     }
 
-                    if (shouldDispose)
-                    {
-                        current.Dispose();
-                    }
-
-                    return toCopy;
+                    return remain.Length;
                 }
 
                 if (_channel.Reader.TryRead(out var next))
@@ -93,10 +79,7 @@ internal sealed class IncomingBytes
                 }
             }
 
-            if (!await _channel.Reader.WaitToReadAsync(cancellationToken).ConfigureAwait(false))
-            {
-                return 0;
-            }
+            if (!await _channel.Reader.WaitToReadAsync(cancellationToken).ConfigureAwait(false)) return 0;
         }
     }
 

@@ -82,6 +82,7 @@ public sealed class YamuxConnection : IAsyncDisposable
         {
             cancellationToken.ThrowIfCancellationRequested();
             Task waitTask;
+
             lock (_lock)
             {
                 if (_closed) throw new YamuxConnectionClosedException("Connection is closed.");
@@ -95,6 +96,7 @@ public sealed class YamuxConnection : IAsyncDisposable
                     var stream = YamuxStream.CreateOutbound(this, _config, id);
                     _streams[id] = stream;
                     _pendingAckCount++;
+
                     return stream;
                 }
 
@@ -156,6 +158,7 @@ public sealed class YamuxConnection : IAsyncDisposable
     internal void NotifyStreamClosed(uint streamId, YamuxStream stream)
     {
         bool signal = false;
+
         lock (_lock)
         {
             if (_streams.Remove(streamId))
@@ -184,9 +187,13 @@ public sealed class YamuxConnection : IAsyncDisposable
                 var frame = await FrameCodec.ReadAsync(_transport, _bytesPool, _cts.Token).ConfigureAwait(false);
                 if (frame is null) break;
 
-                using (frame)
+                try
                 {
                     await this.HandleFrameAsync(frame).ConfigureAwait(false);
+                }
+                finally
+                {
+                    frame.Dispose();
                 }
             }
         }
@@ -315,6 +322,7 @@ public sealed class YamuxConnection : IAsyncDisposable
 
             bool tooMany = false;
             YamuxStream? stream = null;
+
             lock (_lock)
             {
                 if (_streams.ContainsKey(streamId)) throw new YamuxProtocolException("Stream already exists.");
@@ -380,6 +388,7 @@ public sealed class YamuxConnection : IAsyncDisposable
 
             bool tooMany = false;
             YamuxStream? stream = null;
+
             lock (_lock)
             {
                 if (_streams.ContainsKey(streamId)) throw new YamuxProtocolException("Stream already exists.");
@@ -485,6 +494,7 @@ public sealed class YamuxConnection : IAsyncDisposable
     private void CloseAllStreams()
     {
         YamuxStream[] streams;
+
         lock (_lock)
         {
             streams = _streams.Values.ToArray();
@@ -501,6 +511,7 @@ public sealed class YamuxConnection : IAsyncDisposable
     private void SignalOpenStreamWaiters()
     {
         TaskCompletionSource<bool> tcs;
+
         lock (_lock)
         {
             tcs = _openStreamTcs;

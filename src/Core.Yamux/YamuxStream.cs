@@ -73,46 +73,21 @@ public sealed class YamuxStream : Stream
         set => throw new NotSupportedException();
     }
 
-    internal static YamuxStream CreateInbound(
-        YamuxConnection connection,
-        YamuxConfig config,
-        uint streamId,
-        uint initialSendWindow)
+    internal static YamuxStream CreateInbound(YamuxConnection connection, YamuxConfig config, uint streamId, uint initialSendWindow)
     {
-        return new YamuxStream(
-            connection,
-            config,
-            streamId,
-            outbound: false,
-            sendWindow: initialSendWindow,
-            receiveWindow: YamuxConstants.DefaultCredit,
-            pendingFlag: YamuxPendingFlag.Ack);
+        return new YamuxStream(connection, config, streamId, outbound: false, sendWindow: initialSendWindow, receiveWindow: YamuxConstants.DefaultCredit, pendingFlag: YamuxPendingFlag.Ack);
     }
 
-    internal static YamuxStream CreateOutbound(
-        YamuxConnection connection,
-        YamuxConfig config,
-        uint streamId)
+    internal static YamuxStream CreateOutbound(YamuxConnection connection, YamuxConfig config, uint streamId)
     {
-        return new YamuxStream(
-            connection,
-            config,
-            streamId,
-            outbound: true,
-            sendWindow: YamuxConstants.DefaultCredit,
-            receiveWindow: YamuxConstants.DefaultCredit,
-            pendingFlag: YamuxPendingFlag.Syn);
+        return new YamuxStream(connection, config, streamId, outbound: true, sendWindow: YamuxConstants.DefaultCredit, receiveWindow: YamuxConstants.DefaultCredit, pendingFlag: YamuxPendingFlag.Syn);
     }
 
     internal bool MarkAcknowledgedByRemote()
     {
         lock (_lock)
         {
-            if (!_awaitingRemoteAck)
-            {
-                return false;
-            }
-
+            if (!_awaitingRemoteAck) return false;
             _awaitingRemoteAck = false;
             return true;
         }
@@ -123,6 +98,7 @@ public sealed class YamuxStream : Stream
         bool closeRead = false;
         bool notify = false;
         var dataLength = data.Memory.Length;
+
         lock (_lock)
         {
             if (_state == YamuxStreamState.Closed)
@@ -134,8 +110,7 @@ public sealed class YamuxStream : Stream
             if (dataLength > _receiveWindow)
             {
                 data.Dispose();
-                throw new YamuxProtocolException(
-                    $"Stream {this.Id}: frame exceeds receive window.");
+                throw new YamuxProtocolException($"Stream {this.Id}: frame exceeds receive window.");
             }
 
             _receiveWindow -= (uint)dataLength;
@@ -156,10 +131,7 @@ public sealed class YamuxStream : Stream
                 {
                     _receiveWindow += (uint)dataLength;
                     _bufferedBytes -= dataLength;
-                    if (_bufferedBytes < 0)
-                    {
-                        _bufferedBytes = 0;
-                    }
+                    if (_bufferedBytes < 0) _bufferedBytes = 0;
                 }
             }
         }
@@ -182,9 +154,11 @@ public sealed class YamuxStream : Stream
     internal void ReceiveWindowUpdate(uint credit, bool fin)
     {
         bool notify = false;
+
         lock (_lock)
         {
             _sendWindow = checked(_sendWindow + credit);
+
             if (fin)
             {
                 notify = this.TransitionToRecvClosedLocked();
@@ -205,13 +179,10 @@ public sealed class YamuxStream : Stream
     internal void ReceiveReset()
     {
         bool notify = false;
+
         lock (_lock)
         {
-            if (_state == YamuxStreamState.Closed)
-            {
-                return;
-            }
-
+            if (_state == YamuxStreamState.Closed) return;
             _state = YamuxStreamState.Closed;
             notify = true;
         }
@@ -237,14 +208,9 @@ public sealed class YamuxStream : Stream
         _sendWindowTcs.TrySetResult(true);
     }
 
-    public override async ValueTask<int> ReadAsync(
-        Memory<byte> buffer,
-        CancellationToken cancellationToken = default)
+    public override async ValueTask<int> ReadAsync(Memory<byte> buffer, CancellationToken cancellationToken = default)
     {
-        if (buffer.Length == 0)
-        {
-            return 0;
-        }
+        if (buffer.Length == 0) return 0;
 
         if (!_config.ReadAfterClose)
         {
@@ -257,13 +223,8 @@ public sealed class YamuxStream : Stream
             }
         }
 
-        var read = await _incomingBytes.ReadAsync(buffer, cancellationToken)
-            .ConfigureAwait(false);
-        if (read > 0)
-        {
-            this.OnBytesConsumed(read);
-        }
-
+        var read = await _incomingBytes.ReadAsync(buffer, cancellationToken).ConfigureAwait(false);
+        if (read > 0) this.OnBytesConsumed(read);
         return read;
     }
 
@@ -272,59 +233,38 @@ public sealed class YamuxStream : Stream
         return this.ReadAsync(buffer.AsMemory(offset, count)).GetAwaiter().GetResult();
     }
 
-    public override async ValueTask WriteAsync(
-        ReadOnlyMemory<byte> buffer,
-        CancellationToken cancellationToken = default)
+    public override async ValueTask WriteAsync(ReadOnlyMemory<byte> buffer, CancellationToken cancellationToken = default)
     {
-        if (buffer.Length == 0)
-        {
-            return;
-        }
+        if (buffer.Length == 0) return;
 
         var offset = 0;
+
         while (offset < buffer.Length)
         {
             uint allowed;
             FrameFlags flags;
+
             lock (_lock)
             {
-                if (!this.CanWriteLocked())
-                {
-                    throw new IOException("Stream is closed for writing.");
-                }
-
-                if (_connectionClosed)
-                {
-                    throw new YamuxConnectionClosedException(
-                        "Connection is closed for writing.");
-                }
+                if (!this.CanWriteLocked()) throw new IOException("Stream is closed for writing.");
+                if (_connectionClosed) throw new YamuxConnectionClosedException("Connection is closed for writing.");
             }
 
             await this.WaitForSendWindowAsync(cancellationToken).ConfigureAwait(false);
 
             lock (_lock)
             {
-                if (!this.CanWriteLocked())
-                {
-                    throw new IOException("Stream is closed for writing.");
-                }
+                if (!this.CanWriteLocked()) throw new IOException("Stream is closed for writing.");
+                if (_connectionClosed) throw new YamuxConnectionClosedException("Connection is closed for writing.");
 
-                if (_connectionClosed)
-                {
-                    throw new YamuxConnectionClosedException(
-                        "Connection is closed for writing.");
-                }
-
-                if (_sendWindow == 0)
-                {
-                    continue;
-                }
+                if (_sendWindow == 0) continue;
 
                 var remaining = buffer.Length - offset;
                 var windowAllowed = Math.Min(_sendWindow, (uint)remaining);
                 var splitAllowed = Math.Min(windowAllowed, (uint)_config.SplitSendSize);
                 allowed = splitAllowed;
                 _sendWindow -= allowed;
+
                 if (_sendWindow == 0)
                 {
                     _sendWindowTcs = NewTcs();
@@ -358,15 +298,14 @@ public sealed class YamuxStream : Stream
     {
         Frame? frame = null;
         bool notify = false;
+
         lock (_lock)
         {
-            if (_state == YamuxStreamState.Closed || _state == YamuxStreamState.SendClosed)
-            {
-                return;
-            }
+            if (_state == YamuxStreamState.Closed || _state == YamuxStreamState.SendClosed) return;
 
             var flags = this.ApplyPendingFlagLocked(FrameFlags.Fin);
             frame = Frame.Data(this.Id, ReadOnlyMemory<byte>.Empty, flags, _connection.BytesPool);
+
             _state = _state == YamuxStreamState.RecvClosed
                 ? YamuxStreamState.Closed
                 : YamuxStreamState.SendClosed;
@@ -417,33 +356,21 @@ public sealed class YamuxStream : Stream
     private void OnBytesConsumed(int bytes)
     {
         Frame? update = null;
+
         lock (_lock)
         {
             _bufferedBytes -= bytes;
-            if (_bufferedBytes < 0)
-            {
-                _bufferedBytes = 0;
-            }
+            if (_bufferedBytes < 0) _bufferedBytes = 0;
 
-            if (!this.CanReadLocked())
-            {
-                return;
-            }
+            if (!this.CanReadLocked()) return;
 
             var bytesReceived = (long)_maxReceiveWindow - _receiveWindow;
             var pending = bytesReceived - _bufferedBytes;
-            if (pending < _maxReceiveWindow / 2)
-            {
-                return;
-            }
-
-            if (pending <= 0)
-            {
-                return;
-            }
+            if (pending < _maxReceiveWindow / 2) return;
 
             var credit = (uint)Math.Min(pending, uint.MaxValue);
             _receiveWindow += credit;
+
             var flags = this.ApplyPendingFlagLocked(FrameFlags.None);
             update = Frame.WindowUpdate(this.Id, credit, flags);
         }
@@ -483,10 +410,7 @@ public sealed class YamuxStream : Stream
 
     private bool TransitionToRecvClosedLocked()
     {
-        if (_state == YamuxStreamState.Closed)
-        {
-            return false;
-        }
+        if (_state == YamuxStreamState.Closed) return false;
 
         _state = _state == YamuxStreamState.SendClosed
             ? YamuxStreamState.Closed
@@ -498,13 +422,10 @@ public sealed class YamuxStream : Stream
     private async Task WaitForSendWindowAsync(CancellationToken cancellationToken)
     {
         Task waitTask;
+
         lock (_lock)
         {
-            if (_sendWindow > 0)
-            {
-                return;
-            }
-
+            if (_sendWindow > 0) return;
             waitTask = _sendWindowTcs.Task;
         }
 

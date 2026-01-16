@@ -42,12 +42,9 @@ public sealed class YamuxConfig
     internal void EnsureWindowLimits()
     {
         if (this.MaxConnectionReceiveWindow is null) return;
-
-        var minimum = (long)this.MaxNumStreams * YamuxConstants.DefaultCredit;
-        if (this.MaxConnectionReceiveWindow.Value < minimum)
+        if (this.MaxConnectionReceiveWindow.Value < (this.MaxNumStreams * YamuxConstants.DefaultCredit))
         {
-            throw new ArgumentException(
-                "MaxConnectionReceiveWindow must be >= 256KiB * MaxNumStreams.");
+            throw new ArgumentException("MaxConnectionReceiveWindow must be >= 256KiB * MaxNumStreams.");
         }
     }
 }

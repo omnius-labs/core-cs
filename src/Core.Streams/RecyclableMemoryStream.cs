@@ -287,7 +287,7 @@ public class RecyclableMemoryStream : Stream
             this.Position = position;
         }
 
-        var memoryOwner = new MemoryOwner<byte>(buffer.AsMemory()[..bufferLength], () => _bytesPool.Array.Return(buffer));
+        var memoryOwner = new OwnedMemory<byte>(buffer.AsMemory()[..bufferLength], () => _bytesPool.Array.Return(buffer));
         return memoryOwner;
     }
 }

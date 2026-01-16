@@ -6,13 +6,13 @@ internal readonly struct OwnedBytes : IDisposable
 {
     public static OwnedBytes Empty { get; } = new OwnedBytes(ReadOnlyMemory<byte>.Empty, null);
 
+    private readonly IMemoryOwner<byte>? _owner;
+
     public OwnedBytes(ReadOnlyMemory<byte> memory, IMemoryOwner<byte>? owner)
     {
         this.Memory = memory;
         _owner = owner;
     }
-
-    private readonly IMemoryOwner<byte>? _owner;
 
     public ReadOnlyMemory<byte> Memory { get; }
 

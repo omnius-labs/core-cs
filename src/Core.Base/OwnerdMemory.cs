@@ -2,23 +2,23 @@ using System.Buffers;
 
 namespace Omnius.Core.Base;
 
-public sealed class MemoryOwner<T> : IMemoryOwner<T>
+public sealed class OwnedMemory<T> : IMemoryOwner<T>
 {
-    public static IMemoryOwner<T> Empty { get; } = new MemoryOwner<T>();
+    public static IMemoryOwner<T> Empty { get; } = new OwnedMemory<T>();
 
     private readonly Action? _disposeCallback;
 
-    public MemoryOwner()
+    public OwnedMemory()
     {
         this.Memory = Memory<T>.Empty;
     }
 
-    public MemoryOwner(Memory<T> memory)
+    public OwnedMemory(Memory<T> memory)
     {
         this.Memory = memory;
     }
 
-    public MemoryOwner(Memory<T> memory, Action disposeCallback)
+    public OwnedMemory(Memory<T> memory, Action disposeCallback)
     {
         this.Memory = memory;
         _disposeCallback = disposeCallback;

@@ -153,10 +153,8 @@ internal static class FrameCodec
         try
         {
             var headerMemory = headerBuffer.AsMemory(0, YamuxConstants.HeaderSize);
-            if (!await ReadExactlyAsync(stream, headerMemory, cancellationToken).ConfigureAwait(false))
-            {
-                return null;
-            }
+            var readLength = await stream.ReadFullyAsync(headerMemory, cancellationToken).ConfigureAwait(false);
+            if (readLength == 0) return null;
 
             header = FrameHeader.Decode(headerBuffer.AsSpan(0, YamuxConstants.HeaderSize));
         }
@@ -185,7 +183,7 @@ internal static class FrameCodec
         try
         {
             owner = bytesPool.Memory.Rent((int)header.Length).Shrink((int)header.Length);
-            await ReadExactlyAsync(stream, owner.Memory, cancellationToken).ConfigureAwait(false);
+            await stream.ReadExactlyAsync(owner.Memory, cancellationToken).ConfigureAwait(false);
             return new Frame(header, owner.Memory, owner);
         }
         catch
@@ -195,25 +193,15 @@ internal static class FrameCodec
         }
     }
 
-    public static async ValueTask WriteAsync(
-        Stream stream,
-        Frame frame,
-        IBytesPool bytesPool,
-        CancellationToken cancellationToken)
+    public static async ValueTask WriteAsync(Stream stream, Frame frame, IBytesPool bytesPool, CancellationToken cancellationToken)
     {
-        if (bytesPool is null)
-        {
-            throw new ArgumentNullException(nameof(bytesPool));
-        }
+        if (bytesPool is null) throw new ArgumentNullException(nameof(bytesPool));
 
         var headerBuffer = bytesPool.Array.Rent(YamuxConstants.HeaderSize);
         try
         {
             frame.Header.Encode(headerBuffer.AsSpan(0, YamuxConstants.HeaderSize));
-            await stream.WriteAsync(
-                    headerBuffer.AsMemory(0, YamuxConstants.HeaderSize),
-                    cancellationToken)
-                .ConfigureAwait(false);
+            await stream.WriteAsync(headerBuffer.AsMemory(0, YamuxConstants.HeaderSize), cancellationToken).ConfigureAwait(false);
         }
         finally
         {
@@ -224,32 +212,5 @@ internal static class FrameCodec
         {
             await stream.WriteAsync(frame.Body, cancellationToken).ConfigureAwait(false);
         }
-    }
-
-    private static async ValueTask<bool> ReadExactlyAsync(
-        Stream stream,
-        Memory<byte> buffer,
-        CancellationToken cancellationToken)
-    {
-        var offset = 0;
-        while (offset < buffer.Length)
-        {
-            var read = await stream.ReadAsync(
-                buffer.Slice(offset),
-                cancellationToken).ConfigureAwait(false);
-            if (read == 0)
-            {
-                if (offset == 0)
-                {
-                    return false;
-                }
-
-                throw new IOException("Unexpected EOF while reading yamux frame.");
-            }
-
-            offset += read;
-        }
-
-        return true;
     }
 }
