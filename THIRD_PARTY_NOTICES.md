@@ -40,10 +40,14 @@ THE SOFTWARE.
 
 ## https://bloomfilter.codeplex.com/
 
-+ File: BloomFilter.cs
-+ License: Microsoft Permissive License (Ms-PL) v1.1
+- Files
+    - src/Core.Base/Collections/BloomFilter.cs
+- License: Microsoft Permissive License (Ms-PL) v1.1
 
 ## https://github.com/rasky/gcs/blob/master/cpp/gcs.cpp
 
-+ File: GolombCodedSet.cs
-+ License: Unlicense
+- Files
+    - src/Core.Base/Collections/GolombCodedSet.cs
+    - src/Core.Base/Collections/GolombCodedSet.GolombDecoder.cs
+    - src/Core.Base/Collections/GolombCodedSet.GolombEncoder.cs
+- License: Unlicense
