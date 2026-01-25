@@ -320,20 +320,8 @@
         "dependencies": {
           "Microsoft.Extensions.Logging": "[10.0.1, )",
           "NeoSmart.AsyncLock": "[3.2.1, )",
-          "System.IO.Pipelines": "[10.0.1, )"
-        }
-      },
-      "Omnius.Core.Pipelines": {
-        "type": "Project",
-        "dependencies": {
-          "Microsoft.Extensions.Logging": "[10.0.1, )",
-          "Omnius.Core.Base": "[1.0.0, )"
-        }
-      },
-      "Omnius.Core.Serialization": {
-        "type": "Project",
-        "dependencies": {
           "Newtonsoft.Json": "[13.0.4, )",
+          "System.IO.Pipelines": "[10.0.1, )",
           "YamlDotNet": "[16.3.0, )"
         }
       },

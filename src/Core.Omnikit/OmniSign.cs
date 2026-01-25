@@ -3,7 +3,7 @@ using System.Text.Json;
 using Omnius.Core.Base;
 using Omnius.Core.Omnikit.Converters;
 using Omnius.Core.Omnikit.Internal;
-using Omnius.Core.Pipelines;
+using Omnius.Core.Base.Pipelines;
 using Omnius.Core.RocketPack;
 
 namespace Omnius.Core.Omnikit;

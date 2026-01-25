@@ -83,7 +83,7 @@ class Authenticator
                 var otherCert = RocketPackStruct.Import<OmniCert>(receivedCertBytes.Memory, _bytesPool);
 
                 var otherHash = GenHash(otherProfileMessage, myAgreement.GenAgreementPublicKey(), hashAlgorithmType);
-                if (!otherCert.Verify(otherHash)) throw new SecureStreamException("Invalid cert");
+                if (!otherCert.Verify(otherHash)) throw new OmniSecureStreamException("Invalid cert");
                 otherSign = otherCert.ToString();
             }
 
@@ -91,7 +91,7 @@ class Authenticator
         }
         else
         {
-            throw new SecureStreamException("Unsupported key exchange algorithm type");
+            throw new OmniSecureStreamException("Unsupported key exchange algorithm type");
         }
 
         if (keyDerivationAlgorithmType == KeyDerivationAlgorithmType.Hkdf)
@@ -102,7 +102,7 @@ class Authenticator
             var (keyLen, nonceLen) = cipherAlgorithmType switch
             {
                 CipherAlgorithmType.Aes256Gcm => (32, 12),
-                _ => throw new SecureStreamException("Unsupported cipher algorithm type"),
+                _ => throw new OmniSecureStreamException("Unsupported cipher algorithm type"),
             };
 
             if (hashAlgorithmType == HashAlgorithmType.Sha3_256)
@@ -118,7 +118,7 @@ class Authenticator
                 {
                     OmniSecureStreamType.Connected => (0, keyLen + nonceLen),
                     OmniSecureStreamType.Accepted => (keyLen + nonceLen, 0),
-                    _ => throw new SecureStreamException("Unsupported secure stream type"),
+                    _ => throw new OmniSecureStreamException("Unsupported secure stream type"),
                 };
 
                 var encKey = okm[encOffset..(encOffset + keyLen)].ToArray();
@@ -140,12 +140,12 @@ class Authenticator
             }
             else
             {
-                throw new SecureStreamException("Unsupported hash algorithm type");
+                throw new OmniSecureStreamException("Unsupported hash algorithm type");
             }
         }
         else
         {
-            throw new SecureStreamException("Unsupported key derivation algorithm type");
+            throw new OmniSecureStreamException("Unsupported key derivation algorithm type");
         }
     }
 
@@ -167,7 +167,7 @@ class Authenticator
         }
         else
         {
-            throw new SecureStreamException("Unsupported hash algorithm type");
+            throw new OmniSecureStreamException("Unsupported hash algorithm type");
         }
     }
 }

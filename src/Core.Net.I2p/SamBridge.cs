@@ -4,7 +4,7 @@ using Microsoft.Extensions.Logging;
 using Omnius.Core.Base;
 using Omnius.Core.Base.Helpers;
 using Omnius.Core.Net.I2p.Internal;
-using Omnius.Core.Pipelines;
+using Omnius.Core.Base.Pipelines;
 
 namespace Omnius.Core.Net.I2p;
 

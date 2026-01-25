@@ -1,6 +1,6 @@
 using System.Text.Json;
 using Omnius.Core.Base.Helpers;
-using Omnius.Core.Serialization;
+using Omnius.Core.Base.Serialization;
 
 namespace Omnius.Core.Avalonia;
 
@@ -14,13 +14,13 @@ public sealed class WindowStatus
 
     public static WindowStatus? Load(string configPath)
     {
-        return Json.ReadFile<WindowStatus>(configPath);
+        return JsonHelper.ReadFile<WindowStatus>(configPath);
     }
 
     public void Save(string configPath)
     {
         DirectoryHelper.CreateDirectory(Path.GetDirectoryName(configPath)!);
-        Json.WriteFile(configPath, this, new JsonSerializerOptions() { WriteIndented = true });
+        JsonHelper.WriteFile(configPath, this, new JsonSerializerOptions() { WriteIndented = true });
     }
 }
 

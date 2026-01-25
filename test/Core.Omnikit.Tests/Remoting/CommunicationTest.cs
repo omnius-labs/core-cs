@@ -7,7 +7,7 @@ using System.Text;
 using Omnius.Core.Base;
 using Omnius.Core.Omnikit.Converters;
 using Omnius.Core.RocketPack;
-using Omnius.Core.Streams;
+using Omnius.Core.Base.Streams;
 using Omnius.Core.Testkit;
 using Xunit;
 using Xunit.Abstractions;
