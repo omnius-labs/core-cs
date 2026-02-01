@@ -3,8 +3,8 @@ using System.Net.Sockets;
 using Microsoft.Extensions.Logging;
 using Omnius.Core.Base;
 using Omnius.Core.Base.Helpers;
-using Omnius.Core.Net.I2p.Internal;
 using Omnius.Core.Base.Pipelines;
+using Omnius.Core.Net.I2p.Internal;
 
 namespace Omnius.Core.Net.I2p;
 
