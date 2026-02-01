@@ -2,7 +2,7 @@ using System.Buffers;
 using System.Buffers.Binary;
 using Omnius.Core.Base;
 
-namespace Omnius.Yamux;
+namespace Omnius.Core.Yamux;
 
 internal enum FrameTag : byte
 {

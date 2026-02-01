@@ -2,7 +2,7 @@ using System.Threading.Channels;
 
 using Omnius.Core.Base;
 
-namespace Omnius.Yamux;
+namespace Omnius.Core.Yamux;
 
 public enum YamuxMode
 {
@@ -25,12 +25,12 @@ public sealed class YamuxConnection : IAsyncDisposable
     private readonly Task _readLoop;
     private readonly Task _writeLoop;
 
-    private TaskCompletionSource<bool> _openStreamTcs = NewTcs();
+    private ManualResetSignal _connectStreamSignal = new(false);
     private int _pendingAckCount;
 
     private readonly CancellationTokenSource _cts = new();
     private bool _closed;
-    private readonly object _lock = new();
+    private readonly object _lockObject = new();
 
     public YamuxConnection(Stream transport, YamuxConfig? config, YamuxMode mode, IBytesPool bytesPool)
     {
@@ -62,7 +62,6 @@ public sealed class YamuxConnection : IAsyncDisposable
 
     public YamuxMode Mode { get; }
     public int StreamCount => _streams.Count;
-    internal IBytesPool BytesPool => _bytesPool;
 
     public async ValueTask<YamuxStream?> AcceptStreamAsync(CancellationToken cancellationToken = default)
     {
@@ -81,9 +80,8 @@ public sealed class YamuxConnection : IAsyncDisposable
         for (; ; )
         {
             cancellationToken.ThrowIfCancellationRequested();
-            Task waitTask;
 
-            lock (_lock)
+            lock (_lockObject)
             {
                 if (_closed) throw new YamuxConnectionClosedException("Connection is closed.");
 
@@ -93,17 +91,17 @@ public sealed class YamuxConnection : IAsyncDisposable
                     if (id == 0 || id > uint.MaxValue - 2) throw new YamuxException("No more stream IDs available.");
 
                     _nextStreamId += 2;
-                    var stream = YamuxStream.CreateOutbound(this, _config, id);
+                    var stream = YamuxStream.CreateOutbound(this, _config, id, _bytesPool);
                     _streams[id] = stream;
                     _pendingAckCount++;
 
                     return stream;
                 }
 
-                waitTask = _openStreamTcs.Task;
+                _connectStreamSignal.Reset();
             }
 
-            await waitTask.WaitAsync(cancellationToken).ConfigureAwait(false);
+            await _connectStreamSignal.WaitAsync(cancellationToken).ConfigureAwait(false);
         }
     }
 
@@ -157,9 +155,7 @@ public sealed class YamuxConnection : IAsyncDisposable
 
     internal void NotifyStreamClosed(uint streamId, YamuxStream stream)
     {
-        bool signal = false;
-
-        lock (_lock)
+        lock (_lockObject)
         {
             if (_streams.Remove(streamId))
             {
@@ -168,13 +164,8 @@ public sealed class YamuxConnection : IAsyncDisposable
                     _pendingAckCount--;
                 }
 
-                signal = true;
+                _connectStreamSignal.Set();
             }
-        }
-
-        if (signal)
-        {
-            this.SignalOpenStreamWaiters();
         }
     }
 
@@ -245,7 +236,7 @@ public sealed class YamuxConnection : IAsyncDisposable
         }
     }
 
-    private async Task HandleFrameAsync(Frame frame)
+    private async ValueTask HandleFrameAsync(Frame frame)
     {
         var header = frame.Header;
 
@@ -255,15 +246,15 @@ public sealed class YamuxConnection : IAsyncDisposable
             {
                 if (ackStream.MarkAcknowledgedByRemote())
                 {
-                    lock (_lock)
+                    lock (_lockObject)
                     {
                         if (_pendingAckCount > 0)
                         {
                             _pendingAckCount--;
                         }
-                    }
 
-                    this.SignalOpenStreamWaiters();
+                        _connectStreamSignal.Set();
+                    }
                 }
             }
         }
@@ -287,7 +278,7 @@ public sealed class YamuxConnection : IAsyncDisposable
         }
     }
 
-    private async Task HandleDataAsync(Frame frame)
+    private async ValueTask HandleDataAsync(Frame frame)
     {
         var header = frame.Header;
         var flags = header.Flags;
@@ -323,7 +314,7 @@ public sealed class YamuxConnection : IAsyncDisposable
             bool tooMany = false;
             YamuxStream? stream = null;
 
-            lock (_lock)
+            lock (_lockObject)
             {
                 if (_streams.ContainsKey(streamId)) throw new YamuxProtocolException("Stream already exists.");
 
@@ -333,7 +324,7 @@ public sealed class YamuxConnection : IAsyncDisposable
                 }
                 else
                 {
-                    stream = YamuxStream.CreateInbound(this, _config, streamId, YamuxConstants.DefaultCredit);
+                    stream = YamuxStream.CreateInbound(this, _config, streamId, YamuxConstants.DefaultCredit, _bytesPool);
                     _streams[streamId] = stream;
                 }
             }
@@ -359,7 +350,7 @@ public sealed class YamuxConnection : IAsyncDisposable
         }
     }
 
-    private async Task HandleWindowUpdateAsync(Frame frame)
+    private async ValueTask HandleWindowUpdateAsync(Frame frame)
     {
         var header = frame.Header;
         var flags = header.Flags;
@@ -389,7 +380,7 @@ public sealed class YamuxConnection : IAsyncDisposable
             bool tooMany = false;
             YamuxStream? stream = null;
 
-            lock (_lock)
+            lock (_lockObject)
             {
                 if (_streams.ContainsKey(streamId)) throw new YamuxProtocolException("Stream already exists.");
 
@@ -400,7 +391,7 @@ public sealed class YamuxConnection : IAsyncDisposable
                 else
                 {
                     var initialSendWindow = YamuxConstants.DefaultCredit + header.Length;
-                    stream = YamuxStream.CreateInbound(this, _config, streamId, initialSendWindow);
+                    stream = YamuxStream.CreateInbound(this, _config, streamId, initialSendWindow, _bytesPool);
                     _streams[streamId] = stream;
                 }
             }
@@ -428,7 +419,7 @@ public sealed class YamuxConnection : IAsyncDisposable
         }
     }
 
-    private async Task HandlePingAsync(Frame frame)
+    private async ValueTask HandlePingAsync(Frame frame)
     {
         var header = frame.Header;
         if ((header.Flags & FrameFlags.Ack) != 0) return;
@@ -438,11 +429,9 @@ public sealed class YamuxConnection : IAsyncDisposable
         {
             pong.Dispose();
         }
-
-        await Task.CompletedTask.ConfigureAwait(false);
     }
 
-    private async Task TerminateAsync(GoAwayCode code)
+    private async ValueTask TerminateAsync(GoAwayCode code)
     {
         if (this.BeginClose())
         {
@@ -455,13 +444,11 @@ public sealed class YamuxConnection : IAsyncDisposable
             _outgoing.Writer.TryComplete();
             _cts.Cancel();
         }
-
-        await Task.CompletedTask.ConfigureAwait(false);
     }
 
     private bool TryGetStream(uint streamId, out YamuxStream stream)
     {
-        lock (_lock)
+        lock (_lockObject)
         {
             return _streams.TryGetValue(streamId, out stream!);
         }
@@ -481,13 +468,14 @@ public sealed class YamuxConnection : IAsyncDisposable
 
     private bool BeginClose()
     {
-        lock (_lock)
+        lock (_lockObject)
         {
             if (_closed) return false;
             _closed = true;
+
+            _connectStreamSignal.Set();
         }
 
-        this.SignalOpenStreamWaiters();
         return true;
     }
 
@@ -495,7 +483,7 @@ public sealed class YamuxConnection : IAsyncDisposable
     {
         YamuxStream[] streams;
 
-        lock (_lock)
+        lock (_lockObject)
         {
             streams = _streams.Values.ToArray();
             _streams.Clear();
@@ -506,24 +494,5 @@ public sealed class YamuxConnection : IAsyncDisposable
         {
             stream.MarkConnectionClosed();
         }
-    }
-
-    private void SignalOpenStreamWaiters()
-    {
-        TaskCompletionSource<bool> tcs;
-
-        lock (_lock)
-        {
-            tcs = _openStreamTcs;
-            if (tcs.Task.IsCompleted) return;
-
-            tcs.TrySetResult(true);
-            _openStreamTcs = NewTcs();
-        }
-    }
-
-    private static TaskCompletionSource<bool> NewTcs()
-    {
-        return new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
     }
 }

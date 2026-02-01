@@ -1,4 +1,4 @@
-namespace Omnius.Yamux;
+namespace Omnius.Core.Yamux;
 
 public sealed class YamuxConfig
 {
@@ -41,10 +41,13 @@ public sealed class YamuxConfig
 
     internal void EnsureWindowLimits()
     {
-        if (this.MaxConnectionReceiveWindow is null) return;
-        if (this.MaxConnectionReceiveWindow.Value < (this.MaxNumStreams * YamuxConstants.DefaultCredit))
+        if (this.MaxConnectionReceiveWindow is int maxConnectionReceiveWindow)
         {
-            throw new ArgumentException("MaxConnectionReceiveWindow must be >= 256KiB * MaxNumStreams.");
+            var required = this.MaxNumStreams * YamuxConstants.DefaultCredit;
+            if (maxConnectionReceiveWindow < required)
+            {
+                throw new ArgumentException("MaxConnectionReceiveWindow must be >= 256KiB * MaxNumStreams.");
+            }
         }
     }
 }

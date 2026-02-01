@@ -3,11 +3,11 @@ using System.Globalization;
 using System.IO;
 using Microsoft.Extensions.Time.Testing;
 using Omnius.Core.Testkit;
-using Omnius.Yamux.Internal;
+using Omnius.Core.Yamux.Internal;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace Omnius.Yamux;
+namespace Omnius.Core.Yamux;
 
 public class YamuxConnectionTest : TestBase<YamuxConnectionTest>
 {

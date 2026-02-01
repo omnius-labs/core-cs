@@ -1,6 +1,6 @@
 using System.Buffers;
 
-namespace Omnius.Yamux;
+namespace Omnius.Core.Yamux;
 
 internal readonly struct OwnedBytes : IDisposable
 {

@@ -5,7 +5,7 @@ using Microsoft.Extensions.Logging;
 using Omnius.Core.Base;
 using Xunit.Abstractions;
 
-namespace Omnius.Yamux.Internal;
+namespace Omnius.Core.Yamux.Internal;
 
 public class TestHelper : IDisposable
 {

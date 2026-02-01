@@ -1,4 +1,4 @@
-namespace Omnius.Yamux;
+namespace Omnius.Core.Yamux;
 
 public class YamuxException : Exception
 {

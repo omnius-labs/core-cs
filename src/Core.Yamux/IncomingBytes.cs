@@ -1,7 +1,7 @@
 using System.Threading.Channels;
 using Omnius.Core.Base;
 
-namespace Omnius.Yamux;
+namespace Omnius.Core.Yamux;
 
 internal sealed class IncomingBytes
 {
