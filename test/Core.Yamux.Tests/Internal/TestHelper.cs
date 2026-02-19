@@ -1,5 +1,3 @@
-using System.Diagnostics;
-using System.Net;
 using System.Net.Sockets;
 using Microsoft.Extensions.Logging;
 using Omnius.Core.Base;
