@@ -1,6 +1,6 @@
 using System.Buffers;
 using Omnius.Core.Base;
-using Omnius.Core.Pipelines;
+using Omnius.Core.Base.Pipelines;
 
 namespace Omnius.Core.RocketPack;
 

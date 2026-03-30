@@ -2,7 +2,7 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Omnius.Core.Base;
-using Omnius.Core.Pipelines;
+using Omnius.Core.Base.Pipelines;
 using Omnius.Core.RocketPack;
 
 namespace Omnius.Core.Omnikit.Connections.Secure.V1;

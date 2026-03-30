@@ -1,6 +1,6 @@
 using System.Buffers;
 using System.Security.Cryptography;
-using Omnius.Core.Common;
+using Omnius.Core.Base.Cryptography;
 
 namespace Omnius.Core.Base.Helpers;
 

@@ -2,7 +2,7 @@ using System.Buffers;
 using System.Collections.Concurrent;
 using System.Runtime.Serialization;
 using Omnius.Core.Base;
-using Omnius.Core.Pipelines;
+using Omnius.Core.Base.Pipelines;
 using Omnius.Core.RocketPack;
 
 namespace Omnius.Core.Omnikit.Remoting.Internal;

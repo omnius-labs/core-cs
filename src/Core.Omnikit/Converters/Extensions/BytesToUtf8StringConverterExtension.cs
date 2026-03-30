@@ -2,7 +2,7 @@ using System.Buffers;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using Omnius.Core.Base;
-using Omnius.Core.Pipelines;
+using Omnius.Core.Base.Pipelines;
 
 namespace Omnius.Core.Omnikit.Converters;
 

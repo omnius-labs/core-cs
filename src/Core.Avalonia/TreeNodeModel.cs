@@ -1,6 +1,6 @@
 using Avalonia.Collections;
 using Avalonia.Threading;
-using Omnius.Core.Pipelines;
+using Omnius.Core.Base.Pipelines;
 
 // https://github.com/kekekeks/example-avalonia-huge-tree/blob/c77f1c32721dfa2ef8da1c65c0cce909b3b33eb2/AvaloniaHugeTree/TreeNodeModel.cs#L10
 

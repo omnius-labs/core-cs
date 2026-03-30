@@ -1,7 +1,7 @@
 using System.Buffers;
 using System.Text;
 using System.Text.Json;
-using Omnius.Core.Pipelines;
+using Omnius.Core.Base.Pipelines;
 using Xunit;
 
 namespace Omnius.Core.Omnikit.Converters;

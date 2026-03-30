@@ -2,7 +2,7 @@ using Omnius.Core.Base.Internal;
 using Shouldly;
 using Xunit;
 
-namespace Omnius.Core;
+namespace Omnius.Core.Base;
 
 public class LogicalStringComparerTest
 {

@@ -2,17 +2,12 @@
   <Folder Name="/src/">
     <Project Path="src/Core.Avalonia/Core.Avalonia.csproj" />
     <Project Path="src/Core.Base/Core.Base.csproj" />
-    <Project Path="src/Core.Collections/Core.Collections.csproj" />
     <Project Path="src/Core.Net.I2p/Core.Net.I2p.csproj" />
     <Project Path="src/Core.Net.Proxies/Core.Net.Proxies.csproj" />
     <Project Path="src/Core.Net.Upnp/Core.Net.Upnp.csproj" />
     <Project Path="src/Core.Omnikit/Core.Omnikit.csproj" />
-    <Project Path="src/Core.Pipelines/Core.Pipelines.csproj" />
     <Project Path="src/Core.RocketPack/Core.RocketPack.csproj" />
-    <Project Path="src/Core.Serialization/Core.Serialization.csproj" />
     <Project Path="src/Core.Sql/Core.Sql.csproj" />
-    <Project Path="src/Core.Storages/Core.Storages.csproj" />
-    <Project Path="src/Core.Streams/Core.Streams.csproj" />
     <Project Path="src/Core.Testkit/Core.Testkit.csproj" />
     <Project Path="src/Core.Yamux/Core.Yamux.csproj" />
   </Folder>
@@ -21,11 +16,7 @@
     <Project Path="test/Core.Net.I2p.Tests/Core.Net.I2p.Tests.csproj" />
     <Project Path="test/Core.Net.Upnp.Tests/Core.Net.Upnp.Tests.csproj" />
     <Project Path="test/Core.Omnikit.Tests/Core.Omnikit.Tests.csproj" />
-    <Project Path="test/Core.Pipelines.Tests/Core.Pipelines.Tests.csproj" />
     <Project Path="test/Core.RocketPack.Tests/Core.RocketPack.Tests.csproj" />
-    <Project Path="test/Core.Serialization.Tests/Core.Serialization.Tests.csproj" />
-    <Project Path="test/Core.Storages.Tests/Core.Storages.Tests.csproj" />
-    <Project Path="test/Core.Streams.Tests/Core.Streams.Tests.csproj" />
     <Project Path="test/Core.Yamux.Tests/Core.Yamux.Tests.csproj" />
   </Folder>
 </Solution>

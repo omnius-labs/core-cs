@@ -59,7 +59,7 @@ public partial class OmniSecureStream
 
     private async ValueTask InternalSendAsync(ReadOnlyMemory<byte> data, CancellationToken cancellationToken = default)
     {
-        if (_encoder is null) throw new SecureStreamException("SecureStream is not initialized.");
+        if (_encoder is null) throw new OmniSecureStreamException("SecureStream is not initialized.");
 
         using var encryptedData = _encoder.Encode(data.ToArray());
         await _sender.SendAsync(encryptedData.Memory, cancellationToken);
@@ -67,18 +67,11 @@ public partial class OmniSecureStream
 
     private async ValueTask<IMemoryOwner<byte>> InternalReceiveAsync(CancellationToken cancellationToken = default)
     {
-        if (_decoder is null) throw new SecureStreamException("SecureStream is not initialized.");
+        if (_decoder is null) throw new OmniSecureStreamException("SecureStream is not initialized.");
 
         using var encryptedData = await _receiver.ReceiveAsync(cancellationToken);
         return _decoder.Decode(encryptedData.Memory.Span);
     }
-}
-
-public class SecureStreamException : Exception
-{
-    public SecureStreamException() { }
-    public SecureStreamException(string message) : base(message) { }
-    public SecureStreamException(string message, Exception inner) : base(message, inner) { }
 }
 
 public partial class OmniSecureStream : Stream
@@ -210,4 +203,11 @@ public partial class OmniSecureStream : Stream
             _sendMemoryOwnerOffset = 0;
         }
     }
+}
+
+public class OmniSecureStreamException : Exception
+{
+    public OmniSecureStreamException() { }
+    public OmniSecureStreamException(string message) : base(message) { }
+    public OmniSecureStreamException(string message, Exception inner) : base(message, inner) { }
 }

@@ -39,4 +39,17 @@ public static class StreamExtensions
             await stream.WriteAsync(m, cancellationToken);
         }
     }
+
+    public static async ValueTask<int> ReadFullyAsync(this Stream stream, Memory<byte> buffer, CancellationToken cancellationToken)
+    {
+        var offset = 0;
+        while (offset < buffer.Length)
+        {
+            var read = await stream.ReadAsync(buffer.Slice(offset), cancellationToken).ConfigureAwait(false);
+            if (read == 0) break;
+            offset += read;
+        }
+
+        return offset;
+    }
 }

@@ -26,6 +26,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" />
+    <PackageReference Include="YamlDotNet" />
     <PackageReference Include="Microsoft.Extensions.Logging" />
     <PackageReference Include="NeoSmart.AsyncLock" />
     <PackageReference Include="System.IO.Pipelines" />

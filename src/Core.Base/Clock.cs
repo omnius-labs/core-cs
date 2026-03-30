@@ -13,7 +13,7 @@ public class Clock : IClock
 public class FakeClock : IClock
 {
     private DateTime _currentTime;
-    private readonly object _lock = new();
+    private readonly object _lockObject = new();
 
     public FakeClock(DateTime start)
     {
@@ -22,7 +22,7 @@ public class FakeClock : IClock
 
     public DateTime GetUtcNow()
     {
-        lock (_lock)
+        lock (_lockObject)
         {
             return _currentTime;
         }
@@ -30,7 +30,7 @@ public class FakeClock : IClock
 
     public void AdvanceTime(TimeSpan duration)
     {
-        lock (_lock)
+        lock (_lockObject)
         {
             _currentTime = _currentTime.Add(duration);
         }
