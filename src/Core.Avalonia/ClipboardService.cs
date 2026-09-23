@@ -7,7 +7,7 @@ namespace Omnius.Core.Avalonia;
 public interface IClipboardService
 {
     Task ClearAsync();
-    Task<string?> GetTextAsync();
+    Task<string?> TryGetTextAsync();
     Task SetTextAsync(string text);
 }
 
@@ -26,9 +26,9 @@ public class ClipboardService : IClipboardService
         await this.GetClipboard().ClearAsync();
     }
 
-    public async Task<string?> GetTextAsync()
+    public async Task<string?> TryGetTextAsync()
     {
-        return await this.GetClipboard().GetTextAsync();
+        return await this.GetClipboard().TryGetTextAsync();
     }
 
     public async Task SetTextAsync(string text)

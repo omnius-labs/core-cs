@@ -11,7 +11,6 @@
   <ItemGroup>
     <ProjectReference Include="..\Core.Base\Core.Base.csproj" />
     <ProjectReference Include="..\Core.Pipelines\Core.Pipelines.csproj" />
-    <ProjectReference Include="..\Core.Collections\Core.Collections.csproj" />
   </ItemGroup>
 
 </Project>
